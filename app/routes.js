@@ -10,8 +10,8 @@ const addContext = ({ context }) => ({
 export const routes = () => {
   const router = express.Router();
 
-  router.get('/', async (req, res) => {
-    const context = await getIndexContext();
+  router.get('/', (req, res) => {
+    const context = getIndexContext();
     res.render('pages/index/template.njk', addContext({ context }));
   });
 
