@@ -76,7 +76,6 @@ class App {
       this.authProvider.setup(this.app);
     }
 
-
     return this.app;
   }
 }

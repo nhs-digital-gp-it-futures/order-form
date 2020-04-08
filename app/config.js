@@ -20,9 +20,6 @@ module.exports = {
   // IDENTITY_SERVER
   identityServer: process.env.IDENTITY_SERVER || 'http://localhost:5102',
 
-  // TODO: ORDER_FORM_API_URL
-  orderFormApiUrl: process.env.ORDER_FORM_API_URL || 'PLACEHOLDER',
-
   // LOGGER_LEVEL options are info, warn, error, off
   loggerLevel: process.env.LOGGER_LEVEL || 'error',
 
