@@ -4,14 +4,14 @@ import { routes } from './routes';
 
 describe('routes', () => {
   describe('GET /', () => {
-    it('should return the text "works"', () => {
+    it('should return the index page', () => {
       const app = new App().createApp();
       app.use('/', routes());
       return request(app)
         .get('/')
         .expect(200)
         .then((res) => {
-          expect(res.text).toEqual('Works');
+          expect(res.text.includes('data-test-id="index-page-title"')).toEqual(true);
         });
     });
   });
