@@ -1,0 +1,25 @@
+{
+  "footerLinks": [
+    {
+      "label": "Buyer's Guide",
+      "URL": "/guide"
+    },
+    {
+      "label": "NHS Digital Helpdesk",
+      "URL": "/guide#contact-us"
+    },
+    {
+      "label": "NHS Digital",
+      "URL": "https://digital.nhs.uk/"
+    },
+    {
+      "label": "About GP IT Futures",
+      "URL": "https://digital.nhs.uk/services/future-gp-it-systems-and-services"
+    },
+    {
+      "label": "Capabilities & Standards Model",
+      "URL": "https://gpitbjss.atlassian.net/wiki/spaces/GPITF/overview"
+    }
+  ],
+  "showLegalPanel": true
+}
