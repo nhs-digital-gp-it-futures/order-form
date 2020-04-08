@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "userId": "1234-56789",
+      "firstName": "John",
+      "lastName": "Smith",
+      "phoneNumber": "01234567890",
+      "emailAddress": "a.b@c.com",
+      "isDisabled": false
+    },
+    {
+      "userId": "4321-98765",
+      "firstName": "Jane",
+      "lastName": "Jones",
+      "phoneNumber": "01234987654",
+      "emailAddress": "j.j@company.com",
+      "isDisabled": true
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "errors": [
+    {
+      "field": "EmailAddress",
+      "id": "EmailAlreadyExists"
+    },
+    {
+      "field": "EmailAddress",
+      "id": "EmailInvalidFormat"
+    },
+    {
+      "field": "PhoneNumber",
+      "id": "PhoneNumberRequired"
+    },
+    {
+      "field": "FirstName",
+      "id": "FirstNameRequired"
+    },
+    {
+      "field": "LastName",
+      "id": "LastNameTooLong"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{% extends 'includes/layout.njk' %}
+{% from 'components/back-link/macro.njk' import backLink %}
+
+{% block body %}
+<div class="nhsuk-width-container nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4 bc-c-error-container nhsuk-u-padding-4">
+  <div class="nhsuk-u-padding-top-5" data-test-id="go-to-home-page-link"> 
+    {{ backLink({
+      "href": backLinkHref,
+      "text": "Go to Home Page"
+    }) }}
+  </div>
+  <h1 class="nhsuk-heading-l nhsuk-u-padding-left-3" data-test-id="error-page-title">Error: {{ message }}</h1>
+</div>
+{% endblock %}

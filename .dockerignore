@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+**/*.test.js
+**/test-utils/**
+**/testcafeRunner.js
+**/*.md
+**/webpack.config.js
+**/*docker**

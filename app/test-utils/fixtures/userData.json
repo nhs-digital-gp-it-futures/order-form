@@ -1,0 +1,8 @@
+{
+  "userId": "user1",
+  "name": "John Smith",
+  "phoneNumber": "07777777777",
+  "emailAddress": "John@Smith.com",
+  "disabled": false,
+  "primaryOrganisationId": "primaryOrg1"
+}

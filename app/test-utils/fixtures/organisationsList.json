@@ -1,0 +1,14 @@
+{
+  "organisations": [
+    {
+        "organisationId": "org-001",
+        "name": "Greater Manchester CCG",
+        "odsCode": "X01"
+    },
+    {
+      "organisationId": "org-002",
+      "name": "Hampshire CCG",
+      "odsCode": "X02"
+    }
+  ]
+}
