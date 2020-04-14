@@ -4,6 +4,12 @@
 
 {{ bcHeader({
   dataTestId: "header-banner",
+  innerComponent: loginLogout({
+    dataTestId: "login-logout-component",
+    username: username,
+    loginUrl: config.baseUrl + "/login",
+    logoutUrl: config.baseUrl + "/logout"
+  }),
   classes: "nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-2"
 }) }}
 
