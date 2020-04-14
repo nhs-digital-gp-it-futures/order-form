@@ -16,4 +16,22 @@ module.exports = {
 
   // LOGGER_LEVEL options are info, warn, error, off
   loggerLevel: process.env.LOGGER_LEVEL || 'error',
+
+  // The base uri of identity service
+  oidcBaseUri: process.env.OIDC_BASE_URI || 'http://localhost:5102',
+
+  // The client id to be sent to identity service
+  oidcClientId: process.env.OIDC_CLIENT_ID || 'SampleClient',
+
+  // The secret need to decode JWT tokens
+  oidcClientSecret: process.env.OIDC_CLIENT_SECRET,
+
+  // The path that the user is redirected to after logout
+  logoutRedirectPath: process.env.LOGOUT_REDIRECT_PATH || '/',
+
+  // How long before the cookies stored in the session expire in ms (1 hour)
+  maxCookieAge: process.env.MAX_COOKIE_AGE || 3600000,
+
+  // The secret needed for encoding and decoding the cookie
+  cookieSecret: process.env.COOKIE_SECRET,
 };
