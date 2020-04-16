@@ -26,10 +26,6 @@ describe('getErrorContext', () => {
     });
 
     expect(context.error.status).toEqual(context.error.status);
-    expect(context.error.backLinkText).toEqual(defaultContext.error.backLinkText);
-    expect(context.error.backLinkHref).toEqual(defaultContext.error.backLinkHref);
-    expect(context.error.title).toEqual(defaultContext.error.title);
-    expect(context.error.description).toEqual(defaultContext.error.description);
   });
 
   it('should get the error backLinkText with the default error context', () => {
@@ -37,11 +33,7 @@ describe('getErrorContext', () => {
       backLinkText: 'Error backLinkText',
     });
 
-    expect(context.error.status).toEqual(defaultContext.error.status);
     expect(context.error.backLinkText).toEqual(context.error.backLinkText);
-    expect(context.error.backLinkHref).toEqual(defaultContext.error.backLinkHref);
-    expect(context.error.title).toEqual(defaultContext.error.title);
-    expect(context.error.description).toEqual(defaultContext.error.description);
   });
 
   it('should get the error backLinkHref with the default error context', () => {
@@ -49,11 +41,7 @@ describe('getErrorContext', () => {
       backLinkHref: 'http://errorBackLinkHref.com',
     });
 
-    expect(context.error.status).toEqual(defaultContext.error.status);
-    expect(context.error.backLinkText).toEqual(defaultContext.error.backLinkText);
     expect(context.error.backLinkHref).toEqual(context.error.backLinkHref);
-    expect(context.error.title).toEqual(defaultContext.error.title);
-    expect(context.error.description).toEqual(defaultContext.error.description);
   });
 
   it('should get the error title with the default error context', () => {
@@ -61,11 +49,7 @@ describe('getErrorContext', () => {
       title: 'Error Title',
     });
 
-    expect(context.error.status).toEqual(defaultContext.error.status);
-    expect(context.error.backLinkText).toEqual(defaultContext.error.backLinkText);
-    expect(context.error.backLinkHref).toEqual(defaultContext.error.backLinkHref);
     expect(context.error.title).toEqual(context.error.title);
-    expect(context.error.description).toEqual(defaultContext.error.description);
   });
 
   it('should get the error title with the default error context', () => {
@@ -73,10 +57,6 @@ describe('getErrorContext', () => {
       description: 'Error Description',
     });
 
-    expect(context.error.status).toEqual(defaultContext.error.status);
-    expect(context.error.backLinkText).toEqual(defaultContext.error.backLinkText);
-    expect(context.error.backLinkHref).toEqual(defaultContext.error.backLinkHref);
-    expect(context.error.title).toEqual(defaultContext.error.title);
     expect(context.error.description).toEqual(context.error.description);
   });
 });
