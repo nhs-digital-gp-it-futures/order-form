@@ -5,6 +5,9 @@ module.exports = {
   // Base URL
   baseUrl: process.env.BASE_URL || '',
 
+  // Public browse base URL
+  publicBrowseBaseUrl: process.env.PUBLIC_BROWSE_BASE_URL || '/',
+
   // Environment
   env: process.env.NODE_ENV || 'development',
 

@@ -3,8 +3,17 @@ import passport from 'passport';
 import { Strategy, Issuer } from 'openid-client';
 import session from 'express-session';
 import {
-  oidcBaseUri, baseUrl, oidcClientId, oidcClientSecret, appBaseUri, maxCookieAge, cookieSecret,
+  oidcBaseUri,
+  baseUrl,
+  oidcClientId,
+  oidcClientSecret,
+  appBaseUri,
+  maxCookieAge,
+  cookieSecret,
+  publicBrowseBaseUrl,
 } from './config';
+
+import { getErrorContext } from './pages/error/controller';
 
 export class AuthProvider {
   constructor() {
@@ -96,10 +105,16 @@ export class AuthProvider {
       if (!req.user) {
         req.headers.referer = `${req.originalUrl}`;
         this.login()(req, res, next);
-      } else if (req.user) {
+      } else if (req.user && req.user.organisationFunction === 'Buyer') {
         next();
       } else {
-        throw new Error('Not authorised matey');
+        throw getErrorContext({
+          status: 401,
+          title: 'You\'re not authorised to view this page',
+          description: 'You must be logged in as a buyer to access Buying Catalogue orders.',
+          backLinkHref: publicBrowseBaseUrl,
+          backLinkText: 'Back to homescreen',
+        });
       }
     };
   }
