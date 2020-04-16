@@ -4,7 +4,7 @@ import config from './config';
 import { logger } from './logger';
 import { withCatch, extractAccessToken } from './helpers/routerHelper';
 import { getIndexContext } from './pages/index/controller';
-import { errorHandler } from './pages/error/errorHandler';
+import { getErrorContext } from './pages/error/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -43,15 +43,19 @@ export const routes = (authProvider) => {
     res.render('pages/index/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.get('*', (req, res, next) => next({
-    status: 404,
-    message: `Incorrect url ${req.originalUrl} - please check it is valid and try again`,
-  }));
+  router.get('*', (req, res, next) => {
+    const error = getErrorContext({
+      status: 404,
+      title: `Incorrect url ${req.originalUrl}`,
+      description: 'Please check it is valid and try again',
+    });
+    next(error);
+  });
 
-  router.use((err, req, res, next) => {
-    if (err) {
-      const context = errorHandler(err);
-      logger.error(context.message);
+  router.use((error, req, res, next) => {
+    if (error) {
+      const context = error;
+      logger.error(`${context.error.title} - ${context.error.description}`);
       return res.render('pages/error/template.njk', addContext({ context, user: req.user }));
     }
     return next();
