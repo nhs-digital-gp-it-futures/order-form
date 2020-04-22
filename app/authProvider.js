@@ -100,12 +100,12 @@ export class AuthProvider {
     });
   }
 
-  authorise() {
+  authorise({ claim } = {}) {
     return (req, res, next) => {
       if (!req.user) {
         req.headers.referer = `${req.originalUrl}`;
         this.login()(req, res, next);
-      } else if (req.user && req.user.organisationFunction === 'Buyer') {
+      } else if (req.user && claim && req.user[claim]) {
         next();
       } else {
         throw getErrorContext({

@@ -5,7 +5,7 @@ const pageUrl = 'http://localhost:1234/index';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude',
+    id: '88421113', name: 'Cool Dude', order: 'manage',
   });
 
   document.cookie = `fakeToken=${cookieValue}`;
