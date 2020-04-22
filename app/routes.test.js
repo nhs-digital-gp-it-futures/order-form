@@ -1,7 +1,8 @@
 import request from 'supertest';
+import { FakeAuthProvider } from 'buying-catalogue-library';
 import { App } from './app';
 import { routes } from './routes';
-import { FakeAuthProvider } from './test-utils/FakeAuthProvider';
+// import { FakeAuthProvider } from './test-utils/FakeAuthProvider';
 import { setFakeCookie } from './test-utils/helper';
 
 jest.mock('./logger');
@@ -14,7 +15,7 @@ jest.mock('./apiProvider', () => ({
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
 const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
+  id: '88421113', name: 'Cool Dude', order: 'manage',
 });
 
 const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;

@@ -1,8 +1,9 @@
 import createTestcafe from 'testcafe';
+import { FakeAuthProvider } from 'buying-catalogue-library';
 import { App } from './app/app';
 import { routes } from './app/routes';
 import { env } from './app/config';
-import { FakeAuthProvider } from './app/test-utils/FakeAuthProvider';
+// import { FakeAuthProvider } from './app/test-utils/FakeAuthProvider';
 
 let testcafe;
 
