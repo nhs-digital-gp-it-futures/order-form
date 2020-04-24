@@ -1,8 +1,0 @@
-{
-  "error": {
-    "status": 400,
-    "title": "Error",
-    "description": "Something went wrong",
-    "backLinkText": "Go to Home Page"
-  }
-}
