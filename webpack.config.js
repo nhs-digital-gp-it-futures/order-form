@@ -4,6 +4,8 @@ const path = require('path');
 // Local dependencies
 const config = require('./app/config');
 
+const outputPath = config.env === 'development' ? './public/js' : './dist/public/js';
+
 module.exports = {
   mode: config.env,
   entry: {
@@ -11,7 +13,7 @@ module.exports = {
   },
   output: {
     filename: 'main.bundle.min.js',
-    path: path.resolve(__dirname, 'public/js'),
+    path: path.resolve(__dirname, outputPath),
   },
   module: {
     rules: [{
