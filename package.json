@@ -7,6 +7,9 @@
     "build": "npm run build:css && npm run build:js",
     "build:css": "node-sass --output-style compressed app/styles/main.scss public/css/main.min.css",
     "build:js": "npm run webpack",
+    "build:docker": "npm run build:docker:css && npm run build:docker:js",
+    "build:docker:css": "node-sass --output-style compressed app/styles/main.scss dist/public/css/main.min.css",
+    "build:docker:js": "babel app -d dist/app --copy-files && npm run webpack",
     "clean": "touch public/tmp.txt && rm -rf public/*",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:js": "eslint \"**/*.js\" --ignore-pattern node_modules/",
@@ -47,6 +50,7 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
     "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.9.0",
