@@ -109,4 +109,15 @@ describe('routes', () => {
         expect(res.text.includes('data-test-id="error-page-title"')).toEqual(false);
       }));
   });
+
+  describe('GET *', () => {
+    it('should return error page if url cannot be matched', done => request(setUpFakeApp())
+      .get('/aaaa')
+      .expect(200)
+      .then((res) => {
+        expect(res.text.includes('<h1 class="nhsuk-heading-l nhsuk-u-margin-top-5" data-test-id="error-title">Incorrect url /aaaa</h1>')).toEqual(true);
+        expect(res.text.includes('<p data-test-id="error-description">Please check it is valid and try again</p>')).toEqual(true);
+        done();
+      }));
+  });
 });

@@ -1,10 +1,9 @@
 import express from 'express';
+import { ErrorContext, errorHandler } from 'buying-catalogue-library';
 import config from './config';
-
 import { logger } from './logger';
 import { withCatch, extractAccessToken } from './helpers/routerHelper';
 import { getIndexContext } from './pages/index/controller';
-import { getErrorContext } from './pages/error/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -43,22 +42,17 @@ export const routes = (authProvider) => {
     res.render('pages/index/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.get('*', (req, res, next) => {
-    const error = getErrorContext({
+  router.get('*', (req) => {
+    throw new ErrorContext({
       status: 404,
       title: `Incorrect url ${req.originalUrl}`,
       description: 'Please check it is valid and try again',
     });
-    next(error);
   });
 
-  router.use((error, req, res, next) => {
-    if (error) {
-      const context = error;
-      logger.error(`${context.error.title} - ${context.error.description}`);
-      return res.render('pages/error/template.njk', addContext({ context, user: req.user }));
-    }
-    return next();
+  errorHandler(router, (error, req, res) => {
+    logger.error(`${error.title} - ${error.description}`);
+    return res.render('pages/error/template.njk', addContext({ context: error, user: req.user }));
   });
 
   return router;
