@@ -1,4 +1,4 @@
-import { createTestHarness } from '../../test-utils/testHarness';
+import { componentTester } from '../../test-utils/componentTester';
 
 const setup = {
   template: {
@@ -7,7 +7,7 @@ const setup = {
 };
 
 describe('error page', () => {
-  it('should render the error backLink', createTestHarness(setup, (harness) => {
+  it('should render the error backLink', componentTester(setup, (harness) => {
     const context = {
       backLinkText: 'Error backLinkText',
       backLinkHref: 'http://errorBackLinkHref.com',
@@ -21,7 +21,7 @@ describe('error page', () => {
     });
   }));
 
-  it('should render the error title', createTestHarness(setup, (harness) => {
+  it('should render the error title', componentTester(setup, (harness) => {
     const context = {
       title: 'Error Title',
     };
@@ -33,7 +33,7 @@ describe('error page', () => {
     });
   }));
 
-  it('should render the error description', createTestHarness(setup, (harness) => {
+  it('should render the error description', componentTester(setup, (harness) => {
     const context = {
       description: 'Error Description',
     };
