@@ -1,4 +1,4 @@
-import { createTestHarness } from '../test-utils/testHarness';
+import { componentTester } from '../test-utils/componentTester';
 
 const setup = {
   template: {
@@ -30,7 +30,7 @@ const footerLinks = [
 ];
 
 describe('footer', () => {
-  it('should render the footer panel', createTestHarness(setup, (harness) => {
+  it('should render the footer panel', componentTester(setup, (harness) => {
     const context = { footerLinks };
 
     harness.request(context, ($) => {
@@ -46,7 +46,7 @@ describe('footer', () => {
     });
   }));
 
-  it('should render the footer legal panel', createTestHarness(setup, (harness) => {
+  it('should render the footer legal panel', componentTester(setup, (harness) => {
     const context = { showLegalPane: false };
 
     harness.request(context, ($) => {

@@ -1,4 +1,4 @@
-import { createTestHarness } from '../../test-utils/testHarness';
+import { componentTester } from '../../test-utils/componentTester';
 import context from './manifest.json';
 
 const setup = {
@@ -8,7 +8,7 @@ const setup = {
 };
 
 describe('index page', () => {
-  it('should render the index page title', createTestHarness(setup, (harness) => {
+  it('should render the index page title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const title = $('[data-test-id="index-page-title"]');
       expect(title.length).toEqual(1);

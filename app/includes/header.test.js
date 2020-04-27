@@ -1,4 +1,4 @@
-import { createTestHarness } from '../test-utils/testHarness';
+import { componentTester } from '../test-utils/componentTester';
 
 const setup = {
   template: {
@@ -7,7 +7,7 @@ const setup = {
 };
 
 describe('header', () => {
-  it('should render the header banner', createTestHarness(setup, (harness) => {
+  it('should render the header banner', componentTester(setup, (harness) => {
     const context = {};
 
     harness.request(context, ($) => {
@@ -18,7 +18,7 @@ describe('header', () => {
 
   describe('login/logout component', () => {
     describe('when username is provided', () => {
-      it('should render username', createTestHarness(setup, (harness) => {
+      it('should render username', componentTester(setup, (harness) => {
         const context = {
           username: 'user 1',
         };
@@ -30,7 +30,7 @@ describe('header', () => {
         });
       }));
 
-      it('should render logout link', createTestHarness(setup, (harness) => {
+      it('should render logout link', componentTester(setup, (harness) => {
         const context = {
           config: {
             baseUrl: '',
@@ -47,7 +47,7 @@ describe('header', () => {
     });
 
     describe('when username is not provided', () => {
-      it('should render login link', createTestHarness(setup, (harness) => {
+      it('should render login link', componentTester(setup, (harness) => {
         const context = {
           config: {
             baseUrl: '',
