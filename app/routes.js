@@ -37,7 +37,7 @@ export const routes = (authProvider) => {
     res.redirect(config.logoutRedirectPath);
   });
 
-  router.get('/index', authProvider.authorise({ claim: 'order' }), withCatch(authProvider, async (req, res) => {
+  router.get('/index', authProvider.authorise({ claim: 'Ordering' }), withCatch(authProvider, async (req, res) => {
     const context = getIndexContext();
     res.render('pages/index/template.njk', addContext({ context, user: req.user }));
   }));

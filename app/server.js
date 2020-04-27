@@ -49,7 +49,7 @@ const isIsapiReady = async ({
 
   // Run application on configured port
   if (config.env === 'development') {
-    logger.info(`Order Form - \x1b[35m${config.appBaseUri}${config.baseUrl}/\x1b[0m`);
+    logger.info(`Order Form - \x1b[35m${config.appBaseUri}${config.baseUrl}/index\x1b[0m`);
   } else {
     logger.info(`App listening on port ${config.port} - Order Form`);
   }

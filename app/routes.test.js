@@ -14,7 +14,7 @@ jest.mock('./apiProvider', () => ({
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
 const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', order: 'manage',
+  id: '88421113', name: 'Cool Dude', Ordering: 'manage',
 });
 
 const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
