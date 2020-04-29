@@ -39,4 +39,4 @@ You should now be able to view the dashboard at [http://localhost:3006](http://l
 In order for the app to function properly, make sure you have an instance of the Buying Catalogue Identity in dev. environment running. How to set up the [Buying Catalogue Identity](https://github.com/nhs-digital-gp-it-futures/BuyingCatalogueIdentity/blob/master/README.md#running-the-application "Identity Server Running the application").
 
 ### Order Form API
-In order for the app to function properly, make sure you have an instance of the Order Form API in dev. environment running. How to set up the [Order Form API](TODO: Link to order form api repo).
+In order for the app to function properly, make sure you have an instance of the Order Form API in dev. environment running. How to set up the [Order Form API](https://github.com/nhs-digital-gp-it-futures/BuyingCatalogueOrdering#running-the-application).
