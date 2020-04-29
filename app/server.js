@@ -41,15 +41,10 @@ const isIsapiReady = async ({
   const authProvider = new AuthProvider();
   const app = new App(authProvider).createApp();
   app.use(config.baseUrl ? config.baseUrl : '/', routes(authProvider));
-  if (config.baseUrl) {
-    app.use('/', (req, res) => {
-      res.redirect(config.baseUrl);
-    });
-  }
 
   // Run application on configured port
   if (config.env === 'development') {
-    logger.info(`Order Form - \x1b[35m${config.appBaseUri}${config.baseUrl}/\x1b[0m`);
+    logger.info(`Order Form - \x1b[35m${config.appBaseUri}${config.baseUrl}/index\x1b[0m`);
   } else {
     logger.info(`App listening on port ${config.port} - Order Form`);
   }
