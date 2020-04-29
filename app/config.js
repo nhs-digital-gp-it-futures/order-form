@@ -37,4 +37,16 @@ module.exports = {
 
   // The secret needed for encoding and decoding the cookie
   cookieSecret: process.env.COOKIE_SECRET,
+
+  // The url in which redis is running
+  redisUrl: process.env.REDIS_URL || 'localhost',
+
+  // The port redis is running
+  redisPort: process.env.REDIS_PORT || 6379,
+
+  // Boolean to indicate whether to connect to redis via TLS
+  redisTls: process.env.REDIS_TLS || 'false',
+
+  // The password to connect to redis
+  redisPass: process.env.REDIS_PASS,
 };
