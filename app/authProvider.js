@@ -3,7 +3,8 @@ import url from 'url';
 import passport from 'passport';
 import { Strategy, Issuer } from 'openid-client';
 import session from 'express-session';
-
+import redis from 'redis';
+import connectRedis from 'connect-redis';
 import config from './config';
 
 export class AuthProvider {
@@ -50,7 +51,14 @@ export class AuthProvider {
   }
 
   setup(app) {
+    const RedisStore = connectRedis(session);
+    const redisTlsConfig = config.redisTls === 'true'
+      ? { auth_pass: config.redisPass, tls: { servername: config.redisUrl } }
+      : undefined;
+    const redisClient = redis.createClient(config.redisPort, config.redisUrl, redisTlsConfig);
+
     app.use(session({
+      store: new RedisStore({ client: redisClient }),
       name: 'token',
       secret: config.cookieSecret,
       resave: false,
