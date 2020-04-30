@@ -19,15 +19,3 @@ export const getCsrfTokenFromGet = async (app, getPath, authenticationCookie) =>
     });
   return { cookies, csrfToken };
 };
-
-export const setFakeCookie = async (app, getPath) => {
-  let cookies;
-  await request(app)
-    .get(getPath)
-    .set('Cookie', ['cookie1=cookie1value'])
-    .then((getRes) => {
-      cookies = getRes.headers['set-cookie'];
-    });
-
-  return { modifiedApp: app, cookies };
-};

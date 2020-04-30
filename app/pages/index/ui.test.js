@@ -1,7 +1,7 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 
-const pageUrl = 'http://localhost:1234/index';
+const pageUrl = 'http://localhost:1234/';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
