@@ -14,3 +14,15 @@ export const withCatch = (authProvider, route) => async (req, res, next) => {
 
 export const extractAccessToken = ({ req, tokenType }) => req.session
   && req.session.accessToken && req.session.accessToken[`${tokenType}_token`];
+
+export const getHealthCheckDependencies = (config) => {
+  const dependencies = [
+    {
+      name: 'Identity Server',
+      endpoint: `${config.oidcBaseUri}/health/ready`,
+      critical: true,
+    },
+  ];
+
+  return dependencies;
+};
