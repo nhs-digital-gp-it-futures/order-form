@@ -2,7 +2,6 @@ import request from 'supertest';
 import { FakeAuthProvider } from 'buying-catalogue-library';
 import { App } from './app';
 import { routes } from './routes';
-import { setFakeCookie } from './test-utils/helper';
 
 jest.mock('./logger');
 
@@ -80,21 +79,21 @@ describe('routes', () => {
           expect(mockLogoutMethod.mock.calls.length).toEqual(1);
         })));
 
-    it('should delete cookies', async () => {
-      const { modifiedApp, cookies } = await setFakeCookie(setUpFakeApp(), '/signout-callback-oidc');
-      expect(cookies.length).toEqual(2);
+    it('should clear cookies', async () => {
+      const expectedClearedCookies = 'cookie1=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
 
-      return request(modifiedApp)
-        .get('/')
-        .expect(200)
+      return request(setUpFakeApp())
+        .get('/signout-callback-oidc')
+        .set('Cookie', ['cookie1=cookie1value'])
+        .expect(302)
         .then((res) => {
-          expect(res.headers['set-cookie'].length).toEqual(1);
+          expect(res.headers['set-cookie'].includes(expectedClearedCookies)).toEqual(true);
         });
     });
   });
 
-  describe('GET /index', () => {
-    const path = '/index';
+  describe('GET /', () => {
+    const path = '/';
 
     it('should redirect to the login page if the user is not logged in', () => (
       checkAuthorisedRouteNotLoggedIn(path)
