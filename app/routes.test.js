@@ -5,11 +5,6 @@ import { routes } from './routes';
 
 jest.mock('./logger');
 
-jest.mock('./apiProvider', () => ({
-  getData: jest.fn()
-    .mockImplementation(() => Promise.resolve({})),
-}));
-
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
 const mockAuthorisedJwtPayload = JSON.stringify({

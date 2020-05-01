@@ -1,11 +1,12 @@
 require('dotenv').config();
 const util = require('util');
+const { getData } = require('buying-catalogue-library');
 const config = require('./config');
 const { App } = require('./app');
 const { AuthProvider } = require('./authProvider');
 const { routes } = require('./routes');
 const { logger } = require('./logger');
-const { getData } = require('./apiProvider');
+const { getEndpoint } = require('./endpoints');
 
 Object.keys(config).map((configKey) => {
   if (config[configKey]) {
@@ -21,7 +22,8 @@ const isIsapiReady = async ({
   attempt, pollDuration,
 }) => {
   try {
-    await getData({ endpointLocator: 'getIdentityApiHealth' });
+    const endpoint = getEndpoint({ endpointLocator: 'getIdentityApiHealth' });
+    await getData({ endpoint, logger });
     logger.info('Isapi is now ready');
     return true;
   } catch (err) {
