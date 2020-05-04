@@ -1,8 +1,8 @@
 import express from 'express';
-import { ErrorContext, errorHandler } from 'buying-catalogue-library';
+import { ErrorContext, errorHandler, healthRoutes } from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
-import { withCatch, extractAccessToken } from './helpers/routerHelper';
+import { withCatch, extractAccessToken, getHealthCheckDependencies } from './helpers/routerHelper';
 import { getIndexContext } from './pages/index/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
@@ -14,6 +14,8 @@ const addContext = ({ context, user, csrfToken }) => ({
 
 export const routes = (authProvider) => {
   const router = express.Router();
+
+  healthRoutes({ router, dependencies: getHealthCheckDependencies(config), logger });
 
   router.get('/login', authProvider.login());
 
