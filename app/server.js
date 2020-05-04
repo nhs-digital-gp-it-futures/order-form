@@ -42,7 +42,7 @@ const isIsapiReady = async ({
   // Routes
   const authProvider = new AuthProvider();
   const app = new App(authProvider).createApp();
-  app.use(config.baseUrl ? config.baseUrl : '/', routes(authProvider));
+  app.use(config.baseUrl, routes(authProvider));
 
   // Run application on configured port
   if (config.env === 'development') {
