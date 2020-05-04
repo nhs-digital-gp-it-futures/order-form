@@ -10,6 +10,9 @@ export const withCatch = (authProvider, route) => async (req, res, next) => {
       req.headers.referer = `${appBaseUri}${req.originalUrl}`;
       return authProvider.login()(req, res, next);
     }
+    if (err instanceof ErrorContext) {
+      return next(err);
+    }
     const defaultError = new ErrorContext({ status: 500 });
     return next(defaultError);
   }
