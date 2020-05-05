@@ -30,63 +30,6 @@ const checkAuthorisedRouteNotLoggedIn = path => (
     }));
 
 describe('routes', () => {
-  describe('GET /login', () => {
-    it('should return the correct status and redirect to the login page when not authenticated', () => (
-      request(setUpFakeApp())
-        .get('/login')
-        .expect(302)
-        .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual('http://identity-server/login');
-        })));
-  });
-
-  describe('GET /logout', () => {
-    it('should redirect to the url provided by authProvider', async () => (
-      request(setUpFakeApp())
-        .get('/logout')
-        .expect(302)
-        .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual('/signout-callback-oidc');
-        })));
-  });
-
-  describe('GET /signout-callback-oidc', () => {
-    afterEach(() => {
-      mockLogoutMethod.mockReset();
-    });
-
-    it('should redirect to /', async () => (
-      request(setUpFakeApp())
-        .get('/signout-callback-oidc')
-        .expect(302)
-        .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual('/');
-        })));
-
-    it('should call req.logout', async () => (
-      request(setUpFakeApp())
-        .get('/signout-callback-oidc')
-        .expect(302)
-        .then(() => {
-          expect(mockLogoutMethod.mock.calls.length).toEqual(1);
-        })));
-
-    it('should clear cookies', async () => {
-      const expectedClearedCookies = 'cookie1=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-
-      return request(setUpFakeApp())
-        .get('/signout-callback-oidc')
-        .set('Cookie', ['cookie1=cookie1value'])
-        .expect(302)
-        .then((res) => {
-          expect(res.headers['set-cookie'].includes(expectedClearedCookies)).toEqual(true);
-        });
-    });
-  });
-
   describe('GET /', () => {
     const path = '/';
 
