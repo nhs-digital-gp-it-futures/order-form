@@ -1,8 +1,10 @@
 import express from 'express';
-import { ErrorContext, errorHandler, healthRoutes } from 'buying-catalogue-library';
+import {
+  ErrorContext, errorHandler, healthRoutes, authenticationRoutes,
+} from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
-import { withCatch, extractAccessToken, getHealthCheckDependencies } from './helpers/routerHelper';
+import { withCatch, getHealthCheckDependencies } from './helpers/routerHelper';
 import { getIndexContext } from './pages/index/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
@@ -17,26 +19,8 @@ export const routes = (authProvider) => {
 
   healthRoutes({ router, dependencies: getHealthCheckDependencies(config), logger });
 
-  router.get('/login', authProvider.login());
-
-  router.get('/oauth/callback', authProvider.loginCallback());
-
-  router.get('/logout', async (req, res) => {
-    const url = await authProvider.logout({ idToken: extractAccessToken({ req, tokenType: 'id' }) });
-    res.redirect(url);
-  });
-
-  router.get('/signout-callback-oidc', async (req, res) => {
-    if (req.logout) req.logout();
-    req.session = null;
-
-    if (req.headers.cookie) {
-      req.headers.cookie.split(';')
-        .map(cookie => cookie.split('=')[0])
-        .forEach(cookieKey => res.clearCookie(cookieKey));
-    }
-
-    res.redirect(config.logoutRedirectPath);
+  authenticationRoutes({
+    router, authProvider, tokenType: 'id', logoutRedirectPath: config.logoutRedirectPath,
   });
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
