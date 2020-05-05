@@ -20,7 +20,7 @@ export const routes = (authProvider) => {
   healthRoutes({ router, dependencies: getHealthCheckDependencies(config), logger });
 
   authenticationRoutes({
-    router, authProvider, tokenType: 'id', logoutRedirectPath: config.logoutRedirectPath,
+    router, authProvider, tokenType: 'id', logoutRedirectPath: config.logoutRedirectPath, logger,
   });
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
