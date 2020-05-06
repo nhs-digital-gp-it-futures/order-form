@@ -1,0 +1,8 @@
+{% extends 'includes/layout.njk' %}
+
+{% block body %}
+  <div data-test-id="{{pageName}}-page">
+    <h1 data-test-id="{{pageName}}-title">{{ title }}</h1>
+    <h2 data-test-id="{{pageName}}-description">{{ description }}</h2>
+  </div>
+{% endblock %}
