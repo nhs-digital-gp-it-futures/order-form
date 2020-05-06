@@ -38,6 +38,15 @@ export const routes = (authProvider) => {
     res.send(200, 'new order page');
   }));
 
+  router.get('/organisation/neworder/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    res.send(200, 'new order description page');
+  }));
+
+  router.get('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    res.send(200, `existing order ${orderId} description page`);
+  }));
+
   router.get('*', (req) => {
     throw new ErrorContext({
       status: 404,
