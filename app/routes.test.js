@@ -96,6 +96,22 @@ describe('routes', () => {
       }));
   });
 
+  describe('GET /organisation/some-order-id/description', () => {
+    const path = '/organisation/some-order-id/description';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      checkAuthorisedRouteNotLoggedIn(path)
+    ));
+
+    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.text).toEqual('existing order some-order-id description page');
+      }));
+  });
+
   describe('GET *', () => {
     it('should return error page if url cannot be matched', done => request(setUpFakeApp())
       .get('/aaaa')
