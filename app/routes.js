@@ -5,9 +5,12 @@ import {
 import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies } from './helpers/routerHelper';
+import { getDashboardContext } from './pages/dashboard/controller';
+import includesContext from './includes/manifest.json';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
+  ...includesContext,
   config,
   username: user && user.name,
   csrfToken,
@@ -27,7 +30,8 @@ export const routes = (authProvider) => {
   }));
 
   router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    res.send(200, 'dashboard page');
+    const context = getDashboardContext();
+    res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
   }));
 
   router.get('*', (req) => {

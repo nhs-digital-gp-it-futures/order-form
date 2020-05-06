@@ -60,7 +60,8 @@ describe('routes', () => {
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text).toEqual('dashboard page');
+        expect(res.text.includes('data-test-id="dashboard-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
   });
 
