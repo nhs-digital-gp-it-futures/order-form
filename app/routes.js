@@ -42,6 +42,11 @@ export const routes = (authProvider) => {
     res.send(200, 'new order description page');
   }));
 
+  router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    res.send(200, `existing order ${orderId} page`);
+  }));
+
   router.get('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     res.send(200, `existing order ${orderId} description page`);
