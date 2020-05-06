@@ -30,7 +30,8 @@ export const routes = (authProvider) => {
   }));
 
   router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const context = getDashboardContext();
+    // TODO: Pass in orgId to getDashboardContext
+    const context = getDashboardContext({});
     res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
   }));
 

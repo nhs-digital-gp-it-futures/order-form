@@ -1,3 +1,3 @@
 import { getContext } from './contextCreator';
 
-export const getDashboardContext = () => getContext();
+export const getDashboardContext = params => getContext(params);

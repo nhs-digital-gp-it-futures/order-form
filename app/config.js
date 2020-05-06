@@ -6,7 +6,7 @@ module.exports = {
   baseUrl: process.env.BASE_URL || '/order',
 
   // Public browse base URL
-  publicBrowseBaseUrl: process.env.PUBLIC_BROWSE_BASE_URL || '/',
+  publicBrowseBaseUrl: process.env.PUBLIC_BROWSE_BASE_URL || 'http://localhost:3000',
 
   // Environment
   env: process.env.NODE_ENV || 'development',
@@ -45,7 +45,7 @@ module.exports = {
   redisUrl: process.env.REDIS_URL || 'localhost',
 
   // The port redis is running
-  redisPort: process.env.REDIS_PORT || 6379,
+  redisPort: process.env.REDIS_PORT || 6380,
 
   // Boolean to indicate whether to connect to redis via TLS
   redisTls: process.env.REDIS_TLS || 'false',

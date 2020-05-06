@@ -1,5 +1,6 @@
 import manifest from './manifest.json';
 
-export const getContext = () => ({
+export const getContext = ({ orgId }) => ({
   ...manifest,
+  title: `${orgId} orders`,
 });
