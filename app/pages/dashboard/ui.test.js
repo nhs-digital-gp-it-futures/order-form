@@ -1,7 +1,7 @@
 import nock from 'nock';
-import { ClientFunction/* , Selector */ } from 'testcafe';
+import { ClientFunction, Selector } from 'testcafe';
 
-const pageUrl = 'http://localhost:1234/';
+const pageUrl = 'http://localhost:1234/organisation';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -42,11 +42,11 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-// test('should render index page', async (t) => {
-//   await pageSetup(t, true);
-//   await t.navigateTo(pageUrl);
-//   const indexPage = Selector('[data-test-id="index-page"]');
+test('should render dashboard page', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+  const page = Selector('[data-test-id="dashboard-page"]');
 
-//   await t
-//     .expect(indexPage.exists).ok();
-// });
+  await t
+    .expect(page.exists).ok();
+});

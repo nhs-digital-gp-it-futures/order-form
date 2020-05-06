@@ -17,6 +17,9 @@ module.exports = {
   // The base uri the app is running on to pass to identity service for redirection
   appBaseUri: process.env.APP_BASE_URI || 'http://localhost:3006',
 
+  // BLOBSTORE_HOST
+  blobstoreHost: process.env.BLOBSTORE_HOST || 'https://gpitfuturesdevsa.blob.core.windows.net',
+
   // LOGGER_LEVEL options are info, warn, error, off
   loggerLevel: process.env.LOGGER_LEVEL || 'error',
 
