@@ -1,8 +1,20 @@
 {% extends 'includes/layout.njk' %}
+{% from 'components/back-link/macro.njk' import backLink %}
 
 {% block body %}
-  <div data-test-id="{{pageName}}-page">
-    <h1 data-test-id="{{pageName}}-title">{{ title }}</h1>
-    <h2 data-test-id="{{pageName}}-description">{{ description }}</h2>
+  <div class="nhsuk-width-container"  data-test-id="{{pageName}}-page">
+    <div data-test-id="go-back-link">
+      {{ backLink({
+        "href": backLinkHref,
+        "text": "Back"
+      }) }}
+    </div>
+
+	  <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <h1 data-test-id="{{pageName}}-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
+        <h2 data-test-id="{{pageName}}-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
+      </div>
+    </div>
   </div>
 {% endblock %}

@@ -11,7 +11,17 @@ describe('neworder dashboard page', () => {
   const neworderPageContext = {
     ...manifest,
     pageName: 'neworder',
+    backLinkHref: '/organisation',
   };
+
+  it('should render a backLink', componentTester(setup, (harness) => {
+    harness.request(neworderPageContext, ($) => {
+      const backLink = $('[data-test-id="go-back-link"]');
+      expect(backLink.length).toEqual(1);
+      expect(backLink.text().trim()).toEqual('Back');
+      expect($(backLink).find('a').attr('href')).toEqual('/organisation');
+    });
+  }));
 
   it('should render the neworder dashboard page', componentTester(setup, (harness) => {
     harness.request(neworderPageContext, ($) => {
