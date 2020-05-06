@@ -2,6 +2,7 @@ import request from 'supertest';
 import { FakeAuthProvider } from 'buying-catalogue-library';
 import { App } from './app';
 import { routes } from './routes';
+import { baseUrl } from './config';
 
 jest.mock('./logger');
 
@@ -37,13 +38,29 @@ describe('routes', () => {
       checkAuthorisedRouteNotLoggedIn(path)
     ));
 
+    it('should redirect to /organisation', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(302)
+      .then((res) => {
+        expect(res.redirect).toEqual(true);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation`);
+      }));
+  });
+
+  describe('GET /organisation', () => {
+    const path = '/organisation';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      checkAuthorisedRouteNotLoggedIn(path)
+    ));
+
     it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text.includes('data-test-id="index-page-title"')).toEqual(true);
-        expect(res.text.includes('data-test-id="error-page-title"')).toEqual(false);
+        expect(res.text).toEqual('dashboard page');
       }));
   });
 

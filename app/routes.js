@@ -5,7 +5,6 @@ import {
 import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies } from './helpers/routerHelper';
-import { getIndexContext } from './pages/index/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -24,8 +23,11 @@ export const routes = (authProvider) => {
   });
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const context = getIndexContext();
-    res.render('pages/index/template.njk', addContext({ context, user: req.user }));
+    res.redirect(`${config.baseUrl}/organisation`);
+  }));
+
+  router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    res.send(200, 'dashboard page');
   }));
 
   router.get('*', (req) => {
