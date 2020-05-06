@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { ClientFunction, Selector } from 'testcafe';
+import { ClientFunction/* , Selector */ } from 'testcafe';
 
 const pageUrl = 'http://localhost:1234/';
 
@@ -42,11 +42,11 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render index page', async (t) => {
-  await pageSetup(t, true);
-  await t.navigateTo(pageUrl);
-  const indexPage = Selector('[data-test-id="index-page"]');
+// test('should render index page', async (t) => {
+//   await pageSetup(t, true);
+//   await t.navigateTo(pageUrl);
+//   const indexPage = Selector('[data-test-id="index-page"]');
 
-  await t
-    .expect(indexPage.exists).ok();
-});
+//   await t
+//     .expect(indexPage.exists).ok();
+// });
