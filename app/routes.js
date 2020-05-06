@@ -30,6 +30,10 @@ export const routes = (authProvider) => {
     res.send(200, 'dashboard page');
   }));
 
+  router.get('/organisation/neworder', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    res.send(200, 'new order page');
+  }));
+
   router.get('*', (req) => {
     throw new ErrorContext({
       status: 404,
