@@ -10,6 +10,8 @@ const setup = {
 const context = {
   ...manifest,
   title: 'org1 orders',
+  proxyLinkHref: '/proxy/href',
+  newOrderButtonHref: '/organisation/neworder',
 };
 
 describe('dashboard page', () => {

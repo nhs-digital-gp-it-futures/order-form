@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from '../../test-utils/helper';
 import content from './manifest.json';
+import { baseUrl } from '../../config';
 
 const pageUrl = 'http://localhost:1234/organisation';
 
@@ -96,7 +97,7 @@ test('should render add new order button', async (t) => {
   await t
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.newOrderButtonText)
-    .expect(button.getAttribute('href')).eql(content.newOrderButtonHref);
+    .expect(button.getAttribute('href')).eql(`${baseUrl}/order/organisation/neworder`${baseUrl});
 });
 
 test('should render the proxy link', async (t) => {

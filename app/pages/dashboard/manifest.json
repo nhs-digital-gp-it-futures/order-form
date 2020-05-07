@@ -2,9 +2,7 @@
   "backlinkText": "Return to homepage",
   "description": "Manage orders currently in progress and view orders that have been submitted.",
   "newOrderButtonText": "Create new order",
-  "newOrderButtonHref": "#",
   "proxyLinkText": "Nominate an organisation to buy on your behalf",
-  "proxyLinkHref": "#",
   "unsubmittedOrdersTableTitle": "Unsubmitted orders",
   "submittedOrdersTableTitle": "Submitted orders",
   "columnInfo": [
