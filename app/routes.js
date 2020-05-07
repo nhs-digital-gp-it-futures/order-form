@@ -36,21 +36,21 @@ export const routes = (authProvider) => {
   }));
 
   router.get('/organisation/neworder', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    res.send(200, 'new order page');
+    res.status(200).send('new order page');
   }));
 
   router.get('/organisation/neworder/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    res.send(200, 'new order description page');
+    res.status(200).send('new order description page');
   }));
 
   router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    res.send(200, `existing order ${orderId} page`);
+    res.status(200).send(`existing order ${orderId} page`);
   }));
 
   router.get('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    res.send(200, `existing order ${orderId} description page`);
+    res.status(200).send(`existing order ${orderId} description page`);
   }));
 
   router.get('*', (req) => {
