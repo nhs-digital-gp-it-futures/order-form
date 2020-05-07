@@ -22,9 +22,25 @@
       {{ bcButton({
         dataTestId: "delete-order-button",
         text: deleteOrderButtonText,
-        classes: "nhsuk-u-margin-bottom-9",
+        classes: "nhsuk-button--secondary nhsuk-u-margin-bottom-9",
         href: deleteOrderButtonHref,
         enabled: deleteOrderButtonEnabled
+      }) }}
+
+      {{ bcButton({
+        dataTestId: "preview-order-button",
+        text: previewOrderButtonText,
+        classes: "nhsuk-button--secondary nhsuk-u-margin-bottom-9",
+        href: previewOrderButtonHref,
+        enabled: previewOrderButtonEnabled
+      }) }}
+
+      {{ bcButton({
+        dataTestId: "submit-order-button",
+        text: submitOrderButtonText,
+        classes: "nhsuk-u-margin-bottom-9",
+        href: submitOrderButtonHref,
+        enabled: submitOrderButtonEnabled
       }) }}
     </div>
   </div>

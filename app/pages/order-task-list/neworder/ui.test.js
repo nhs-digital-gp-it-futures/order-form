@@ -87,7 +87,7 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
-test('should render the Delete order button', async (t) => {
+test('should render the "Delete order" button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -96,5 +96,32 @@ test('should render the Delete order button', async (t) => {
   await t
     .expect(deleteOrderButton.exists).ok()
     .expect(await extractInnerText(deleteOrderButton)).eql(content.deleteOrderButtonText)
+    .expect(deleteOrderButton.hasClass('nhsuk-button--secondary')).eql(true)
     .expect(deleteOrderButton.hasClass('nhsuk-button--disabled')).eql(true);
+});
+
+test('should render the "Preview order summary" button', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const previewOrderButton = Selector('[data-test-id="preview-order-button"] a');
+
+  await t
+    .expect(previewOrderButton.exists).ok()
+    .expect(await extractInnerText(previewOrderButton)).eql(content.previewOrderButtonText)
+    .expect(previewOrderButton.hasClass('nhsuk-button--secondary')).eql(true)
+    .expect(previewOrderButton.hasClass('nhsuk-button--disabled')).eql(true);
+});
+
+test('should render the "Submit order" button', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const submitOrderButton = Selector('[data-test-id="submit-order-button"] a');
+
+  await t
+    .expect(submitOrderButton.exists).ok()
+    .expect(await extractInnerText(submitOrderButton)).eql(content.submitOrderButtonText)
+    .expect(submitOrderButton.hasClass('nhsuk-button--secondary')).eql(false)
+    .expect(submitOrderButton.hasClass('nhsuk-button--disabled')).eql(true);
 });
