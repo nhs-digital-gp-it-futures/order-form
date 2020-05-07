@@ -6,7 +6,7 @@ module.exports = {
   baseUrl: process.env.BASE_URL || '/order',
 
   // Public browse base URL
-  publicBrowseBaseUrl: process.env.PUBLIC_BROWSE_BASE_URL || '/',
+  publicBrowseBaseUrl: process.env.PUBLIC_BROWSE_BASE_URL || 'http://localhost:3000',
 
   // Environment
   env: process.env.NODE_ENV || 'development',
