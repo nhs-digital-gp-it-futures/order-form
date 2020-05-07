@@ -19,3 +19,8 @@ export const getCsrfTokenFromGet = async (app, getPath, authenticationCookie) =>
     });
   return { cookies, csrfToken };
 };
+
+export const extractInnerText = async (element) => {
+  const elementInnerText = await element.innerText;
+  return elementInnerText.trim();
+};
