@@ -1,4 +1,4 @@
-import newOrderManifest from  './neworder/manifest.json';
+import newOrderManifest from './neworder/manifest.json';
 import { getContext } from './contextCreator';
 
 describe('order-dashboard contextCreator', () => {
