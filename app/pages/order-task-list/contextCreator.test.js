@@ -2,7 +2,7 @@ import newOrderManifest from './neworder/manifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
-describe('order-dashboard contextCreator', () => {
+describe('order-task-list contextCreator', () => {
   describe('getContext', () => {
     it('should return the contents of the new order manifest', () => {
       const context = getContext({});

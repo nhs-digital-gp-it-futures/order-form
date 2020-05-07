@@ -22,7 +22,7 @@ const pageSetup = async (t, withAuth = false) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('neworder dashboard page')
+fixture('neworder task-list page')
   .page('http://localhost:1234/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -45,7 +45,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render neworder dashboard page', async (t) => {
+test('should render neworder task-list page', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="neworder-page"]');
