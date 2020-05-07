@@ -48,7 +48,7 @@ module.exports = {
   redisUrl: process.env.REDIS_URL || 'localhost',
 
   // The port redis is running
-  redisPort: process.env.REDIS_PORT || 6380,
+  redisPort: process.env.REDIS_PORT || 6379,
 
   // Boolean to indicate whether to connect to redis via TLS
   redisTls: process.env.REDIS_TLS || 'false',
