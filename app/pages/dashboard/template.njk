@@ -36,7 +36,8 @@
           <div class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
             {{ bcTable({
               columnInfo: columnInfo,
-              columnClass: columnClass
+              columnClass: columnClass,
+              data: unsubmittedOrders
             })}}
           </div>
         </div>
@@ -47,7 +48,8 @@
           <div class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
             {{ bcTable({
               columnInfo: columnInfo,
-              columnClass: columnClass
+              columnClass: columnClass,
+              data: submittedOrders
             })}}
           </div>
         </div>
