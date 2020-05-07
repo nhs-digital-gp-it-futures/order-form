@@ -3,8 +3,12 @@ import { FakeAuthProvider } from 'buying-catalogue-library';
 import { App } from './app';
 import { routes } from './routes';
 import { baseUrl } from './config';
+import * as dashboardController from './pages/dashboard/controller';
 
 jest.mock('./logger');
+
+dashboardController.getDashboardContext = jest.fn()
+  .mockResolvedValue({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
