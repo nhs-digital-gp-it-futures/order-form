@@ -10,14 +10,6 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-// export const getDashboardContext = ({ orgId, accessToken }) => {
-//   const ordersData = getData({ endpoint: getEndpoint({ endpointLocator: 'getOrders' }), accessToken, logger });
-//   // const ordersData = mockOrdersData;
-
-//   logger.info(`${ordersData ? ordersData.length : 'No'} orders found`);
-//   return getContext({ orgId, ordersData });
-// };
-
 const mockOrdersData = [
   {
     orderId: 'C0000014-01',
