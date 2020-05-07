@@ -1,0 +1,26 @@
+{
+  "backlinkText": "Return to homepage",
+  "description": "Manage orders currently in progress and view orders that have been submitted.",
+  "newOrderButtonText": "Create new order",
+  "proxyLinkText": "Nominate an organisation to buy on your behalf",
+  "unsubmittedOrdersTableTitle": "Unsubmitted orders",
+  "submittedOrdersTableTitle": "Submitted orders",
+  "columnInfo": [
+    {
+      "data": "Call-off Agreement ID"
+    },
+    {
+      "data": "Order description"
+    },
+    {
+      "data": "Last updated by"
+    },
+    {
+      "data": "Last updated"
+    },
+    {
+      "data": "Date created"
+    }
+  ],
+  "columnClass": "bc-grid-column-one-fifth nhsuk-u-font-size-16"
+}

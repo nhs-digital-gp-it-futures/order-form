@@ -8,6 +8,15 @@ const setup = {
 };
 
 describe('header', () => {
+  it('should render the beta banner', componentTester(setup, (harness) => {
+    const context = {};
+
+    harness.request(context, ($) => {
+      const betaBanner = $('span[data-test-id="beta-banner"]');
+      expect(betaBanner.length).toEqual(1);
+    });
+  }));
+
   it('should render the header banner', componentTester(setup, (harness) => {
     const context = {};
 

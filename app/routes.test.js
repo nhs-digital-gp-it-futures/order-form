@@ -60,7 +60,8 @@ describe('routes', () => {
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text).toEqual('dashboard page');
+        expect(res.text.includes('data-test-id="dashboard-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
   });
 
@@ -93,6 +94,22 @@ describe('routes', () => {
       .expect(200)
       .then((res) => {
         expect(res.text).toEqual('new order description page');
+      }));
+  });
+
+  describe('GET /organisation/some-order-id', () => {
+    const path = '/organisation/some-order-id';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      checkAuthorisedRouteNotLoggedIn(path)
+    ));
+
+    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.text).toEqual('existing order some-order-id page');
       }));
   });
 

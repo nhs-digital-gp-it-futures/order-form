@@ -5,9 +5,12 @@ import {
 import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies } from './helpers/routerHelper';
+import { getDashboardContext } from './pages/dashboard/controller';
+import includesContext from './includes/manifest.json';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
+  ...includesContext,
   config,
   username: user && user.name,
   csrfToken,
@@ -27,20 +30,27 @@ export const routes = (authProvider) => {
   }));
 
   router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    res.send(200, 'dashboard page');
+    // TODO: Pass in orgId to getDashboardContext
+    const context = getDashboardContext({});
+    res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
   }));
 
   router.get('/organisation/neworder', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    res.send(200, 'new order page');
+    res.status(200).send('new order page');
   }));
 
   router.get('/organisation/neworder/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    res.send(200, 'new order description page');
+    res.status(200).send('new order description page');
+  }));
+
+  router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    res.status(200).send(`existing order ${orderId} page`);
   }));
 
   router.get('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    res.send(200, `existing order ${orderId} description page`);
+    res.status(200).send(`existing order ${orderId} description page`);
   }));
 
   router.get('*', (req) => {
