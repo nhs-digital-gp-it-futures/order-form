@@ -3,11 +3,11 @@ import manifest from './neworder/manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/order-dashboard/template.njk',
+    path: 'pages/order-task-list/template.njk',
   },
 };
 
-describe('neworder dashboard page', () => {
+describe('neworder task-list page', () => {
   const neworderPageContext = {
     ...manifest,
     pageName: 'neworder',
@@ -23,14 +23,14 @@ describe('neworder dashboard page', () => {
     });
   }));
 
-  it('should render the neworder dashboard page', componentTester(setup, (harness) => {
+  it('should render the neworder task-list page', componentTester(setup, (harness) => {
     harness.request(neworderPageContext, ($) => {
       const neworderPage = $('[data-test-id="neworder-page"]');
       expect(neworderPage.length).toEqual(1);
     });
   }));
 
-  it('should render the neworder dashboard title', componentTester(setup, (harness) => {
+  it('should render the neworder task-list title', componentTester(setup, (harness) => {
     harness.request(neworderPageContext, ($) => {
       const neworderPageTitle = $('[data-test-id="neworder-page-title"]');
       expect(neworderPageTitle.length).toEqual(1);
@@ -38,7 +38,7 @@ describe('neworder dashboard page', () => {
     });
   }));
 
-  it('should render the neworder dashboard description', componentTester(setup, (harness) => {
+  it('should render the neworder task-list description', componentTester(setup, (harness) => {
     harness.request(neworderPageContext, ($) => {
       const neworderPageDescription = $('[data-test-id="neworder-page-description"]');
       expect(neworderPageDescription.length).toEqual(1);
