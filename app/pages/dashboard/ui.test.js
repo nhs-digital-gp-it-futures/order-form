@@ -97,7 +97,7 @@ test('should render add new order button', async (t) => {
   await t
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.newOrderButtonText)
-    .expect(button.getAttribute('href')).eql(`${baseUrl}/order/organisation/neworder`${baseUrl});
+    .expect(button.getAttribute('href')).eql(`${baseUrl}/order/organisation/neworder`);
 });
 
 test('should render the proxy link', async (t) => {
