@@ -1,12 +1,13 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
 
 {% block body %}
   <div class="nhsuk-width-container"  data-test-id="{{pageName}}-page">
     <div data-test-id="go-back-link">
       {{ backLink({
-        "href": backLinkHref,
-        "text": backLinkText
+        href: backLinkHref,
+        text: backLinkText
       }) }}
     </div>
 
@@ -15,6 +16,16 @@
         <h1 data-test-id="{{pageName}}-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
         <h2 data-test-id="{{pageName}}-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
       </div>
+    </div>
+
+    <div class="nhsuk-grid-row">
+      {{ bcButton({
+        dataTestId: "delete-order-button",
+        text: deleteOrderButtonText,
+        classes: "nhsuk-u-margin-bottom-9",
+        href: deleteOrderButtonHref,
+        enabled: deleteOrderButtonEnabled
+      }) }}
     </div>
   </div>
 {% endblock %}

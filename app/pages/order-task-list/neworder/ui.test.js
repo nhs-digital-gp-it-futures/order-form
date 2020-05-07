@@ -86,3 +86,15 @@ test('should render the description', async (t) => {
     .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
+
+test('should render the Delete order button', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const deleteOrderButton = Selector('[data-test-id="delete-order-button"] a');
+
+  await t
+    .expect(deleteOrderButton.exists).ok()
+    .expect(await extractInnerText(deleteOrderButton)).eql(content.deleteOrderButtonText)
+    .expect(deleteOrderButton.hasClass('nhsuk-button--disabled')).eql(true);
+});

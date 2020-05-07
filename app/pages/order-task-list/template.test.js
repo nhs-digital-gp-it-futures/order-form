@@ -45,4 +45,13 @@ describe('neworder task-list page', () => {
       expect(neworderPageDescription.text().trim()).toEqual(neworderPageContext.description);
     });
   }));
+
+  it('should render the Delete order button as disabled', componentTester(setup, (harness) => {
+    harness.request(neworderPageContext, ($) => {
+      const deleteOrderButton = $('[data-test-id="delete-order-button"] a');
+      expect(deleteOrderButton.length).toEqual(1);
+      expect(deleteOrderButton.text().trim()).toEqual(neworderPageContext.deleteOrderButtonText);
+      expect(deleteOrderButton.hasClass('nhsuk-button--disabled')).toEqual(true);
+    });
+  }));
 });
