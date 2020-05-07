@@ -18,7 +18,7 @@ describe('neworder task-list page', () => {
     harness.request(neworderPageContext, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
-      expect(backLink.text().trim()).toEqual('Back');
+      expect(backLink.text().trim()).toEqual('Go back');
       expect($(backLink).find('a').attr('href')).toEqual('/organisation');
     });
   }));
