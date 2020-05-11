@@ -1,6 +1,5 @@
 import { componentTester } from '../../../test-utils/componentTester';
 import manifest from './manifest.json';
-import { baseUrl } from '../../../config';
 
 const setup = {
   template: {

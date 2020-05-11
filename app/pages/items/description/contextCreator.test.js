@@ -11,6 +11,7 @@ describe('decription contextCreator', () => {
       expect(context.description).toEqual(manifest.description);
       expect(context.descriptionQuestion).toEqual({
         question: {
+          id: 'description',
           footerAdvice: '(Maximum number of characters 100)',
           rows: 3,
         },
