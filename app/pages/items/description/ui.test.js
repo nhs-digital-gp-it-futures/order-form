@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from '../../../test-utils/helper';
 import content from './manifest.json';
+import { baseUrl, orderApiUrl } from '../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/neworder/description';
 
@@ -105,22 +106,25 @@ test('should render save button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="save-button"] a');
+  const button = Selector('[data-test-id="save-button"] button');
 
   await t
     .expect(button.exists).ok()
-    .expect(await extractInnerText(button)).eql(content.saveButtonText)
-    .expect(button.getAttribute('href')).eql('#');
+    .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });
 
-test('should navigate to ? when save button is clicked', async (t) => {
+test('should navigate to task list page when valid description is added and save is clicked', async (t) => {
+  nock(orderApiUrl)
+    .post('/api/v1/order')
+    .reply(200, { orderId: 'order1' });
+
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="save-button"] a');
+  const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .expect(button.exists).ok()
-    .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/organisation/neworder/description#');
+    .expect(saveButton.exists).ok()
+    .click(saveButton)
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order1`);
 });
