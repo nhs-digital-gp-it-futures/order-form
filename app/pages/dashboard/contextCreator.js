@@ -8,23 +8,23 @@ export const getContext = ({ orgId, ordersData = [] }) => {
       {
         data: order.orderId,
         href: `${baseUrl}/organisation/${order.orderId}`,
-        dataTestId: `id-${order.orderId}`,
+        dataTestId: `${order.orderId}-id`,
       },
       {
         data: order.orderDescription,
-        dataTestId: `description-${order.orderId}`,
+        dataTestId: `${order.orderId}-description`,
       },
       {
         data: order.lastUpdatedBy,
-        dataTestId: `lastUpdatedBy-${order.orderId}`,
+        dataTestId: `${order.orderId}-lastUpdatedBy`,
       },
       {
         data: formatDate(order.lastUpdated),
-        dataTestId: `lastUpdated-${order.orderId}`,
+        dataTestId: `${order.orderId}-lastUpdated`,
       },
       {
         data: formatDate(order.dateCreated),
-        dataTestId: `dateCreated-${order.orderId}`,
+        dataTestId: `${order.orderId}-dateCreated`,
       },
     ];
     if (order.status === 'Submitted') acc.submittedOrders.push(formattedOrder);

@@ -1,6 +1,6 @@
 import { componentTester } from '../../test-utils/componentTester';
 import manifest from './manifest.json';
-import mockOrders from '../../test-utils/mockData/mockOrders.json';
+import mockOrders from '../../test-utils/mockData/mockFormattedOrders.json';
 import { baseUrl } from '../../config';
 
 const setup = {
@@ -64,57 +64,7 @@ describe('dashboard page', () => {
 
     it('should render the table headings', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="submitted-orders-table"]');
-        expect(table.length).toEqual(1);
-        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.columnInfo[0].data);
-        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.columnInfo[1].data);
-        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual(context.columnInfo[2].data);
-        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual(context.columnInfo[3].data);
-        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual(context.columnInfo[4].data);
-      });
-    }));
-
-    it('should render the data', componentTester(setup, (harness) => {
-      harness.request(context, ($) => {
-        const table = $('div[data-test-id="submitted-orders-table"]');
-        const row = table.find('[data-test-id="table-row-0"]');
-        const orderId = row.find('a[data-test-id="id-order1"]');
-        const orderDescription = row.find('div[data-test-id="description-order1"]');
-        const lastUpdatedBy = row.find('div[data-test-id="lastUpdatedBy-order1"]');
-        const lastUpdated = row.find('div[data-test-id="lastUpdated-order1"]');
-        const dateCreated = row.find('div[data-test-id="dateCreated-order1"]');
-
-        expect(table.length).toEqual(1);
-        expect(table.find('[data-test-id="table"]').length).toEqual(1);
-        expect(table.find('[data-test-id="table-headings"]').length).toEqual(1);
-        expect(row.length).toEqual(1);
-        expect(orderId.length).toEqual(1);
-        expect(orderId.text().trim()).toEqual('order1');
-        expect(orderId.attr('href')).toEqual(`${baseUrl}/organisation/order1`);
-        expect(orderDescription.length).toEqual(1);
-        expect(orderDescription.text().trim()).toEqual('a description for order 1');
-        expect(lastUpdatedBy.length).toEqual(1);
-        expect(lastUpdatedBy.text().trim()).toEqual('Bobby Smithsmith');
-        expect(lastUpdated.length).toEqual(1);
-        expect(lastUpdated.text().trim()).toEqual('9 December 2020');
-        expect(dateCreated.length).toEqual(1);
-        expect(dateCreated.text().trim()).toEqual('9 October 2020');
-      });
-    }));
-  });
-
-  describe('submitted orders table', () => {
-    it('should render the table title', componentTester(setup, (harness) => {
-      harness.request(context, ($) => {
-        const tableTitle = $('h3[data-test-id="submitted-orders-table-title"]');
-        expect(tableTitle.length).toEqual(1);
-        expect(tableTitle.text().trim()).toEqual(context.submittedOrdersTableTitle);
-      });
-    }));
-
-    it('should render the table headings', componentTester(setup, (harness) => {
-      harness.request(context, ($) => {
-        const table = $('div[data-test-id="submitted-orders-table"]');
+        const table = $('div[data-test-id="unsubmitted-orders-table"]');
         expect(table.length).toEqual(1);
         expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.columnInfo[0].data);
         expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.columnInfo[1].data);
@@ -128,17 +78,17 @@ describe('dashboard page', () => {
       harness.request(context, ($) => {
         const table = $('div[data-test-id="unsubmitted-orders-table"]');
         const row1 = table.find('[data-test-id="table-row-0"]');
-        const orderId1 = row1.find('a[data-test-id="id-order2"]');
-        const orderDescription1 = row1.find('div[data-test-id="description-order2"]');
-        const lastUpdatedBy1 = row1.find('div[data-test-id="lastUpdatedBy-order2"]');
-        const lastUpdated1 = row1.find('div[data-test-id="lastUpdated-order2"]');
-        const dateCreated1 = row1.find('div[data-test-id="dateCreated-order2"]');
+        const orderId1 = row1.find('a[data-test-id="order2-id"]');
+        const orderDescription1 = row1.find('div[data-test-id="order2-description"]');
+        const lastUpdatedBy1 = row1.find('div[data-test-id="order2-lastUpdatedBy"]');
+        const lastUpdated1 = row1.find('div[data-test-id="order2-lastUpdated"]');
+        const dateCreated1 = row1.find('div[data-test-id="order2-dateCreated"]');
         const row2 = table.find('[data-test-id="table-row-1"]');
-        const orderId2 = row2.find('a[data-test-id="id-order3"]');
-        const orderDescription2 = row2.find('div[data-test-id="description-order3"]');
-        const lastUpdatedBy2 = row2.find('div[data-test-id="lastUpdatedBy-order3"]');
-        const lastUpdated2 = row2.find('div[data-test-id="lastUpdated-order3"]');
-        const dateCreated2 = row2.find('div[data-test-id="dateCreated-order3"]');
+        const orderId2 = row2.find('a[data-test-id="order3-id"]');
+        const orderDescription2 = row2.find('div[data-test-id="order3-description"]');
+        const lastUpdatedBy2 = row2.find('div[data-test-id="order3-lastUpdatedBy"]');
+        const lastUpdated2 = row2.find('div[data-test-id="order3-lastUpdated"]');
+        const dateCreated2 = row2.find('div[data-test-id="order3-dateCreated"]');
 
         expect(table.length).toEqual(1);
         expect(table.find('[data-test-id="table"]').length).toEqual(1);
@@ -171,6 +121,56 @@ describe('dashboard page', () => {
         expect(lastUpdated2.text().trim()).toEqual('31 December 2020');
         expect(dateCreated2.length).toEqual(1);
         expect(dateCreated2.text().trim()).toEqual('9 May 2020');
+      });
+    }));
+  });
+
+  describe('submitted orders table', () => {
+    it('should render the table title', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const tableTitle = $('h3[data-test-id="submitted-orders-table-title"]');
+        expect(tableTitle.length).toEqual(1);
+        expect(tableTitle.text().trim()).toEqual(context.submittedOrdersTableTitle);
+      });
+    }));
+
+    it('should render the table headings', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="submitted-orders-table"]');
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.columnInfo[0].data);
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.columnInfo[1].data);
+        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual(context.columnInfo[2].data);
+        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual(context.columnInfo[3].data);
+        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual(context.columnInfo[4].data);
+      });
+    }));
+
+    it('should render the data', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="submitted-orders-table"]');
+        const row = table.find('[data-test-id="table-row-0"]');
+        const orderId = row.find('a[data-test-id="order1-id"]');
+        const orderDescription = row.find('div[data-test-id="order1-description"]');
+        const lastUpdatedBy = row.find('div[data-test-id="order1-lastUpdatedBy"]');
+        const lastUpdated = row.find('div[data-test-id="order1-lastUpdated"]');
+        const dateCreated = row.find('div[data-test-id="order1-dateCreated"]');
+
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="table"]').length).toEqual(1);
+        expect(table.find('[data-test-id="table-headings"]').length).toEqual(1);
+        expect(row.length).toEqual(1);
+        expect(orderId.length).toEqual(1);
+        expect(orderId.text().trim()).toEqual('order1');
+        expect(orderId.attr('href')).toEqual(`${baseUrl}/organisation/order1`);
+        expect(orderDescription.length).toEqual(1);
+        expect(orderDescription.text().trim()).toEqual('a description for order 1');
+        expect(lastUpdatedBy.length).toEqual(1);
+        expect(lastUpdatedBy.text().trim()).toEqual('Bobby Smithsmith');
+        expect(lastUpdated.length).toEqual(1);
+        expect(lastUpdated.text().trim()).toEqual('9 December 2020');
+        expect(dateCreated.length).toEqual(1);
+        expect(dateCreated.text().trim()).toEqual('9 October 2020');
       });
     }));
   });

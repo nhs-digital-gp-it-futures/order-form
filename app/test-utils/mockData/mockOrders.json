@@ -1,71 +1,18 @@
 [
-  [
-    {
-      "data": "order1",
-      "href": "/order/organisation/order1",
-      "dataTestId": "id-order1"
-    },
-    {
-      "data": "a description for order 1",
-      "dataTestId": "description-order1"
-    },
-    {
-      "data": "Bobby Smithsmith",
-      "dataTestId": "lastUpdatedBy-order1"
-    },
-    {
-      "data": "9 December 2020",
-      "dataTestId": "lastUpdated-order1"
-    },
-    {
-      "data": "9 October 2020",
-      "dataTestId": "dateCreated-order1"
-    }
-  ],
-  [
-    {
-      "data": "order2",
-      "href": "/order/organisation/order2",
-      "dataTestId": "id-order2"
-    },
-    {
-      "data": "a description for order 2",
-      "dataTestId": "description-order2"
-    },
-    {
-      "data": "Alice Smith",
-      "dataTestId": "lastUpdatedBy-order2"
-    },
-    {
-      "data": "9 June 2021",
-      "dataTestId": "lastUpdated-order2"
-    },
-    {
-      "data": "9 October 2020",
-      "dataTestId": "dateCreated-order2"
-    }
-  ],
-  [
-    {
-      "data": "order3",
-      "href": "/order/organisation/order3",
-      "dataTestId": "id-order3"
-    },
-    {
-      "data": "a description for order 3",
-      "dataTestId": "description-order3"
-    },
-    {
-      "data": "Bob Smith",
-      "dataTestId": "lastUpdatedBy-order3"
-    },
-    {
-      "data": "31 December 2020",
-      "dataTestId": "lastUpdated-order3"
-    },
-    {
-      "data": "9 May 2020",
-      "dataTestId": "dateCreated-order3"
-    }
-  ]
+  {
+    "orderId": "order1",
+    "orderDescription": "Some Order",
+    "lastUpdatedBy": "Alice Smith",
+    "lastUpdated": "2020-05-06T11: 29: 52.4965647Z",
+    "dateCreated": "2020-01-06T09: 29: 52.4965653Z",
+    "status": "Unsubmitted"
+  },
+  {
+    "orderId": "order2",
+    "orderDescription": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean m",
+    "lastUpdatedBy": "Bobbybobbybobby Smithsmith-Smithsmith-Smithsmith",
+    "lastUpdated": "2020-12-09T09: 29: 52.49657Z",
+    "dateCreated": "2020-10-09T09: 29: 52.4965701Z",
+    "status": "Submitted"
+  }
 ]
