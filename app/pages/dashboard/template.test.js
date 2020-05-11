@@ -1,5 +1,7 @@
 import { componentTester } from '../../test-utils/componentTester';
 import manifest from './manifest.json';
+import mockOrders from '../../test-utils/mockData/mockFormattedOrders.json';
+import { baseUrl } from '../../config';
 
 const setup = {
   template: {
@@ -12,6 +14,8 @@ const context = {
   title: 'org1 orders',
   proxyLinkHref: '/proxy/href',
   newOrderButtonHref: '/organisation/neworder',
+  submittedOrders: [mockOrders[0]],
+  unsubmittedOrders: [mockOrders[1], mockOrders[2]],
 };
 
 describe('dashboard page', () => {
@@ -60,13 +64,60 @@ describe('dashboard page', () => {
 
     it('should render the table headings', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="submitted-orders-table"]');
+        const table = $('div[data-test-id="unsubmitted-orders-table"]');
         expect(table.length).toEqual(1);
         expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.columnInfo[0].data);
         expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.columnInfo[1].data);
         expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual(context.columnInfo[2].data);
         expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual(context.columnInfo[3].data);
         expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual(context.columnInfo[4].data);
+      });
+    }));
+
+    it('should render the data', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="unsubmitted-orders-table"]');
+        const row1 = table.find('[data-test-id="table-row-0"]');
+        const orderId1 = row1.find('a[data-test-id="order2-id"]');
+        const orderDescription1 = row1.find('div[data-test-id="order2-description"]');
+        const lastUpdatedBy1 = row1.find('div[data-test-id="order2-lastUpdatedBy"]');
+        const lastUpdated1 = row1.find('div[data-test-id="order2-lastUpdated"]');
+        const dateCreated1 = row1.find('div[data-test-id="order2-dateCreated"]');
+        const row2 = table.find('[data-test-id="table-row-1"]');
+        const orderId2 = row2.find('a[data-test-id="order3-id"]');
+        const orderDescription2 = row2.find('div[data-test-id="order3-description"]');
+        const lastUpdatedBy2 = row2.find('div[data-test-id="order3-lastUpdatedBy"]');
+        const lastUpdated2 = row2.find('div[data-test-id="order3-lastUpdated"]');
+        const dateCreated2 = row2.find('div[data-test-id="order3-dateCreated"]');
+
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="table"]').length).toEqual(1);
+        expect(table.find('[data-test-id="table-headings"]').length).toEqual(1);
+        expect(row1.length).toEqual(1);
+        expect(orderId1.length).toEqual(1);
+        expect(orderId1.text().trim()).toEqual('order2');
+        expect(orderId1.attr('href')).toEqual(`${baseUrl}/organisation/order2`);
+        expect(orderDescription1.length).toEqual(1);
+        expect(orderDescription1.text().trim()).toEqual('a description for order 2');
+        expect(lastUpdatedBy1.length).toEqual(1);
+        expect(lastUpdatedBy1.text().trim()).toEqual('Alice Smith');
+        expect(lastUpdated1.length).toEqual(1);
+        expect(lastUpdated1.text().trim()).toEqual('9 June 2021');
+        expect(dateCreated1.length).toEqual(1);
+        expect(dateCreated1.text().trim()).toEqual('9 October 2020');
+
+        expect(row2.length).toEqual(1);
+        expect(orderId2.length).toEqual(1);
+        expect(orderId2.text().trim()).toEqual('order3');
+        expect(orderId2.attr('href')).toEqual(`${baseUrl}/organisation/order3`);
+        expect(orderDescription2.length).toEqual(1);
+        expect(orderDescription2.text().trim()).toEqual('a description for order 3');
+        expect(lastUpdatedBy2.length).toEqual(1);
+        expect(lastUpdatedBy2.text().trim()).toEqual('Bob Smith');
+        expect(lastUpdated2.length).toEqual(1);
+        expect(lastUpdated2.text().trim()).toEqual('31 December 2020');
+        expect(dateCreated2.length).toEqual(1);
+        expect(dateCreated2.text().trim()).toEqual('9 May 2020');
       });
     }));
   });
@@ -89,6 +140,34 @@ describe('dashboard page', () => {
         expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual(context.columnInfo[2].data);
         expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual(context.columnInfo[3].data);
         expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual(context.columnInfo[4].data);
+      });
+    }));
+
+    it('should render the data', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="submitted-orders-table"]');
+        const row = table.find('[data-test-id="table-row-0"]');
+        const orderId = row.find('a[data-test-id="order1-id"]');
+        const orderDescription = row.find('div[data-test-id="order1-description"]');
+        const lastUpdatedBy = row.find('div[data-test-id="order1-lastUpdatedBy"]');
+        const lastUpdated = row.find('div[data-test-id="order1-lastUpdated"]');
+        const dateCreated = row.find('div[data-test-id="order1-dateCreated"]');
+
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="table"]').length).toEqual(1);
+        expect(table.find('[data-test-id="table-headings"]').length).toEqual(1);
+        expect(row.length).toEqual(1);
+        expect(orderId.length).toEqual(1);
+        expect(orderId.text().trim()).toEqual('order1');
+        expect(orderId.attr('href')).toEqual(`${baseUrl}/organisation/order1`);
+        expect(orderDescription.length).toEqual(1);
+        expect(orderDescription.text().trim()).toEqual('a description for order 1');
+        expect(lastUpdatedBy.length).toEqual(1);
+        expect(lastUpdatedBy.text().trim()).toEqual('Bobby Smithsmith');
+        expect(lastUpdated.length).toEqual(1);
+        expect(lastUpdated.text().trim()).toEqual('9 December 2020');
+        expect(dateCreated.length).toEqual(1);
+        expect(dateCreated.text().trim()).toEqual('9 October 2020');
       });
     }));
   });
