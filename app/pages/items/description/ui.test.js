@@ -2,8 +2,6 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from '../../../test-utils/helper';
 import content from './manifest.json';
-import { baseUrl } from '../../../config';
-import mockOrdersData from '../../../test-utils/mockData/mockOrders.json';
 
 const pageUrl = 'http://localhost:1234/organisation/neworder/description';
 
