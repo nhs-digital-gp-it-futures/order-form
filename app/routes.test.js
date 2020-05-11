@@ -94,7 +94,8 @@ describe('routes', () => {
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text).toEqual('new order description page');
+        expect(res.text.includes('data-test-id="description-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       }));
   });
 
@@ -126,7 +127,8 @@ describe('routes', () => {
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text).toEqual('existing order some-order-id description page');
+        expect(res.text.includes('data-test-id="description-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       }));
   });
 

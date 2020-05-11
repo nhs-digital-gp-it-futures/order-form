@@ -6,6 +6,7 @@ import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies } from './helpers/routerHelper';
 import { getDashboardContext } from './pages/dashboard/controller';
+import { getDescriptionContext } from './pages/items/description/controller';
 import includesContext from './includes/manifest.json';
 import { getNewOrderPageContext } from './pages/order-task-list/controller';
 
@@ -42,7 +43,8 @@ export const routes = (authProvider) => {
   }));
 
   router.get('/organisation/neworder/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    res.status(200).send('new order description page');
+    const context = getDescriptionContext({ orderId: 'neworder' });
+    res.render('pages/items/description/template.njk', addContext({ context, user: req.user }));
   }));
 
   router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -52,7 +54,8 @@ export const routes = (authProvider) => {
 
   router.get('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    res.status(200).send(`existing order ${orderId} description page`);
+    const context = getDescriptionContext({ orderId });
+    res.render('pages/items/description/template.njk', addContext({ context, user: req.user }));
   }));
 
   router.get('*', (req) => {
