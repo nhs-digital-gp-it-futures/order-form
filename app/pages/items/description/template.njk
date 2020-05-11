@@ -19,13 +19,12 @@
 
         {{ textareaFieldNoCount(descriptionQuestion) }}
 
-        <div data-test-id="save-button">
-          {{ bcButton({
-              text: saveButtonText,
-              href: saveButtonHref,
-              classes: "nhsuk-u-margin-top-9"
-          })}}
-        </div>
+        {{ bcButton({
+            dataTestId: "save-button",
+            text: saveButtonText,
+            href: saveButtonHref,
+            classes: "nhsuk-u-margin-top-9"
+        })}}
     </div>
   </div>
 {% endblock %}
