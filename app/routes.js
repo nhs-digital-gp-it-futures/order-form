@@ -65,6 +65,7 @@ export const routes = (authProvider) => {
     const response = await postOrPatchDescription({ orderId, data: req.body, accessToken });
     if (response.success) return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
     // TODO: res.redirect for validation errors
+    res.status(200).send(`redirect with validation to ${orderId} page`);
   }));
 
   router.get('*', (req) => {

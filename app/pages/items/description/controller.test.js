@@ -39,7 +39,10 @@ describe('description controller', () => {
     //   postData
     //     .mockRejectedValueOnce({ response: { status: 400, data: '400 response data' } });
 
-    // const response = await postOrPatchDescription({ orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_token' });
+    // const response = await postOrPatchDescription({
+    // orderId: 'neworder',
+    // data: { description: 'an order description' },
+    // accessToken: 'access_token' });
 
     //   expect(response).toEqual('400 response data');
     // });
@@ -49,7 +52,10 @@ describe('description controller', () => {
     //     .mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
 
     //   try {
-    //     await postOrPatchDescription({ orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_t
+    // await postOrPatchDescription({orderId:
+    // 'neworder',
+    // data: { description: 'an order description' },
+    // accessToken: 'access_token' });
     //   } catch (err) {
     //     expect(err).toEqual(new Error());
     //   }
