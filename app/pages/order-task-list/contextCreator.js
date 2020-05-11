@@ -4,7 +4,7 @@ import { baseUrl } from '../../config';
 
 export const getContext = ({ pageName }) => ({
   ...neworderPageManifest,
-  ...taskListManifest,
+  taskList: taskListManifest.taskList,
   backLinkHref: `${baseUrl}/organisation`,
   pageName,
 });

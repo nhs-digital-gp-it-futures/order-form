@@ -1,4 +1,5 @@
 import newOrderManifest from './neworder/manifest.json';
+import taskListManifest from './taskListManifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
@@ -13,6 +14,12 @@ describe('order-task-list contextCreator', () => {
       expect(context.previewOrderButton).toEqual(newOrderManifest.previewOrderButton);
       expect(context.submitOrderButton).toEqual(newOrderManifest.submitOrderButton);
     });
+
+    it('should return the contents of the taskListManifest', () => {
+      const context = getContext({});
+      expect(context.taskList).toEqual(taskListManifest.taskList);
+    });
+
 
     it('should return the pageName provided', () => {
       const context = getContext({ pageName: 'some-page-name' });
