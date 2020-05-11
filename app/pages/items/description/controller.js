@@ -20,6 +20,7 @@ export const postOrPatchDescription = async ({ orderId, accessToken, data }) => 
   try {
     // TODO: call patchData if not new order
     const response = isNewOrder ? await postData(apiCallParams) : {};
+    // const response = { data: { orderId: 'order-id-1' }}
     logger.info(`Order ${isNewOrder ? 'added' : 'updated'} - id: ${response.data.id}, ${JSON.stringify(body)}`);
     return { success: true, orderId: isNewOrder ? response.data.orderId : orderId };
   } catch (err) {
