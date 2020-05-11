@@ -9,15 +9,9 @@ describe('order-task-list contextCreator', () => {
       expect(context.backLinkText).toEqual(newOrderManifest.backLinkText);
       expect(context.title).toEqual(newOrderManifest.title);
       expect(context.description).toEqual(newOrderManifest.description);
-      expect(context.deleteOrderButtonText).toEqual(newOrderManifest.deleteOrderButtonText);
-      expect(context.deleteOrderButtonHref).toEqual(newOrderManifest.deleteOrderButtonHref);
-      expect(context.deleteOrderButtonAltText).toEqual(newOrderManifest.deleteOrderButtonAltText);
-      expect(context.previewOrderButtonText).toEqual(newOrderManifest.previewOrderButtonText);
-      expect(context.previewOrderButtonHref).toEqual(newOrderManifest.previewOrderButtonHref);
-      expect(context.previewOrderButtonAltText).toEqual(newOrderManifest.previewOrderButtonAltText);
-      expect(context.submitOrderButtonText).toEqual(newOrderManifest.submitOrderButtonText);
-      expect(context.submitOrderButtonHref).toEqual(newOrderManifest.submitOrderButtonHref);
-      expect(context.submitOrderButtonAltText).toEqual(newOrderManifest.submitOrderButtonAltText);
+      expect(context.deleteOrderButton).toEqual(newOrderManifest.deleteOrderButton);
+      expect(context.previewOrderButton).toEqual(newOrderManifest.previewOrderButton);
+      expect(context.submitOrderButton).toEqual(newOrderManifest.submitOrderButton);
     });
 
     it('should return the pageName provided', () => {
