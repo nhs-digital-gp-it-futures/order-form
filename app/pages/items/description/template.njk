@@ -1,6 +1,6 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
-{% from 'components/button/macro.njk' import button %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/textarea-field-no-count/macro.njk' import textareaFieldNoCount %}
 
 {% block body %}
@@ -20,7 +20,7 @@
         {{ textareaFieldNoCount(descriptionQuestion) }}
 
         <div data-test-id="save-button">
-          {{ button({
+          {{ bcButton({
               text: saveButtonText,
               href: saveButtonHref,
               classes: "nhsuk-u-margin-top-9"
