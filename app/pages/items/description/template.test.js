@@ -38,9 +38,9 @@ describe('description page', () => {
       const footerAdvice = $('[data-test-id="textarea-field-footer"] span');
 
       expect(input.length).toEqual(1);
-      expect(input[0].attribs.id).toEqual(context.descriptionQuestion.question.id);
-      expect(input[0].attribs.name).toEqual(context.descriptionQuestion.question.id);
-      expect(input[0].attribs.rows.trim())
+      expect(input.attr('id')).toEqual(context.descriptionQuestion.question.id);
+      expect(input.attr('name')).toEqual(context.descriptionQuestion.question.id);
+      expect(input.attr('rows').trim())
         .toEqual(String(context.descriptionQuestion.question.rows));
       expect(footerAdvice.length).toEqual(1);
       expect(footerAdvice.text().trim()).toEqual(context.descriptionQuestion.question.footerAdvice);
