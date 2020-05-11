@@ -106,9 +106,6 @@ describe('dashboard page', () => {
         expect(dateCreated1.length).toEqual(1);
         expect(dateCreated1.text().trim()).toEqual('9 October 2020');
 
-        expect(table.length).toEqual(1);
-        expect(table.find('[data-test-id="table"]').length).toEqual(1);
-        expect(table.find('[data-test-id="table-headings"]').length).toEqual(1);
         expect(row2.length).toEqual(1);
         expect(orderId2.length).toEqual(1);
         expect(orderId2.text().trim()).toEqual('order3');
