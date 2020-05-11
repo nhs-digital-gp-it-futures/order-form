@@ -59,21 +59,23 @@ describe('neworder task-list page', () => {
 
   it('should render the "Preview order summary" as a secondary and disabled button', componentTester(setup, (harness) => {
     harness.request(neworderPageContext, ($) => {
-      const previewOrderButton = $('[data-test-id="preview-order-button"] a');
+      const previewOrderButton = $('[data-test-id="preview-order-button"]');
       expect(previewOrderButton.length).toEqual(1);
       expect(previewOrderButton.text().trim()).toEqual(neworderPageContext.previewOrderButtonText);
-      expect(previewOrderButton.hasClass('nhsuk-button--secondary')).toEqual(true);
-      expect(previewOrderButton.hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(previewOrderButton.attr('aria-label')).toEqual(neworderPageContext.previewOrderButtonAltText);
+      expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 
   it('should render the "Submit order" as a primary and disabled button', componentTester(setup, (harness) => {
     harness.request(neworderPageContext, ($) => {
-      const submitOrderButton = $('[data-test-id="submit-order-button"] a');
+      const submitOrderButton = $('[data-test-id="submit-order-button"]');
       expect(submitOrderButton.length).toEqual(1);
       expect(submitOrderButton.text().trim()).toEqual(neworderPageContext.submitOrderButtonText);
-      expect(submitOrderButton.hasClass('nhsuk-button--secondary')).toEqual(false);
-      expect(submitOrderButton.hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(submitOrderButton.attr('aria-label')).toEqual(neworderPageContext.submitOrderButtonAltText);
+      expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
+      expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 });

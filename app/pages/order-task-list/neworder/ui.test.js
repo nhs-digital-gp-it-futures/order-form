@@ -91,37 +91,40 @@ test('should render the "Delete order" button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const deleteOrderButton = Selector('[data-test-id="delete-order-button"] a');
+  const deleteOrderButton = Selector('[data-test-id="delete-order-button"]');
 
   await t
     .expect(deleteOrderButton.exists).ok()
     .expect(await extractInnerText(deleteOrderButton)).eql(content.deleteOrderButtonText)
-    .expect(deleteOrderButton.hasClass('nhsuk-button--secondary')).eql(true)
-    .expect(deleteOrderButton.hasClass('nhsuk-button--disabled')).eql(true);
+    .expect(deleteOrderButton.getAttribute('aria-label')).eql(content.deleteOrderButtonAltText)
+    .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
+    .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
 
 test('should render the "Preview order summary" button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const previewOrderButton = Selector('[data-test-id="preview-order-button"] a');
+  const previewOrderButton = Selector('[data-test-id="preview-order-button"]');
 
   await t
     .expect(previewOrderButton.exists).ok()
     .expect(await extractInnerText(previewOrderButton)).eql(content.previewOrderButtonText)
-    .expect(previewOrderButton.hasClass('nhsuk-button--secondary')).eql(true)
-    .expect(previewOrderButton.hasClass('nhsuk-button--disabled')).eql(true);
+    .expect(previewOrderButton.getAttribute('aria-label')).eql(content.previewOrderButtonAltText)
+    .expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
+    .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
 
 test('should render the "Submit order" button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const submitOrderButton = Selector('[data-test-id="submit-order-button"] a');
+  const submitOrderButton = Selector('[data-test-id="submit-order-button"]');
 
   await t
     .expect(submitOrderButton.exists).ok()
     .expect(await extractInnerText(submitOrderButton)).eql(content.submitOrderButtonText)
-    .expect(submitOrderButton.hasClass('nhsuk-button--secondary')).eql(false)
-    .expect(submitOrderButton.hasClass('nhsuk-button--disabled')).eql(true);
+    .expect(submitOrderButton.getAttribute('aria-label')).eql(content.submitOrderButtonAltText)
+    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
+    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
