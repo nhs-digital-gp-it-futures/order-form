@@ -2,7 +2,8 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from '../../test-utils/helper';
 import content from './manifest.json';
-import { baseUrl } from '../../config';
+import { baseUrl, orderApiUrl } from '../../config';
+import mockOrdersData from '../../test-utils/mockData/mockOrders.json';
 
 const pageUrl = 'http://localhost:1234/organisation';
 
@@ -14,8 +15,15 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
+const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders')
+    .reply(200, mockOrdersData);
+};
+
 const pageSetup = async (t, withAuth = false) => {
   if (withAuth) {
+    mocks();
     await setCookies();
   }
 };
@@ -100,6 +108,18 @@ test('should render add new order button', async (t) => {
     .expect(button.getAttribute('href')).eql(`${baseUrl}/organisation/neworder`);
 });
 
+test('should navigate to the new order page when add new order button is clicked', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="new-order-button"] a');
+
+  await t
+    .expect(button.exists).ok()
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/neworder');
+});
+
 test('should render the proxy link', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
@@ -110,6 +130,19 @@ test('should render the proxy link', async (t) => {
     .expect(link.exists).ok()
     .expect(await extractInnerText(link)).eql(content.proxyLinkText)
     .expect(link.getAttribute('href')).eql('#');
+});
+
+// TODO: Change the expected location
+test('should navigate to ? page when proxy link is clicked', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const link = Selector('div[data-test-id="proxy-link"] a');
+
+  await t
+    .expect(link.exists).ok()
+    .click(link)
+    .expect(getLocation()).eql('http://localhost:1234/organisation#');
 });
 
 test('should render the unsubmitted orders table', async (t) => {
@@ -140,6 +173,33 @@ test('should render the unsubmitted orders table', async (t) => {
     .expect(await extractInnerText(unsubmittedColumnHeading5)).eql(content.columnInfo[4].data);
 });
 
+test('should render the unsubmitted orders table content', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="unsubmitted-orders-table"]');
+  const row = table.find('[data-test-id="table-row-0"]');
+  const orderId = row.find('a[data-test-id="order1-id"]');
+  const orderDescription = row.find('div[data-test-id="order1-description"]');
+  const lastUpdatedBy = row.find('div[data-test-id="order1-lastUpdatedBy"]');
+  const lastUpdated = row.find('div[data-test-id="order1-lastUpdated"]');
+  const dateCreated = row.find('div[data-test-id="order1-dateCreated"]');
+
+  await t
+    .expect(row.exists).ok()
+    .expect(orderId.exists).ok()
+    .expect(await extractInnerText(orderId)).eql(mockOrdersData[0].orderId)
+    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order1`)
+    .expect(orderDescription.exists).ok()
+    .expect(await extractInnerText(orderDescription)).eql(mockOrdersData[0].orderDescription)
+    .expect(lastUpdatedBy.exists).ok()
+    .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[0].lastUpdatedBy)
+    .expect(lastUpdated.exists).ok()
+    .expect(await extractInnerText(lastUpdated)).eql('6 May 2020')
+    .expect(dateCreated.exists).ok()
+    .expect(await extractInnerText(dateCreated)).eql('6 January 2020');
+});
+
 test('should render the submitted orders table', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
@@ -166,4 +226,47 @@ test('should render the submitted orders table', async (t) => {
     .expect(await extractInnerText(submittedColumnHeading4)).eql(content.columnInfo[3].data)
     .expect(submittedColumnHeading5.exists).ok()
     .expect(await extractInnerText(submittedColumnHeading5)).eql(content.columnInfo[4].data);
+});
+
+test('should render the submitted orders table content', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="submitted-orders-table"]');
+  const row = table.find('[data-test-id="table-row-0"]');
+  const orderId = row.find('a[data-test-id="order2-id"]');
+  const orderDescription = row.find('div[data-test-id="order2-description"]');
+  const lastUpdatedBy = row.find('div[data-test-id="order2-lastUpdatedBy"]');
+  const lastUpdated = row.find('div[data-test-id="order2-lastUpdated"]');
+  const dateCreated = row.find('div[data-test-id="order2-dateCreated"]');
+
+  await t
+    .expect(row.exists).ok()
+    .expect(orderId.exists).ok()
+    .expect(await extractInnerText(orderId)).eql(mockOrdersData[1].orderId)
+    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order2`)
+    .expect(orderDescription.exists).ok()
+    .expect(await extractInnerText(orderDescription)).eql(mockOrdersData[1].orderDescription)
+    .expect(lastUpdatedBy.exists).ok()
+    .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[1].lastUpdatedBy)
+    .expect(lastUpdated.exists).ok()
+    .expect(await extractInnerText(lastUpdated)).eql('9 December 2020')
+    .expect(dateCreated.exists).ok()
+    .expect(await extractInnerText(dateCreated)).eql('9 October 2020');
+});
+
+test('should navigate to the order page when an order id is clicked', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="submitted-orders-table"]');
+  const row = table.find('[data-test-id="table-row-0"]');
+  const orderId = row.find('a[data-test-id="order2-id"]');
+
+  await t
+    .expect(table.exists).ok()
+    .expect(row.exists).ok()
+    .expect(orderId.exists).ok()
+    .click(orderId)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order2');
 });
