@@ -11,8 +11,7 @@ const context = {
   ...manifest,
   title: 'org1 orders',
   backlinkHref: '/organisation/order-1',
-  // TODO: Change below to be more in line with real href
-  saveButtonHref: '#',
+  csrfToken: 'mockCsrfToken',
 };
 
 describe('description page', () => {
@@ -29,6 +28,15 @@ describe('description page', () => {
       const description = $('h2[data-test-id="description-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
+    });
+  }));
+
+  it('should render hidden input with csrf token', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const formElement = $('input[name=_csrf]');
+      expect(formElement.length).toEqual(1);
+      expect(formElement.attr('type')).toEqual('hidden');
+      expect(formElement.attr('value')).toEqual(context.csrfToken);
     });
   }));
 
@@ -49,10 +57,9 @@ describe('description page', () => {
 
   it('should render the save button', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const button = $('[data-test-id="save-button"] a');
+      const button = $('[data-test-id="save-button"] button');
       expect(button.length).toEqual(1);
       expect(button.text().trim()).toEqual(context.saveButtonText);
-      expect(button.attr('href')).toEqual(context.saveButtonHref);
     });
   }));
 });
