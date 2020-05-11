@@ -48,11 +48,12 @@ describe('neworder task-list page', () => {
 
   it('should render the "Delete order" as a secondary and disabled button', componentTester(setup, (harness) => {
     harness.request(neworderPageContext, ($) => {
-      const deleteOrderButton = $('[data-test-id="delete-order-button"] a');
+      const deleteOrderButton = $('[data-test-id="delete-order-button"]');
       expect(deleteOrderButton.length).toEqual(1);
       expect(deleteOrderButton.text().trim()).toEqual(neworderPageContext.deleteOrderButtonText);
-      expect(deleteOrderButton.hasClass('nhsuk-button--secondary')).toEqual(true);
-      expect(deleteOrderButton.hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(deleteOrderButton.attr('aria-label')).toEqual(neworderPageContext.deleteOrderButtonAltText);
+      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 

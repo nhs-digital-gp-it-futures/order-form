@@ -4,8 +4,11 @@
   "description": "You must complete step 1 and a Call-off Agreement ID will be generated before you can view your order summary.",
   "deleteOrderButtonText": "Delete order",
   "deleteOrderButtonHref": "#",
+  "deleteOrderButtonAltText": "The delete order button will be disabled until you complete and save step 1",
   "previewOrderButtonText": "Preview order summary",
   "previewOrderButtonHref": "#",
+  "previewOrderButtonAltText": "The preview order button will be disabled until you complete and save step 1",
   "submitOrderButtonText": "Submit order",
-  "submitOrderButtonHref": "#"
+  "submitOrderButtonHref": "#",
+  "submitOrderButtonAltText": "The submit order button will be disabled until the necessary steps are complete"
 }

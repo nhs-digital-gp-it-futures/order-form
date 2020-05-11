@@ -11,10 +11,13 @@ describe('order-task-list contextCreator', () => {
       expect(context.description).toEqual(newOrderManifest.description);
       expect(context.deleteOrderButtonText).toEqual(newOrderManifest.deleteOrderButtonText);
       expect(context.deleteOrderButtonHref).toEqual(newOrderManifest.deleteOrderButtonHref);
+      expect(context.deleteOrderButtonAltText).toEqual(newOrderManifest.deleteOrderButtonAltText);
       expect(context.previewOrderButtonText).toEqual(newOrderManifest.previewOrderButtonText);
       expect(context.previewOrderButtonHref).toEqual(newOrderManifest.previewOrderButtonHref);
+      expect(context.previewOrderButtonAltText).toEqual(newOrderManifest.previewOrderButtonAltText);
       expect(context.submitOrderButtonText).toEqual(newOrderManifest.submitOrderButtonText);
       expect(context.submitOrderButtonHref).toEqual(newOrderManifest.submitOrderButtonHref);
+      expect(context.submitOrderButtonAltText).toEqual(newOrderManifest.submitOrderButtonAltText);
     });
 
     it('should return the pageName provided', () => {
