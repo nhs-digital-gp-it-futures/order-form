@@ -3,11 +3,16 @@ import { FakeAuthProvider } from 'buying-catalogue-library';
 import { App } from './app';
 import { routes } from './routes';
 import { baseUrl } from './config';
+import { getCsrfTokenFromGet } from './test-utils/helper';
 import * as dashboardController from './pages/dashboard/controller';
+import * as descriptionController from './pages/items/description/controller';
 
 jest.mock('./logger');
 
 dashboardController.getDashboardContext = jest.fn()
+  .mockResolvedValue({});
+
+descriptionController.postOrPatchDescription = jest.fn()
   .mockResolvedValue({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
@@ -33,6 +38,55 @@ const checkAuthorisedRouteNotLoggedIn = path => (
       expect(res.redirect).toEqual(true);
       expect(res.headers.location).toEqual('http://identity-server/login');
     }));
+
+const checkForbiddenNoCsrf = path => request(setUpFakeApp())
+  .post(path)
+  .set('Cookie', [mockAuthorisedCookie])
+  .type('form')
+  .send({})
+  .then((res) => {
+    expect(res.status).toEqual(403);
+  });
+
+const checkRedirectToLogin = async (csrfPagePath, postPath) => {
+  const { cookies, csrfToken } = await getCsrfTokenFromGet(
+    setUpFakeApp(), csrfPagePath, mockAuthorisedCookie,
+  );
+  return request(setUpFakeApp())
+    .post(postPath)
+    .type('form')
+    .set('Cookie', [cookies])
+    .send({
+      _csrf: csrfToken,
+    })
+    .expect(302)
+    .then((res) => {
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual('http://identity-server/login');
+    });
+};
+
+const checkLoggedInNotAuthorised = async (csrfPagePath, postPath) => {
+  const { cookies, csrfToken } = await getCsrfTokenFromGet(
+    setUpFakeApp(), csrfPagePath, mockAuthorisedCookie,
+  );
+
+  const mockUnauthorisedJwtPayload = JSON.stringify({
+    id: '88421113', name: 'Cool Dude',
+  });
+  const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
+
+  return request(setUpFakeApp())
+    .post(postPath)
+    .type('form')
+    .set('Cookie', [cookies, mockUnauthorisedCookie])
+    .send({ _csrf: csrfToken })
+    .expect(200)
+    .then((res) => {
+      expect(res.text.includes('data-test-id="error-title"')).toEqual(true);
+      expect(res.text.includes('You are not authorised to view this page')).toEqual(true);
+    });
+};
 
 describe('routes', () => {
   describe('GET /', () => {
@@ -134,6 +188,52 @@ describe('routes', () => {
         expect(res.text.includes('data-test-id="description-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       }));
+  });
+
+  describe('POST /organisation/neworder/description', () => {
+    const path = '/organisation/neworder/description';
+
+    afterEach(() => {
+      descriptionController.postOrPatchDescription.mockReset();
+    });
+
+    it('should return 403 forbidden if no csrf token is available', async () => {
+      await checkForbiddenNoCsrf(path);
+    });
+
+    it('should redirect to the login page if the user is not logged in', async () => {
+      await checkRedirectToLogin(path, path);
+    });
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', async () => {
+      await checkLoggedInNotAuthorised(path, path);
+    });
+
+    it('should return the correct status and text if response.success is true', async () => {
+      descriptionController.postOrPatchDescription = jest.fn()
+        .mockImplementation(() => Promise.resolve({ success: true, orderId: 'order1' }));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet(
+        setUpFakeApp(), path, mockAuthorisedCookie,
+      );
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({
+          orderDescription: 'a description of the order',
+          _csrf: csrfToken,
+        })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order1`);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+    // TODO: validation
+    // it('should return the correct status and text if response.success is false', async () => {});
   });
 
   describe('GET *', () => {
