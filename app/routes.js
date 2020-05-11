@@ -7,6 +7,7 @@ import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routerHelper';
 import { getDashboardContext } from './pages/dashboard/controller';
 import includesContext from './includes/manifest.json';
+import { getNewOrderPageContext } from './pages/order-task-list/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -37,7 +38,8 @@ export const routes = (authProvider) => {
   }));
 
   router.get('/organisation/neworder', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    res.status(200).send('new order page');
+    const context = getNewOrderPageContext();
+    res.render('pages/order-task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
   router.get('/organisation/neworder/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
