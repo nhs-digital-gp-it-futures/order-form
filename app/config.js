@@ -17,6 +17,9 @@ module.exports = {
   // The base uri the app is running on to pass to identity service for redirection
   appBaseUri: process.env.APP_BASE_URI || 'http://localhost:3006',
 
+  // Orders API
+  orderApiUrl: process.env.ORDER_API_URL || 'http://localhost:5104',
+
   // BLOBSTORE_HOST
   blobstoreHost: process.env.BLOBSTORE_HOST || 'https://gpitfuturesdevsa.blob.core.windows.net',
 
@@ -45,7 +48,7 @@ module.exports = {
   redisUrl: process.env.REDIS_URL || 'localhost',
 
   // The port redis is running
-  redisPort: process.env.REDIS_PORT || 6380,
+  redisPort: process.env.REDIS_PORT || 6379,
 
   // Boolean to indicate whether to connect to redis via TLS
   redisTls: process.env.REDIS_TLS || 'false',

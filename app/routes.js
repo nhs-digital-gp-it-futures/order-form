@@ -4,7 +4,7 @@ import {
 } from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
-import { withCatch, getHealthCheckDependencies } from './helpers/routerHelper';
+import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routerHelper';
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getDescriptionContext } from './pages/items/description/controller';
 import includesContext from './includes/manifest.json';
@@ -32,8 +32,9 @@ export const routes = (authProvider) => {
   }));
 
   router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
     // TODO: Pass in orgId to getDashboardContext
-    const context = getDashboardContext({});
+    const context = await getDashboardContext({ accessToken });
     res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
   }));
 
