@@ -1,14 +1,9 @@
 import { postData } from 'buying-catalogue-library';
 import { postOrPatchDescription } from './controller';
-import * as contextCreator from './contextCreator';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
 jest.mock('buying-catalogue-library');
-
-jest.mock('./contextCreator', () => ({
-  getContext: jest.fn(),
-}));
 
 describe('description controller', () => {
   describe('postOrPatchDescription', () => {
