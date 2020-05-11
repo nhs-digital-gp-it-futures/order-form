@@ -29,11 +29,11 @@
       <div class="nhsuk-grid-column-one-third">
         {{ bcButton({
           dataTestId: "delete-order-button",
-          text: deleteOrderButtonText,
-          altText: deleteOrderButtonAltText,
+          text: deleteOrderButton.text,
+          altText: deleteOrderButton.altText,
           classes: "nhsuk-button--secondary nhsuk-u-margin-bottom-9",
-          href: deleteOrderButtonHref,
-          enabled: deleteOrderButtonEnabled
+          href: deleteOrderButton.href,
+          disabled: deleteOrderButton.disabled
         }) }}
       </div>
 
@@ -42,22 +42,22 @@
           <div class="bc-u-inline-block">
             {{ bcButton({
               dataTestId: "preview-order-button",
-              text: previewOrderButtonText,
-              altText: previewOrderButtonAltText,
+              text: previewOrderButton.text,
+              altText: previewOrderButton.altText,
               classes: "nhsuk-button--secondary nhsuk-u-margin-bottom-9 nhsuk-u-margin-right-5",
-              href: previewOrderButtonHref,
-              enabled: previewOrderButtonEnabled
+              href: previewOrderButton.href,
+              disabled: previewOrderButton.disabled
             }) }}
           </div>
 
           <div class="bc-u-inline-block">
             {{ bcButton({
               dataTestId: "submit-order-button",
-              text: submitOrderButtonText,
-              altText: submitOrderButtonAltText,
+              text: submitOrderButton.text,
+              altText: submitOrderButton.altText,
               classes: "nhsuk-u-margin-bottom-9",
-              href: submitOrderButtonHref,
-              enabled: submitOrderButtonEnabled
+              href: submitOrderButton.href,
+              disabled: submitOrderButton.disabled
             }) }}
           </div>
         </div>
