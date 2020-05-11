@@ -50,8 +50,8 @@ describe('neworder task-list page', () => {
     harness.request(neworderPageContext, ($) => {
       const deleteOrderButton = $('[data-test-id="delete-order-button"]');
       expect(deleteOrderButton.length).toEqual(1);
-      expect(deleteOrderButton.text().trim()).toEqual(neworderPageContext.deleteOrderButtonText);
-      expect(deleteOrderButton.attr('aria-label')).toEqual(neworderPageContext.deleteOrderButtonAltText);
+      expect(deleteOrderButton.text().trim()).toEqual(neworderPageContext.deleteOrderButton.text);
+      expect(deleteOrderButton.attr('aria-label')).toEqual(neworderPageContext.deleteOrderButton.altText);
       expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
       expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
@@ -61,8 +61,8 @@ describe('neworder task-list page', () => {
     harness.request(neworderPageContext, ($) => {
       const previewOrderButton = $('[data-test-id="preview-order-button"]');
       expect(previewOrderButton.length).toEqual(1);
-      expect(previewOrderButton.text().trim()).toEqual(neworderPageContext.previewOrderButtonText);
-      expect(previewOrderButton.attr('aria-label')).toEqual(neworderPageContext.previewOrderButtonAltText);
+      expect(previewOrderButton.text().trim()).toEqual(neworderPageContext.previewOrderButton.text);
+      expect(previewOrderButton.attr('aria-label')).toEqual(neworderPageContext.previewOrderButton.altText);
       expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
       expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
@@ -72,8 +72,8 @@ describe('neworder task-list page', () => {
     harness.request(neworderPageContext, ($) => {
       const submitOrderButton = $('[data-test-id="submit-order-button"]');
       expect(submitOrderButton.length).toEqual(1);
-      expect(submitOrderButton.text().trim()).toEqual(neworderPageContext.submitOrderButtonText);
-      expect(submitOrderButton.attr('aria-label')).toEqual(neworderPageContext.submitOrderButtonAltText);
+      expect(submitOrderButton.text().trim()).toEqual(neworderPageContext.submitOrderButton.text);
+      expect(submitOrderButton.attr('aria-label')).toEqual(neworderPageContext.submitOrderButton.altText);
       expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
       expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
     });

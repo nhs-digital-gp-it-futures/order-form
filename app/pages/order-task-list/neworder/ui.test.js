@@ -95,8 +95,8 @@ test('should render the "Delete order" button', async (t) => {
 
   await t
     .expect(deleteOrderButton.exists).ok()
-    .expect(await extractInnerText(deleteOrderButton)).eql(content.deleteOrderButtonText)
-    .expect(deleteOrderButton.getAttribute('aria-label')).eql(content.deleteOrderButtonAltText)
+    .expect(await extractInnerText(deleteOrderButton)).eql(content.deleteOrderButton.text)
+    .expect(deleteOrderButton.getAttribute('aria-label')).eql(content.deleteOrderButton.altText)
     .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
     .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
@@ -109,8 +109,8 @@ test('should render the "Preview order summary" button', async (t) => {
 
   await t
     .expect(previewOrderButton.exists).ok()
-    .expect(await extractInnerText(previewOrderButton)).eql(content.previewOrderButtonText)
-    .expect(previewOrderButton.getAttribute('aria-label')).eql(content.previewOrderButtonAltText)
+    .expect(await extractInnerText(previewOrderButton)).eql(content.previewOrderButton.text)
+    .expect(previewOrderButton.getAttribute('aria-label')).eql(content.previewOrderButton.altText)
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
@@ -123,8 +123,8 @@ test('should render the "Submit order" button', async (t) => {
 
   await t
     .expect(submitOrderButton.exists).ok()
-    .expect(await extractInnerText(submitOrderButton)).eql(content.submitOrderButtonText)
-    .expect(submitOrderButton.getAttribute('aria-label')).eql(content.submitOrderButtonAltText)
+    .expect(await extractInnerText(submitOrderButton)).eql(content.submitOrderButton.text)
+    .expect(submitOrderButton.getAttribute('aria-label')).eql(content.submitOrderButton.altText)
     .expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
     .expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
