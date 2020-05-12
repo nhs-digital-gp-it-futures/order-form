@@ -24,10 +24,5 @@ describe('decription contextCreator', () => {
       const context = getContext({ orderId });
       expect(context.backlinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
-
-    it('should construct the saveButtonHref', () => {
-      const context = getContext({});
-      expect(context.saveButtonHref).toEqual('#');
-    });
   });
 });

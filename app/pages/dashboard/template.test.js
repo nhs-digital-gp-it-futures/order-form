@@ -79,13 +79,13 @@ describe('dashboard page', () => {
         const table = $('div[data-test-id="unsubmitted-orders-table"]');
         const row1 = table.find('[data-test-id="table-row-0"]');
         const orderId1 = row1.find('a[data-test-id="order2-id"]');
-        const orderDescription1 = row1.find('div[data-test-id="order2-description"]');
+        const description1 = row1.find('div[data-test-id="order2-description"]');
         const lastUpdatedBy1 = row1.find('div[data-test-id="order2-lastUpdatedBy"]');
         const lastUpdated1 = row1.find('div[data-test-id="order2-lastUpdated"]');
         const dateCreated1 = row1.find('div[data-test-id="order2-dateCreated"]');
         const row2 = table.find('[data-test-id="table-row-1"]');
         const orderId2 = row2.find('a[data-test-id="order3-id"]');
-        const orderDescription2 = row2.find('div[data-test-id="order3-description"]');
+        const description2 = row2.find('div[data-test-id="order3-description"]');
         const lastUpdatedBy2 = row2.find('div[data-test-id="order3-lastUpdatedBy"]');
         const lastUpdated2 = row2.find('div[data-test-id="order3-lastUpdated"]');
         const dateCreated2 = row2.find('div[data-test-id="order3-dateCreated"]');
@@ -97,8 +97,8 @@ describe('dashboard page', () => {
         expect(orderId1.length).toEqual(1);
         expect(orderId1.text().trim()).toEqual('order2');
         expect(orderId1.attr('href')).toEqual(`${baseUrl}/organisation/order2`);
-        expect(orderDescription1.length).toEqual(1);
-        expect(orderDescription1.text().trim()).toEqual('a description for order 2');
+        expect(description1.length).toEqual(1);
+        expect(description1.text().trim()).toEqual('a description for order 2');
         expect(lastUpdatedBy1.length).toEqual(1);
         expect(lastUpdatedBy1.text().trim()).toEqual('Alice Smith');
         expect(lastUpdated1.length).toEqual(1);
@@ -110,8 +110,8 @@ describe('dashboard page', () => {
         expect(orderId2.length).toEqual(1);
         expect(orderId2.text().trim()).toEqual('order3');
         expect(orderId2.attr('href')).toEqual(`${baseUrl}/organisation/order3`);
-        expect(orderDescription2.length).toEqual(1);
-        expect(orderDescription2.text().trim()).toEqual('a description for order 3');
+        expect(description2.length).toEqual(1);
+        expect(description2.text().trim()).toEqual('a description for order 3');
         expect(lastUpdatedBy2.length).toEqual(1);
         expect(lastUpdatedBy2.text().trim()).toEqual('Bob Smith');
         expect(lastUpdated2.length).toEqual(1);
@@ -148,7 +148,7 @@ describe('dashboard page', () => {
         const table = $('div[data-test-id="submitted-orders-table"]');
         const row = table.find('[data-test-id="table-row-0"]');
         const orderId = row.find('a[data-test-id="order1-id"]');
-        const orderDescription = row.find('div[data-test-id="order1-description"]');
+        const description = row.find('div[data-test-id="order1-description"]');
         const lastUpdatedBy = row.find('div[data-test-id="order1-lastUpdatedBy"]');
         const lastUpdated = row.find('div[data-test-id="order1-lastUpdated"]');
         const dateCreated = row.find('div[data-test-id="order1-dateCreated"]');
@@ -160,8 +160,8 @@ describe('dashboard page', () => {
         expect(orderId.length).toEqual(1);
         expect(orderId.text().trim()).toEqual('order1');
         expect(orderId.attr('href')).toEqual(`${baseUrl}/organisation/order1`);
-        expect(orderDescription.length).toEqual(1);
-        expect(orderDescription.text().trim()).toEqual('a description for order 1');
+        expect(description.length).toEqual(1);
+        expect(description.text().trim()).toEqual('a description for order 1');
         expect(lastUpdatedBy.length).toEqual(1);
         expect(lastUpdatedBy.text().trim()).toEqual('Bobby Smithsmith');
         expect(lastUpdated.length).toEqual(1);

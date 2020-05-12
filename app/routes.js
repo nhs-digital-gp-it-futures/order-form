@@ -6,7 +6,7 @@ import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routerHelper';
 import { getDashboardContext } from './pages/dashboard/controller';
-import { getDescriptionContext } from './pages/items/description/controller';
+import { getDescriptionContext, postOrPutDescription } from './pages/sections/description/controller';
 import includesContext from './includes/manifest.json';
 import { getNewOrderPageContext } from './pages/order-task-list/controller';
 
@@ -47,7 +47,7 @@ export const routes = (authProvider) => {
 
   router.get('/organisation/neworder/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const context = getDescriptionContext({ orderId: 'neworder' });
-    res.render('pages/items/description/template.njk', addContext({ context, user: req.user }));
+    res.render('pages/sections/description/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -58,7 +58,18 @@ export const routes = (authProvider) => {
   router.get('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const context = getDescriptionContext({ orderId });
-    res.render('pages/items/description/template.njk', addContext({ context, user: req.user }));
+    res.render('pages/sections/description/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const response = await postOrPutDescription({
+      orgId: req.user.primaryOrganisationId, orderId, data: req.body, accessToken,
+    });
+    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
+    // TODO: res.redirect for validation errors
+    return res.status(200).send(`redirect with validation to ${orderId} page`);
   }));
 
   router.get('*', (req) => {
