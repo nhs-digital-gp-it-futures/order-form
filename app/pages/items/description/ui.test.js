@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from '../../../test-utils/helper';
 import content from './manifest.json';
-import { baseUrl, orderApiUrl } from '../../../config';
+import { orderApiUrl } from '../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/neworder/description';
 
@@ -115,7 +115,7 @@ test('should render save button', async (t) => {
 
 test('should navigate to task list page when valid description is added and save is clicked', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/order')
+    .post('/api/v1/orders')
     .reply(200, { orderId: 'order1' });
 
   await pageSetup(t, true);
@@ -126,5 +126,5 @@ test('should navigate to task list page when valid description is added and save
   await t
     .expect(saveButton.exists).ok()
     .click(saveButton)
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order1`);
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order1');
 });
