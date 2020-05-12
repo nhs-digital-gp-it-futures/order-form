@@ -14,7 +14,7 @@ describe('order-task-list controller', () => {
       await getNewOrderPageContext();
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ pageName: 'neworder' });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'neworder' });
     });
   });
 });

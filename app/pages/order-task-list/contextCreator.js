@@ -4,9 +4,9 @@ import { generateTaskList } from './helpers/generateTaskList';
 import { baseUrl } from '../../config';
 
 
-export const getContext = ({ pageName }) => ({
+export const getContext = ({ orderId }) => ({
   ...neworderPageManifest,
-  taskList: generateTaskList({ orderId: pageName, taskListManifest }),
+  taskList: generateTaskList({ orderId, taskListManifest }),
   backLinkHref: `${baseUrl}/organisation`,
-  pageName,
+  orderId,
 });

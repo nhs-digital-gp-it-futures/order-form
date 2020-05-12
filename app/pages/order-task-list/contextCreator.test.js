@@ -14,13 +14,13 @@ describe('order-task-list contextCreator', () => {
       expect(context.submitOrderButton).toEqual(newOrderManifest.submitOrderButton);
     });
 
-    it('should return the pageName provided', () => {
-      const context = getContext({ pageName: 'some-page-name' });
-      expect(context.pageName).toEqual('some-page-name');
+    it('should return the orderId provided', () => {
+      const context = getContext({ orderId: 'some-order-id' });
+      expect(context.orderId).toEqual('some-order-id');
     });
 
     it('should return the backLinkHref', () => {
-      const context = getContext({ pageName: 'some-page-name' });
+      const context = getContext({ orderId: 'some-page-name' });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
     });
   });

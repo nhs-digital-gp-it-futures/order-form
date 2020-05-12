@@ -12,7 +12,7 @@ describe('neworder task-list page', () => {
   const neworderPageContext = {
     ...manifest,
     taskList: taskListManifest.taskList,
-    pageName: 'neworder',
+    orderId: 'neworder',
     backLinkHref: '/organisation',
   };
 
