@@ -1,0 +1,13 @@
+{
+  "backlinkText": "Go back",
+  "title": "Order description",
+  "description": "Provide a brief description of your order to help identify it from any others you’ve worked on.",
+  "descriptionQuestion": {
+    "question": {
+      "id": "description",
+      "footerAdvice": "(Maximum number of characters 100)",
+      "rows": 3
+    }
+  },
+  "saveButtonText": "Save and return"
+}
