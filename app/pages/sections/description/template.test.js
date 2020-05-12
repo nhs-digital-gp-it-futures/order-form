@@ -3,7 +3,7 @@ import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/items/description/template.njk',
+    path: 'pages/sections/description/template.njk',
   },
 };
 
