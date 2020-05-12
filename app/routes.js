@@ -15,6 +15,7 @@ const addContext = ({ context, user, csrfToken }) => ({
   ...includesContext,
   config,
   username: user && user.name,
+  organisation: user && user.primaryOrganisationName,
   csrfToken,
 });
 
