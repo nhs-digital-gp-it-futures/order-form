@@ -11,7 +11,7 @@ export const getContext = ({ orgId, ordersData = [] }) => {
         dataTestId: `${order.orderId}-id`,
       },
       {
-        data: order.orderDescription,
+        data: order.description,
         dataTestId: `${order.orderId}-description`,
       },
       {

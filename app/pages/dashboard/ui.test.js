@@ -180,7 +180,7 @@ test('should render the unsubmitted orders table content', async (t) => {
   const table = Selector('div[data-test-id="unsubmitted-orders-table"]');
   const row = table.find('[data-test-id="table-row-0"]');
   const orderId = row.find('a[data-test-id="order1-id"]');
-  const orderDescription = row.find('div[data-test-id="order1-description"]');
+  const description = row.find('div[data-test-id="order1-description"]');
   const lastUpdatedBy = row.find('div[data-test-id="order1-lastUpdatedBy"]');
   const lastUpdated = row.find('div[data-test-id="order1-lastUpdated"]');
   const dateCreated = row.find('div[data-test-id="order1-dateCreated"]');
@@ -190,8 +190,8 @@ test('should render the unsubmitted orders table content', async (t) => {
     .expect(orderId.exists).ok()
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[0].orderId)
     .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order1`)
-    .expect(orderDescription.exists).ok()
-    .expect(await extractInnerText(orderDescription)).eql(mockOrdersData[0].orderDescription)
+    .expect(description.exists).ok()
+    .expect(await extractInnerText(description)).eql(mockOrdersData[0].description)
     .expect(lastUpdatedBy.exists).ok()
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[0].lastUpdatedBy)
     .expect(lastUpdated.exists).ok()
@@ -235,7 +235,7 @@ test('should render the submitted orders table content', async (t) => {
   const table = Selector('div[data-test-id="submitted-orders-table"]');
   const row = table.find('[data-test-id="table-row-0"]');
   const orderId = row.find('a[data-test-id="order2-id"]');
-  const orderDescription = row.find('div[data-test-id="order2-description"]');
+  const description = row.find('div[data-test-id="order2-description"]');
   const lastUpdatedBy = row.find('div[data-test-id="order2-lastUpdatedBy"]');
   const lastUpdated = row.find('div[data-test-id="order2-lastUpdated"]');
   const dateCreated = row.find('div[data-test-id="order2-dateCreated"]');
@@ -245,8 +245,8 @@ test('should render the submitted orders table content', async (t) => {
     .expect(orderId.exists).ok()
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[1].orderId)
     .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order2`)
-    .expect(orderDescription.exists).ok()
-    .expect(await extractInnerText(orderDescription)).eql(mockOrdersData[1].orderDescription)
+    .expect(description.exists).ok()
+    .expect(await extractInnerText(description)).eql(mockOrdersData[1].description)
     .expect(lastUpdatedBy.exists).ok()
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[1].lastUpdatedBy)
     .expect(lastUpdated.exists).ok()

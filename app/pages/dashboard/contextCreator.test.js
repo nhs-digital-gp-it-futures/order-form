@@ -5,7 +5,7 @@ import { getContext } from './contextCreator';
 const mockOrdersData = [
   {
     orderId: 'order1',
-    orderDescription: 'Some Order',
+    description: 'Some Order',
     lastUpdatedBy: 'Bob Smith',
     lastUpdated: '2020-05-06T09:29:52.4965647Z',
     dateCreated: '2020-05-06T09:29:52.4965653Z',
@@ -13,7 +13,7 @@ const mockOrdersData = [
   },
   {
     orderId: 'order2',
-    orderDescription: 'Some new order',
+    description: 'Some new order',
     lastUpdatedBy: 'Alice Smith',
     lastUpdated: '2020-06-06T09:29:52.49657Z',
     dateCreated: '2020-06-06T09:29:52.4965701Z',

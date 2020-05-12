@@ -222,7 +222,7 @@ describe('routes', () => {
         .type('form')
         .set('Cookie', [cookies, mockAuthorisedCookie])
         .send({
-          orderDescription: 'a description of the order',
+          description: 'a description of the order',
           _csrf: csrfToken,
         })
         .expect(302)

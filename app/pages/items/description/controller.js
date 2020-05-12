@@ -11,12 +11,15 @@ export const postOrPutDescription = async ({
   const isNewOrder = orderId === 'neworder';
   // TODO: replace null with PUT endpoint
   const endpoint = isNewOrder
-    ? getEndpoint({ endpointLocator: 'postDescription', options: { orgId } })
+    ? getEndpoint({ endpointLocator: 'postDescription' })
     : null;
-  const body = { orderDescription: data.description };
+  const body = { description: data.description };
   const apiCallParams = {
     endpoint,
-    body,
+    body: isNewOrder ? {
+      ...body,
+      organisationId: orgId,
+    } : body,
     accessToken,
     logger,
   };

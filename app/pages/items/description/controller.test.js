@@ -15,11 +15,13 @@ describe('description controller', () => {
       postData
         .mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-      await postOrPutDescription({ orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_token' });
+      await postOrPutDescription({
+        orgId: 'org-id', orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_token',
+      });
       expect(postData.mock.calls.length).toEqual(1);
       expect(postData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/order`,
-        body: { orderDescription: 'an order description' },
+        endpoint: `${orderApiUrl}/api/v1/orders`,
+        body: { description: 'an order description', organisationId: 'org-id' },
         accessToken: 'access_token',
         logger,
       });
