@@ -7,7 +7,7 @@ export const getDescriptionContext = params => getContext(params);
 
 export const postOrPatchDescription = async ({ orderId, accessToken, data }) => {
   const isNewOrder = orderId === 'neworder';
-  // TODO: add PATCH endpoint
+  // TODO: add PUT endpoint
   const endpoint = isNewOrder ? getEndpoint({ endpointLocator: 'postDescription' }) : null;
   const body = { orderDescription: data.description };
   const apiCallParams = {
@@ -18,7 +18,7 @@ export const postOrPatchDescription = async ({ orderId, accessToken, data }) => 
   };
 
   try {
-    // TODO: call patchData if not new order
+    // TODO: call putData if not new order
     const response = isNewOrder ? await postData(apiCallParams) : {};
     logger.info(`Order ${isNewOrder ? 'added' : 'updated'} - id: ${response.data.id}, ${JSON.stringify(body)}`);
     return { success: true, orderId: isNewOrder ? response.data.orderId : orderId };
