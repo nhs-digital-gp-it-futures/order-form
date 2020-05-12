@@ -5,10 +5,14 @@ import { logger } from '../../../logger';
 
 export const getDescriptionContext = params => getContext(params);
 
-export const postOrPatchDescription = async ({ orderId, accessToken, data }) => {
+export const postOrPutDescription = async ({
+  orgId, orderId, accessToken, data,
+}) => {
   const isNewOrder = orderId === 'neworder';
-  // TODO: add PUT endpoint
-  const endpoint = isNewOrder ? getEndpoint({ endpointLocator: 'postDescription' }) : null;
+  // TODO: replace null with PUT endpoint
+  const endpoint = isNewOrder
+    ? getEndpoint({ endpointLocator: 'postDescription', options: { orgId } })
+    : null;
   const body = { orderDescription: data.description };
   const apiCallParams = {
     endpoint,

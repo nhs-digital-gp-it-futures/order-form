@@ -1,12 +1,12 @@
 import { postData } from 'buying-catalogue-library';
-import { postOrPatchDescription } from './controller';
+import { postOrPutDescription } from './controller';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
 jest.mock('buying-catalogue-library');
 
 describe('description controller', () => {
-  describe('postOrPatchDescription', () => {
+  describe('postOrPutDescription', () => {
     afterEach(() => {
       postData.mockReset();
     });
@@ -15,7 +15,7 @@ describe('description controller', () => {
       postData
         .mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-      await postOrPatchDescription({ orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_token' });
+      await postOrPutDescription({ orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_token' });
       expect(postData.mock.calls.length).toEqual(1);
       expect(postData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/order`,
@@ -29,7 +29,7 @@ describe('description controller', () => {
       postData
         .mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-      const response = await postOrPatchDescription({ orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_token' });
+      const response = await postOrPutDescription({ orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_token' });
 
       expect(response.success).toEqual(true);
     });
@@ -39,7 +39,7 @@ describe('description controller', () => {
     //   postData
     //     .mockRejectedValueOnce({ response: { status: 400, data: '400 response data' } });
 
-    // const response = await postOrPatchDescription({
+    // const response = await postOrPutDescription({
     // orderId: 'neworder',
     // data: { description: 'an order description' },
     // accessToken: 'access_token' });
@@ -52,7 +52,7 @@ describe('description controller', () => {
     //     .mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
 
     //   try {
-    // await postOrPatchDescription({orderId:
+    // await postOrPutDescription({orderId:
     // 'neworder',
     // data: { description: 'an order description' },
     // accessToken: 'access_token' });
