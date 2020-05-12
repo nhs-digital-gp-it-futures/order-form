@@ -1,9 +1,13 @@
 {
-  "taskList": [
+  "tasks": [
     {
-      "taskName": "Start your order",
-      "items": [
-        { "description": "Provide a description of your order" }
+      "name": "Start your order",
+      "sections": [
+        {
+          "id": "description",
+          "title": "Provide a description of your order",
+          "enabled": true
+        }
       ]
     }
   ]

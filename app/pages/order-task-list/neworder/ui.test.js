@@ -87,14 +87,24 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
-test('should render the task-list component', async (t) => {
+test('should render the first task as Start your order task and description item as a href', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
   const taskList = Selector('[data-test-id="task-list"]');
+  const firstTask = Selector('li[data-test-id="task-0"]');
+  const firstTaskFirstItem = Selector('li[data-test-id="task-0-item-0"]');
 
   await t
-    .expect(taskList.exists).ok();
+    .expect(taskList.exists).ok()
+    .expect(firstTask.exists).ok()
+    .expect(await extractInnerText(firstTask.find('h2 span'))).eql('1.')
+    .expect(await extractInnerText(firstTask.find('h2 div'))).eql('Start your order')
+    .expect(firstTaskFirstItem.exists).ok()
+    .expect(await extractInnerText(firstTaskFirstItem)).eql('Provide a description of your order')
+    .expect(firstTaskFirstItem.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/neworder/description`)
+    .click(firstTaskFirstItem.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/neworder/description`);
 });
 
 test('should render the "Delete order" button', async (t) => {
