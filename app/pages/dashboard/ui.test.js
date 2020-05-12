@@ -17,7 +17,7 @@ const setCookies = ClientFunction(() => {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders')
+    .get('/api/v1/organisation/org1/orders')
     .reply(200, mockOrdersData);
 };
 
