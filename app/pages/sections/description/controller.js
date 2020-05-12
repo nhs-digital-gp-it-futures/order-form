@@ -25,7 +25,9 @@ export const postOrPutDescription = async ({
 
   try {
     const response = isNewOrder ? await postData(apiCallParams) : await putData(apiCallParams);
-    const returnOrderId = (response.data && response.data.orderId) ? response.data.orderId : orderId;
+    const returnOrderId = (response.data && response.data.orderId)
+      ? response.data.orderId
+      : orderId;
     logger.info(`Order ${isNewOrder ? 'added' : 'updated'} - id: ${returnOrderId}, ${JSON.stringify(body)}`);
     return { success: true, orderId: returnOrderId };
   } catch (err) {
@@ -37,16 +39,3 @@ export const postOrPutDescription = async ({
     throw new Error();
   }
 };
-
-// {
-//   endpoint: 'http://localhost:5104/api/v1/orders/order-id/sections/description',
-//   body: { description: '' },
-//   accessToken: undefined
-// }
-
-// {
-//   endpoint: 'http://localhost:5104/api/v1/orders',
-//   body: { description: '', organisationId: 'org-id' },
-//   accessToken: undefined
-// }
-// { success: true, orderId: 'order1' }
