@@ -12,7 +12,7 @@ jest.mock('./logger');
 dashboardController.getDashboardContext = jest.fn()
   .mockResolvedValue({});
 
-descriptionController.postOrPatchDescription = jest.fn()
+descriptionController.postOrPutDescription = jest.fn()
   .mockResolvedValue({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
@@ -194,7 +194,7 @@ describe('routes', () => {
     const path = '/organisation/neworder/description';
 
     afterEach(() => {
-      descriptionController.postOrPatchDescription.mockReset();
+      descriptionController.postOrPutDescription.mockReset();
     });
 
     it('should return 403 forbidden if no csrf token is available', async () => {
@@ -210,7 +210,7 @@ describe('routes', () => {
     });
 
     it('should return the correct status and text if response.success is true', async () => {
-      descriptionController.postOrPatchDescription = jest.fn()
+      descriptionController.postOrPutDescription = jest.fn()
         .mockImplementation(() => Promise.resolve({ success: true, orderId: 'order1' }));
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet(

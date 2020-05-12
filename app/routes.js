@@ -6,7 +6,7 @@ import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routerHelper';
 import { getDashboardContext } from './pages/dashboard/controller';
-import { getDescriptionContext, postOrPatchDescription } from './pages/items/description/controller';
+import { getDescriptionContext, postOrPutDescription } from './pages/items/description/controller';
 import includesContext from './includes/manifest.json';
 import { getNewOrderPageContext } from './pages/order-task-list/controller';
 
@@ -62,7 +62,9 @@ export const routes = (authProvider) => {
   router.post('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const response = await postOrPatchDescription({ orderId, data: req.body, accessToken });
+    const response = await postOrPutDescription({
+      orgId: req.user.primaryOrganisationId, orderId, data: req.body, accessToken,
+    });
     if (response.success) return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
     // TODO: res.redirect for validation errors
     return res.status(200).send(`redirect with validation to ${orderId} page`);
