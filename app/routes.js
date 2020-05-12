@@ -32,8 +32,10 @@ export const routes = (authProvider) => {
 
   router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    // TODO: Pass in orgId to getDashboardContext
-    const context = await getDashboardContext({ accessToken });
+    // TODO: Add orgName to getDashboardContext
+    const context = await getDashboardContext({
+      accessToken, orgId: req.user.primaryOrganisationId,
+    });
     res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
   }));
 
