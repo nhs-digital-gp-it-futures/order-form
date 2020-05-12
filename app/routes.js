@@ -53,6 +53,9 @@ export const routes = (authProvider) => {
 
   router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+
+    // call controller in order-task-list call it getExistingOrderPageContext({ orderId });
+
     res.status(200).send(`existing order ${orderId} page`);
   }));
 
