@@ -13,7 +13,10 @@ dashboardController.getDashboardContext = jest.fn()
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
 const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage',
+  id: '88421113',
+  name: 'Cool Dude',
+  ordering: 'manage',
+  primaryOrganisationId: 'org-id',
 });
 
 const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
@@ -98,7 +101,8 @@ describe('routes', () => {
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text).toEqual('new order description page');
+        expect(res.text.includes('data-test-id="description-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       }));
   });
 
@@ -130,7 +134,8 @@ describe('routes', () => {
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text).toEqual('existing order some-order-id description page');
+        expect(res.text.includes('data-test-id="description-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       }));
   });
 
