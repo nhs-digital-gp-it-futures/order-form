@@ -18,7 +18,10 @@ descriptionController.postOrPutDescription = jest.fn()
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
 const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage',
+  id: '88421113',
+  name: 'Cool Dude',
+  ordering: 'manage',
+  primaryOrganisationId: 'org-id',
 });
 
 const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;

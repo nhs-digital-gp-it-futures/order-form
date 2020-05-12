@@ -35,7 +35,7 @@ describe('getContext', () => {
   });
 
   it('should construct title', () => {
-    const context = getContext({ orgId: 'Org1' });
+    const context = getContext({ orgName: 'Org1' });
     expect(context.title).toEqual('Org1 orders');
   });
 
@@ -45,13 +45,13 @@ describe('getContext', () => {
   });
 
   it('should construct proxyLinkHref', () => {
-    const context = getContext({ orgId: 'Org1' });
+    const context = getContext({ orgName: 'Org1' });
     expect(context.proxyLinkHref).toEqual('#');
   });
 
   describe('ordersData', () => {
     it('should format a submitted order correctly', () => {
-      const context = getContext({ orgId: 'Org1', ordersData: mockOrdersData });
+      const context = getContext({ orgName: 'Org1', ordersData: mockOrdersData });
       expect(context.submittedOrders.length).toEqual(1);
       const submittedOrder1 = context.submittedOrders[0];
       expect(submittedOrder1[0].data).toEqual('order2');
@@ -68,7 +68,7 @@ describe('getContext', () => {
     });
 
     it('should format an unsubmitted order correctly', () => {
-      const context = getContext({ orgId: 'Org1', ordersData: mockOrdersData });
+      const context = getContext({ orgName: 'Org1', ordersData: mockOrdersData });
       expect(context.unsubmittedOrders.length).toEqual(1);
       const unsubmittedOrder1 = context.unsubmittedOrders[0];
       expect(unsubmittedOrder1[0].data).toEqual('order1');
@@ -94,7 +94,7 @@ describe('getContext', () => {
         { status: 'Unsubmitted' },
         { status: 'Unsubmitted' },
       ];
-      const context = getContext({ orgId: 'Org1', ordersData: manyMockOrders });
+      const context = getContext({ orgName: 'Org1', ordersData: manyMockOrders });
       expect(context.unsubmittedOrders.length).toEqual(5);
       expect(context.submittedOrders.length).toEqual(2);
     });
