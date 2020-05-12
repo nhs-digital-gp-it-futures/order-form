@@ -2,7 +2,7 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 import { formatDate } from '../../helpers/dateFormatter';
 
-export const getContext = ({ orgId, ordersData = [] }) => {
+export const getContext = ({ orgName, ordersData = [] }) => {
   const formattedOrders = ordersData.reduce((acc, order) => {
     const formattedOrder = [
       {
@@ -34,7 +34,7 @@ export const getContext = ({ orgId, ordersData = [] }) => {
 
   return ({
     ...manifest,
-    title: `${orgId} orders`,
+    title: `${orgName} orders`,
     newOrderButtonHref: `${baseUrl}/organisation/neworder`,
     proxyLinkHref: '#',
     submittedOrders: formattedOrders.submittedOrders,
