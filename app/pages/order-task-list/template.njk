@@ -1,9 +1,10 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
+{% from 'components/bc-task-list/macro.njk' import bcTaskList %}
 
 {% block body %}
-  <div class="nhsuk-width-container"  data-test-id="{{pageName}}-page">
+  <div class="nhsuk-width-container"  data-test-id="{{orderId}}-page">
     <div data-test-id="go-back-link">
       {{ backLink({
         href: backLinkHref,
@@ -12,9 +13,19 @@
     </div>
 
 	  <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds">
-        <h1 data-test-id="{{pageName}}-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
-        <h2 data-test-id="{{pageName}}-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
+      <div class="nhsuk-grid-column-two-thirds nhsuk-u-margin-bottom-6">
+        <h1 data-test-id="{{orderId}}-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
+        <h2 data-test-id="{{orderId}}-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
+      </div>
+    </div>
+
+    <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-3 bc-c-order-table--hr"/>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        {{ bcTaskList({
+          taskList: taskList
+        }) }}
       </div>
     </div>
 

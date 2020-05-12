@@ -1,0 +1,14 @@
+{
+  "tasks": [
+    {
+      "name": "Start your order",
+      "sections": [
+        {
+          "id": "description",
+          "title": "Provide a description of your order",
+          "enabled": true
+        }
+      ]
+    }
+  ]
+}
