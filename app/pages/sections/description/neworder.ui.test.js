@@ -8,7 +8,7 @@ const pageUrl = 'http://localhost:1234/organisation/neworder/description';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage',
+    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
   });
 
   document.cookie = `fakeToken=${cookieValue}`;
@@ -22,7 +22,7 @@ const pageSetup = async (t, withAuth = false) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Description page')
+fixture('Description page (new order)')
   .page('http://localhost:1234/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
