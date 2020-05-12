@@ -68,6 +68,37 @@ describe('header', () => {
       }));
     });
 
+    describe('when username and organisation are provided', () => {
+      it('should render username and organisation', componentTester(setup, (harness) => {
+        const context = {
+          username: 'user 1',
+          organisation: 'nhs',
+        };
+        harness.request(context, ($) => {
+          const headerBanner = $('header[data-test-id="header-banner"]');
+          const loginLogout = headerBanner.find('[data-test-id="login-logout-component"]');
+          const loginLogoutText = loginLogout.find('span').text().trim().split(/\s\s+/);
+          expect(loginLogoutText[0]).toEqual(`Logged in as: ${context.username} for ${context.organisation}`);
+        });
+      }));
+
+      it('should render logout link', componentTester(setup, (harness) => {
+        const context = {
+          config: {
+            baseUrl: '',
+          },
+          username: 'user 1',
+          organisation: 'nhs',
+        };
+        harness.request(context, ($) => {
+          const headerBanner = $('header[data-test-id="header-banner"]');
+          const logoutLink = headerBanner.find('[data-test-id="login-logout-component"] a');
+          expect(logoutLink.text().trim()).toEqual('Log out');
+          expect(logoutLink.attr('href')).toEqual('/logout');
+        });
+      }));
+    });
+
     describe('when username is not provided', () => {
       it('should render login link', componentTester(setup, (harness) => {
         const context = {
