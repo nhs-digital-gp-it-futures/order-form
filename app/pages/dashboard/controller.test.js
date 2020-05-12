@@ -22,10 +22,10 @@ describe('dashboard controller', () => {
       getData
         .mockResolvedValueOnce(mockOrdersData);
 
-      await getDashboardContext({ organisationId: 1, accessToken: 'access_token' });
+      await getDashboardContext({ orgId: 'org1', accessToken: 'access_token' });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders`,
+        endpoint: `${orderApiUrl}/api/v1/organisation/org1/orders`,
         accessToken: 'access_token',
         logger,
       });

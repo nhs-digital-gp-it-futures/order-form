@@ -2,7 +2,7 @@ import { oidcBaseUri, orderApiUrl } from './config';
 
 const endpoints = {
   getIdentityApiHealth: () => `${oidcBaseUri}/health/ready`,
-  getOrders: () => `${orderApiUrl}/api/v1/orders`,
+  getOrders: options => `${orderApiUrl}/api/v1/organisation/${options.orgId}/orders`,
   postDescription: () => `${orderApiUrl}/api/v1/order`,
 };
 
