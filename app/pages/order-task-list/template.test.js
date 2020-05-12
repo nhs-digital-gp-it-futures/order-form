@@ -1,5 +1,6 @@
 import { componentTester } from '../../test-utils/componentTester';
 import manifest from './neworder/manifest.json';
+import taskListManifest from './taskListManifest.json';
 
 const setup = {
   template: {
@@ -10,7 +11,8 @@ const setup = {
 describe('neworder task-list page', () => {
   const neworderPageContext = {
     ...manifest,
-    pageName: 'neworder',
+    taskList: taskListManifest.taskList,
+    orderId: 'neworder',
     backLinkHref: '/organisation',
   };
 
@@ -43,6 +45,13 @@ describe('neworder task-list page', () => {
       const neworderPageDescription = $('[data-test-id="neworder-page-description"]');
       expect(neworderPageDescription.length).toEqual(1);
       expect(neworderPageDescription.text().trim()).toEqual(neworderPageContext.description);
+    });
+  }));
+
+  it('should render the neworder task-list component', componentTester(setup, (harness) => {
+    harness.request(neworderPageContext, ($) => {
+      const taskListComponent = $('[data-test-id="task-list"]');
+      expect(taskListComponent.length).toEqual(1);
     });
   }));
 

@@ -1,3 +1,3 @@
 import { getContext } from './contextCreator';
 
-export const getNewOrderPageContext = () => getContext({ pageName: 'neworder' });
+export const getNewOrderPageContext = () => getContext({ orderId: 'neworder' });
