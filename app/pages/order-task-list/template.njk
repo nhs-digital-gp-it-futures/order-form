@@ -1,12 +1,13 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
 
 {% block body %}
   <div class="nhsuk-width-container"  data-test-id="{{pageName}}-page">
     <div data-test-id="go-back-link">
       {{ backLink({
-        "href": backLinkHref,
-        "text": backLinkText
+        href: backLinkHref,
+        text: backLinkText
       }) }}
     </div>
 
@@ -15,6 +16,45 @@
         <h1 data-test-id="{{pageName}}-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
         <h2 data-test-id="{{pageName}}-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
       </div>
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-third">
+        {{ bcButton({
+          dataTestId: "delete-order-button",
+          text: deleteOrderButton.text,
+          altText: deleteOrderButton.altText,
+          classes: "nhsuk-button--secondary nhsuk-u-margin-bottom-9",
+          href: deleteOrderButton.href,
+          disabled: deleteOrderButton.disabled
+        }) }}
+      </div>
+
+      <div class="nhsuk-grid-column-two-thirds">
+        <div class="bc-u-float-right">
+          <div class="bc-u-inline-block">
+            {{ bcButton({
+              dataTestId: "preview-order-button",
+              text: previewOrderButton.text,
+              altText: previewOrderButton.altText,
+              classes: "nhsuk-button--secondary nhsuk-u-margin-bottom-9 nhsuk-u-margin-right-5",
+              href: previewOrderButton.href,
+              disabled: previewOrderButton.disabled
+            }) }}
+          </div>
+
+          <div class="bc-u-inline-block">
+            {{ bcButton({
+              dataTestId: "submit-order-button",
+              text: submitOrderButton.text,
+              altText: submitOrderButton.altText,
+              classes: "nhsuk-u-margin-bottom-9",
+              href: submitOrderButton.href,
+              disabled: submitOrderButton.disabled
+            }) }}
+          </div>
+        </div>
+       </div>
     </div>
   </div>
 {% endblock %}

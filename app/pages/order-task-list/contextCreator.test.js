@@ -9,6 +9,9 @@ describe('order-task-list contextCreator', () => {
       expect(context.backLinkText).toEqual(newOrderManifest.backLinkText);
       expect(context.title).toEqual(newOrderManifest.title);
       expect(context.description).toEqual(newOrderManifest.description);
+      expect(context.deleteOrderButton).toEqual(newOrderManifest.deleteOrderButton);
+      expect(context.previewOrderButton).toEqual(newOrderManifest.previewOrderButton);
+      expect(context.submitOrderButton).toEqual(newOrderManifest.submitOrderButton);
     });
 
     it('should return the pageName provided', () => {

@@ -1,6 +1,6 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
-{% from 'components/button/macro.njk' import button %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/view-data-link/macro.njk' import viewDataLink %}
 {% from 'components/bc-table/macro.njk' import bcTable %}
 
@@ -17,13 +17,14 @@
       <div class="nhsuk-grid-column-two-thirds">
         <h1 data-test-id="dashboard-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
         <h2 data-test-id="dashboard-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
-        <div data-test-id="new-order-button">
-          {{ button({
-            text: newOrderButtonText,
-            href: newOrderButtonHref,
-            classes: "nhsuk-u-margin-bottom-3 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5"
-          }) }}
-        </div>
+
+        {{ bcButton({
+          dataTestId: "new-order-button",
+          text: newOrderButtonText,
+          classes: "nhsuk-u-margin-bottom-3 nhsuk-u-padding-left-5 nhsuk-u-padding-right-5",
+          href: newOrderButtonHref
+        }) }}
+
         <div data-test-id="proxy-link" class="bc-c-data-link nhsuk-u-margin-bottom-9">
           <a href="{{proxyLinkHref}}">{{ proxyLinkText }}</a>
         </div>
@@ -36,7 +37,8 @@
           <div class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
             {{ bcTable({
               columnInfo: columnInfo,
-              columnClass: columnClass
+              columnClass: columnClass,
+              data: unsubmittedOrders
             })}}
           </div>
         </div>
@@ -47,7 +49,8 @@
           <div class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
             {{ bcTable({
               columnInfo: columnInfo,
-              columnClass: columnClass
+              columnClass: columnClass,
+              data: submittedOrders
             })}}
           </div>
         </div>
