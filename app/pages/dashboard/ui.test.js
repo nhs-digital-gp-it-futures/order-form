@@ -9,7 +9,10 @@ const pageUrl = 'http://localhost:1234/organisation';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage',
+    id: '88421113',
+    name: 'Cool Dude',
+    ordering: 'manage',
+    primaryOrganisationId: 'org-id',
   });
 
   document.cookie = `fakeToken=${cookieValue}`;
@@ -17,7 +20,7 @@ const setCookies = ClientFunction(() => {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/organisation/undefined/orders')
+    .get('/api/v1/organisation/org-id/orders')
     .reply(200, mockOrdersData);
 };
 
