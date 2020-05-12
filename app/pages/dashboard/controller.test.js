@@ -22,10 +22,10 @@ describe('dashboard controller', () => {
       getData
         .mockResolvedValueOnce(mockOrdersData);
 
-      await getDashboardContext({ orgId: 'org1', accessToken: 'access_token' });
+      await getDashboardContext({ orgId: 'org-id', orgName: 'org1', accessToken: 'access_token' });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/organisation/org1/orders`,
+        endpoint: `${orderApiUrl}/api/v1/organisation/org-id/orders`,
         accessToken: 'access_token',
         logger,
       });
@@ -37,10 +37,10 @@ describe('dashboard controller', () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
 
-      await getDashboardContext({ orgId: 'org1', accessToken: 'access_token' });
+      await getDashboardContext({ orgId: 'org-id', orgName: 'org1', accessToken: 'access_token' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orgId: 'org1', ordersData: mockOrdersData });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orgName: 'org1', ordersData: mockOrdersData });
     });
 
     it('should call getContext with the correct params when no orders data is returned by getData', async () => {
@@ -49,9 +49,9 @@ describe('dashboard controller', () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
 
-      await getDashboardContext({ orgId: 'org1', accessToken: 'access_token' });
+      await getDashboardContext({ orgId: 'org-id', orgName: 'org1', accessToken: 'access_token' });
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orgId: 'org1', ordersData: [] });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orgName: 'org1', ordersData: [] });
     });
   });
 });
