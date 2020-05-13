@@ -91,14 +91,3 @@ describe('decription contextCreator', () => {
     });
   });
 });
-// export const getErrorContext = ({ orderId, validationErrors, data }) => {
-//   const formattedErrors = formatErrors({ manifest, errors: validationErrors });
-//   const modifiedManifest = addErrorsAndDataToManifest({ manifest, errors: formattedErrors, data });
-//   const allErrors = formatAllErrors(modifiedManifest.questions);
-
-//   return {
-//     ...modifiedManifest,
-//     errors: allErrors,
-//     backlinkHref: `${baseUrl}/organisation/${orderId}`,
-//   };
-// };

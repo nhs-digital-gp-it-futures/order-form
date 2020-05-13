@@ -167,7 +167,7 @@ test('should show the error summary when there are validation errors', async (t)
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Description must be 100 characters or fewer')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Description must be 100 characters or fewer');
 });
 
 test('should show text fields as errors with error message when there are validation errors', async (t) => {
