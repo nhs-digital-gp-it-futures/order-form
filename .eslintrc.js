@@ -17,7 +17,7 @@ module.exports = {
   },
   "overrides": [
     {
-      "files": ["**/test-utils/**", "**/ui.test.js"],
+      "files": ["**/test-utils/**", "**/*ui.test.js"],
         "rules": {
           "newline-per-chained-call": 0,
           "max-len": "off"

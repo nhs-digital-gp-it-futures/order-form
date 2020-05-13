@@ -8,7 +8,7 @@ const pageUrl = 'http://localhost:1234/organisation/neworder/description';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage',
+    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
   });
 
   document.cookie = `fakeToken=${cookieValue}`;
@@ -22,7 +22,7 @@ const pageSetup = async (t, withAuth = false) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Description page')
+fixture('Description page (new order)')
   .page('http://localhost:1234/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -100,6 +100,17 @@ test('should render a textarea for description', async (t) => {
     .expect(description.find('textarea').count).eql(1)
     .expect(footerAdvice.exists).ok()
     .expect(await extractInnerText(footerAdvice)).eql(content.descriptionQuestion.question.footerAdvice);
+});
+
+test('should not populate the text area with existing decription data', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const description = Selector('[data-test-id="question-description"] textarea');
+
+  await t
+    .expect(description.exists).ok()
+    .expect(description.value).eql('');
 });
 
 test('should render save button', async (t) => {
