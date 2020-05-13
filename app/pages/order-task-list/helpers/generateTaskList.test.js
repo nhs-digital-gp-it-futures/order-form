@@ -65,4 +65,59 @@ describe('generateTaskList', () => {
 
     expect(taskList).toEqual(expectedTaskList);
   });
+
+  describe('when sectionsData is provided', () => {
+    it('should set the item as "complete" if "status: complete" is passed in for that section', () => {
+      const expectedTaskList = [
+        {
+          taskName: 'some task name',
+          items: [
+            {
+              description: 'some item description',
+              href: `${baseUrl}/organisation/neworder/some-section`,
+              complete: true,
+            },
+            {
+              description: 'some other item description',
+              complete: false,
+            },
+          ],
+        },
+      ];
+
+      const taskListManifest = {
+        tasks: [
+          {
+            name: 'some task name',
+            sections: [
+              {
+                id: 'some-section',
+                title: 'some item description',
+                enabled: true,
+              },
+              {
+                id: 'some-other-section',
+                title: 'some other item description',
+              },
+            ],
+          },
+        ],
+      };
+
+      const sectionsData = [
+        {
+          id: 'some-section',
+          status: 'complete',
+        },
+        {
+          id: 'some-other-section',
+          status: 'incomplete',
+        },
+      ];
+
+      const taskList = generateTaskList({ orderId: 'neworder', taskListManifest, sectionsData });
+
+      expect(taskList).toEqual(expectedTaskList);
+    });
+  });
 });
