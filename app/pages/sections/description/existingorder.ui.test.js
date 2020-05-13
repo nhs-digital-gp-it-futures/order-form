@@ -14,8 +14,15 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
+const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/description')
+    .reply(200, { description: 'a lovely description' });
+};
+
 const pageSetup = async (t, withAuth = false) => {
   if (withAuth) {
+    mocks();
     await setCookies();
   }
 };
@@ -100,6 +107,17 @@ test('should render a textarea for description', async (t) => {
     .expect(description.find('textarea').count).eql(1)
     .expect(footerAdvice.exists).ok()
     .expect(await extractInnerText(footerAdvice)).eql(content.descriptionQuestion.question.footerAdvice);
+});
+
+test('should populate the text area with existing decription data', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const description = Selector('[data-test-id="question-description"] textarea');
+
+  await t
+    .expect(description.exists).ok()
+    .expect(description.value).eql('a lovely description');
 });
 
 test('should render save button', async (t) => {

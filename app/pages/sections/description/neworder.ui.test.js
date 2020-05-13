@@ -102,6 +102,17 @@ test('should render a textarea for description', async (t) => {
     .expect(await extractInnerText(footerAdvice)).eql(content.descriptionQuestion.question.footerAdvice);
 });
 
+test('should not populate the text area with existing decription data', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const description = Selector('[data-test-id="question-description"] textarea');
+
+  await t
+    .expect(description.exists).ok()
+    .expect(description.value).eql('');
+});
+
 test('should render save button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
