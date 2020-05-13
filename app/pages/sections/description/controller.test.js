@@ -1,4 +1,4 @@
-import { postData } from 'buying-catalogue-library';
+import { postData, putData } from 'buying-catalogue-library';
 import { postOrPutDescription } from './controller';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
@@ -9,6 +9,7 @@ describe('description controller', () => {
   describe('postOrPutDescription', () => {
     afterEach(() => {
       postData.mockReset();
+      putData.mockReset();
     });
 
     it('should call postData once with the correct params for neworder', async () => {
@@ -22,6 +23,22 @@ describe('description controller', () => {
       expect(postData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders`,
         body: { description: 'an order description', organisationId: 'org-id' },
+        accessToken: 'access_token',
+        logger,
+      });
+    });
+
+    it('should call putData once with the correct params for existing order', async () => {
+      putData
+        .mockResolvedValueOnce({ data: { orderId: 'order1' } });
+
+      await postOrPutDescription({
+        orgId: 'org-id', orderId: 'order-id', data: { description: 'an order description' }, accessToken: 'access_token',
+      });
+      expect(putData.mock.calls.length).toEqual(1);
+      expect(putData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
+        body: { description: 'an order description' },
         accessToken: 'access_token',
         logger,
       });
