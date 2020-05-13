@@ -1,7 +1,8 @@
 {
   "backLinkText": "Go back",
-  "title": "New order",
+  "title": "Order",
   "description": "You must complete step 1 and a Call-off Agreement ID will be generated before you can view your order summary.",
+  "orderDescriptionTitle": "Order description",
   "deleteOrderButton": {
     "text": "Delete order",
     "href": "#",

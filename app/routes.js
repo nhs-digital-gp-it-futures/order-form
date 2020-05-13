@@ -34,9 +34,10 @@ export const routes = (authProvider) => {
 
   router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    // TODO: Add orgName to getDashboardContext
     const context = await getDashboardContext({
-      accessToken, orgId: req.user.primaryOrganisationId,
+      accessToken,
+      orgId: req.user.primaryOrganisationId,
+      orgName: req.user.primaryOrganisationName,
     });
     res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
   }));
@@ -46,22 +47,17 @@ export const routes = (authProvider) => {
     res.render('pages/order-task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.get('/organisation/neworder/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const context = getDescriptionContext({ orderId: 'neworder' });
-    res.render('pages/sections/description/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-  }));
-
   router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const { orderId } = req.params;
-
-    // call controller in order-task-list call it getExistingOrderPageContext({ orderId });
-
-    res.status(200).send(`existing order ${orderId} page`);
+    // const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    // const { orderId } = req.params;
+    // const context = await getExistingOrderPageContext({ accessToken, orderId });
+    // res.render('pages/order-task-list/template.njk', addContext({ context, user: req.user }));
+    res.send('existing order some-order-id page');
   }));
 
   router.get('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const context = getDescriptionContext({ orderId });
+    const context = await getDescriptionContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     res.render('pages/sections/description/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 

@@ -20,9 +20,15 @@ describe('decription contextCreator', () => {
     });
 
     it('should construct the backLinkHref', () => {
-      const orderId = 'order-1';
+      const orderId = 'order-id';
       const context = getContext({ orderId });
       expect(context.backlinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+    });
+
+    it('should add description to the question', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId, description: 'a description of the order' });
+      expect(context.descriptionQuestion.question.data).toEqual('a description of the order');
     });
   });
 });
