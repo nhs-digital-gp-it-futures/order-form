@@ -131,13 +131,14 @@ describe('routes', () => {
   });
 
   describe('GET /organisation/:orderId', () => {
-    const path = '/organisation/order-id';
-
-    it('should redirect to the login page if the user is not logged in', () => (
-      checkAuthorisedRouteNotLoggedIn(path)
-    ));
+    it('should redirect to the login page if the user is not logged in', () => {
+      const path = '/organisation/order-id';
+      return checkAuthorisedRouteNotLoggedIn(path);
+    });
 
     it('should return the neworder page with correct status when the user is authorised', () => {
+      const path = '/organisation/neworder';
+
       taskListController.getTaskListPageContext = jest.fn()
         .mockResolvedValueOnce({ orderId: 'neworder' });
 
@@ -152,6 +153,8 @@ describe('routes', () => {
     });
 
     it('should return the existing order page with correct status when the user is authorised', () => {
+      const path = '/organisation/order-id';
+
       taskListController.getTaskListPageContext = jest.fn()
         .mockResolvedValueOnce({ orderId: 'order-id' });
 
