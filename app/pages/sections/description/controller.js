@@ -40,28 +40,6 @@ export const postOrPutDescription = async ({
     logger.info(`Order ${isNewOrder ? 'added' : 'updated'} - id: ${returnOrderId}, ${JSON.stringify(data)}`);
     return { success: true, orderId: returnOrderId };
   } catch (err) {
-  // const err = {
-  //   response: {
-  //     status: 400,
-  //     data: {
-  //       errors: [
-  //         {
-  //           field: 'Description',
-  //           id: 'OrderDescriptionRequired',
-  //         },
-  //         {
-  //           field: 'Description',
-  //           id: 'OrderDescriptionTooLong',
-  //         },
-  //         {
-  //           field: 'OrganisationId',
-  //           id: 'OrganisationIdRequired',
-  //         },
-  //       ],
-  //     },
-  //   },
-  // };
-
     if (err.response.status === 400 && err.response.data && err.response.data.errors) {
       return err.response.data;
     }
