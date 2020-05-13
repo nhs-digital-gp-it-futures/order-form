@@ -13,9 +13,6 @@ jest.mock('./logger');
 dashboardController.getDashboardContext = jest.fn()
   .mockResolvedValue({});
 
-orderTaskListController.getExistingOrderPageContext = jest.fn()
-  .mockResolvedValue({ orderId: 'order-id' });
-
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
 
@@ -133,23 +130,6 @@ describe('routes', () => {
       }));
   });
 
-  describe('GET /organisation/neworder', () => {
-    const path = '/organisation/neworder';
-
-    it('should redirect to the login page if the user is not logged in', () => (
-      checkAuthorisedRouteNotLoggedIn(path)
-    ));
-
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.text.includes('data-test-id="neworder-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
-  });
-
   describe('GET /organisation/:orderId', () => {
     const path = '/organisation/order-id';
 
@@ -157,14 +137,33 @@ describe('routes', () => {
       checkAuthorisedRouteNotLoggedIn(path)
     ));
 
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.text.includes('data-test-id="order-id-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
+    it('should return the neworder page with correct status when the user is authorised', () => {
+      orderTaskListController.getOrderTaskListPageContext = jest.fn()
+        .mockResolvedValueOnce({ orderId: 'neworder' });
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="neworder-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
+
+    it('should return the existing order page with correct status when the user is authorised', () => {
+      orderTaskListController.getOrderTaskListPageContext = jest.fn()
+        .mockResolvedValueOnce({ orderId: 'order-id' });
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="order-id-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
   });
 
   describe('GET /organisation/:orderId/description', () => {

@@ -6,7 +6,6 @@ import { baseUrl } from '../../config';
 
 export const getNewOrderContext = ({ orderId }) => ({
   ...neworderPageManifest,
-  // else get existingorder
   taskList: generateTaskList({ orderId, taskListManifest }),
   backLinkHref: `${baseUrl}/organisation`,
   orderId,

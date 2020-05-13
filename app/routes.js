@@ -8,7 +8,7 @@ import { withCatch, getHealthCheckDependencies, extractAccessToken } from './hel
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getDescriptionContext, postOrPutDescription } from './pages/sections/description/controller';
 import includesContext from './includes/manifest.json';
-import { getNewOrderPageContext, getExistingOrderPageContext } from './pages/order-task-list/controller';
+import { getOrderTaskListPageContext } from './pages/order-task-list/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -42,15 +42,10 @@ export const routes = (authProvider) => {
     res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.get('/organisation/neworder', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const context = getNewOrderPageContext();
-    res.render('pages/order-task-list/template.njk', addContext({ context, user: req.user }));
-  }));
-
   router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
-    const context = await getExistingOrderPageContext({ accessToken, orderId });
+    const context = await getOrderTaskListPageContext({ accessToken, orderId });
     res.render('pages/order-task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
