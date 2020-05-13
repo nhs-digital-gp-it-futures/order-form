@@ -47,11 +47,6 @@ export const routes = (authProvider) => {
     res.render('pages/order-task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.get('/organisation/neworder/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const context = getDescriptionContext({ orderId: 'neworder' });
-    res.render('pages/sections/description/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-  }));
-
   router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     res.status(200).send(`existing order ${orderId} page`);
@@ -59,7 +54,7 @@ export const routes = (authProvider) => {
 
   router.get('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const context = getDescriptionContext({ orderId });
+    const context = await getDescriptionContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     res.render('pages/sections/description/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
