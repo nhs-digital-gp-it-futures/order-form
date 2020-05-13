@@ -13,6 +13,7 @@ const setCookies = ClientFunction(() => {
     name: 'Cool Dude',
     ordering: 'manage',
     primaryOrganisationId: 'org-id',
+    primaryOrganisationName: 'org-name',
   });
 
   document.cookie = `fakeToken=${cookieValue}`;
@@ -84,8 +85,7 @@ test('should render the title', async (t) => {
 
   await t
     .expect(title.exists).ok()
-    // TODO: change value when orgName is in claims
-    .expect(await extractInnerText(title)).eql('undefined orders');
+    .expect(await extractInnerText(title)).eql('org-name orders');
 });
 
 test('should render the description', async (t) => {
