@@ -79,6 +79,7 @@ describe('generateTaskList', () => {
             },
             {
               description: 'some other item description',
+              complete: false,
             },
           ],
         },
