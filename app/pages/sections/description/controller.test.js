@@ -1,11 +1,63 @@
-import { postData, putData } from 'buying-catalogue-library';
-import { postOrPutDescription } from './controller';
+import { getData, postData, putData } from 'buying-catalogue-library';
+import { postOrPutDescription, getDescriptionContext } from './controller';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
+import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
 
+jest.mock('./contextCreator', () => ({
+  getContext: jest.fn(),
+}));
+
 describe('description controller', () => {
+  describe('getDescriptionContext', () => {
+    afterEach(() => {
+      getData.mockReset();
+      contextCreator.getContext.mockReset();
+    });
+
+    it('should call getData once with the correct params for an order with an id', async () => {
+      getData
+        .mockResolvedValueOnce({ data: { description: 'a lovely description' } });
+
+      await getDescriptionContext({ orderId: 'order-id', accessToken: 'access_token' });
+      expect(getData.mock.calls.length).toEqual(1);
+      expect(getData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
+        accessToken: 'access_token',
+        logger,
+      });
+    });
+
+    it('should not call getData for a new order', async () => {
+      await getDescriptionContext({ orderId: 'neworder', accessToken: 'access_token' });
+      expect(getData.mock.calls.length).toEqual(0);
+    });
+
+    it('should call getContext with the correct params for an order with an id and data returned from getData', async () => {
+      getData
+        .mockResolvedValueOnce({ description: 'a lovely description' });
+      contextCreator.getContext
+        .mockResolvedValueOnce();
+
+      await getDescriptionContext({ orderId: 'order-id', accessToken: 'access_token' });
+
+      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', description: 'a lovely description' });
+    });
+
+    it('should call getContext with the correct params for a new order', async () => {
+      contextCreator.getContext
+        .mockResolvedValueOnce();
+
+      await getDescriptionContext({ orderId: 'neworder', accessToken: 'access_token' });
+
+      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'neworder', description: '' });
+    });
+  });
+
   describe('postOrPutDescription', () => {
     afterEach(() => {
       postData.mockReset();

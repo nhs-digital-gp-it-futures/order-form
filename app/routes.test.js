@@ -12,6 +12,9 @@ jest.mock('./logger');
 dashboardController.getDashboardContext = jest.fn()
   .mockResolvedValue({});
 
+descriptionController.getDescriptionContext = jest.fn()
+  .mockResolvedValue({});
+
 descriptionController.postOrPutDescription = jest.fn()
   .mockResolvedValue({});
 
@@ -143,24 +146,7 @@ describe('routes', () => {
       }));
   });
 
-  describe('GET /organisation/neworder/description', () => {
-    const path = '/organisation/neworder/description';
-
-    it('should redirect to the login page if the user is not logged in', () => (
-      checkAuthorisedRouteNotLoggedIn(path)
-    ));
-
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.text.includes('data-test-id="description-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-      }));
-  });
-
-  describe('GET /organisation/some-order-id', () => {
+  describe('GET /organisation/:orderId', () => {
     const path = '/organisation/some-order-id';
 
     it('should redirect to the login page if the user is not logged in', () => (
@@ -176,7 +162,7 @@ describe('routes', () => {
       }));
   });
 
-  describe('GET /organisation/some-order-id/description', () => {
+  describe('GET /organisation/:orderId/description', () => {
     const path = '/organisation/some-order-id/description';
 
     it('should redirect to the login page if the user is not logged in', () => (
