@@ -5,12 +5,16 @@ import { routes } from './routes';
 import { baseUrl } from './config';
 import { getCsrfTokenFromGet } from './test-utils/helper';
 import * as dashboardController from './pages/dashboard/controller';
+import * as orderTaskListController from './pages/order-task-list/controller';
 import * as descriptionController from './pages/sections/description/controller';
 
 jest.mock('./logger');
 
 dashboardController.getDashboardContext = jest.fn()
   .mockResolvedValue({});
+
+orderTaskListController.getExistingOrderPageContext = jest.fn()
+  .mockResolvedValue({ orderId: 'order-id' });
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -147,7 +151,7 @@ describe('routes', () => {
   });
 
   describe('GET /organisation/:orderId', () => {
-    const path = '/organisation/some-order-id';
+    const path = '/organisation/order-id';
 
     it('should redirect to the login page if the user is not logged in', () => (
       checkAuthorisedRouteNotLoggedIn(path)
@@ -158,7 +162,8 @@ describe('routes', () => {
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text).toEqual('existing order some-order-id page');
+        expect(res.text.includes('data-test-id="order-id-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
   });
 
