@@ -1,5 +1,6 @@
 import { componentTester } from '../../test-utils/componentTester';
-import manifest from './neworder/manifest.json';
+import neworderManifest from './neworder/manifest.json';
+import existingorderManifest from './existingorder/manifest.json';
 import taskListManifest from './taskListManifest.json';
 
 const setup = {
@@ -10,7 +11,7 @@ const setup = {
 
 describe('neworder task-list page', () => {
   const neworderPageContext = {
-    ...manifest,
+    ...neworderManifest,
     taskList: taskListManifest.taskList,
     orderId: 'neworder',
     backLinkHref: '/organisation',
@@ -45,6 +46,15 @@ describe('neworder task-list page', () => {
       const neworderPageDescription = $('[data-test-id="neworder-page-description"]');
       expect(neworderPageDescription.length).toEqual(1);
       expect(neworderPageDescription.text().trim()).toEqual(neworderPageContext.description);
+    });
+  }));
+
+  it('should not render the order details', componentTester(setup, (harness) => {
+    harness.request(neworderPageContext, ($) => {
+      const neworderDescriptionTitle = $('[data-test-id="neworder-order-description-title"]');
+      const neworderDescription = $('[data-test-id="neworder-order-description"]');
+      expect(neworderDescriptionTitle.length).toEqual(0);
+      expect(neworderDescription.length).toEqual(0);
     });
   }));
 
@@ -85,6 +95,61 @@ describe('neworder task-list page', () => {
       expect(submitOrderButton.attr('aria-label')).toEqual(neworderPageContext.submitOrderButton.altText);
       expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
       expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+    });
+  }));
+});
+
+describe('existingorder task-list page', () => {
+  const existingorderPageContext = {
+    title: 'Order order-id',
+    description: 'Complete the following steps to create an order',
+    orderDescriptionTitle: 'Order description',
+    orderDescription: 'The order description',
+    taskList: taskListManifest.taskList,
+    orderId: 'order-id',
+    backLinkHref: '/organisation',
+    backLinkText: 'Go back',
+  };
+
+  it('should render the backLink for the existing order', componentTester(setup, (harness) => {
+    harness.request(existingorderPageContext, ($) => {
+      const backLink = $('[data-test-id="go-back-link"]');
+      expect(backLink.length).toEqual(1);
+      expect(backLink.text().trim()).toEqual('Go back');
+      expect($(backLink).find('a').attr('href')).toEqual('/organisation');
+    });
+  }));
+
+  it('should render the page for the existing order', componentTester(setup, (harness) => {
+    harness.request(existingorderPageContext, ($) => {
+      const existingorderPage = $('[data-test-id="order-id-page"]');
+      expect(existingorderPage.length).toEqual(1);
+    });
+  }));
+
+  it('should render the title for the existing order', componentTester(setup, (harness) => {
+    harness.request(existingorderPageContext, ($) => {
+      const existingorderPageTitle = $('[data-test-id="order-id-page-title"]');
+      expect(existingorderPageTitle.length).toEqual(1);
+      expect(existingorderPageTitle.text().trim()).toEqual(existingorderPageContext.title);
+    });
+  }));
+
+  it('should render the description for the existing order', componentTester(setup, (harness) => {
+    harness.request(existingorderPageContext, ($) => {
+      const existingorderPageDescription = $('[data-test-id="order-id-page-description"]');
+      expect(existingorderPageDescription.length).toEqual(1);
+      expect(existingorderPageDescription.text().trim()).toEqual(existingorderPageContext.description);
+    });
+  }));
+
+  it('should render the order details for the existing order', componentTester(setup, (harness) => {
+    harness.request(existingorderPageContext, ($) => {
+      const existingorderDescriptionTitle = $('[data-test-id="order-id-order-description-title"]');
+      const existingorderDescription = $('[data-test-id="order-id-order-description"]');
+      expect(existingorderDescriptionTitle.length).toEqual(1);
+      expect(existingorderDescriptionTitle.text().trim()).toEqual(existingorderPageContext.orderDescriptionTitle);
+      expect(existingorderDescription.text().trim()).toEqual(existingorderPageContext.orderDescription);
     });
   }));
 });

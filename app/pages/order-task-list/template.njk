@@ -19,6 +19,15 @@
       </div>
     </div>
 
+    {% if orderId !== 'neworder' %}
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-two-thirds nhsuk-u-margin-bottom-6">
+          <h3 data-test-id="{{orderId}}-order-description-title" class="nhsuk-u-margin-bottom-3">{{ orderDescriptionTitle }}</h3>
+          <h4 data-test-id="{{orderId}}-order-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ orderDescription }}</h4>
+        </div>
+      </div>
+    {% endif %}
+
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-3 bc-c-order-table--hr"/>
 
     <div class="nhsuk-grid-row">
