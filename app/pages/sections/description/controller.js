@@ -1,5 +1,5 @@
 import { postData, putData, getData } from 'buying-catalogue-library';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 
@@ -13,6 +13,8 @@ export const getDescriptionContext = async ({ orderId, accessToken }) => {
   return getContext({ orderId, description: descriptionData ? descriptionData.description : '' });
 };
 
+export const getDescriptionErrorContext = async params => getErrorContext(params);
+
 export const postOrPutDescription = async ({
   orgId, orderId, accessToken, data,
 }) => {
@@ -20,13 +22,12 @@ export const postOrPutDescription = async ({
   const endpoint = isNewOrder
     ? getEndpoint({ endpointLocator: 'postDescription' })
     : getEndpoint({ endpointLocator: 'putDescription', options: { orderId } });
-  const body = { description: data.description };
   const apiCallParams = {
     endpoint,
     body: isNewOrder ? {
-      ...body,
+      ...data,
       organisationId: orgId,
-    } : body,
+    } : data,
     accessToken,
     logger,
   };
@@ -36,12 +37,33 @@ export const postOrPutDescription = async ({
     const returnOrderId = (response.data && response.data.orderId)
       ? response.data.orderId
       : orderId;
-    logger.info(`Order ${isNewOrder ? 'added' : 'updated'} - id: ${returnOrderId}, ${JSON.stringify(body)}`);
+    logger.info(`Order ${isNewOrder ? 'added' : 'updated'} - id: ${returnOrderId}, ${JSON.stringify(data)}`);
     return { success: true, orderId: returnOrderId };
   } catch (err) {
+  // const err = {
+  //   response: {
+  //     status: 400,
+  //     data: {
+  //       errors: [
+  //         {
+  //           field: 'Description',
+  //           id: 'OrderDescriptionRequired',
+  //         },
+  //         {
+  //           field: 'Description',
+  //           id: 'OrderDescriptionTooLong',
+  //         },
+  //         {
+  //           field: 'OrganisationId',
+  //           id: 'OrganisationIdRequired',
+  //         },
+  //       ],
+  //     },
+  //   },
+  // };
+
     if (err.response.status === 400 && err.response.data && err.response.data.errors) {
-      // TODO: validation
-      return { success: false };
+      return err.response.data;
     }
     logger.error('Error adding order');
     throw new Error();
