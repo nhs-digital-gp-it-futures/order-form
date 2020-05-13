@@ -1,3 +1,4 @@
+import commonManifest from './commonManifest.json';
 import newOrderManifest from './neworder/manifest.json';
 import existingOrderManifest from './existingorder/manifest.json';
 import { getContext } from './contextCreator';
@@ -5,14 +6,14 @@ import { baseUrl } from '../../config';
 
 describe('order-task-list contextCreator', () => {
   describe('getContext for new order', () => {
-    it('should return the contents of the new order manifest', () => {
+    it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'neworder' });
-      expect(context.backLinkText).toEqual(newOrderManifest.backLinkText);
-      expect(context.title).toEqual(newOrderManifest.title);
-      expect(context.description).toEqual(newOrderManifest.description);
-      expect(context.deleteOrderButton).toEqual(newOrderManifest.deleteOrderButton);
-      expect(context.previewOrderButton).toEqual(newOrderManifest.previewOrderButton);
-      expect(context.submitOrderButton).toEqual(newOrderManifest.submitOrderButton);
+      expect(context.backLinkText).toEqual(commonManifest.backLinkText);
+    });
+
+    it('should return the backLinkHref', () => {
+      const context = getContext({ orderId: 'neworder' });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
     });
 
     it('should return the orderId provided', () => {
@@ -20,26 +21,65 @@ describe('order-task-list contextCreator', () => {
       expect(context.orderId).toEqual('neworder');
     });
 
-    it('should return the backLinkHref', () => {
+    it('should return the title', () => {
       const context = getContext({ orderId: 'neworder' });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
+      expect(context.title).toEqual(newOrderManifest.title);
+    });
+
+    it('should return the description', () => {
+      const context = getContext({ orderId: 'neworder' });
+      expect(context.description).toEqual(newOrderManifest.description);
+    });
+
+    it('should return the deleteOrderButton context', () => {
+      const expectedDeleteOrderButtonContext = {
+        text: commonManifest.deleteOrderButton.text,
+        altText: commonManifest.deleteOrderButton.disabledAltText,
+        href: '#',
+        disabled: true,
+      };
+
+      const context = getContext({ orderId: 'neworder' });
+
+      expect(context.deleteOrderButton).toEqual(expectedDeleteOrderButtonContext);
+    });
+
+    it('should return the previewOrderButton context', () => {
+      const expectedPreviewOrderButtonContext = {
+        text: commonManifest.previewOrderButton.text,
+        altText: commonManifest.previewOrderButton.disabledAltText,
+        href: '#',
+        disabled: true,
+      };
+
+      const context = getContext({ orderId: 'neworder' });
+
+      expect(context.previewOrderButton).toEqual(expectedPreviewOrderButtonContext);
+    });
+
+    it('should return the submitOrderButton context', () => {
+      const expectedSubmitOrderButtonContext = {
+        text: commonManifest.submitOrderButton.text,
+        altText: commonManifest.submitOrderButton.disabledAltText,
+        href: '#',
+        disabled: true,
+      };
+
+      const context = getContext({ orderId: 'neworder' });
+
+      expect(context.submitOrderButton).toEqual(expectedSubmitOrderButtonContext);
     });
   });
 
   describe('getContext for existing order', () => {
-    it('should return the contents of the existing order manifest', () => {
+    it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-id' });
-      expect(context.backLinkText).toEqual(existingOrderManifest.backLinkText);
-      expect(context.description).toEqual(existingOrderManifest.description);
-      expect(context.orderDescriptionTitle).toEqual(existingOrderManifest.orderDescriptionTitle);
-      expect(context.deleteOrderButton).toEqual(existingOrderManifest.deleteOrderButton);
-      expect(context.previewOrderButton).toEqual(existingOrderManifest.previewOrderButton);
-      expect(context.submitOrderButton).toEqual(existingOrderManifest.submitOrderButton);
+      expect(context.backLinkText).toEqual(commonManifest.backLinkText);
     });
 
-    it('should return the title', () => {
+    it('should return the backLinkHref', () => {
       const context = getContext({ orderId: 'order-id' });
-      expect(context.title).toEqual('Order order-id');
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
     });
 
     it('should return the orderId provided', () => {
@@ -47,10 +87,21 @@ describe('order-task-list contextCreator', () => {
       expect(context.orderId).toEqual('order-id');
     });
 
-    it('should return the backLinkHref', () => {
+    it('should return the title', () => {
       const context = getContext({ orderId: 'order-id' });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
+      expect(context.title).toEqual('Order order-id');
     });
+
+    it('should return the description', () => {
+      const context = getContext({ orderId: 'order-id' });
+      expect(context.description).toEqual(existingOrderManifest.description);
+    });
+
+    it('should return the orderDescriptionTitle', () => {
+      const context = getContext({ orderId: 'order-id' });
+      expect(context.orderDescriptionTitle).toEqual(existingOrderManifest.orderDescriptionTitle);
+    });
+
 
     it('should return the order description provided', () => {
       const context = getContext({
@@ -58,6 +109,41 @@ describe('order-task-list contextCreator', () => {
         orderDescription: 'Some order description',
       });
       expect(context.orderDescription).toEqual('Some order description');
+    });
+
+    it('should return the deleteOrderButton context', () => {
+      const expectedDeleteOrderButtonContext = {
+        text: commonManifest.deleteOrderButton.text,
+        href: '#',
+      };
+
+      const context = getContext({ orderId: 'order-id' });
+
+      expect(context.deleteOrderButton).toEqual(expectedDeleteOrderButtonContext);
+    });
+
+    it('should return the previewOrderButton context', () => {
+      const expectedPreviewOrderButtonContext = {
+        text: commonManifest.previewOrderButton.text,
+        href: '#',
+      };
+
+      const context = getContext({ orderId: 'order-id' });
+
+      expect(context.previewOrderButton).toEqual(expectedPreviewOrderButtonContext);
+    });
+
+    it('should return the submitOrderButton context', () => {
+      const expectedSubmitOrderButtonContext = {
+        text: commonManifest.submitOrderButton.text,
+        altText: commonManifest.submitOrderButton.disabledAltText,
+        href: '#',
+        disabled: true,
+      };
+
+      const context = getContext({ orderId: 'order-id' });
+
+      expect(context.submitOrderButton).toEqual(expectedSubmitOrderButtonContext);
     });
   });
 });

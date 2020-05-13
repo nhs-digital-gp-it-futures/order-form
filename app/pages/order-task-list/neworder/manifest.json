@@ -1,23 +1,4 @@
 {
-  "backLinkText": "Go back",
   "title": "New order",
-  "description": "You must complete step 1 and a Call-off Agreement ID will be generated before you can view your order summary.",
-  "deleteOrderButton": {
-    "text": "Delete order",
-    "href": "#",
-    "altText": "The delete order button will be disabled until you complete and save step 1",
-    "disabled": true
-  },
-  "previewOrderButton": {
-    "text": "Preview order summary",
-    "href": "#",
-    "altText": "The preview order button will be disabled until you complete and save step 1",
-    "disabled": true
-  },
-  "submitOrderButton": {
-    "text": "Submit order",
-    "href": "#",
-    "altText": "The submit order button will be disabled until the necessary steps are complete",
-    "disabled": true
-  }
+  "description": "You must complete step 1 and a Call-off Agreement ID will be generated before you can view your order summary."
 }
