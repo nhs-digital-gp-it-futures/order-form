@@ -12,6 +12,9 @@ jest.mock('./logger');
 dashboardController.getDashboardContext = jest.fn()
   .mockResolvedValue({});
 
+descriptionController.getDescriptionContext = jest.fn()
+  .mockResolvedValue({});
+
 descriptionController.postOrPutDescription = jest.fn()
   .mockResolvedValue({});
 
