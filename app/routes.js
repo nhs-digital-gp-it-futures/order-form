@@ -51,7 +51,6 @@ export const routes = (authProvider) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
     const context = await getExistingOrderPageContext({ accessToken, orderId });
-    console.log('context', context);
     res.render('pages/order-task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
