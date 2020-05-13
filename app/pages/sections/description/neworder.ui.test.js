@@ -33,6 +33,15 @@ fixture('Description page (new order)')
     await t.expect(isDone).ok('Not all nock interceptors were used!');
   });
 
+const postDescriptionErrorResponse = {
+  errors: [
+    {
+      field: 'Description',
+      id: 'OrderDescriptionTooLong',
+    },
+  ],
+};
+
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
   await pageSetup(t);
   nock('http://identity-server')
@@ -138,4 +147,68 @@ test('should navigate to task list page when valid description is added and save
     .expect(saveButton.exists).ok()
     .click(saveButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order1');
+});
+
+test('should show the error summary when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .post('/api/v1/orders')
+    .reply(400, postDescriptionErrorResponse);
+
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Description must be 100 characters or fewer')
+});
+
+test('should show text fields as errors with error message when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .post('/api/v1/orders')
+    .reply(400, postDescriptionErrorResponse);
+
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const descriptionPage = Selector('[data-test-id="description-page"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const descriptionField = descriptionPage.find('[data-test-id="question-description"]');
+
+  await t
+    .expect(descriptionField.find('[data-test-id="textarea-field-error"]').exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(descriptionField.find('[data-test-id="textarea-field-error"]').exists).ok()
+    .expect(await extractInnerText(descriptionField.find('#description-error'))).contains('Error:\nDescription must be 100 characters or fewer');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  nock(orderApiUrl)
+    .post('/api/v1/orders')
+    .reply(400, postDescriptionErrorResponse);
+
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#description`);
 });
