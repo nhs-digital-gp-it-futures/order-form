@@ -16,7 +16,7 @@ export const generateTaskList = ({ orderId, taskListManifest, sectionsData }) =>
   const taskLists = taskListManifest.tasks.map((task) => {
     const items = task.sections.map((section) => {
       const itemHref = section.enabled ? `${baseUrl}/organisation/${orderId}/${section.id}` : undefined;
-      const isItemComplete = sectionsDataDict && sectionsDataDict[section.id].status === 'complete' ? true : undefined
+      const isItemComplete = sectionsDataDict && sectionsDataDict[section.id].status === 'complete' ? true : undefined;
 
       return ({
         description: section.title,
