@@ -46,12 +46,12 @@ describe('description page', () => {
       const footerAdvice = $('[data-test-id="textarea-field-footer"] span');
 
       expect(input.length).toEqual(1);
-      expect(input.attr('id')).toEqual(context.descriptionQuestion.question.id);
-      expect(input.attr('name')).toEqual(context.descriptionQuestion.question.id);
+      expect(input.attr('id')).toEqual(context.questions[0].id);
+      expect(input.attr('name')).toEqual(context.questions[0].id);
       expect(input.attr('rows').trim())
-        .toEqual(String(context.descriptionQuestion.question.rows));
+        .toEqual(String(context.questions[0].rows));
       expect(footerAdvice.length).toEqual(1);
-      expect(footerAdvice.text().trim()).toEqual(context.descriptionQuestion.question.footerAdvice);
+      expect(footerAdvice.text().trim()).toEqual(context.questions[0].footerAdvice);
     });
   }));
 
