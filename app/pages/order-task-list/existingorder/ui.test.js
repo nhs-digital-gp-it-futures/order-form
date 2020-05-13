@@ -122,7 +122,7 @@ test('should render the order description details', async (t) => {
     .expect(await extractInnerText(orderDescription)).eql(mockExistingOrder.description);
 });
 
-test('should render the first task as tag it as complete', async (t) => {
+test('should render the first task and tag it as complete', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
