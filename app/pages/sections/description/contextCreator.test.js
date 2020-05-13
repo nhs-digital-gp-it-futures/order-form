@@ -7,11 +7,11 @@ jest.mock('buying-catalogue-library');
 
 const mockValidationErrors = [{
   field: 'Description',
-  id: 'DescriptionRequired',
+  id: 'OrderDescriptionRequired',
 },
 {
   field: 'Description',
-  id: 'DescriptionTooLong',
+  id: 'OrderDescriptionTooLong',
 }];
 
 describe('decription contextCreator', () => {
