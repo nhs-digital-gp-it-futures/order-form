@@ -99,7 +99,7 @@ test('should render a textarea for description', async (t) => {
     .expect(description.exists).ok()
     .expect(description.find('textarea').count).eql(1)
     .expect(footerAdvice.exists).ok()
-    .expect(await extractInnerText(footerAdvice)).eql(content.descriptionQuestion.question.footerAdvice);
+    .expect(await extractInnerText(footerAdvice)).eql(content.questions[0].footerAdvice);
 });
 
 test('should not populate the text area with existing decription data', async (t) => {
