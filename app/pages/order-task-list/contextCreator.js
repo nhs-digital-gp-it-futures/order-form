@@ -4,8 +4,6 @@ import taskListManifest from './taskListManifest.json';
 import { generateTaskList } from './helpers/generateTaskList';
 import { baseUrl } from '../../config';
 
-export const getContext = ({ orderId, orderDescription }) => orderId === 'neworder' ? getNewOrderContext({ orderId }) : getExistingOrderContext({ orderId, orderDescription });
-
 export const getNewOrderContext = ({ orderId }) => ({
   ...neworderPageManifest,
   taskList: generateTaskList({ orderId, taskListManifest }),
@@ -16,8 +14,15 @@ export const getNewOrderContext = ({ orderId }) => ({
 export const getExistingOrderContext = ({ orderId, orderDescription }) => ({
   ...existingorderPageManifest,
   title: `${existingorderPageManifest.title} ${orderId}`,
-  orderDescription: orderDescription,
+  orderDescription,
   taskList: generateTaskList({ orderId, taskListManifest }),
   backLinkHref: `${baseUrl}/organisation`,
   orderId,
 });
+
+export const getContext = ({ orderId, orderDescription }) => {
+  if (orderId === 'neworder') {
+    return getNewOrderContext({ orderId });
+  }
+  return getExistingOrderContext({ orderId, orderDescription });
+};

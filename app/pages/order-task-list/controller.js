@@ -1,6 +1,6 @@
+import { getData } from 'buying-catalogue-library';
 import { getContext } from './contextCreator';
 import { getEndpoint } from '../../endpoints';
-import { getData } from 'buying-catalogue-library';
 import { logger } from '../../logger';
 
 export const getNewOrderPageContext = () => getContext({ orderId: 'neworder' });

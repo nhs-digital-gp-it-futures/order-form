@@ -1,10 +1,8 @@
+import { getData } from 'buying-catalogue-library';
 import { getExistingOrderPageContext, getNewOrderPageContext } from './controller';
 import * as contextCreator from './contextCreator';
-import { getData } from 'buying-catalogue-library';
-import mockOrdersData from '../../test-utils/mockData/mockOrders';
 import { orderApiUrl } from '../../config';
 import { logger } from '../../logger';
-import { getDashboardContext } from '../dashboard/controller';
 
 jest.mock('buying-catalogue-library');
 
@@ -26,7 +24,6 @@ describe('order-task-list controller', () => {
   });
 
   describe('getExistingOrderPageContext', () => {
-
     const mockExistingOrderData = {
       orderId: 'order-id',
       description: 'Some description',
@@ -65,6 +62,5 @@ describe('order-task-list controller', () => {
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', orderDescription: mockExistingOrderData.description });
     });
-
   });
 });

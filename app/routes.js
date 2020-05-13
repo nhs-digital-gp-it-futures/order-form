@@ -8,7 +8,7 @@ import { withCatch, getHealthCheckDependencies, extractAccessToken } from './hel
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getDescriptionContext, postOrPutDescription } from './pages/sections/description/controller';
 import includesContext from './includes/manifest.json';
-import { getNewOrderPageContext, getExistingOrderPageContext } from './pages/order-task-list/controller';
+import { getNewOrderPageContext } from './pages/order-task-list/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,

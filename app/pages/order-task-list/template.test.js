@@ -1,6 +1,5 @@
 import { componentTester } from '../../test-utils/componentTester';
 import neworderManifest from './neworder/manifest.json';
-import existingorderManifest from './existingorder/manifest.json';
 import taskListManifest from './taskListManifest.json';
 
 const setup = {
@@ -139,7 +138,8 @@ describe('existingorder task-list page', () => {
     harness.request(existingorderPageContext, ($) => {
       const existingorderPageDescription = $('[data-test-id="order-id-page-description"]');
       expect(existingorderPageDescription.length).toEqual(1);
-      expect(existingorderPageDescription.text().trim()).toEqual(existingorderPageContext.description);
+      expect(existingorderPageDescription.text().trim())
+        .toEqual(existingorderPageContext.description);
     });
   }));
 
@@ -148,8 +148,10 @@ describe('existingorder task-list page', () => {
       const existingorderDescriptionTitle = $('[data-test-id="order-id-order-description-title"]');
       const existingorderDescription = $('[data-test-id="order-id-order-description"]');
       expect(existingorderDescriptionTitle.length).toEqual(1);
-      expect(existingorderDescriptionTitle.text().trim()).toEqual(existingorderPageContext.orderDescriptionTitle);
-      expect(existingorderDescription.text().trim()).toEqual(existingorderPageContext.orderDescription);
+      expect(existingorderDescriptionTitle.text().trim())
+        .toEqual(existingorderPageContext.orderDescriptionTitle);
+      expect(existingorderDescription.text().trim())
+        .toEqual(existingorderPageContext.orderDescription);
     });
   }));
 });
