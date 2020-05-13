@@ -7,6 +7,12 @@ import { baseUrl, orderApiUrl } from '../../../config';
 const mockExistingOrder = {
   orderId: 'order-id',
   description: 'Some description',
+  sections: [
+    {
+      id: 'description',
+      status: 'complete',
+    },
+  ],
 };
 
 const pageUrl = 'http://localhost:1234/organisation/order-id';
@@ -114,4 +120,26 @@ test('should render the order description details', async (t) => {
     .expect(await extractInnerText(orderDescriptionTitle)).eql(content.orderDescriptionTitle)
     .expect(orderDescription.exists).ok()
     .expect(await extractInnerText(orderDescription)).eql(mockExistingOrder.description);
+});
+
+test('should render the first task and tag it as complete', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const taskList = Selector('[data-test-id="task-list"]');
+  const firstTask = Selector('li[data-test-id="task-0"]');
+  const firstTaskFirstItem = Selector('li[data-test-id="task-0-item-0"]');
+  const firstTaskFirstItemCompleteTag = Selector('[data-test-id="task-0-item-0-complete-tag"]');
+
+  await t
+    .expect(taskList.exists).ok()
+    .expect(firstTask.exists).ok()
+    .expect(await extractInnerText(firstTask.find('h2 span'))).eql('1.')
+    .expect(await extractInnerText(firstTask.find('h2 div'))).eql('Start your order')
+    .expect(firstTaskFirstItem.exists).ok()
+    .expect(await extractInnerText(firstTaskFirstItem.find('a'))).eql('Provide a description of your order')
+    .expect(firstTaskFirstItem.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/description`)
+    .expect(firstTaskFirstItemCompleteTag.exists).ok()
+    .click(firstTaskFirstItem.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/description`);
 });

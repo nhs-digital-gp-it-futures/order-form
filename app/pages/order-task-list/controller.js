@@ -9,7 +9,7 @@ const getExistingOrderTaskListPageContext = async ({ accessToken, orderId }) => 
   const endpoint = getEndpoint({ endpointLocator: 'getOrderSummary', options: { orderId } });
   const order = await getData({ endpoint, accessToken, logger });
   logger.info(`Existing order ${order.orderId} returned`);
-  return getContext({ orderId, orderDescription: order.description });
+  return getContext({ orderId, orderDescription: order.description, sectionsData: order.sections });
 };
 
 export const getTaskListPageContext = ({ accessToken, orderId }) => {

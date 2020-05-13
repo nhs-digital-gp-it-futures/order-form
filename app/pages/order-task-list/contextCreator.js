@@ -11,18 +11,18 @@ export const getNewOrderContext = ({ orderId }) => ({
   orderId,
 });
 
-export const getExistingOrderContext = ({ orderId, orderDescription }) => ({
+export const getExistingOrderContext = ({ orderId, orderDescription, sectionsData }) => ({
   ...existingorderPageManifest,
   title: `${existingorderPageManifest.title} ${orderId}`,
   orderDescription,
-  taskList: generateTaskList({ orderId, taskListManifest }),
+  taskList: generateTaskList({ orderId, taskListManifest, sectionsData }),
   backLinkHref: `${baseUrl}/organisation`,
   orderId,
 });
 
-export const getContext = ({ orderId, orderDescription }) => {
+export const getContext = ({ orderId, orderDescription, sectionsData }) => {
   if (orderId === 'neworder') {
     return getNewOrderContext({ orderId });
   }
-  return getExistingOrderContext({ orderId, orderDescription });
+  return getExistingOrderContext({ orderId, orderDescription, sectionsData });
 };
