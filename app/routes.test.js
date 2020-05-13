@@ -5,7 +5,7 @@ import { routes } from './routes';
 import { baseUrl } from './config';
 import { getCsrfTokenFromGet } from './test-utils/helper';
 import * as dashboardController from './pages/dashboard/controller';
-import * as orderTaskListController from './pages/order-task-list/controller';
+import * as taskListController from './pages/order-task-list/controller';
 import * as descriptionController from './pages/sections/description/controller';
 
 jest.mock('./logger');
@@ -138,7 +138,7 @@ describe('routes', () => {
     ));
 
     it('should return the neworder page with correct status when the user is authorised', () => {
-      orderTaskListController.getOrderTaskListPageContext = jest.fn()
+      taskListController.getTaskListPageContext = jest.fn()
         .mockResolvedValueOnce({ orderId: 'neworder' });
 
       return request(setUpFakeApp())
@@ -152,7 +152,7 @@ describe('routes', () => {
     });
 
     it('should return the existing order page with correct status when the user is authorised', () => {
-      orderTaskListController.getOrderTaskListPageContext = jest.fn()
+      taskListController.getTaskListPageContext = jest.fn()
         .mockResolvedValueOnce({ orderId: 'order-id' });
 
       return request(setUpFakeApp())

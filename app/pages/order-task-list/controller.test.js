@@ -1,5 +1,5 @@
 import { getData } from 'buying-catalogue-library';
-import { getOrderTaskListPageContext } from './controller';
+import { getTaskListPageContext } from './controller';
 import * as contextCreator from './contextCreator';
 import { orderApiUrl } from '../../config';
 import { logger } from '../../logger';
@@ -16,7 +16,7 @@ describe('order-task-list controller', () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
 
-      await getOrderTaskListPageContext({ orderId: 'neworder' });
+      await getTaskListPageContext({ orderId: 'neworder' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'neworder' });
@@ -37,7 +37,7 @@ describe('order-task-list controller', () => {
     it('should call getData once with the correct params', async () => {
       getData.mockResolvedValueOnce(mockExistingOrderData);
 
-      await getOrderTaskListPageContext({
+      await getTaskListPageContext({
         orderId: 'order-id',
         accessToken: 'access_token',
       });
@@ -54,7 +54,7 @@ describe('order-task-list controller', () => {
       getData.mockResolvedValueOnce(mockExistingOrderData);
       contextCreator.getContext.mockResolvedValueOnce();
 
-      await getOrderTaskListPageContext({
+      await getTaskListPageContext({
         orderId: 'order-id',
         accessToken: 'access_token',
       });

@@ -12,7 +12,7 @@ const getExistingOrderTaskListPageContext = async ({ accessToken, orderId }) => 
   return getContext({ orderId, orderDescription: order.description });
 };
 
-export const getOrderTaskListPageContext = ({ accessToken, orderId }) => {
+export const getTaskListPageContext = ({ accessToken, orderId }) => {
   if (orderId === 'neworder') {
     return getNewOrderTaskListPageContext({ orderId });
   }
