@@ -72,7 +72,6 @@ export const routes = (authProvider) => {
       orderId,
       data: req.body,
     });
-
     return res.render('pages/sections/description/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
