@@ -90,6 +90,19 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
+
+test('should not render the order description details', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const orderDescriptionTitle = Selector('h3[data-test-id="neworder-order-description-title"]');
+  const orderDescription = Selector('h4[data-test-id="neworder-order-description"]');
+
+  await t
+    .expect(orderDescriptionTitle.exists).notOk()
+    .expect(orderDescription.exists).notOk();
+});
+
 test('should render the first task as Start your order task and description item as a href', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
