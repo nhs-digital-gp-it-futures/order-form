@@ -5,8 +5,17 @@
       "sections": [
         {
           "id": "description",
-          "title": "Provide a description of your order",
-          "enabled": true
+          "title": "Provide a description of your order"
+        }
+      ]
+    },
+    {
+      "name": "Organisation information",
+      "sections": [
+        {
+          "id": "callOffInfo",
+          "title": "Provide Call-off Ordering Party information",
+          "dependencies": ["description"]
         }
       ]
     }
