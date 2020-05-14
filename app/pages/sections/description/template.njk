@@ -2,6 +2,7 @@
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/textarea-field-no-count/macro.njk' import textareaFieldNoCount %}
+{% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="description-page">
@@ -14,13 +15,19 @@
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-two-thirds">
+        {% if (errors.length > 0) %}
+          {{ bcErrorSummary({
+            errors: errors
+          }) }}
+        {% endif %}
+
         <h1 data-test-id="description-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
         <h2 data-test-id="description-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
 
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-          {{ textareaFieldNoCount(descriptionQuestion) }}
+          {{ textareaFieldNoCount({ question: questions[0] }) }}
 
           {{ bcButton({
               dataTestId: "save-button",

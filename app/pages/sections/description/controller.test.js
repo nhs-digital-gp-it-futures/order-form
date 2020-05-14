@@ -105,31 +105,34 @@ describe('description controller', () => {
       expect(response.success).toEqual(true);
     });
 
-    // TODO: validation
-    // it('should return error.respose.data if api request is unsuccessful with 400', async () => {
-    //   postData
-    //     .mockRejectedValueOnce({ response: { status: 400, data: '400 response data' } });
 
-    // const response = await postOrPutDescription({
-    // orderId: 'neworder',
-    // data: { description: 'an order description' },
-    // accessToken: 'access_token' });
+    it('should return error.respose.data if api request is unsuccessful with 400', async () => {
+      const responseData = { description: 'an order description', errors: [{}] };
+      postData
+        .mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 
-    //   expect(response).toEqual('400 response data');
-    // });
+      const response = await postOrPutDescription({
+        orderId: 'neworder',
+        data: { description: 'an order description' },
+        accessToken: 'access_token',
+      });
 
-    // it('should throw an error if api request is unsuccessful with non 400', async () => {
-    //   postData
-    //     .mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
+      expect(response).toEqual(responseData);
+    });
 
-    //   try {
-    // await postOrPutDescription({orderId:
-    // 'neworder',
-    // data: { description: 'an order description' },
-    // accessToken: 'access_token' });
-    //   } catch (err) {
-    //     expect(err).toEqual(new Error());
-    //   }
-    // });
+    it('should throw an error if api request is unsuccessful with non 400', async () => {
+      postData
+        .mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
+
+      try {
+        await postOrPutDescription({
+          orderId: 'neworder',
+          data: { description: 'an order description' },
+          accessToken: 'access_token',
+        });
+      } catch (err) {
+        expect(err).toEqual(new Error());
+      }
+    });
   });
 });
