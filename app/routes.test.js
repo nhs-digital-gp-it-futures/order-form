@@ -228,8 +228,36 @@ describe('routes', () => {
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
-    // TODO: validation
-    // it('should return the correct status and text if response.success is false', async () => {});
+
+    it('should return the correct status and text if response.success is not true', async () => {
+      descriptionController.postOrPutDescription = jest.fn()
+        .mockImplementation(() => Promise.resolve({ success: false }));
+
+      descriptionController.getDescriptionErrorContext = jest.fn()
+        .mockImplementation(() => Promise.resolve({
+          errors: [{ text: 'Description too long', href: '#description' }],
+        }));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet(
+        setUpFakeApp(), path, mockAuthorisedCookie,
+      );
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({
+          description: 'a lovely decription',
+          _csrf: csrfToken,
+        })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="description-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+          descriptionController.getDescriptionErrorContext.mockReset();
+        });
+    });
   });
 
   describe('GET *', () => {

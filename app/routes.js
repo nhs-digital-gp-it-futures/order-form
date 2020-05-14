@@ -6,7 +6,7 @@ import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routerHelper';
 import { getDashboardContext } from './pages/dashboard/controller';
-import { getDescriptionContext, postOrPutDescription } from './pages/sections/description/controller';
+import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './pages/sections/description/controller';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/order-task-list/controller';
 
@@ -61,9 +61,15 @@ export const routes = (authProvider) => {
     const response = await postOrPutDescription({
       orgId: req.user.primaryOrganisationId, orderId, data: req.body, accessToken,
     });
+
     if (response.success) return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
-    // TODO: res.redirect for validation errors
-    return res.status(200).send(`redirect with validation to ${orderId} page`);
+
+    const context = await getDescriptionErrorContext({
+      validationErrors: response.errors,
+      orderId,
+      data: req.body,
+    });
+    return res.render('pages/sections/description/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('*', (req) => {
