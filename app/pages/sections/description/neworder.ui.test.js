@@ -188,7 +188,7 @@ test('should show text fields as errors with error message when there are valida
 
   await t
     .expect(descriptionField.find('[data-test-id="textarea-field-error"]').exists).ok()
-    .expect(await extractInnerText(descriptionField.find('#description-error'))).contains('Error:\nDescription must be 100 characters or fewer');
+    .expect(await extractInnerText(descriptionField.find('#description-error'))).contains('Description must be 100 characters or fewer');
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
