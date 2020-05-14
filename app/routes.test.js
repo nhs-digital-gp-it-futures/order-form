@@ -1,9 +1,15 @@
 import request from 'supertest';
-import { FakeAuthProvider } from 'buying-catalogue-library';
+import {
+  FakeAuthProvider,
+  checkAuthorisedRouteNotLoggedInNew,
+  checkForbiddenNoCsrfNew,
+  checkRedirectToLoginNew,
+  checkLoggedInNotAuthorisedNew,
+  getCsrfTokenFromGetNew,
+} from 'buying-catalogue-library';
 import { App } from './app';
 import { routes } from './routes';
 import { baseUrl } from './config';
-import { getCsrfTokenFromGet } from './test-utils/helper';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/order-task-list/controller';
 import * as descriptionController from './pages/sections/description/controller';
@@ -30,6 +36,11 @@ const mockAuthorisedJwtPayload = JSON.stringify({
 
 const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
 
+const mockUnauthorisedJwtPayload = JSON.stringify({
+  id: '88421113', name: 'Cool Dude',
+});
+const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
+
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
   const app = new App(authProvider).createApp();
@@ -37,70 +48,14 @@ const setUpFakeApp = () => {
   return app;
 };
 
-const checkAuthorisedRouteNotLoggedIn = path => (
-  request(setUpFakeApp())
-    .get(path)
-    .expect(302)
-    .then((res) => {
-      expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual('http://identity-server/login');
-    }));
-
-const checkForbiddenNoCsrf = path => request(setUpFakeApp())
-  .post(path)
-  .set('Cookie', [mockAuthorisedCookie])
-  .type('form')
-  .send({})
-  .then((res) => {
-    expect(res.status).toEqual(403);
-  });
-
-const checkRedirectToLogin = async (csrfPagePath, postPath) => {
-  const { cookies, csrfToken } = await getCsrfTokenFromGet(
-    setUpFakeApp(), csrfPagePath, mockAuthorisedCookie,
-  );
-  return request(setUpFakeApp())
-    .post(postPath)
-    .type('form')
-    .set('Cookie', [cookies])
-    .send({
-      _csrf: csrfToken,
-    })
-    .expect(302)
-    .then((res) => {
-      expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual('http://identity-server/login');
-    });
-};
-
-const checkLoggedInNotAuthorised = async (csrfPagePath, postPath) => {
-  const { cookies, csrfToken } = await getCsrfTokenFromGet(
-    setUpFakeApp(), csrfPagePath, mockAuthorisedCookie,
-  );
-
-  const mockUnauthorisedJwtPayload = JSON.stringify({
-    id: '88421113', name: 'Cool Dude',
-  });
-  const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
-
-  return request(setUpFakeApp())
-    .post(postPath)
-    .type('form')
-    .set('Cookie', [cookies, mockUnauthorisedCookie])
-    .send({ _csrf: csrfToken })
-    .expect(200)
-    .then((res) => {
-      expect(res.text.includes('data-test-id="error-title"')).toEqual(true);
-      expect(res.text.includes('You are not authorised to view this page')).toEqual(true);
-    });
-};
-
 describe('routes', () => {
   describe('GET /', () => {
     const path = '/';
 
     it('should redirect to the login page if the user is not logged in', () => (
-      checkAuthorisedRouteNotLoggedIn(path)
+      checkAuthorisedRouteNotLoggedInNew({
+        app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
+      })
     ));
 
     it('should redirect to /organisation', () => request(setUpFakeApp())
@@ -117,7 +72,9 @@ describe('routes', () => {
     const path = '/organisation';
 
     it('should redirect to the login page if the user is not logged in', () => (
-      checkAuthorisedRouteNotLoggedIn(path)
+      checkAuthorisedRouteNotLoggedInNew({
+        app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
+      })
     ));
 
     it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
@@ -133,7 +90,9 @@ describe('routes', () => {
   describe('GET /organisation/:orderId', () => {
     it('should redirect to the login page if the user is not logged in', () => {
       const path = '/organisation/order-id';
-      return checkAuthorisedRouteNotLoggedIn(path);
+      return checkAuthorisedRouteNotLoggedInNew({
+        app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
+      });
     });
 
     it('should return the neworder page with correct status when the user is authorised', () => {
@@ -173,7 +132,9 @@ describe('routes', () => {
     const path = '/organisation/some-order-id/description';
 
     it('should redirect to the login page if the user is not logged in', () => (
-      checkAuthorisedRouteNotLoggedIn(path)
+      checkAuthorisedRouteNotLoggedInNew({
+        app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
+      })
     ));
 
     it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
@@ -193,25 +154,41 @@ describe('routes', () => {
       descriptionController.postOrPutDescription.mockReset();
     });
 
-    it('should return 403 forbidden if no csrf token is available', async () => {
-      await checkForbiddenNoCsrf(path);
-    });
+    it('should return 403 forbidden if no csrf token is available', () => (
+      checkForbiddenNoCsrfNew({
+        app: request(setUpFakeApp()), pathToTest: path, mockAuthorisedCookie,
+      })
+    ));
 
-    it('should redirect to the login page if the user is not logged in', async () => {
-      await checkRedirectToLogin(path, path);
-    });
+    it('should redirect to the login page if the user is not logged in', () => (
+      checkRedirectToLoginNew({
+        app: request(setUpFakeApp()),
+        csrfPagePath: path,
+        pathToTest: path,
+        mockAuthorisedCookie,
+        expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
 
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', async () => {
-      await checkLoggedInNotAuthorised(path, path);
-    });
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      checkLoggedInNotAuthorisedNew({
+        app: request(setUpFakeApp()),
+        csrfPagePath: path,
+        pathToTest: path,
+        mockAuthorisedCookie,
+        mockUnauthorisedCookie,
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
 
     it('should return the correct status and text if response.success is true', async () => {
       descriptionController.postOrPutDescription = jest.fn()
         .mockImplementation(() => Promise.resolve({ success: true, orderId: 'order1' }));
 
-      const { cookies, csrfToken } = await getCsrfTokenFromGet(
-        setUpFakeApp(), path, mockAuthorisedCookie,
-      );
+      const { cookies, csrfToken } = await getCsrfTokenFromGetNew({
+        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
+      });
 
       return request(setUpFakeApp())
         .post(path)
@@ -238,9 +215,9 @@ describe('routes', () => {
           errors: [{ text: 'Description too long', href: '#description' }],
         }));
 
-      const { cookies, csrfToken } = await getCsrfTokenFromGet(
-        setUpFakeApp(), path, mockAuthorisedCookie,
-      );
+      const { cookies, csrfToken } = await getCsrfTokenFromGetNew({
+        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
+      });
 
       return request(setUpFakeApp())
         .post(path)
