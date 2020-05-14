@@ -1,7 +1,8 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from '../../../test-utils/helper';
-import content from './manifest.json';
+import commonContent from '../commonManifest.json';
+import existingorderPageContent from './manifest.json';
 import { baseUrl, orderApiUrl } from '../../../config';
 
 const mockExistingOrder = {
@@ -94,7 +95,7 @@ test('should render the title', async (t) => {
 
   await t
     .expect(title.exists).ok()
-    .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
+    .expect(await extractInnerText(title)).eql(`${existingorderPageContent.title} order-id`);
 });
 
 test('should render the description', async (t) => {
@@ -105,7 +106,7 @@ test('should render the description', async (t) => {
 
   await t
     .expect(description.exists).ok()
-    .expect(await extractInnerText(description)).eql(content.description);
+    .expect(await extractInnerText(description)).eql(existingorderPageContent.description);
 });
 
 test('should render the order description details', async (t) => {
@@ -117,7 +118,7 @@ test('should render the order description details', async (t) => {
 
   await t
     .expect(orderDescriptionTitle.exists).ok()
-    .expect(await extractInnerText(orderDescriptionTitle)).eql(content.orderDescriptionTitle)
+    .expect(await extractInnerText(orderDescriptionTitle)).eql(existingorderPageContent.orderDescriptionTitle)
     .expect(orderDescription.exists).ok()
     .expect(await extractInnerText(orderDescription)).eql(mockExistingOrder.description);
 });
@@ -142,4 +143,46 @@ test('should render the first task and tag it as complete', async (t) => {
     .expect(firstTaskFirstItemCompleteTag.exists).ok()
     .click(firstTaskFirstItem.find('a'))
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/description`);
+});
+
+test('should render the "Delete order" button', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const deleteOrderButton = Selector('[data-test-id="delete-order-button"]');
+
+  await t
+    .expect(deleteOrderButton.exists).ok()
+    .expect(await extractInnerText(deleteOrderButton)).eql(commonContent.deleteOrderButton.text)
+    .expect(deleteOrderButton.getAttribute('aria-label')).eql(commonContent.deleteOrderButton.text)
+    .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
+    .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(false);
+});
+
+test('should render the "Preview order summary" button', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const previewOrderButton = Selector('[data-test-id="preview-order-button"]');
+
+  await t
+    .expect(previewOrderButton.exists).ok()
+    .expect(await extractInnerText(previewOrderButton)).eql(commonContent.previewOrderButton.text)
+    .expect(previewOrderButton.getAttribute('aria-label')).eql(commonContent.previewOrderButton.text)
+    .expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
+    .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(false);
+});
+
+test('should render the "Submit order" button', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const submitOrderButton = Selector('[data-test-id="submit-order-button"]');
+
+  await t
+    .expect(submitOrderButton.exists).ok()
+    .expect(await extractInnerText(submitOrderButton)).eql(commonContent.submitOrderButton.text)
+    .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
+    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
+    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });

@@ -1,7 +1,8 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from '../../../test-utils/helper';
-import content from './manifest.json';
+import commonContent from '../commonManifest.json';
+import neworderPageContent from './manifest.json';
 import { baseUrl } from '../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/neworder';
@@ -76,7 +77,7 @@ test('should render the title', async (t) => {
 
   await t
     .expect(title.exists).ok()
-    .expect(await extractInnerText(title)).eql(content.title);
+    .expect(await extractInnerText(title)).eql(neworderPageContent.title);
 });
 
 test('should render the description', async (t) => {
@@ -87,7 +88,7 @@ test('should render the description', async (t) => {
 
   await t
     .expect(description.exists).ok()
-    .expect(await extractInnerText(description)).eql(content.description);
+    .expect(await extractInnerText(description)).eql(neworderPageContent.description);
 });
 
 
@@ -131,8 +132,8 @@ test('should render the "Delete order" button', async (t) => {
 
   await t
     .expect(deleteOrderButton.exists).ok()
-    .expect(await extractInnerText(deleteOrderButton)).eql(content.deleteOrderButton.text)
-    .expect(deleteOrderButton.getAttribute('aria-label')).eql(content.deleteOrderButton.altText)
+    .expect(await extractInnerText(deleteOrderButton)).eql(commonContent.deleteOrderButton.text)
+    .expect(deleteOrderButton.getAttribute('aria-label')).eql(commonContent.deleteOrderButton.disabledAltText)
     .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
     .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
@@ -145,8 +146,8 @@ test('should render the "Preview order summary" button', async (t) => {
 
   await t
     .expect(previewOrderButton.exists).ok()
-    .expect(await extractInnerText(previewOrderButton)).eql(content.previewOrderButton.text)
-    .expect(previewOrderButton.getAttribute('aria-label')).eql(content.previewOrderButton.altText)
+    .expect(await extractInnerText(previewOrderButton)).eql(commonContent.previewOrderButton.text)
+    .expect(previewOrderButton.getAttribute('aria-label')).eql(commonContent.previewOrderButton.disabledAltText)
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
@@ -159,8 +160,8 @@ test('should render the "Submit order" button', async (t) => {
 
   await t
     .expect(submitOrderButton.exists).ok()
-    .expect(await extractInnerText(submitOrderButton)).eql(content.submitOrderButton.text)
-    .expect(submitOrderButton.getAttribute('aria-label')).eql(content.submitOrderButton.altText)
+    .expect(await extractInnerText(submitOrderButton)).eql(commonContent.submitOrderButton.text)
+    .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
     .expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
     .expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
