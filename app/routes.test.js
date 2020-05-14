@@ -1,11 +1,11 @@
 import request from 'supertest';
 import {
   FakeAuthProvider,
-  checkAuthorisedRouteNotLoggedInNew,
-  checkForbiddenNoCsrfNew,
-  checkRedirectToLoginNew,
-  checkLoggedInNotAuthorisedNew,
-  getCsrfTokenFromGetNew,
+  testAuthorisedGetPathForUnauthenticatedUser,
+  testPostPathWithoutCsrf,
+  testAuthorisedPostPathForUnauthenticatedUser,
+  testAuthorisedPostPathForUnauthorisedUsers,
+  getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import { App } from './app';
 import { routes } from './routes';
@@ -53,7 +53,7 @@ describe('routes', () => {
     const path = '/';
 
     it('should redirect to the login page if the user is not logged in', () => (
-      checkAuthorisedRouteNotLoggedInNew({
+      testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
       })
     ));
@@ -72,7 +72,7 @@ describe('routes', () => {
     const path = '/organisation';
 
     it('should redirect to the login page if the user is not logged in', () => (
-      checkAuthorisedRouteNotLoggedInNew({
+      testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
       })
     ));
@@ -90,7 +90,7 @@ describe('routes', () => {
   describe('GET /organisation/:orderId', () => {
     it('should redirect to the login page if the user is not logged in', () => {
       const path = '/organisation/order-id';
-      return checkAuthorisedRouteNotLoggedInNew({
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
       });
     });
@@ -132,7 +132,7 @@ describe('routes', () => {
     const path = '/organisation/some-order-id/description';
 
     it('should redirect to the login page if the user is not logged in', () => (
-      checkAuthorisedRouteNotLoggedInNew({
+      testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
       })
     ));
@@ -155,13 +155,13 @@ describe('routes', () => {
     });
 
     it('should return 403 forbidden if no csrf token is available', () => (
-      checkForbiddenNoCsrfNew({
+      testPostPathWithoutCsrf({
         app: request(setUpFakeApp()), pathToTest: path, mockAuthorisedCookie,
       })
     ));
 
     it('should redirect to the login page if the user is not logged in', () => (
-      checkRedirectToLoginNew({
+      testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
         csrfPagePath: path,
         pathToTest: path,
@@ -171,7 +171,7 @@ describe('routes', () => {
     ));
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      checkLoggedInNotAuthorisedNew({
+      testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
         csrfPagePath: path,
         pathToTest: path,
@@ -186,7 +186,7 @@ describe('routes', () => {
       descriptionController.postOrPutDescription = jest.fn()
         .mockImplementation(() => Promise.resolve({ success: true, orderId: 'order1' }));
 
-      const { cookies, csrfToken } = await getCsrfTokenFromGetNew({
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
       });
 
@@ -215,7 +215,7 @@ describe('routes', () => {
           errors: [{ text: 'Description too long', href: '#description' }],
         }));
 
-      const { cookies, csrfToken } = await getCsrfTokenFromGetNew({
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
       });
 
