@@ -25,7 +25,7 @@ describe('dashboard controller', () => {
       await getDashboardContext({ orgId: 'org-id', orgName: 'org1', accessToken: 'access_token' });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/organisation/org-id/orders`,
+        endpoint: `${orderApiUrl}/api/v1/organisations/org-id/orders`,
         accessToken: 'access_token',
         logger,
       });
