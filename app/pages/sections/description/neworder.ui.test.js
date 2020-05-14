@@ -1,6 +1,6 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
-import { extractInnerText } from '../../../test-utils/helper';
+import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
 import { orderApiUrl } from '../../../config';
 
