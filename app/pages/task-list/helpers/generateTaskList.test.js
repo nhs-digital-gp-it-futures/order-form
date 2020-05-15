@@ -41,7 +41,7 @@ const sectionsData = [
 
 describe('generateTaskList', () => {
   describe('taskName', () => {
-    it('should return task.name as taskName in tasks array for each task in manifest', () => {
+    it('should return taskName for each task in manifest', () => {
       const taskList = generateTaskList({ orderId, taskListManifest });
       taskList.forEach((task, i) => {
         expect(task.taskName).toEqual(taskListManifest.tasks[i].name);
