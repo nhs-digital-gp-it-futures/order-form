@@ -5,6 +5,7 @@ import {
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
+  testAuthorisedGetPathForUnauthorisedUser,
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import { App } from './app';
@@ -77,6 +78,16 @@ describe('routes', () => {
       })
     ));
 
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        pathToTest: path,
+        mockUnauthorisedCookie,
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
     it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
@@ -88,16 +99,25 @@ describe('routes', () => {
   });
 
   describe('GET /organisation/:orderId', () => {
+    const path = '/organisation/order-id';
+
     it('should redirect to the login page if the user is not logged in', () => {
-      const path = '/organisation/order-id';
       return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
       });
     });
 
-    it('should return the neworder page with correct status when the user is authorised', () => {
-      const path = '/organisation/neworder';
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        pathToTest: path,
+        mockUnauthorisedCookie,
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
 
+    it('should return the neworder page with correct status when the user is authorised', () => {
       taskListController.getTaskListPageContext = jest.fn()
         .mockResolvedValueOnce({ orderId: 'neworder' });
 
@@ -112,8 +132,6 @@ describe('routes', () => {
     });
 
     it('should return the existing order page with correct status when the user is authorised', () => {
-      const path = '/organisation/order-id';
-
       taskListController.getTaskListPageContext = jest.fn()
         .mockResolvedValueOnce({ orderId: 'order-id' });
 
@@ -134,6 +152,16 @@ describe('routes', () => {
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        pathToTest: path,
+        mockUnauthorisedCookie,
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
       })
     ));
 
