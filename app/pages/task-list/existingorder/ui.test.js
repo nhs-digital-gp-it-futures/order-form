@@ -153,7 +153,7 @@ test('should render the second task with call off party info as link not text', 
   const secondTask = Selector('li[data-test-id="task-1"]');
   const secondTaskFirstItem = Selector('li[data-test-id="task-1-item-0"]');
 
-  await t.debug()
+  await t
     .expect(taskList.exists).ok()
     .expect(secondTask.exists).ok()
     .expect(await extractInnerText(secondTask.find('h2 span'))).eql('2.')

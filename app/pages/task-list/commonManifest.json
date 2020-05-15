@@ -1,5 +1,5 @@
 {
-  "backLinkText": "Go back",
+  "backLinkText": "Go back to all orders",
   "deleteOrderButton": {
     "text": "Delete order",
     "disabledAltText": "The delete order button will be disabled until you complete and save step 1"
