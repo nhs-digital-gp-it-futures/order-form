@@ -13,7 +13,7 @@
       "name": "Organisation information",
       "sections": [
         {
-          "id": "callOffInfo",
+          "id": "call-off-ordering-party",
           "title": "Provide Call-off Ordering Party information",
           "dependencies": ["description"]
         }
