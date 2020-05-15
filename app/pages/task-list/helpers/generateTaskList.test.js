@@ -31,7 +31,7 @@ const sectionsData = [
   },
   {
     id: 'task2item1',
-    status: 'complete',
+    status: 'incomplete',
   },
   {
     id: 'task2item2',
@@ -67,41 +67,82 @@ describe('generateTaskList', () => {
       });
     });
 
-    it('should not add href to item if no section data is available if the item has dependencies', () => {
-      const taskList = generateTaskList({ orderId, taskListManifest });
-      taskList.forEach((task, i) => {
-        task.items.forEach((item, j) => {
-          if (taskListManifest.tasks[i].sections[j].dependencies) expect(item.href).toBeFalsy();
-        });
-      });
-    });
-
-    it('should add href to item if no section data is available if the item has no dependencies', () => {
-      const taskList = generateTaskList({ orderId, taskListManifest });
-      taskList.forEach((task, i) => {
-        task.items.forEach((item, j) => {
-          if (!taskListManifest.tasks[i].sections[j].dependencies) expect(item.href).toBeTruthy();
-        });
-      });
-    });
-
     it('should construct correct href for item', () => {
       const taskList = generateTaskList({ orderId, taskListManifest });
+      let hrefFound;
       taskList.forEach((task, i) => {
         task.items.forEach((item, j) => {
           if (item.href) {
+            hrefFound = true;
             expect(item.href)
               .toEqual(`${baseUrl}/organisation/${orderId}/${taskListManifest.tasks[i].sections[j].id}`);
           }
         });
       });
+      expect(hrefFound).toBeTruthy();
     });
 
     it('should show item as complete: true if sectionData has status as complete', () => {
       const taskList = generateTaskList({ orderId, taskListManifest, sectionsData });
       expect(taskList[0].items[0].complete).toBeTruthy();
-      expect(taskList[1].items[0].complete).toBeTruthy();
+      expect(taskList[1].items[0].complete).toBeFalsy();
       expect(taskList[1].items[1].complete).toBeFalsy();
+    });
+
+    describe('href without sectionData', () => {
+      it('should add href to item if the item has no dependencies', () => {
+        const taskList = generateTaskList({ orderId, taskListManifest });
+        let itemWithNoDependanciesFound;
+        taskList.forEach((task, i) => {
+          task.items.forEach((item, j) => {
+            if (!taskListManifest.tasks[i].sections[j].dependencies) {
+              itemWithNoDependanciesFound = true;
+              expect(item.href).toBeTruthy();
+            }
+          });
+        });
+        expect(itemWithNoDependanciesFound).toBeTruthy();
+      });
+
+      it('should not add href to item if the item has dependencies', () => {
+        const taskList = generateTaskList({ orderId, taskListManifest });
+        let itemWithDependanciesFound;
+        taskList.forEach((task, i) => {
+          task.items.forEach((item, j) => {
+            if (taskListManifest.tasks[i].sections[j].dependencies) {
+              itemWithDependanciesFound = true;
+              expect(item.href).toBeFalsy();
+            }
+          });
+        });
+        expect(itemWithDependanciesFound).toBeTruthy();
+      });
+    });
+
+    describe('href with sectionData', () => {
+      it('should add href to item if the item has no dependencies', () => {
+        const taskList = generateTaskList({ orderId, taskListManifest, sectionsData });
+        let itemWithNoDependanciesFound;
+        taskList.forEach((task, i) => {
+          task.items.forEach((item, j) => {
+            if (!taskListManifest.tasks[i].sections[j].dependencies) {
+              itemWithNoDependanciesFound = true;
+              expect(item.href).toBeTruthy();
+            }
+          });
+        });
+        expect(itemWithNoDependanciesFound).toBeTruthy();
+      });
+
+      it('should add href to item if all dependencies are complete', () => {
+        const taskList = generateTaskList({ orderId, taskListManifest, sectionsData });
+        expect(taskList[1].items[0].href).toBeTruthy();
+      });
+
+      it('should not add href to item if one or more dependencies are incomplete', () => {
+        const taskList = generateTaskList({ orderId, taskListManifest, sectionsData });
+        expect(taskList[1].items[1].href).toBeFalsy();
+      });
     });
   });
 });
