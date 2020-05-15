@@ -145,6 +145,26 @@ test('should render the first task and tag it as complete', async (t) => {
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/description`);
 });
 
+test('should render the second task with call off party info as link not text', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const taskList = Selector('[data-test-id="task-list"]');
+  const secondTask = Selector('li[data-test-id="task-1"]');
+  const secondTaskFirstItem = Selector('li[data-test-id="task-1-item-0"]');
+
+  await t.debug()
+    .expect(taskList.exists).ok()
+    .expect(secondTask.exists).ok()
+    .expect(await extractInnerText(secondTask.find('h2 span'))).eql('2.')
+    .expect(await extractInnerText(secondTask.find('h2 div'))).eql('Organisation information')
+    .expect(secondTaskFirstItem.exists).ok()
+    .expect(await extractInnerText(secondTaskFirstItem)).eql('Provide Call-off Ordering Party information')
+    .expect(secondTaskFirstItem.find('a').exists).ok()
+    .click(secondTaskFirstItem.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/call-off-ordering-party`);
+});
+
 test('should render the "Delete order" button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
