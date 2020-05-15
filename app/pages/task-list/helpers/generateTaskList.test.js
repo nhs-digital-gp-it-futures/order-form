@@ -38,10 +38,7 @@ const sectionsData = [
     status: 'incomplete',
   },
 ];
-// [
-//   { taskName: 'task 1', items: [ [Object] ] },
-//   { taskName: 'task 2', items: [ [Object], [Object] ] }
-// ]
+
 describe('generateTaskList', () => {
   describe('taskName', () => {
     it('should return task.name as taskName in tasks array for each task in manifest', () => {
