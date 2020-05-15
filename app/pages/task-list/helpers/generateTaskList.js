@@ -1,35 +1,25 @@
 import { baseUrl } from '../../../config';
 
-const convertSectionsDataToDict = ({ sectionsData }) => {
-  if (sectionsData && sectionsData.length > 0) {
-    const sectionsDataDict = sectionsData.reduce((dict, item) => (
-      { ...dict, [item.id]: item }), {});
+const convertDataToDict = ({ sectionsData }) => (sectionsData && sectionsData.length > 0
+  ? sectionsData.reduce((dict, item) => ({ ...dict, [item.id]: item }), {})
+  : undefined);
 
-    return sectionsDataDict;
-  }
-  return undefined;
-};
+const isSectionEnabled = (dataDict = {}, dependencies = []) => (
+  dependencies.length > 0 ? !dependencies.find(
+    dependency => !dataDict[dependency] || (dataDict[dependency] && dataDict[dependency].status === 'incomplete'),
+  ) : true);
+
+const isSectionComplete = (sectionsDataDict = {}, section = []) => !!(sectionsDataDict && sectionsDataDict[section.id] && sectionsDataDict[section.id].status === 'complete');
 
 export const generateTaskList = ({ orderId, taskListManifest, sectionsData }) => {
-  const sectionsDataDict = convertSectionsDataToDict({ sectionsData });
-
-  const taskLists = taskListManifest.tasks.map((task) => {
-    const items = task.sections.map((section) => {
-      const itemHref = section.enabled ? `${baseUrl}/organisation/${orderId}/${section.id}` : undefined;
-      const isItemComplete = sectionsDataDict && sectionsDataDict[section.id].status === 'complete';
-
-      return ({
-        description: section.title,
-        href: itemHref,
-        complete: isItemComplete,
-      });
-    });
-
-    return ({
-      taskName: task.name,
-      items,
-    });
-  });
-
+  const sectionsDataDict = convertDataToDict({ sectionsData });
+  const taskLists = taskListManifest.tasks.map(task => ({
+    taskName: task.name,
+    items: task.sections.map(section => ({
+      description: section.title,
+      href: isSectionEnabled(sectionsDataDict, section.dependencies) ? `${baseUrl}/organisation/${orderId}/${section.id}` : undefined,
+      complete: isSectionComplete(sectionsDataDict, section),
+    })),
+  }));
   return taskLists;
 };
