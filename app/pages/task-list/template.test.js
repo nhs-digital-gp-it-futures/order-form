@@ -6,7 +6,7 @@ import taskListManifest from './taskListManifest.json';
 
 const setup = {
   template: {
-    path: 'pages/order-task-list/template.njk',
+    path: 'pages/task-list/template.njk',
   },
 };
 

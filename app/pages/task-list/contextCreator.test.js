@@ -4,7 +4,7 @@ import existingOrderManifest from './existingorder/manifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
-describe('order-task-list contextCreator', () => {
+describe('task-list contextCreator', () => {
   describe('getContext for new order', () => {
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'neworder' });

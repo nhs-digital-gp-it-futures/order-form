@@ -11,7 +11,7 @@ import { App } from './app';
 import { routes } from './routes';
 import { baseUrl } from './config';
 import * as dashboardController from './pages/dashboard/controller';
-import * as taskListController from './pages/order-task-list/controller';
+import * as taskListController from './pages/task-list/controller';
 import * as descriptionController from './pages/sections/description/controller';
 
 jest.mock('./logger');
