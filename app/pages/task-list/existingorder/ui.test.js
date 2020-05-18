@@ -117,6 +117,7 @@ test('should render the order description details', async (t) => {
   const orderDescription = Selector('h4[data-test-id="order-id-order-description"]');
 
   await t
+    .debug()
     .expect(orderDescriptionTitle.exists).ok()
     .expect(await extractInnerText(orderDescriptionTitle)).eql(existingorderPageContent.orderDescriptionTitle)
     .expect(orderDescription.exists).ok()
