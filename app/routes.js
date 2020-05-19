@@ -72,6 +72,10 @@ export const routes = (authProvider) => {
     return res.render('pages/sections/description/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.get('/organisation/:orderId/call-off-ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    res.status(200).send('call-off-ordering-party-page');
+  }));
+
   router.get('*', (req) => {
     throw new ErrorContext({
       status: 404,
