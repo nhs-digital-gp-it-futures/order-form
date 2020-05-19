@@ -16,6 +16,11 @@
           "id": "call-off-ordering-party",
           "title": "Provide Call-off Ordering Party information",
           "dependencies": ["description"]
+        },
+        {
+          "id": "supplier",
+          "title": "Provide Supplier information",
+          "dependencies": ["description"]
         }
       ]
     }
