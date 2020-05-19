@@ -104,7 +104,7 @@ test('should not render the order description details', async (t) => {
     .expect(orderDescription.exists).notOk();
 });
 
-test('should render the first task as Start your order task and description item as a href', async (t) => {
+test('should render the first task as "Start your order" and "description" item as a href', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -124,7 +124,7 @@ test('should render the first task as Start your order task and description item
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/neworder/description`);
 });
 
-test('should render the second task with call off party info as text not link', async (t) => {
+test('should render the second task as "Organisation information" and "call off party" item as text not link', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -140,6 +140,24 @@ test('should render the second task with call off party info as text not link', 
     .expect(secondTaskFirstItem.exists).ok()
     .expect(await extractInnerText(secondTaskFirstItem)).eql('Provide Call-off Ordering Party information')
     .expect(secondTaskFirstItem.find('a').exists).notOk();
+});
+
+test('should render the second task as "Organisation information" and "supplier" item as text not link', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const taskList = Selector('[data-test-id="task-list"]');
+  const secondTask = Selector('li[data-test-id="task-1"]');
+  const secondTaskSecondItem = Selector('li[data-test-id="task-1-item-1"]');
+
+  await t
+    .expect(taskList.exists).ok()
+    .expect(secondTask.exists).ok()
+    .expect(await extractInnerText(secondTask.find('h2 span'))).eql('2.')
+    .expect(await extractInnerText(secondTask.find('h2 div'))).eql('Organisation information')
+    .expect(secondTaskSecondItem.exists).ok()
+    .expect(await extractInnerText(secondTaskSecondItem)).eql('Provide Supplier information')
+    .expect(secondTaskSecondItem.find('a').exists).notOk();
 });
 
 test('should render the "Delete order" button', async (t) => {

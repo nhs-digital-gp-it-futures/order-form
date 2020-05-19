@@ -145,7 +145,7 @@ test('should render the first task and tag it as complete', async (t) => {
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/description`);
 });
 
-test('should render the second task with call off party info as link not text', async (t) => {
+test('should render the second task as "Organisation information" and "call-off party" as link not text', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -163,6 +163,26 @@ test('should render the second task with call off party info as link not text', 
     .expect(secondTaskFirstItem.find('a').exists).ok()
     .click(secondTaskFirstItem.find('a'))
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/call-off-ordering-party`);
+});
+
+test('should render the second task as "Organisation information" and "supplier" as link not text', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const taskList = Selector('[data-test-id="task-list"]');
+  const secondTask = Selector('li[data-test-id="task-1"]');
+  const secondTaskSecondItem = Selector('li[data-test-id="task-1-item-1"]');
+
+  await t
+    .expect(taskList.exists).ok()
+    .expect(secondTask.exists).ok()
+    .expect(await extractInnerText(secondTask.find('h2 span'))).eql('2.')
+    .expect(await extractInnerText(secondTask.find('h2 div'))).eql('Organisation information')
+    .expect(secondTaskSecondItem.exists).ok()
+    .expect(await extractInnerText(secondTaskSecondItem)).eql('Provide Supplier information')
+    .expect(secondTaskSecondItem.find('a').exists).ok()
+    .click(secondTaskSecondItem.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/supplier`);
 });
 
 test('should render the "Delete order" button', async (t) => {
