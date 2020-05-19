@@ -104,7 +104,7 @@ test('should not render the order description details', async (t) => {
     .expect(orderDescription.exists).notOk();
 });
 
-test('should render the first task as "Start your order" and "description" item as a href', async (t) => {
+test('should render the first task as "Start your order" and "description" as a link', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -124,7 +124,7 @@ test('should render the first task as "Start your order" and "description" item 
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/neworder/description`);
 });
 
-test('should render the second task as "Organisation information" and "call off party" item as text not link', async (t) => {
+test('should render the second task as "Organisation information" and "call off party" as text not link', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -142,7 +142,7 @@ test('should render the second task as "Organisation information" and "call off 
     .expect(secondTaskFirstItem.find('a').exists).notOk();
 });
 
-test('should render the second task as "Organisation information" and "supplier" item as text not link', async (t) => {
+test('should render the second task as "Organisation information" and "supplier" as text not link', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
