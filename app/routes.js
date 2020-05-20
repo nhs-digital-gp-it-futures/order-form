@@ -75,7 +75,8 @@ export const routes = (authProvider) => {
 
   router.get('/organisation/:orderId/call-off-ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const context = await getCallOffOrderingPartyContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    const orgId = req.user.primaryOrganisationId;
+    const context = await getCallOffOrderingPartyContext({ orderId, orgId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     res.render('pages/sections/call-off-ordering-party/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
