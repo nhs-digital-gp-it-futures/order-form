@@ -123,36 +123,3 @@ describe('call-off-ordering-party page', () => {
     });
   }));
 });
-// const mockOrderingPartyData = {
-//   name: 'Hampshire CC',
-//   odsCode: 'AB3',
-//   address: {
-//     line1: 'line 1',
-//     line2: 'line 2',
-//     line3: 'line 3',
-//     line4: null,
-//     line5: 'line 5',
-//     town: 'townville',
-//     county: 'countyshire',
-//     postcode: 'HA3 PSH',
-//     country: 'UK',
-//   },
-// };
-
-// const mockOrgData = {
-//   organisationId: 'b7ee5261-43e7-4589-907b-5eef5e98c085',
-//   name: 'Cheshire and Merseyside Commissioning Hub',
-//   odsCode: 'AB2',
-//   primaryRoleId: 'RO98',
-//   address: {
-//     line1: 'C/O NHS ENGLAND, 1W09, 1ST FLOOR',
-//     line2: 'QUARRY HOUSE',
-//     line3: 'QUARRY HILL',
-//     line4: null,
-//     town: 'LEEDS',
-//     county: 'WEST YORKSHIRE',
-//     postcode: 'LS2 7UE',
-//     country: 'ENGLAND',
-//   },
-//   catalogueAgreementSigned: false,
-// };
