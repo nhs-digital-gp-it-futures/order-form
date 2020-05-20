@@ -7,7 +7,7 @@ import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routerHelper';
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './pages/sections/description/controller';
-import { getSupplierSearchPageContext } from './pages/sections/supplier/search/controller';
+import { getSupplierSearchPageContext, validateSupplierSearchForm, getSupplierSearchPageErrorContext } from './pages/sections/supplier/search/controller';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
 import { getCallOffOrderingPartyContext } from './pages/sections/call-off-ordering-party/controller';
@@ -94,7 +94,13 @@ export const routes = (authProvider) => {
 
   router.post('/organisation/:orderId/supplier/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const context = await getSupplierSearchPageContext({ orderId });
+
+    const response = validateSupplierSearchForm({ data: req.body });
+
+    const context = await getSupplierSearchPageErrorContext({
+      orderId,
+      validationErrors: response.errors,
+    });
     return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 

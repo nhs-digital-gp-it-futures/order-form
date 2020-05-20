@@ -17,3 +17,7 @@ export const validateSupplierSearchForm = ({ data }) => {
   ];
   return { success: false, errors };
 };
+
+export const getSupplierSearchPageErrorContext = ({ orderId, validationErrors }) => {
+  return true;
+};
