@@ -108,3 +108,55 @@ test('should render Search button', async (t) => {
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.searchButtonText);
 });
+
+test('should show the error summary when there are validation errors', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="search-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Enter a supplier name or part of a supplier name');
+});
+
+test('should show text fields as errors with error message when there are validation errors', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const supplierSearchPage = Selector('[data-test-id="supplier-search-page"]');
+  const searchButton = Selector('[data-test-id="search-button"] button');
+  const supplierNameField = supplierSearchPage.find('[data-test-id="question-supplierName"]');
+
+  await t
+    .expect(supplierNameField.find('[data-test-id="text-field-input-error"]').exists).notOk()
+    .click(searchButton);
+
+  await t
+    .expect(supplierNameField.find('[data-test-id="text-field-input-error"]').exists).ok()
+    .expect(await extractInnerText(supplierNameField.find('#supplierName-error'))).contains('Enter a supplier name or part of a supplier name');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const searchButton = Selector('[data-test-id="search-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(searchButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#supplierName`);
+});
