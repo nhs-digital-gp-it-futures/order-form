@@ -78,6 +78,8 @@ describe('supplier search page', () => {
   }));
 
   it('should render the save button', componentTester(setup, (harness) => {
+    const context = {};
+
     harness.request(context, ($) => {
       const button = $('[data-test-id="save-button"] button');
       expect(button.length).toEqual(1);
