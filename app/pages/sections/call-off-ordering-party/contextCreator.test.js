@@ -20,7 +20,7 @@ describe('call-off-ordering-party contextCreator', () => {
       expect(context.backlinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
 
-    it('should construct title woth orderId', () => {
+    it('should construct title with orderId', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId });
       expect(context.title).toEqual('Call-off Ordering Party information for order-id');
