@@ -76,6 +76,15 @@ export const routes = (authProvider) => {
     res.status(200).send('call-off-ordering-party-page');
   }));
 
+  router.get('/organisation/:orderId/supplier', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
+  }));
+
+  router.get('/organisation/:orderId/supplier/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    res.status(200).send('supplier search page');
+  }));
+
   router.get('*', (req) => {
     throw new ErrorContext({
       status: 404,
