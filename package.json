@@ -1,0 +1,89 @@
+{
+  "name": "order-form",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "node-sass --output-style compressed app/styles/main.scss public/css/main.min.css",
+    "build:js": "npm run webpack",
+    "build:docker": "npm run build:docker:css && npm run build:docker:js",
+    "build:docker:css": "node-sass --output-style compressed app/styles/main.scss dist/public/css/main.min.css",
+    "build:docker:js": "babel app -d dist/app --copy-files && npm run webpack",
+    "clean": "touch public/tmp.txt && rm -rf public/*",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "eslint \"**/*.js\" --ignore-pattern node_modules/",
+    "lint:css": "sass-lint 'app/**/*.scss' -v -q",
+    "nuke": "npm run clean && rm -rf node_modules/",
+    "start:dev": "cross-env LOGGER_LEVEL=info babel-node ./app/server",
+    "start:redis": "docker-compose -f \"docker-compose-redis.yml\" up -d",
+    "test:ui": "cross-env NODE_ENV=test LOGGER_LEVEL=off babel-node testcafeRunner.js",
+    "test:integration": "cross-env NODE_ENV=pipeline LOGGER_LEVEL=off babel-node testcafeRunner.js",
+    "test": "jest",
+    "webpack": "webpack",
+    "debug": "babel-node ./app/server --inspect"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhs-digital-gp-it-futures/order-form"
+  },
+  "author": "Ben Hayward",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "buying-catalogue-components": "^1.1.70",
+    "buying-catalogue-library": "^1.0.21",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.5",
+    "csurf": "^1.11.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^3.22.0",
+    "nhsuk-frontend": "^3.0.4",
+    "nunjucks": "^3.2.1",
+    "nunjucks-date-filter": "^0.1.1",
+    "serve-favicon": "^2.5.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/register": "^7.9.0",
+    "babel-loader": "^8.1.0",
+    "cheerio": "^1.0.0-rc.3",
+    "concurrently": "^4.1.2",
+    "cross-env": "^6.0.3",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-import": "^2.18.2",
+    "husky": "^4.0.3",
+    "jest": "^24.8.0",
+    "jest-nunit-reporter": "^1.3.1",
+    "nock": "^10.0.6",
+    "node-sass": "^4.13.1",
+    "sass-lint": "^1.13.1",
+    "supertest": "^4.0.2",
+    "testcafe": "^1.8.3",
+    "testcafe-reporter-nunit": "^0.1.2",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.10"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "((\\.|/)(ui.test))\\.js$"
+    ],
+    "testResultsProcessor": "./node_modules/jest-nunit-reporter"
+  },
+  "jestNunitReporter": {
+    "outputFilename": "unit-test-report.xml"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run lint"
+    }
+  }
+}

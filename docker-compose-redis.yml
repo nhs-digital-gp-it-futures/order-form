@@ -1,0 +1,9 @@
+version: '3.5'
+
+services:
+
+  redis:
+    image: redis
+    container_name: bc-redis
+    ports: 
+      - "6380:6379"

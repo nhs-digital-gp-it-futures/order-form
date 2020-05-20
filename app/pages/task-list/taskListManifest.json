@@ -1,0 +1,23 @@
+{
+  "tasks": [
+    {
+      "name": "Start your order",
+      "sections": [
+        {
+          "id": "description",
+          "title": "Provide a description of your order"
+        }
+      ]
+    },
+    {
+      "name": "Organisation information",
+      "sections": [
+        {
+          "id": "call-off-ordering-party",
+          "title": "Provide Call-off Ordering Party information",
+          "dependencies": ["description"]
+        }
+      ]
+    }
+  ]
+}

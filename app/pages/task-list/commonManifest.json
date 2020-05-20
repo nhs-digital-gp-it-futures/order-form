@@ -1,0 +1,15 @@
+{
+  "backLinkText": "Go back to all orders",
+  "deleteOrderButton": {
+    "text": "Delete order",
+    "disabledAltText": "The delete order button will be disabled until you complete and save step 1"
+  },
+  "previewOrderButton": {
+    "text": "Preview order summary",
+    "disabledAltText": "The preview order button will be disabled until you complete and save step 1"
+  },
+  "submitOrderButton": {
+    "text": "Submit order",
+    "disabledAltText": "The submit order button will be disabled until the necessary steps are complete"
+  }
+}
