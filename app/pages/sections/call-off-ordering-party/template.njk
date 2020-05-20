@@ -17,8 +17,21 @@
         <h2 data-test-id="call-off-ordering-party-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-9">{{ description }}</h2>
 
         <h3 data-test-id="organisation-name-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ orgNameHeading }}</h3>
+        <div data-test-id="organisation-name" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ name }}</div>
+
         <h3 data-test-id="organisation-ods-code-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ odsCodeHeading }}</h3>
+        <div data-test-id="organisation-ods-code" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ odsCode }}</div>
+
         <h3 data-test-id="organisation-address-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ orgAddressHeading }}</h3>
+        <div data-test-id="organisation-address-1" class="nhsuk-u-font-size-19">{{ address.line1 }}</div>
+        <div data-test-id="organisation-address-2" class="nhsuk-u-font-size-19">{{ address.line2 }}</div>
+        <div data-test-id="organisation-address-3" class="nhsuk-u-font-size-19">{{ address.line3 }}</div>
+        <div data-test-id="organisation-address-4" class="nhsuk-u-font-size-19">{{ address.line4 }}</div>
+        <div data-test-id="organisation-address-5" class="nhsuk-u-font-size-19">{{ address.line5 }}</div>
+        <div data-test-id="organisation-address-town" class="nhsuk-u-font-size-19">{{ address.town }}</div>
+        <div data-test-id="organisation-address-county" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ address.county }}</div>
+        <div data-test-id="organisation-address-postcode" class="nhsuk-u-font-size-19">{{ address.postcode }}</div>
+        <div data-test-id="organisation-address-country" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ address.country }}</div>
 
         {{ bcButton({
             dataTestId: "save-button",
