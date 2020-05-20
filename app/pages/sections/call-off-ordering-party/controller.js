@@ -25,4 +25,5 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
       throw new Error();
     }
   }
+  throw new Error();
 };
