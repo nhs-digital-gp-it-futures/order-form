@@ -9,7 +9,7 @@ export const createAuthProvider = ({ config }) => {
     backLinkHref: config.publicBrowseBaseUrl,
   });
   const authProvider = new AuthProvider({
-    config, scopes: 'Ordering', unauthenticatedError, logger,
+    config, scopes: 'Ordering Organisation', unauthenticatedError, logger,
   });
   return authProvider;
 };
