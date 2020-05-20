@@ -87,7 +87,7 @@ export const routes = (authProvider) => {
 
   router.get('/organisation/:orderId/supplier/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const context = getSupplierSearchPageContext({ orderId });
+    const context = await getSupplierSearchPageContext({ orderId });
     res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
