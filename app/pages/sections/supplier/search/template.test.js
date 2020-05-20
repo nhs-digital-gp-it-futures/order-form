@@ -60,9 +60,9 @@ describe('supplier search page', () => {
 
   it('should render the "Enter Supplier name" textfield component', componentTester(setup, (harness) => {
     const context = {
-      questions: 
-    }
-    
+      questions: manifest.questions,
+    };
+
     harness.request(context, ($) => {
       const input = $('[data-test-id="question-description"] textarea');
       const footerAdvice = $('[data-test-id="textarea-field-footer"] span');
