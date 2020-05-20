@@ -70,7 +70,6 @@ describe('supplier search page', () => {
       expect(supplierNameInput.length).toEqual(1);
       expect(supplierNameInput.find('label').text().trim()).toEqual(context.questions[0].mainAdvice);
       expect(supplierNameInput.find('input').length).toEqual(1);
-
     });
   }));
 
