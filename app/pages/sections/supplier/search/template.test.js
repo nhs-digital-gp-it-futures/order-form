@@ -12,7 +12,7 @@ describe('supplier search page', () => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation',
+      backLinkHref: '/organisation/order-1',
     };
 
     harness.request(context, ($) => {
@@ -48,7 +48,9 @@ describe('supplier search page', () => {
   }));
 
   it('should render hidden input with csrf token', componentTester(setup, (harness) => {
-    const context = {};
+    const context = {
+      csrfToken: 'mockCsrfToken',
+    };
 
     harness.request(context, ($) => {
       const formElement = $('input[name=_csrf]');
@@ -64,26 +66,23 @@ describe('supplier search page', () => {
     };
 
     harness.request(context, ($) => {
-      const input = $('[data-test-id="question-description"] textarea');
-      const footerAdvice = $('[data-test-id="textarea-field-footer"] span');
+      const supplierNameInput = $('[data-test-id="question-supplierName"]');
+      expect(supplierNameInput.length).toEqual(1);
+      expect(supplierNameInput.find('label').text().trim()).toEqual(context.questions[0].mainAdvice);
+      expect(supplierNameInput.find('input').length).toEqual(1);
 
-      expect(input.length).toEqual(1);
-      expect(input.attr('id')).toEqual(context.questions[0].id);
-      expect(input.attr('name')).toEqual(context.questions[0].id);
-      expect(input.attr('rows').trim())
-        .toEqual(String(context.questions[0].rows));
-      expect(footerAdvice.length).toEqual(1);
-      expect(footerAdvice.text().trim()).toEqual(context.questions[0].footerAdvice);
     });
   }));
 
-  it('should render the save button', componentTester(setup, (harness) => {
-    const context = {};
+  it('should render the "Search" button', componentTester(setup, (harness) => {
+    const context = {
+      searchButtonText: 'Search',
+    };
 
     harness.request(context, ($) => {
-      const button = $('[data-test-id="save-button"] button');
+      const button = $('[data-test-id="search-button"] button');
       expect(button.length).toEqual(1);
-      expect(button.text().trim()).toEqual(context.saveButtonText);
+      expect(button.text().trim()).toEqual(context.searchButtonText);
     });
   }));
 });
