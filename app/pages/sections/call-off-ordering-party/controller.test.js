@@ -85,7 +85,7 @@ describe('Call-off-ordering-party controller', () => {
     });
 
     describe('when call-off-ordering-party is already completed', () => {
-      it('should call getData twice with the correct params', async () => {
+      it('should call getData once with the correct params', async () => {
         getData
           .mockResolvedValueOnce(mockOrderingPartyData);
 
@@ -98,7 +98,7 @@ describe('Call-off-ordering-party controller', () => {
         });
       });
 
-      it('should call getContext with the correct params when data returned from organisations API', async () => {
+      it('should call getContext with the correct params when data returned from ordering API', async () => {
         getData
           .mockResolvedValueOnce(mockOrderingPartyData);
 
