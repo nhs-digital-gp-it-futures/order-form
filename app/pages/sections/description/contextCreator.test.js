@@ -16,7 +16,7 @@ const mockValidationErrors = [{
 
 describe('decription contextCreator', () => {
   describe('getContext', () => {
-    it('should return the contents of the new order manifest', () => {
+    it('should return the contents of the manifest', () => {
       const context = getContext({});
       expect(context.backLinkText).toEqual(manifest.backLinkText);
       expect(context.title).toEqual(manifest.title);

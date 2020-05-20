@@ -289,7 +289,7 @@ describe('routes', () => {
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text.includes('call-off-ordering-party-page')).toBeTruthy();
+        expect(res.text.includes('data-test-id="call-off-ordering-party-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       }));
   });
