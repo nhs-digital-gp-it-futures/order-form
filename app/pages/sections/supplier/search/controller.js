@@ -1,4 +1,4 @@
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 
 export const getSupplierSearchPageContext = async ({ orderId }) => (
   getContext({ orderId })
@@ -18,6 +18,4 @@ export const validateSupplierSearchForm = ({ data }) => {
   return { success: false, errors };
 };
 
-export const getSupplierSearchPageErrorContext = ({ orderId, validationErrors }) => {
-  return true;
-};
+export const getSupplierSearchPageErrorContext = params => getErrorContext(params);
