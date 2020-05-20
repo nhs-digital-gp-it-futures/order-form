@@ -9,6 +9,7 @@ import { getDashboardContext } from './pages/dashboard/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './pages/sections/description/controller';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
+import { getCallOffOrderingPartyContext } from './pages/sections/call-off-ordering-party/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -73,7 +74,9 @@ export const routes = (authProvider) => {
   }));
 
   router.get('/organisation/:orderId/call-off-ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    res.status(200).send('call-off-ordering-party-page');
+    const { orderId } = req.params;
+    const context = await getCallOffOrderingPartyContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    res.render('pages/sections/call-off-ordering-party/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('*', (req) => {
