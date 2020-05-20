@@ -14,6 +14,7 @@ import { baseUrl } from './config';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
 import * as descriptionController from './pages/sections/description/controller';
+import * as orderingPartyController from './pages/sections/call-off-ordering-party/controller';
 
 jest.mock('./logger');
 
@@ -24,6 +25,9 @@ descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
 
 descriptionController.postOrPutDescription = jest.fn()
+  .mockResolvedValue({});
+
+orderingPartyController.getCallOffOrderingPartyContext = jest.fn()
   .mockResolvedValue({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));

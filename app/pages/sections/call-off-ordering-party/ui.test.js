@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
+import { orderApiUrl } from '../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/order-id/call-off-ordering-party';
 
@@ -13,8 +14,15 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
+const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/ordering-party')
+    .reply(200, {});
+};
+
 const pageSetup = async (t, withAuth = false) => {
   if (withAuth) {
+    mocks();
     await setCookies();
   }
 };
