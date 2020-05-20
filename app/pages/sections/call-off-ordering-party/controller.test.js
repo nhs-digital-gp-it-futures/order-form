@@ -40,7 +40,7 @@ describe('Call-off-ordering-party controller', () => {
       await getCallOffOrderingPartyContext({ orderId: 'order-id', accessToken: 'access_token' });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/call-off-ordering-party`,
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
         accessToken: 'access_token',
         logger,
       });
