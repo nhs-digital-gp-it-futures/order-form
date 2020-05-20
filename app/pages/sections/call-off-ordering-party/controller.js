@@ -20,7 +20,6 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
     try {
       const orgDataEndpoint = getEndpoint({ endpointLocator: 'getOrganisationById', options: { orgId } });
       const orgData = await getData({ endpoint: orgDataEndpoint, accessToken, logger });
-      // const orgData = mockOrgData;
       logger.info(`Organisation with id: ${orgId} found`);
       return getContext({ orderId, data: orgData });
     } catch (error) {
