@@ -1,5 +1,5 @@
 import * as contextCreator from './contextCreator';
-import { getSupplierSearchPageContext } from './controller';
+import { getSupplierSearchPageContext, validateSupplierSearchForm } from './controller';
 
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
@@ -15,6 +15,58 @@ describe('supplier search controller', () => {
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1' });
+    });
+  });
+
+  describe('validateSupplierSearchForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return success as true if there are no validation errors', () => {
+        const data = {
+          supplierName: 'some supplier name',
+        };
+
+        const response = validateSupplierSearchForm({ data });
+
+        expect(response.success).toEqual(true);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const expectedValidationErrors = [
+        {
+          field: 'supplierName',
+          id: 'SupplierNameRequired',
+        },
+      ];
+
+      it('should return an array of one validation error and success as false', () => {
+        const data = {
+          supplierName: '',
+        };
+
+        const response = validateSupplierSearchForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return a validation error is supplierName just contains blank spaces', () => {
+        const data = {
+          supplierName: '  ',
+        };
+
+        const response = validateSupplierSearchForm({ data });
+
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return a validation error if supplierName is undefined', () => {
+        const data = {};
+
+        const response = validateSupplierSearchForm({ data });
+
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
     });
   });
 });

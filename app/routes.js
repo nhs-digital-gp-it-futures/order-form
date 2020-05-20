@@ -92,6 +92,12 @@ export const routes = (authProvider) => {
     res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.post('/organisation/:orderId/supplier/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const context = await getSupplierSearchPageContext({ orderId });
+    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
   router.get('*', (req) => {
     throw new ErrorContext({
       status: 404,
