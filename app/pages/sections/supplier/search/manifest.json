@@ -1,0 +1,10 @@
+{
+  "backLinkText": "Go back",
+  "title": "Find supplier information for",
+  "description": "Search for the supplier you want to purchase from.",
+  "questions": [{
+      "id": "supplierName",
+      "mainAdvice": "Enter Supplier name"
+    }],
+  "searchButtonText": "Search"
+}
