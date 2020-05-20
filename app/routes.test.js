@@ -347,7 +347,7 @@ describe('routes', () => {
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text.includes('supplier search page')).toBeTruthy();
+        expect(res.text.includes('data-test-id="supplier-search-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
   });
