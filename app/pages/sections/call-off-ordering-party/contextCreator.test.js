@@ -19,10 +19,10 @@ const mockOrderingPartyData = {
 };
 
 const questionData = {
-    firstName: 'first name',
-    lastName: 'lastName',
-    telephoneNumber: '07777777777',
-    emailAddress: 'email@address.com',
+  firstName: 'first name',
+  lastName: 'lastName',
+  telephoneNumber: '07777777777',
+  emailAddress: 'email@address.com',
 };
 
 const orderId = 'order-id';
@@ -66,13 +66,3 @@ describe('call-off-ordering-party contextCreator', () => {
     });
   });
 });
-
-// export const getContext = ({ orderId, orgData, contactData }) => {
-//   const manifestWithQuestionsData = addDataToQuestionsInManifest(contactData);
-//   return {
-//     ...manifestWithQuestionsData,
-//     ...orgData,
-//     title: `${manifest.title} ${orderId}`,
-//     backlinkHref: `${baseUrl}/organisation/${orderId}`,
-//   };
-// };
