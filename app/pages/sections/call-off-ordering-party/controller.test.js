@@ -10,81 +10,46 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-const mockOrderingPartyData = {
-  organisation: {
-    name: 'Hampshire CC',
-    odsCode: 'AB3',
-    address: {
-      line1: 'line 1',
-      line2: 'line 2',
-      line3: 'line 3',
-      line4: 'line 4',
-      line5: 'line 5',
-      town: 'townville',
-      county: 'countyshire',
-      postcode: 'HA3 PSH',
-      country: 'UK',
-    },
-  },
+const mockPrimaryContact = {
+  firstName: 'first name',
+  lastName: 'last name',
+  telephoneNumber: '07777777777',
+  emailAddress: 'email@address.com',
 };
 
-const mockOrgData = {
-  organisationId: 'b7ee5261-43e7-4589-907b-5eef5e98c085',
-  name: 'Cheshire and Merseyside Commissioning Hub',
-  odsCode: 'AB2',
-  primaryRoleId: 'RO98',
-  address: {
-    line1: 'C/O NHS ENGLAND, 1W09, 1ST FLOOR',
-    line2: 'QUARRY HOUSE',
-    line3: 'QUARRY HILL',
-    line4: null,
-    town: 'LEEDS',
-    county: 'WEST YORKSHIRE',
-    postcode: 'LS2 7UE',
-    country: 'ENGLAND',
-  },
-  catalogueAgreementSigned: false,
-};
-const mockFormData = {
+const mockOrganisation = {
   name: 'Hampshire CC',
   odsCode: 'AB3',
-  line1: 'line 1',
-  line2: 'line 2',
-  line3: 'line 3',
-  line4: null,
-  line5: 'line 5',
-  town: 'townville',
-  county: 'countyshire',
-  postcode: 'HA3 PSH',
-  country: 'UK',
-  firstName: 'firstName',
-  lastName: 'lastName',
-  emailAddress: 'emailAddress',
-  telephoneNumber: 'telephoneNumber',
+  address: {
+    line1: 'line 1',
+    line2: 'line 2',
+    line3: 'line 3',
+    line4: null,
+    line5: 'line 5',
+    town: 'townville',
+    county: 'countyshire',
+    postcode: 'HA3 PSH',
+    country: 'UK',
+  },
 };
 
-const mockPutBody = {
-  organisation: {
-    name: 'Hampshire CC',
-    odsCode: 'AB3',
-    address: {
-      line1: 'line 1',
-      line2: 'line 2',
-      line3: 'line 3',
-      line4: null,
-      line5: 'line 5',
-      town: 'townville',
-      county: 'countyshire',
-      postcode: 'HA3 PSH',
-      country: 'UK',
-    },
-  },
-  primaryContact: {
-    firstName: 'firstName',
-    lastName: 'lastName',
-    emailAddress: 'emailAddress',
-    telephoneNumber: 'telephoneNumber',
-  },
+const mockCompleteData = {
+  organisation: { ...mockOrganisation },
+  primaryContact: { ...mockPrimaryContact },
+};
+
+const mockDataFromOapi = {
+  organisationId: 'b7ee5261-43e7-4589-907b-5eef5e98c085',
+  primaryRoleId: 'RO98',
+  catalogueAgreementSigned: false,
+  ...mockOrganisation,
+};
+
+const mockFormData = {
+  name: mockOrganisation.name,
+  odsCode: mockOrganisation.odsCode,
+  ...mockOrganisation.address,
+  ...mockPrimaryContact,
 };
 
 describe('Call-off-ordering-party controller', () => {
@@ -93,11 +58,12 @@ describe('Call-off-ordering-party controller', () => {
       getData.mockReset();
       contextCreator.getContext.mockReset();
     });
+
     describe('when call-off-ordering-party is not completed yet', () => {
       it('should call getData twice with the correct params', async () => {
         getData
           .mockRejectedValueOnce({})
-          .mockResolvedValueOnce(mockOrgData);
+          .mockResolvedValueOnce(mockDataFromOapi);
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
         expect(getData.mock.calls.length).toEqual(2);
@@ -113,24 +79,37 @@ describe('Call-off-ordering-party controller', () => {
         });
       });
 
-      it('should call getContext with the correct params when data returned from organisations API', async () => {
+      it('should call getContext with the correct params when organisation data returned from organisations API', async () => {
         getData
           .mockRejectedValueOnce({})
-          .mockResolvedValueOnce(mockOrgData);
+          .mockResolvedValueOnce({ organisation: mockDataFromOapi });
         contextCreator.getContext
           .mockResolvedValueOnce();
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-        expect(contextCreator.getContext).toHaveBeenCalledWith({ data: mockOrgData, orderId: 'order-id' });
+        expect(contextCreator.getContext).toHaveBeenCalledWith({ orgData: mockDataFromOapi, orderId: 'order-id' });
+      });
+
+      it('should call getContext with the correct params when primary contact data returned from organisations API', async () => {
+        getData
+          .mockRejectedValueOnce({})
+          .mockResolvedValueOnce({ primaryContact: mockPrimaryContact });
+        contextCreator.getContext
+          .mockResolvedValueOnce();
+
+        await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
+
+        expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+        expect(contextCreator.getContext).toHaveBeenCalledWith({ contactData: mockPrimaryContact, orderId: 'order-id' });
       });
     });
 
     describe('when call-off-ordering-party is already completed', () => {
       it('should call getData once with the correct params', async () => {
         getData
-          .mockResolvedValueOnce(mockOrderingPartyData);
+          .mockResolvedValueOnce(mockCompleteData);
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
         expect(getData.mock.calls.length).toEqual(1);
@@ -143,12 +122,12 @@ describe('Call-off-ordering-party controller', () => {
 
       it('should call getContext with the correct params when data returned from ordering API', async () => {
         getData
-          .mockResolvedValueOnce(mockOrderingPartyData);
+          .mockResolvedValueOnce(mockCompleteData);
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-        expect(contextCreator.getContext).toHaveBeenCalledWith({ data: mockOrderingPartyData.organisation, orderId: 'order-id' });
+        expect(contextCreator.getContext).toHaveBeenCalledWith({ orgData: mockCompleteData.organisation, contactData: mockCompleteData.primaryContact, orderId: 'order-id' });
       });
     });
   });
@@ -168,7 +147,7 @@ describe('Call-off-ordering-party controller', () => {
       expect(putData.mock.calls.length).toEqual(1);
       expect(putData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
-        body: mockPutBody,
+        body: mockCompleteData,
         organisationId: 'org-id',
         accessToken: 'access_token',
         logger,
@@ -194,7 +173,7 @@ describe('Call-off-ordering-party controller', () => {
       expect(putData.mock.calls.length).toEqual(1);
       expect(putData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
-        body: mockPutBody,
+        body: mockCompleteData,
         organisationId: 'org-id',
         accessToken: 'access_token',
         logger,

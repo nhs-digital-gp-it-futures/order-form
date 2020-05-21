@@ -34,16 +34,24 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
 
     if (callOffOrgData) {
       logger.info(`Call off ordering party found in ORDAPI for ${orderId}`);
-      return getContext({ orderId, data: callOffOrgData.organisation });
+      return getContext({
+        orderId,
+        orgData: callOffOrgData.organisation,
+        contactData: callOffOrgData.primaryContact,
+      });
     }
   } catch (err) {
     logger.info(`No call off ordering party found in ORDAPI for ${orderId}. ${err}`);
 
     try {
       const orgDataEndpoint = getEndpoint({ endpointLocator: 'getOrganisationById', options: { orgId } });
-      const orgData = await getData({ endpoint: orgDataEndpoint, accessToken, logger });
+      const organisationData = await getData({ endpoint: orgDataEndpoint, accessToken, logger });
       logger.info(`Organisation with id: ${orgId} found in OAPI`);
-      return getContext({ orderId, data: orgData });
+      return getContext({
+        orderId,
+        orgData: organisationData.organisation,
+        contactData: organisationData.primaryContact,
+      });
     } catch (error) {
       logger.error(`No organisation data returned from OAPI for id: ${orgId}. ${err}`);
       throw new Error();
