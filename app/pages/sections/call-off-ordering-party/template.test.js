@@ -116,6 +116,66 @@ describe('call-off-ordering-party page', () => {
     });
   }));
 
+  it('should render hidden inputs for organisation details', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const nameFormElement = $('input[name=name]');
+      const odsCodeformElement = $('input[name=odsCode]');
+      const line1FormElement = $('input[name=line1]');
+      const line2FormElement = $('input[name=line2]');
+      const line3FormElement = $('input[name=line3]');
+      const line4FormElement = $('input[name=line4]');
+      const line5FormElement = $('input[name=line5]');
+      const townFormElement = $('input[name=town]');
+      const countyFormElement = $('input[name=county]');
+      const postcodeFormElement = $('input[name=postcode]');
+      const countryFormElement = $('input[name=country]');
+
+      expect(nameFormElement.length).toEqual(1);
+      expect(nameFormElement.attr('type')).toEqual('hidden');
+      expect(nameFormElement.attr('value')).toEqual(context.name);
+
+      expect(odsCodeformElement.length).toEqual(1);
+      expect(odsCodeformElement.attr('type')).toEqual('hidden');
+      expect(odsCodeformElement.attr('value')).toEqual(context.odsCode);
+
+      expect(line1FormElement.length).toEqual(1);
+      expect(line1FormElement.attr('type')).toEqual('hidden');
+      expect(line1FormElement.attr('value')).toEqual(context.address.line1);
+
+      expect(line2FormElement.length).toEqual(1);
+      expect(line2FormElement.attr('type')).toEqual('hidden');
+      expect(line2FormElement.attr('value')).toEqual(context.address.line2);
+
+      expect(line3FormElement.length).toEqual(1);
+      expect(line3FormElement.attr('type')).toEqual('hidden');
+      expect(line3FormElement.attr('value')).toEqual(context.address.line3);
+
+      expect(line4FormElement.length).toEqual(1);
+      expect(line4FormElement.attr('type')).toEqual('hidden');
+      expect(line4FormElement.attr('value')).toEqual('');
+
+      expect(line5FormElement.length).toEqual(1);
+      expect(line5FormElement.attr('type')).toEqual('hidden');
+      expect(line5FormElement.attr('value')).toEqual(context.address.line5);
+
+      expect(townFormElement.length).toEqual(1);
+      expect(townFormElement.attr('type')).toEqual('hidden');
+      expect(townFormElement.attr('value')).toEqual(context.address.town);
+
+      expect(countyFormElement.length).toEqual(1);
+      expect(countyFormElement.attr('type')).toEqual('hidden');
+      expect(countyFormElement.attr('value')).toEqual(context.address.county);
+
+      expect(postcodeFormElement.length).toEqual(1);
+      expect(postcodeFormElement.attr('type')).toEqual('hidden');
+      expect(postcodeFormElement.attr('value')).toEqual(context.address.postcode);
+
+      expect(countryFormElement.length).toEqual(1);
+      expect(countryFormElement.attr('type')).toEqual('hidden');
+      expect(countryFormElement.attr('value')).toEqual(context.address.country);
+    });
+  }));
+
   describe('form fields', () => {
     it('should render hidden input with csrf token', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
@@ -139,7 +199,7 @@ describe('call-off-ordering-party page', () => {
 
     it('should render a textField for each question', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const inputs = $('input:not([name=_csrf])');
+        const inputs = $('[data-test-id="primary-contact-fields"] input:not([name=_csrf])');
         expect(inputs.length).toEqual(context.questions.length);
         context.questions.forEach((question, i) => {
           expect(inputs[i].attribs.id).toEqual(question.id);

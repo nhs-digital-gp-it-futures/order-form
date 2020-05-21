@@ -1,5 +1,5 @@
-import { getData } from 'buying-catalogue-library';
-import { getCallOffOrderingPartyContext } from './controller';
+import { getData, putData } from 'buying-catalogue-library';
+import { getCallOffOrderingPartyContext, putCallOffOrderingParty } from './controller';
 import { logger } from '../../../logger';
 import { orderApiUrl, organisationApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
@@ -44,6 +44,47 @@ const mockOrgData = {
     country: 'ENGLAND',
   },
   catalogueAgreementSigned: false,
+};
+const mockFormData = {
+  name: 'Hampshire CC',
+  odsCode: 'AB3',
+  line1: 'line 1',
+  line2: 'line 2',
+  line3: 'line 3',
+  line4: null,
+  line5: 'line 5',
+  town: 'townville',
+  county: 'countyshire',
+  postcode: 'HA3 PSH',
+  country: 'UK',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  emailAddress: 'emailAddress',
+  telephoneNumber: 'telephoneNumber',
+};
+
+const mockPutBody = {
+  organisation: {
+    name: 'Hampshire CC',
+    odsCode: 'AB3',
+    address: {
+      line1: 'line 1',
+      line2: 'line 2',
+      line3: 'line 3',
+      line4: null,
+      line5: 'line 5',
+      town: 'townville',
+      county: 'countyshire',
+      postcode: 'HA3 PSH',
+      country: 'UK',
+    },
+  },
+  primaryContact: {
+    firstName: 'firstName',
+    lastName: 'lastName',
+    emailAddress: 'emailAddress',
+    telephoneNumber: 'telephoneNumber',
+  },
 };
 
 describe('Call-off-ordering-party controller', () => {
@@ -109,6 +150,65 @@ describe('Call-off-ordering-party controller', () => {
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
         expect(contextCreator.getContext).toHaveBeenCalledWith({ data: mockOrderingPartyData.organisation, orderId: 'order-id' });
       });
+    });
+  });
+
+  describe('putCallOffOrderingParty', () => {
+    afterEach(() => {
+      putData.mockReset();
+    });
+
+    it('should call putData once with the correct params', async () => {
+      putData
+        .mockResolvedValueOnce({});
+
+      await putCallOffOrderingParty({
+        orgId: 'org-id', orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
+      });
+      expect(putData.mock.calls.length).toEqual(1);
+      expect(putData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
+        body: mockPutBody,
+        organisationId: 'org-id',
+        accessToken: 'access_token',
+        logger,
+      });
+    });
+
+    it('should trim whitespace from the data', async () => {
+      const mockData = {
+        ...mockFormData,
+        line2: '   line 2  ',
+        line3: '  line 3',
+        line4: null,
+        line5: 'line 5  ',
+        town: ' townville  ',
+      };
+
+      putData
+        .mockResolvedValueOnce({});
+
+      await putCallOffOrderingParty({
+        orgId: 'org-id', orderId: 'order-id', data: mockData, accessToken: 'access_token',
+      });
+      expect(putData.mock.calls.length).toEqual(1);
+      expect(putData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
+        body: mockPutBody,
+        organisationId: 'org-id',
+        accessToken: 'access_token',
+        logger,
+      });
+    });
+
+    it('should return succes: true if put is successful', async () => {
+      putData
+        .mockResolvedValueOnce({});
+
+      const response = await putCallOffOrderingParty({
+        orgId: 'org-id', orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
+      });
+      expect(response).toEqual({ success: true });
     });
   });
 });
