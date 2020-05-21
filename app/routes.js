@@ -137,7 +137,7 @@ export const routes = (authProvider) => {
         backLinkHref: `${config.baseUrl}/organisation/${orderId}/supplier/search`,
       });
     }
-    res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
+    return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
   }));
 
   router.get('*', (req) => {

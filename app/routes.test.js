@@ -443,7 +443,7 @@ describe('routes', () => {
   });
 
   describe('GET /organisation/:orderId/supplier/search/select', () => {
-    const path = '/organisation/some-order-id/supplier/search/select';
+    const path = '/organisation/some-order-id/supplier/search/select?supplierNameToFind=some-supp';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -461,35 +461,14 @@ describe('routes', () => {
       })
     ));
 
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.text.includes('supplier select page')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
-
     it('should show the number of supplier found if there are no validation errors and suppliers were returned', async () => {
-      supplierSearchController.validateSupplierSearchForm = jest.fn()
-        .mockImplementation(() => ({ success: true }));
-
       supplierSearchController.findSuppliers = jest.fn()
         .mockImplementation(() => Promise.resolve([
           { supplierId: 'some-supplier-id', name: 'some-supplier-name' }]));
 
-      const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
-      });
-
       return request(setUpFakeApp())
-        .post(path)
-        .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie])
-        .send({
-          supplierName: '',
-          _csrf: csrfToken,
-        })
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(false);
@@ -499,24 +478,12 @@ describe('routes', () => {
     });
 
     it('should show the error page indicating no suppliers found', async () => {
-      supplierSearchController.validateSupplierSearchForm = jest.fn()
-        .mockImplementation(() => ({ success: true }));
-
       supplierSearchController.findSuppliers = jest.fn()
         .mockImplementation(() => Promise.resolve([]));
 
-      const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
-      });
-
       return request(setUpFakeApp())
-        .post(path)
-        .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie])
-        .send({
-          supplierName: '',
-          _csrf: csrfToken,
-        })
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="error-title"')).toEqual(true);
