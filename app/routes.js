@@ -10,7 +10,7 @@ import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription
 import { getSupplierSearchPageContext, validateSupplierSearchForm, getSupplierSearchPageErrorContext } from './pages/sections/supplier/search/controller';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
-import { getCallOffOrderingPartyContext } from './pages/sections/call-off-ordering-party/controller';
+import { getCallOffOrderingPartyContext, putCallOffOrderingParty } from './pages/sections/call-off-ordering-party/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -61,7 +61,10 @@ export const routes = (authProvider) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const response = await postOrPutDescription({
-      orgId: req.user.primaryOrganisationId, orderId, data: req.body, accessToken,
+      orgId: req.user.primaryOrganisationId,
+      orderId,
+      data: req.body,
+      accessToken,
     });
 
     if (response.success) return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
@@ -79,6 +82,18 @@ export const routes = (authProvider) => {
     const orgId = req.user.primaryOrganisationId;
     const context = await getCallOffOrderingPartyContext({ orderId, orgId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     res.render('pages/sections/call-off-ordering-party/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/organisation/:orderId/call-off-ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const response = await putCallOffOrderingParty({
+      orgId: req.user.primaryOrganisationId,
+      orderId,
+      data: req.body,
+      accessToken: extractAccessToken({ req, tokenType: 'access' }),
+    });
+    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    return res.status(200).send('error with put call for call-off-ordering-party');
   }));
 
   router.get('/organisation/:orderId/supplier', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
