@@ -183,7 +183,8 @@ describe('Call-off-ordering-party controller', () => {
         line4: null,
         line5: 'line 5  ',
         town: ' townville  ',
-      }
+      };
+
       putData
         .mockResolvedValueOnce({});
 
