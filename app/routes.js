@@ -130,6 +130,10 @@ export const routes = (authProvider) => {
     return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.get('/organisation/:orderId/supplier/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    res.status(200).send('supplier select page');
+  }));
+
   router.get('*', (req) => {
     throw new ErrorContext({
       status: 404,
