@@ -11,18 +11,20 @@ jest.mock('./contextCreator', () => ({
 }));
 
 const mockOrderingPartyData = {
-  name: 'Hampshire CC',
-  odsCode: 'AB3',
-  address: {
-    line1: 'line 1',
-    line2: 'line 2',
-    line3: 'line 3',
-    line4: 'line 4',
-    line5: 'line 5',
-    town: 'townville',
-    county: 'countyshire',
-    postcode: 'HA3 PSH',
-    country: 'UK',
+  organisation: {
+    name: 'Hampshire CC',
+    odsCode: 'AB3',
+    address: {
+      line1: 'line 1',
+      line2: 'line 2',
+      line3: 'line 3',
+      line4: 'line 4',
+      line5: 'line 5',
+      town: 'townville',
+      county: 'countyshire',
+      postcode: 'HA3 PSH',
+      country: 'UK',
+    },
   },
 };
 
@@ -105,7 +107,7 @@ describe('Call-off-ordering-party controller', () => {
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-        expect(contextCreator.getContext).toHaveBeenCalledWith({ data: mockOrderingPartyData, orderId: 'order-id' });
+        expect(contextCreator.getContext).toHaveBeenCalledWith({ data: mockOrderingPartyData.organisation, orderId: 'order-id' });
       });
     });
   });
