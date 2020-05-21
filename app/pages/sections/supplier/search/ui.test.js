@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
-import { buyingCatalogueApiHost } from '../../../../config';
+import { solutionsApiUrl } from '../../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/order-1/supplier/search';
 
@@ -163,7 +163,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
 });
 
 test('should show the error page if no suppliers are returned', async (t) => {
-  nock(buyingCatalogueApiHost)
+  nock(solutionsApiUrl)
     .get('/api/v1/suppliers?name=some-supp')
     .reply(200, []);
 
