@@ -97,20 +97,21 @@ export const routes = (authProvider) => {
 
     const response = supplierSearchController.validateSupplierSearchForm({ data: req.body });
 
-    if (!response.success) {
-      const context = await supplierSearchController.getSupplierSearchPageErrorContext({
-        orderId,
-        validationErrors: response.errors,
+    if (response.success) {
+      const accessToken = extractAccessToken({ req, tokenType: 'access' });
+
+      const suppliersFound = await supplierSearchController.findSuppliers({
+        supplierNameToFind: req.body.supplierName, accessToken,
       });
-      return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+
+      return res.status(200).send(`${suppliersFound.length} suppliers found`);
     }
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const suppliersFound = await supplierSearchController.findSuppliers({
-      supplierNameToFind: req.body.supplierName, accessToken,
+    const context = await supplierSearchController.getSupplierSearchPageErrorContext({
+      orderId,
+      validationErrors: response.errors,
     });
-
-    return res.status(200).send(`${suppliersFound.length} suppliers found`);
+    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('*', (req) => {
