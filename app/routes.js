@@ -97,11 +97,15 @@ export const routes = (authProvider) => {
 
     const response = validateSupplierSearchForm({ data: req.body });
 
+    // if respose.success is false
     const context = await getSupplierSearchPageErrorContext({
       orderId,
       validationErrors: response.errors,
     });
     return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+
+    // call controller to get list of suppliers here
+
   }));
 
   router.get('*', (req) => {
