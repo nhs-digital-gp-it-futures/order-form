@@ -18,6 +18,15 @@ const mockOrderingPartyData = {
   },
 };
 
+const questionData = {
+    firstName: 'first name',
+    lastName: 'lastName',
+    telephoneNumber: '07777777777',
+    emailAddress: 'email@address.com',
+};
+
+const orderId = 'order-id';
+
 describe('call-off-ordering-party contextCreator', () => {
   describe('getContext', () => {
     it('should return the contents of manifest', () => {
@@ -30,23 +39,40 @@ describe('call-off-ordering-party contextCreator', () => {
       expect(context.saveButtonText).toEqual(manifest.saveButtonText);
     });
 
-    it('should add data', () => {
-      const context = getContext({ data: mockOrderingPartyData });
+    it('should add organisation data', () => {
+      const context = getContext({ orgData: mockOrderingPartyData });
       expect(context.name).toEqual(mockOrderingPartyData.name);
       expect(context.odsCode).toEqual(mockOrderingPartyData.odsCode);
       expect(context.address).toEqual(mockOrderingPartyData.address);
     });
 
+    it('should add contact data to questions if provided', () => {
+      const context = getContext({ orderId, contactData: questionData });
+      expect(context.questions.length).toEqual(manifest.questions.length);
+      expect(context.questions[0].data).toEqual(questionData.firstName);
+      expect(context.questions[1].data).toEqual(questionData.lastName);
+      expect(context.questions[2].data).toEqual(questionData.emailAddress);
+      expect(context.questions[3].data).toEqual(questionData.telephoneNumber);
+    });
+
     it('should construct the backLinkHref', () => {
-      const orderId = 'order-id';
       const context = getContext({ orderId });
       expect(context.backlinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
 
     it('should construct title with orderId', () => {
-      const orderId = 'order-id';
       const context = getContext({ orderId });
       expect(context.title).toEqual('Call-off Ordering Party information for order-id');
     });
   });
 });
+
+// export const getContext = ({ orderId, orgData, contactData }) => {
+//   const manifestWithQuestionsData = addDataToQuestionsInManifest(contactData);
+//   return {
+//     ...manifestWithQuestionsData,
+//     ...orgData,
+//     title: `${manifest.title} ${orderId}`,
+//     backlinkHref: `${baseUrl}/organisation/${orderId}`,
+//   };
+// };
