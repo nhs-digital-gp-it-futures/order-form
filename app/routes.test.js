@@ -260,10 +260,7 @@ describe('routes', () => {
         .post(path)
         .type('form')
         .set('Cookie', [cookies, mockAuthorisedCookie])
-        .send({
-          description: 'a lovely decription',
-          _csrf: csrfToken,
-        })
+        .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="description-page"')).toEqual(true);
@@ -350,10 +347,7 @@ describe('routes', () => {
         .post(path)
         .type('form')
         .set('Cookie', [cookies, mockAuthorisedCookie])
-        .send({
-          description: 'a description of the order',
-          _csrf: csrfToken,
-        })
+        .send({ _csrf: csrfToken })
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
@@ -374,10 +368,7 @@ describe('routes', () => {
         .post(path)
         .type('form')
         .set('Cookie', [cookies, mockAuthorisedCookie])
-        .send({
-          description: 'a lovely decription',
-          _csrf: csrfToken,
-        })
+        .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
           expect(res.text.includes('error with put call for call-off-ordering-party')).toEqual(true);
@@ -492,10 +483,7 @@ describe('routes', () => {
         .post(path)
         .type('form')
         .set('Cookie', [cookies, mockAuthorisedCookie])
-        .send({
-          supplierName: '',
-          _csrf: csrfToken,
-        })
+        .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="supplier-search-page"')).toEqual(true);
@@ -520,10 +508,7 @@ describe('routes', () => {
         .post(path)
         .type('form')
         .set('Cookie', [cookies, mockAuthorisedCookie])
-        .send({
-          supplierName: '',
-          _csrf: csrfToken,
-        })
+        .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(false);
