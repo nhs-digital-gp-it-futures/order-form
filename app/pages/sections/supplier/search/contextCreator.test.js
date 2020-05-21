@@ -6,7 +6,7 @@ import { baseUrl } from '../../../../config';
 jest.mock('buying-catalogue-library');
 
 
-describe('decription contextCreator', () => {
+describe('supplier search contextCreator', () => {
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1' });
