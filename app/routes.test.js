@@ -461,7 +461,7 @@ describe('routes', () => {
       })
     ));
 
-    it('should show the number of supplier found if there are no validation errors and suppliers were returned', async () => {
+    it('should show the supplier select if there are no validation errors and suppliers were returned', async () => {
       supplierSelectController.findSuppliers = jest.fn()
         .mockImplementation(() => Promise.resolve([
           { supplierId: 'some-supplier-id', name: 'some-supplier-name' }]));
@@ -473,7 +473,7 @@ describe('routes', () => {
         .then((res) => {
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(false);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-          expect(res.text.includes('1 suppliers found')).toEqual(true);
+          expect(res.text.includes('data-test-id="supplier-select-page"')).toBeTruthy();
         });
     });
 

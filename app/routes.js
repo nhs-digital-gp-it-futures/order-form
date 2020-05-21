@@ -10,7 +10,7 @@ import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription
 import {
   getSupplierSearchPageContext, validateSupplierSearchForm, getSupplierSearchPageErrorContext,
 } from './pages/sections/supplier/search/controller';
-import { findSuppliers } from './pages/sections/supplier/select/controller';
+import { findSuppliers, getSupplierSelectPageContext } from './pages/sections/supplier/select/controller';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
 import { getCallOffOrderingPartyContext } from './pages/sections/call-off-ordering-party/controller';
@@ -124,7 +124,9 @@ export const routes = (authProvider) => {
       });
 
       if (suppliersFound.length > 0) {
-        return res.status(200).send(`${suppliersFound.length} suppliers found`);
+        const context = await getSupplierSelectPageContext({ orderId });
+    
+        return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
       }
 
       throw new ErrorContext({
