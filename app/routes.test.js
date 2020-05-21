@@ -418,7 +418,7 @@ describe('routes', () => {
         });
     });
 
-    it('should show the error page indicating no suppliers founf if there was no validation errors', async () => {
+    it('should show the number of supplier found if there are no validation errors and suppliers were returned', async () => {
       supplierSearchController.validateSupplierSearchForm = jest.fn()
         .mockImplementation(() => ({ success: true }));
 
@@ -443,6 +443,34 @@ describe('routes', () => {
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(false);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
           expect(res.text.includes('1 suppliers found')).toEqual(true);
+        });
+    });
+
+    it('should show the error page indicating no suppliers found', async () => {
+      supplierSearchController.validateSupplierSearchForm = jest.fn()
+        .mockImplementation(() => ({ success: true }));
+
+      supplierSearchController.findSuppliers = jest.fn()
+        .mockImplementation(() => Promise.resolve([]));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({
+          supplierName: '',
+          _csrf: csrfToken,
+        })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(true);
+          expect(res.text.includes(
+            "There are no suppliers that match the search terms you've provided. Try searching again.",
+          )).toEqual(true);
         });
     });
   });

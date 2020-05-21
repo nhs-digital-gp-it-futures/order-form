@@ -110,7 +110,17 @@ export const routes = (authProvider) => {
       supplierNameToFind: req.body.supplierName, accessToken,
     });
 
-    return res.status(200).send(`${suppliersFound.length} suppliers found`);
+    if (suppliersFound.length > 0) {
+      return res.status(200).send(`${suppliersFound.length} suppliers found`);
+    }
+
+    throw new ErrorContext({
+      status: 404,
+      title: 'No Supplier found',
+      description: "There are no suppliers that match the search terms you've provided. Try searching again.",
+      backLinkText: 'Go back to search',
+      backLinkHref: `${config.baseUrl}/organisation/${orderId}/supplier/search`,
+    });
   }));
 
   router.get('*', (req) => {
