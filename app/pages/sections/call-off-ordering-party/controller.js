@@ -10,7 +10,6 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
 
     if (callOffOrgData) {
       logger.info(`Call off ordering party found in ORDAPI for ${orderId}`);
-      console.log(callOffOrgData)
       return getContext({ orderId, data: callOffOrgData.organisation });
     }
   } catch (err) {
