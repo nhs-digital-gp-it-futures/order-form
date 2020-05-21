@@ -466,6 +466,9 @@ describe('routes', () => {
         .mockImplementation(() => Promise.resolve([
           { supplierId: 'some-supplier-id', name: 'some-supplier-name' }]));
 
+      supplierSelectController.getSupplierSelectPageContext = jest.fn()
+        .mockImplementation(() => {});
+
       return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])

@@ -124,8 +124,7 @@ export const routes = (authProvider) => {
       });
 
       if (suppliersFound.length > 0) {
-        const context = await getSupplierSelectPageContext({ orderId });
-    
+        const context = getSupplierSelectPageContext({ orderId });
         return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
       }
 
