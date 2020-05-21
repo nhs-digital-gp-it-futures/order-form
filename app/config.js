@@ -23,7 +23,7 @@ module.exports = {
   // Organisations API
   organisationApiUrl: process.env.ORGANISATION_API_URL || 'http://localhost:5103',
 
-  // Buying Catalogue API
+  // Solutions API aka Buying Catalogue API
   solutionsApiUrl: process.env.SOLUTIONS_API_URL || 'http://localhost:5100',
 
   // BLOBSTORE_HOST
