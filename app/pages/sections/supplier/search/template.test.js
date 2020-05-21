@@ -98,6 +98,26 @@ describe('supplier search page', () => {
     });
   }));
 
+  it('should render errors description field if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'supplierName',
+          error: [{ message: 'some supplier name error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some supplier name error message', href: '#supplierName' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const supplierNameQuestion = $('div[data-test-id="question-supplierName"]');
+      expect(supplierNameQuestion.find('div[data-test-id="text-field-input-error"]').length).toEqual(1);
+      expect(supplierNameQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
+    });
+  }));
+
   it('should render the "Search" button', componentTester(setup, (harness) => {
     const context = {
       searchButtonText: 'Search',
