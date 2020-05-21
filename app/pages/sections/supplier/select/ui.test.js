@@ -45,6 +45,15 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
+test('should redirect to the search page if a supplier to find is not pass in the url', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(`${pageUrl}`);
+
+  await t
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
+});
+
+
 test('should show the error page if no suppliers are returned', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers?name=some-supp')
@@ -60,7 +69,7 @@ test('should show the error page if no suppliers are returned', async (t) => {
   await t
     .expect(backLink.exists).ok()
     .expect(await extractInnerText(backLink)).eql('Go back to search')
-    .expect(backLink.find('a').getAttribute('href')).ok('/order/organisations/order-1/supplier/search')
+    .expect(backLink.find('a').getAttribute('href')).ok('/order/organisation/order-1/supplier/search')
     .expect(errorTitle.exists).ok()
     .expect(await extractInnerText(errorTitle)).eql('No Supplier found')
     .expect(errorDescription.exists).ok()
