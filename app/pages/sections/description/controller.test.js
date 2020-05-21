@@ -105,7 +105,6 @@ describe('description controller', () => {
       expect(response.success).toEqual(true);
     });
 
-
     it('should return error.respose.data if api request is unsuccessful with 400', async () => {
       const responseData = { description: 'an order description', errors: [{}] };
       postData

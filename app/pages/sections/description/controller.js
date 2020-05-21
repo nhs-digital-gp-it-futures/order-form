@@ -37,7 +37,7 @@ export const postOrPutDescription = async ({
     const returnOrderId = (response.data && response.data.orderId)
       ? response.data.orderId
       : orderId;
-    logger.info(`Order ${isNewOrder ? 'added' : 'updated'} - id: ${returnOrderId}, ${JSON.stringify(data)}`);
+    logger.info(`Order description ${isNewOrder ? 'added' : 'updated'} - id: ${returnOrderId}, ${JSON.stringify(data)}`);
     return { success: true, orderId: returnOrderId };
   } catch (err) {
     if (err.response.status === 400 && err.response.data && err.response.data.errors) {
