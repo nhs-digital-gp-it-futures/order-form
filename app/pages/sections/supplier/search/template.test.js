@@ -98,7 +98,7 @@ describe('supplier search page', () => {
     });
   }));
 
-  it('should render errors description field if there are errors', componentTester(setup, (harness) => {
+  it('should render errors on supplierName field if there are errors', componentTester(setup, (harness) => {
     const context = {
       questions: [
         {

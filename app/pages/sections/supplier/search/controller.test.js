@@ -20,7 +20,7 @@ describe('supplier search controller', () => {
 
   describe('validateSupplierSearchForm', () => {
     describe('when there are no validation errors', () => {
-      it('should return success as true if there are no validation errors', () => {
+      it('should return success as true', () => {
         const data = {
           supplierName: 'some supplier name',
         };
@@ -50,7 +50,7 @@ describe('supplier search controller', () => {
         expect(response.errors).toEqual(expectedValidationErrors);
       });
 
-      it('should return a validation error is supplierName just contains blank spaces', () => {
+      it('should return a validation error if supplierName just contains blank spaces', () => {
         const data = {
           supplierName: '  ',
         };
