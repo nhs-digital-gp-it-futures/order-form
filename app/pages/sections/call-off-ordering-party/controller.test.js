@@ -46,8 +46,8 @@ const mockDataFromOapi = {
 };
 
 const mockFormData = {
-  name: 'Hampshire CC',
-  odsCode: 'AB3',
+  name: mockOrganisation.name,
+  odsCode: mockOrganisation.odsCode,
   ...mockOrganisation.address,
   ...mockPrimaryContact,
 };
