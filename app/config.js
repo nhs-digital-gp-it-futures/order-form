@@ -23,6 +23,9 @@ module.exports = {
   // Organisations API
   organisationApiUrl: process.env.ORGANISATION_API_URL || 'http://localhost:5103',
 
+  // Buying Catalogue API
+  buyingCatalogueApiHost: process.env.API_HOST || 'http://localhost:5100',
+
   // BLOBSTORE_HOST
   blobstoreHost: process.env.BLOBSTORE_HOST || 'https://gpitfuturesdevsa.blob.core.windows.net',
 

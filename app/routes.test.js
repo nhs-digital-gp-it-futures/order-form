@@ -391,7 +391,7 @@ describe('routes', () => {
 
     it('should return the correct status and text if response.success is not true', async () => {
       supplierSearchController.validateSupplierSearchForm = jest.fn()
-        .mockImplementation(() => Promise.resolve({ success: false }));
+        .mockImplementation(() => ({ success: false }));
 
       supplierSearchController.getSupplierSearchPageErrorContext = jest.fn()
         .mockImplementation(() => Promise.resolve({
@@ -415,7 +415,34 @@ describe('routes', () => {
           expect(res.text.includes('data-test-id="supplier-search-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-          descriptionController.getDescriptionErrorContext.mockReset();
+        });
+    });
+
+    it('should return the correct status and text if response.success is true', async () => {
+      supplierSearchController.validateSupplierSearchForm = jest.fn()
+        .mockImplementation(() => ({ success: true }));
+
+      supplierSearchController.findSuppliers = jest.fn()
+        .mockImplementation(() => Promise.resolve([
+          { supplierId: 'some-supplier-id', name: 'some-supplier-name' }]));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({
+          supplierName: '',
+          _csrf: csrfToken,
+        })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(false);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+          expect(res.text.includes('1 suppliers found')).toEqual(true);
         });
     });
   });
