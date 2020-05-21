@@ -389,7 +389,7 @@ describe('routes', () => {
       })
     ));
 
-    it('should return the correct status and text if response.success is not true', async () => {
+    it('should show the supplier search page with errors if there are validation errors', async () => {
       supplierSearchController.validateSupplierSearchForm = jest.fn()
         .mockImplementation(() => ({ success: false }));
 
@@ -418,7 +418,7 @@ describe('routes', () => {
         });
     });
 
-    it('should return the correct status and text if response.success is true', async () => {
+    it('should show the error page indicating no suppliers founf if there was no validation errors', async () => {
       supplierSearchController.validateSupplierSearchForm = jest.fn()
         .mockImplementation(() => ({ success: true }));
 
