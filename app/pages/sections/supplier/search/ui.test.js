@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
+import { solutionsApiUrl } from '../../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/order-1/supplier/search';
 
@@ -113,12 +114,12 @@ test('should show the error summary when there are validation errors', async (t)
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const saveButton = Selector('[data-test-id="search-button"] button');
+  const searchButton = Selector('[data-test-id="search-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
 
   await t
     .expect(errorSummary.exists).notOk()
-    .click(saveButton);
+    .click(searchButton);
 
   await t
     .expect(errorSummary.exists).ok()
@@ -159,4 +160,33 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#supplierName`);
+});
+
+test('should show the error page if no suppliers are returned', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers?name=some-supp')
+    .reply(200, []);
+
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const supplierNameInput = Selector('[data-test-id="question-supplierName"]');
+  const searchButton = Selector('[data-test-id="search-button"] button');
+
+  const backLink = Selector('[data-test-id="error-back-link"]');
+  const errorTitle = Selector('[data-test-id="error-title"]');
+  const errorDescription = Selector('[data-test-id="error-description"]');
+
+  await t
+    .typeText(supplierNameInput.find('input'), 'some-supp')
+    .click(searchButton);
+
+  await t
+    .expect(backLink.exists).ok()
+    .expect(await extractInnerText(backLink)).eql('Go back to search')
+    .expect(backLink.find('a').getAttribute('href')).ok('/order/organisations/order-1/supplier/search')
+    .expect(errorTitle.exists).ok()
+    .expect(await extractInnerText(errorTitle)).eql('No Supplier found')
+    .expect(errorDescription.exists).ok()
+    .expect(await extractInnerText(errorDescription)).eql("There are no suppliers that match the search terms you've provided. Try searching again.");
 });
