@@ -16,7 +16,7 @@ import * as taskListController from './pages/task-list/controller';
 import * as descriptionController from './pages/sections/description/controller';
 import * as orderingPartyController from './pages/sections/call-off-ordering-party/controller';
 import * as supplierSearchController from './pages/sections/supplier/search/controller';
-
+import * as supplierSelectController from './pages/sections/supplier/select/controller';
 
 jest.mock('./logger');
 
@@ -462,7 +462,7 @@ describe('routes', () => {
     ));
 
     it('should show the number of supplier found if there are no validation errors and suppliers were returned', async () => {
-      supplierSearchController.findSuppliers = jest.fn()
+      supplierSelectController.findSuppliers = jest.fn()
         .mockImplementation(() => Promise.resolve([
           { supplierId: 'some-supplier-id', name: 'some-supplier-name' }]));
 
@@ -478,7 +478,7 @@ describe('routes', () => {
     });
 
     it('should show the error page indicating no suppliers found', async () => {
-      supplierSearchController.findSuppliers = jest.fn()
+      supplierSelectController.findSuppliers = jest.fn()
         .mockImplementation(() => Promise.resolve([]));
 
       return request(setUpFakeApp())

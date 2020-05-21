@@ -8,11 +8,9 @@ import { withCatch, getHealthCheckDependencies, extractAccessToken } from './hel
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './pages/sections/description/controller';
 import {
-  getSupplierSearchPageContext,
-  validateSupplierSearchForm,
-  findSuppliers,
-  getSupplierSearchPageErrorContext,
+  getSupplierSearchPageContext, validateSupplierSearchForm, getSupplierSearchPageErrorContext,
 } from './pages/sections/supplier/search/controller';
+import { findSuppliers } from './pages/sections/supplier/select/controller';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
 import { getCallOffOrderingPartyContext } from './pages/sections/call-off-ordering-party/controller';
