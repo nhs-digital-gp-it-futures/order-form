@@ -7,7 +7,7 @@ import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routerHelper';
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './pages/sections/description/controller';
-import { getSupplierSearchPageContext, validateSupplierSearchForm, getSupplierSearchPageErrorContext } from './pages/sections/supplier/search/controller';
+import * as supplierSearchController from './pages/sections/supplier/search/controller';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
 import { getCallOffOrderingPartyContext } from './pages/sections/call-off-ordering-party/controller';
@@ -88,24 +88,29 @@ export const routes = (authProvider) => {
 
   router.get('/organisation/:orderId/supplier/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const context = await getSupplierSearchPageContext({ orderId });
+    const context = await supplierSearchController.getSupplierSearchPageContext({ orderId });
     res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/organisation/:orderId/supplier/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    const response = validateSupplierSearchForm({ data: req.body });
+    const response = supplierSearchController.validateSupplierSearchForm({ data: req.body });
 
-    // if respose.success is false
-    const context = await getSupplierSearchPageErrorContext({
-      orderId,
-      validationErrors: response.errors,
+    if (!response.success) {
+      const context = await supplierSearchController.getSupplierSearchPageErrorContext({
+        orderId,
+        validationErrors: response.errors,
+      });
+      return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    }
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+
+    const suppliersFound = await supplierSearchController.findSuppliers({
+      supplierNameToFind: req.body.supplierName, accessToken,
     });
-    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
 
-    // call controller to get list of suppliers here
-
+    return res.status(200).send(`${suppliersFound.length} suppliers found`);
   }));
 
   router.get('*', (req) => {
