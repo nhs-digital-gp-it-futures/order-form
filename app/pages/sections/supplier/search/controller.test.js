@@ -1,7 +1,7 @@
 import { getData } from 'buying-catalogue-library';
 import * as contextCreator from './contextCreator';
 import { getSupplierSearchPageContext, validateSupplierSearchForm, findSuppliers } from './controller';
-import { buyingCatalogueApiHost } from '../../../../config';
+import { solutionsApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
 
 jest.mock('buying-catalogue-library');
@@ -87,7 +87,7 @@ describe('supplier search controller', () => {
       await findSuppliers({ supplierNameToFind: 'some-supp', accessToken: 'access_token' });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${buyingCatalogueApiHost}/api/v1/suppliers?name=some-supp`,
+        endpoint: `${solutionsApiUrl}/api/v1/suppliers?name=some-supp`,
         accessToken: 'access_token',
         logger,
       });
