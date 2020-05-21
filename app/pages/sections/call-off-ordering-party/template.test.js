@@ -129,36 +129,47 @@ describe('call-off-ordering-party page', () => {
       const countyFormElement = $('input[name=county]');
       const postcodeFormElement = $('input[name=postcode]');
       const countryFormElement = $('input[name=country]');
+
       expect(nameFormElement.length).toEqual(1);
       expect(nameFormElement.attr('type')).toEqual('hidden');
       expect(nameFormElement.attr('value')).toEqual(context.name);
+
       expect(odsCodeformElement.length).toEqual(1);
       expect(odsCodeformElement.attr('type')).toEqual('hidden');
       expect(odsCodeformElement.attr('value')).toEqual(context.odsCode);
+
       expect(line1FormElement.length).toEqual(1);
       expect(line1FormElement.attr('type')).toEqual('hidden');
       expect(line1FormElement.attr('value')).toEqual(context.address.line1);
+
       expect(line2FormElement.length).toEqual(1);
       expect(line2FormElement.attr('type')).toEqual('hidden');
       expect(line2FormElement.attr('value')).toEqual(context.address.line2);
+
       expect(line3FormElement.length).toEqual(1);
       expect(line3FormElement.attr('type')).toEqual('hidden');
       expect(line3FormElement.attr('value')).toEqual(context.address.line3);
+
       expect(line4FormElement.length).toEqual(1);
       expect(line4FormElement.attr('type')).toEqual('hidden');
       expect(line4FormElement.attr('value')).toEqual('');
+
       expect(line5FormElement.length).toEqual(1);
       expect(line5FormElement.attr('type')).toEqual('hidden');
       expect(line5FormElement.attr('value')).toEqual(context.address.line5);
+
       expect(townFormElement.length).toEqual(1);
       expect(townFormElement.attr('type')).toEqual('hidden');
       expect(townFormElement.attr('value')).toEqual(context.address.town);
+
       expect(countyFormElement.length).toEqual(1);
       expect(countyFormElement.attr('type')).toEqual('hidden');
       expect(countyFormElement.attr('value')).toEqual(context.address.county);
+
       expect(postcodeFormElement.length).toEqual(1);
       expect(postcodeFormElement.attr('type')).toEqual('hidden');
       expect(postcodeFormElement.attr('value')).toEqual(context.address.postcode);
+
       expect(countryFormElement.length).toEqual(1);
       expect(countryFormElement.attr('type')).toEqual('hidden');
       expect(countryFormElement.attr('value')).toEqual(context.address.country);

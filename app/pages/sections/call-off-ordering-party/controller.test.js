@@ -45,7 +45,7 @@ const mockOrgData = {
   },
   catalogueAgreementSigned: false,
 };
-const mockPutData = {
+const mockFormData = {
   name: 'Hampshire CC',
   odsCode: 'AB3',
   line1: 'line 1',
@@ -163,7 +163,7 @@ describe('Call-off-ordering-party controller', () => {
         .mockResolvedValueOnce({});
 
       await putCallOffOrderingParty({
-        orgId: 'org-id', orderId: 'order-id', data: mockPutData, accessToken: 'access_token',
+        orgId: 'org-id', orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
       });
       expect(putData.mock.calls.length).toEqual(1);
       expect(putData).toHaveBeenCalledWith({
@@ -177,7 +177,7 @@ describe('Call-off-ordering-party controller', () => {
 
     it('should trim whitespace from the data', async () => {
       const mockData = {
-        ...mockPutData,
+        ...mockFormData,
         line2: '   line 2  ',
         line3: '  line 3',
         line4: null,
@@ -206,7 +206,7 @@ describe('Call-off-ordering-party controller', () => {
         .mockResolvedValueOnce({});
 
       const response = await putCallOffOrderingParty({
-        orgId: 'org-id', orderId: 'order-id', data: mockPutData, accessToken: 'access_token',
+        orgId: 'org-id', orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
       });
       expect(response).toEqual({ success: true });
     });
