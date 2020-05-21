@@ -23,6 +23,31 @@ describe('supplier search page', () => {
     });
   }));
 
+  it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'supplierName',
+          error: [{ message: 'some supplier name error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some supplier name error message', href: '#supplierName' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(context.errors.length);
+      context.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
+    });
+  }));
+
   it('should render the supplier-search page title', componentTester(setup, (harness) => {
     const context = {
       title: 'Find supplier information for order-1',
@@ -70,6 +95,26 @@ describe('supplier search page', () => {
       expect(supplierNameInput.length).toEqual(1);
       expect(supplierNameInput.find('label').text().trim()).toEqual(context.questions[0].mainAdvice);
       expect(supplierNameInput.find('input').length).toEqual(1);
+    });
+  }));
+
+  it('should render errors on supplierName field if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'supplierName',
+          error: [{ message: 'some supplier name error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some supplier name error message', href: '#supplierName' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const supplierNameQuestion = $('div[data-test-id="question-supplierName"]');
+      expect(supplierNameQuestion.find('div[data-test-id="text-field-input-error"]').length).toEqual(1);
+      expect(supplierNameQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
     });
   }));
 

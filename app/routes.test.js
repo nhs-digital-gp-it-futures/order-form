@@ -15,6 +15,8 @@ import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
 import * as descriptionController from './pages/sections/description/controller';
 import * as orderingPartyController from './pages/sections/call-off-ordering-party/controller';
+import * as supplierSearchController from './pages/sections/supplier/search/controller';
+
 
 jest.mock('./logger');
 
@@ -354,6 +356,68 @@ describe('routes', () => {
         expect(res.text.includes('data-test-id="supplier-search-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
+  });
+
+  describe('POST /organisation/:orderId/supplier/search', () => {
+    const path = '/organisation/order-1/supplier/search';
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), pathToTest: path, mockAuthorisedCookie,
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        csrfPagePath: path,
+        pathToTest: path,
+        mockAuthorisedCookie,
+        expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        csrfPagePath: path,
+        pathToTest: path,
+        mockAuthorisedCookie,
+        mockUnauthorisedCookie,
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should return the correct status and text if response.success is not true', async () => {
+      supplierSearchController.validateSupplierSearchForm = jest.fn()
+        .mockImplementation(() => Promise.resolve({ success: false }));
+
+      supplierSearchController.getSupplierSearchPageErrorContext = jest.fn()
+        .mockImplementation(() => Promise.resolve({
+          errors: [{ text: 'Supplier name is required', href: '#supplierName' }],
+        }));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({
+          supplierName: '',
+          _csrf: csrfToken,
+        })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="supplier-search-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+          descriptionController.getDescriptionErrorContext.mockReset();
+        });
+    });
   });
 
   describe('GET *', () => {
