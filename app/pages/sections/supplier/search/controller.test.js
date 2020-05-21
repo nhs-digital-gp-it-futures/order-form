@@ -1,8 +1,5 @@
-import { getData } from 'buying-catalogue-library';
 import * as contextCreator from './contextCreator';
 import { getSupplierSearchPageContext, validateSupplierSearchForm } from './controller';
-import { solutionsApiUrl } from '../../../../config';
-import { logger } from '../../../../logger';
 
 jest.mock('buying-catalogue-library');
 
