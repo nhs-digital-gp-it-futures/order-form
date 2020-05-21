@@ -1,4 +1,6 @@
-import { oidcBaseUri, orderApiUrl, organisationApiUrl } from './config';
+import {
+  oidcBaseUri, orderApiUrl, organisationApiUrl, buyingCatalogueApiHost,
+} from './config';
 
 const endpoints = {
   getIdentityApiHealth: () => `${oidcBaseUri}/health/ready`,
@@ -9,6 +11,7 @@ const endpoints = {
   getDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
   getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
   getOrganisationById: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}`,
+  getSearchSuppliers: options => `${buyingCatalogueApiHost}/api/v1/suppliers?name=${options.supplierNameToFind}`,
 };
 
 export const getEndpoint = ({ endpointLocator, options }) => endpoints[endpointLocator](options);
