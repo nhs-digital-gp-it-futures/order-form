@@ -175,6 +175,31 @@ describe('Call-off-ordering-party controller', () => {
       });
     });
 
+    it('should trim whitespace from the data', async () => {
+      const mockData = {
+        ...mockPutData,
+        line2: '   line 2  ',
+        line3: '  line 3',
+        line4: null,
+        line5: 'line 5  ',
+        town: ' townville  ',
+      }
+      putData
+        .mockResolvedValueOnce({});
+
+      await putCallOffOrderingParty({
+        orgId: 'org-id', orderId: 'order-id', data: mockData, accessToken: 'access_token',
+      });
+      expect(putData.mock.calls.length).toEqual(1);
+      expect(putData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
+        body: mockPutBody,
+        organisationId: 'org-id',
+        accessToken: 'access_token',
+        logger,
+      });
+    });
+
     it('should return succes: true if put is successful', async () => {
       putData
         .mockResolvedValueOnce({});

@@ -5,25 +5,25 @@ import { logger } from '../../../logger';
 
 const formatPutData = data => ({
   organisation: {
-    name: data.name,
-    odsCode: data.odsCode,
+    name: data.name ? data.name.trim() : null,
+    odsCode: data.odsCode ? data.odsCode.trim() : null,
     address: {
-      line1: data.line1,
-      line2: data.line2,
-      line3: data.line3,
-      line4: data.line4,
-      line5: data.line5,
-      town: data.town,
-      county: data.county,
-      postcode: data.postcode,
-      country: data.country,
+      line1: data.line1 ? data.line1.trim() : null,
+      line2: data.line2 ? data.line2.trim() : null,
+      line3: data.line3 ? data.line3.trim() : null,
+      line4: data.line4 ? data.line4.trim() : null,
+      line5: data.line5 ? data.line5.trim() : null,
+      town: data.town ? data.town.trim() : null,
+      county: data.county ? data.county.trim() : null,
+      postcode: data.postcode ? data.postcode.trim() : null,
+      country: data.country ? data.country.trim() : null,
     },
   },
   primaryContact: {
-    firstName: data.firstName,
-    lastName: data.lastName,
-    emailAddress: data.emailAddress,
-    telephoneNumber: data.telephoneNumber,
+    firstName: data.firstName ? data.firstName.trim() : null,
+    lastName: data.lastName ? data.lastName.trim() : null,
+    emailAddress: data.emailAddress ? data.emailAddress.trim() : null,
+    telephoneNumber: data.telephoneNumber ? data.telephoneNumber.trim() : null,
   },
 });
 
