@@ -28,6 +28,7 @@ const context = {
   ...mockData,
   title: 'Call-off Ordering Party information for order-id',
   backlinkHref: '/organisation/order-1',
+  csrfToken: 'mockCsrfToken',
 };
 
 
@@ -114,6 +115,50 @@ describe('call-off-ordering-party page', () => {
       expect(country.text().trim()).toEqual(context.address.country);
     });
   }));
+
+  describe('form fields', () => {
+    it('should render hidden input with csrf token', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const formElement = $('input[name=_csrf]');
+        expect(formElement.length).toEqual(1);
+        expect(formElement.attr('type')).toEqual('hidden');
+        expect(formElement.attr('value')).toEqual(context.csrfToken);
+      });
+    }));
+
+    it('should render a label for each question', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const labels = $('label');
+        expect(labels.length).toEqual(context.questions.length);
+        context.questions.forEach((question, i) => {
+          expect(labels[i].attribs.for).toEqual(question.id);
+          expect(labels[i].children[0].data.trim()).toEqual(question.mainAdvice);
+        });
+      });
+    }));
+
+    it('should render a textField for each question', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const inputs = $('input:not([name=_csrf])');
+        expect(inputs.length).toEqual(context.questions.length);
+        context.questions.forEach((question, i) => {
+          expect(inputs[i].attribs.id).toEqual(question.id);
+          expect(inputs[i].attribs.name).toEqual(question.id);
+          expect(inputs[i].attribs.type).toEqual('text');
+        });
+      });
+    }));
+
+    it('should render footerAdvice for each question', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const form = $('form');
+        context.questions.forEach(async (question) => {
+          const footerText = await form.find(`div[data-test-id="question-${question.id}"] span`);
+          expect(footerText.text().trim()).toEqual(question.footerAdvice);
+        });
+      });
+    }));
+  });
 
   it('should render the save button', componentTester(setup, (harness) => {
     harness.request(context, ($) => {

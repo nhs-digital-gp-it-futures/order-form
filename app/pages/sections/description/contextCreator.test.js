@@ -23,7 +23,7 @@ describe('decription contextCreator', () => {
       expect(context.description).toEqual(manifest.description);
       expect(context.questions).toEqual([{
         id: 'description',
-        footerAdvice: '(Maximum number of characters 100)',
+        footerAdvice: '(Maximum character length 100)',
         rows: 3,
       }]);
       expect(context.saveButtonText).toEqual(manifest.saveButtonText);
