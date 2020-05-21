@@ -4,7 +4,7 @@
   "description": "Provide a brief description of your order to help identify it from any others you’ve worked on.",
   "questions": [{
       "id": "description",
-      "footerAdvice": "(Maximum number of characters 100)",
+      "footerAdvice": "(Maximum character length 100)",
       "rows": 3
     }],
   "errorMessages": {

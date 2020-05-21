@@ -5,5 +5,34 @@
   "orgNameHeading": "Organisation name",
   "odsCodeHeading": "ODS code",
   "orgAddressHeading": "Organisation address",
+  "primartContactHeading": "Primary contact’s details",
+  "questions": [{
+    "id": "firstName",
+    "mainAdvice": "First name",
+    "footerAdvice": "(Maximum character length 100)"
+  }, {
+    "id": "lastName",
+    "mainAdvice": "Last name",
+    "footerAdvice": "(Maximum character length 100)"
+  }, {
+    "id": "emailAddress",
+    "mainAdvice": "Email address",
+    "footerAdvice": "(Maximum character length 256)"
+  }, {
+    "id": "telephoneNumber",
+    "mainAdvice": "Telephone number",
+    "footerAdvice": "(Maximum character length 35)"
+  }],
+  "errorMessages": {
+    "FirstNameRequired": "Enter a first name",
+    "FirstNameTooLong": "First name must be 100 characters or fewer",
+    "LastNameRequired": "Enter a last name",
+    "LastNameTooLong": "Last name must be 100 characters or fewer",
+    "EmailAddressRequired": "Enter an email address",
+    "EmailAddressTooLong": "Email address must be 256 characters or fewer",
+    "EmailAddressInvalidFormat": "Enter an email address in the correct format, like name@example.com",
+    "TelephoneNumberRequired": "Enter a telephone number",
+    "TelephoneNumberTooLong": "Telephone number must be 35 characters or fewer"
+  },
   "saveButtonText": "Save and return"
 }
