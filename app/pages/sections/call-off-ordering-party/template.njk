@@ -1,6 +1,7 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
+{% from 'components/text-field/macro.njk' import textField %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="call-off-ordering-party-page">
@@ -29,15 +30,28 @@
         <div data-test-id="organisation-address-4" class="nhsuk-u-font-size-19">{{ address.line4 }}</div>
         <div data-test-id="organisation-address-5" class="nhsuk-u-font-size-19">{{ address.line5 }}</div>
         <div data-test-id="organisation-address-town" class="nhsuk-u-font-size-19">{{ address.town }}</div>
-        <div data-test-id="organisation-address-county" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ address.county }}</div>
+        <div data-test-id="organisation-address-county" class="nhsuk-u-font-size-19">{{ address.county }}</div>
         <div data-test-id="organisation-address-postcode" class="nhsuk-u-font-size-19">{{ address.postcode }}</div>
         <div data-test-id="organisation-address-country" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ address.country }}</div>
-
-        {{ bcButton({
-            dataTestId: "save-button",
-            text: saveButtonText,
-            classes: "nhsuk-u-margin-top-9"
-        })}}
+      </div>
+    </div>
+    <hr class="bc-c-order-table--hr"/>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <form method="post">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          {% for question in questions %}
+            <div class="nhsuk-u-margin-bottom-5">
+              {{ textField({ question: question }) }}
+            </div>
+          {% endfor %}
+          {{ bcButton({
+              dataTestId: "save-button",
+              text: saveButtonText,
+              classes: "nhsuk-u-margin-top-9"
+          })}}
+        </form>
     </div>
   </div>
+</div>
 {% endblock %}
