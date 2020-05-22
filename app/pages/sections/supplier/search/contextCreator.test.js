@@ -7,7 +7,7 @@ jest.mock('../../getSectionErrorContext', () => ({
   getSectionErrorContext: jest.fn(),
 }));
 
-describe('decription contextCreator', () => {
+describe('supplier search contextCreator', () => {
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1' });
