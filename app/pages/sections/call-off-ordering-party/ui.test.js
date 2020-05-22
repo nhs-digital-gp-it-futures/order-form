@@ -231,3 +231,19 @@ test('should render save button', async (t) => {
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });
+
+test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/ordering-party')
+    .reply(200, {});
+
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .expect(saveButton.exists).ok()
+    .click(saveButton)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+});
