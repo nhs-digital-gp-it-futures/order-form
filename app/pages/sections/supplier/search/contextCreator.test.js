@@ -1,10 +1,11 @@
-import { formatErrors, formatAllErrors, addErrorsAndDataToManifest } from 'buying-catalogue-library';
 import manifest from './manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../../config';
+import * as errorContext from '../../getSectionErrorContext';
 
-jest.mock('buying-catalogue-library');
-
+jest.mock('../../getSectionErrorContext', () => ({
+  getSectionErrorContext: jest.fn(),
+}));
 
 describe('decription contextCreator', () => {
   describe('getContext', () => {
@@ -46,47 +47,30 @@ describe('decription contextCreator', () => {
       id: 'SupplierNameRequired',
     }];
 
-    it('should construct errors array from the data provided', () => {
-      formatErrors.mockReturnValue({});
-      addErrorsAndDataToManifest.mockReturnValue({});
-      formatAllErrors.mockReturnValue([
-        { href: '#supplierName', text: 'Enter a supplier name or part of a supplier name' },
-      ]);
+    afterEach(() => {
+      errorContext.getSectionErrorContext.mockReset();
+    });
 
+    it('should call getSectionErrorContext with correct params', () => {
+      errorContext.getSectionErrorContext
+        .mockResolvedValueOnce();
+      const mockParams = {
+        orderId: 'order-id',
+        validationErrors: mockValidationErrors,
+        data: { supplierName: '' },
+      };
+      getErrorContext(mockParams);
+      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
+      expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({ ...mockParams, manifest });
+    });
+
+    it('should construct title with orderid', () => {
       const context = getErrorContext({
         orderId: 'order-id',
         validationErrors: mockValidationErrors,
         data: { supplierName: '' },
       });
-
-      expect(context.errors.length).toEqual(1);
-      expect(context.errors[0].href).toEqual('#supplierName');
-      expect(context.errors[0].text).toEqual('Enter a supplier name or part of a supplier name');
-      formatErrors.mockRestore();
-      addErrorsAndDataToManifest.mockRestore();
-      formatAllErrors.mockRestore();
-    });
-
-    it('should call the helper functions', () => {
-      formatErrors.mockReturnValue({});
-      addErrorsAndDataToManifest.mockReturnValue({});
-      formatAllErrors.mockReturnValue([
-        { href: '#description', text: 'Description is required' },
-      ]);
-
-      getErrorContext({
-        orderId: 'order-id',
-        validationErrors: mockValidationErrors,
-        data: { supplierName: '' },
-      });
-
-      expect(formatErrors.mock.calls.length).toEqual(1);
-      expect(addErrorsAndDataToManifest.mock.calls.length).toEqual(1);
-      expect(formatAllErrors.mock.calls.length).toEqual(1);
-
-      formatErrors.mockRestore();
-      addErrorsAndDataToManifest.mockRestore();
-      formatAllErrors.mockRestore();
+      expect(context.title).toEqual('Find supplier information for order-id');
     });
   });
 });
