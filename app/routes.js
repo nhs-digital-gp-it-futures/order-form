@@ -24,7 +24,7 @@ const addContext = ({ context, user, csrfToken }) => ({
   csrfToken,
 });
 
-export const routes = (authProvider) => {
+export const routes = (authProvider, stateProvider) => {
   const router = express.Router();
 
   healthRoutes({ router, dependencies: getHealthCheckDependencies(config), logger });
@@ -139,6 +139,7 @@ export const routes = (authProvider) => {
       });
 
       if (suppliersFound.length > 0) {
+        // stateProvider.saveListToSession('', suppliersFound);
         const context = getSupplierSelectPageContext({ orderId, suppliers: suppliersFound });
         return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
       }

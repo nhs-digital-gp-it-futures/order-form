@@ -5,6 +5,7 @@ const { routes } = require('./routes');
 const { logger } = require('./logger');
 const { isIdentityReady } = require('./helpers/isIdentityReady');
 const { createAuthProvider } = require('./helpers/createAuthProvider');
+const { StateProvider } = require('./StateProvider');
 
 Object.keys(config).map((configKey) => {
   if (config[configKey]) {
@@ -17,12 +18,15 @@ Object.keys(config).map((configKey) => {
 (async () => {
   await isIdentityReady();
 
+  // Create stateProvider
+  const stateProvider = new StateProvider();
+
   // Create authProvider
   const authProvider = createAuthProvider({ config });
 
   // Create app
-  const app = new App(authProvider).createApp();
-  app.use(config.baseUrl, routes(authProvider));
+  const app = new App(authProvider, stateProvider).createApp();
+  app.use(config.baseUrl, routes(authProvider, stateProvider));
 
   // Run application on configured port
   if (config.env === 'development') {
