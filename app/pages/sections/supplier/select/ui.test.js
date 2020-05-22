@@ -4,7 +4,8 @@ import { extractInnerText } from 'buying-catalogue-library';
 import { solutionsApiUrl } from '../../../../config';
 import content from './manifest.json';
 
-const pageUrl = 'http://localhost:1234/organisation/order-1/supplier/search/select';
+const pageUrl = 'http://localhost:1234/organisation/order-1/supplier/search/select?name=some-supp';
+const pageUrlWithoutQueryString = 'http://localhost:1234/organisation/order-1/supplier/search/select';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -52,7 +53,7 @@ test('should render Supplier select page', async (t) => {
     .reply(200, [{}]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?name=some-supp`);
+  await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="supplier-select-page"]');
 
   await t
@@ -65,7 +66,7 @@ test('should navigate to /organisation/order-1/supplier/search when click on bac
     .reply(200, [{}]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?name=some-supp`);
+  await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
@@ -81,7 +82,7 @@ test('should render the title', async (t) => {
     .reply(200, [{}]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?name=some-supp`);
+  await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="supplier-select-page-title"]');
 
@@ -96,7 +97,7 @@ test('should render the description', async (t) => {
     .reply(200, [{}]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?name=some-supp`);
+  await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="supplier-select-page-description"]');
 
@@ -114,7 +115,7 @@ test('should render a selectSupplier question as radio button options', async (t
     ]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?name=some-supp`);
+  await t.navigateTo(pageUrl);
 
   const selectSupplierRadioOptions = Selector('[data-test-id="question-selectSupplier"]');
 
@@ -136,7 +137,7 @@ test('should render the Continue button', async (t) => {
     .reply(200, [{}]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?name=some-supp`);
+  await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
 
@@ -147,7 +148,7 @@ test('should render the Continue button', async (t) => {
 
 test('should redirect to the search page if a supplier to find is not pass in the url', async (t) => {
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}`);
+  await t.navigateTo(pageUrlWithoutQueryString);
 
   await t
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
@@ -160,7 +161,7 @@ test('should show the error page if no suppliers are returned', async (t) => {
     .reply(200, []);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?name=some-supp`);
+  await t.navigateTo(pageUrl);
 
   const backLink = Selector('[data-test-id="error-back-link"]');
   const errorTitle = Selector('[data-test-id="error-title"]');
