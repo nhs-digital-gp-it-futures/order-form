@@ -27,8 +27,43 @@ const context = {
   ...manifest,
   ...mockData,
   title: 'Call-off Ordering Party information for order-id',
-  backlinkHref: '/organisation/order-1',
+  backLinkHref: '/organisation/order-1',
   csrfToken: 'mockCsrfToken',
+};
+
+const questionsWithErrors = {
+  questions: [{
+    id: 'firstName',
+    mainAdvice: 'First name',
+    footerAdvice: '(Maximum character length 100)',
+    error: [{ message: 'First name must be 100 characters or fewer' }],
+  }, {
+    id: 'lastName',
+    mainAdvice: 'Last name',
+    footerAdvice: '(Maximum character length 100)',
+    error: [{ message: 'Last name must be 100 characters or fewer' }],
+  }, {
+    id: 'emailAddress',
+    mainAdvice: 'Email address',
+    footerAdvice: '(Maximum character length 256)',
+    error: [{ message: 'Email address must be 256 characters or fewer' }],
+  }, {
+    id: 'telephoneNumber',
+    mainAdvice: 'Telephone number',
+    footerAdvice: '(Maximum character length 35)',
+    error: [{ message: 'Telephone number must be 35 characters or fewer' }],
+  }],
+  errors: [
+    { text: 'First name must be 100 characters or fewer', href: '#firstName' },
+    { text: 'Last name must be 100 characters or fewer', href: '#lastName' },
+    { text: 'Email address must be 256 characters or fewer', href: '#emailAddress' },
+    { text: 'Telephone number must be 35 characters or fewer', href: '#telephoneNumber' },
+  ],
+};
+
+const contextWithErrors = {
+  ...context,
+  ...questionsWithErrors,
 };
 
 
@@ -39,6 +74,19 @@ describe('call-off-ordering-party page', () => {
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
       expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+    });
+  }));
+
+  it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
+    harness.request(contextWithErrors, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(contextWithErrors.errors.length);
+      contextWithErrors.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
     });
   }));
 
@@ -215,6 +263,19 @@ describe('call-off-ordering-party page', () => {
         context.questions.forEach(async (question) => {
           const footerText = await form.find(`div[data-test-id="question-${question.id}"] span`);
           expect(footerText.text().trim()).toEqual(question.footerAdvice);
+        });
+      });
+    }));
+
+    it('should render error field if there are errors', componentTester(setup, (harness) => {
+      harness.request(contextWithErrors, async ($) => {
+        const form = $('form');
+        await context.questions.forEach(async (question) => {
+          const renderedQuestion = await form.find(`div[data-test-id="question-${question.id}"]`);
+          const fieldError = await renderedQuestion.find('div[data-test-id="text-field-input-error"]');
+          const errorMessage = await renderedQuestion.find('.nhsuk-error-message');
+          expect(fieldError.length).toEqual(1);
+          expect(errorMessage.text().trim()).toEqual('Error:');
         });
       });
     }));
