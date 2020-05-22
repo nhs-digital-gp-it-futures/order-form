@@ -73,10 +73,12 @@ export const putCallOffOrderingParty = async ({
       accessToken,
       logger,
     });
-
     logger.info(`Call off ordering party updated - order id: ${orderId}, ${JSON.stringify(data)}`);
     return { success: true };
   } catch (err) {
+    if (err.response.status === 400 && err.response.data && err.response.data.errors) {
+      return err.response.data;
+    }
     logger.error('Error updating call-off-ordering-party for order');
     throw new Error();
   }
