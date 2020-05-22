@@ -13,7 +13,9 @@ import {
 import { findSuppliers, getSupplierSelectPageContext } from './pages/sections/supplier/select/controller';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
-import { getCallOffOrderingPartyContext, putCallOffOrderingParty } from './pages/sections/call-off-ordering-party/controller';
+import {
+  getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext, putCallOffOrderingParty,
+} from './pages/sections/call-off-ordering-party/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -96,7 +98,13 @@ export const routes = (authProvider, stateProvider) => {
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
     if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
-    return res.status(200).send('error with put call for call-off-ordering-party');
+
+    const context = await getCallOffOrderingPartyErrorContext({
+      validationErrors: response.errors,
+      orderId,
+      data: req.body,
+    });
+    return res.render('pages/sections/call-off-ordering-party//template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/organisation/:orderId/supplier', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -116,7 +124,7 @@ export const routes = (authProvider, stateProvider) => {
     const response = validateSupplierSearchForm({ data: req.body });
 
     if (response.success) {
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search?supplierNameToFind=${req.body.supplierName}`);
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search?name=${req.body.supplierName}`);
     }
 
     const context = await getSupplierSearchPageErrorContext({
@@ -129,13 +137,13 @@ export const routes = (authProvider, stateProvider) => {
 
   router.get('/organisation/:orderId/supplier/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const { supplierNameToFind } = req.query;
+    const { name } = req.query;
 
-    if (supplierNameToFind) {
+    if (name) {
       const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
       const suppliersFound = await findSuppliers({
-        supplierNameToFind, accessToken,
+        name, accessToken,
       });
 
       if (suppliersFound.length > 0) {

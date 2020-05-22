@@ -360,6 +360,11 @@ describe('routes', () => {
       orderingPartyController.putCallOffOrderingParty = jest.fn()
         .mockImplementation(() => Promise.resolve({ success: false }));
 
+      orderingPartyController.getCallOffOrderingPartyErrorContext = jest.fn()
+        .mockImplementation(() => Promise.resolve({
+          errors: [{ text: 'First name must be 100 characters or fewer', href: '#firstName' }],
+        }));
+
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
       });
@@ -371,8 +376,10 @@ describe('routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('error with put call for call-off-ordering-party')).toEqual(true);
+          expect(res.text.includes('data-test-id="call-off-ordering-party-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+          orderingPartyController.getCallOffOrderingPartyErrorContext.mockReset();
         });
     });
   });
@@ -492,7 +499,7 @@ describe('routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/supplier/search/select?supplierNameToFind=some-supp if no validation errors', async () => {
+    it('should redirect to /organisation/some-order-id/supplier/search/select?name=some-supp if no validation errors', async () => {
       supplierSearchController.validateSupplierSearchForm = jest.fn()
         .mockImplementation(() => ({ success: true }));
 
@@ -511,13 +518,13 @@ describe('routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/supplier/search?supplierNameToFind=some-supp`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/supplier/search?name=some-supp`);
         });
     });
   });
 
   describe('GET /organisation/:orderId/supplier/search/select', () => {
-    const path = '/organisation/some-order-id/supplier/search/select?supplierNameToFind=some-supp';
+    const path = '/organisation/some-order-id/supplier/search/select?name=some-supp';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({

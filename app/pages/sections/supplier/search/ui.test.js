@@ -53,7 +53,7 @@ test('should render Supplier search page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1 when click on backlink', async (t) => {
+test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 

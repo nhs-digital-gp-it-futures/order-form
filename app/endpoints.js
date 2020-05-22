@@ -10,7 +10,7 @@ const endpoints = {
   getDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
   getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
   getOrganisationById: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}`,
-  getSearchSuppliers: options => `${solutionsApiUrl}/api/v1/suppliers?name=${options.supplierNameToFind}`,
+  getSearchSuppliers: options => `${solutionsApiUrl}/api/v1/suppliers?name=${options.name}`,
   // PUT endpoints
   putDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
   putOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
