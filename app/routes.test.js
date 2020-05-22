@@ -379,7 +379,7 @@ describe('routes', () => {
           expect(res.text.includes('data-test-id="call-off-ordering-party-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-          descriptionController.getDescriptionErrorContext.mockReset();
+          orderingPartyController.getCallOffOrderingPartyErrorContext.mockReset();
         });
     });
   });
