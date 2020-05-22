@@ -1,6 +1,11 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../config';
+import * as errorContext from '../getSectionErrorContext';
+
+jest.mock('../getSectionErrorContext', () => ({
+  getSectionErrorContext: jest.fn(),
+}));
 
 const mockOrderingPartyData = {
   name: 'Hampshire CC',
@@ -26,6 +31,15 @@ const questionData = {
 };
 
 const orderId = 'order-id';
+
+const mockValidationErrors = [{
+  field: 'EmailAddress',
+  id: 'EmailAddressRequired',
+},
+{
+  field: 'TelephoneNumber',
+  id: 'TelephoneNumberTooLong',
+}];
 
 describe('call-off-ordering-party contextCreator', () => {
   describe('getContext', () => {
@@ -57,12 +71,33 @@ describe('call-off-ordering-party contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const context = getContext({ orderId });
-      expect(context.backlinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
 
     it('should construct title with orderId', () => {
       const context = getContext({ orderId });
       expect(context.title).toEqual('Call-off Ordering Party information for order-id');
+    });
+  });
+
+  describe('getErrorContext', () => {
+    afterEach(() => {
+      errorContext.getSectionErrorContext.mockReset();
+    });
+
+    it('should call getSectionErrorContext with correct params', () => {
+      errorContext.getSectionErrorContext
+        .mockResolvedValueOnce();
+
+      const mockParams = {
+        orderId: 'order-id',
+        validationErrors: mockValidationErrors,
+        contactData: questionData,
+        orgData: mockOrderingPartyData,
+      };
+      getErrorContext(mockParams);
+      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
+      expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({ ...mockParams, manifest });
     });
   });
 });
