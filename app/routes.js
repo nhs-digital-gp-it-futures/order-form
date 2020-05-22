@@ -15,7 +15,9 @@ import {
 } from './pages/sections/supplier/search/controller';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
-import { getCallOffOrderingPartyContext, putCallOffOrderingParty } from './pages/sections/call-off-ordering-party/controller';
+import {
+  getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext, putCallOffOrderingParty,
+} from './pages/sections/call-off-ordering-party/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -98,7 +100,13 @@ export const routes = (authProvider) => {
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
     if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
-    return res.status(200).send('error with put call for call-off-ordering-party');
+
+    const context = await getCallOffOrderingPartyErrorContext({
+      validationErrors: response.errors,
+      orderId,
+      data: req.body,
+    });
+    return res.render('pages/sections/call-off-ordering-party//template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/organisation/:orderId/supplier', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
