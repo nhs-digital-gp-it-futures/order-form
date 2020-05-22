@@ -116,7 +116,7 @@ export const routes = (authProvider) => {
     const response = validateSupplierSearchForm({ data: req.body });
 
     if (response.success) {
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search?supplierNameToFind=${req.body.supplierName}`);
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search?name=${req.body.supplierName}`);
     }
 
     const context = await getSupplierSearchPageErrorContext({
@@ -129,13 +129,13 @@ export const routes = (authProvider) => {
 
   router.get('/organisation/:orderId/supplier/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const { supplierNameToFind } = req.query;
+    const { name } = req.query;
 
-    if (supplierNameToFind) {
+    if (name) {
       const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
       const suppliersFound = await findSuppliers({
-        supplierNameToFind, accessToken,
+        name, accessToken,
       });
 
       if (suppliersFound.length > 0) {

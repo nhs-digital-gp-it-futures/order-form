@@ -492,7 +492,7 @@ describe('routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/supplier/search/select?supplierNameToFind=some-supp if no validation errors', async () => {
+    it('should redirect to /organisation/some-order-id/supplier/search/select?name=some-supp if no validation errors', async () => {
       supplierSearchController.validateSupplierSearchForm = jest.fn()
         .mockImplementation(() => ({ success: true }));
 
@@ -511,13 +511,13 @@ describe('routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/supplier/search?supplierNameToFind=some-supp`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/supplier/search?name=some-supp`);
         });
     });
   });
 
   describe('GET /organisation/:orderId/supplier/search/select', () => {
-    const path = '/organisation/some-order-id/supplier/search/select?supplierNameToFind=some-supp';
+    const path = '/organisation/some-order-id/supplier/search/select?name=some-supp';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({

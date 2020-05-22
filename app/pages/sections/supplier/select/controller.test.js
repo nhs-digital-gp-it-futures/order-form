@@ -20,7 +20,7 @@ describe('supplier select controller', () => {
       getData
         .mockResolvedValueOnce({ data: [] });
 
-      await findSuppliers({ supplierNameToFind: 'some-supp', accessToken: 'access_token' });
+      await findSuppliers({ name: 'some-supp', accessToken: 'access_token' });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
         endpoint: `${solutionsApiUrl}/api/v1/suppliers?name=some-supp`,

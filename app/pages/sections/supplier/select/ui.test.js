@@ -52,7 +52,7 @@ test('should render Supplier select page', async (t) => {
     .reply(200, [{}]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?supplierNameToFind=some-supp`);
+  await t.navigateTo(`${pageUrl}?name=some-supp`);
   const page = Selector('[data-test-id="supplier-select-page"]');
 
   await t
@@ -65,7 +65,7 @@ test('should navigate to /organisation/order-1/supplier/search when click on bac
     .reply(200, [{}]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?supplierNameToFind=some-supp`);
+  await t.navigateTo(`${pageUrl}?name=some-supp`);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
@@ -81,7 +81,7 @@ test('should render the title', async (t) => {
     .reply(200, [{}]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?supplierNameToFind=some-supp`);
+  await t.navigateTo(`${pageUrl}?name=some-supp`);
 
   const title = Selector('h1[data-test-id="supplier-select-page-title"]');
 
@@ -96,7 +96,7 @@ test('should render the description', async (t) => {
     .reply(200, [{}]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?supplierNameToFind=some-supp`);
+  await t.navigateTo(`${pageUrl}?name=some-supp`);
 
   const description = Selector('h2[data-test-id="supplier-select-page-description"]');
 
@@ -114,7 +114,7 @@ test('should render a selectSupplier question as radio button options', async (t
     ]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?supplierNameToFind=some-supp`);
+  await t.navigateTo(`${pageUrl}?name=some-supp`);
 
   const selectSupplierRadioOptions = Selector('[data-test-id="question-selectSupplier"]');
 
@@ -136,7 +136,7 @@ test('should render the Continue button', async (t) => {
     .reply(200, [{}]);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?supplierNameToFind=some-supp`);
+  await t.navigateTo(`${pageUrl}?name=some-supp`);
 
   const button = Selector('[data-test-id="continue-button"] button');
 
@@ -160,7 +160,7 @@ test('should show the error page if no suppliers are returned', async (t) => {
     .reply(200, []);
 
   await pageSetup(t, true);
-  await t.navigateTo(`${pageUrl}?supplierNameToFind=some-supp`);
+  await t.navigateTo(`${pageUrl}?name=some-supp`);
 
   const backLink = Selector('[data-test-id="error-back-link"]');
   const errorTitle = Selector('[data-test-id="error-title"]');
