@@ -1,5 +1,5 @@
 import { getData, putData } from 'buying-catalogue-library';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 
@@ -59,6 +59,8 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
   }
   throw new Error();
 };
+
+export const getCallOffOrderingPartyErrorContext = async params => getErrorContext(params);
 
 export const putCallOffOrderingParty = async ({
   orgId, orderId, data, accessToken,
