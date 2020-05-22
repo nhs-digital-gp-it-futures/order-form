@@ -25,9 +25,9 @@ export const postOrPutDescription = async ({
   const apiCallParams = {
     endpoint,
     body: isNewOrder ? {
-      ...data,
+      description: data.description.trim(),
       organisationId: orgId,
-    } : data,
+    } : { description: data.description.trim() },
     accessToken,
     logger,
   };

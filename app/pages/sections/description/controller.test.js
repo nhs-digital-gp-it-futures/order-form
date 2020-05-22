@@ -133,5 +133,22 @@ describe('description controller', () => {
         expect(err).toEqual(new Error());
       }
     });
+
+    it('should trim whitespace from the data', async () => {
+      const mockData = { description: '  an order description ' };
+
+      putData
+        .mockResolvedValueOnce({});
+
+      await postOrPutDescription({ orderId: 'order-id', data: mockData, accessToken: 'access_token' });
+
+      expect(putData.mock.calls.length).toEqual(1);
+      expect(putData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
+        body: { description: 'an order description' },
+        accessToken: 'access_token',
+        logger,
+      });
+    });
   });
 });
