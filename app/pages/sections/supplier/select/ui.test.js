@@ -105,6 +105,31 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
+test('should render a selectSupplier question as radio button options', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers?name=some-supp')
+    .reply(200, [
+      { supplierId: 'supplier-1', name: 'Supplier 1' },
+      { supplierId: 'supplier-2', name: 'Supplier 2' },
+    ]);
+
+  await pageSetup(t, true);
+  await t.navigateTo(`${pageUrl}?supplierNameToFind=some-supp`);
+
+  const selectSupplierRadioOptions = Selector('[data-test-id="question-selectSupplier"]');
+
+  await t
+    .expect(selectSupplierRadioOptions.exists).ok()
+    .expect(await extractInnerText(selectSupplierRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
+    .expect(selectSupplierRadioOptions.find('input').count).eql(2)
+
+    .expect(selectSupplierRadioOptions.find('input').nth(0).getAttribute('value')).eql('supplier-1')
+    .expect(await extractInnerText(selectSupplierRadioOptions.find('label').nth(0))).eql('Supplier 1')
+
+    .expect(selectSupplierRadioOptions.find('input').nth(1).getAttribute('value')).eql('supplier-2')
+    .expect(await extractInnerText(selectSupplierRadioOptions.find('label').nth(1))).eql('Supplier 2');
+});
+
 test('should render the Continue button', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers?name=some-supp')
