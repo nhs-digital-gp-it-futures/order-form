@@ -47,6 +47,15 @@ const pageSetup = async (t, withAuth = false) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
+const putOrderingPartyErrorResponse = {
+  errors: [
+    {
+      field: 'TelephoneNumber',
+      id: 'TelephoneNumberTooLong',
+    },
+  ],
+};
+
 fixture('Call-off-ordering-party page')
   .page('http://localhost:1234/some-fake-page')
   .afterEach(async (t) => {
@@ -79,7 +88,7 @@ test('should render call-off-ordering-party page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id when click on backlink', async (t) => {
+test('should navigate to /organisation/order-id when click on backLink', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -246,4 +255,68 @@ test('should navigate to task list page if save button is clicked and data is va
     .expect(saveButton.exists).ok()
     .click(saveButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+});
+
+test('should show the error summary when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/ordering-party')
+    .reply(400, putOrderingPartyErrorResponse);
+
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Telephone number must be 35 characters or fewer');
+});
+
+test('should show text fields as errors with error message when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/ordering-party')
+    .reply(400, putOrderingPartyErrorResponse);
+
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const descriptionPage = Selector('[data-test-id="call-off-ordering-party-page"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const descriptionField = descriptionPage.find('[data-test-id="question-telephoneNumber"]');
+
+  await t
+    .expect(descriptionField.find('[data-test-id="textarea-field-error"]').exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(descriptionField.find('[data-test-id="text-field-input-error"]').exists).ok()
+    .expect(await extractInnerText(descriptionField.find('#telephoneNumber-error'))).contains('Telephone number must be 35 characters or fewer');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/ordering-party')
+    .reply(400, putOrderingPartyErrorResponse);
+
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#telephoneNumber`);
 });
