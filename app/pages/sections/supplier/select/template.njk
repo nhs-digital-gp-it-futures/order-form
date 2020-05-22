@@ -1,7 +1,7 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
-{% from 'components/text-field/macro.njk' import textField %}
+{% from 'components/radiobutton-options/macro.njk' import radiobuttonOptions %}
 {% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
 
 {% block body %}
@@ -20,6 +20,12 @@
 
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+          {{
+            radiobuttonOptions({
+              question: questions[0]
+            })
+          }}
 
           {{ bcButton({
               dataTestId: "continue-button",

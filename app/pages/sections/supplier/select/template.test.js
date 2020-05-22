@@ -60,6 +60,34 @@ describe('supplier select page', () => {
     });
   }));
 
+  it('should render the "Select Supplier" radio button options component', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectSupplier',
+          mainAdvice: 'Select Supplier',
+          options: [
+            {
+              value: 'supplier-1',
+              text: 'Supplier 1',
+            },
+            {
+              value: 'supplier-2',
+              text: 'Supplier 2',
+            },
+          ],
+        },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const selectSupplierRadioOptions = $('[data-test-id="question-selectSupplier"]');
+      expect(selectSupplierRadioOptions.length).toEqual(1);
+      expect(selectSupplierRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
+      expect(selectSupplierRadioOptions.find('input').length).toEqual(2);
+    });
+  }));
+
   it('should render the "Continue" button', componentTester(setup, (harness) => {
     const context = {
       continueButtonText: 'Continue',

@@ -98,7 +98,7 @@ test('should render a supplierName question as a textfield', async (t) => {
     .expect(supplierNameInput.find('input').count).eql(1);
 });
 
-test('should render Search button', async (t) => {
+test('should render the Search button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
