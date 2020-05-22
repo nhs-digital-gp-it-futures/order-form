@@ -1,5 +1,6 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../config';
+import { getSectionErrorContext } from '../getSectionErrorContext';
 
 const addDataToQuestionsInManifest = contactData => (contactData ? ({
   ...manifest,
@@ -18,6 +19,8 @@ export const getContext = ({ orderId, orgData, contactData }) => {
     ...manifestWithQuestionsData,
     ...orgData,
     title: `${manifest.title} ${orderId}`,
-    backlinkHref: `${baseUrl}/organisation/${orderId}`,
+    backLinkHref: `${baseUrl}/organisation/${orderId}`,
   };
 };
+
+export const getErrorContext = params => getSectionErrorContext({ ...params, manifest });
