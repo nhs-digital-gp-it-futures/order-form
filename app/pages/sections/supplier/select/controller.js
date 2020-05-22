@@ -11,6 +11,6 @@ export const findSuppliers = async ({ supplierNameToFind, accessToken }) => {
   return suppliersFound;
 };
 
-export const getSupplierSelectPageContext = ({ orderId }) => (
-  getContext({ orderId })
+export const getSupplierSelectPageContext = ({ orderId, suppliers }) => (
+  getContext({ orderId, suppliers })
 );
