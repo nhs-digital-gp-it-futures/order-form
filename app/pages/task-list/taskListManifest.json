@@ -23,6 +23,16 @@
           "dependencies": ["description"]
         }
       ]
+    },
+    {
+      "name": "Commencement date",
+      "sections": [
+        {
+          "id": "commencement-date",
+          "title": "Provide commencement date for this agreement",
+          "dependencies": ["description", "call-off-ordering-party", "supplier"]
+        }
+      ]
     }
   ]
 }
