@@ -360,6 +360,11 @@ describe('routes', () => {
       orderingPartyController.putCallOffOrderingParty = jest.fn()
         .mockImplementation(() => Promise.resolve({ success: false }));
 
+      orderingPartyController.getCallOffOrderingPartyErrorContext = jest.fn()
+        .mockImplementation(() => Promise.resolve({
+          errors: [{ text: 'First name must be 100 characters or fewer', href: '#firstName' }],
+        }));
+
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
       });
@@ -371,8 +376,10 @@ describe('routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('error with put call for call-off-ordering-party')).toEqual(true);
+          expect(res.text.includes('data-test-id="call-off-ordering-party-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+          descriptionController.getDescriptionErrorContext.mockReset();
         });
     });
   });
