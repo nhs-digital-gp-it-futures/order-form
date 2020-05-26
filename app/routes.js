@@ -19,7 +19,6 @@ import { getTaskListPageContext } from './pages/task-list/controller';
 import {
   getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext, putCallOffOrderingParty,
 } from './pages/sections/call-off-ordering-party/controller';
-import { saveToSession, getFromSession } from './sessionManager';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -30,7 +29,7 @@ const addContext = ({ context, user, csrfToken }) => ({
   csrfToken,
 });
 
-export const routes = (authProvider) => {
+export const routes = (authProvider, sessionManager) => {
   const router = express.Router();
 
   healthRoutes({ router, dependencies: getHealthCheckDependencies(config), logger });
@@ -135,7 +134,7 @@ export const routes = (authProvider) => {
       });
 
       if (suppliersFound.length > 0) {
-        saveToSession({ req, key: 'suppliersFound', value: suppliersFound });
+        sessionManager.saveToSession({ req, key: 'suppliersFound', value: suppliersFound });
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search/select`);
       }
 
@@ -159,7 +158,7 @@ export const routes = (authProvider) => {
   router.get('/organisation/:orderId/supplier/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    const suppliersFound = getFromSession({ req, key: 'suppliersFound' });
+    const suppliersFound = sessionManager.getFromSession({ req, key: 'suppliersFound' });
     if (suppliersFound) {
       const context = getSupplierSelectPageContext({ orderId, suppliers: suppliersFound });
       return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
