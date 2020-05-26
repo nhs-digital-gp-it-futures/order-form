@@ -14,6 +14,7 @@ import { routes } from '../../routes';
 import { baseUrl } from '../../config';
 import * as descriptionController from './description/controller';
 import * as orderingPartyController from './call-off-ordering-party/controller';
+import * as commencementDateController from './commencement-date/controller';
 
 jest.mock('../../logger');
 
@@ -27,6 +28,9 @@ orderingPartyController.getCallOffOrderingPartyContext = jest.fn()
   .mockResolvedValue({});
 
 orderingPartyController.putCallOffOrderingParty = jest.fn()
+  .mockResolvedValue({});
+
+commencementDateController.putCommencementDate = jest.fn()
   .mockResolvedValue({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
@@ -310,5 +314,83 @@ describe('routes', () => {
         expect(res.text.includes('data-test-id="commencement-date-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       }));
+  });
+
+  describe('POST /organisation/neworder/commencement-date', () => {
+    const path = '/organisation/order-id/commencement-date';
+
+    afterEach(() => {
+      commencementDateController.putCommencementDate.mockReset();
+    });
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), pathToTest: path, mockAuthorisedCookie,
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        csrfPagePath: path,
+        pathToTest: path,
+        mockAuthorisedCookie,
+        expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        csrfPagePath: path,
+        pathToTest: path,
+        mockAuthorisedCookie,
+        mockUnauthorisedCookie,
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should return the correct status and text if response.success is true', async () => {
+      commencementDateController.putCommencementDate = jest.fn()
+        .mockImplementation(() => Promise.resolve({ success: true }));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should return the correct status and text if response.success is not true', async () => {
+      commencementDateController.putCommencementDate = jest.fn()
+        .mockImplementation(() => Promise.resolve({ success: false }));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
   });
 });
