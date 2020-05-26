@@ -50,7 +50,6 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.post('/call-off-ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const response = await putCallOffOrderingParty({
-      orgId: req.user.primaryOrganisationId,
       orderId,
       data: req.body,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),

@@ -63,7 +63,7 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
 export const getCallOffOrderingPartyErrorContext = async params => getErrorContext(params);
 
 export const putCallOffOrderingParty = async ({
-  orgId, orderId, data, accessToken,
+  orderId, data, accessToken,
 }) => {
   const endpoint = getEndpoint({ endpointLocator: 'putOrderingParty', options: { orderId } });
   const body = formatPutData(data);
@@ -71,7 +71,6 @@ export const putCallOffOrderingParty = async ({
     await putData({
       endpoint,
       body,
-      organisationId: orgId,
       accessToken,
       logger,
     });

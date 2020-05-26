@@ -142,13 +142,12 @@ describe('Call-off-ordering-party controller', () => {
         .mockResolvedValueOnce({});
 
       await putCallOffOrderingParty({
-        orgId: 'org-id', orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
+        orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
       });
       expect(putData.mock.calls.length).toEqual(1);
       expect(putData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
         body: mockCompleteData,
-        organisationId: 'org-id',
         accessToken: 'access_token',
         logger,
       });
@@ -168,13 +167,12 @@ describe('Call-off-ordering-party controller', () => {
         .mockResolvedValueOnce({});
 
       await putCallOffOrderingParty({
-        orgId: 'org-id', orderId: 'order-id', data: mockData, accessToken: 'access_token',
+        orderId: 'order-id', data: mockData, accessToken: 'access_token',
       });
       expect(putData.mock.calls.length).toEqual(1);
       expect(putData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
         body: mockCompleteData,
-        organisationId: 'org-id',
         accessToken: 'access_token',
         logger,
       });
@@ -185,7 +183,7 @@ describe('Call-off-ordering-party controller', () => {
         .mockResolvedValueOnce({});
 
       const response = await putCallOffOrderingParty({
-        orgId: 'org-id', orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
+        orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
       });
       expect(response).toEqual({ success: true });
     });
@@ -196,7 +194,7 @@ describe('Call-off-ordering-party controller', () => {
         .mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 
       const response = await putCallOffOrderingParty({
-        orgId: 'org-id', orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
+        orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
       });
 
       expect(response).toEqual(responseData);
@@ -208,7 +206,7 @@ describe('Call-off-ordering-party controller', () => {
 
       try {
         await putCallOffOrderingParty({
-          orgId: 'org-id', orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
+          orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
         });
       } catch (err) {
         expect(err).toEqual(new Error());
