@@ -9,7 +9,7 @@ const isSectionEnabled = (dataDict = {}, dependencies = []) => (
     dependency => !dataDict[dependency] || (dataDict[dependency] && dataDict[dependency].status === 'incomplete'),
   ) : true);
 
-const isSectionComplete = (sectionsDataDict = {}, section = []) => !!(sectionsDataDict && sectionsDataDict[section.id] && sectionsDataDict[section.id].status === 'complete');
+const isSectionComplete = (sectionsDataDict = {}, section = {}) => !!(sectionsDataDict && sectionsDataDict[section.id] && sectionsDataDict[section.id].status === 'complete');
 
 export const generateTaskList = ({ orderId, taskListManifest, sectionsData }) => {
   const sectionsDataDict = convertDataToDict({ sectionsData });

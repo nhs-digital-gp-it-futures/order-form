@@ -160,6 +160,24 @@ test('should render the second task as "Organisation information" and "supplier"
     .expect(secondTaskSecondItem.find('a').exists).notOk();
 });
 
+test('should render the third task as "Commencement date" and "data" as text not link', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const taskList = Selector('[data-test-id="task-list"]');
+  const thirdTask = Selector('li[data-test-id="task-2"]');
+  const thirdTaskFirstItem = Selector('li[data-test-id="task-2-item-0"]');
+
+  await t
+    .expect(taskList.exists).ok()
+    .expect(thirdTask.exists).ok()
+    .expect(await extractInnerText(thirdTask.find('h2 span'))).eql('3.')
+    .expect(await extractInnerText(thirdTask.find('h2 div'))).eql('Commencement date')
+    .expect(thirdTaskFirstItem.exists).ok()
+    .expect(await extractInnerText(thirdTaskFirstItem)).eql('Provide commencement date for this agreement')
+    .expect(thirdTaskFirstItem.find('a').exists).notOk();
+});
+
 test('should render the "Delete order" button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
