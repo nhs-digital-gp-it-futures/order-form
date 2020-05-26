@@ -1,0 +1,11 @@
+{
+  "backLinkText": "Go back",
+  "title": "Commencement date for",
+  "description": "Enter the date that this Call-off Agreement will begin.",
+  "questions": [{
+    "id": "commencementDate",
+    "mainAdvice": "Commencement date",
+    "additionalAdvice": "For example 14 1 2020"
+  }],
+  "saveButtonText": "Save and return"
+}
