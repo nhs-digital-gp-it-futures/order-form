@@ -592,6 +592,23 @@ describe('routes', () => {
           expect(res.text.includes('data-test-id="supplier-select-page"')).toBeTruthy();
         });
     });
+
+    it('should redirect back to /search if no supplierFound are returned from session', async () => {
+      sessionManager.getFromSession = jest.fn()
+        .mockImplementation(() => undefined);
+
+      supplierSelectController.getSupplierSelectPageContext = jest.fn()
+        .mockImplementation(() => {});
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier/search`);
+        });
+    });
   });
 
   describe('GET *', () => {
