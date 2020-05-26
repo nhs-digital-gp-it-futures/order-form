@@ -1,5 +1,4 @@
 import express from 'express';
-import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../logger';
 import config from '../../config';
 import { withCatch, extractAccessToken } from '../../helpers/routerHelper';
@@ -7,15 +6,12 @@ import {
   getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext, putCallOffOrderingParty,
 } from './call-off-ordering-party/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './description/controller';
-import {
-  getSupplierSearchPageContext, validateSupplierSearchForm, getSupplierSearchPageErrorContext,
-} from './supplier/search/controller';
-import { findSuppliers, getSupplierSelectPageContext } from './supplier/select/controller';
 import { getCommencementDateContext } from './commencement-date/controller';
+import { supplierRoutes } from './supplier/routes';
 
 const router = express.Router({ mergeParams: true });
 
-export const sectionRoutes = (authProvider, addContext) => {
+export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const context = await getDescriptionContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
@@ -69,65 +65,7 @@ export const sectionRoutes = (authProvider, addContext) => {
     return res.render('pages/sections/call-off-ordering-party//template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.get('/supplier', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    logger.info(`redirecting to order ${orderId} supplier search page`);
-    res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
-  }));
-
-  router.get('/supplier/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    const context = await getSupplierSearchPageContext({ orderId });
-    logger.info(`navigating to order ${orderId} supplier search page`);
-    res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-  }));
-
-  router.post('/supplier/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const { orderId } = req.params;
-
-    const response = validateSupplierSearchForm({ data: req.body });
-
-    if (response.success) {
-      logger.info(`redirecting to order ${orderId} supplier search results page`);
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search?name=${req.body.supplierName}`);
-    }
-
-    const context = await getSupplierSearchPageErrorContext({
-      orderId,
-      validationErrors: response.errors,
-    });
-    logger.info(`navigating to order ${orderId} supplier search page (with errors)`);
-    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-  }));
-
-  router.get('/supplier/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    const { name } = req.query;
-
-    if (name) {
-      const accessToken = extractAccessToken({ req, tokenType: 'access' });
-
-      const suppliersFound = await findSuppliers({
-        name, accessToken,
-      });
-
-      if (suppliersFound.length > 0) {
-        const context = getSupplierSelectPageContext({ orderId, suppliers: suppliersFound });
-        logger.info(`navigating to order ${orderId} supplier select page`);
-        return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-      }
-
-      throw new ErrorContext({
-        status: 404,
-        title: 'No Supplier found',
-        description: "There are no suppliers that match the search terms you've provided. Try searching again.",
-        backLinkText: 'Go back to search',
-        backLinkHref: `${config.baseUrl}/organisation/${orderId}/supplier/search`,
-      });
-    }
-    logger.info(`redirecting to order ${orderId} supplier search page`);
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
-  }));
+  router.use('/supplier', supplierRoutes(authProvider, addContext, sessionManager));
 
   router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;

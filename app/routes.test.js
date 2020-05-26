@@ -3,6 +3,7 @@ import {
   FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
+  fakeSessionManager,
 } from 'buying-catalogue-library';
 import { App } from './app';
 import { routes } from './routes';
@@ -34,7 +35,7 @@ const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
   const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider));
+  app.use('/', routes(authProvider, fakeSessionManager()));
   return app;
 };
 
