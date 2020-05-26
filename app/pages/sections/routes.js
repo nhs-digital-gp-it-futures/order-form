@@ -11,7 +11,7 @@ import {
   getSupplierSearchPageContext, validateSupplierSearchForm, getSupplierSearchPageErrorContext,
 } from './supplier/search/controller';
 import { findSuppliers, getSupplierSelectPageContext } from './supplier/select/controller';
-import { getCommencementDateContext } from './commencement-date/controller';
+import { getCommencementDateContext, putCommencementDate } from './commencement-date/controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -134,6 +134,21 @@ export const sectionRoutes = (authProvider, addContext) => {
     const context = await getCommencementDateContext({ orderId });
     logger.info(`navigating to order ${orderId} commencement-date page`);
     res.render('pages/sections/commencement-date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    const response = await putCommencementDate({
+      orgId: req.user.primaryOrganisationId,
+      orderId,
+      data: req.body,
+      accessToken: extractAccessToken({ req, tokenType: 'access' }),
+    });
+
+    if (!response.success) logger.info(`validation error: ${JSON.stringify(response)}`);
+
+    return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
 
   return router;
