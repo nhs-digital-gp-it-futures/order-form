@@ -77,7 +77,6 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const { orderId } = req.params;
 
     const response = await putCommencementDate({
-      orgId: req.user.primaryOrganisationId,
       orderId,
       data: req.body,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
