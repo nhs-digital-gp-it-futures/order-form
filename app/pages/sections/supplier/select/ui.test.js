@@ -1,11 +1,9 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import { solutionsApiUrl } from '../../../../config';
 import content from './manifest.json';
 
-const pageUrl = 'http://localhost:1234/organisation/order-1/supplier/search/select?name=some-supp';
-const pageUrlWithoutQueryString = 'http://localhost:1234/organisation/order-1/supplier/search/select';
+const pageUrl = 'http://localhost:1234/organisation/order-1/supplier/search/select';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -15,10 +13,18 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const pageSetup = async (t, withAuth = false) => {
-  if (withAuth) {
-    await setCookies();
-  }
+const setSessionState = ClientFunction(() => {
+  const cookieValue = JSON.stringify([
+    { supplierId: 'supplier-1', name: 'Supplier 1' },
+    { supplierId: 'supplier-2', name: 'Supplier 2' },
+  ]);
+
+  document.cookie = `suppliersFound=${cookieValue}`;
+});
+
+const pageSetup = async (t, withAuth = false, withSessionState = false) => {
+  if (withAuth) await setCookies();
+  if (withSessionState) await setSessionState();
 };
 
 
@@ -48,11 +54,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render Supplier select page', async (t) => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/suppliers?name=some-supp')
-    .reply(200, [{}]);
-
-  await pageSetup(t, true);
+  await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="supplier-select-page"]');
 
@@ -61,11 +63,7 @@ test('should render Supplier select page', async (t) => {
 });
 
 test('should navigate to /organisation/order-1/supplier/search when click on backlink', async (t) => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/suppliers?name=some-supp')
-    .reply(200, [{}]);
-
-  await pageSetup(t, true);
+  await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -77,11 +75,7 @@ test('should navigate to /organisation/order-1/supplier/search when click on bac
 });
 
 test('should render the title', async (t) => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/suppliers?name=some-supp')
-    .reply(200, [{}]);
-
-  await pageSetup(t, true);
+  await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="supplier-select-page-title"]');
@@ -92,11 +86,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/suppliers?name=some-supp')
-    .reply(200, [{}]);
-
-  await pageSetup(t, true);
+  await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="supplier-select-page-description"]');
@@ -107,14 +97,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render a selectSupplier question as radio button options', async (t) => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/suppliers?name=some-supp')
-    .reply(200, [
-      { supplierId: 'supplier-1', name: 'Supplier 1' },
-      { supplierId: 'supplier-2', name: 'Supplier 2' },
-    ]);
-
-  await pageSetup(t, true);
+  await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
   const selectSupplierRadioOptions = Selector('[data-test-id="question-selectSupplier"]');
@@ -132,11 +115,7 @@ test('should render a selectSupplier question as radio button options', async (t
 });
 
 test('should render the Continue button', async (t) => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/suppliers?name=some-supp')
-    .reply(200, [{}]);
-
-  await pageSetup(t, true);
+  await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -146,33 +125,11 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to the search page if a supplier to find is not pass in the url', async (t) => {
-  await pageSetup(t, true);
-  await t.navigateTo(pageUrlWithoutQueryString);
+
+test('should redirect back to /organisation/order-1/supplier/search no suppliers are returned', async (t) => {
+  await pageSetup(t, true, false);
+  await t.navigateTo(pageUrl);
 
   await t
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
-});
-
-
-test('should show the error page if no suppliers are returned', async (t) => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/suppliers?name=some-supp')
-    .reply(200, []);
-
-  await pageSetup(t, true);
-  await t.navigateTo(pageUrl);
-
-  const backLink = Selector('[data-test-id="error-back-link"]');
-  const errorTitle = Selector('[data-test-id="error-title"]');
-  const errorDescription = Selector('[data-test-id="error-description"]');
-
-  await t
-    .expect(backLink.exists).ok()
-    .expect(await extractInnerText(backLink)).eql('Go back to search')
-    .expect(backLink.find('a').getAttribute('href')).ok('/order/organisation/order-1/supplier/search')
-    .expect(errorTitle.exists).ok()
-    .expect(await extractInnerText(errorTitle)).eql('No Supplier found')
-    .expect(errorDescription.exists).ok()
-    .expect(await extractInnerText(errorDescription)).eql("There are no suppliers that match the search terms you've provided. Try searching again.");
 });

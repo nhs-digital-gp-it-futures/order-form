@@ -10,7 +10,6 @@ import { sectionRoutes } from './pages/sections/routes';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
 
-
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
   ...includesContext,
@@ -20,7 +19,7 @@ const addContext = ({ context, user, csrfToken }) => ({
   csrfToken,
 });
 
-export const routes = (authProvider) => {
+export const routes = (authProvider, sessionManager) => {
   const router = express.Router();
 
   healthRoutes({ router, dependencies: getHealthCheckDependencies(config), logger });
@@ -53,7 +52,7 @@ export const routes = (authProvider) => {
     res.render('pages/task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext));
+  router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
 
   router.get('*', (req) => {
     throw new ErrorContext({
