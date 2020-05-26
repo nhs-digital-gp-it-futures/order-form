@@ -74,12 +74,14 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.get('/supplier', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+    logger.info('redirecting to suppliers search page');
     res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
   }));
 
   router.get('/supplier/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const context = await getSupplierSearchPageContext({ orderId });
+    logger.info(`navigating to order ${orderId} suppliers search page`);
     res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
@@ -97,6 +99,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
       if (suppliersFound.length > 0) {
         sessionManager.saveToSession({ req, key: 'suppliersFound', value: suppliersFound });
+        logger.info('redirecting suppliers select page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search/select`);
       }
 
@@ -123,9 +126,10 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const suppliersFound = sessionManager.getFromSession({ req, key: 'suppliersFound' });
     if (suppliersFound) {
       const context = getSupplierSelectPageContext({ orderId, suppliers: suppliersFound });
+      logger.info(`navigating to order ${orderId} suppliers select page`);
       return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     }
-
+    logger.info('no suppliers found in session redirecting suppliers search page');
     return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
   }));
 
