@@ -38,7 +38,9 @@ export const getDateErrors = (data) => {
   if (+month > 12) return { ...errorsMap.CommencementDateNotReal, part: ['month'] };
 
   const date = new Date(+year, +month - 1, +day);
+  if (date.getFullYear() !== +year || date.getMonth() + 1 !== +month) {
+    return errorsMap.CommencementDateNotReal;
+  }
 
-  if (date.getFullYear() !== +year || date.getMonth() + 1 !== +month) return errorsMap.CommencementDateNotReal;
   return null;
 };
