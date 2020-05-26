@@ -1,5 +1,6 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
+import { getSectionErrorContext } from '../../getSectionErrorContext';
 
 const generateSupplierOptions = ({ suppliers }) => (
   suppliers.map(supplier => ({
@@ -20,3 +21,11 @@ export const getContext = ({ orderId, suppliers }) => ({
   questions: suppliers && generateQuestionsContext({ suppliers }),
   backLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search`,
 });
+
+export const getErrorContext = (params) => {
+  const updatedManifest = getContext({ orderId: params.orderId, suppliers: params.suppliers });
+
+  return {
+    ...getSectionErrorContext({ ...params, manifest: updatedManifest }),
+  };
+};

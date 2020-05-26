@@ -1,9 +1,11 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../../config';
+import * as errorContext from '../../getSectionErrorContext';
 
-jest.mock('buying-catalogue-library');
-
+jest.mock('../../getSectionErrorContext', () => ({
+  getSectionErrorContext: jest.fn(),
+}));
 
 describe('supplier select contextCreator', () => {
   describe('getContext', () => {
@@ -67,6 +69,36 @@ describe('supplier select contextCreator', () => {
     it('should return the continueButtonText', () => {
       const context = getContext({});
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
+    });
+  });
+
+  describe('getErrorContext', () => {
+    const mockValidationErrors = [{
+      field: 'selectSupplier',
+      id: 'SelectSupplierRequired',
+    }];
+
+    const suppliers = [
+      { supplierId: 'supplier-1', name: 'Supplier 1' },
+      { supplierId: 'supplier-2', name: 'Supplier 2' },
+    ];
+
+    afterEach(() => {
+      errorContext.getSectionErrorContext.mockReset();
+    });
+
+    it('should call getSectionErrorContext with correct params', () => {
+      errorContext.getSectionErrorContext
+        .mockResolvedValueOnce();
+
+      const params = {
+        orderId: 'order-id',
+        validationErrors: mockValidationErrors,
+        suppliers,
+      };
+
+      getErrorContext(params);
+      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
     });
   });
 });

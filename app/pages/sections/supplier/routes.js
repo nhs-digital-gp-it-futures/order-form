@@ -9,7 +9,11 @@ import {
   getSupplierSearchPageErrorContext,
   findSuppliers,
 } from './search/controller';
-import { getSupplierSelectPageContext } from './select/controller';
+import {
+  getSupplierSelectPageContext,
+  validateSupplierSelectForm,
+  getSupplierSelectErrorPageContext,
+} from './select/controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -73,6 +77,27 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     }
     logger.info('no suppliers found in session redirecting suppliers search page');
     return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
+  }));
+
+  router.post('/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const suppliersFound = sessionManager.getFromSession({ req, key: 'suppliersFound' });
+
+    const response = validateSupplierSelectForm({ data: req.body });
+
+    if (response.success) {
+      sessionManager.saveToSession({ req, key: 'selectedSupplier', value: req.body.selectSupplier });
+      logger.info('redirecting supplier section page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
+    }
+
+    const context = await getSupplierSelectErrorPageContext({
+      orderId,
+      suppliers: suppliersFound,
+      validationErrors: response.errors,
+    });
+
+    return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
