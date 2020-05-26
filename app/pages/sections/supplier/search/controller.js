@@ -24,7 +24,7 @@ export const validateSupplierSearchForm = ({ data }) => {
 export const findSuppliers = async ({ name, accessToken }) => {
   const endpoint = getEndpoint({ endpointLocator: 'getSearchSuppliers', options: { name } });
   const suppliersFound = await getData({ endpoint, accessToken, logger });
-  logger.info(`Searching for "${name}" returned ${suppliersFound.length} supplier`);
+  logger.info(`Searching for "${name}" returned ${suppliersFound.length} suppliers`);
 
   return suppliersFound;
 };
