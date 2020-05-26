@@ -70,10 +70,6 @@ class App {
       noCache: true,
     });
 
-    if (this.stateProvider) {
-      this.stateProvider.setup(this.app);
-    }
-
     if (this.authProvider) {
       this.authProvider.setup(this.app, false);
     }
