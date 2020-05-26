@@ -502,7 +502,7 @@ describe('routes', () => {
       .expect(200)
       .then((res) => {
         expect(res.status).toBe(200);
-        expect(res.text.includes('commencement-date page')).toBeTruthy();
+        expect(res.text.includes('data-test-id="commencement-date-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       }));
   });

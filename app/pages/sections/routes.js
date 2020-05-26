@@ -11,6 +11,7 @@ import {
   getSupplierSearchPageContext, validateSupplierSearchForm, getSupplierSearchPageErrorContext,
 } from './supplier/search/controller';
 import { findSuppliers, getSupplierSelectPageContext } from './supplier/select/controller';
+import { getCommencementDateContext } from './commencement-date/controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -130,8 +131,9 @@ export const sectionRoutes = (authProvider, addContext) => {
 
   router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const context = await getCommencementDateContext({ orderId });
     logger.info(`navigating to order ${orderId} commencement-date page`);
-    res.status(200).send('commencement-date page');
+    res.render('pages/sections/commencement-date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
