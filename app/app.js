@@ -16,11 +16,10 @@ const config = require('./config');
 const locals = require('./locals');
 
 class App {
-  constructor(authProvider, stateProvider) {
+  constructor(authProvider) {
     // Initialise application
     this.app = express();
     this.authProvider = authProvider;
-    this.stateProvider = stateProvider;
   }
 
   createApp() {
@@ -71,7 +70,7 @@ class App {
     });
 
     if (this.authProvider) {
-      this.authProvider.setup(this.app, false);
+      this.authProvider.setup(this.app);
     }
 
     return this.app;
