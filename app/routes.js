@@ -10,7 +10,6 @@ import { sectionRoutes } from './pages/sections/routes';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
 
-
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
   ...includesContext,
