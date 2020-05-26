@@ -1,15 +1,14 @@
 import createTestcafe from 'testcafe';
-import { FakeAuthProvider } from 'buying-catalogue-library';
+import { FakeAuthProvider, fakeSessionManager } from 'buying-catalogue-library';
 import { App } from './app/app';
 import { routes } from './app/routes';
 import { env } from './app/config';
-import { sessionManager } from './app/fakeSessionManager';
 
 let testcafe;
 
 const authProvider = new FakeAuthProvider();
 const app = new App(authProvider).createApp();
-app.use('/', routes(authProvider, sessionManager));
+app.use('/', routes(authProvider, fakeSessionManager()));
 const server = app.listen('1234');
 
 const browserFromArgs = process.argv.slice(2, 3);

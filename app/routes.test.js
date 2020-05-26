@@ -7,6 +7,7 @@ import {
   testAuthorisedPostPathForUnauthorisedUsers,
   testAuthorisedGetPathForUnauthorisedUser,
   getCsrfTokenFromGet,
+  fakeSessionManager,
 } from 'buying-catalogue-library';
 import { App } from './app';
 import { routes } from './routes';
@@ -17,7 +18,6 @@ import * as descriptionController from './pages/sections/description/controller'
 import * as orderingPartyController from './pages/sections/call-off-ordering-party/controller';
 import * as supplierSearchController from './pages/sections/supplier/search/controller';
 import * as supplierSelectController from './pages/sections/supplier/select/controller';
-import { sessionManager } from './fakeSessionManager';
 
 jest.mock('./logger');
 
@@ -62,7 +62,7 @@ const mockSuppliersFoundCookie = `suppliersFound=${mockSuppliersFoundState}`;
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
   const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, sessionManager));
+  app.use('/', routes(authProvider, fakeSessionManager()));
   return app;
 };
 

@@ -1,11 +1,11 @@
 require('dotenv').config();
+const { sessionManager } = require('buying-catalogue-library');
 const config = require('./config');
 const { App } = require('./app');
 const { routes } = require('./routes');
 const { logger } = require('./logger');
 const { isIdentityReady } = require('./helpers/isIdentityReady');
 const { createAuthProvider } = require('./helpers/createAuthProvider');
-const { sessionManager } = require('./sessionManager');
 
 Object.keys(config).map((configKey) => {
   if (config[configKey]) {
@@ -23,7 +23,7 @@ Object.keys(config).map((configKey) => {
 
   // Create app
   const app = new App(authProvider).createApp();
-  app.use(config.baseUrl, routes(authProvider, sessionManager));
+  app.use(config.baseUrl, routes(authProvider, sessionManager({ logger })));
 
   // Run application on configured port
   if (config.env === 'development') {
