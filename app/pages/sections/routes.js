@@ -128,5 +128,11 @@ export const sectionRoutes = (authProvider, addContext) => {
     return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
   }));
 
+  router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    logger.info(`navigating to order ${orderId} commencement-date page`);
+    res.status(200).send('commencement-date page');
+  }));
+
   return router;
 };
