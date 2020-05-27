@@ -23,6 +23,12 @@
           }) }}
         </div>
 
+        <h3 data-test-id="supplier-name-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ supplierNameHeading }}</h3>
+        <div data-test-id="supplier-name" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ supplierData.name }}</div>
+        <input type="hidden" name="supplierData.name" value="{{ supplierData.name }}" />
+
+        <h3 data-test-id="supplier-address-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ supplierAddressHeading }}</h3>
+
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 

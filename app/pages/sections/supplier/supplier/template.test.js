@@ -59,6 +59,24 @@ describe('supplier page via select', () => {
     });
   }));
 
+  it('should render supplier name', componentTester(setup, (harness) => {
+    const context = {
+      supplierNameHeading: manifest.supplierNameHeading,
+      supplierData: {
+        name: 'SupplierOne',
+      },
+    };
+
+    harness.request(context, ($) => {
+      const heading = $('h3[data-test-id="supplier-name-heading"]');
+      const text = $('div[data-test-id="supplier-name"]');
+      expect(heading.length).toEqual(1);
+      expect(heading.text().trim()).toEqual(context.supplierNameHeading);
+      expect(text.length).toEqual(1);
+      expect(text.text().trim()).toEqual(context.supplierData.name);
+    });
+  }));
+
   it('should render hidden input with csrf token', componentTester(setup, (harness) => {
     const context = {
       csrfToken: 'mockCsrfToken',
