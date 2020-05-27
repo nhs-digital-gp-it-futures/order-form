@@ -26,7 +26,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
 
     if (selectedSupplier) {
-      const context = await getSupplierPageContext({ orderId, selectedSupplier, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+      const context = await getSupplierPageContext({ orderId, supplierId: selectedSupplier, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
       return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     }
 
