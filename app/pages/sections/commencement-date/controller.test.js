@@ -1,12 +1,16 @@
-import { putData } from 'buying-catalogue-library';
-import { putCommencementDate } from './controller';
+import { getData, putData } from 'buying-catalogue-library';
+import { getCommencementDateContext, putCommencementDate } from './controller';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 import * as dateValidator from './getDateErrors';
+import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
 jest.mock('./getDateErrors', () => ({
   getDateErrors: jest.fn(),
+}));
+jest.mock('./contextCreator', () => ({
+  getContext: jest.fn(),
 }));
 
 const mockData = {
@@ -22,6 +26,51 @@ const mockDataError = {
 };
 
 describe('commencement-date controller', () => {
+  describe('getCommencementDateContext', () => {
+    afterEach(() => {
+      getData.mockReset();
+      contextCreator.getContext.mockReset();
+    });
+
+    it('calls getData once with correct params', async () => {
+      getData
+        .mockResolvedValueOnce({});
+
+      await getCommencementDateContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
+      expect(getData.mock.calls.length).toEqual(1);
+      expect(getData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/commencement-date`,
+        accessToken: 'access_token',
+        logger,
+      });
+    });
+
+    it('calls getContext once with correct params if no data returned', async () => {
+      getData
+        .mockResolvedValueOnce({});
+      contextCreator.getContext
+        .mockResolvedValueOnce();
+
+      await getCommencementDateContext({ orderId: 'order-id', accessToken: 'access_token' });
+
+      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', data: undefined });
+    });
+
+    it('calls getContext once with correct params if data is returned', async () => {
+      const commencementDate = '2020-1-1';
+      getData
+        .mockResolvedValueOnce({ commencementDate });
+      contextCreator.getContext
+        .mockResolvedValueOnce();
+
+      await getCommencementDateContext({ orderId: 'order-id', accessToken: 'access_token' });
+
+      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', data: commencementDate });
+    });
+  });
+
   describe('putCommencementDate', () => {
     afterEach(() => {
       dateValidator.getDateErrors.mockReset();
