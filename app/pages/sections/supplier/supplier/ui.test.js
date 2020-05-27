@@ -116,7 +116,7 @@ test('should render the "Save and return" button', async (t) => {
 });
 
 
-test('should redirect to /organisation/order-1/supplier/search if no supplierSelected', async (t) => {
+test('should redirect to /organisation/order-1/supplier/search if there are supplierSelected returned from the session', async (t) => {
   await pageSetup(t, true, false);
   await t.navigateTo(pageUrl);
 
