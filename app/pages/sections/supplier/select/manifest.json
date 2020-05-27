@@ -8,5 +8,8 @@
       "mainAdvice": "Select Supplier"
     }
   ],
+  "errorMessages": {
+    "SelectSupplierRequired": "Select a supplier"
+  },
   "continueButtonText": "Continue"
 }

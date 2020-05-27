@@ -133,3 +133,55 @@ test('should redirect back to /organisation/order-1/supplier/search no suppliers
   await t
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
 });
+
+test('should show the error summary when there are validation errors', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a supplier');
+});
+
+test('should select supplier field as errors with error message when there are validation errors', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const supplierSelectPage = Selector('[data-test-id="supplier-select-page"]');
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const supplierSelectField = supplierSelectPage.find('[data-test-id="question-selectSupplier"]');
+
+  await t
+    .expect(supplierSelectField.find('[data-test-id="radiobutton-options-error"]').exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(supplierSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
+    .expect(await extractInnerText(supplierSelectField.find('#selectSupplier-error'))).contains('Select a supplier');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#selectSupplier`);
+});

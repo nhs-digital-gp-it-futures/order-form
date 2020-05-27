@@ -61,7 +61,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       orderId,
       data: req.body,
     });
-    return res.render('pages/sections/call-off-ordering-party//template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/call-off-ordering-party/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.use('/supplier', supplierRoutes(authProvider, addContext, sessionManager));

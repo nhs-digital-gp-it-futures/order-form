@@ -23,6 +23,31 @@ describe('supplier select page', () => {
     });
   }));
 
+  it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectSupplier',
+          error: [{ message: 'some select supplier error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some select supplier error message', href: '#selectSupplier' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(context.errors.length);
+      context.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
+    });
+  }));
+
   it('should render the supplier-select page title', componentTester(setup, (harness) => {
     const context = {
       title: 'Suppliers found',
@@ -85,6 +110,26 @@ describe('supplier select page', () => {
       expect(selectSupplierRadioOptions.length).toEqual(1);
       expect(selectSupplierRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
       expect(selectSupplierRadioOptions.find('input').length).toEqual(2);
+    });
+  }));
+
+  it('should render errors on selectSupplier field if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectSupplier',
+          error: [{ message: 'some select supplier error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some select supplier error message', href: '#selectSupplier' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const supplierNameQuestion = $('div[data-test-id="question-selectSupplier"]');
+      expect(supplierNameQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
+      expect(supplierNameQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
     });
   }));
 
