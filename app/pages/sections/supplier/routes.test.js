@@ -40,6 +40,10 @@ const mockSuppliersFoundState = JSON.stringify([
 
 const mockSuppliersFoundCookie = `suppliersFound=${mockSuppliersFoundState}`;
 
+const mockSelectedSupplierState = 'supplier-1';
+
+const mockSelectedSupplierCookie = `selectedSupplier=${mockSelectedSupplierState}`;
+
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
   const app = new App(authProvider).createApp();
@@ -67,13 +71,22 @@ describe('routes', () => {
       })
     ));
 
-    it('should redirect to /organisation/some-order-id/supplier/search', () => request(setUpFakeApp())
+    it('should redirect to /organisation/some-order-id/supplier/search if no supplierSelected returned from the session', () => request(setUpFakeApp())
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
       .expect(302)
       .then((res) => {
         expect(res.redirect).toEqual(true);
         expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier/search`);
+      }));
+
+    it('should return the supplier section page if authorised and supplierSelected returned from session', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie, mockSelectedSupplierCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.text.includes('data-test-id="supplier-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
   });
 

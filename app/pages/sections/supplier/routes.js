@@ -14,14 +14,24 @@ import {
   validateSupplierSelectForm,
   getSupplierSelectErrorPageContext,
 } from './select/controller';
+import {
+  getSupplierPageContext,
+} from './supplier/controller';
 
 const router = express.Router({ mergeParams: true });
 
 export const supplierRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
+
+    if (selectedSupplier) {
+      const context = await getSupplierPageContext({ orderId });
+      return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    }
+
     logger.info('redirecting to suppliers search page');
-    res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
+    return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
   }));
 
   router.get('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
