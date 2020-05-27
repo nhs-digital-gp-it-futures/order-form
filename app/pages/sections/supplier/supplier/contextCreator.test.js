@@ -30,6 +30,12 @@ describe('supplier contextCreator', () => {
       expect(context.insetAdvice).toEqual(manifest.insetAdvice);
     });
 
+    it('should return the supplierData provided', () => {
+      const supplierData = { name: 'some supp name' };
+      const context = getContext({ orderId: 'order-1', supplierData });
+      expect(context.supplierData).toEqual(supplierData);
+    });
+
     it('should return the saveButtonText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.saveButtonText).toEqual(manifest.saveButtonText);
