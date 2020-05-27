@@ -1,0 +1,7 @@
+{
+  "backLinkText": "Go back",
+  "title": "Supplier information for",
+  "description": "Check the supplier information and edit details for the primary contact for this order.",
+  "insetAdvice": "Once saved, you'll not be able to change the supplier for this order",
+  "saveButtonText": "Save and return"
+}
