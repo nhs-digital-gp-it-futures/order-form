@@ -41,7 +41,7 @@ describe('commencement-date page', () => {
   }));
 
   describe('form fields', () => {
-    xit('should render hidden input with csrf token', componentTester(setup, (harness) => {
+    it('should render hidden input with csrf token', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const formElement = $('input[name=_csrf]');
         expect(formElement.length).toEqual(1);
