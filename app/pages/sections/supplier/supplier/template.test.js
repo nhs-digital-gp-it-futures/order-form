@@ -138,16 +138,16 @@ describe('supplier page via select', () => {
     };
 
     harness.request(context, ($) => {
-      const nameFormElement = $('input[name="supplierData.name"]');
-      const line1FormElement = $('input[name="supplierData.address.line1"]');
-      const line2FormElement = $('input[name="supplierData.address.line2"]');
-      const line3FormElement = $('input[name="supplierData.address.line3"]');
-      const line4FormElement = $('input[name="supplierData.address.line4"]');
-      const line5FormElement = $('input[name="supplierData.address.line5"]');
-      const townFormElement = $('input[name="supplierData.address.town"]');
-      const countyFormElement = $('input[name="supplierData.address.county"]');
-      const postcodeFormElement = $('input[name="supplierData.address.postcode"]');
-      const countryFormElement = $('input[name="supplierData.address.country"]');
+      const nameFormElement = $('input[name=name]');
+      const line1FormElement = $('input[name=line1]');
+      const line2FormElement = $('input[name=line2]');
+      const line3FormElement = $('input[name=line3]');
+      const line4FormElement = $('input[name=line4]');
+      const line5FormElement = $('input[name=line5]');
+      const townFormElement = $('input[name=town]');
+      const countyFormElement = $('input[name=county]');
+      const postcodeFormElement = $('input[name=postcode]');
+      const countryFormElement = $('input[name=country]');
 
       expect(nameFormElement.length).toEqual(1);
       expect(nameFormElement.attr('type')).toEqual('hidden');
