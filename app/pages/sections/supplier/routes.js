@@ -83,21 +83,25 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     const { orderId } = req.params;
     const suppliersFound = sessionManager.getFromSession({ req, key: 'suppliersFound' });
 
-    const response = validateSupplierSelectForm({ data: req.body });
+    if (suppliersFound) {
+      const response = validateSupplierSelectForm({ data: req.body });
 
-    if (response.success) {
-      sessionManager.saveToSession({ req, key: 'selectedSupplier', value: req.body.selectSupplier });
-      logger.info('redirecting supplier section page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
+      if (response.success) {
+        sessionManager.saveToSession({ req, key: 'selectedSupplier', value: req.body.selectSupplier });
+        logger.info('redirecting supplier section page');
+        return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
+      }
+
+      const context = await getSupplierSelectErrorPageContext({
+        orderId,
+        suppliers: suppliersFound,
+        validationErrors: response.errors,
+      });
+
+      return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     }
-
-    const context = await getSupplierSelectErrorPageContext({
-      orderId,
-      suppliers: suppliersFound,
-      validationErrors: response.errors,
-    });
-
-    return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    logger.info('no suppliers found in session redirecting suppliers search page');
+    return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
   }));
 
   return router;

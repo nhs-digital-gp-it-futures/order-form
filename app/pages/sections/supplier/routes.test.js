@@ -111,16 +111,17 @@ describe('routes', () => {
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
-        app: request(setUpFakeApp()), pathToTest: path, mockAuthorisedCookie,
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
       })
     ));
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
-        csrfPagePath: path,
-        pathToTest: path,
-        mockAuthorisedCookie,
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
         expectedRedirectPath: 'http://identity-server/login',
       })
     ));
@@ -128,10 +129,10 @@ describe('routes', () => {
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
-        csrfPagePath: path,
-        pathToTest: path,
-        mockAuthorisedCookie,
-        mockUnauthorisedCookie,
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [mockUnauthorisedCookie],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
       })
@@ -147,7 +148,9 @@ describe('routes', () => {
         }));
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
       });
 
       return request(setUpFakeApp())
@@ -172,7 +175,9 @@ describe('routes', () => {
           { supplierId: 'some-supplier-id', name: 'some-supplier-name' }]));
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
       });
 
       return request(setUpFakeApp())
@@ -195,7 +200,9 @@ describe('routes', () => {
         .mockImplementation(() => Promise.resolve([]));
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()), csrfPagePath: path, mockAuthorisedCookie,
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
       });
 
       return request(setUpFakeApp())
@@ -259,5 +266,115 @@ describe('routes', () => {
           expect(res.redirect).toEqual(true);
           expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier/search`);
         })));
+  });
+
+  describe('POST /organisation/:orderId/supplier/search/select', () => {
+    const path = '/organisation/order-1/supplier/search/select';
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSuppliersFoundCookie],
+        postPathCookies: [mockSuppliersFoundCookie],
+        expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSuppliersFoundCookie],
+        postPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should show the supplier select page with errors if there are validation errors', async () => {
+      supplierSelectController.validateSupplierSelectForm = jest.fn()
+        .mockImplementation(() => ({ success: false }));
+
+      supplierSelectController.getSupplierSelectErrorPageContext = jest.fn()
+        .mockImplementation(() => Promise.resolve({
+          errors: [{ text: 'Select a supplier', href: '#selectSupplier' }],
+        }));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSuppliersFoundCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockSuppliersFoundCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="supplier-select-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should redirect to /organisation/some-order-id/supplier if a supplier is selected', async () => {
+      supplierSelectController.validateSupplierSelectForm = jest.fn()
+        .mockImplementation(() => ({ success: true }));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSuppliersFoundCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockSuppliersFoundCookie])
+        .send({
+          selectSupplier: 'supp-1',
+          _csrf: csrfToken,
+        })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/supplier`);
+        });
+    });
+
+    it('should redirect to /organisation/some-order-id/supplier/search if no suppliersFound returned from session', async () => {
+      supplierSearchController.findSuppliers = jest.fn()
+        .mockImplementation(() => Promise.resolve([]));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSuppliersFoundCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({
+          _csrf: csrfToken,
+        })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/supplier/search`);
+        });
+    });
   });
 });
