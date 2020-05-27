@@ -25,7 +25,7 @@ describe('supplier page via select', () => {
 
   it('should render the supplier page title', componentTester(setup, (harness) => {
     const context = {
-      title: 'Supplier information for SupplierOne',
+      title: 'Supplier information for order-1',
     };
 
     harness.request(context, ($) => {
