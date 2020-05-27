@@ -47,6 +47,18 @@ describe('supplier page via select', () => {
     });
   }));
 
+  it('should render the supplier page inset advice', componentTester(setup, (harness) => {
+    const context = {
+      insetAdvice: manifest.insetAdvice,
+    };
+
+    harness.request(context, ($) => {
+      const insetAdvice = $('[data-test-id="supplier-page-insetAdvice"]');
+      expect(insetAdvice.length).toEqual(1);
+      expect(insetAdvice.text().trim()).toContain(context.insetAdvice);
+    });
+  }));
+
   it('should render hidden input with csrf token', componentTester(setup, (harness) => {
     const context = {
       csrfToken: 'mockCsrfToken',
