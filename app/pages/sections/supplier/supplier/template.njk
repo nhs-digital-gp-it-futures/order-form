@@ -28,6 +28,24 @@
         <input type="hidden" name="supplierData.name" value="{{ supplierData.name }}" />
 
         <h3 data-test-id="supplier-address-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ supplierAddressHeading }}</h3>
+        <div data-test-id="supplier-address-1" class="nhsuk-u-font-size-19">{{ supplierData.address.line1 }}</div>
+        <input type="hidden" name="supplierData.line1" value="{{ supplierData.address.line1 }}" />
+        <div data-test-id="supplier-address-2" class="nhsuk-u-font-size-19">{{ supplierData.address.line2 }}</div>
+        <input type="hidden" name="supplierData.line2" value="{{ supplierData.address.line2 }}" />
+        <div data-test-id="supplier-address-3" class="nhsuk-u-font-size-19">{{ supplierData.address.line3 }}</div>
+        <input type="hidden" name="supplierData.line3" value="{{ supplierData.address.line3 }}" />
+        <div data-test-id="supplier-address-4" class="nhsuk-u-font-size-19">{{ supplierData.address.line4 }}</div>
+        <input type="hidden" name="supplierData.line4" value="{{ supplierData.address.line4 }}" />
+        <div data-test-id="supplier-address-5" class="nhsuk-u-font-size-19">{{ supplierData.address.line5 }}</div>
+        <input type="hidden" name="supplierData.line5" value="{{ supplierData.address.line5 }}" />
+        <div data-test-id="supplier-address-town" class="nhsuk-u-font-size-19">{{ supplierData.address.town }}</div>
+        <input type="hidden" name="supplierData.town" value="{{ supplierData.address.town }}" />
+        <div data-test-id="supplier-address-county" class="nhsuk-u-font-size-19">{{ supplierData.address.county }}</div>
+        <input type="hidden" name="supplierData.county" value="{{ supplierData.address.county }}" />
+        <div data-test-id="supplier-address-postcode" class="nhsuk-u-font-size-19">{{ supplierData.address.postcode }}</div>
+        <input type="hidden" name="supplierData.postcode" value="{{ supplierData.address.postcode }}" />
+        <div data-test-id="supplier-address-country" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ supplierData.address.country }}</div>
+        <input type="hidden" name="supplierData.country" value="{{ supplierData.address.country }}" />
 
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

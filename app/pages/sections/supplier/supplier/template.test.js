@@ -77,6 +77,59 @@ describe('supplier page via select', () => {
     });
   }));
 
+  it('should render organisation address', componentTester(setup, (harness) => {
+    const context = {
+      supplierAddressHeading: manifest.supplierAddressHeading,
+      supplierData: {
+        address: {
+          line1: 'line 1',
+          line2: 'line 2',
+          line3: 'line 3',
+          line4: null,
+          line5: 'line 5',
+          town: 'townville',
+          county: 'countyshire',
+          postcode: 'HA3 PSH',
+          country: 'UK',
+        },
+      },
+    };
+
+    harness.request(context, ($) => {
+      const heading = $('h3[data-test-id="supplier-address-heading"]');
+      const line1 = $('div[data-test-id="supplier-address-1"]');
+      const line2 = $('div[data-test-id="supplier-address-2"]');
+      const line3 = $('div[data-test-id="supplier-address-3"]');
+      const line4 = $('div[data-test-id="supplier-address-4"]');
+      const line5 = $('div[data-test-id="supplier-address-5"]');
+      const town = $('div[data-test-id="supplier-address-town"]');
+      const county = $('div[data-test-id="supplier-address-county"]');
+      const postcode = $('div[data-test-id="supplier-address-postcode"]');
+      const country = $('div[data-test-id="supplier-address-country"]');
+
+      expect(heading.length).toEqual(1);
+      expect(heading.text().trim()).toEqual(context.supplierAddressHeading);
+      expect(line1.length).toEqual(1);
+      expect(line1.text().trim()).toEqual(context.supplierData.address.line1);
+      expect(line2.length).toEqual(1);
+      expect(line2.text().trim()).toEqual(context.supplierData.address.line2);
+      expect(line3.length).toEqual(1);
+      expect(line3.text().trim()).toEqual(context.supplierData.address.line3);
+      expect(line4.length).toEqual(1);
+      expect(line4.text().trim()).toBeFalsy();
+      expect(line5.length).toEqual(1);
+      expect(line5.text().trim()).toEqual(context.supplierData.address.line5);
+      expect(town.length).toEqual(1);
+      expect(town.text().trim()).toEqual(context.supplierData.address.town);
+      expect(county.length).toEqual(1);
+      expect(county.text().trim()).toEqual(context.supplierData.address.county);
+      expect(postcode.length).toEqual(1);
+      expect(postcode.text().trim()).toEqual(context.supplierData.address.postcode);
+      expect(country.length).toEqual(1);
+      expect(country.text().trim()).toEqual(context.supplierData.address.country);
+    });
+  }));
+
   it('should render hidden input with csrf token', componentTester(setup, (harness) => {
     const context = {
       csrfToken: 'mockCsrfToken',
