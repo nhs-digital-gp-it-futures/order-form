@@ -148,7 +148,7 @@ test('should show the error summary when there are validation errors', async (t)
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Select a supplier');
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a supplier');
 });
 
 test('should select supplier field as errors with error message when there are validation errors', async (t) => {
