@@ -17,7 +17,7 @@ describe('supplier controller', () => {
       contextCreator.getContext.mockReset();
     });
 
-    it('should call getData twice with the correct params', async () => {
+    it('should call getData with the correct params', async () => {
       getData.mockResolvedValueOnce({});
 
       await getSupplierPageContext({ orderId: 'order-id', supplierId: 'supp-id', accessToken: 'access_token' });
