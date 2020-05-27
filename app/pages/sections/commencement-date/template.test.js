@@ -14,6 +14,18 @@ const context = {
   csrfToken: 'mockCsrfToken',
 };
 
+const contextWithErrors = {
+  ...context,
+  questions: [{
+    ...manifest.questions[0],
+    error: {
+      message: 'error message',
+      fields: ['day', 'month'],
+    },
+  }],
+  errors: [{ text: 'summary error message', href: '#commencementDate' }],
+};
+
 describe('commencement-date page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
@@ -21,6 +33,17 @@ describe('commencement-date page', () => {
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
       expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+    });
+  }));
+
+  it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
+    harness.request(contextWithErrors, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const error = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(error.length).toEqual(contextWithErrors.errors.length);
+      expect(error[0].attribs.href).toEqual(contextWithErrors.errors[0].href);
+      expect(error[0].children[0].data.trim()).toEqual(contextWithErrors.errors[0].text);
     });
   }));
 
@@ -92,6 +115,22 @@ describe('commencement-date page', () => {
         expect(inputs[2].attribs.id).toEqual(`${manifest.questions[0].id}-year`);
         expect(inputs[2].attribs.name).toEqual(`${manifest.questions[0].id}-year`);
         expect(inputs[2].attribs.type).toEqual('number');
+      });
+    }));
+
+    it('should render error field if there are errors', componentTester(setup, (harness) => {
+      harness.request(contextWithErrors, ($) => {
+        const form = $('form');
+        const renderedQuestion = form.find(`div[data-test-id="question-${context.questions[0].id}"]`);
+        const fieldError = renderedQuestion.find('div[data-test-id="date-field-input-error"]');
+        const errorMessage = renderedQuestion.find('.nhsuk-error-message');
+        const errorInputs = renderedQuestion.find('.nhsuk-input--error');
+
+        expect(fieldError.length).toEqual(1);
+        expect(errorMessage.text().trim()).toEqual('Error: error message');
+        expect(errorInputs.length).toEqual(2);
+        expect(errorInputs[0].attribs.id).toEqual('commencementDate-day');
+        expect(errorInputs[1].attribs.id).toEqual('commencementDate-month');
       });
     }));
   });
