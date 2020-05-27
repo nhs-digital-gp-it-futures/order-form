@@ -77,7 +77,7 @@ describe('supplier page via select', () => {
     });
   }));
 
-  it('should render organisation address', componentTester(setup, (harness) => {
+  it('should render supplier address', componentTester(setup, (harness) => {
     const context = {
       supplierAddressHeading: manifest.supplierAddressHeading,
       supplierData: {
