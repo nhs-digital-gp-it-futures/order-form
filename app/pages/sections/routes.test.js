@@ -367,7 +367,7 @@ describe('routes', () => {
 
     it('should return the correct status and text if response.success is true', async () => {
       commencementDateController.putCommencementDate = jest.fn()
-        .mockImplementation(() => Promise.resolve({ success: true }));
+        .mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -390,7 +390,12 @@ describe('routes', () => {
 
     it('should return the correct status and text if response.success is not true', async () => {
       commencementDateController.putCommencementDate = jest.fn()
-        .mockImplementation(() => Promise.resolve({ success: false }));
+        .mockResolvedValue({});
+
+      commencementDateController.getCommencementDateErrorContext = jest.fn()
+        .mockResolvedValue({
+          errors: [{ text: 'error', field: ['year'], href: '#commencementDate' }],
+        });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -403,11 +408,12 @@ describe('routes', () => {
         .type('form')
         .set('Cookie', [cookies, mockAuthorisedCookie])
         .send({ _csrf: csrfToken })
-        .expect(302)
+        .expect(200)
         .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.text.includes('data-test-id="commencement-date-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+          commencementDateController.getCommencementDateErrorContext.mockReset();
         });
     });
   });
