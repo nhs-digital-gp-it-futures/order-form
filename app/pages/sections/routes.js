@@ -6,7 +6,7 @@ import {
   getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext, putCallOffOrderingParty,
 } from './call-off-ordering-party/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './description/controller';
-import { getCommencementDateContext, putCommencementDate } from './commencement-date/controller';
+import { getCommencementDateContext, putCommencementDate, getCommencementDateErrorContext } from './commencement-date/controller';
 import { supplierRoutes } from './supplier/routes';
 
 const router = express.Router({ mergeParams: true });
@@ -82,9 +82,14 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    if (!response.success) logger.info(`validation error: ${JSON.stringify(response)}`);
+    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
 
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    const context = await getCommencementDateErrorContext({
+      validationErrors: response.errors,
+      orderId,
+      data: req.body,
+    });
+    return res.render('pages/sections/commencement-date/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
