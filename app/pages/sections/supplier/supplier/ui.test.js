@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
+import { solutionsApiUrl } from '../../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/order-1/supplier';
 
@@ -19,11 +20,17 @@ const setSessionState = ClientFunction(() => {
   document.cookie = `selectedSupplier=${cookieValue}`;
 });
 
+const mocks = () => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, {});
+};
+
 const pageSetup = async (t, withAuth = false, withSessionState = false) => {
   if (withAuth) await setCookies();
   if (withSessionState) await setSessionState();
+  if (withAuth && withSessionState) mocks();
 };
-
 
 const getLocation = ClientFunction(() => document.location.href);
 
