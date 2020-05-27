@@ -7,6 +7,21 @@ const setup = {
   },
 };
 
+const supplierData = {
+  name: 'SupplierOne',
+  address: {
+    line1: 'line 1',
+    line2: 'line 2',
+    line3: 'line 3',
+    line4: null,
+    line5: 'line 5',
+    town: 'townville',
+    county: 'countyshire',
+    postcode: 'HA3 PSH',
+    country: 'UK',
+  },
+};
+
 describe('supplier page via select', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
@@ -56,6 +71,123 @@ describe('supplier page via select', () => {
       const insetAdvice = $('[data-test-id="supplier-page-insetAdvice"]');
       expect(insetAdvice.length).toEqual(1);
       expect(insetAdvice.text().trim()).toContain(context.insetAdvice);
+    });
+  }));
+
+  it('should render supplier name', componentTester(setup, (harness) => {
+    const context = {
+      supplierNameHeading: manifest.supplierNameHeading,
+      supplierData,
+    };
+
+    harness.request(context, ($) => {
+      const heading = $('h3[data-test-id="supplier-name-heading"]');
+      const text = $('div[data-test-id="supplier-name"]');
+      expect(heading.length).toEqual(1);
+      expect(heading.text().trim()).toEqual(context.supplierNameHeading);
+      expect(text.length).toEqual(1);
+      expect(text.text().trim()).toEqual(context.supplierData.name);
+    });
+  }));
+
+  it('should render supplier address', componentTester(setup, (harness) => {
+    const context = {
+      supplierAddressHeading: manifest.supplierAddressHeading,
+      supplierData,
+    };
+
+    harness.request(context, ($) => {
+      const heading = $('h3[data-test-id="supplier-address-heading"]');
+      const line1 = $('div[data-test-id="supplier-address-1"]');
+      const line2 = $('div[data-test-id="supplier-address-2"]');
+      const line3 = $('div[data-test-id="supplier-address-3"]');
+      const line4 = $('div[data-test-id="supplier-address-4"]');
+      const line5 = $('div[data-test-id="supplier-address-5"]');
+      const town = $('div[data-test-id="supplier-address-town"]');
+      const county = $('div[data-test-id="supplier-address-county"]');
+      const postcode = $('div[data-test-id="supplier-address-postcode"]');
+      const country = $('div[data-test-id="supplier-address-country"]');
+
+      expect(heading.length).toEqual(1);
+      expect(heading.text().trim()).toEqual(context.supplierAddressHeading);
+      expect(line1.length).toEqual(1);
+      expect(line1.text().trim()).toEqual(context.supplierData.address.line1);
+      expect(line2.length).toEqual(1);
+      expect(line2.text().trim()).toEqual(context.supplierData.address.line2);
+      expect(line3.length).toEqual(1);
+      expect(line3.text().trim()).toEqual(context.supplierData.address.line3);
+      expect(line4.length).toEqual(1);
+      expect(line4.text().trim()).toBeFalsy();
+      expect(line5.length).toEqual(1);
+      expect(line5.text().trim()).toEqual(context.supplierData.address.line5);
+      expect(town.length).toEqual(1);
+      expect(town.text().trim()).toEqual(context.supplierData.address.town);
+      expect(county.length).toEqual(1);
+      expect(county.text().trim()).toEqual(context.supplierData.address.county);
+      expect(postcode.length).toEqual(1);
+      expect(postcode.text().trim()).toEqual(context.supplierData.address.postcode);
+      expect(country.length).toEqual(1);
+      expect(country.text().trim()).toEqual(context.supplierData.address.country);
+    });
+  }));
+
+  it('should render hidden inputs for supplier details', componentTester(setup, (harness) => {
+    const context = {
+      supplierAddressHeading: manifest.supplierAddressHeading,
+      supplierData,
+    };
+
+    harness.request(context, ($) => {
+      const nameFormElement = $('input[name=name]');
+      const line1FormElement = $('input[name=line1]');
+      const line2FormElement = $('input[name=line2]');
+      const line3FormElement = $('input[name=line3]');
+      const line4FormElement = $('input[name=line4]');
+      const line5FormElement = $('input[name=line5]');
+      const townFormElement = $('input[name=town]');
+      const countyFormElement = $('input[name=county]');
+      const postcodeFormElement = $('input[name=postcode]');
+      const countryFormElement = $('input[name=country]');
+
+      expect(nameFormElement.length).toEqual(1);
+      expect(nameFormElement.attr('type')).toEqual('hidden');
+      expect(nameFormElement.attr('value')).toEqual(context.supplierData.name);
+
+      expect(line1FormElement.length).toEqual(1);
+      expect(line1FormElement.attr('type')).toEqual('hidden');
+      expect(line1FormElement.attr('value')).toEqual(context.supplierData.address.line1);
+
+      expect(line2FormElement.length).toEqual(1);
+      expect(line2FormElement.attr('type')).toEqual('hidden');
+      expect(line2FormElement.attr('value')).toEqual(context.supplierData.address.line2);
+
+      expect(line3FormElement.length).toEqual(1);
+      expect(line3FormElement.attr('type')).toEqual('hidden');
+      expect(line3FormElement.attr('value')).toEqual(context.supplierData.address.line3);
+
+      expect(line4FormElement.length).toEqual(1);
+      expect(line4FormElement.attr('type')).toEqual('hidden');
+      expect(line4FormElement.attr('value')).toEqual('');
+
+      expect(line5FormElement.length).toEqual(1);
+      expect(line5FormElement.attr('type')).toEqual('hidden');
+      expect(line5FormElement.attr('value')).toEqual(context.supplierData.address.line5);
+
+      expect(townFormElement.length).toEqual(1);
+      expect(townFormElement.attr('type')).toEqual('hidden');
+      expect(townFormElement.attr('value')).toEqual(context.supplierData.address.town);
+
+      expect(countyFormElement.length).toEqual(1);
+      expect(countyFormElement.attr('type')).toEqual('hidden');
+      expect(countyFormElement.attr('value')).toEqual(context.supplierData.address.county);
+
+      expect(postcodeFormElement.length).toEqual(1);
+      expect(postcodeFormElement.attr('type')).toEqual('hidden');
+      expect(postcodeFormElement.attr('value')).toEqual(context.supplierData.address.postcode);
+
+      expect(countryFormElement.length).toEqual(1);
+      expect(countryFormElement.attr('type')).toEqual('hidden');
+      expect(countryFormElement.attr('value')).toEqual(context.supplierData.address.country);
     });
   }));
 
