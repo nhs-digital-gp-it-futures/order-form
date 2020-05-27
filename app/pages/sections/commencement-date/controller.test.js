@@ -6,6 +6,7 @@ import * as dateValidator from './getDateErrors';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
+jest.mock('../../../logger');
 jest.mock('./getDateErrors', () => ({
   getDateErrors: jest.fn(),
 }));
@@ -95,6 +96,31 @@ describe('commencement-date controller', () => {
         expect(response.success).toEqual(false);
         expect(response.errors.length).toEqual(1);
         expect(response.errors[0]).toEqual(mockDataError);
+      });
+
+      it('should return error.respose.data if api request is unsuccessful with 400', async () => {
+        const responseData = { errors: [{}] };
+        putData
+          .mockRejectedValueOnce({ response: { status: 400, data: responseData } });
+
+        const response = await putCommencementDate({
+          orderId: 'order-id', data: mockData, accessToken: 'access_token',
+        });
+
+        expect(response).toEqual(responseData);
+      });
+
+      it('should throw an error if api request is unsuccessful with non 400', async () => {
+        putData
+          .mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
+
+        try {
+          await putCommencementDate({
+            orderId: 'order-id', data: mockData, accessToken: 'access_token',
+          });
+        } catch (err) {
+          expect(err).toEqual(new Error());
+        }
       });
     });
 
