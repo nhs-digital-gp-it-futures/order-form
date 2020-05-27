@@ -171,8 +171,7 @@ describe('routes', () => {
         .mockImplementation(() => ({ success: true }));
 
       supplierSearchController.findSuppliers = jest.fn()
-        .mockImplementation(() => Promise.resolve([
-          { supplierId: 'some-supplier-id', name: 'some-supplier-name' }]));
+        .mockResolvedValue([{ supplierId: 'some-supplier-id', name: 'some-supplier-name' }]);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -197,7 +196,7 @@ describe('routes', () => {
 
     it('should show the error page indicating no suppliers found', async () => {
       supplierSearchController.findSuppliers = jest.fn()
-        .mockImplementation(() => Promise.resolve([]));
+        .mockResolvedValue([]);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -354,9 +353,6 @@ describe('routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/supplier/search if no suppliersFound returned from session', async () => {
-      supplierSearchController.findSuppliers = jest.fn()
-        .mockImplementation(() => Promise.resolve([]));
-
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
