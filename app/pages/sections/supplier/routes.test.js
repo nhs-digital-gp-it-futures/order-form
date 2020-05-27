@@ -53,15 +53,15 @@ describe('routes', () => {
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
       })
     ));
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
         app: request(setUpFakeApp()),
-        pathToTest: path,
-        mockUnauthorisedCookie,
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
       })
@@ -82,15 +82,15 @@ describe('routes', () => {
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
       })
     ));
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
         app: request(setUpFakeApp()),
-        pathToTest: path,
-        mockUnauthorisedCookie,
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
       })
@@ -228,15 +228,15 @@ describe('routes', () => {
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()), pathToTest: path, expectedRedirectPath: 'http://identity-server/login',
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
       })
     ));
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
         app: request(setUpFakeApp()),
-        pathToTest: path,
-        mockUnauthorisedCookie,
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
       })
