@@ -23,7 +23,7 @@ const contextWithErrors = {
       fields: ['day', 'month'],
     },
   }],
-  errors: [{ text: 'summary error message', href: '#commencementDate' }]
+  errors: [{ text: 'summary error message', href: '#commencementDate' }],
 };
 
 describe('commencement-date page', () => {
