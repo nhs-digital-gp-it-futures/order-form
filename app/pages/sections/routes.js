@@ -68,7 +68,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const context = await getCommencementDateContext({ orderId });
+    const context = await getCommencementDateContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     logger.info(`navigating to order ${orderId} commencement-date page`);
     res.render('pages/sections/commencement-date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

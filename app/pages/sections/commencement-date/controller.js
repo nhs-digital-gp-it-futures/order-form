@@ -1,4 +1,4 @@
-import { putData } from 'buying-catalogue-library';
+import { getData, putData } from 'buying-catalogue-library';
 import { getContext } from './contextCreator';
 import { getDateErrors } from './getDateErrors';
 import { getEndpoint } from '../../../endpoints';
@@ -8,7 +8,18 @@ const formatPutData = data => ({
   commencementDate: `${data['commencementDate-year']}-${data['commencementDate-month']}-${data['commencementDate-day']}`,
 });
 
-export const getCommencementDateContext = async parmas => getContext(parmas);
+export const getCommencementDateContext = async ({ orderId, accessToken }) => {
+  const commencementDateDataEndpoint = getEndpoint({ endpointLocator: 'getCommencementDate', options: { orderId } });
+  const commencementDateData = await getData({
+    endpoint: commencementDateDataEndpoint, accessToken, logger,
+  });
+
+  logger.info(`Commencement date ${commencementDateData ? '' : 'not '}found for ${orderId}`);
+  return getContext({
+    orderId,
+    data: commencementDateData ? commencementDateData.commencementDate : undefined,
+  });
+};
 
 export const putCommencementDate = async ({
   orderId, data, accessToken,

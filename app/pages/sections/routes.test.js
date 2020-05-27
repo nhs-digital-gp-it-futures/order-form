@@ -33,6 +33,9 @@ orderingPartyController.putCallOffOrderingParty = jest.fn()
 commencementDateController.putCommencementDate = jest.fn()
   .mockResolvedValue({});
 
+commencementDateController.getCommencementDateContext = jest.fn()
+  .mockResolvedValue({});
+
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
 const mockAuthorisedJwtPayload = JSON.stringify({
