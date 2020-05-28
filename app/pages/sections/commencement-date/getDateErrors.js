@@ -25,6 +25,11 @@ export const getDateErrors = (data) => {
       part: ['day', 'month'],
       id: 'CommencementDateNotReal',
     },
+    CommencementDateYearLength: {
+      field: 'CommencementDate',
+      part: ['year'],
+      id: 'CommencementDateYearLength',
+    },
   };
   const day = data['commencementDate-day'];
   const month = data['commencementDate-month'];
@@ -34,8 +39,10 @@ export const getDateErrors = (data) => {
   if (!day) return errorsMap.CommencementDateDayRequired;
   if (!month) return errorsMap.CommencementDateMonthRequired;
   if (!year) return errorsMap.CommencementDateYearRequired;
+  if (year.length !== 4) return errorsMap.CommencementDateYearLength;
   if (+day > 31) return { ...errorsMap.CommencementDateNotReal, part: ['day'] };
   if (+month > 12) return { ...errorsMap.CommencementDateNotReal, part: ['month'] };
+  if (+year < 1000) return { ...errorsMap.CommencementDateNotReal, part: ['year'] };
 
   const date = new Date(+year, +month - 1, +day);
   if (date.getFullYear() !== +year || date.getMonth() + 1 !== +month) {
