@@ -340,6 +340,27 @@ test('should show the error summary when there are validation errors', async (t)
     .expect(await extractInnerText(errorSummary.find('li a').nth(3))).eql('Telephone number must be 35 characters or fewer');
 });
 
+test('should ensure details are repopulated when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/sections/supplier')
+    .reply(400, supplierErrorResponse);
+
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const page = Selector('[data-test-id="supplier-page"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const addressTextLine1 = Selector('[data-test-id="supplier-address-1"]');
+  const firstNameField = page.find('[data-test-id="question-firstName"]');
+
+  await t
+    .click(saveButton);
+
+  await t
+    .expect(await extractInnerText(addressTextLine1)).eql(supplierData.address.line1)
+    .expect(firstNameField.find('input').value).eql(supplierData.primaryContact.firstName);
+});
+
 test('should show text fields as errors with error message when there are validation errors', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/sections/supplier')
