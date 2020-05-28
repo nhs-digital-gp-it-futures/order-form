@@ -36,7 +36,7 @@ describe('supplier contextCreator', () => {
       expect(context.supplierData).toEqual(supplierData);
     });
 
-    describe('questions', () => {
+    describe('questions with no data populated', () => {
       it('should return the firstName question', () => {
         const context = getContext({ orderId: 'order-1' });
         expect(context.questions[0]).toEqual(manifest.questions[0]);
@@ -55,6 +55,37 @@ describe('supplier contextCreator', () => {
       it('should return the telephoneNumber question', () => {
         const context = getContext({ orderId: 'order-1' });
         expect(context.questions[3]).toEqual(manifest.questions[3]);
+      });
+    });
+
+    describe('questions with data populated', () => {
+      const supplierData = {
+        primaryContact: {
+          firstName: 'Bob',
+          lastName: 'Smith',
+          emailAddress: 'bob.smith@email.com',
+          telephoneNumber: '01234567890',
+        },
+      };
+
+      it('should return the data populated for firstName', () => {
+        const context = getContext({ orderId: 'order-1', supplierData });
+        expect(context.questions[0].data).toEqual(supplierData.primaryContact.firstName);
+      });
+
+      it('should return the data populated for lastName', () => {
+        const context = getContext({ orderId: 'order-1', supplierData });
+        expect(context.questions[1].data).toEqual(supplierData.primaryContact.lastName);
+      });
+
+      it('should return the data populated for emailAddress', () => {
+        const context = getContext({ orderId: 'order-1', supplierData });
+        expect(context.questions[2].data).toEqual(supplierData.primaryContact.emailAddress);
+      });
+
+      it('should return the data populated for telephoneNumber', () => {
+        const context = getContext({ orderId: 'order-1', supplierData });
+        expect(context.questions[3].data).toEqual(supplierData.primaryContact.telephoneNumber);
       });
     });
 
