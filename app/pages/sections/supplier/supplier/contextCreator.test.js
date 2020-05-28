@@ -36,6 +36,17 @@ describe('supplier contextCreator', () => {
       expect(context.supplierData).toEqual(supplierData);
     });
 
+    it('should return the findSupplierLinkText', () => {
+      const context = getContext({ orderId: 'order-1' });
+      expect(context.findSupplierLinkText).toEqual(manifest.findSupplierLinkText);
+    });
+
+    it('should construct the findSupplierLinkHref', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId });
+      expect(context.findSupplierLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/supplier/search`);
+    });
+
     describe('questions with no data populated', () => {
       it('should return the firstName question', () => {
         const context = getContext({ orderId: 'order-1' });
