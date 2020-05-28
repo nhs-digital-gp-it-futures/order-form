@@ -133,7 +133,9 @@ describe('supplier contextCreator', () => {
 
       getErrorContext(mockParams);
       expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
-      expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({ ...mockParams, manifest: updatedManifest });
+      expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({
+        ...mockParams, manifest: updatedManifest,
+      });
     });
   });
 });
