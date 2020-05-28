@@ -191,7 +191,7 @@ describe('supplier page via select', () => {
     });
   }));
 
-  it('should rendern the "Search again" link', componentTester(setup, (harness) => {
+  it('should render the "Search again" link', componentTester(setup, (harness) => {
     const context = {
       searchAgainLinkText: manifest.searchAgainLinkText,
       searchAgainLinkHref: '/organisation/order-1/search',
