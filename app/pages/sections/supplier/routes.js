@@ -43,6 +43,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
     if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    return null;
   }));
 
   router.get('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
