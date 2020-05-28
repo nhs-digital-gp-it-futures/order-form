@@ -33,6 +33,12 @@ const supplierData = {
     postcode: 'HA3 PSH',
     country: 'UK',
   },
+  primaryContact: {
+    firstName: 'Bob',
+    lastName: 'Smith',
+    emailAddress: 'bob.smith@email.com',
+    telephoneNumber: '01234567890',
+  },
 };
 
 const mocks = () => {
@@ -176,6 +182,68 @@ test('should render supplier address', async (t) => {
     .expect(await extractInnerText(addressTextPostcode)).eql(supplierData.address.postcode)
     .expect(addressTextCountry.exists).ok()
     .expect(await extractInnerText(addressTextCountry)).eql(supplierData.address.country);
+});
+
+test('should render the primary contact details form', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const heading = Selector('h2[data-test-id="primary-contact-heading"]');
+
+  const firstName = Selector('[data-test-id="question-firstName"]');
+  const lastName = Selector('[data-test-id="question-lastName"]');
+  const emailAddress = Selector('[data-test-id="question-emailAddress"]');
+  const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
+
+  const firstNameLabel = firstName.find('label.nhsuk-label');
+  const lastNameLabel = lastName.find('label.nhsuk-label');
+  const emailAddressLabel = emailAddress.find('label.nhsuk-label');
+  const phoneNumberLabel = phoneNumber.find('label.nhsuk-label');
+
+  const firstNameFooterText = firstName.find('span');
+  const lastNameFooterText = lastName.find('span');
+  const emailAddressFooterText = emailAddress.find('span');
+  const phoneNumberFooterText = phoneNumber.find('span');
+
+  await t
+    .expect(heading.exists).ok()
+    .expect(await extractInnerText(heading)).eql(content.primaryContactHeading)
+
+    .expect(firstName.exists).ok()
+    .expect(await extractInnerText(firstNameLabel)).eql(content.questions[0].mainAdvice)
+    .expect(firstName.find('input').count).eql(1)
+    .expect(await extractInnerText(firstNameFooterText)).eql(content.questions[0].footerAdvice)
+
+    .expect(lastName.exists).ok()
+    .expect(await extractInnerText(lastNameLabel)).eql(content.questions[1].mainAdvice)
+    .expect(lastName.find('input').count).eql(1)
+    .expect(await extractInnerText(lastNameFooterText)).eql(content.questions[1].footerAdvice)
+
+    .expect(emailAddress.exists).ok()
+    .expect(await extractInnerText(emailAddressLabel)).eql(content.questions[2].mainAdvice)
+    .expect(emailAddress.find('input').count).eql(1)
+    .expect(await extractInnerText(emailAddressFooterText)).eql(content.questions[2].footerAdvice)
+
+    .expect(phoneNumber.exists).ok()
+    .expect(await extractInnerText(phoneNumberLabel)).eql(content.questions[3].mainAdvice)
+    .expect(phoneNumber.find('input').count).eql(1)
+    .expect(await extractInnerText(phoneNumberFooterText)).eql(content.questions[3].footerAdvice);
+});
+
+test('should render the primary contact details form with populated data', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const firstName = Selector('[data-test-id="question-firstName"]');
+  const lastName = Selector('[data-test-id="question-lastName"]');
+  const emailAddress = Selector('[data-test-id="question-emailAddress"]');
+  const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
+
+  await t
+    .expect(firstName.find('input').value).eql(supplierData.primaryContact.firstName)
+    .expect(lastName.find('input').value).eql(supplierData.primaryContact.lastName)
+    .expect(emailAddress.find('input').value).eql(supplierData.primaryContact.emailAddress)
+    .expect(phoneNumber.find('input').value).eql(supplierData.primaryContact.telephoneNumber);
 });
 
 test('should render the "Save and return" button', async (t) => {

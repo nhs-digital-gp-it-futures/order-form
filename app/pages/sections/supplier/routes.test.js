@@ -52,7 +52,7 @@ const setUpFakeApp = () => {
   return app;
 };
 
-describe('routes', () => {
+describe('supplier section routes', () => {
   describe('GET /organisation/:orderId/supplier', () => {
     const path = '/organisation/some-order-id/supplier';
 

@@ -28,36 +28,29 @@ const formatPutData = data => ({
 });
 
 export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessToken }) => {
-  try {
-    const callOffOrgDataEndpoint = getEndpoint({ endpointLocator: 'getCallOffOrderingParty', options: { orderId } });
-    const callOffOrgData = await getData({ endpoint: callOffOrgDataEndpoint, accessToken, logger });
-
-    if (callOffOrgData) {
-      logger.info(`Call off ordering party found in ORDAPI for ${orderId}`);
-      return getContext({
-        orderId,
-        orgData: callOffOrgData.organisation,
-        contactData: callOffOrgData.primaryContact,
-      });
-    }
-  } catch (err) {
-    logger.info(`No call off ordering party found in ORDAPI for ${orderId}. ${err}`);
-
-    try {
-      const orgDataEndpoint = getEndpoint({ endpointLocator: 'getOrganisationById', options: { orgId } });
-      const organisationData = await getData({ endpoint: orgDataEndpoint, accessToken, logger });
-      logger.info(`Organisation with id: ${orgId} found in OAPI`);
-      return getContext({
-        orderId,
-        orgData: organisationData.organisation,
-        contactData: organisationData.primaryContact,
-      });
-    } catch (error) {
-      logger.error(`No organisation data returned from OAPI for id: ${orgId}. ${err}`);
-      throw new Error();
-    }
+  const callOffOrgDataEndpoint = getEndpoint({ endpointLocator: 'getCallOffOrderingParty', options: { orderId } });
+  const callOffOrgData = await getData({ endpoint: callOffOrgDataEndpoint, accessToken, logger });
+  if (callOffOrgData.organisation) {
+    logger.info(`Call off ordering party found in ORDAPI for ${orderId}`);
+    return getContext({
+      orderId,
+      orgData: callOffOrgData.organisation,
+      contactData: callOffOrgData.primaryContact,
+    });
   }
-  throw new Error();
+  logger.info(`No call off ordering party found in ORDAPI for ${orderId}.`);
+  try {
+    const orgDataEndpoint = getEndpoint({ endpointLocator: 'getOrganisationById', options: { orgId } });
+    const organisationData = await getData({ endpoint: orgDataEndpoint, accessToken, logger });
+    logger.info(`Organisation with id: ${orgId} found in OAPI`);
+    return getContext({
+      orderId,
+      orgData: organisationData,
+    });
+  } catch (error) {
+    logger.error(`No organisation data returned from OAPI for id: ${orgId}. ${error}`);
+    throw new Error();
+  }
 };
 
 export const getCallOffOrderingPartyErrorContext = async params => getErrorContext(params);

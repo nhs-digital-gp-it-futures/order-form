@@ -224,6 +224,14 @@ describe('call-off-ordering-party page', () => {
     });
   }));
 
+  it('should render primary contact details heading', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const heading = $('h2[data-test-id="primary-contact-details-heading"]');
+      expect(heading.length).toEqual(1);
+      expect(heading.text().trim()).toEqual(context.primartContactHeading);
+    });
+  }));
+
   describe('form fields', () => {
     it('should render hidden input with csrf token', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
