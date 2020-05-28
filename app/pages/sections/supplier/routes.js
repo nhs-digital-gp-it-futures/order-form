@@ -61,7 +61,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
 
       throw new ErrorContext({
         status: 404,
-        title: 'No Supplier found',
+        title: 'No supplier found',
         description: "There are no suppliers that match the search terms you've provided. Try searching again.",
         backLinkText: 'Go back to search',
         backLinkHref: `${config.baseUrl}/organisation/${orderId}/supplier/search`,

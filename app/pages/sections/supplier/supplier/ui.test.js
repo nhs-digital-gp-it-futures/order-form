@@ -33,6 +33,12 @@ const supplierData = {
     postcode: 'HA3 PSH',
     country: 'UK',
   },
+  primaryContact: {
+    firstName: 'Bob',
+    lastName: 'Smith',
+    emailAddress: 'bob.smith@email.com',
+    telephoneNumber: '01234567890',
+  },
 };
 
 const mocks = () => {
@@ -222,6 +228,22 @@ test('should render the primary contact details form', async (t) => {
     .expect(await extractInnerText(phoneNumberLabel)).eql(content.questions[3].mainAdvice)
     .expect(phoneNumber.find('input').count).eql(1)
     .expect(await extractInnerText(phoneNumberFooterText)).eql(content.questions[3].footerAdvice);
+});
+
+test('should render the primary contact details form with populated data', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const firstName = Selector('[data-test-id="question-firstName"]');
+  const lastName = Selector('[data-test-id="question-lastName"]');
+  const emailAddress = Selector('[data-test-id="question-emailAddress"]');
+  const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
+
+  await t
+    .expect(firstName.find('input').value).eql(supplierData.primaryContact.firstName)
+    .expect(lastName.find('input').value).eql(supplierData.primaryContact.lastName)
+    .expect(emailAddress.find('input').value).eql(supplierData.primaryContact.emailAddress)
+    .expect(phoneNumber.find('input').value).eql(supplierData.primaryContact.telephoneNumber);
 });
 
 test('should render the "Save and return" button', async (t) => {
