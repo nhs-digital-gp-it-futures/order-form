@@ -5,5 +5,23 @@
   "insetAdvice": "Once saved, you'll not be able to change the supplier for this order",
   "supplierNameHeading": "Supplier name",
   "supplierAddressHeading": "Registered address",
+  "primaryContactHeading": "Primary contact’s details",
+  "questions": [{
+    "id": "firstName",
+    "mainAdvice": "First name",
+    "footerAdvice": "(Maximum character length 100)"
+  }, {
+    "id": "lastName",
+    "mainAdvice": "Last name",
+    "footerAdvice": "(Maximum character length 100)"
+  }, {
+    "id": "emailAddress",
+    "mainAdvice": "Email address",
+    "footerAdvice": "(Maximum character length 256)"
+  }, {
+    "id": "telephoneNumber",
+    "mainAdvice": "Telephone number",
+    "footerAdvice": "(Maximum character length 35)"
+  }],
   "saveButtonText": "Save and return"
 }
