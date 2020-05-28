@@ -38,6 +38,28 @@ describe('supplier page via select', () => {
     });
   }));
 
+  it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      errors: [
+        { text: 'First name must be 100 characters or fewer', href: '#firstName' },
+        { text: 'Last name must be 100 characters or fewer', href: '#lastName' },
+        { text: 'Email address must be 256 characters or fewer', href: '#emailAddress' },
+        { text: 'Telephone number must be 35 characters or fewer', href: '#telephoneNumber' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(context.errors.length);
+      context.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
+    });
+  }));
+
   it('should render the supplier page title', componentTester(setup, (harness) => {
     const context = {
       title: 'Supplier information for order-1',
@@ -258,6 +280,35 @@ describe('supplier page via select', () => {
         context.questions.forEach(async (question) => {
           const footerText = await form.find(`div[data-test-id="question-${question.id}"] span`);
           expect(footerText.text().trim()).toEqual(question.footerAdvice);
+        });
+      });
+    }));
+
+    it('should render error field if there are errors', componentTester(setup, (harness) => {
+      const contextWithErrors = {
+        questions: [{
+          id: 'firstName',
+          error: [{ message: 'First name must be 100 characters or fewer' }],
+        }, {
+          id: 'lastName',
+          error: [{ message: 'Last name must be 100 characters or fewer' }],
+        }, {
+          id: 'emailAddress',
+          error: [{ message: 'Email address must be 256 characters or fewer' }],
+        }, {
+          id: 'telephoneNumber',
+          error: [{ message: 'Telephone number must be 35 characters or fewer' }],
+        }],
+      };
+
+      harness.request(contextWithErrors, async ($) => {
+        const form = $('form');
+        await contextWithErrors.questions.forEach(async (question) => {
+          const renderedQuestion = await form.find(`div[data-test-id="question-${question.id}"]`);
+          const fieldError = await renderedQuestion.find('div[data-test-id="text-field-input-error"]');
+          const errorMessage = await renderedQuestion.find('.nhsuk-error-message');
+          expect(fieldError.length).toEqual(1);
+          expect(errorMessage.text().trim()).toEqual('Error:');
         });
       });
     }));
