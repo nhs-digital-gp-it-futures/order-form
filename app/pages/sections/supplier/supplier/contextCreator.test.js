@@ -36,6 +36,28 @@ describe('supplier contextCreator', () => {
       expect(context.supplierData).toEqual(supplierData);
     });
 
+    describe('questions', () => {
+      it('should return the firstName question', () => {
+        const context = getContext({ orderId: 'order-1' });
+        expect(context.questions[0]).toEqual(manifest.questions[0]);
+      });
+
+      it('should return the lastName question', () => {
+        const context = getContext({ orderId: 'order-1' });
+        expect(context.questions[1]).toEqual(manifest.questions[1]);
+      });
+
+      it('should return the emailAddress question', () => {
+        const context = getContext({ orderId: 'order-1' });
+        expect(context.questions[2]).toEqual(manifest.questions[2]);
+      });
+
+      it('should return the telephoneNumber question', () => {
+        const context = getContext({ orderId: 'order-1' });
+        expect(context.questions[3]).toEqual(manifest.questions[3]);
+      });
+    });
+
     it('should return the saveButtonText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.saveButtonText).toEqual(manifest.saveButtonText);
