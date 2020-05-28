@@ -2,6 +2,7 @@
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/inset-text/macro.njk' import insetText %}
+{% from 'components/text-field/macro.njk' import textField %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="supplier-page">
@@ -22,10 +23,13 @@
             HTML: insetAdvice
           }) }}
         </div>
+      </div>
+    </div>
 
-        <form method="post">
+    <form method="post">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-two-thirds">   
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-          
           <h3 data-test-id="supplier-name-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ supplierNameHeading }}</h3>
           <div data-test-id="supplier-name" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ supplierData.name }}</div>
           <input type="hidden" name="name" value="{{ supplierData.name }}" />
@@ -49,13 +53,28 @@
           <input type="hidden" name="postcode" value="{{ supplierData.address.postcode }}" />
           <div data-test-id="supplier-address-country" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ supplierData.address.country }}</div>
           <input type="hidden" name="country" value="{{ supplierData.address.country }}" />
+        </div>
+      </div>
+
+      <hr class="bc-c-order-table--hr"/>
+
+      <div class="nhsuk-grid-row">
+        <div data-test-id="primary-contact-fields" class="nhsuk-grid-column-two-thirds">
+          <h2 data-test-id="primary-contact-heading" class="nhsuk-u-font-size-32 nhsuk-u-margin-bottom-7 nhsuk-u-margin-top-3">{{ primaryContactHeading }}</h2>
+
+          {% for question in questions %}
+            <div class="nhsuk-u-margin-bottom-5">
+              {{ textField({ question: question }) }}
+            </div>
+          {% endfor %}
 
           {{ bcButton({
               dataTestId: "save-button",
               text: saveButtonText,
               classes: "nhsuk-u-margin-top-9"
           })}}
-        </form>
-    </div>
+        </div>
+      </div>
+    </form>
   </div>
 {% endblock %}
