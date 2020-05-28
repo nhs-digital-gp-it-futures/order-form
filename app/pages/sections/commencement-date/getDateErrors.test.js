@@ -1,7 +1,7 @@
 import { getDateErrors } from './getDateErrors';
 
 const mockData = {
-  'commencementDate-day': '1',
+  'commencementDate-day': '01',
   'commencementDate-month': '12',
   'commencementDate-year': '2020',
 };
