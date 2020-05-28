@@ -3,7 +3,7 @@ import { getEndpoint } from '../../../../endpoints';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 
-const formatPutData = data => ({
+const formatFormData = data => ({
   supplier: {
     name: data.name ? data.name.trim() : undefined,
     address: {
@@ -38,7 +38,7 @@ export const putSupplier = async ({
   orderId, data, accessToken,
 }) => {
   const endpoint = getEndpoint({ endpointLocator: 'putSupplier', options: { orderId } });
-  const body = formatPutData(data);
+  const body = formatFormData(data);
   try {
     await putData({
       endpoint,
@@ -57,4 +57,11 @@ export const putSupplier = async ({
   }
 };
 
-export const getSupplierPageErrorContext = async params => getErrorContext(params);
+export const getSupplierPageErrorContext = async (params) => {
+  const forattedData = formatFormData(params.data).supplier;
+  const updatedParams = {
+    ...params,
+    data: forattedData,
+  };
+  return getErrorContext(updatedParams);
+};

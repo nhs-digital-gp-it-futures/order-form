@@ -177,7 +177,6 @@ test('should render organisation address', async (t) => {
   const addressTextPostcode = Selector('[data-test-id="organisation-address-postcode"]');
   const addressTextCountry = Selector('[data-test-id="organisation-address-country"]');
 
-
   await t
     .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.orgAddressHeading)

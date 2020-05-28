@@ -123,9 +123,17 @@ describe('supplier contextCreator', () => {
         orderId: 'order-id',
         validationErrors: [],
       };
+
+      const updatedManifest = {
+        ...manifest,
+        title: 'Supplier information for order-id',
+        backLinkHref: '/order/organisation/order-id/supplier/search/select',
+        searchAgainLinkHref: '/order/organisation/order-id/supplier/search',
+      };
+
       getErrorContext(mockParams);
       expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
-      expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({ ...mockParams, manifest });
+      expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({ ...mockParams, manifest: updatedManifest });
     });
   });
 });

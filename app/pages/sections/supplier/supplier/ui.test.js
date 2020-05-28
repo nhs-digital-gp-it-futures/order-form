@@ -41,6 +41,27 @@ const supplierData = {
   },
 };
 
+const supplierErrorResponse = {
+  errors: [
+    {
+      field: 'FirstName',
+      id: 'FirstNameTooLong',
+    },
+    {
+      field: 'LastName',
+      id: 'LastNameTooLong',
+    },
+    {
+      field: 'EmailAddress',
+      id: 'EmailAddressTooLong',
+    },
+    {
+      field: 'TelephoneNumber',
+      id: 'TelephoneNumberTooLong',
+    },
+  ],
+};
+
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
@@ -293,4 +314,90 @@ test('should navigate to task list page if save button is clicked and data is va
     .expect(saveButton.exists).ok()
     .click(saveButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+});
+
+test('should show the error summary when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/sections/supplier')
+    .reply(400, supplierErrorResponse);
+
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(4)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('First name must be 100 characters or fewer')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(1))).eql('Last name must be 100 characters or fewer')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(2))).eql('Email address must be 256 characters or fewer')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(3))).eql('Telephone number must be 35 characters or fewer');
+});
+
+test('should show text fields as errors with error message when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/sections/supplier')
+    .reply(400, supplierErrorResponse);
+
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const page = Selector('[data-test-id="supplier-page"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const firstNameField = page.find('[data-test-id="question-firstName"]');
+  const lastNameField = page.find('[data-test-id="question-lastName"]');
+  const emailField = page.find('[data-test-id="question-emailAddress"]');
+  const phoneField = page.find('[data-test-id="question-telephoneNumber"]');
+
+  await t
+    .expect(firstNameField.exists).ok()
+    .expect(firstNameField.find('[data-test-id="text-field-input-error"]').exists).notOk()
+    .expect(lastNameField.find('[data-test-id="text-field-input-error"]').exists).notOk()
+    .expect(phoneField.find('[data-test-id="text-field-input-error"]').exists).notOk()
+    .expect(emailField.find('[data-test-id="text-field-input-error"]').exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(firstNameField.find('[data-test-id="text-field-input-error"]').exists).ok()
+    .expect(await extractInnerText(firstNameField.find('#firstName-error'))).contains('First name must be 100 characters or fewer')
+    .expect(lastNameField.find('[data-test-id="text-field-input-error"]').exists).ok()
+    .expect(await extractInnerText(lastNameField.find('#lastName-error'))).contains('Last name must be 100 characters or fewer')
+    .expect(emailField.find('[data-test-id="text-field-input-error"]').exists).ok()
+    .expect(await extractInnerText(emailField.find('#emailAddress-error'))).contains('Email address must be 256 characters or fewer')
+    .expect(phoneField.find('[data-test-id="text-field-input-error"]').exists).ok()
+    .expect(await extractInnerText(phoneField.find('#telephoneNumber-error'))).contains('Telephone number must be 35 characters or fewer');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/sections/supplier')
+    .reply(400, supplierErrorResponse);
+
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#firstName`)
+    .click(errorSummary.find('li a').nth(1))
+    .expect(getLocation()).eql(`${pageUrl}#lastName`)
+    .click(errorSummary.find('li a').nth(2))
+    .expect(getLocation()).eql(`${pageUrl}#emailAddress`)
+    .click(errorSummary.find('li a').nth(3))
+    .expect(getLocation()).eql(`${pageUrl}#telephoneNumber`);
 });

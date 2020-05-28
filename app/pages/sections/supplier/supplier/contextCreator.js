@@ -23,4 +23,13 @@ export const getContext = ({ orderId, supplierData }) => ({
   backLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search/select`,
 });
 
-export const getErrorContext = params => getSectionErrorContext({ ...params, manifest });
+export const getErrorContext = (params) => {
+  const updatedManifest = getContext({
+    orderId: params.orderId,
+    supplierData: params.data,
+  });
+
+  return {
+    ...getSectionErrorContext({ ...params, manifest: updatedManifest }),
+  };
+};
