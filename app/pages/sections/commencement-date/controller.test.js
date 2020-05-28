@@ -15,7 +15,7 @@ jest.mock('./contextCreator', () => ({
 }));
 
 const mockData = {
-  'commencementDate-day': '1',
+  'commencementDate-day': '21',
   'commencementDate-month': '12',
   'commencementDate-year': '2020',
 };
@@ -59,7 +59,7 @@ describe('commencement-date controller', () => {
     });
 
     it('calls getContext once with correct params if data is returned', async () => {
-      const commencementDate = '2020-1-1';
+      const commencementDate = '2020-01-01';
       getData
         .mockResolvedValueOnce({ commencementDate });
       contextCreator.getContext
@@ -141,7 +141,31 @@ describe('commencement-date controller', () => {
         expect(putData.mock.calls.length).toEqual(1);
         expect(putData).toHaveBeenCalledWith({
           endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/commencement-date`,
-          body: { commencementDate: '2020-12-1' },
+          body: { commencementDate: '2020-12-21' },
+          accessToken: 'access_token',
+          logger,
+        });
+      });
+
+      it('should call putData once with the correct params when day and month are single digit', async () => {
+        dateValidator.getDateErrors
+          .mockReturnValueOnce(null);
+        putData
+          .mockResolvedValueOnce({});
+
+        const data = {
+          'commencementDate-day': '1',
+          'commencementDate-month': '2',
+          'commencementDate-year': '2020',
+        };
+
+        await putCommencementDate({
+          orderId: 'order-id', data, accessToken: 'access_token',
+        });
+        expect(putData.mock.calls.length).toEqual(1);
+        expect(putData).toHaveBeenCalledWith({
+          endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/commencement-date`,
+          body: { commencementDate: '2020-02-01' },
           accessToken: 'access_token',
           logger,
         });

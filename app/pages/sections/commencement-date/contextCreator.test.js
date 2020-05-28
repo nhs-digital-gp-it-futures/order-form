@@ -11,7 +11,7 @@ const validationErrors = [{
 
 const data = {
   'commencementDate-day': '13',
-  'commencementDate-month': '1',
+  'commencementDate-month': '01',
   'commencementDate-year': '2020',
 };
 
@@ -26,27 +26,27 @@ describe('commencement-date contextCreator', () => {
         expect(context.questions.length).toEqual(1);
         expect(context.questions[0].id).toEqual('commencementDate');
         expect(context.questions[0].mainAdvice).toEqual('Commencement date');
-        expect(context.questions[0].additionalAdvice).toEqual('For example 14 1 2020');
+        expect(context.questions[0].additionalAdvice).toEqual('For example 14 01 2020');
       });
     });
 
     describe('with data', () => {
       it('should return the contents of manifest', () => {
-        const context = getContext({ data: '2020-1-13' });
+        const context = getContext({ data: '2020-01-13' });
         expect(context.backLinkText).toEqual(manifest.backLinkText);
         expect(context.description).toEqual(manifest.description);
         expect(context.saveButtonText).toEqual(manifest.saveButtonText);
         expect(context.questions.length).toEqual(1);
         expect(context.questions[0].id).toEqual('commencementDate');
         expect(context.questions[0].mainAdvice).toEqual('Commencement date');
-        expect(context.questions[0].additionalAdvice).toEqual('For example 14 1 2020');
+        expect(context.questions[0].additionalAdvice).toEqual('For example 14 01 2020');
       });
 
       it('should add data to the question', () => {
-        const context = getContext({ data: '2020-1-13' });
+        const context = getContext({ data: '2020-01-13' });
         expect(context.questions[0].data).toBeTruthy();
         expect(context.questions[0].data.day).toEqual('13');
-        expect(context.questions[0].data.month).toEqual('1');
+        expect(context.questions[0].data.month).toEqual('01');
         expect(context.questions[0].data.year).toEqual('2020');
       });
     });
@@ -71,14 +71,14 @@ describe('commencement-date contextCreator', () => {
       expect(context.questions.length).toEqual(1);
       expect(context.questions[0].id).toEqual('commencementDate');
       expect(context.questions[0].mainAdvice).toEqual('Commencement date');
-      expect(context.questions[0].additionalAdvice).toEqual('For example 14 1 2020');
+      expect(context.questions[0].additionalAdvice).toEqual('For example 14 01 2020');
     });
 
     it('should add data to the question', () => {
       const context = getErrorContext({ validationErrors, orderId, data });
       expect(context.questions[0].data).toBeTruthy();
       expect(context.questions[0].data.day).toEqual('13');
-      expect(context.questions[0].data.month).toEqual('1');
+      expect(context.questions[0].data.month).toEqual('01');
       expect(context.questions[0].data.year).toEqual('2020');
     });
 
