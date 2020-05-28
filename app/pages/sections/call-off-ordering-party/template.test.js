@@ -223,7 +223,6 @@ describe('call-off-ordering-party page', () => {
       expect(countryFormElement.attr('value')).toEqual(context.address.country);
     });
   }));
-  // <h2 data-test-id="primary-contact-details-heading" class="nhsuk-u-font-size-32 nhsuk-u-margin-bottom-7 nhsuk-u-margin-top-3">{{ primartContactHeading }}</h2>
 
   it('should render primary contact details heading', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
