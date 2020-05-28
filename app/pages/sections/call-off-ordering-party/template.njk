@@ -58,6 +58,7 @@
       <hr class="bc-c-order-table--hr"/>
       <div class="nhsuk-grid-row">
         <div data-test-id="primary-contact-fields" class="nhsuk-grid-column-two-thirds">
+          <h2 data-test-id="primary-contact-details-heading" class="nhsuk-u-font-size-32 nhsuk-u-margin-bottom-7 nhsuk-u-margin-top-3">{{ primartContactHeading }}</h2>
           {% for question in questions %}
             <div class="nhsuk-u-margin-bottom-5">
               {{ textField({ question: question }) }}
