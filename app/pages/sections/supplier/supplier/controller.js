@@ -10,3 +10,9 @@ export const getSupplierPageContext = async ({ orderId, supplierId, accessToken 
   const context = getContext({ orderId, supplierData });
   return context;
 };
+
+export const putSupplier = async ({
+  orderId, data, accessToken,
+}) => {
+  return { success: true };
+};
