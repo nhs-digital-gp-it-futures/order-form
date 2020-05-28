@@ -184,16 +184,16 @@ test('should render supplier address', async (t) => {
     .expect(await extractInnerText(addressTextCountry)).eql(supplierData.address.country);
 });
 
-test('should navigate to /organisation/order-1/supplier/search when click on findSupplierLink', async (t) => {
+test('should navigate to /organisation/order-1/supplier/search when click on searchAgainLink', async (t) => {
   await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
-  const findSupplierLink = Selector('[data-test-id="find-supplier-link"] a');
+  const searchAgainLink = Selector('[data-test-id="search-again-link"] a');
 
   await t
-    .expect(findSupplierLink.exists).ok()
-    .expect(await extractInnerText(findSupplierLink)).eql(content.findSupplierLinkText)
-    .click(findSupplierLink)
+    .expect(searchAgainLink.exists).ok()
+    .expect(await extractInnerText(searchAgainLink)).eql(content.searchAgainLinkText)
+    .click(searchAgainLink)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
 });
 

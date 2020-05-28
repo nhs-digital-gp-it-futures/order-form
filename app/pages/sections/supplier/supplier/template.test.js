@@ -191,17 +191,17 @@ describe('supplier page via select', () => {
     });
   }));
 
-  it('should rendern the "Find supplier" link', componentTester(setup, (harness) => {
+  it('should rendern the "Search again" link', componentTester(setup, (harness) => {
     const context = {
-      findSupplierLinkText: manifest.findSupplierLinkText,
-      findSupplierLinkHref: '/organisation/order-1/search',
+      searchAgainLinkText: manifest.searchAgainLinkText,
+      searchAgainLinkHref: '/organisation/order-1/search',
     };
 
     harness.request(context, ($) => {
-      const findSupplierLink = $('[data-test-id="find-supplier-link"]');
-      expect(findSupplierLink.length).toEqual(1);
-      expect(findSupplierLink.text().trim()).toEqual(context.findSupplierLinkText);
-      expect(findSupplierLink.find('a').attr('href')).toEqual(context.findSupplierLinkHref);
+      const searchAgainLink = $('[data-test-id="search-again-link"]');
+      expect(searchAgainLink.length).toEqual(1);
+      expect(searchAgainLink.text().trim()).toEqual(context.searchAgainLinkText);
+      expect(searchAgainLink.find('a').attr('href')).toEqual(context.searchAgainLinkHref);
     });
   }));
 

@@ -36,15 +36,15 @@ describe('supplier contextCreator', () => {
       expect(context.supplierData).toEqual(supplierData);
     });
 
-    it('should return the findSupplierLinkText', () => {
+    it('should return the searchAgainLinkText', () => {
       const context = getContext({ orderId: 'order-1' });
-      expect(context.findSupplierLinkText).toEqual(manifest.findSupplierLinkText);
+      expect(context.searchAgainLinkText).toEqual(manifest.searchAgainLinkText);
     });
 
-    it('should construct the findSupplierLinkHref', () => {
+    it('should construct the searchAgainLinkHref', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId });
-      expect(context.findSupplierLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/supplier/search`);
+      expect(context.searchAgainLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/supplier/search`);
     });
 
     describe('questions with no data populated', () => {

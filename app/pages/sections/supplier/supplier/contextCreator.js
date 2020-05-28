@@ -18,6 +18,6 @@ export const getContext = ({ orderId, supplierData }) => ({
     : manifest.questions,
   title: `${manifest.title} ${orderId}`,
   supplierData,
-  findSupplierLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search`,
+  searchAgainLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search`,
   backLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search/select`,
 });
