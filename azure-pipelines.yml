@@ -72,6 +72,8 @@ jobs:
 
 - job: dockerBuildAndPush
   displayName: Build and push docker containers to the acr
+  variables:
+    semVer: $[ dependencies.version.outputs['setVersionStep.semVer'] ]
   condition: and(succeeded(), not(eq(variables['build.reason'], 'PullRequest')))
   dependsOn: 
     - version
