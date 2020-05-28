@@ -1,6 +1,11 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../../config';
+import * as errorContext from '../../getSectionErrorContext';
+
+jest.mock('../../getSectionErrorContext', () => ({
+  getSectionErrorContext: jest.fn(),
+}));
 
 describe('supplier contextCreator', () => {
   describe('getContext', () => {
@@ -103,6 +108,24 @@ describe('supplier contextCreator', () => {
     it('should return the saveButtonText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.saveButtonText).toEqual(manifest.saveButtonText);
+    });
+  });
+
+  describe('getErrorContext', () => {
+    afterEach(() => {
+      errorContext.getSectionErrorContext.mockReset();
+    });
+
+    it('should call getSectionErrorContext with correct params', () => {
+      errorContext.getSectionErrorContext.mockResolvedValueOnce();
+
+      const mockParams = {
+        orderId: 'order-id',
+        validationErrors: [],
+      };
+      getErrorContext(mockParams);
+      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
+      expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({ ...mockParams, manifest });
     });
   });
 });
