@@ -209,7 +209,7 @@ describe('supplier page via select', () => {
 
     it('should render primary contact heading', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const heading = $('h3[data-test-id="primary-contact-heading"]');
+        const heading = $('h2[data-test-id="primary-contact-heading"]');
         expect(heading.length).toEqual(1);
         expect(heading.text().trim()).toEqual(context.primaryContactHeading);
       });
