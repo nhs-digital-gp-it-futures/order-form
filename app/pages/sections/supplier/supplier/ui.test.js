@@ -253,6 +253,7 @@ test('should render the primary contact details form with populated data', async
   const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
 
   await t
+    .debug()
     .expect(firstName.find('input').value).eql(supplierData.primaryContact.firstName)
     .expect(lastName.find('input').value).eql(supplierData.primaryContact.lastName)
     .expect(emailAddress.find('input').value).eql(supplierData.primaryContact.emailAddress)
