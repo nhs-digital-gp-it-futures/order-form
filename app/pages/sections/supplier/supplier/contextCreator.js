@@ -10,14 +10,12 @@ const populateQuestionsWithData = ({ primaryContact }) => (
   })
 );
 
-export const getContext = ({ orderId, supplierData }) => {
-  return {
-    ...manifest,
-    questions: supplierData && supplierData.primaryContact
-      ? populateQuestionsWithData({ supplierData })
-      : manifest.questions,
-    title: `${manifest.title} ${orderId}`,
-    supplierData,
-    backLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search/select`,
-  };
-};
+export const getContext = ({ orderId, supplierData }) => ({
+  ...manifest,
+  questions: supplierData && supplierData.primaryContact
+    ? populateQuestionsWithData({ supplierData })
+    : manifest.questions,
+  title: `${manifest.title} ${orderId}`,
+  supplierData,
+  backLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search/select`,
+});
