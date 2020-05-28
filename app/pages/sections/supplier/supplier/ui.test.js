@@ -184,6 +184,19 @@ test('should render supplier address', async (t) => {
     .expect(await extractInnerText(addressTextCountry)).eql(supplierData.address.country);
 });
 
+test('should navigate to /organisation/order-1/supplier/search when click on searchAgainLink', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const searchAgainLink = Selector('[data-test-id="search-again-link"] a');
+
+  await t
+    .expect(searchAgainLink.exists).ok()
+    .expect(await extractInnerText(searchAgainLink)).eql(content.searchAgainLinkText)
+    .click(searchAgainLink)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
+});
+
 test('should render the primary contact details form', async (t) => {
   await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
@@ -240,6 +253,7 @@ test('should render the primary contact details form with populated data', async
   const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
 
   await t
+    .debug()
     .expect(firstName.find('input').value).eql(supplierData.primaryContact.firstName)
     .expect(lastName.find('input').value).eql(supplierData.primaryContact.lastName)
     .expect(emailAddress.find('input').value).eql(supplierData.primaryContact.emailAddress)

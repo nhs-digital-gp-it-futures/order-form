@@ -53,6 +53,10 @@
           <input type="hidden" name="postcode" value="{{ supplierData.address.postcode }}" />
           <div data-test-id="supplier-address-country" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ supplierData.address.country }}</div>
           <input type="hidden" name="country" value="{{ supplierData.address.country }}" />
+
+          <div data-test-id="search-again-link"> 
+            <a href={{ searchAgainLinkHref }}>{{ searchAgainLinkText }}</a>
+          </div>
         </div>
       </div>
 
