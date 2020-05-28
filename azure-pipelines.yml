@@ -1,3 +1,8 @@
+variables:
+  - name: dockerVersion
+    value: '19.03.5'
+  - group: dev-acr-secrets
+
 trigger:
 - master
 - development
@@ -11,8 +16,22 @@ pool:
   vmImage: 'ubuntu-latest'
 
 jobs: 
+- job: version
+  displayName: Work out Version
+  steps:
+  - task: UseGitVersion@5
+    displayName: gitversion
+    inputs:
+      versionSpec: '5.x'
+  - script: echo "##vso[task.setvariable variable=semVer;isOutput=true]$(GitVersion.SemVer)"
+    name: setVersionStep
+  - script: echo semVer $(setVersionStep.semVer)
+    name: echovar
+
 - job: buildAndTest
   displayName: Build app and run tests
+  variables:
+    semVer: $[ dependencies.version.outputs['setVersionStep.semVer'] ]
   steps:
   - task: NodeTool@0
     inputs:
@@ -24,12 +43,10 @@ jobs:
       npm build
     displayName: 'NPM install'
 
-  - script: |
-      npx webpack --config webpack.config.js
+  - script: npx webpack --config webpack.config.js
     displayName: 'NPX Webpack'
 
-  - script: |
-      npm run test
+  - script: npm run test
     displayName: 'Unit test'
 
   - task: PublishTestResults@2
@@ -41,8 +58,7 @@ jobs:
       failTaskOnFailedTests: true
     condition: succeededOrFailed()
 
-  - script: |
-      npm run test:integration
+  - script: npm run test:integration
     displayName: 'Integration test'
 
   - task: PublishTestResults@2
@@ -57,11 +73,13 @@ jobs:
 - job: dockerBuildAndPush
   displayName: Build and push docker containers to the acr
   condition: and(succeeded(), not(eq(variables['build.reason'], 'PullRequest')))
-  dependsOn: buildAndTest
+  dependsOn: 
+    - version
+    - buildAndTest
   steps:
   - task: DockerInstaller@0
     inputs:
-      dockerVersion: '18.09.9'
+      dockerVersion: $(dockerVersion)
 
   - task: DockerCompose@0
     displayName: 'Build: Dev'
@@ -72,7 +90,7 @@ jobs:
       azureContainerRegistry: '{"loginServer":"gpitfuturesdevacr.azurecr.io", "id" : "/subscriptions/7b12a8a2-f06f-456f-b6f9-aa2d92e0b2ec/resourceGroups/gpitfutures-dev-rg-acr/providers/Microsoft.ContainerRegistry/registries/gpitfuturesdevacr"}'
       dockerComposeFile: '**/docker-compose.yml'
       action: 'Build services'
-      additionalImageTags: '$(Build.BuildNumber)'
+      additionalImageTags: '$(semVer)'
       includeSourceTags: true
 
   - task: DockerCompose@0
@@ -84,53 +102,77 @@ jobs:
       azureContainerRegistry: '{"loginServer":"gpitfuturesdevacr.azurecr.io", "id" : "/subscriptions/7b12a8a2-f06f-456f-b6f9-aa2d92e0b2ec/resourceGroups/gpitfutures-dev-rg-acr/providers/Microsoft.ContainerRegistry/registries/gpitfuturesdevacr"}'
       dockerComposeFile: '**/docker-compose.yml'
       action: 'Push services'
-      additionalImageTags: '$(Build.BuildNumber)'
+      additionalImageTags: '$(semVer)'
       includeSourceTags: true
+
+  - task: HelmInstaller@1
+    displayName: 'Install helm'
+    inputs:
+      helmVersionToInstall: 'latest'
+  - bash: |
+      cd charts
+      helm package \
+          --version $(semVer) \
+          --app-version $(semVer) \
+          of
+    failOnStderr: true
+    displayName: 'Helm package'
+  - bash: |
+      cd charts
+      chartPackage=$(ls of-*.tgz)
+      az acr helm push --force \
+          -n "gpitfuturesdevacr" \
+          -u "gpitfuturesdevacr" \
+          -p $(gpitfuturesdevacr-pass) \
+          $chartPackage      
+    failOnStderr: true
+    name: helmPush
+    displayName: 'Push helm to az acr'
 
   - task: DockerCompose@0
     displayName: 'Build: Test'
-    condition: and(succeeded(), ne(variables['build.reason'], 'PullRequest'))
+    condition: and(succeeded(), ne(variables['build.reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/development')))
     inputs:
       containerregistrytype: 'Azure Container Registry'
       azureSubscription: 'NHSAPP-BuyingCatalogue (Non-Prod)'
       azureContainerRegistry: '{"loginServer":"gpitfuturestestacr.azurecr.io", "id" : "/subscriptions/7b12a8a2-f06f-456f-b6f9-aa2d92e0b2ec/resourceGroups/gpitfutures-test-rg-acr/providers/Microsoft.ContainerRegistry/registries/gpitfuturestestacr"}'
       dockerComposeFile: '**/docker-compose.yml'
       action: 'Build services'
-      additionalImageTags: '$(Build.BuildNumber)'
+      additionalImageTags: '$(semVer)'
       includeSourceTags: true
 
   - task: DockerCompose@0
     displayName: 'Push: Test'
-    condition: and(succeeded(), ne(variables['build.reason'], 'PullRequest'))
+    condition: and(succeeded(), ne(variables['build.reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/development')))
     inputs:
       containerregistrytype: 'Azure Container Registry'
       azureSubscription: 'NHSAPP-BuyingCatalogue (Non-Prod)'
       azureContainerRegistry: '{"loginServer":"gpitfuturestestacr.azurecr.io", "id" : "/subscriptions/7b12a8a2-f06f-456f-b6f9-aa2d92e0b2ec/resourceGroups/gpitfutures-test-rg-acr/providers/Microsoft.ContainerRegistry/registries/gpitfuturestestacr"}'
       dockerComposeFile: '**/docker-compose.yml'
       action: 'Push services'
-      additionalImageTags: '$(Build.BuildNumber)'
+      additionalImageTags: '$(semVer)'
       includeSourceTags: true
 
   - task: DockerCompose@0
     displayName: 'Build: Prod'
-    condition: and(succeeded(), ne(variables['build.reason'], 'PullRequest'))
+    condition: and(succeeded(), ne(variables['build.reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     inputs:
       containerregistrytype: 'Azure Container Registry'
       azureSubscription: 'NHSAPP-BuyingCatalogue (Prod)'
       azureContainerRegistry: '{"loginServer":"gpitfuturesprodacr.azurecr.io", "id" : "/subscriptions/d1be8dbc-1a9f-4b7b-ba51-037116110e00/resourceGroups/gpitfutures-prod-rg-acr/providers/Microsoft.ContainerRegistry/registries/gpitfuturesprodacr"}'
       dockerComposeFile: '**/docker-compose.yml'
       action: 'Build services'
-      additionalImageTags: '$(Build.BuildNumber)'
+      additionalImageTags: '$(semVer)'
       includeSourceTags: true
 
   - task: DockerCompose@0
     displayName: 'Push: Prod'
-    condition: and(succeeded(), ne(variables['build.reason'], 'PullRequest'))
+    condition: and(succeeded(), ne(variables['build.reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     inputs:
       containerregistrytype: 'Azure Container Registry'
       azureSubscription: 'NHSAPP-BuyingCatalogue (Prod)'
       azureContainerRegistry: '{"loginServer":"gpitfuturesprodacr.azurecr.io", "id" : "/subscriptions/d1be8dbc-1a9f-4b7b-ba51-037116110e00/resourceGroups/gpitfutures-prod-rg-acr/providers/Microsoft.ContainerRegistry/registries/gpitfuturesprodacr"}'
       dockerComposeFile: '**/docker-compose.yml'
       action: 'Push services'
-      additionalImageTags: '$(Build.BuildNumber)'
+      additionalImageTags: '$(semVer)'
       includeSourceTags: true
