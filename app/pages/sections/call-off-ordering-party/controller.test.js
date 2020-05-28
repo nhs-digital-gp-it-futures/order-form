@@ -5,7 +5,7 @@ import { orderApiUrl, organisationApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
-
+jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
@@ -62,7 +62,7 @@ describe('Call-off-ordering-party controller', () => {
     describe('when call-off-ordering-party is not completed yet', () => {
       it('should call getData twice with the correct params', async () => {
         getData
-          .mockRejectedValueOnce({})
+          .mockResolvedValueOnce({})
           .mockResolvedValueOnce(mockDataFromOapi);
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
@@ -81,8 +81,8 @@ describe('Call-off-ordering-party controller', () => {
 
       it('should call getContext with the correct params when organisation data returned from organisations API', async () => {
         getData
-          .mockRejectedValueOnce({})
-          .mockResolvedValueOnce({ organisation: mockDataFromOapi });
+          .mockResolvedValueOnce({})
+          .mockResolvedValueOnce(mockDataFromOapi);
         contextCreator.getContext
           .mockResolvedValueOnce();
 
@@ -94,15 +94,15 @@ describe('Call-off-ordering-party controller', () => {
 
       it('should call getContext with the correct params when primary contact data returned from organisations API', async () => {
         getData
-          .mockRejectedValueOnce({})
-          .mockResolvedValueOnce({ primaryContact: mockPrimaryContact });
+          .mockResolvedValueOnce({})
+          .mockResolvedValueOnce(mockOrganisation);
         contextCreator.getContext
           .mockResolvedValueOnce();
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-        expect(contextCreator.getContext).toHaveBeenCalledWith({ contactData: mockPrimaryContact, orderId: 'order-id' });
+        expect(contextCreator.getContext).toHaveBeenCalledWith({ orgData: mockOrganisation, orderId: 'order-id' });
       });
     });
 

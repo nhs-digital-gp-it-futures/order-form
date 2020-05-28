@@ -182,7 +182,7 @@ test('should render the primary contact details form', async (t) => {
   await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
-  const heading = Selector('h3[data-test-id="primary-contact-heading"]');
+  const heading = Selector('h2[data-test-id="primary-contact-heading"]');
 
   const firstName = Selector('[data-test-id="question-firstName"]');
   const lastName = Selector('[data-test-id="question-lastName"]');
