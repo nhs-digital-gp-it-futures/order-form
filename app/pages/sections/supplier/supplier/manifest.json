@@ -5,7 +5,7 @@
   "insetAdvice": "Once saved, you'll not be able to change the supplier for this order",
   "supplierNameHeading": "Supplier name",
   "supplierAddressHeading": "Registered address",
-  "searchAgainLinkText": "Find supplier",
+  "searchAgainLinkText": "Search again",
   "primaryContactHeading": "Primary contact’s details",
   "questions": [{
     "id": "firstName",
