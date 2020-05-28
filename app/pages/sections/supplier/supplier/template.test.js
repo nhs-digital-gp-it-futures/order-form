@@ -193,15 +193,12 @@ describe('supplier page via select', () => {
 
   describe('form fields', () => {
     const context = {
+      csrfToken: 'mockCsrfToken',
       primaryContactHeading: manifest.primaryContactHeading,
       questions: manifest.questions,
     };
 
     it('should render hidden input with csrf token', componentTester(setup, (harness) => {
-      const context = {
-        csrfToken: 'mockCsrfToken',
-      };
-  
       harness.request(context, ($) => {
         const formElement = $('input[name=_csrf]');
         expect(formElement.length).toEqual(1);
