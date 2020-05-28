@@ -4,20 +4,25 @@ import { getDateErrors } from './getDateErrors';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 
-const formatPutData = data => ({
-  commencementDate: `${data['commencementDate-year']}-${data['commencementDate-month']}-${data['commencementDate-day']}`,
-});
+const formatPutData = (data) => {
+  const day = data['commencementDate-day'];
+  const month = data['commencementDate-month'];
+  const year = data['commencementDate-year'];
+  return {
+    commencementDate: `${year}-${month.length === 1 ? '0' : ''}${month}-${day.length === 1 ? '0' : ''}${day}`,
+  };
+};
 
 export const getCommencementDateContext = async ({ orderId, accessToken }) => {
   const commencementDateDataEndpoint = getEndpoint({ endpointLocator: 'getCommencementDate', options: { orderId } });
   const commencementDateData = await getData({
     endpoint: commencementDateDataEndpoint, accessToken, logger,
   });
-
+  // const commencementDateData = { commencementDate: '2020-01-01' }
   logger.info(`Commencement date ${commencementDateData ? '' : 'not '}found for ${orderId}`);
   return getContext({
     orderId,
-    data: commencementDateData ? commencementDateData.commencementDate : undefined,
+    data: commencementDateData.commencementDate ? commencementDateData.commencementDate : undefined,
   });
 };
 
