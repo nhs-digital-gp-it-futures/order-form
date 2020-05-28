@@ -1,6 +1,6 @@
 import { getData, putData } from 'buying-catalogue-library';
 import { getEndpoint } from '../../../../endpoints';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 
 const formatPutData = data => ({
@@ -56,3 +56,5 @@ export const putSupplier = async ({
     throw new Error();
   }
 };
+
+export const getSupplierPageErrorContext = async params => getErrorContext(params);

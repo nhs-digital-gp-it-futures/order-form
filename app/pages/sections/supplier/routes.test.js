@@ -150,6 +150,34 @@ describe('supplier section routes', () => {
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
+
+    it('should return the correct status and text if response.success is not true', async () => {
+      supplierController.putSupplier = jest.fn()
+        .mockImplementation(() => Promise.resolve({ success: false }));
+
+      supplierController.getSupplierPageErrorContext = jest.fn()
+        .mockImplementation(() => Promise.resolve({
+          errors: [{ text: 'First name too long', href: '#firstName' }],
+        }));
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSelectedSupplierCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockSelectedSupplierCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="supplier-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
   });
 
   describe('GET /organisation/:orderId/supplier/search', () => {
