@@ -150,7 +150,7 @@ test('should render the error page if no suppliers are found', async (t) => {
     .expect(await extractInnerText(backLink)).eql('Go back to search')
     .expect(backLink.find('a').getAttribute('href')).ok('/order/organisation/order-1/supplier/search')
     .expect(errorTitle.exists).ok()
-    .expect(await extractInnerText(errorTitle)).eql('No Supplier found')
+    .expect(await extractInnerText(errorTitle)).eql('No supplier found')
     .expect(errorDescription.exists).ok()
     .expect(await extractInnerText(errorDescription)).eql("There are no suppliers that match the search terms you've provided. Try searching again.");
 });
