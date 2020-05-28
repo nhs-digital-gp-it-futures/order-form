@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
-import { solutionsApiUrl } from '../../../../config';
+import { solutionsApiUrl, orderApiUrl } from '../../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/order-1/supplier';
 
@@ -253,7 +253,6 @@ test('should render the primary contact details form with populated data', async
   const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
 
   await t
-    .debug()
     .expect(firstName.find('input').value).eql(supplierData.primaryContact.firstName)
     .expect(lastName.find('input').value).eql(supplierData.primaryContact.lastName)
     .expect(emailAddress.find('input').value).eql(supplierData.primaryContact.emailAddress)
@@ -278,4 +277,20 @@ test('should redirect to /organisation/order-1/supplier/search if there are supp
 
   await t
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
+});
+
+test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/sections/supplier')
+    .reply(200, {});
+
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .expect(saveButton.exists).ok()
+    .click(saveButton)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
 });
