@@ -62,7 +62,7 @@ describe('call-off-ordering-party contextCreator', () => {
 
     it('should add contact data to questions if provided', () => {
       const context = getContext({
-        orderId, orgData: { ...mockOrderingPartyData, primaryContact: questionData }
+        orderId, orgData: { ...mockOrderingPartyData, primaryContact: questionData },
       });
       expect(context.questions.length).toEqual(manifest.questions.length);
       expect(context.questions[0].data).toEqual(questionData.firstName);
