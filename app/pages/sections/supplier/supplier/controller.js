@@ -4,25 +4,23 @@ import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 
 const formatFormData = data => ({
-  supplier: {
-    name: data.name ? data.name.trim() : undefined,
-    address: {
-      line1: data.line1 ? data.line1.trim() : undefined,
-      line2: data.line2 ? data.line2.trim() : undefined,
-      line3: data.line3 ? data.line3.trim() : undefined,
-      line4: data.line4 ? data.line4.trim() : undefined,
-      line5: data.line5 ? data.line5.trim() : undefined,
-      town: data.town ? data.town.trim() : undefined,
-      county: data.county ? data.county.trim() : undefined,
-      postcode: data.postcode ? data.postcode.trim() : undefined,
-      country: data.country ? data.country.trim() : undefined,
-    },
-    primaryContact: {
-      firstName: data.firstName ? data.firstName.trim() : undefined,
-      lastName: data.lastName ? data.lastName.trim() : undefined,
-      emailAddress: data.emailAddress ? data.emailAddress.trim() : undefined,
-      telephoneNumber: data.telephoneNumber ? data.telephoneNumber.trim() : undefined,
-    },
+  name: data.name ? data.name.trim() : undefined,
+  address: {
+    line1: data.line1 ? data.line1.trim() : undefined,
+    line2: data.line2 ? data.line2.trim() : undefined,
+    line3: data.line3 ? data.line3.trim() : undefined,
+    line4: data.line4 ? data.line4.trim() : undefined,
+    line5: data.line5 ? data.line5.trim() : undefined,
+    town: data.town ? data.town.trim() : undefined,
+    county: data.county ? data.county.trim() : undefined,
+    postcode: data.postcode ? data.postcode.trim() : undefined,
+    country: data.country ? data.country.trim() : undefined,
+  },
+  primaryContact: {
+    firstName: data.firstName ? data.firstName.trim() : undefined,
+    lastName: data.lastName ? data.lastName.trim() : undefined,
+    emailAddress: data.emailAddress ? data.emailAddress.trim() : undefined,
+    telephoneNumber: data.telephoneNumber ? data.telephoneNumber.trim() : undefined,
   },
 });
 
@@ -58,7 +56,7 @@ export const putSupplier = async ({
 };
 
 export const getSupplierPageErrorContext = async (params) => {
-  const forattedData = formatFormData(params.data).supplier;
+  const forattedData = formatFormData(params.data);
   const updatedParams = {
     ...params,
     data: forattedData,
