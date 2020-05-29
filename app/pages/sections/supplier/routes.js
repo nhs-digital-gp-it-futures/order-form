@@ -24,15 +24,14 @@ const router = express.Router({ mergeParams: true });
 export const supplierRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
-
-    if (selectedSupplier) {
+    try {
+      const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
       const context = await getSupplierPageContext({ orderId, supplierId: selectedSupplier, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
       return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    } catch (err) {
+      logger.info('redirecting to suppliers search page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
     }
-
-    logger.info('redirecting to suppliers search page');
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
