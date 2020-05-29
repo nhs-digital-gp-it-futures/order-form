@@ -483,8 +483,8 @@ test('should ensure details are repopulated when there are validation errors', a
   await t
     .expect(await extractInnerText(addressTextLine1)).eql(supplierDataFromBapi.address.line1)
     .expect(await extractInnerText(addressTextLine2)).eql(supplierDataFromBapi.address.line2)
-    .expect(await extractInnerText(addressTextLine3)).eql(supplierDataFromBapi.address.line3)
-    .expect(await extractInnerText(addressTextLine4)).eql('')
+    .expect(await extractInnerText(addressTextLine3)).eql('')
+    .expect(await extractInnerText(addressTextLine4)).eql(supplierDataFromBapi.address.line4)
     .expect(await extractInnerText(addressTextLine5)).eql(supplierDataFromBapi.address.line5)
     .expect(await extractInnerText(addressTextTown)).eql(supplierDataFromBapi.address.town)
     .expect(await extractInnerText(addressTextCounty)).eql(supplierDataFromBapi.address.county)
