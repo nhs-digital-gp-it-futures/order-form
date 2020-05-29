@@ -27,11 +27,31 @@ const formatPutData = data => ({
 });
 
 export const getSupplierPageContext = async ({ orderId, supplierId, accessToken }) => {
-  const getSupplierDataEndpoint = getEndpoint({ endpointLocator: 'getSupplier', options: { supplierId } });
-  const supplierData = await getData({ endpoint: getSupplierDataEndpoint, accessToken, logger });
+  const ordapiSupplierDataEndpoint = getEndpoint({ endpointLocator: 'getOrdapiSupplier', options: { orderId } });
+  const ordapiSupplierData = await getData({
+    endpoint: ordapiSupplierDataEndpoint, accessToken, logger,
+  });
 
-  const context = getContext({ orderId, supplierData });
-  return context;
+  if (ordapiSupplierData.supplierId) {
+    logger.info(`Supplier data found in ORDAPI for ${orderId}`);
+    return getContext({
+      orderId,
+      supplierData: ordapiSupplierData,
+      // showSearchAgainLink: false,
+    });
+  }
+
+  if (supplierId) {
+    logger.info(`SupplierId found in session for ${orderId} - ${supplierId}`);
+    const getSupplierDataEndpoint = getEndpoint({ endpointLocator: 'getSupplier', options: { supplierId } });
+    const supplierData = await getData({ endpoint: getSupplierDataEndpoint, accessToken, logger });
+
+    const context = getContext({ orderId, supplierData });
+    return context;
+  }
+
+  logger.info(`No supplier data found in ORDAPI and no supplierId in session for ${orderId}`);
+  throw new Error();
 };
 
 export const putSupplier = async ({
