@@ -5,7 +5,7 @@ import { solutionsApiUrl, orderApiUrl } from '../../../../config';
 import { getSupplierPageContext, putSupplier } from './controller';
 
 jest.mock('buying-catalogue-library');
-
+jest.mock('../../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
@@ -39,7 +39,7 @@ describe('supplier controller', () => {
 
         await getSupplierPageContext({ orderId, accessToken });
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-        expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, supplierData: { name: 'a lovely name' } });
+        expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, supplierData: { name: 'a lovely name' }, hasSavedData: true });
       });
     });
 

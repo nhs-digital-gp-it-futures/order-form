@@ -46,10 +46,28 @@ describe('supplier contextCreator', () => {
       expect(context.searchAgainLinkText).toEqual(manifest.searchAgainLinkText);
     });
 
-    it('should construct the searchAgainLinkHref', () => {
+    it('should construct the searchAgainLinkHref if hasSavedData is false', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId });
       expect(context.searchAgainLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/supplier/search`);
+    });
+
+    it('should not construct the searchAgainLinkHref if hasSavedData is true', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId, hasSavedData: true });
+      expect(context.searchAgainLinkHref).toEqual(undefined);
+    });
+
+    it('should add showSearchAgainLink is true if hasSavedData is false', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId });
+      expect(context.showSearchAgainLink).toEqual(true);
+    });
+
+    it('should add showSearchAgainLink is false if hasSavedData is true', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId, hasSavedData: true });
+      expect(context.showSearchAgainLink).toEqual(false);
     });
 
     describe('questions with no data populated', () => {
@@ -129,6 +147,7 @@ describe('supplier contextCreator', () => {
         title: 'Supplier information for order-id',
         backLinkHref: '/order/organisation/order-id/supplier/search/select',
         searchAgainLinkHref: '/order/organisation/order-id/supplier/search',
+        showSearchAgainLink: true,
       };
 
       getErrorContext(mockParams);
