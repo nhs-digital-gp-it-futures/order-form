@@ -12,15 +12,16 @@ const populateQuestionsWithData = primaryContact => (
   })
 );
 
-export const getContext = ({ orderId, supplierData }) => ({
+export const getContext = ({ orderId, supplierData, hasSavedData = false }) => ({
   ...manifest,
   questions: supplierData && supplierData.primaryContact
     ? populateQuestionsWithData(supplierData.primaryContact)
     : manifest.questions,
   title: `${manifest.title} ${orderId}`,
   supplierData,
-  searchAgainLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search`,
+  searchAgainLinkHref: hasSavedData ? undefined : `${baseUrl}/organisation/${orderId}/supplier/search`,
   backLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search/select`,
+  showSearchAgainLink: !hasSavedData,
 });
 
 export const getErrorContext = (params) => {
