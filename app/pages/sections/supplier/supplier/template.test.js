@@ -219,10 +219,11 @@ describe('supplier page via select', () => {
     });
   }));
 
-  it('should render the "Search again" link', componentTester(setup, (harness) => {
+  it('should render the "Search again" link if showSearchAgainLink is true', componentTester(setup, (harness) => {
     const context = {
       searchAgainLinkText: manifest.searchAgainLinkText,
       searchAgainLinkHref: '/organisation/order-1/search',
+      showSearchAgainLink: true,
     };
 
     harness.request(context, ($) => {
@@ -230,6 +231,19 @@ describe('supplier page via select', () => {
       expect(searchAgainLink.length).toEqual(1);
       expect(searchAgainLink.text().trim()).toEqual(context.searchAgainLinkText);
       expect(searchAgainLink.find('a').attr('href')).toEqual(context.searchAgainLinkHref);
+    });
+  }));
+
+  it('should not render the "Search again" link if showSearchAgainLink is false', componentTester(setup, (harness) => {
+    const context = {
+      searchAgainLinkText: manifest.searchAgainLinkText,
+      searchAgainLinkHref: '/organisation/order-1/search',
+      showSearchAgainLink: false,
+    };
+
+    harness.request(context, ($) => {
+      const searchAgainLink = $('[data-test-id="search-again-link"]');
+      expect(searchAgainLink.length).toEqual(0);
     });
   }));
 
