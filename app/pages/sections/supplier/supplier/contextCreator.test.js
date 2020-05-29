@@ -14,10 +14,16 @@ describe('supplier contextCreator', () => {
       expect(context.backLinkText).toEqual(manifest.backLinkText);
     });
 
-    it('should construct the backLinkHref', () => {
+    it('should construct the backLinkHref if hasSavedData is false', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/supplier/search/select`);
+    });
+
+    it('should construct the correct backLinkHref if hasSavedData is true', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId, hasSavedData: true });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
 
     it('should return the title', () => {
