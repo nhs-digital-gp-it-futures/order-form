@@ -16,6 +16,7 @@ import {
 } from './select/controller';
 import {
   getSupplierPageContext,
+  putSupplier,
 } from './supplier/controller';
 
 const router = express.Router({ mergeParams: true });
@@ -31,6 +32,17 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
       logger.info('redirecting to suppliers search page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
     }
+  }));
+
+  router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const response = await putSupplier({
+      orderId,
+      data: req.body,
+      accessToken: extractAccessToken({ req, tokenType: 'access' }),
+    });
+    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    return null;
   }));
 
   router.get('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
