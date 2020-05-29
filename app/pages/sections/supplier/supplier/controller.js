@@ -36,6 +36,7 @@ export const getSupplierPageContext = async ({ orderId, supplierId, accessToken 
     return getContext({
       orderId,
       supplierData: ordapiSupplierData,
+      hasSavedData: true,
     });
   }
 
