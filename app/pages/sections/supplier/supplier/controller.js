@@ -32,7 +32,7 @@ export const getSupplierPageContext = async ({ orderId, supplierId, accessToken 
     endpoint: ordapiSupplierDataEndpoint, accessToken, logger,
   });
 
-  if (ordapiSupplierData.name) {
+  if (ordapiSupplierData && ordapiSupplierData.name) {
     logger.info(`Supplier data found in ORDAPI for ${orderId}`);
     return getContext({
       orderId,
