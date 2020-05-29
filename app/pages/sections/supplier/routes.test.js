@@ -117,26 +117,35 @@ describe('supplier section routes', () => {
 
   describe('POST /organisation/:orderId/supplier', () => {
     const path = '/organisation/order-id/supplier';
+    afterEach(() => {
+      supplierController.getSupplierPageContext.mockRestore();
+    });
 
-    it('should return 403 forbidden if no csrf token is available', () => (
-      testPostPathWithoutCsrf({
+    it('should return 403 forbidden if no csrf token is available', () => {
+      supplierController.getSupplierPageContext = jest.fn()
+        .mockResolvedValue({});
+      return testPostPathWithoutCsrf({
         app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
-      })
-    ));
+      });
+    });
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedPostPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      supplierController.getSupplierPageContext = jest.fn()
+        .mockResolvedValue({});
+      return testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
         getPathCookies: [mockAuthorisedCookie, mockSelectedSupplierCookie],
         postPathCookies: [],
         expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedPostPathForUnauthorisedUsers({
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      supplierController.getSupplierPageContext = jest.fn()
+        .mockResolvedValue({});
+      return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
@@ -144,12 +153,12 @@ describe('supplier section routes', () => {
         postPathCookies: [mockUnauthorisedCookie],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
+      });
+    });
 
     it('should return the correct status and text if response.success is true', async () => {
       supplierController.putSupplier = jest.fn()
-        .mockImplementation(() => Promise.resolve({ success: true }));
+        .mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
