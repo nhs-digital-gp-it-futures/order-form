@@ -424,6 +424,9 @@ test('should navigate to task list page if save button is clicked and data is va
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, supplierDataFromBapi);
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/sections/supplier')
     .reply(400, supplierErrorResponse);
@@ -448,6 +451,9 @@ test('should show the error summary when there are validation errors', async (t)
 });
 
 test('should ensure details are repopulated when there are validation errors', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, supplierDataFromBapi);
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/sections/supplier')
     .reply(400, supplierErrorResponse);
@@ -475,22 +481,25 @@ test('should ensure details are repopulated when there are validation errors', a
     .click(saveButton);
 
   await t
-    .expect(await extractInnerText(addressTextLine1)).eql(supplierData.address.line1)
-    .expect(await extractInnerText(addressTextLine2)).eql(supplierData.address.line2)
-    .expect(await extractInnerText(addressTextLine3)).eql(supplierData.address.line3)
+    .expect(await extractInnerText(addressTextLine1)).eql(supplierDataFromBapi.address.line1)
+    .expect(await extractInnerText(addressTextLine2)).eql(supplierDataFromBapi.address.line2)
+    .expect(await extractInnerText(addressTextLine3)).eql(supplierDataFromBapi.address.line3)
     .expect(await extractInnerText(addressTextLine4)).eql('')
-    .expect(await extractInnerText(addressTextLine5)).eql(supplierData.address.line5)
-    .expect(await extractInnerText(addressTextTown)).eql(supplierData.address.town)
-    .expect(await extractInnerText(addressTextCounty)).eql(supplierData.address.county)
-    .expect(await extractInnerText(addressTextPostcode)).eql(supplierData.address.postcode)
-    .expect(await extractInnerText(addressTextCountry)).eql(supplierData.address.country)
-    .expect(firstNameField.find('input').value).eql(supplierData.primaryContact.firstName)
-    .expect(lastName.find('input').value).eql(supplierData.primaryContact.lastName)
-    .expect(emailAddress.find('input').value).eql(supplierData.primaryContact.emailAddress)
-    .expect(phoneNumber.find('input').value).eql(supplierData.primaryContact.telephoneNumber);
+    .expect(await extractInnerText(addressTextLine5)).eql(supplierDataFromBapi.address.line5)
+    .expect(await extractInnerText(addressTextTown)).eql(supplierDataFromBapi.address.town)
+    .expect(await extractInnerText(addressTextCounty)).eql(supplierDataFromBapi.address.county)
+    .expect(await extractInnerText(addressTextPostcode)).eql(supplierDataFromBapi.address.postcode)
+    .expect(await extractInnerText(addressTextCountry)).eql(supplierDataFromBapi.address.country)
+    .expect(firstNameField.find('input').value).eql(supplierDataFromBapi.primaryContact.firstName)
+    .expect(lastName.find('input').value).eql(supplierDataFromBapi.primaryContact.lastName)
+    .expect(emailAddress.find('input').value).eql(supplierDataFromBapi.primaryContact.emailAddress)
+    .expect(phoneNumber.find('input').value).eql(supplierDataFromBapi.primaryContact.telephoneNumber);
 });
 
 test('should show text fields as errors with error message when there are validation errors', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, supplierDataFromBapi);
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/sections/supplier')
     .reply(400, supplierErrorResponse);
@@ -525,6 +534,9 @@ test('should show text fields as errors with error message when there are valida
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, supplierDataFromBapi);
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/sections/supplier')
     .reply(400, supplierErrorResponse);
