@@ -51,11 +51,11 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
 };
 
 export const getCallOffOrderingPartyErrorContext = async (params) => {
-  const forattedData = formatFormData(params.data);
+  const formattedData = formatFormData(params.data);
 
   const updatedParams = {
     ...params,
-    data: forattedData,
+    data: formattedData,
   };
 
   return getErrorContext(updatedParams);

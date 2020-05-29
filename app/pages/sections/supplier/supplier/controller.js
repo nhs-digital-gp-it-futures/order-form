@@ -56,10 +56,10 @@ export const putSupplier = async ({
 };
 
 export const getSupplierPageErrorContext = async (params) => {
-  const forattedData = formatFormData(params.data);
+  const formattedData = formatFormData(params.data);
   const updatedParams = {
     ...params,
-    data: forattedData,
+    data: formattedData,
   };
   return getErrorContext(updatedParams);
 };
