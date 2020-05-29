@@ -38,6 +38,7 @@
         <div class="nhsuk-grid-column-two-thirds">   
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
           <h3 data-test-id="supplier-name-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ supplierNameHeading }}</h3>
+          <input type="hidden" name="supplierId" value="{{ supplierData.supplierId }}" />
           <div data-test-id="supplier-name" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ supplierData.name }}</div>
           <input type="hidden" name="name" value="{{ supplierData.name }}" />
 

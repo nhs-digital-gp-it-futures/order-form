@@ -4,6 +4,7 @@ import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 
 const formatFormData = data => ({
+  supplierId: data.supplierId ? data.supplierId.trim() : undefined,
   name: data.name ? data.name.trim() : undefined,
   address: {
     line1: data.line1 ? data.line1.trim() : undefined,

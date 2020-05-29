@@ -8,6 +8,7 @@ const setup = {
 };
 
 const supplierData = {
+  supplierId: 'supp-1',
   name: 'SupplierOne',
   address: {
     line1: 'line 1',
@@ -160,6 +161,7 @@ describe('supplier page via select', () => {
     };
 
     harness.request(context, ($) => {
+      const supplierIdFormElement = $('input[name=supplierId]');
       const nameFormElement = $('input[name=name]');
       const line1FormElement = $('input[name=line1]');
       const line2FormElement = $('input[name=line2]');
@@ -170,6 +172,10 @@ describe('supplier page via select', () => {
       const countyFormElement = $('input[name=county]');
       const postcodeFormElement = $('input[name=postcode]');
       const countryFormElement = $('input[name=country]');
+
+      expect(supplierIdFormElement.length).toEqual(1);
+      expect(supplierIdFormElement.attr('type')).toEqual('hidden');
+      expect(supplierIdFormElement.attr('value')).toEqual(context.supplierData.supplierId);
 
       expect(nameFormElement.length).toEqual(1);
       expect(nameFormElement.attr('type')).toEqual('hidden');

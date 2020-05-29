@@ -46,6 +46,7 @@ describe('supplier controller', () => {
     });
 
     const mockFormData = {
+      supplierId: 'supp-1',
       name: 'SupplierOne',
       line1: 'line 1',
       line2: '   line 2  ',
@@ -58,6 +59,7 @@ describe('supplier controller', () => {
     };
 
     const formattedPutData = {
+      supplierId: 'supp-1',
       name: 'SupplierOne',
       address: {
         line1: 'line 1',
