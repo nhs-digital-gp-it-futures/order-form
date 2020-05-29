@@ -1,8 +1,8 @@
-import { getData } from 'buying-catalogue-library';
+import { getData, putData } from 'buying-catalogue-library';
 import * as contextCreator from './contextCreator';
 import { logger } from '../../../../logger';
-import { solutionsApiUrl } from '../../../../config';
-import { getSupplierPageContext } from './controller';
+import { solutionsApiUrl, orderApiUrl } from '../../../../config';
+import { getSupplierPageContext, putSupplier } from './controller';
 
 jest.mock('buying-catalogue-library');
 
@@ -37,6 +37,66 @@ describe('supplier controller', () => {
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', supplierData: {} });
+    });
+  });
+
+  describe('putSupplier', () => {
+    afterEach(() => {
+      putData.mockReset();
+    });
+
+    const mockFormData = {
+      name: 'SupplierOne',
+      line1: 'line 1',
+      line2: '   line 2  ',
+      line3: '  line 3',
+      line4: null,
+      line5: 'line 5  ',
+      town: ' townville  ',
+      postcode: 'HA3 PSH',
+      firstName: 'Bob',
+    };
+
+    const formattedPutData = {
+      supplier: {
+        name: 'SupplierOne',
+        address: {
+          line1: 'line 1',
+          line2: 'line 2',
+          line3: 'line 3',
+          line5: 'line 5',
+          town: 'townville',
+          postcode: 'HA3 PSH',
+        },
+        primaryContact: {
+          firstName: 'Bob',
+        },
+      },
+    };
+
+    it('should format form data and call putData once with the correct params', async () => {
+      putData.mockResolvedValueOnce({});
+
+      await putSupplier({
+        orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
+      });
+
+      expect(putData.mock.calls.length).toEqual(1);
+      expect(putData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/supplier`,
+        body: formattedPutData,
+        accessToken: 'access_token',
+        logger,
+      });
+    });
+
+    it('should return succes: true if put is successful', async () => {
+      putData.mockResolvedValueOnce({});
+
+      const response = await putSupplier({
+        orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
+      });
+      expect(response).toEqual({ success: true });
     });
   });
 });
