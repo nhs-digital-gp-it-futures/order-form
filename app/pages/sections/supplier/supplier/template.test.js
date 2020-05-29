@@ -8,6 +8,7 @@ const setup = {
 };
 
 const supplierData = {
+  supplierId: 'supp-1',
   name: 'SupplierOne',
   address: {
     line1: 'line 1',
@@ -35,6 +36,28 @@ describe('supplier page via select', () => {
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
       expect(backLink.find('a').attr('href')).toEqual('/organisation/order-1/search/select');
+    });
+  }));
+
+  it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      errors: [
+        { text: 'First name must be 100 characters or fewer', href: '#firstName' },
+        { text: 'Last name must be 100 characters or fewer', href: '#lastName' },
+        { text: 'Email address must be 256 characters or fewer', href: '#emailAddress' },
+        { text: 'Telephone number must be 35 characters or fewer', href: '#telephoneNumber' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(context.errors.length);
+      context.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
     });
   }));
 
@@ -138,6 +161,7 @@ describe('supplier page via select', () => {
     };
 
     harness.request(context, ($) => {
+      const supplierIdFormElement = $('input[name=supplierId]');
       const nameFormElement = $('input[name=name]');
       const line1FormElement = $('input[name=line1]');
       const line2FormElement = $('input[name=line2]');
@@ -148,6 +172,10 @@ describe('supplier page via select', () => {
       const countyFormElement = $('input[name=county]');
       const postcodeFormElement = $('input[name=postcode]');
       const countryFormElement = $('input[name=country]');
+
+      expect(supplierIdFormElement.length).toEqual(1);
+      expect(supplierIdFormElement.attr('type')).toEqual('hidden');
+      expect(supplierIdFormElement.attr('value')).toEqual(context.supplierData.supplierId);
 
       expect(nameFormElement.length).toEqual(1);
       expect(nameFormElement.attr('type')).toEqual('hidden');
@@ -258,6 +286,35 @@ describe('supplier page via select', () => {
         context.questions.forEach(async (question) => {
           const footerText = await form.find(`div[data-test-id="question-${question.id}"] span`);
           expect(footerText.text().trim()).toEqual(question.footerAdvice);
+        });
+      });
+    }));
+
+    it('should render error field if there are errors', componentTester(setup, (harness) => {
+      const contextWithErrors = {
+        questions: [{
+          id: 'firstName',
+          error: [{ message: 'First name must be 100 characters or fewer' }],
+        }, {
+          id: 'lastName',
+          error: [{ message: 'Last name must be 100 characters or fewer' }],
+        }, {
+          id: 'emailAddress',
+          error: [{ message: 'Email address must be 256 characters or fewer' }],
+        }, {
+          id: 'telephoneNumber',
+          error: [{ message: 'Telephone number must be 35 characters or fewer' }],
+        }],
+      };
+
+      harness.request(contextWithErrors, async ($) => {
+        const form = $('form');
+        await contextWithErrors.questions.forEach(async (question) => {
+          const renderedQuestion = await form.find(`div[data-test-id="question-${question.id}"]`);
+          const fieldError = await renderedQuestion.find('div[data-test-id="text-field-input-error"]');
+          const errorMessage = await renderedQuestion.find('.nhsuk-error-message');
+          expect(fieldError.length).toEqual(1);
+          expect(errorMessage.text().trim()).toEqual('Error:');
         });
       });
     }));

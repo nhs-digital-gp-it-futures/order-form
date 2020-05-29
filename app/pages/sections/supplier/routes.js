@@ -16,6 +16,7 @@ import {
 } from './select/controller';
 import {
   getSupplierPageContext,
+  getSupplierPageErrorContext,
   putSupplier,
 } from './supplier/controller';
 
@@ -42,7 +43,13 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
     if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
-    return null;
+
+    const context = await getSupplierPageErrorContext({
+      validationErrors: response.errors,
+      orderId,
+      data: req.body,
+    });
+    return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
