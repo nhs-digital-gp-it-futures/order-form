@@ -22,7 +22,7 @@ describe('supplier controller', () => {
 
     describe('when ordapi has supplier data', () => {
       it('should call getData with the correct params', async () => {
-        getData.mockResolvedValueOnce({ supplierId: 'supplier-id' });
+        getData.mockResolvedValueOnce({ name: 'a lovely name' });
 
         await getSupplierPageContext({ orderId, accessToken });
         expect(getData.mock.calls.length).toEqual(1);
@@ -34,12 +34,12 @@ describe('supplier controller', () => {
       });
 
       it('should call getContext with the correct params', async () => {
-        getData.mockResolvedValueOnce({ supplierId: 'supplier-id' });
+        getData.mockResolvedValueOnce({ name: 'a lovely name' });
         contextCreator.getContext.mockResolvedValueOnce({});
 
         await getSupplierPageContext({ orderId, accessToken });
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-        expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, supplierData: { supplierId: 'supplier-id' } });
+        expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, supplierData: { name: 'a lovely name' } });
       });
     });
 
