@@ -20,7 +20,9 @@ export const getContext = ({ orderId, supplierData, hasSavedData = false }) => (
   title: `${manifest.title} ${orderId}`,
   supplierData,
   searchAgainLinkHref: hasSavedData ? undefined : `${baseUrl}/organisation/${orderId}/supplier/search`,
-  backLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search/select`,
+  backLinkHref: hasSavedData
+    ? `${baseUrl}/organisation/${orderId}`
+    : `${baseUrl}/organisation/${orderId}/supplier/search/select`,
   showSearchAgainLink: !hasSavedData,
 });
 

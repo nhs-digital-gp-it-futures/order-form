@@ -129,8 +129,12 @@ test('should render Supplier page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1/supplier/search/select when click on backlink', async (t) => {
-  await pageSetup(t, true, true, supplierDataFromOrdapi);
+test('should navigate to /organisation/order-1/supplier/search/select when click on backlink if data comes from bapi', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, supplierDataFromBapi);
+
+  await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -139,6 +143,18 @@ test('should navigate to /organisation/order-1/supplier/search/select when click
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search/select');
+});
+
+test('should navigate to /organisation/order-1 when click on backlink if data comes from ordapi', async (t) => {
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
+  await t.navigateTo(pageUrl);
+
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+
+  await t
+    .expect(goBackLink.exists).ok()
+    .click(goBackLink)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
 });
 
 test('should render the title', async (t) => {
@@ -188,7 +204,7 @@ test('should render supplier name with data from ordapi', async (t) => {
     .expect(await extractInnerText(text)).eql(supplierDataFromOrdapi.name);
 });
 
-test('should render supplier name with data from dapi when no data from orapi and supplierId provided', async (t) => {
+test('should render supplier name with data from bapi when no data from orapi and supplierId provided', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -244,7 +260,7 @@ test('should render supplier address name with data from ordapi', async (t) => {
     .expect(await extractInnerText(addressTextCountry)).eql(supplierDataFromOrdapi.address.country);
 });
 
-test('should render supplier address name with data from dapi when no data from orapi and supplierId provided', async (t) => {
+test('should render supplier address name with data from bapi when no data from orapi and supplierId provided', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -365,7 +381,7 @@ test('should render the primary contact details form with populated data from or
     .expect(phoneNumber.find('input').value).eql(supplierDataFromOrdapi.primaryContact.telephoneNumber);
 });
 
-test('should render the primary contact details form with populated data from dapi', async (t) => {
+test('should render the primary contact details form with populated data from bapi', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
