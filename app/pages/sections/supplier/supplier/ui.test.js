@@ -351,14 +351,36 @@ test('should ensure details are repopulated when there are validation errors', a
   const page = Selector('[data-test-id="supplier-page"]');
   const saveButton = Selector('[data-test-id="save-button"] button');
   const addressTextLine1 = Selector('[data-test-id="supplier-address-1"]');
+  const addressTextLine2 = Selector('[data-test-id="supplier-address-2"]');
+  const addressTextLine3 = Selector('[data-test-id="supplier-address-3"]');
+  const addressTextLine4 = Selector('[data-test-id="supplier-address-4"]');
+  const addressTextLine5 = Selector('[data-test-id="supplier-address-5"]');
+  const addressTextTown = Selector('[data-test-id="supplier-address-town"]');
+  const addressTextCounty = Selector('[data-test-id="supplier-address-county"]');
+  const addressTextPostcode = Selector('[data-test-id="supplier-address-postcode"]');
+  const addressTextCountry = Selector('[data-test-id="supplier-address-country"]');
   const firstNameField = page.find('[data-test-id="question-firstName"]');
+  const lastName = Selector('[data-test-id="question-lastName"]');
+  const emailAddress = Selector('[data-test-id="question-emailAddress"]');
+  const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
 
   await t
     .click(saveButton);
 
   await t
     .expect(await extractInnerText(addressTextLine1)).eql(supplierData.address.line1)
-    .expect(firstNameField.find('input').value).eql(supplierData.primaryContact.firstName);
+    .expect(await extractInnerText(addressTextLine2)).eql(supplierData.address.line2)
+    .expect(await extractInnerText(addressTextLine3)).eql(supplierData.address.line3)
+    .expect(await extractInnerText(addressTextLine4)).eql('')
+    .expect(await extractInnerText(addressTextLine5)).eql(supplierData.address.line5)
+    .expect(await extractInnerText(addressTextTown)).eql(supplierData.address.town)
+    .expect(await extractInnerText(addressTextCounty)).eql(supplierData.address.county)
+    .expect(await extractInnerText(addressTextPostcode)).eql(supplierData.address.postcode)
+    .expect(await extractInnerText(addressTextCountry)).eql(supplierData.address.country)
+    .expect(firstNameField.find('input').value).eql(supplierData.primaryContact.firstName)
+    .expect(lastName.find('input').value).eql(supplierData.primaryContact.lastName)
+    .expect(emailAddress.find('input').value).eql(supplierData.primaryContact.emailAddress)
+    .expect(phoneNumber.find('input').value).eql(supplierData.primaryContact.telephoneNumber);
 });
 
 test('should show text fields as errors with error message when there are validation errors', async (t) => {
