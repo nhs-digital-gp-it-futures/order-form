@@ -72,14 +72,19 @@ describe('supplier section routes', () => {
       })
     ));
 
-    it('should redirect to /organisation/some-order-id/supplier/search if no supplierSelected returned from the session', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(302)
-      .then((res) => {
-        expect(res.redirect).toEqual(true);
-        expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier/search`);
-      }));
+    it('should return the supplier section page if authorised and no supplierSelected returned from session', () => {
+      supplierController.getSupplierPageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="supplier-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
 
     it('should return the supplier section page if authorised and supplierSelected returned from session', () => {
       supplierController.getSupplierPageContext = jest.fn()
@@ -92,6 +97,20 @@ describe('supplier section routes', () => {
         .then((res) => {
           expect(res.text.includes('data-test-id="supplier-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
+
+    it('should redirect to /organisation/some-order-id/supplier/search if error from getSupplierPageContext', () => {
+      supplierController.getSupplierPageContext = jest.fn()
+        .mockRejectedValue({});
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier/search`);
         });
     });
   });
