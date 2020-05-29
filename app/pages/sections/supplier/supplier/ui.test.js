@@ -20,7 +20,7 @@ const setSessionState = ClientFunction(() => {
   document.cookie = `selectedSupplier=${cookieValue}`;
 });
 
-const supplierData = {
+const supplierDataFromOrdapi = {
   name: 'SupplierOne',
   address: {
     line1: 'line 1',
@@ -41,16 +41,37 @@ const supplierData = {
   },
 };
 
-const mocks = () => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/suppliers/supplier-1')
-    .reply(200, supplierData);
+const supplierDataFromDapi = {
+  name: 'SupplierTwo',
+  address: {
+    line1: 'address 1',
+    line2: 'address 2',
+    line3: null,
+    line4: 'address 3',
+    line5: 'address 5',
+    town: 'townytown',
+    county: 'shirexshire',
+    postcode: 'PO57 COD',
+    country: 'Scotland',
+  },
+  primaryContact: {
+    firstName: 'Mary',
+    lastName: 'Green',
+    emailAddress: 'mary.green@email.com',
+    telephoneNumber: '07765432198',
+  },
 };
 
-const pageSetup = async (t, withAuth = false, withSessionState = false) => {
+const mocks = (data) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-1/sections/supplier')
+    .reply(200, data);
+};
+
+const pageSetup = async (t, withAuth = false, withSessionState = false, ordapiData = {}) => {
   if (withAuth) await setCookies();
   if (withSessionState) await setSessionState();
-  if (withAuth && withSessionState) mocks();
+  if (withAuth && withSessionState) mocks(ordapiData);
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -79,7 +100,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render Supplier page', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="supplier-page"]');
 
@@ -88,7 +109,7 @@ test('should render Supplier page', async (t) => {
 });
 
 test('should navigate to /organisation/order-1/supplier/search/select when click on backlink', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -100,7 +121,7 @@ test('should navigate to /organisation/order-1/supplier/search/select when click
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="supplier-page-title"]');
@@ -111,7 +132,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="supplier-page-description"]');
@@ -122,7 +143,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render the inset advice', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
   const insetAdvice = Selector('[data-test-id="supplier-page-insetAdvice"]');
@@ -132,7 +153,25 @@ test('should render the inset advice', async (t) => {
     .expect(await extractInnerText(insetAdvice)).contains(content.insetAdvice);
 });
 
-test('should render supplier name', async (t) => {
+test('should render supplier name with data from ordapi', async (t) => {
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
+  await t.navigateTo(pageUrl);
+
+  const heading = Selector('h3[data-test-id="supplier-name-heading"]');
+  const text = Selector('div[data-test-id="supplier-name"]');
+
+  await t
+    .expect(heading.exists).ok()
+    .expect(await extractInnerText(heading)).eql(content.supplierNameHeading)
+    .expect(text.exists).ok()
+    .expect(await extractInnerText(text)).eql(supplierDataFromOrdapi.name);
+});
+
+test('should render supplier name with data from dapi when no data from orapi and supplierId provided', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, supplierDataFromDapi);
+
   await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
@@ -143,10 +182,52 @@ test('should render supplier name', async (t) => {
     .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.supplierNameHeading)
     .expect(text.exists).ok()
-    .expect(await extractInnerText(text)).eql(supplierData.name);
+    .expect(await extractInnerText(text)).eql(supplierDataFromDapi.name);
 });
 
-test('should render supplier address', async (t) => {
+test('should render supplier address name with data from ordapi', async (t) => {
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
+  await t.navigateTo(pageUrl);
+
+  const heading = Selector('h3[data-test-id="supplier-address-heading"]');
+  const addressTextLine1 = Selector('[data-test-id="supplier-address-1"]');
+  const addressTextLine2 = Selector('[data-test-id="supplier-address-2"]');
+  const addressTextLine3 = Selector('[data-test-id="supplier-address-3"]');
+  const addressTextLine4 = Selector('[data-test-id="supplier-address-4"]');
+  const addressTextLine5 = Selector('[data-test-id="supplier-address-5"]');
+  const addressTextTown = Selector('[data-test-id="supplier-address-town"]');
+  const addressTextCounty = Selector('[data-test-id="supplier-address-county"]');
+  const addressTextPostcode = Selector('[data-test-id="supplier-address-postcode"]');
+  const addressTextCountry = Selector('[data-test-id="supplier-address-country"]');
+
+  await t
+    .expect(heading.exists).ok()
+    .expect(await extractInnerText(heading)).eql(content.supplierAddressHeading)
+    .expect(addressTextLine1.exists).ok()
+    .expect(await extractInnerText(addressTextLine1)).eql(supplierDataFromOrdapi.address.line1)
+    .expect(addressTextLine2.exists).ok()
+    .expect(await extractInnerText(addressTextLine2)).eql(supplierDataFromOrdapi.address.line2)
+    .expect(addressTextLine3.exists).ok()
+    .expect(await extractInnerText(addressTextLine3)).eql(supplierDataFromOrdapi.address.line3)
+    .expect(addressTextLine4.exists).ok()
+    .expect(await extractInnerText(addressTextLine4)).eql('')
+    .expect(addressTextLine5.exists).ok()
+    .expect(await extractInnerText(addressTextLine5)).eql(supplierDataFromOrdapi.address.line5)
+    .expect(addressTextTown.exists).ok()
+    .expect(await extractInnerText(addressTextTown)).eql(supplierDataFromOrdapi.address.town)
+    .expect(addressTextCounty.exists).ok()
+    .expect(await extractInnerText(addressTextCounty)).eql(supplierDataFromOrdapi.address.county)
+    .expect(addressTextPostcode.exists).ok()
+    .expect(await extractInnerText(addressTextPostcode)).eql(supplierDataFromOrdapi.address.postcode)
+    .expect(addressTextCountry.exists).ok()
+    .expect(await extractInnerText(addressTextCountry)).eql(supplierDataFromOrdapi.address.country);
+});
+
+test('should render supplier address name with data from dapi when no data from orapi and supplierId provided', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, supplierDataFromDapi);
+
   await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
@@ -165,26 +246,30 @@ test('should render supplier address', async (t) => {
     .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.supplierAddressHeading)
     .expect(addressTextLine1.exists).ok()
-    .expect(await extractInnerText(addressTextLine1)).eql(supplierData.address.line1)
+    .expect(await extractInnerText(addressTextLine1)).eql(supplierDataFromDapi.address.line1)
     .expect(addressTextLine2.exists).ok()
-    .expect(await extractInnerText(addressTextLine2)).eql(supplierData.address.line2)
+    .expect(await extractInnerText(addressTextLine2)).eql(supplierDataFromDapi.address.line2)
     .expect(addressTextLine3.exists).ok()
-    .expect(await extractInnerText(addressTextLine3)).eql(supplierData.address.line3)
+    .expect(await extractInnerText(addressTextLine3)).eql('')
     .expect(addressTextLine4.exists).ok()
-    .expect(await extractInnerText(addressTextLine4)).eql('')
+    .expect(await extractInnerText(addressTextLine4)).eql(supplierDataFromDapi.address.line4)
     .expect(addressTextLine5.exists).ok()
-    .expect(await extractInnerText(addressTextLine5)).eql(supplierData.address.line5)
+    .expect(await extractInnerText(addressTextLine5)).eql(supplierDataFromDapi.address.line5)
     .expect(addressTextTown.exists).ok()
-    .expect(await extractInnerText(addressTextTown)).eql(supplierData.address.town)
+    .expect(await extractInnerText(addressTextTown)).eql(supplierDataFromDapi.address.town)
     .expect(addressTextCounty.exists).ok()
-    .expect(await extractInnerText(addressTextCounty)).eql(supplierData.address.county)
+    .expect(await extractInnerText(addressTextCounty)).eql(supplierDataFromDapi.address.county)
     .expect(addressTextPostcode.exists).ok()
-    .expect(await extractInnerText(addressTextPostcode)).eql(supplierData.address.postcode)
+    .expect(await extractInnerText(addressTextPostcode)).eql(supplierDataFromDapi.address.postcode)
     .expect(addressTextCountry.exists).ok()
-    .expect(await extractInnerText(addressTextCountry)).eql(supplierData.address.country);
+    .expect(await extractInnerText(addressTextCountry)).eql(supplierDataFromDapi.address.country);
 });
 
 test('should navigate to /organisation/order-1/supplier/search when click on searchAgainLink', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, supplierDataFromDapi);
+
   await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
@@ -198,7 +283,7 @@ test('should navigate to /organisation/order-1/supplier/search when click on sea
 });
 
 test('should render the primary contact details form', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
   const heading = Selector('h2[data-test-id="primary-contact-heading"]');
@@ -243,7 +328,27 @@ test('should render the primary contact details form', async (t) => {
     .expect(await extractInnerText(phoneNumberFooterText)).eql(content.questions[3].footerAdvice);
 });
 
-test('should render the primary contact details form with populated data', async (t) => {
+test('should render the primary contact details form with populated data from ordapi', async (t) => {
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
+  await t.navigateTo(pageUrl);
+
+  const firstName = Selector('[data-test-id="question-firstName"]');
+  const lastName = Selector('[data-test-id="question-lastName"]');
+  const emailAddress = Selector('[data-test-id="question-emailAddress"]');
+  const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
+
+  await t
+    .expect(firstName.find('input').value).eql(supplierDataFromOrdapi.primaryContact.firstName)
+    .expect(lastName.find('input').value).eql(supplierDataFromOrdapi.primaryContact.lastName)
+    .expect(emailAddress.find('input').value).eql(supplierDataFromOrdapi.primaryContact.emailAddress)
+    .expect(phoneNumber.find('input').value).eql(supplierDataFromOrdapi.primaryContact.telephoneNumber);
+});
+
+test('should render the primary contact details form with populated data from dapi', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, supplierDataFromDapi);
+
   await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
@@ -253,14 +358,14 @@ test('should render the primary contact details form with populated data', async
   const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
 
   await t
-    .expect(firstName.find('input').value).eql(supplierData.primaryContact.firstName)
-    .expect(lastName.find('input').value).eql(supplierData.primaryContact.lastName)
-    .expect(emailAddress.find('input').value).eql(supplierData.primaryContact.emailAddress)
-    .expect(phoneNumber.find('input').value).eql(supplierData.primaryContact.telephoneNumber);
+    .expect(firstName.find('input').value).eql(supplierDataFromDapi.primaryContact.firstName)
+    .expect(lastName.find('input').value).eql(supplierDataFromDapi.primaryContact.lastName)
+    .expect(emailAddress.find('input').value).eql(supplierDataFromDapi.primaryContact.emailAddress)
+    .expect(phoneNumber.find('input').value).eql(supplierDataFromDapi.primaryContact.telephoneNumber);
 });
 
 test('should render the "Save and return" button', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="save-button"] button');
@@ -270,8 +375,7 @@ test('should render the "Save and return" button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });
 
-
-test('should redirect to /organisation/order-1/supplier/search if there are supplierSelected returned from the session', async (t) => {
+test('should redirect to search if there is no data in ordapi and supplierSelected is not in session', async (t) => {
   await pageSetup(t, true, false);
   await t.navigateTo(pageUrl);
 
@@ -280,6 +384,9 @@ test('should redirect to /organisation/order-1/supplier/search if there are supp
 });
 
 test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/suppliers/supplier-1')
+    .reply(200, supplierDataFromDapi);
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/sections/supplier')
     .reply(200, {});
