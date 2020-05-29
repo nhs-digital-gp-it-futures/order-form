@@ -55,13 +55,15 @@ describe('call-off-ordering-party contextCreator', () => {
 
     it('should add organisation data', () => {
       const context = getContext({ orgData: mockOrderingPartyData });
-      expect(context.name).toEqual(mockOrderingPartyData.name);
-      expect(context.odsCode).toEqual(mockOrderingPartyData.odsCode);
-      expect(context.address).toEqual(mockOrderingPartyData.address);
+      expect(context.orgData.name).toEqual(mockOrderingPartyData.name);
+      expect(context.orgData.odsCode).toEqual(mockOrderingPartyData.odsCode);
+      expect(context.orgData.address).toEqual(mockOrderingPartyData.address);
     });
 
     it('should add contact data to questions if provided', () => {
-      const context = getContext({ orderId, contactData: questionData });
+      const context = getContext({
+        orderId, orgData: { ...mockOrderingPartyData, primaryContact: questionData }
+      });
       expect(context.questions.length).toEqual(manifest.questions.length);
       expect(context.questions[0].data).toEqual(questionData.firstName);
       expect(context.questions[1].data).toEqual(questionData.lastName);
@@ -92,12 +94,20 @@ describe('call-off-ordering-party contextCreator', () => {
       const mockParams = {
         orderId: 'order-id',
         validationErrors: mockValidationErrors,
-        contactData: questionData,
         orgData: mockOrderingPartyData,
       };
+
+      const updatedManifest = {
+        ...manifest,
+        title: 'Call-off Ordering Party information for order-id',
+        backLinkHref: '/order/organisation/order-id',
+      };
+
       getErrorContext(mockParams);
       expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
-      expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({ ...mockParams, manifest });
+      expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({
+        ...mockParams, manifest: updatedManifest,
+      });
     });
   });
 });

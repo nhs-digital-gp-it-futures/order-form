@@ -58,19 +58,17 @@ describe('supplier controller', () => {
     };
 
     const formattedPutData = {
-      supplier: {
-        name: 'SupplierOne',
-        address: {
-          line1: 'line 1',
-          line2: 'line 2',
-          line3: 'line 3',
-          line5: 'line 5',
-          town: 'townville',
-          postcode: 'HA3 PSH',
-        },
-        primaryContact: {
-          firstName: 'Bob',
-        },
+      name: 'SupplierOne',
+      address: {
+        line1: 'line 1',
+        line2: 'line 2',
+        line3: 'line 3',
+        line5: 'line 5',
+        town: 'townville',
+        postcode: 'HA3 PSH',
+      },
+      primaryContact: {
+        firstName: 'Bob',
       },
     };
 

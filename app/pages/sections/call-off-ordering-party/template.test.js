@@ -25,7 +25,7 @@ const mockData = {
 
 const context = {
   ...manifest,
-  ...mockData,
+  orgData: mockData,
   title: 'Call-off Ordering Party information for order-id',
   backLinkHref: '/organisation/order-1',
   csrfToken: 'mockCsrfToken',
@@ -113,7 +113,7 @@ describe('call-off-ordering-party page', () => {
       expect(heading.length).toEqual(1);
       expect(heading.text().trim()).toEqual(context.orgNameHeading);
       expect(text.length).toEqual(1);
-      expect(text.text().trim()).toEqual(context.name);
+      expect(text.text().trim()).toEqual(context.orgData.name);
     });
   }));
 
@@ -124,7 +124,7 @@ describe('call-off-ordering-party page', () => {
       expect(heading.length).toEqual(1);
       expect(heading.text().trim()).toEqual(context.odsCodeHeading);
       expect(text.length).toEqual(1);
-      expect(text.text().trim()).toEqual(context.odsCode);
+      expect(text.text().trim()).toEqual(context.orgData.odsCode);
     });
   }));
 
@@ -144,23 +144,23 @@ describe('call-off-ordering-party page', () => {
       expect(heading.length).toEqual(1);
       expect(heading.text().trim()).toEqual(context.orgAddressHeading);
       expect(line1.length).toEqual(1);
-      expect(line1.text().trim()).toEqual(context.address.line1);
+      expect(line1.text().trim()).toEqual(context.orgData.address.line1);
       expect(line2.length).toEqual(1);
-      expect(line2.text().trim()).toEqual(context.address.line2);
+      expect(line2.text().trim()).toEqual(context.orgData.address.line2);
       expect(line3.length).toEqual(1);
-      expect(line3.text().trim()).toEqual(context.address.line3);
+      expect(line3.text().trim()).toEqual(context.orgData.address.line3);
       expect(line4.length).toEqual(1);
       expect(line4.text().trim()).toBeFalsy();
       expect(line5.length).toEqual(1);
-      expect(line5.text().trim()).toEqual(context.address.line5);
+      expect(line5.text().trim()).toEqual(context.orgData.address.line5);
       expect(town.length).toEqual(1);
-      expect(town.text().trim()).toEqual(context.address.town);
+      expect(town.text().trim()).toEqual(context.orgData.address.town);
       expect(county.length).toEqual(1);
-      expect(county.text().trim()).toEqual(context.address.county);
+      expect(county.text().trim()).toEqual(context.orgData.address.county);
       expect(postcode.length).toEqual(1);
-      expect(postcode.text().trim()).toEqual(context.address.postcode);
+      expect(postcode.text().trim()).toEqual(context.orgData.address.postcode);
       expect(country.length).toEqual(1);
-      expect(country.text().trim()).toEqual(context.address.country);
+      expect(country.text().trim()).toEqual(context.orgData.address.country);
     });
   }));
 
@@ -180,23 +180,23 @@ describe('call-off-ordering-party page', () => {
 
       expect(nameFormElement.length).toEqual(1);
       expect(nameFormElement.attr('type')).toEqual('hidden');
-      expect(nameFormElement.attr('value')).toEqual(context.name);
+      expect(nameFormElement.attr('value')).toEqual(context.orgData.name);
 
       expect(odsCodeformElement.length).toEqual(1);
       expect(odsCodeformElement.attr('type')).toEqual('hidden');
-      expect(odsCodeformElement.attr('value')).toEqual(context.odsCode);
+      expect(odsCodeformElement.attr('value')).toEqual(context.orgData.odsCode);
 
       expect(line1FormElement.length).toEqual(1);
       expect(line1FormElement.attr('type')).toEqual('hidden');
-      expect(line1FormElement.attr('value')).toEqual(context.address.line1);
+      expect(line1FormElement.attr('value')).toEqual(context.orgData.address.line1);
 
       expect(line2FormElement.length).toEqual(1);
       expect(line2FormElement.attr('type')).toEqual('hidden');
-      expect(line2FormElement.attr('value')).toEqual(context.address.line2);
+      expect(line2FormElement.attr('value')).toEqual(context.orgData.address.line2);
 
       expect(line3FormElement.length).toEqual(1);
       expect(line3FormElement.attr('type')).toEqual('hidden');
-      expect(line3FormElement.attr('value')).toEqual(context.address.line3);
+      expect(line3FormElement.attr('value')).toEqual(context.orgData.address.line3);
 
       expect(line4FormElement.length).toEqual(1);
       expect(line4FormElement.attr('type')).toEqual('hidden');
@@ -204,23 +204,23 @@ describe('call-off-ordering-party page', () => {
 
       expect(line5FormElement.length).toEqual(1);
       expect(line5FormElement.attr('type')).toEqual('hidden');
-      expect(line5FormElement.attr('value')).toEqual(context.address.line5);
+      expect(line5FormElement.attr('value')).toEqual(context.orgData.address.line5);
 
       expect(townFormElement.length).toEqual(1);
       expect(townFormElement.attr('type')).toEqual('hidden');
-      expect(townFormElement.attr('value')).toEqual(context.address.town);
+      expect(townFormElement.attr('value')).toEqual(context.orgData.address.town);
 
       expect(countyFormElement.length).toEqual(1);
       expect(countyFormElement.attr('type')).toEqual('hidden');
-      expect(countyFormElement.attr('value')).toEqual(context.address.county);
+      expect(countyFormElement.attr('value')).toEqual(context.orgData.address.county);
 
       expect(postcodeFormElement.length).toEqual(1);
       expect(postcodeFormElement.attr('type')).toEqual('hidden');
-      expect(postcodeFormElement.attr('value')).toEqual(context.address.postcode);
+      expect(postcodeFormElement.attr('value')).toEqual(context.orgData.address.postcode);
 
       expect(countryFormElement.length).toEqual(1);
       expect(countryFormElement.attr('type')).toEqual('hidden');
-      expect(countryFormElement.attr('value')).toEqual(context.address.country);
+      expect(countryFormElement.attr('value')).toEqual(context.orgData.address.country);
     });
   }));
 

@@ -34,8 +34,7 @@ const mockOrganisation = {
 };
 
 const mockCompleteData = {
-  organisation: { ...mockOrganisation },
-  primaryContact: { ...mockPrimaryContact },
+  ...mockOrganisation, primaryContact: { ...mockPrimaryContact },
 };
 
 const mockDataFromOapi = {
@@ -127,7 +126,7 @@ describe('Call-off-ordering-party controller', () => {
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-        expect(contextCreator.getContext).toHaveBeenCalledWith({ orgData: mockCompleteData.organisation, contactData: mockCompleteData.primaryContact, orderId: 'order-id' });
+        expect(contextCreator.getContext).toHaveBeenCalledWith({ orgData: mockCompleteData, orderId: 'order-id' });
       });
     });
   });
