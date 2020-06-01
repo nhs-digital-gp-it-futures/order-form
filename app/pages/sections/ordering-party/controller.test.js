@@ -34,8 +34,7 @@ const mockOrganisation = {
 };
 
 const mockCompleteData = {
-  organisation: { ...mockOrganisation },
-  primaryContact: { ...mockPrimaryContact },
+  ...mockOrganisation, primaryContact: { ...mockPrimaryContact },
 };
 
 const mockDataFromOapi = {
@@ -52,14 +51,14 @@ const mockFormData = {
   ...mockPrimaryContact,
 };
 
-describe('Call-off-ordering-party controller', () => {
+describe('ordering-party controller', () => {
   describe('getCallOffOrderingPartyContext', () => {
     afterEach(() => {
       getData.mockReset();
       contextCreator.getContext.mockReset();
     });
 
-    describe('when call-off-ordering-party is not completed yet', () => {
+    describe('when ordering-party is not completed yet', () => {
       it('should call getData twice with the correct params', async () => {
         getData
           .mockResolvedValueOnce({})
@@ -106,7 +105,7 @@ describe('Call-off-ordering-party controller', () => {
       });
     });
 
-    describe('when call-off-ordering-party is already completed', () => {
+    describe('when ordering-party is already completed', () => {
       it('should call getData once with the correct params', async () => {
         getData
           .mockResolvedValueOnce(mockCompleteData);
@@ -127,7 +126,7 @@ describe('Call-off-ordering-party controller', () => {
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-        expect(contextCreator.getContext).toHaveBeenCalledWith({ orgData: mockCompleteData.organisation, contactData: mockCompleteData.primaryContact, orderId: 'order-id' });
+        expect(contextCreator.getContext).toHaveBeenCalledWith({ orgData: mockCompleteData, orderId: 'order-id' });
       });
     });
   });

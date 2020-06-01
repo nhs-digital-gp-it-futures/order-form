@@ -18,7 +18,7 @@ export const getCommencementDateContext = async ({ orderId, accessToken }) => {
   const commencementDateData = await getData({
     endpoint: commencementDateDataEndpoint, accessToken, logger,
   });
-  // const commencementDateData = { commencementDate: '2020-01-01' }
+
   logger.info(`Commencement date ${commencementDateData ? '' : 'not '}found for ${orderId}`);
   return getContext({
     orderId,

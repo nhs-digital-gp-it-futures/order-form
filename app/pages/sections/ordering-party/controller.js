@@ -3,21 +3,19 @@ import { getContext, getErrorContext } from './contextCreator';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 
-const formatPutData = data => ({
-  organisation: {
-    name: data.name ? data.name.trim() : null,
-    odsCode: data.odsCode ? data.odsCode.trim() : null,
-    address: {
-      line1: data.line1 ? data.line1.trim() : null,
-      line2: data.line2 ? data.line2.trim() : null,
-      line3: data.line3 ? data.line3.trim() : null,
-      line4: data.line4 ? data.line4.trim() : null,
-      line5: data.line5 ? data.line5.trim() : null,
-      town: data.town ? data.town.trim() : null,
-      county: data.county ? data.county.trim() : null,
-      postcode: data.postcode ? data.postcode.trim() : null,
-      country: data.country ? data.country.trim() : null,
-    },
+const formatFormData = data => ({
+  name: data.name ? data.name.trim() : null,
+  odsCode: data.odsCode ? data.odsCode.trim() : null,
+  address: {
+    line1: data.line1 ? data.line1.trim() : null,
+    line2: data.line2 ? data.line2.trim() : null,
+    line3: data.line3 ? data.line3.trim() : null,
+    line4: data.line4 ? data.line4.trim() : null,
+    line5: data.line5 ? data.line5.trim() : null,
+    town: data.town ? data.town.trim() : null,
+    county: data.county ? data.county.trim() : null,
+    postcode: data.postcode ? data.postcode.trim() : null,
+    country: data.country ? data.country.trim() : null,
   },
   primaryContact: {
     firstName: data.firstName ? data.firstName.trim() : null,
@@ -30,12 +28,11 @@ const formatPutData = data => ({
 export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessToken }) => {
   const callOffOrgDataEndpoint = getEndpoint({ endpointLocator: 'getCallOffOrderingParty', options: { orderId } });
   const callOffOrgData = await getData({ endpoint: callOffOrgDataEndpoint, accessToken, logger });
-  if (callOffOrgData.organisation) {
+  if (callOffOrgData && callOffOrgData.name) {
     logger.info(`Call off ordering party found in ORDAPI for ${orderId}`);
     return getContext({
       orderId,
-      orgData: callOffOrgData.organisation,
-      contactData: callOffOrgData.primaryContact,
+      orgData: callOffOrgData,
     });
   }
   logger.info(`No call off ordering party found in ORDAPI for ${orderId}.`);
@@ -53,13 +50,22 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
   }
 };
 
-export const getCallOffOrderingPartyErrorContext = async params => getErrorContext(params);
+export const getCallOffOrderingPartyErrorContext = async (params) => {
+  const formattedData = formatFormData(params.data);
+
+  const updatedParams = {
+    ...params,
+    data: formattedData,
+  };
+
+  return getErrorContext(updatedParams);
+};
 
 export const putCallOffOrderingParty = async ({
   orderId, data, accessToken,
 }) => {
   const endpoint = getEndpoint({ endpointLocator: 'putOrderingParty', options: { orderId } });
-  const body = formatPutData(data);
+  const body = formatFormData(data);
   try {
     await putData({
       endpoint,
@@ -73,7 +79,7 @@ export const putCallOffOrderingParty = async ({
     if (err.response.status === 400 && err.response.data && err.response.data.errors) {
       return err.response.data;
     }
-    logger.error('Error updating call-off-ordering-party for order');
+    logger.error('Error updating ordering-party for order');
     throw new Error();
   }
 };

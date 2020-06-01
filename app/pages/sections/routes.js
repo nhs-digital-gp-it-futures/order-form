@@ -4,7 +4,7 @@ import config from '../../config';
 import { withCatch, extractAccessToken } from '../../helpers/routerHelper';
 import {
   getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext, putCallOffOrderingParty,
-} from './call-off-ordering-party/controller';
+} from './ordering-party/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './description/controller';
 import { getCommencementDateContext, putCommencementDate, getCommencementDateErrorContext } from './commencement-date/controller';
 import { supplierRoutes } from './supplier/routes';
@@ -39,15 +39,15 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     return res.render('pages/sections/description/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.get('/call-off-ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const orgId = req.user.primaryOrganisationId;
     const context = await getCallOffOrderingPartyContext({ orderId, orgId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
-    logger.info(`navigating to order ${orderId} call-off-ordering-party page`);
-    res.render('pages/sections/call-off-ordering-party/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    logger.info(`navigating to order ${orderId} ordering-party page`);
+    res.render('pages/sections/ordering-party/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/call-off-ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.post('/ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const response = await putCallOffOrderingParty({
       orderId,
@@ -61,7 +61,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       orderId,
       data: req.body,
     });
-    return res.render('pages/sections/call-off-ordering-party/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/ordering-party/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.use('/supplier', supplierRoutes(authProvider, addContext, sessionManager));

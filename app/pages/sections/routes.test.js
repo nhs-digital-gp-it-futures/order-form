@@ -13,7 +13,7 @@ import { App } from '../../app';
 import { routes } from '../../routes';
 import { baseUrl } from '../../config';
 import * as descriptionController from './description/controller';
-import * as orderingPartyController from './call-off-ordering-party/controller';
+import * as orderingPartyController from './ordering-party/controller';
 import * as commencementDateController from './commencement-date/controller';
 
 jest.mock('../../logger');
@@ -181,8 +181,8 @@ describe('section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/call-off-ordering-party', () => {
-    const path = '/organisation/some-order-id/call-off-ordering-party';
+  describe('GET /organisation/:orderId/ordering-party', () => {
+    const path = '/organisation/some-order-id/ordering-party';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -205,13 +205,13 @@ describe('section routes', () => {
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text.includes('data-test-id="call-off-ordering-party-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="ordering-party-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       }));
   });
 
-  describe('POST /organisation/neworder/call-off-ordering-party', () => {
-    const path = '/organisation/order-id/call-off-ordering-party';
+  describe('POST /organisation/neworder/ordering-party', () => {
+    const path = '/organisation/order-id/ordering-party';
 
     afterEach(() => {
       orderingPartyController.putCallOffOrderingParty.mockReset();
@@ -291,7 +291,7 @@ describe('section routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('data-test-id="call-off-ordering-party-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="ordering-party-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
           orderingPartyController.getCallOffOrderingPartyErrorContext.mockReset();

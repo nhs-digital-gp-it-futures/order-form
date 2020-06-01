@@ -2,9 +2,9 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
-import { orderApiUrl } from '../../../config';
+import { orderApiUrl, organisationApiUrl } from '../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/call-off-ordering-party';
+const pageUrl = 'http://localhost:1234/organisation/order-id/ordering-party';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -14,33 +14,63 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const mockData = {
-  organisation: {
-    name: 'Hampshire CC',
-    odsCode: 'AB3',
-    address: {
-      line1: 'line 1',
-      line2: 'line 2',
-      line3: 'line 3',
-      line4: null,
-      line5: 'line 5',
-      town: 'townville',
-      county: 'countyshire',
-      postcode: 'HA3 PSH',
-      country: 'UK',
-    },
+const mockOrgData = {
+  name: 'Org name',
+  odsCode: 'AB3',
+  address: {
+    line1: 'line 1',
+    line2: 'line 2',
+    line3: 'line 3',
+    line4: null,
+    line5: 'line 5',
+    town: 'townville',
+    county: 'countyshire',
+    postcode: 'P05 COD',
+    country: 'UK',
   },
 };
 
-const mocks = () => {
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/ordering-party')
-    .reply(200, mockData);
+const mockDataFromOrdapi = {
+  ...mockOrgData,
+  primaryContact: {
+    firstName: 'first',
+    lastName: 'last',
+    telephoneNumber: '0777',
+    emailAddress: 'first@last.com',
+  },
 };
 
-const pageSetup = async (t, withAuth = false) => {
+const mockDataFromOapi = {
+  name: 'Org name from oapi',
+  odsCode: 'AB5',
+  address: {
+    line1: 'address 1',
+    line2: 'address 2',
+    line3: null,
+    line4: 'address 4',
+    line5: 'address 5',
+    town: 'towntown',
+    county: 'shireshire',
+    postcode: 'OT3 RPO',
+    country: 'SCOTLAND',
+  },
+  primaryContact: {
+    firstName: 'first name',
+    lastName: 'last name',
+    telephoneNumber: '077744',
+    emailAddress: 'name@mname.com',
+  },
+};
+
+const mocks = (data) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/ordering-party')
+    .reply(200, data);
+};
+
+const pageSetup = async (t, withAuth = false, data = mockDataFromOrdapi) => {
   if (withAuth) {
-    mocks();
+    mocks(data);
     await setCookies();
   }
 };
@@ -68,7 +98,7 @@ const putOrderingPartyErrorResponse = {
   ],
 };
 
-fixture('Call-off-ordering-party page')
+fixture('ordering-party page')
   .page('http://localhost:1234/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -91,10 +121,10 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render call-off-ordering-party page', async (t) => {
+test('should render ordering-party page', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
-  const page = Selector('[data-test-id="call-off-ordering-party-page"]');
+  const page = Selector('[data-test-id="ordering-party-page"]');
 
   await t
     .expect(page.exists).ok();
@@ -116,7 +146,7 @@ test('should render the title', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const title = Selector('h1[data-test-id="call-off-ordering-party-page-title"]');
+  const title = Selector('h1[data-test-id="ordering-party-page-title"]');
 
   await t
     .expect(title.exists).ok()
@@ -127,14 +157,14 @@ test('should render the description', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="call-off-ordering-party-page-description"]');
+  const description = Selector('h2[data-test-id="ordering-party-page-description"]');
 
   await t
     .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
-test('should render organisation name', async (t) => {
+test('should render organisation name with data from ORDAPI', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -145,10 +175,28 @@ test('should render organisation name', async (t) => {
     .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.orgNameHeading)
     .expect(text.exists).ok()
-    .expect(await extractInnerText(text)).eql(mockData.organisation.name);
+    .expect(await extractInnerText(text)).eql(mockDataFromOrdapi.name);
 });
 
-test('should render organisation ods code', async (t) => {
+test('should render organisation name with data from OAPI', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, mockDataFromOapi);
+
+  await pageSetup(t, true, {});
+  await t.navigateTo(pageUrl);
+
+  const heading = Selector('h3[data-test-id="organisation-name-heading"]');
+  const text = Selector('div[data-test-id="organisation-name"]');
+
+  await t
+    .expect(heading.exists).ok()
+    .expect(await extractInnerText(heading)).eql(content.orgNameHeading)
+    .expect(text.exists).ok()
+    .expect(await extractInnerText(text)).eql(mockDataFromOapi.name);
+});
+
+test('should render organisation ods code with data from ORDAPI', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -159,10 +207,28 @@ test('should render organisation ods code', async (t) => {
     .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.odsCodeHeading)
     .expect(text.exists).ok()
-    .expect(await extractInnerText(text)).eql(mockData.organisation.odsCode);
+    .expect(await extractInnerText(text)).eql(mockDataFromOrdapi.odsCode);
 });
 
-test('should render organisation address', async (t) => {
+test('should render organisation ods code with data from OAPI', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, mockDataFromOapi);
+
+  await pageSetup(t, true, {});
+  await t.navigateTo(pageUrl);
+
+  const heading = Selector('h3[data-test-id="organisation-ods-code-heading"]');
+  const text = Selector('div[data-test-id="organisation-ods-code"]');
+
+  await t
+    .expect(heading.exists).ok()
+    .expect(await extractInnerText(heading)).eql(content.odsCodeHeading)
+    .expect(text.exists).ok()
+    .expect(await extractInnerText(text)).eql(mockDataFromOapi.odsCode);
+});
+
+test('should render organisation address with data from ORDAPI', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -177,28 +243,69 @@ test('should render organisation address', async (t) => {
   const addressTextPostcode = Selector('[data-test-id="organisation-address-postcode"]');
   const addressTextCountry = Selector('[data-test-id="organisation-address-country"]');
 
+  await t
+    .expect(heading.exists).ok()
+    .expect(await extractInnerText(heading)).eql(content.orgAddressHeading)
+    .expect(addressTextLine1.exists).ok()
+    .expect(await extractInnerText(addressTextLine1)).eql(mockDataFromOrdapi.address.line1)
+    .expect(addressTextLine2.exists).ok()
+    .expect(await extractInnerText(addressTextLine2)).eql(mockDataFromOrdapi.address.line2)
+    .expect(addressTextLine3.exists).ok()
+    .expect(await extractInnerText(addressTextLine3)).eql(mockDataFromOrdapi.address.line3)
+    .expect(addressTextLine4.exists).ok()
+    .expect(await extractInnerText(addressTextLine4)).eql('')
+    .expect(addressTextLine5.exists).ok()
+    .expect(await extractInnerText(addressTextLine5)).eql(mockDataFromOrdapi.address.line5)
+    .expect(addressTextTown.exists).ok()
+    .expect(await extractInnerText(addressTextTown)).eql(mockDataFromOrdapi.address.town)
+    .expect(addressTextCounty.exists).ok()
+    .expect(await extractInnerText(addressTextCounty)).eql(mockDataFromOrdapi.address.county)
+    .expect(addressTextPostcode.exists).ok()
+    .expect(await extractInnerText(addressTextPostcode)).eql(mockDataFromOrdapi.address.postcode)
+    .expect(addressTextCountry.exists).ok()
+    .expect(await extractInnerText(addressTextCountry)).eql(mockDataFromOrdapi.address.country);
+});
+
+test('should render organisation address with data from OAPI', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, mockDataFromOapi);
+
+  await pageSetup(t, true, {});
+  await t.navigateTo(pageUrl);
+
+  const heading = Selector('h3[data-test-id="organisation-address-heading"]');
+  const addressTextLine1 = Selector('[data-test-id="organisation-address-1"]');
+  const addressTextLine2 = Selector('[data-test-id="organisation-address-2"]');
+  const addressTextLine3 = Selector('[data-test-id="organisation-address-3"]');
+  const addressTextLine4 = Selector('[data-test-id="organisation-address-4"]');
+  const addressTextLine5 = Selector('[data-test-id="organisation-address-5"]');
+  const addressTextTown = Selector('[data-test-id="organisation-address-town"]');
+  const addressTextCounty = Selector('[data-test-id="organisation-address-county"]');
+  const addressTextPostcode = Selector('[data-test-id="organisation-address-postcode"]');
+  const addressTextCountry = Selector('[data-test-id="organisation-address-country"]');
 
   await t
     .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.orgAddressHeading)
     .expect(addressTextLine1.exists).ok()
-    .expect(await extractInnerText(addressTextLine1)).eql(mockData.organisation.address.line1)
+    .expect(await extractInnerText(addressTextLine1)).eql(mockDataFromOapi.address.line1)
     .expect(addressTextLine2.exists).ok()
-    .expect(await extractInnerText(addressTextLine2)).eql(mockData.organisation.address.line2)
+    .expect(await extractInnerText(addressTextLine2)).eql(mockDataFromOapi.address.line2)
     .expect(addressTextLine3.exists).ok()
-    .expect(await extractInnerText(addressTextLine3)).eql(mockData.organisation.address.line3)
+    .expect(await extractInnerText(addressTextLine3)).eql('')
     .expect(addressTextLine4.exists).ok()
-    .expect(await extractInnerText(addressTextLine4)).eql('')
+    .expect(await extractInnerText(addressTextLine4)).eql(mockDataFromOapi.address.line4)
     .expect(addressTextLine5.exists).ok()
-    .expect(await extractInnerText(addressTextLine5)).eql(mockData.organisation.address.line5)
+    .expect(await extractInnerText(addressTextLine5)).eql(mockDataFromOapi.address.line5)
     .expect(addressTextTown.exists).ok()
-    .expect(await extractInnerText(addressTextTown)).eql(mockData.organisation.address.town)
+    .expect(await extractInnerText(addressTextTown)).eql(mockDataFromOapi.address.town)
     .expect(addressTextCounty.exists).ok()
-    .expect(await extractInnerText(addressTextCounty)).eql(mockData.organisation.address.county)
+    .expect(await extractInnerText(addressTextCounty)).eql(mockDataFromOapi.address.county)
     .expect(addressTextPostcode.exists).ok()
-    .expect(await extractInnerText(addressTextPostcode)).eql(mockData.organisation.address.postcode)
+    .expect(await extractInnerText(addressTextPostcode)).eql(mockDataFromOapi.address.postcode)
     .expect(addressTextCountry.exists).ok()
-    .expect(await extractInnerText(addressTextCountry)).eql(mockData.organisation.address.country);
+    .expect(await extractInnerText(addressTextCountry)).eql(mockDataFromOapi.address.country);
 });
 
 test('should render a text field for each question', async (t) => {
@@ -240,6 +347,42 @@ test('should render a text field for each question', async (t) => {
     .expect(await extractInnerText(phoneNumberLabel)).eql(content.questions[3].mainAdvice)
     .expect(phoneNumber.find('input').count).eql(1)
     .expect(await extractInnerText(phoneNumberFooterText)).eql(content.questions[3].footerAdvice);
+});
+
+test('should render the primary contact details form with populated data from ORDAPI', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const firstName = Selector('[data-test-id="question-firstName"]');
+  const lastName = Selector('[data-test-id="question-lastName"]');
+  const emailAddress = Selector('[data-test-id="question-emailAddress"]');
+  const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
+
+  await t
+    .expect(firstName.find('input').value).eql(mockDataFromOrdapi.primaryContact.firstName)
+    .expect(lastName.find('input').value).eql(mockDataFromOrdapi.primaryContact.lastName)
+    .expect(emailAddress.find('input').value).eql(mockDataFromOrdapi.primaryContact.emailAddress)
+    .expect(phoneNumber.find('input').value).eql(mockDataFromOrdapi.primaryContact.telephoneNumber);
+});
+
+test('should render the primary contact details form with populated data from OAPI', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, mockDataFromOapi);
+
+  await pageSetup(t, true, {});
+  await t.navigateTo(pageUrl);
+
+  const firstName = Selector('[data-test-id="question-firstName"]');
+  const lastName = Selector('[data-test-id="question-lastName"]');
+  const emailAddress = Selector('[data-test-id="question-emailAddress"]');
+  const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
+
+  await t
+    .expect(firstName.find('input').value).eql(mockDataFromOapi.primaryContact.firstName)
+    .expect(lastName.find('input').value).eql(mockDataFromOapi.primaryContact.lastName)
+    .expect(emailAddress.find('input').value).eql(mockDataFromOapi.primaryContact.emailAddress)
+    .expect(phoneNumber.find('input').value).eql(mockDataFromOapi.primaryContact.telephoneNumber);
 });
 
 test('should render save button', async (t) => {
@@ -293,6 +436,54 @@ test('should show the error summary when there are validation errors', async (t)
     .expect(await extractInnerText(errorSummary.find('li a').nth(3))).eql('Telephone number must be 35 characters or fewer');
 });
 
+test('should ensure details are repopulated when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/ordering-party')
+    .reply(400, putOrderingPartyErrorResponse);
+
+  await pageSetup(t, true, mockOrgData);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const addressTextLine1 = Selector('[data-test-id="organisation-address-1"]');
+  const addressTextLine2 = Selector('[data-test-id="organisation-address-2"]');
+  const addressTextLine3 = Selector('[data-test-id="organisation-address-3"]');
+  const addressTextLine4 = Selector('[data-test-id="organisation-address-4"]');
+  const addressTextLine5 = Selector('[data-test-id="organisation-address-5"]');
+  const addressTextTown = Selector('[data-test-id="organisation-address-town"]');
+  const addressTextCounty = Selector('[data-test-id="organisation-address-county"]');
+  const addressTextPostcode = Selector('[data-test-id="organisation-address-postcode"]');
+  const addressTextCountry = Selector('[data-test-id="organisation-address-country"]');
+  const firstName = Selector('[data-test-id="question-firstName"]');
+  const lastName = Selector('[data-test-id="question-lastName"]');
+  const emailAddress = Selector('[data-test-id="question-emailAddress"]');
+  const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
+
+  const typedText = 'A really long string for';
+
+  await t
+    .typeText(firstName.find('input'), `${typedText} firstName`)
+    .typeText(lastName.find('input'), `${typedText} lastName`)
+    .typeText(emailAddress.find('input'), `${typedText} emailAddress`)
+    .typeText(phoneNumber.find('input'), `${typedText} phoneNumber`)
+    .click(saveButton);
+
+  await t
+    .expect(await extractInnerText(addressTextLine1)).eql(mockDataFromOrdapi.address.line1)
+    .expect(await extractInnerText(addressTextLine2)).eql(mockDataFromOrdapi.address.line2)
+    .expect(await extractInnerText(addressTextLine3)).eql(mockDataFromOrdapi.address.line3)
+    .expect(await extractInnerText(addressTextLine4)).eql('')
+    .expect(await extractInnerText(addressTextLine5)).eql(mockDataFromOrdapi.address.line5)
+    .expect(await extractInnerText(addressTextTown)).eql(mockDataFromOrdapi.address.town)
+    .expect(await extractInnerText(addressTextCounty)).eql(mockDataFromOrdapi.address.county)
+    .expect(await extractInnerText(addressTextPostcode)).eql(mockDataFromOrdapi.address.postcode)
+    .expect(await extractInnerText(addressTextCountry)).eql(mockDataFromOrdapi.address.country)
+    .expect(firstName.find('input').value).eql(`${typedText} firstName`)
+    .expect(lastName.find('input').value).eql(`${typedText} lastName`)
+    .expect(emailAddress.find('input').value).eql(`${typedText} emailAddress`)
+    .expect(phoneNumber.find('input').value).eql(`${typedText} phoneNumber`);
+});
+
 test('should show text fields as errors with error message when there are validation errors', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-id/sections/ordering-party')
@@ -301,7 +492,7 @@ test('should show text fields as errors with error message when there are valida
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const page = Selector('[data-test-id="call-off-ordering-party-page"]');
+  const page = Selector('[data-test-id="ordering-party-page"]');
   const saveButton = Selector('[data-test-id="save-button"] button');
   const firstNameField = page.find('[data-test-id="question-firstName"]');
   const lastNameField = page.find('[data-test-id="question-lastName"]');

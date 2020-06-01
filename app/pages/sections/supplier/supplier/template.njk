@@ -3,6 +3,7 @@
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/inset-text/macro.njk' import insetText %}
 {% from 'components/text-field/macro.njk' import textField %}
+{% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="supplier-page">
@@ -15,6 +16,12 @@
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-two-thirds">
+        {% if (errors.length > 0) %}
+          {{ bcErrorSummary({
+            errors: errors
+          }) }}
+        {% endif %}
+
         <h1 data-test-id="supplier-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
         <h2 data-test-id="supplier-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
         
@@ -31,6 +38,7 @@
         <div class="nhsuk-grid-column-two-thirds">   
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
           <h3 data-test-id="supplier-name-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ supplierNameHeading }}</h3>
+          <input type="hidden" name="supplierId" value="{{ supplierData.supplierId }}" />
           <div data-test-id="supplier-name" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ supplierData.name }}</div>
           <input type="hidden" name="name" value="{{ supplierData.name }}" />
 
@@ -53,6 +61,12 @@
           <input type="hidden" name="postcode" value="{{ supplierData.address.postcode }}" />
           <div data-test-id="supplier-address-country" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ supplierData.address.country }}</div>
           <input type="hidden" name="country" value="{{ supplierData.address.country }}" />
+
+          {% if showSearchAgainLink %}
+            <div data-test-id="search-again-link"> 
+              <a href={{ searchAgainLinkHref }}>{{ searchAgainLinkText }}</a>
+            </div>
+          {% endif %}
         </div>
       </div>
 

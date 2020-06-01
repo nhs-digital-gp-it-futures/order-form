@@ -47,6 +47,9 @@ export const routes = (authProvider, sessionManager) => {
   router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
+
+    sessionManager.clearFromSession({ req, keys: ['selectedSupplier', 'suppliersFound'] });
+
     const context = await getTaskListPageContext({ accessToken, orderId });
     logger.info(`navigating to order ${orderId} task list page`);
     res.render('pages/task-list/template.njk', addContext({ context, user: req.user }));

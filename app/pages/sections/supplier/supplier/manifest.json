@@ -2,9 +2,10 @@
   "backLinkText": "Go back",
   "title": "Supplier information for",
   "description": "Check the supplier information and edit details for the primary contact for this order.",
-  "insetAdvice": "Once saved, you'll not be able to change the supplier for this order",
+  "insetAdvice": "Once saved, you'll not be able to change the supplier for this order. To change the supplier, you'd need to start a new order.",
   "supplierNameHeading": "Supplier name",
   "supplierAddressHeading": "Registered address",
+  "searchAgainLinkText": "Search again",
   "primaryContactHeading": "Primary contact’s details",
   "questions": [{
     "id": "firstName",
@@ -23,5 +24,16 @@
     "mainAdvice": "Telephone number",
     "footerAdvice": "(Maximum character length 35)"
   }],
+  "errorMessages": {
+    "FirstNameRequired": "Enter a first name",
+    "FirstNameTooLong": "First name must be 100 characters or fewer",
+    "LastNameRequired": "Enter a last name",
+    "LastNameTooLong": "Last name must be 100 characters or fewer",
+    "EmailAddressRequired": "Enter an email address",
+    "EmailAddressTooLong": "Email address must be 256 characters or fewer",
+    "EmailAddressInvalidFormat": "Enter an email address in the correct format, like name@example.com",
+    "TelephoneNumberRequired": "Enter a telephone number",
+    "TelephoneNumberTooLong": "Telephone number must be 35 characters or fewer"
+  },
   "saveButtonText": "Save and return"
 }

@@ -1,6 +1,11 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../../config';
+import * as errorContext from '../../getSectionErrorContext';
+
+jest.mock('../../getSectionErrorContext', () => ({
+  getSectionErrorContext: jest.fn(),
+}));
 
 describe('supplier contextCreator', () => {
   describe('getContext', () => {
@@ -9,10 +14,16 @@ describe('supplier contextCreator', () => {
       expect(context.backLinkText).toEqual(manifest.backLinkText);
     });
 
-    it('should construct the backLinkHref', () => {
+    it('should construct the backLinkHref if hasSavedData is false', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/supplier/search/select`);
+    });
+
+    it('should construct the correct backLinkHref if hasSavedData is true', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId, hasSavedData: true });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -36,7 +47,36 @@ describe('supplier contextCreator', () => {
       expect(context.supplierData).toEqual(supplierData);
     });
 
-    describe('questions', () => {
+    it('should return the searchAgainLinkText', () => {
+      const context = getContext({ orderId: 'order-1' });
+      expect(context.searchAgainLinkText).toEqual(manifest.searchAgainLinkText);
+    });
+
+    it('should construct the searchAgainLinkHref if hasSavedData is false', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId });
+      expect(context.searchAgainLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/supplier/search`);
+    });
+
+    it('should not construct the searchAgainLinkHref if hasSavedData is true', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId, hasSavedData: true });
+      expect(context.searchAgainLinkHref).toEqual(undefined);
+    });
+
+    it('should add showSearchAgainLink is true if hasSavedData is false', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId });
+      expect(context.showSearchAgainLink).toEqual(true);
+    });
+
+    it('should add showSearchAgainLink is false if hasSavedData is true', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId, hasSavedData: true });
+      expect(context.showSearchAgainLink).toEqual(false);
+    });
+
+    describe('questions with no data populated', () => {
       it('should return the firstName question', () => {
         const context = getContext({ orderId: 'order-1' });
         expect(context.questions[0]).toEqual(manifest.questions[0]);
@@ -58,9 +98,69 @@ describe('supplier contextCreator', () => {
       });
     });
 
+    describe('questions with data populated', () => {
+      const supplierData = {
+        primaryContact: {
+          firstName: 'Bob',
+          lastName: 'Smith',
+          emailAddress: 'bob.smith@email.com',
+          telephoneNumber: '01234567890',
+        },
+      };
+
+      it('should return the data populated for firstName', () => {
+        const context = getContext({ orderId: 'order-1', supplierData });
+        expect(context.questions[0].data).toEqual(supplierData.primaryContact.firstName);
+      });
+
+      it('should return the data populated for lastName', () => {
+        const context = getContext({ orderId: 'order-1', supplierData });
+        expect(context.questions[1].data).toEqual(supplierData.primaryContact.lastName);
+      });
+
+      it('should return the data populated for emailAddress', () => {
+        const context = getContext({ orderId: 'order-1', supplierData });
+        expect(context.questions[2].data).toEqual(supplierData.primaryContact.emailAddress);
+      });
+
+      it('should return the data populated for telephoneNumber', () => {
+        const context = getContext({ orderId: 'order-1', supplierData });
+        expect(context.questions[3].data).toEqual(supplierData.primaryContact.telephoneNumber);
+      });
+    });
+
     it('should return the saveButtonText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.saveButtonText).toEqual(manifest.saveButtonText);
+    });
+  });
+
+  describe('getErrorContext', () => {
+    afterEach(() => {
+      errorContext.getSectionErrorContext.mockReset();
+    });
+
+    it('should call getSectionErrorContext with correct params', () => {
+      errorContext.getSectionErrorContext.mockResolvedValueOnce();
+
+      const mockParams = {
+        orderId: 'order-id',
+        validationErrors: [],
+      };
+
+      const updatedManifest = {
+        ...manifest,
+        title: 'Supplier information for order-id',
+        backLinkHref: '/order/organisation/order-id/supplier/search/select',
+        searchAgainLinkHref: '/order/organisation/order-id/supplier/search',
+        showSearchAgainLink: true,
+      };
+
+      getErrorContext(mockParams);
+      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
+      expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({
+        ...mockParams, manifest: updatedManifest,
+      });
     });
   });
 });
