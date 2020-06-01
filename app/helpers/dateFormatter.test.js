@@ -20,8 +20,8 @@ describe('formatDate', () => {
 
   describe('formatCommencementDate', () => {
     it('returns correctly formatted date when valid string is passed in', () => {
-      expect(formatCommencementDate('2020-05-06T11:29:52.4965647Z')).toEqual('06 05 2020');
-      expect(formatCommencementDate('2025-12-31T11:29:52.4965647Z')).toEqual('31 12 2025');
+      expect(formatCommencementDate('2020-05-06T11:29:52.4965647Z')).toEqual(['06', '05', '2020']);
+      expect(formatCommencementDate('2025-12-31T11:29:52.4965647Z')).toEqual(['31', '12', '2025']);
     });
 
     it('returns empty string when invalid string is passed in', () => {

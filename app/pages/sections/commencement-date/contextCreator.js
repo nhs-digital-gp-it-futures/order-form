@@ -4,7 +4,7 @@ import { formatCommencementDate } from '../../../helpers/dateFormatter';
 
 const addDataToManifest = (commencementDate) => {
   if (commencementDate) {
-    const [day, month, year] = formatCommencementDate(commencementDate).split(' ');
+    const [day, month, year] = formatCommencementDate(commencementDate);
     return {
       ...manifest,
       questions: [{
