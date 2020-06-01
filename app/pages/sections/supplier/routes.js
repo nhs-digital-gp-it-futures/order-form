@@ -60,7 +60,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
 
     const context = await getSupplierSearchPageContext({ orderId });
     logger.info(`navigating to order ${orderId} suppliers search page`);
-    res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
