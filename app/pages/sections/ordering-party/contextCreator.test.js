@@ -41,7 +41,7 @@ const mockValidationErrors = [{
   id: 'TelephoneNumberTooLong',
 }];
 
-describe('call-off-ordering-party contextCreator', () => {
+describe('ordering-party contextCreator', () => {
   describe('getContext', () => {
     it('should return the contents of manifest', () => {
       const context = getContext({});
