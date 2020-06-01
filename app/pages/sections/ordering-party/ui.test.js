@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
 import { orderApiUrl, organisationApiUrl } from '../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/call-off-ordering-party';
+const pageUrl = 'http://localhost:1234/organisation/order-id/ordering-party';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -98,7 +98,7 @@ const putOrderingPartyErrorResponse = {
   ],
 };
 
-fixture('Call-off-ordering-party page')
+fixture('ordering-party page')
   .page('http://localhost:1234/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -121,10 +121,10 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render call-off-ordering-party page', async (t) => {
+test('should render ordering-party page', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
-  const page = Selector('[data-test-id="call-off-ordering-party-page"]');
+  const page = Selector('[data-test-id="ordering-party-page"]');
 
   await t
     .expect(page.exists).ok();
@@ -146,7 +146,7 @@ test('should render the title', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const title = Selector('h1[data-test-id="call-off-ordering-party-page-title"]');
+  const title = Selector('h1[data-test-id="ordering-party-page-title"]');
 
   await t
     .expect(title.exists).ok()
@@ -157,7 +157,7 @@ test('should render the description', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="call-off-ordering-party-page-description"]');
+  const description = Selector('h2[data-test-id="ordering-party-page-description"]');
 
   await t
     .expect(description.exists).ok()
@@ -492,7 +492,7 @@ test('should show text fields as errors with error message when there are valida
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const page = Selector('[data-test-id="call-off-ordering-party-page"]');
+  const page = Selector('[data-test-id="ordering-party-page"]');
   const saveButton = Selector('[data-test-id="save-button"] button');
   const firstNameField = page.find('[data-test-id="question-firstName"]');
   const lastNameField = page.find('[data-test-id="question-lastName"]');
