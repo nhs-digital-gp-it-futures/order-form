@@ -36,7 +36,7 @@ module.exports = {
   oidcBaseUri: process.env.OIDC_BASE_URI || 'http://localhost:5102/identity',
 
   // The client id to be sent to identity service
-  oidcClientId: process.env.OIDC_CLIENT_ID || 'SampleClient',
+  oidcClientId: process.env.OIDC_CLIENT_ID || 'NodeClient',
 
   // The secret need to decode JWT tokens
   oidcClientSecret: process.env.OIDC_CLIENT_SECRET,
