@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
+import { orderApiUrl } from '../../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/order-1/supplier/search/select';
 
@@ -22,11 +23,24 @@ const setSessionState = ClientFunction(() => {
   document.cookie = `suppliersFound=${cookieValue}`;
 });
 
-const pageSetup = async (t, withAuth = false, withSessionState = false) => {
-  if (withAuth) await setCookies();
-  if (withSessionState) await setSessionState();
+const mocks = (data) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, data);
 };
 
+const pageSetup = async (t, withAuth = false, withSessionState = false, data = {}) => {
+  if (withAuth) {
+    mocks(data);
+    await setCookies();
+  }
+  if (withSessionState) {
+    mocks(data);
+    await setSessionState();
+  }
+};
+
+const orderData = { name: 'a lovely order' };
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -125,7 +139,6 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-
 test('should redirect back to /organisation/order-1/supplier/search no suppliers are returned', async (t) => {
   await pageSetup(t, true, false);
   await t.navigateTo(pageUrl);
@@ -184,4 +197,16 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#selectSupplier`);
+});
+
+test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, orderData);
+
+  await pageSetup(t, true, orderData);
+  await t.navigateTo(pageUrl);
+
+  await t.debug()
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier');
 });
