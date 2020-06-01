@@ -1,9 +1,10 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../config';
+import { formatCommencementDate } from '../../../helpers/dateFormatter';
 
 const addDataToManifest = (commencementDate) => {
   if (commencementDate) {
-    const [year, month, day] = commencementDate.split('-');
+    const [day, month, year] = formatCommencementDate(commencementDate).split(' ');
     return {
       ...manifest,
       questions: [{
