@@ -129,7 +129,7 @@ test('should render Supplier page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1/supplier/search/select when click on backlink if data comes from bapi', async (t) => {
+test('should navigate to /organisation/order-1/supplier/search/select when click on backlink if data comes from BAPI', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -145,7 +145,7 @@ test('should navigate to /organisation/order-1/supplier/search/select when click
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search/select');
 });
 
-test('should navigate to /organisation/order-1 when click on backlink if data comes from ordapi', async (t) => {
+test('should navigate to /organisation/order-1 when click on backlink if data comes from ORDAPI', async (t) => {
   await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
@@ -190,7 +190,7 @@ test('should render the inset advice', async (t) => {
     .expect(await extractInnerText(insetAdvice)).contains(content.insetAdvice);
 });
 
-test('should render supplier name with data from ordapi', async (t) => {
+test('should render supplier name with data from ORDAPI', async (t) => {
   await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
@@ -204,7 +204,7 @@ test('should render supplier name with data from ordapi', async (t) => {
     .expect(await extractInnerText(text)).eql(supplierDataFromOrdapi.name);
 });
 
-test('should render supplier name with data from bapi when no data from orapi and supplierId provided', async (t) => {
+test('should render supplier name with data from BAPI when no data from ORDAPI and supplierId provided', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -222,7 +222,7 @@ test('should render supplier name with data from bapi when no data from orapi an
     .expect(await extractInnerText(text)).eql(supplierDataFromBapi.name);
 });
 
-test('should render supplier address name with data from ordapi', async (t) => {
+test('should render supplier address name with data from ORDAPI', async (t) => {
   await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
@@ -260,7 +260,7 @@ test('should render supplier address name with data from ordapi', async (t) => {
     .expect(await extractInnerText(addressTextCountry)).eql(supplierDataFromOrdapi.address.country);
 });
 
-test('should render supplier address name with data from bapi when no data from orapi and supplierId provided', async (t) => {
+test('should render supplier address name with data from BAPI when no data from ORDAPI and supplierId provided', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -365,7 +365,7 @@ test('should render the primary contact details form', async (t) => {
     .expect(await extractInnerText(phoneNumberFooterText)).eql(content.questions[3].footerAdvice);
 });
 
-test('should render the primary contact details form with populated data from ordapi', async (t) => {
+test('should render the primary contact details form with populated data from ORDAPI', async (t) => {
   await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
@@ -381,7 +381,7 @@ test('should render the primary contact details form with populated data from or
     .expect(phoneNumber.find('input').value).eql(supplierDataFromOrdapi.primaryContact.telephoneNumber);
 });
 
-test('should render the primary contact details form with populated data from bapi', async (t) => {
+test('should render the primary contact details form with populated data from BAPI', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -412,7 +412,7 @@ test('should render the "Save and return" button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });
 
-test('should redirect to search if there is no data in ordapi and supplierSelected is not in session', async (t) => {
+test('should redirect to search if there is no data in ORDAPI and supplierSelected is not in session', async (t) => {
   await pageSetup(t, true, false);
   await t.navigateTo(pageUrl);
 
