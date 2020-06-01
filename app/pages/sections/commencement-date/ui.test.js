@@ -170,7 +170,7 @@ test('should render input fields for day, month and year', async (t) => {
 });
 
 test('should populate input fields for day, month and year if data is returned from api', async (t) => {
-  await pageSetup(t, true, { commencementDate: '2020-02-01' });
+  await pageSetup(t, true, { commencementDate: '2020-02-01T00:00:00' });
   await t.navigateTo(pageUrl);
 
   const inputFields = Selector('#commencementDate input:not([name=_csrf])');
