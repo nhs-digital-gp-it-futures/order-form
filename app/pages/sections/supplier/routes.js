@@ -19,6 +19,7 @@ import {
   getSupplierPageErrorContext,
   putSupplier,
 } from './supplier/controller';
+import { checkOrdapiForSupplier } from './controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -54,9 +55,12 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
 
   router.get('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
+
     const context = await getSupplierSearchPageContext({ orderId });
     logger.info(`navigating to order ${orderId} suppliers search page`);
-    res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -96,6 +100,9 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
 
   router.get('/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+
+    if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
 
     const suppliersFound = sessionManager.getFromSession({ req, key: 'suppliersFound' });
     if (suppliersFound) {

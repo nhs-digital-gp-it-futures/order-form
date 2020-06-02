@@ -2,9 +2,9 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
-import { solutionsApiUrl } from '../../../../config';
+import { solutionsApiUrl, orderApiUrl } from '../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-1/supplier/search';
+const pageUrl = 'http://localhost:1234/organisation/order-id/supplier/search';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -14,11 +14,20 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const pageSetup = async (t, withAuth = false) => {
+const mocks = (data) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, data);
+};
+
+const pageSetup = async (t, withAuth = false, data = {}) => {
   if (withAuth) {
+    mocks(data);
     await setCookies();
   }
 };
+
+const orderData = { name: 'a lovely order' };
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -54,7 +63,7 @@ test('should render Supplier search page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
+test('should navigate to /organisation/order-id when click on backLink', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -63,7 +72,7 @@ test('should navigate to /organisation/order-1 when click on backLink', async (t
   await t
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -74,7 +83,7 @@ test('should render the title', async (t) => {
 
   await t
     .expect(title.exists).ok()
-    .expect(await extractInnerText(title)).eql(`${content.title} order-1`);
+    .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
 });
 
 test('should render the description', async (t) => {
@@ -110,7 +119,7 @@ test('should render the Search button', async (t) => {
     .expect(await extractInnerText(searchButton)).eql(content.searchButtonText);
 });
 
-test('should redirect to /organisation/order-1/supplier/search/select when suppliers are returned', async (t) => {
+test('should redirect to /organisation/order-id/supplier/search/select when suppliers are returned', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers?name=some-supp')
     .reply(200, [{}]);
@@ -124,7 +133,7 @@ test('should redirect to /organisation/order-1/supplier/search/select when suppl
   await t
     .typeText(supplierNameInput.find('input'), 'some-supp')
     .click(searchButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search/select');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search/select');
 });
 
 test('should render the error page if no suppliers are found', async (t) => {
@@ -148,7 +157,7 @@ test('should render the error page if no suppliers are found', async (t) => {
   await t
     .expect(backLink.exists).ok()
     .expect(await extractInnerText(backLink)).eql('Go back to search')
-    .expect(backLink.find('a').getAttribute('href')).ok('/order/organisation/order-1/supplier/search')
+    .expect(backLink.find('a').getAttribute('href')).ok('/order/organisation/order-id/supplier/search')
     .expect(errorTitle.exists).ok()
     .expect(await extractInnerText(errorTitle)).eql('No supplier found')
     .expect(errorDescription.exists).ok()
@@ -205,4 +214,12 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#supplierName`);
+});
+
+test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
+  await pageSetup(t, true, orderData);
+  await t.navigateTo(pageUrl);
+
+  await t
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier');
 });
