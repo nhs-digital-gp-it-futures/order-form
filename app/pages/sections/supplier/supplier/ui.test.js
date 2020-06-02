@@ -86,13 +86,14 @@ const supplierErrorResponse = {
 const mocks = (data) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
+    .times(2)
     .reply(200, data);
 };
 
-const pageSetup = async (t, withAuth = false, withSessionState = false, ordapiData = {}) => {
+const pageSetup = async (t, withAuth = false, withSessionState = false, ordapiData) => {
   if (withAuth) await setCookies();
   if (withSessionState) await setSessionState();
-  if (withAuth && withSessionState) mocks(ordapiData);
+  if (withAuth && withSessionState && ordapiData) mocks(ordapiData);
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -130,6 +131,10 @@ test('should render Supplier page', async (t) => {
 });
 
 test('should navigate to /organisation/order-id/supplier/search/select when click on backlink if data comes from BAPI', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -205,6 +210,10 @@ test('should render supplier name with data from ORDAPI', async (t) => {
 });
 
 test('should render supplier name with data from BAPI when no data from ORDAPI and supplierId provided', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -261,6 +270,10 @@ test('should render supplier address name with data from ORDAPI', async (t) => {
 });
 
 test('should render supplier address name with data from BAPI when no data from ORDAPI and supplierId provided', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -303,6 +316,10 @@ test('should render supplier address name with data from BAPI when no data from 
 });
 
 test('should navigate to /organisation/order-id/supplier/search when click on searchAgainLink', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -382,6 +399,10 @@ test('should render the primary contact details form with populated data from OR
 });
 
 test('should render the primary contact details form with populated data from BAPI', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -413,6 +434,10 @@ test('should render the "Save and return" button', async (t) => {
 });
 
 test('should redirect to search if there is no data in ORDAPI and supplierSelected is not in session', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
   await pageSetup(t, true, false);
   await t.navigateTo(pageUrl);
 
@@ -421,9 +446,14 @@ test('should redirect to search if there is no data in ORDAPI and supplierSelect
 });
 
 test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
+
   nock(orderApiUrl)
     .put('/api/v1/orders/order-id/sections/supplier')
     .reply(200, {});
@@ -439,10 +469,62 @@ test('should navigate to task list page if save button is clicked and data is va
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
 
+test('should not show the search again link when there are validation errors and details are provided from ORDAPI', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, supplierDataFromOrdapi);
+
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier')
+    .reply(400, supplierErrorResponse);
+
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const searchAgainLink = Selector('[data-test-id="search-again-link"] a');
+
+  await t
+    .expect(searchAgainLink.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(searchAgainLink.exists).notOk();
+});
+
+test('should redirect back to the /organisation/order-id when clicking the backlink validation errors and details are provided from ORDAPI', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, supplierDataFromOrdapi);
+
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier')
+    .reply(400, supplierErrorResponse);
+
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+
+  await t
+    .click(saveButton);
+
+  await t
+    .click(goBackLink)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+});
+
 test('should show the error summary when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .times(2)
+    .reply(200, {});
+
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
+
   nock(orderApiUrl)
     .put('/api/v1/orders/order-id/sections/supplier')
     .reply(400, supplierErrorResponse);
@@ -467,9 +549,15 @@ test('should show the error summary when there are validation errors', async (t)
 });
 
 test('should ensure details are repopulated when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .times(2)
+    .reply(200, {});
+
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
+
   nock(orderApiUrl)
     .put('/api/v1/orders/order-id/sections/supplier')
     .reply(400, supplierErrorResponse);
@@ -513,9 +601,15 @@ test('should ensure details are repopulated when there are validation errors', a
 });
 
 test('should show text fields as errors with error message when there are validation errors', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .times(2)
+    .reply(200, {});
+
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
+
   nock(orderApiUrl)
     .put('/api/v1/orders/order-id/sections/supplier')
     .reply(400, supplierErrorResponse);
@@ -550,9 +644,15 @@ test('should show text fields as errors with error message when there are valida
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .times(2)
+    .reply(200, {});
+
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
+
   nock(orderApiUrl)
     .put('/api/v1/orders/order-id/sections/supplier')
     .reply(400, supplierErrorResponse);
