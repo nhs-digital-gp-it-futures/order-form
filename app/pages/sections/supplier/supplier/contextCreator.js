@@ -12,7 +12,7 @@ const populateQuestionsWithData = primaryContact => (
   })
 );
 
-export const getContext = ({ orderId, supplierData, hasSavedData = false }) => ({
+export const getContext = ({ orderId, supplierData, hasSavedData }) => ({
   ...manifest,
   questions: supplierData && supplierData.primaryContact
     ? populateQuestionsWithData(supplierData.primaryContact)
@@ -30,6 +30,7 @@ export const getErrorContext = (params) => {
   const updatedManifest = getContext({
     orderId: params.orderId,
     supplierData: params.data,
+    hasSavedData: params.hasSavedData,
   });
 
   return {

@@ -25,18 +25,20 @@ const formatFormData = data => ({
   },
 });
 
-export const getSupplierPageContext = async ({ orderId, supplierId, accessToken }) => {
-  const ordapiSupplierDataEndpoint = getEndpoint({ endpointLocator: 'getOrdapiSupplier', options: { orderId } });
-  const ordapiSupplierData = await getData({
-    endpoint: ordapiSupplierDataEndpoint, accessToken, logger,
-  });
+export const getSupplierPageContext = async ({
+  orderId, supplierId, accessToken, hasSavedData,
+}) => {
+  if (hasSavedData) {
+    const ordapiSupplierDataEndpoint = getEndpoint({ endpointLocator: 'getOrdapiSupplier', options: { orderId } });
+    const ordapiSupplierData = await getData({
+      endpoint: ordapiSupplierDataEndpoint, accessToken, logger,
+    });
 
-  if (ordapiSupplierData && ordapiSupplierData.name) {
     logger.info(`Supplier data found in ORDAPI for ${orderId}`);
     return getContext({
       orderId,
       supplierData: ordapiSupplierData,
-      hasSavedData: true,
+      hasSavedData,
     });
   }
 
