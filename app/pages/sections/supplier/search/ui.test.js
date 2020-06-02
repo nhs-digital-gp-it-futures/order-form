@@ -217,13 +217,9 @@ test('should anchor to the field when clicking on the error link in errorSummary
 });
 
 test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/supplier')
-    .reply(200, orderData);
-
-  await pageSetup(t, true, orderData);
+  await pageSetup(t, true, true, orderData);
   await t.navigateTo(pageUrl);
 
-  await t
+  await t.debug()
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier');
 });

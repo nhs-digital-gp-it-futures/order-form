@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-1/supplier';
+const pageUrl = 'http://localhost:1234/organisation/order-id/supplier';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -85,7 +85,7 @@ const supplierErrorResponse = {
 
 const mocks = (data) => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-1/sections/supplier')
+    .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, data);
 };
 
@@ -129,7 +129,7 @@ test('should render Supplier page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1/supplier/search/select when click on backlink if data comes from BAPI', async (t) => {
+test('should navigate to /organisation/order-id/supplier/search/select when click on backlink if data comes from BAPI', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -142,10 +142,10 @@ test('should navigate to /organisation/order-1/supplier/search/select when click
   await t
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search/select');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search/select');
 });
 
-test('should navigate to /organisation/order-1 when click on backlink if data comes from ORDAPI', async (t) => {
+test('should navigate to /organisation/order-id when click on backlink if data comes from ORDAPI', async (t) => {
   await pageSetup(t, true, true, supplierDataFromOrdapi);
   await t.navigateTo(pageUrl);
 
@@ -154,7 +154,7 @@ test('should navigate to /organisation/order-1 when click on backlink if data co
   await t
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -165,7 +165,7 @@ test('should render the title', async (t) => {
 
   await t
     .expect(title.exists).ok()
-    .expect(await extractInnerText(title)).eql(`${content.title} order-1`);
+    .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
 });
 
 test('should render the description', async (t) => {
@@ -302,7 +302,7 @@ test('should render supplier address name with data from BAPI when no data from 
     .expect(await extractInnerText(addressTextCountry)).eql(supplierDataFromBapi.address.country);
 });
 
-test('should navigate to /organisation/order-1/supplier/search when click on searchAgainLink', async (t) => {
+test('should navigate to /organisation/order-id/supplier/search when click on searchAgainLink', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
@@ -316,7 +316,7 @@ test('should navigate to /organisation/order-1/supplier/search when click on sea
     .expect(searchAgainLink.exists).ok()
     .expect(await extractInnerText(searchAgainLink)).eql(content.searchAgainLinkText)
     .click(searchAgainLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search');
 });
 
 test('should render the primary contact details form', async (t) => {
@@ -417,7 +417,7 @@ test('should redirect to search if there is no data in ORDAPI and supplierSelect
   await t.navigateTo(pageUrl);
 
   await t
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search');
 });
 
 test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
@@ -425,7 +425,7 @@ test('should navigate to task list page if save button is clicked and data is va
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/sections/supplier')
+    .put('/api/v1/orders/order-id/sections/supplier')
     .reply(200, {});
 
   await pageSetup(t, true, true);
@@ -436,7 +436,7 @@ test('should navigate to task list page if save button is clicked and data is va
   await t
     .expect(saveButton.exists).ok()
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
@@ -444,7 +444,7 @@ test('should show the error summary when there are validation errors', async (t)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/sections/supplier')
+    .put('/api/v1/orders/order-id/sections/supplier')
     .reply(400, supplierErrorResponse);
 
   await pageSetup(t, true, true);
@@ -471,7 +471,7 @@ test('should ensure details are repopulated when there are validation errors', a
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/sections/supplier')
+    .put('/api/v1/orders/order-id/sections/supplier')
     .reply(400, supplierErrorResponse);
 
   await pageSetup(t, true, true);
@@ -517,7 +517,7 @@ test('should show text fields as errors with error message when there are valida
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/sections/supplier')
+    .put('/api/v1/orders/order-id/sections/supplier')
     .reply(400, supplierErrorResponse);
 
   await pageSetup(t, true, true);
@@ -554,7 +554,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/sections/supplier')
+    .put('/api/v1/orders/order-id/sections/supplier')
     .reply(400, supplierErrorResponse);
 
   await pageSetup(t, true, true);
