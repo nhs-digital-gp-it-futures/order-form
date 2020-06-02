@@ -57,6 +57,16 @@ describe('supplier section routes', () => {
   describe('GET /organisation/:orderId/supplier', () => {
     const path = '/organisation/some-order-id/supplier';
 
+    beforeEach(() => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockResolvedValue(false);
+    });
+
+    afterEach(() => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockReset();
+    });
+
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
