@@ -14,7 +14,7 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const setSessionState = ClientFunction(() => {
+const suppliersFoundState = ClientFunction(() => {
   const cookieValue = JSON.stringify([
     { supplierId: 'supplier-1', name: 'Supplier 1' },
     { supplierId: 'supplier-2', name: 'Supplier 2' },
@@ -23,18 +23,25 @@ const setSessionState = ClientFunction(() => {
   document.cookie = `suppliersFound=${cookieValue}`;
 });
 
+const selectedSuppliersState = ClientFunction(() => {
+  const cookieValue = 'supplier-2';
+
+  document.cookie = `selectedSupplier=${cookieValue}`;
+});
+
 const mocks = (data) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, data);
 };
 
-const pageSetup = async (t, withAuth = false, withSessionState = false, data = {}) => {
+const pageSetup = async (t, withAuth = false, withSuppliersFoundState = false, withSelectedSuppliersState = false, data) => {
   if (withAuth) {
     mocks(data);
     await setCookies();
   }
-  if (withSessionState) await setSessionState();
+  if (withSuppliersFoundState) await suppliersFoundState();
+  if (withSelectedSuppliersState) await selectedSuppliersState();
 };
 
 const orderData = { name: 'a lovely order' };
@@ -123,6 +130,19 @@ test('should render a selectSupplier question as radio button options', async (t
 
     .expect(selectSupplierRadioOptions.find('input').nth(1).getAttribute('value')).eql('supplier-2')
     .expect(await extractInnerText(selectSupplierRadioOptions.find('label').nth(1))).eql('Supplier 2');
+});
+
+test('should render the radioButton as checked for the selectedSupplier', async (t) => {
+  await pageSetup(t, true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const selectSupplierRadioOptions = Selector('[data-test-id="question-selectSupplier"]');
+
+  await t
+    .expect(selectSupplierRadioOptions.exists).ok()
+    .expect(selectSupplierRadioOptions.find('.nhsuk-radios__item').count).eql(2)
+    .expect(selectSupplierRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input:checked').exists).notOk()
+    .expect(selectSupplierRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input:checked').exists).ok();
 });
 
 test('should render the Continue button', async (t) => {

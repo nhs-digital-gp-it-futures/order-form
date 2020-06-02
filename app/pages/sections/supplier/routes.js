@@ -106,10 +106,15 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
 
     const suppliersFound = sessionManager.getFromSession({ req, key: 'suppliersFound' });
     if (suppliersFound) {
-      const context = getSupplierSelectPageContext({ orderId, suppliers: suppliersFound });
+      const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
+      const context = getSupplierSelectPageContext({
+        orderId, suppliers: suppliersFound, selectedSupplier,
+      });
+
       logger.info(`navigating to order ${orderId} suppliers select page`);
       return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     }
+
     logger.info('no suppliers found in session redirecting suppliers search page');
     return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
   }));

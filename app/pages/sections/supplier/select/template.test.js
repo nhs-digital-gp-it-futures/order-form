@@ -113,6 +113,37 @@ describe('supplier select page', () => {
     });
   }));
 
+  it('should render the checked radio for the selected supplier', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectSupplier',
+          mainAdvice: 'Select Supplier',
+          options: [
+            {
+              value: 'supplier-1',
+              text: 'Supplier 1',
+            },
+            {
+              value: 'supplier-2',
+              text: 'Supplier 2',
+              checked: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const selectSupplierRadioOptions = $('div[data-test-id="question-selectSupplier"]');
+      expect(selectSupplierRadioOptions.find('.nhsuk-radios__item').length).toEqual(2);
+      expect(selectSupplierRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('checked')).toBeUndefined();
+      expect(selectSupplierRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('supplier-1');
+      expect(selectSupplierRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('checked')).toEqual('checked');
+      expect(selectSupplierRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('supplier-2');
+    });
+  }));
+
   it('should render errors on selectSupplier field if there are errors', componentTester(setup, (harness) => {
     const context = {
       questions: [
