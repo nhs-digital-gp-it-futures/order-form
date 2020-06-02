@@ -439,6 +439,44 @@ test('should navigate to task list page if save button is clicked and data is va
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
 
+test('should not show the search again link when there are validation errors and details are provided from ORDAPI', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier')
+    .reply(400, supplierErrorResponse);
+
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const searchAgainLink = Selector('[data-test-id="search-again-link"] a');
+
+  await t
+    .expect(searchAgainLink.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(searchAgainLink.exists).notOk();
+});
+
+test('should redirect back to the /organisation/order-id when clicking the backlink validation errors and details are provided from ORDAPI', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier')
+    .reply(400, supplierErrorResponse);
+
+  await pageSetup(t, true, true, supplierDataFromOrdapi);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+
+  await t
+    .click(saveButton);
+
+  await t
+    .click(goBackLink)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+});
+
 test('should show the error summary when there are validation errors', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
