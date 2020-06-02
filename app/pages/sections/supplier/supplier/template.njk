@@ -1,0 +1,94 @@
+{% extends 'includes/layout.njk' %}
+{% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
+{% from 'components/inset-text/macro.njk' import insetText %}
+{% from 'components/text-field/macro.njk' import textField %}
+{% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
+
+{% block body %}
+  <div class="nhsuk-width-container" data-test-id="supplier-page">
+    <div data-test-id="go-back-link">
+      {{ backLink({
+        href: backLinkHref,
+        text: backLinkText
+      }) }}
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        {% if (errors.length > 0) %}
+          {{ bcErrorSummary({
+            errors: errors
+          }) }}
+        {% endif %}
+
+        <h1 data-test-id="supplier-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
+        <h2 data-test-id="supplier-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
+        
+        <div data-test-id="supplier-page-insetAdvice">
+          {{ insetText({
+            HTML: insetAdvice
+          }) }}
+        </div>
+      </div>
+    </div>
+
+    <form method="post">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-two-thirds">   
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          <h3 data-test-id="supplier-name-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ supplierNameHeading }}</h3>
+          <input type="hidden" name="supplierId" value="{{ supplierData.supplierId }}" />
+          <div data-test-id="supplier-name" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ supplierData.name }}</div>
+          <input type="hidden" name="name" value="{{ supplierData.name }}" />
+
+          <h3 data-test-id="supplier-address-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ supplierAddressHeading }}</h3>
+          <div data-test-id="supplier-address-1" class="nhsuk-u-font-size-19">{{ supplierData.address.line1 }}</div>
+          <input type="hidden" name="line1" value="{{ supplierData.address.line1 }}" />
+          <div data-test-id="supplier-address-2" class="nhsuk-u-font-size-19">{{ supplierData.address.line2 }}</div>
+          <input type="hidden" name="line2" value="{{ supplierData.address.line2 }}" />
+          <div data-test-id="supplier-address-3" class="nhsuk-u-font-size-19">{{ supplierData.address.line3 }}</div>
+          <input type="hidden" name="line3" value="{{ supplierData.address.line3 }}" />
+          <div data-test-id="supplier-address-4" class="nhsuk-u-font-size-19">{{ supplierData.address.line4 }}</div>
+          <input type="hidden" name="line4" value="{{ supplierData.address.line4 }}" />
+          <div data-test-id="supplier-address-5" class="nhsuk-u-font-size-19">{{ supplierData.address.line5 }}</div>
+          <input type="hidden" name="line5" value="{{ supplierData.address.line5 }}" />
+          <div data-test-id="supplier-address-town" class="nhsuk-u-font-size-19">{{ supplierData.address.town }}</div>
+          <input type="hidden" name="town" value="{{ supplierData.address.town }}" />
+          <div data-test-id="supplier-address-county" class="nhsuk-u-font-size-19">{{ supplierData.address.county }}</div>
+          <input type="hidden" name="county" value="{{ supplierData.address.county }}" />
+          <div data-test-id="supplier-address-postcode" class="nhsuk-u-font-size-19">{{ supplierData.address.postcode }}</div>
+          <input type="hidden" name="postcode" value="{{ supplierData.address.postcode }}" />
+          <div data-test-id="supplier-address-country" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ supplierData.address.country }}</div>
+          <input type="hidden" name="country" value="{{ supplierData.address.country }}" />
+
+          {% if showSearchAgainLink %}
+            <div data-test-id="search-again-link"> 
+              <a href={{ searchAgainLinkHref }}>{{ searchAgainLinkText }}</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="bc-c-order-table--hr"/>
+
+      <div class="nhsuk-grid-row">
+        <div data-test-id="primary-contact-fields" class="nhsuk-grid-column-two-thirds">
+          <h2 data-test-id="primary-contact-heading" class="nhsuk-u-font-size-32 nhsuk-u-margin-bottom-7 nhsuk-u-margin-top-3">{{ primaryContactHeading }}</h2>
+
+          {% for question in questions %}
+            <div class="nhsuk-u-margin-bottom-5">
+              {{ textField({ question: question }) }}
+            </div>
+          {% endfor %}
+
+          {{ bcButton({
+              dataTestId: "save-button",
+              text: saveButtonText,
+              classes: "nhsuk-u-margin-top-9"
+          })}}
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}

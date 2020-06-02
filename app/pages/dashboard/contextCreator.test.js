@@ -24,7 +24,7 @@ const mockOrdersData = [
 describe('getContext', () => {
   it('should return the contents of the manifest', () => {
     const context = getContext({});
-    expect(context.backlinkText).toEqual(manifest.backlinkText);
+    expect(context.backLinkText).toEqual(manifest.backLinkText);
     expect(context.description).toEqual(manifest.description);
     expect(context.newOrderButtonText).toEqual(manifest.newOrderButtonText);
     expect(context.proxyLinkText).toEqual(manifest.proxyLinkText);

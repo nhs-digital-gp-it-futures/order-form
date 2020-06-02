@@ -1,0 +1,15 @@
+{
+  "backLinkText": "Go back",
+  "title": "Suppliers found",
+  "description": "These are the suppliers that match the search terms you provided. Select the one you're looking for.",
+  "questions": [
+    {
+      "id": "selectSupplier",
+      "mainAdvice": "Select Supplier"
+    }
+  ],
+  "errorMessages": {
+    "SelectSupplierRequired": "Select a supplier"
+  },
+  "continueButtonText": "Continue"
+}

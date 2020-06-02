@@ -5,7 +5,7 @@ import { orderApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
-
+jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
@@ -105,7 +105,6 @@ describe('description controller', () => {
       expect(response.success).toEqual(true);
     });
 
-
     it('should return error.respose.data if api request is unsuccessful with 400', async () => {
       const responseData = { description: 'an order description', errors: [{}] };
       postData
@@ -133,6 +132,23 @@ describe('description controller', () => {
       } catch (err) {
         expect(err).toEqual(new Error());
       }
+    });
+
+    it('should trim whitespace from the data', async () => {
+      const mockData = { description: '  an order description ' };
+
+      putData
+        .mockResolvedValueOnce({});
+
+      await postOrPutDescription({ orderId: 'order-id', data: mockData, accessToken: 'access_token' });
+
+      expect(putData.mock.calls.length).toEqual(1);
+      expect(putData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
+        body: { description: 'an order description' },
+        accessToken: 'access_token',
+        logger,
+      });
     });
   });
 });

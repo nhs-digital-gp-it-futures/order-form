@@ -1,0 +1,21 @@
+{
+  "backLinkText": "Go back",
+  "title": "Commencement date for",
+  "description": "Enter the date that this Call-off Agreement will begin.",
+  "questions": [{
+    "id": "commencementDate",
+    "mainAdvice": "Commencement date",
+    "additionalAdvice": "For example 14 01 2020"
+  }],
+  "errorMessages": {
+    "CommencementDateRequired": "Enter a commencement date",
+    "CommencementDateInvalid": "Enter a commencement date in a valid format",
+    "CommencementDateGreaterThan": "Commencement date must be in the future or within the last 60 days",
+    "CommencementDateNotReal": "Commencement date must be a real date",
+    "CommencementDateDayRequired": "Commencement date must include a day",
+    "CommencementDateMonthRequired": "Commencement date must include a month",
+    "CommencementDateYearRequired": "Commencement date must include a year",
+    "CommencementDateYearLength": "Year must be four numbers"
+  },
+  "saveButtonText": "Save and return"
+}

@@ -20,6 +20,12 @@ module.exports = {
   // Orders API
   orderApiUrl: process.env.ORDER_API_URL || 'http://localhost:5104',
 
+  // Organisations API
+  organisationApiUrl: process.env.ORGANISATION_API_URL || 'http://localhost:5103',
+
+  // Solutions API aka Buying Catalogue API
+  solutionsApiUrl: process.env.SOLUTIONS_API_URL || 'http://localhost:5100',
+
   // BLOBSTORE_HOST
   blobstoreHost: process.env.BLOBSTORE_HOST || 'https://gpitfuturesdevsa.blob.core.windows.net',
 
@@ -30,7 +36,7 @@ module.exports = {
   oidcBaseUri: process.env.OIDC_BASE_URI || 'http://localhost:5102/identity',
 
   // The client id to be sent to identity service
-  oidcClientId: process.env.OIDC_CLIENT_ID || 'SampleClient',
+  oidcClientId: process.env.OIDC_CLIENT_ID || 'NodeClient',
 
   // The secret need to decode JWT tokens
   oidcClientSecret: process.env.OIDC_CLIENT_SECRET,

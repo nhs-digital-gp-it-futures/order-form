@@ -6,7 +6,7 @@ import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routerHelper';
 import { getDashboardContext } from './pages/dashboard/controller';
-import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './pages/sections/description/controller';
+import { sectionRoutes } from './pages/sections/routes';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
 
@@ -19,7 +19,7 @@ const addContext = ({ context, user, csrfToken }) => ({
   csrfToken,
 });
 
-export const routes = (authProvider) => {
+export const routes = (authProvider, sessionManager) => {
   const router = express.Router();
 
   healthRoutes({ router, dependencies: getHealthCheckDependencies(config), logger });
@@ -29,6 +29,7 @@ export const routes = (authProvider) => {
   });
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    logger.info('redirecting to organisation orders page');
     res.redirect(`${config.baseUrl}/organisation`);
   }));
 
@@ -39,38 +40,22 @@ export const routes = (authProvider) => {
       orgId: req.user.primaryOrganisationId,
       orgName: req.user.primaryOrganisationName,
     });
+    logger.info('navigating to organisation orders page');
     res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
   }));
 
   router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
+
+    sessionManager.clearFromSession({ req, keys: ['selectedSupplier', 'suppliersFound'] });
+
     const context = await getTaskListPageContext({ accessToken, orderId });
+    logger.info(`navigating to order ${orderId} task list page`);
     res.render('pages/task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.get('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    const context = await getDescriptionContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
-    res.render('pages/sections/description/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-  }));
-
-  router.post('/organisation/:orderId/description', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const response = await postOrPutDescription({
-      orgId: req.user.primaryOrganisationId, orderId, data: req.body, accessToken,
-    });
-
-    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
-
-    const context = await getDescriptionErrorContext({
-      validationErrors: response.errors,
-      orderId,
-      data: req.body,
-    });
-    return res.render('pages/sections/description/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-  }));
+  router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
 
   router.get('*', (req) => {
     throw new ErrorContext({
