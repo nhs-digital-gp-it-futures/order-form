@@ -35,7 +35,7 @@ const mocks = (data) => {
     .reply(200, data);
 };
 
-const pageSetup = async (t, withAuth = false, withSuppliersFoundState = false, withSelectedSuppliersState = false, data) => {
+const pageSetup = async (t, withAuth = false, withSuppliersFoundState = false, withSelectedSuppliersState = false, data = {}) => {
   if (withAuth) {
     mocks(data);
     await setCookies();
@@ -217,7 +217,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
 });
 
 test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
-  await pageSetup(t, true, true, orderData);
+  await pageSetup(t, true, true, false, orderData);
   await t.navigateTo(pageUrl);
 
   await t
