@@ -27,7 +27,7 @@ const pageSetup = async (t, withAuth = false) => {
   }
 };
 
-fixture('Catalogue-solution page - no solutions')
+fixture('Catalogue-solution page - without saved data')
   .page('http://localhost:1234/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
