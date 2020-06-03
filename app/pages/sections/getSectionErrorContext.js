@@ -9,8 +9,8 @@ export const getSectionErrorContext = ({
   const allErrors = formatAllErrors(modifiedManifest.questions);
 
   return {
+    backLinkHref: `${baseUrl}/organisation/${orderId}`,
     ...modifiedManifest,
     errors: allErrors,
-    backLinkHref: `${baseUrl}/organisation/${orderId}`,
   };
 };
