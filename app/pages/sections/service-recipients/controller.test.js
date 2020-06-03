@@ -1,7 +1,7 @@
 import { getData } from 'buying-catalogue-library';
 import { getServiceRecipientsContext } from './controller';
 import { logger } from '../../../logger';
-import { organisationApiUrl } from '../../../config';
+import { organisationApiUrl, orderApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
@@ -19,12 +19,18 @@ describe('service-recipients controller', () => {
 
     it('calls getData once with correct params', async () => {
       getData
-        .mockResolvedValueOnce({});
+        .mockResolvedValueOnce({})
+        .mockResolvedValueOnce({ serviceRecipients: [] });
 
       await getServiceRecipientsContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
+      expect(getData.mock.calls.length).toEqual(2);
+      expect(getData).toHaveBeenNthCalledWith(1, {
         endpoint: `${organisationApiUrl}/api/v1/Organisations/org-id/service-recipients`,
+        accessToken: 'access_token',
+        logger,
+      });
+      expect(getData).toHaveBeenNthCalledWith(2, {
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/service-recipients`,
         accessToken: 'access_token',
         logger,
       });
@@ -32,7 +38,8 @@ describe('service-recipients controller', () => {
 
     it('calls getContext once with correct params if data returned', async () => {
       getData
-        .mockResolvedValueOnce({});
+        .mockResolvedValueOnce({})
+        .mockResolvedValueOnce({ serviceRecipients: [] });
       contextCreator.getContext
         .mockResolvedValueOnce();
 
