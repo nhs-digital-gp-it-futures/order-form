@@ -4,21 +4,15 @@ import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 
 export const getServiceRecipientsContext = async ({ orderId, orgId, accessToken }) => {
-  let serviceRecipientsData;
   let selectedServiceRecipientsData;
 
-  try {
-    const serviceRecipientEndpoint = getEndpoint({ endpointLocator: 'getServiceRecipientsFromOapi', options: { orgId } });
-    serviceRecipientsData = await getData({
-      endpoint: serviceRecipientEndpoint,
-      accessToken,
-      logger,
-    });
-    logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI. ${serviceRecipientsData}`);
-  } catch (err) {
-    logger.error(`No selected service recipients data returned from OAPI for order id: ${orgId}. ${err}`);
-    throw new Error();
-  }
+  const serviceRecipientEndpoint = getEndpoint({ endpointLocator: 'getServiceRecipientsFromOapi', options: { orgId } });
+  const serviceRecipientsData = await getData({
+    endpoint: serviceRecipientEndpoint,
+    accessToken,
+    logger,
+  });
+  logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI. ${serviceRecipientsData}`);
 
   try {
     const selectedServiceRecipientsEndpoint = getEndpoint({ endpointLocator: 'getSelectedServiceRecipientsFromOrdapi', options: { orderId } });
