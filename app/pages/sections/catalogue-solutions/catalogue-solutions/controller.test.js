@@ -16,7 +16,7 @@ const accessToken = 'access_token';
 const orderId = 'order-id';
 
 describe('catalogue-solutions controller', () => {
-  describe('getSupplierSearchPageContext', () => {
+  describe('getCatalogueSolutionsPageContext', () => {
     afterEach(() => {
       getData.mockReset();
       contextCreator.getContext.mockReset();
