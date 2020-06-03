@@ -5,6 +5,7 @@ import {
   testAuthorisedGetPathForUnauthorisedUser,
   fakeSessionManager,
 } from 'buying-catalogue-library';
+import * as catalogueSolutionsController from './catalogue-solutions/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 
@@ -53,15 +54,18 @@ describe('catalogue-solutions section routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions text if authorised', () => (
-      request(setUpFakeApp())
+    it('should return the catalogue-solutions text if authorised', () => {
+      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('The catalogue solutions page for order some-order-id')).toBeTruthy();
+          expect(res.text.includes('data-test-id="catalogue-solutions-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        })
-    ));
+        });
+    });
   });
 });
