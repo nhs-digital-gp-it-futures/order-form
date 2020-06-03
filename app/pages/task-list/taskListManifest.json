@@ -33,6 +33,16 @@
           "dependencies": ["description", "ordering-party", "supplier"]
         }
       ]
+    },
+    {
+      "name": "Select Service Recipients",
+      "sections": [
+        {
+          "id": "service-recipients",
+          "title": "Select the organisations you are ordering for",
+          "dependencies": ["description", "ordering-party", "supplier", "commencement-date"]
+        }
+      ]
     }
   ]
 }
