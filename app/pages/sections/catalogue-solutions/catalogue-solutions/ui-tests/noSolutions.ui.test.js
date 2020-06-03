@@ -14,7 +14,6 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/catalogue-solutions')
