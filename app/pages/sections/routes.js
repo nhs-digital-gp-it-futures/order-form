@@ -7,6 +7,7 @@ import {
 } from './ordering-party/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './description/controller';
 import { getCommencementDateContext, putCommencementDate, getCommencementDateErrorContext } from './commencement-date/controller';
+import { getServiceRecipientsContext } from './service-recipients/controller';
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './catalogue-solutions/routes';
 
@@ -96,7 +97,10 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   }));
 
   router.get('/service-recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    res.status(200).send('Service recipients page');
+    const { orderId } = req.params;
+    const context = await getServiceRecipientsContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    logger.info(`navigating to order ${orderId} service-recipients page`);
+    res.render('pages/sections/service-recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
