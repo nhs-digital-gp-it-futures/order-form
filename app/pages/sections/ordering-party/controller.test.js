@@ -51,14 +51,14 @@ const mockFormData = {
   ...mockPrimaryContact,
 };
 
-describe('Call-off-ordering-party controller', () => {
+describe('ordering-party controller', () => {
   describe('getCallOffOrderingPartyContext', () => {
     afterEach(() => {
       getData.mockReset();
       contextCreator.getContext.mockReset();
     });
 
-    describe('when call-off-ordering-party is not completed yet', () => {
+    describe('when ordering-party is not completed yet', () => {
       it('should call getData twice with the correct params', async () => {
         getData
           .mockResolvedValueOnce({})
@@ -105,7 +105,7 @@ describe('Call-off-ordering-party controller', () => {
       });
     });
 
-    describe('when call-off-ordering-party is already completed', () => {
+    describe('when ordering-party is already completed', () => {
       it('should call getData once with the correct params', async () => {
         getData
           .mockResolvedValueOnce(mockCompleteData);

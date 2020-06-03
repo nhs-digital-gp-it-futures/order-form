@@ -2,8 +2,9 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from './manifest.json';
+import { orderApiUrl } from '../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-1/supplier/search/select';
+const pageUrl = 'http://localhost:1234/organisation/order-id/supplier/search/select';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -13,7 +14,7 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const setSessionState = ClientFunction(() => {
+const suppliersFoundState = ClientFunction(() => {
   const cookieValue = JSON.stringify([
     { supplierId: 'supplier-1', name: 'Supplier 1' },
     { supplierId: 'supplier-2', name: 'Supplier 2' },
@@ -22,11 +23,28 @@ const setSessionState = ClientFunction(() => {
   document.cookie = `suppliersFound=${cookieValue}`;
 });
 
-const pageSetup = async (t, withAuth = false, withSessionState = false) => {
-  if (withAuth) await setCookies();
-  if (withSessionState) await setSessionState();
+const selectedSuppliersState = ClientFunction(() => {
+  const cookieValue = 'supplier-2';
+
+  document.cookie = `selectedSupplier=${cookieValue}`;
+});
+
+const mocks = (data) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, data);
 };
 
+const pageSetup = async (t, withAuth = false, withSuppliersFoundState = false, withSelectedSuppliersState = false, data = {}) => {
+  if (withAuth) {
+    mocks(data);
+    await setCookies();
+  }
+  if (withSuppliersFoundState) await suppliersFoundState();
+  if (withSelectedSuppliersState) await selectedSuppliersState();
+};
+
+const orderData = { name: 'a lovely order' };
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -62,7 +80,7 @@ test('should render Supplier select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1/supplier/search when click on backlink', async (t) => {
+test('should navigate to /organisation/order-id/supplier/search when click on backlink', async (t) => {
   await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
 
@@ -71,7 +89,7 @@ test('should navigate to /organisation/order-1/supplier/search when click on bac
   await t
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search');
 });
 
 test('should render the title', async (t) => {
@@ -114,6 +132,19 @@ test('should render a selectSupplier question as radio button options', async (t
     .expect(await extractInnerText(selectSupplierRadioOptions.find('label').nth(1))).eql('Supplier 2');
 });
 
+test('should render the radioButton as checked for the selectedSupplier', async (t) => {
+  await pageSetup(t, true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const selectSupplierRadioOptions = Selector('[data-test-id="question-selectSupplier"]');
+
+  await t
+    .expect(selectSupplierRadioOptions.exists).ok()
+    .expect(selectSupplierRadioOptions.find('.nhsuk-radios__item').count).eql(2)
+    .expect(selectSupplierRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input:checked').exists).notOk()
+    .expect(selectSupplierRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input:checked').exists).ok();
+});
+
 test('should render the Continue button', async (t) => {
   await pageSetup(t, true, true);
   await t.navigateTo(pageUrl);
@@ -125,13 +156,12 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-
-test('should redirect back to /organisation/order-1/supplier/search no suppliers are returned', async (t) => {
+test('should redirect back to /organisation/order-id/supplier/search no suppliers are returned', async (t) => {
   await pageSetup(t, true, false);
   await t.navigateTo(pageUrl);
 
   await t
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/supplier/search');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search');
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
@@ -184,4 +214,12 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#selectSupplier`);
+});
+
+test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
+  await pageSetup(t, true, true, false, orderData);
+  await t.navigateTo(pageUrl);
+
+  await t
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier');
 });

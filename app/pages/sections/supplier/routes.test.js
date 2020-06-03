@@ -15,6 +15,7 @@ import { baseUrl } from '../../../config';
 import * as supplierSearchController from './search/controller';
 import * as supplierSelectController from './select/controller';
 import * as supplierController from './supplier/controller';
+import * as baseController from './controller';
 
 jest.mock('../../../logger');
 
@@ -55,6 +56,16 @@ const setUpFakeApp = () => {
 describe('supplier section routes', () => {
   describe('GET /organisation/:orderId/supplier', () => {
     const path = '/organisation/some-order-id/supplier';
+
+    beforeEach(() => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockResolvedValue(false);
+    });
+
+    afterEach(() => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockReset();
+    });
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -211,6 +222,16 @@ describe('supplier section routes', () => {
   describe('GET /organisation/:orderId/supplier/search', () => {
     const path = '/organisation/some-order-id/supplier/search';
 
+    beforeEach(() => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockResolvedValue(false);
+    });
+
+    afterEach(() => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockReset();
+    });
+
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
@@ -226,6 +247,20 @@ describe('supplier section routes', () => {
         expectedPageMessage: 'You are not authorised to view this page',
       })
     ));
+
+    it('should redirect to /supplier if authorised and data found in ORDAPI', () => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockResolvedValue(true);
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier`);
+        });
+    });
 
     it('should return the correct status and text when the user is authorised', () => (
       request(setUpFakeApp())
@@ -357,6 +392,16 @@ describe('supplier section routes', () => {
   describe('GET /organisation/:orderId/supplier/search/select', () => {
     const path = '/organisation/some-order-id/supplier/search/select';
 
+    beforeEach(() => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockResolvedValue(false);
+    });
+
+    afterEach(() => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockReset();
+    });
+
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
@@ -397,10 +442,34 @@ describe('supplier section routes', () => {
           expect(res.redirect).toEqual(true);
           expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier/search`);
         })));
+
+    it('should redirect to /supplier if authorised and data found in ORDAPI', () => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockResolvedValue(true);
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier`);
+        });
+    });
   });
 
   describe('POST /organisation/:orderId/supplier/search/select', () => {
     const path = '/organisation/order-1/supplier/search/select';
+
+    beforeEach(() => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockResolvedValue(false);
+    });
+
+    afterEach(() => {
+      baseController.checkOrdapiForSupplier = jest.fn()
+        .mockReset();
+    });
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({

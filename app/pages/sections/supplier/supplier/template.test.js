@@ -23,7 +23,7 @@ const supplierData = {
   },
 };
 
-describe('supplier page via select', () => {
+describe('supplier page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
       orderId: 'order-1',

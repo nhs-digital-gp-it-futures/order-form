@@ -19,15 +19,22 @@ import {
   getSupplierPageErrorContext,
   putSupplier,
 } from './supplier/controller';
+import { checkOrdapiForSupplier } from './controller';
 
 const router = express.Router({ mergeParams: true });
 
 export const supplierRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     try {
       const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
-      const context = await getSupplierPageContext({ orderId, supplierId: selectedSupplier, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+      const context = await getSupplierPageContext({
+        orderId,
+        supplierId: selectedSupplier,
+        accessToken: extractAccessToken({ req, tokenType: 'access' }),
+        hasSavedData: dataFoundInOrdapi,
+      });
       return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     } catch (err) {
       logger.info('redirecting to suppliers search page');
@@ -44,19 +51,28 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     });
     if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
 
+    const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+
     const context = await getSupplierPageErrorContext({
       validationErrors: response.errors,
       orderId,
       data: req.body,
+      hasSavedData: dataFoundInOrdapi,
     });
     return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+
+    sessionManager.clearFromSession({ req, keys: ['selectedSupplier', 'suppliersFound'] });
+
+    const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
+
     const context = await getSupplierSearchPageContext({ orderId });
     logger.info(`navigating to order ${orderId} suppliers search page`);
-    res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -96,13 +112,21 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
 
   router.get('/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+
+    if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
 
     const suppliersFound = sessionManager.getFromSession({ req, key: 'suppliersFound' });
     if (suppliersFound) {
-      const context = getSupplierSelectPageContext({ orderId, suppliers: suppliersFound });
+      const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
+      const context = getSupplierSelectPageContext({
+        orderId, suppliers: suppliersFound, selectedSupplier,
+      });
+
       logger.info(`navigating to order ${orderId} suppliers select page`);
       return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     }
+
     logger.info('no suppliers found in session redirecting suppliers search page');
     return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search`);
   }));

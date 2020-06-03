@@ -13,10 +13,10 @@ describe('supplier select controller', () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
 
-      await getSupplierSelectPageContext({ orderId: 'order-1' });
+      await getSupplierSelectPageContext({ orderId: 'order-1', selectedSupplier: 'supp-1' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1' });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', selectedSupplier: 'supp-1' });
     });
   });
 

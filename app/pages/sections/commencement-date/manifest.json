@@ -14,7 +14,8 @@
     "CommencementDateNotReal": "Commencement date must be a real date",
     "CommencementDateDayRequired": "Commencement date must include a day",
     "CommencementDateMonthRequired": "Commencement date must include a month",
-    "CommencementDateYearRequired": "Commencement date must include a year"
+    "CommencementDateYearRequired": "Commencement date must include a year",
+    "CommencementDateYearLength": "Year must be four numbers"
   },
   "saveButtonText": "Save and return"
 }

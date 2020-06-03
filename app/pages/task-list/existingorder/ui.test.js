@@ -162,7 +162,7 @@ test('should render the second task as "Organisation information" and "call-off 
     .expect(await extractInnerText(secondTaskFirstItem)).eql('Provide Call-off Ordering Party information')
     .expect(secondTaskFirstItem.find('a').exists).ok()
     .click(secondTaskFirstItem.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/call-off-ordering-party`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/ordering-party`);
 });
 
 test('should render the second task as "Organisation information" and "supplier" as link not text', async (t) => {

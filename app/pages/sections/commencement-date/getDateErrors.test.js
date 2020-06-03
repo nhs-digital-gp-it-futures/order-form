@@ -52,6 +52,24 @@ describe('getDateErrors', () => {
     expect(validationResponse.part.includes('year')).toBe(true);
   });
 
+  it('should return CommencementDateNotReal error when year is not 4 chars', () => {
+    const validationResponseLess = getDateErrors({ ...mockData, 'commencementDate-year': '20' });
+    expect(validationResponseLess.field).toEqual('CommencementDate');
+    expect(validationResponseLess.id).toEqual('CommencementDateYearLength');
+    expect(validationResponseLess.part.length).toEqual(1);
+    expect(validationResponseLess.part.includes('day')).toBe(false);
+    expect(validationResponseLess.part.includes('month')).toBe(false);
+    expect(validationResponseLess.part.includes('year')).toBe(true);
+
+    const validationResponseMore = getDateErrors({ ...mockData, 'commencementDate-year': '202020' });
+    expect(validationResponseMore.field).toEqual('CommencementDate');
+    expect(validationResponseMore.id).toEqual('CommencementDateYearLength');
+    expect(validationResponseMore.part.length).toEqual(1);
+    expect(validationResponseMore.part.includes('day')).toBe(false);
+    expect(validationResponseMore.part.includes('month')).toBe(false);
+    expect(validationResponseMore.part.includes('year')).toBe(true);
+  });
+
   it('should return CommencementDateNotReal error for "day" when day is over 31', () => {
     const validationResponse = getDateErrors({ ...mockData, 'commencementDate-day': '32' });
     expect(validationResponse.field).toEqual('CommencementDate');
@@ -82,8 +100,18 @@ describe('getDateErrors', () => {
     expect(validationResponse.part.includes('year')).toBe(false);
   });
 
+  it('should return CommencementDateNotReal error when year is < 1000', () => {
+    const validationResponse = getDateErrors({ ...mockData, 'commencementDate-year': '0999' });
+    expect(validationResponse.field).toEqual('CommencementDate');
+    expect(validationResponse.id).toEqual('CommencementDateNotReal');
+    expect(validationResponse.part.length).toEqual(1);
+    expect(validationResponse.part.includes('day')).toBe(false);
+    expect(validationResponse.part.includes('month')).toBe(false);
+    expect(validationResponse.part.includes('year')).toBe(true);
+  });
+
   it('should return CommencementDateNotReal error for "day" and "month" when day and month not numbers', () => {
-    const validationResponse = getDateErrors({ 'commencementDate-day': 'a', 'commencementDate-month': 'a', 'commencementDate-year': 'a' });
+    const validationResponse = getDateErrors({ 'commencementDate-day': 'a', 'commencementDate-month': 'a', 'commencementDate-year': 'aaaa' });
     expect(validationResponse.field).toEqual('CommencementDate');
     expect(validationResponse.id).toEqual('CommencementDateNotReal');
     expect(validationResponse.part.length).toEqual(2);

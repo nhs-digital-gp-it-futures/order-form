@@ -3,7 +3,7 @@ import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/sections/call-off-ordering-party/template.njk',
+    path: 'pages/sections/ordering-party/template.njk',
   },
 };
 
@@ -67,7 +67,7 @@ const contextWithErrors = {
 };
 
 
-describe('call-off-ordering-party page', () => {
+describe('ordering-party page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
@@ -92,7 +92,7 @@ describe('call-off-ordering-party page', () => {
 
   it('should render the page title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const title = $('h1[data-test-id="call-off-ordering-party-page-title"]');
+      const title = $('h1[data-test-id="ordering-party-page-title"]');
       expect(title.length).toEqual(1);
       expect(title.text().trim()).toEqual(context.title);
     });
@@ -100,7 +100,7 @@ describe('call-off-ordering-party page', () => {
 
   it('should render the page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="call-off-ordering-party-page-description"]');
+      const description = $('h2[data-test-id="ordering-party-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });

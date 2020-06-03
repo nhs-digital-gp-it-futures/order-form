@@ -21,10 +21,10 @@ describe('supplier controller', () => {
     });
 
     describe('when ordapi has supplier data', () => {
-      it('should call getData with the correct params', async () => {
+      it('should call getData with the correct params when hasSavedData is true', async () => {
         getData.mockResolvedValueOnce({ name: 'a lovely name' });
 
-        await getSupplierPageContext({ orderId, accessToken });
+        await getSupplierPageContext({ orderId, accessToken, hasSavedData: true });
         expect(getData.mock.calls.length).toEqual(1);
         expect(getData).toHaveBeenCalledWith({
           endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/supplier`,
@@ -37,7 +37,7 @@ describe('supplier controller', () => {
         getData.mockResolvedValueOnce({ name: 'a lovely name' });
         contextCreator.getContext.mockResolvedValueOnce({});
 
-        await getSupplierPageContext({ orderId, accessToken });
+        await getSupplierPageContext({ orderId, accessToken, hasSavedData: true });
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
         expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, supplierData: { name: 'a lovely name' }, hasSavedData: true });
       });
@@ -46,17 +46,13 @@ describe('supplier controller', () => {
     describe('when ordapi does not have supplier data and supplierId is provided', () => {
       it('should call getData with the correct params', async () => {
         getData
-          .mockResolvedValueOnce({})
           .mockResolvedValueOnce({});
 
-        await getSupplierPageContext({ orderId, supplierId: 'supp-id', accessToken });
-        expect(getData.mock.calls.length).toEqual(2);
-        expect(getData).toHaveBeenNthCalledWith(1, {
-          endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/supplier`,
-          accessToken,
-          logger,
+        await getSupplierPageContext({
+          orderId, supplierId: 'supp-id', accessToken, hasSavedData: false,
         });
-        expect(getData).toHaveBeenNthCalledWith(2, {
+        expect(getData.mock.calls.length).toEqual(1);
+        expect(getData).toHaveBeenCalledWith({
           endpoint: `${solutionsApiUrl}/api/v1/suppliers/supp-id`,
           accessToken,
           logger,
@@ -65,44 +61,37 @@ describe('supplier controller', () => {
 
       it('should call getContext with the correct params', async () => {
         getData
-          .mockResolvedValueOnce({})
           .mockResolvedValueOnce({ name: 'supplier' });
         contextCreator.getContext.mockResolvedValueOnce({});
 
-        await getSupplierPageContext({ orderId, supplierId: 'supplier-id', accessToken });
+        await getSupplierPageContext({
+          orderId, supplierId: 'supplier-id', accessToken, hasSavedData: true,
+        });
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-        expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, supplierData: { name: 'supplier' } });
+        expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, supplierData: { name: 'supplier' }, hasSavedData: true });
       });
     });
 
     describe('when ordapi does not have supplier data and supplierId not provided', () => {
-      it('should call getData once with the correct params', async () => {
-        getData.mockResolvedValueOnce({});
+      it('should not call getData', async () => {
         try {
-          await getSupplierPageContext({ orderId, accessToken });
+          await getSupplierPageContext({ orderId, accessToken, hasSavedData: false });
         } catch (err) {
-          expect(getData.mock.calls.length).toEqual(1);
-          expect(getData).toHaveBeenCalledWith({
-            endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/supplier`,
-            accessToken,
-            logger,
-          });
+          expect(getData.mock.calls.length).toEqual(0);
         }
       });
 
       it('should not call getContext', async () => {
-        getData.mockResolvedValueOnce({});
         try {
-          await getSupplierPageContext({ orderId, accessToken });
+          await getSupplierPageContext({ orderId, accessToken, hasSavedData: false });
         } catch (err) {
           expect(contextCreator.getContext.mock.calls.length).toEqual(0);
         }
       });
 
       it('should throw error', async () => {
-        getData.mockResolvedValueOnce({});
         try {
-          await getSupplierPageContext({ orderId, accessToken });
+          await getSupplierPageContext({ orderId, accessToken, hasSavedData: false });
         } catch (err) {
           expect(err).toEqual(new Error());
         }
