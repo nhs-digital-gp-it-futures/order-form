@@ -45,9 +45,9 @@ describe('catalogue-solutions contextCreator', () => {
       expect(context.noSolutionsText).toEqual(manifest.noSolutionsText);
     });
 
-    it('should return the solutions provided', () => {
-      const context = getContext({ orderId: 'order-1', solutions: [] });
-      expect(context.solutions).toEqual([]);
+    it('should return the catalogueSolutions provided', () => {
+      const context = getContext({ orderId: 'order-1', catalogueSolutions: [] });
+      expect(context.catalogueSolutions).toEqual([]);
     });
 
     it('should return the addSolutionButtonText', () => {

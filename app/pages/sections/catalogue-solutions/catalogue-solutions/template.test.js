@@ -90,9 +90,9 @@ describe('catalogue-solutions page', () => {
     });
   }));
 
-  it('should render no solutions text when the solutions provided is an empty array', componentTester(setup, (harness) => {
+  it('should render no solutions text when the catalogueSolutions provided is an empty array', componentTester(setup, (harness) => {
     const context = {
-      solutions: [],
+      catalogueSolutions: [],
       noSolutionsText: manifest.noSolutionsText,
     };
 
