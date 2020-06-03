@@ -354,7 +354,8 @@ describe('section routes', () => {
       .expect(200)
       .then((res) => {
         expect(res.status).toBe(200);
-        expect(res.text).toEqual('Service recipients page');
+        expect(res.text.includes('data-test-id="service-recipients-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
   });
 
