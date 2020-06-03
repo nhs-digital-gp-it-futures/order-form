@@ -17,7 +17,7 @@ describe('service-recipients controller', () => {
       contextCreator.getContext.mockReset();
     });
 
-    it('calls getData once with correct params', async () => {
+    it('calls getData twice with correct params', async () => {
       getData
         .mockResolvedValueOnce({})
         .mockResolvedValueOnce({ serviceRecipients: [] });

@@ -29,7 +29,7 @@ export const getServiceRecipientsContext = async ({ orderId, orgId, accessToken 
     });
     logger.info(`${selectedServiceRecipientsData.serviceRecipients.length} selected service recipients found in ORDAPI.`);
   } catch (err) {
-    logger.error(`No service recipients data returned from OAPI for org id: ${orgId}. ${err}`);
+    logger.error(`No service recipients data returned from ORDAPI for org id: ${orgId}. ${err}`);
     throw new Error();
   }
 
