@@ -4,12 +4,12 @@ import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 
 export const getServiceRecipientsContext = async ({ orderId, orgId, accessToken }) => {
-  const serviceRecipientEndpoint = getEndpoint({ endpointLocator: 'getServiceRecipientsFromOapi', options: { orgId } });
-  const organisationData = await getData({
-    endpoint: serviceRecipientEndpoint,
+  const serviceRecipientsEndpoint = getEndpoint({ endpointLocator: 'getServiceRecipientsFromOapi', options: { orgId } });
+  const serviceRecipientsData = await getData({
+    endpoint: serviceRecipientsEndpoint,
     accessToken,
     logger,
   });
-  logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI. ${organisationData}`);
+  logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI. ${serviceRecipientsData}`);
   return getContext({ orderId });
 };
