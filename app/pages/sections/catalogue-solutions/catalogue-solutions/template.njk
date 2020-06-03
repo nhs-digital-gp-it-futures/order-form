@@ -16,12 +16,15 @@
       <div class="nhsuk-grid-column-two-thirds">
         <h1 data-test-id="catalogue-solutions-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
         <h2 data-test-id="catalogue-solutions-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
-
+      
         <div data-test-id="catalogue-solutions-page-insetAdvice">
           {{ insetText({
             HTML: insetAdvice
           }) }}
         </div>
+
+        <h3 data-test-id="order-description-heading" class="nhsuk-u-margin-bottom-3">{{ orderDescriptionHeading }}</h3>
+        <h4 data-test-id="order-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ orderDescription }}</h4>
 
         {{ bcButton({
             dataTestId: "add-solution-button",

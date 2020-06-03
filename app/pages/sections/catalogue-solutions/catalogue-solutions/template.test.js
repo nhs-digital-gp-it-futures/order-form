@@ -59,6 +59,23 @@ describe('catalogue-solutions page', () => {
     });
   }));
 
+  it('should render the order description', componentTester(setup, (harness) => {
+    const context = {
+      orderDescriptionHeading: manifest.orderDescriptionHeading,
+      orderDescription: 'some-order-description',
+    };
+
+    harness.request(context, ($) => {
+      const orderDescriptionHeading = $('h3[data-test-id="order-description-heading"]');
+      const orderDescription = $('h4[data-test-id="order-description"]');
+
+      expect(orderDescriptionHeading.length).toEqual(1);
+      expect(orderDescriptionHeading.text().trim()).toContain(context.orderDescriptionHeading);
+      expect(orderDescription.length).toEqual(1);
+      expect(orderDescription.text().trim()).toContain(context.orderDescription);
+    });
+  }));
+
   it('should render the "Add Catalogue Solution" button', componentTester(setup, (harness) => {
     const context = {
       addSolutionButtonText: 'Add Catalogue Solution',

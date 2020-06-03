@@ -3,6 +3,7 @@
   "title": "Catalogue Solution for",
   "description": "Add the Catalogue Solutions you want to be part of this order.",
   "insetAdvice": "If you do not want to add any, or have finished adding Catalogue Solutions, continue to the next step.",
+  "orderDescriptionHeading": "Order description",
   "noSolutionsText": "No Catalogue Solutions added",
   "addSolutionButtonText": "Add Catalogue Solution",
   "continueButtonText": "Continue"
