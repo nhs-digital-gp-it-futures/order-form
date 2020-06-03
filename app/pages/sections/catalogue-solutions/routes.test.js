@@ -2,16 +2,11 @@ import request from 'supertest';
 import {
   FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
-  testPostPathWithoutCsrf,
-  testAuthorisedPostPathForUnauthenticatedUser,
-  testAuthorisedPostPathForUnauthorisedUsers,
   testAuthorisedGetPathForUnauthorisedUser,
-  getCsrfTokenFromGet,
   fakeSessionManager,
 } from 'buying-catalogue-library';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
-import { baseUrl } from '../../../config';
 
 jest.mock('../../../logger');
 
