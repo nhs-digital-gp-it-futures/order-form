@@ -15,6 +15,7 @@ import { baseUrl } from '../../config';
 import * as descriptionController from './description/controller';
 import * as orderingPartyController from './ordering-party/controller';
 import * as commencementDateController from './commencement-date/controller';
+import * as serviceRecipientsController from './service-recipients/controller';
 
 jest.mock('../../logger');
 
@@ -34,6 +35,9 @@ commencementDateController.putCommencementDate = jest.fn()
   .mockResolvedValue({});
 
 commencementDateController.getCommencementDateContext = jest.fn()
+  .mockResolvedValue({});
+
+serviceRecipientsController.getServiceRecipientsContext = jest.fn()
   .mockResolvedValue({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
