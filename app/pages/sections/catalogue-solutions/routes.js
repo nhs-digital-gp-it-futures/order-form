@@ -1,6 +1,5 @@
 import express from 'express';
 import { logger } from '../../../logger';
-import config from '../../../config';
 import { withCatch } from '../../../helpers/routerHelper';
 
 const router = express.Router({ mergeParams: true });
