@@ -95,5 +95,9 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     return res.render('pages/sections/commencement-date/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.get('/service-recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    res.status(200).send('Service recipients page');
+  }));
+
   return router;
 };
