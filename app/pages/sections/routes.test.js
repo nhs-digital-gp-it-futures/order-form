@@ -15,6 +15,7 @@ import { baseUrl } from '../../config';
 import * as descriptionController from './description/controller';
 import * as orderingPartyController from './ordering-party/controller';
 import * as commencementDateController from './commencement-date/controller';
+import * as serviceRecipientsController from './service-recipients/controller';
 
 jest.mock('../../logger');
 
@@ -34,6 +35,9 @@ commencementDateController.putCommencementDate = jest.fn()
   .mockResolvedValue({});
 
 commencementDateController.getCommencementDateContext = jest.fn()
+  .mockResolvedValue({});
+
+serviceRecipientsController.getServiceRecipientsContext = jest.fn()
   .mockResolvedValue({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
@@ -354,7 +358,8 @@ describe('section routes', () => {
       .expect(200)
       .then((res) => {
         expect(res.status).toBe(200);
-        expect(res.text).toEqual('Service recipients page');
+        expect(res.text.includes('data-test-id="service-recipients-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
   });
 
