@@ -24,11 +24,13 @@ export const catalogueSolutionsRoutes = (authProvider, addContext) => {
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const response = await putCatalogueSolutions({
+
+    await putCatalogueSolutions({
       orderId,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
-    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+
+    return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
 
   return router;
