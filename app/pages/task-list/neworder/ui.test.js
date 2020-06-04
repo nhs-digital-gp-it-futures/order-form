@@ -104,222 +104,222 @@ test('should not render the order description details', async (t) => {
     .expect(orderDescription.exists).notOk();
 });
 
-// First Task First Item Tests
-test('should render the first task and first item', async (t) => {
+// Task 1 Item 1 Tests
+test('should render task 1 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const firstTask = Selector('li[data-test-id="task-0"]');
-  const firstTaskFirstItem = Selector('[data-test-id="task-0-item-0"]');
+  const task1 = Selector('li[data-test-id="task-0"]');
+  const task1Item1 = Selector('[data-test-id="task-0-item-0"]');
 
   await t
-    .expect(firstTask.exists).ok()
-    .expect(await extractInnerText(firstTask.find('h2 span'))).eql('1.')
-    .expect(await extractInnerText(firstTask.find('h2 div'))).eql('Start your order')
-    .expect(firstTaskFirstItem.exists).ok()
-    .expect(await extractInnerText(firstTaskFirstItem.find('span'))).eql('Provide a description of your order');
+    .expect(task1.exists).ok()
+    .expect(await extractInnerText(task1.find('h2 span'))).eql('1.')
+    .expect(await extractInnerText(task1.find('h2 div'))).eql('Start your order')
+    .expect(task1Item1.exists).ok()
+    .expect(await extractInnerText(task1Item1.find('span'))).eql('Provide a description of your order');
 });
 
-test('should always render the first task and first item as a link', async (t) => {
+test('should always render task 1 item 1 as a link', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const firstTaskFirstItem = Selector('li[data-test-id="task-0-item-0"]');
+  const task1Item1 = Selector('li[data-test-id="task-0-item-0"]');
 
   await t
-    .expect(firstTaskFirstItem.find('a').exists).ok()
-    .click(firstTaskFirstItem.find('a'))
+    .expect(task1Item1.find('a').exists).ok()
+    .click(task1Item1.find('a'))
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/neworder/description`);
 });
 
-test('should not render the complete tag for the first task and first item', async (t) => {
+test('should not render the complete tag for task 1 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const firstTaskFirstItemCompleteTag = Selector('[data-test-id="task-0-item-0-complete-tag"]');
+  const task1Item1CompleteTag = Selector('[data-test-id="task-0-item-0-complete-tag"]');
 
   await t
-    .expect(firstTaskFirstItemCompleteTag.exists).notOk();
+    .expect(task1Item1CompleteTag.exists).notOk();
 });
 
-// Second Task First Item Tests
-test('should render the second task and first item', async (t) => {
+// Task 2 Item 1 Tests
+test('should render task 2 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const secondTask = Selector('li[data-test-id="task-1"]');
-  const secondTaskFirstItem = Selector('[data-test-id="task-1-item-0"]');
+  const task2 = Selector('li[data-test-id="task-1"]');
+  const task2Item1 = Selector('[data-test-id="task-1-item-0"]');
 
   await t
-    .expect(secondTask.exists).ok()
-    .expect(await extractInnerText(secondTask.find('h2 span'))).eql('2.')
-    .expect(await extractInnerText(secondTask.find('h2 div'))).eql('Organisation information')
-    .expect(secondTaskFirstItem.exists).ok()
-    .expect(await extractInnerText(secondTaskFirstItem.find('span'))).eql('Provide Call-off Ordering Party information');
+    .expect(task2.exists).ok()
+    .expect(await extractInnerText(task2.find('h2 span'))).eql('2.')
+    .expect(await extractInnerText(task2.find('h2 div'))).eql('Organisation information')
+    .expect(task2Item1.exists).ok()
+    .expect(await extractInnerText(task2Item1.find('span'))).eql('Provide Call-off Ordering Party information');
 });
 
-test('should render the second task and first item as a text', async (t) => {
+test('should render task 2 item 1 as a text', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const secondTaskFirstItem = Selector('li[data-test-id="task-1-item-0"]');
+  const task2Item1 = Selector('li[data-test-id="task-1-item-0"]');
 
   await t
-    .expect(secondTaskFirstItem.find('a').exists).notOk();
+    .expect(task2Item1.find('a').exists).notOk();
 });
 
-test('should not render the complete tag for the second task and first item', async (t) => {
+test('should not render the complete tag for task 2 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const secondTaskFirstItemCompleteTag = Selector('[data-test-id="task-1-item-0-complete-tag"]');
+  const task2Item1CompleteTag = Selector('[data-test-id="task-1-item-0-complete-tag"]');
 
   await t
-    .expect(secondTaskFirstItemCompleteTag.exists).notOk();
+    .expect(task2Item1CompleteTag.exists).notOk();
 });
 
-// Second Task Second Item Tests
-test('should render the second task and second item', async (t) => {
+// Task 2 Item 2 Tests
+test('should render task 2 item 2', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const secondTask = Selector('li[data-test-id="task-1"]');
-  const secondTaskSecondItem = Selector('[data-test-id="task-1-item-1"]');
+  const task2 = Selector('li[data-test-id="task-1"]');
+  const task2Item2 = Selector('[data-test-id="task-1-item-1"]');
 
   await t
-    .expect(secondTask.exists).ok()
-    .expect(await extractInnerText(secondTask.find('h2 span'))).eql('2.')
-    .expect(await extractInnerText(secondTask.find('h2 div'))).eql('Organisation information')
-    .expect(secondTaskSecondItem.exists).ok()
-    .expect(await extractInnerText(secondTaskSecondItem.find('span'))).eql('Provide Supplier information');
+    .expect(task2.exists).ok()
+    .expect(await extractInnerText(task2.find('h2 span'))).eql('2.')
+    .expect(await extractInnerText(task2.find('h2 div'))).eql('Organisation information')
+    .expect(task2Item2.exists).ok()
+    .expect(await extractInnerText(task2Item2.find('span'))).eql('Provide Supplier information');
 });
 
-test('should render the second task and second item as a text', async (t) => {
+test('should render task 2 item 2 as a text', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const secondTaskSecondItem = Selector('li[data-test-id="task-1-item-1"]');
+  const task2Item2 = Selector('li[data-test-id="task-1-item-1"]');
 
   await t
-    .expect(secondTaskSecondItem.find('a').exists).notOk();
+    .expect(task2Item2.find('a').exists).notOk();
 });
 
-test('should not render the complete tag for the second task and second item', async (t) => {
+test('should not render the complete tag for task 2 item 2', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const secondTaskSecondItemCompleteTag = Selector('[data-test-id="task-1-item-0-complete-tag"]');
+  const task2Item2CompleteTag = Selector('[data-test-id="task-1-item-0-complete-tag"]');
 
   await t
-    .expect(secondTaskSecondItemCompleteTag.exists).notOk();
+    .expect(task2Item2CompleteTag.exists).notOk();
 });
 
-// Third Task First Item Tests
-test('should render the third task and first item', async (t) => {
+// Task 3 Item 1 Tests
+test('should render task 3 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const thirdTask = Selector('li[data-test-id="task-2"]');
-  const thirdTaskFirstItem = Selector('[data-test-id="task-2-item-0"]');
+  const task3 = Selector('li[data-test-id="task-2"]');
+  const task3Item1 = Selector('[data-test-id="task-2-item-0"]');
 
   await t
-    .expect(thirdTask.exists).ok()
-    .expect(await extractInnerText(thirdTask.find('h2 span'))).eql('3.')
-    .expect(await extractInnerText(thirdTask.find('h2 div'))).eql('Commencement date')
-    .expect(thirdTaskFirstItem.exists).ok()
-    .expect(await extractInnerText(thirdTaskFirstItem.find('span'))).eql('Provide commencement date for this agreement');
+    .expect(task3.exists).ok()
+    .expect(await extractInnerText(task3.find('h2 span'))).eql('3.')
+    .expect(await extractInnerText(task3.find('h2 div'))).eql('Commencement date')
+    .expect(task3Item1.exists).ok()
+    .expect(await extractInnerText(task3Item1.find('span'))).eql('Provide commencement date for this agreement');
 });
 
-test('should render the third task and first item as a text', async (t) => {
+test('should render task 3 item 1 as a text', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const thirdTaskFirstItem = Selector('li[data-test-id="task-2-item-0"]');
+  const task3Item1 = Selector('li[data-test-id="task-2-item-0"]');
 
   await t
-    .expect(thirdTaskFirstItem.find('a').exists).notOk();
+    .expect(task3Item1.find('a').exists).notOk();
 });
 
-test('should not render the complete tag for the third task and first item', async (t) => {
+test('should not render the complete tag for task 3 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const thirdTaskFirstItemCompleteTag = Selector('[data-test-id="task-2-item-0-complete-tag"]');
+  const task3Item1CompleteTag = Selector('[data-test-id="task-2-item-0-complete-tag"]');
 
   await t
-    .expect(thirdTaskFirstItemCompleteTag.exists).notOk();
+    .expect(task3Item1CompleteTag.exists).notOk();
 });
 
-// Forth Task First Item Tests
-test('should render the forth task and first item', async (t) => {
+// Task 4 Item 1 Tests
+test('should render task 4 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const forthTask = Selector('li[data-test-id="task-3"]');
-  const forthTaskFirstItem = Selector('[data-test-id="task-3-item-0"]');
+  const task4 = Selector('li[data-test-id="task-3"]');
+  const task4Item1 = Selector('[data-test-id="task-3-item-0"]');
 
   await t
-    .expect(forthTask.exists).ok()
-    .expect(await extractInnerText(forthTask.find('h2 span'))).eql('4.')
-    .expect(await extractInnerText(forthTask.find('h2 div'))).eql('Select Service Recipients')
-    .expect(forthTaskFirstItem.exists).ok()
-    .expect(await extractInnerText(forthTaskFirstItem.find('span'))).eql('Select the organisations you are ordering for');
+    .expect(task4.exists).ok()
+    .expect(await extractInnerText(task4.find('h2 span'))).eql('4.')
+    .expect(await extractInnerText(task4.find('h2 div'))).eql('Select Service Recipients')
+    .expect(task4Item1.exists).ok()
+    .expect(await extractInnerText(task4Item1.find('span'))).eql('Select the organisations you are ordering for');
 });
 
-test('should render the forth task and first item as a text', async (t) => {
+test('should render task 4 item 1 as a text', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const forthTaskFirstItem = Selector('li[data-test-id="task-3-item-0"]');
+  const task4Item1 = Selector('li[data-test-id="task-3-item-0"]');
 
   await t
-    .expect(forthTaskFirstItem.find('a').exists).notOk();
+    .expect(task4Item1.find('a').exists).notOk();
 });
 
-test('should not render the complete tag for the forth task and first item', async (t) => {
+test('should not render the complete tag for task 4 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const forthTaskFirstItemCompleteTag = Selector('[data-test-id="task-3-item-0-complete-tag"]');
+  const task4Item1CompleteTag = Selector('[data-test-id="task-3-item-0-complete-tag"]');
 
   await t
-    .expect(forthTaskFirstItemCompleteTag.exists).notOk();
+    .expect(task4Item1CompleteTag.exists).notOk();
 });
 
-// Fifth Task First Item Tests
-test('should render the fifth task and first item', async (t) => {
+// Task 5 Item 1 Tests
+test('should render task 5 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const fifthTask = Selector('li[data-test-id="task-4"]');
-  const fifthTaskFirstItem = Selector('[data-test-id="task-4-item-0"]');
+  const task5 = Selector('li[data-test-id="task-4"]');
+  const task5Item1 = Selector('[data-test-id="task-4-item-0"]');
 
   await t
-    .expect(fifthTask.exists).ok()
-    .expect(await extractInnerText(fifthTask.find('h2 span'))).eql('5.')
-    .expect(await extractInnerText(fifthTask.find('h2 div'))).eql('Add Catalogue Solutions')
-    .expect(fifthTaskFirstItem.exists).ok()
-    .expect(await extractInnerText(fifthTaskFirstItem.find('span'))).eql('Add Catalogue Solutions to your order');
+    .expect(task5.exists).ok()
+    .expect(await extractInnerText(task5.find('h2 span'))).eql('5.')
+    .expect(await extractInnerText(task5.find('h2 div'))).eql('Add Catalogue Solutions')
+    .expect(task5Item1.exists).ok()
+    .expect(await extractInnerText(task5Item1.find('span'))).eql('Add Catalogue Solutions to your order');
 });
 
-test('should render the fifth task and first item as a text', async (t) => {
+test('should render task 5 item 1 as a text', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const fifthTaskFirstItem = Selector('li[data-test-id="task-4-item-0"]');
+  const task5Item1 = Selector('li[data-test-id="task-4-item-0"]');
 
   await t
-    .expect(fifthTaskFirstItem.find('a').exists).notOk();
+    .expect(task5Item1.find('a').exists).notOk();
 });
 
-test('should not render the complete tag for the fifth task and first item', async (t) => {
+test('should not render the complete tag for task 5 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const fifthTaskFirstItemCompleteTag = Selector('[data-test-id="task-4-item-0-complete-tag"]');
+  const task5Item1CompleteTag = Selector('[data-test-id="task-4-item-0-complete-tag"]');
 
   await t
-    .expect(fifthTaskFirstItemCompleteTag.exists).notOk();
+    .expect(task5Item1CompleteTag.exists).notOk();
 });
 
 // Buttons tests
