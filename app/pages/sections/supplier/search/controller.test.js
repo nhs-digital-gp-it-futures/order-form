@@ -89,7 +89,7 @@ describe('supplier search controller', () => {
       await findSuppliers({ name: 'some-supp', accessToken: 'access_token' });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${solutionsApiUrl}/api/v1/suppliers?name=some-supp&limitToPublishedSolutions=true`,
+        endpoint: `${solutionsApiUrl}/api/v1/suppliers?name=some-supp&solutionPublicationStatus=Published`,
         accessToken: 'access_token',
         logger,
       });
