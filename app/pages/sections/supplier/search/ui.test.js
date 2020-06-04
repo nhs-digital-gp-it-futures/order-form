@@ -121,7 +121,7 @@ test('should render the Search button', async (t) => {
 
 test('should redirect to /organisation/order-id/supplier/search/select when suppliers are returned', async (t) => {
   nock(solutionsApiUrl)
-    .get('/api/v1/suppliers?name=some-supp&limitToPublishedSolutions=true')
+    .get('/api/v1/suppliers?name=some-supp&solutionPublicationStatus=Published')
     .reply(200, [{}]);
 
   await pageSetup(t, true);
@@ -138,7 +138,7 @@ test('should redirect to /organisation/order-id/supplier/search/select when supp
 
 test('should render the error page if no suppliers are found', async (t) => {
   nock(solutionsApiUrl)
-    .get('/api/v1/suppliers?name=some-supp&limitToPublishedSolutions=true')
+    .get('/api/v1/suppliers?name=some-supp&solutionPublicationStatus=Published')
     .reply(200, []);
 
   await pageSetup(t, true);
