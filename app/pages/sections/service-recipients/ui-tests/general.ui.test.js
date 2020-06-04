@@ -43,7 +43,7 @@ const mockOapiData = [
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('service-recipients page')
+fixture('service-recipients page - general')
   .page('http://localhost:1234/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
