@@ -10,16 +10,14 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-const dataFromOapi = [
-  {
-    name: 'Some service recipient 1',
-    odsCode: 'ods1',
-  },
-  {
-    name: 'Some service recipient 2',
-    odsCode: 'ods2',
-  },
-];
+const dataFromOapi = [{
+  name: 'Some service recipient 1',
+  odsCode: 'ods1',
+}, {
+  name: 'Some service recipient 2',
+  odsCode: 'ods2',
+}];
+
 const dataFromOrdapi = {
   serviceRecipients: [{
     name: 'Some service recipient 2',
