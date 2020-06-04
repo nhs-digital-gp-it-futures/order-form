@@ -1,9 +1,9 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import content from './manifest.json';
-import { baseUrl, orderApiUrl } from '../../config';
-import mockOrdersData from '../../test-utils/mockData/mockOrders.json';
+import content from '../manifest.json';
+import { baseUrl, orderApiUrl } from '../../../config';
+import mockOrdersData from '../../../test-utils/mockData/mockOrders.json';
 
 const pageUrl = 'http://localhost:1234/organisation';
 
