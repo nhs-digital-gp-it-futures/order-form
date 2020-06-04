@@ -1,9 +1,9 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import commonContent from '../commonManifest.json';
-import existingorderPageContent from './manifest.json';
-import { baseUrl, orderApiUrl } from '../../../config';
+import commonContent from '../../commonManifest.json';
+import existingorderPageContent from '../manifest.json';
+import { baseUrl, orderApiUrl } from '../../../../config';
 
 const mockExistingOrderSummary = {
   orderId: 'order-id',

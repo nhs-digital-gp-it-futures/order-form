@@ -1,9 +1,9 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import commonContent from '../commonManifest.json';
-import neworderPageContent from './manifest.json';
-import { baseUrl } from '../../../config';
+import commonContent from '../../commonManifest.json';
+import neworderPageContent from '../manifest.json';
+import { baseUrl } from '../../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/neworder';
 
