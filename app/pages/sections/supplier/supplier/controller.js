@@ -73,7 +73,7 @@ export const putSupplier = async ({
     if (err.response.status === 400 && err.response.data && err.response.data.errors) {
       return err.response.data;
     }
-    logger.error('Error updating supplier for order');
+    logger.error(`Error updating supplier for ${orderId}`);
     throw new Error();
   }
 };
