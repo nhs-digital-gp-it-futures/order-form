@@ -161,7 +161,7 @@ test('should always render the first task and first item as a link', async (t) =
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/description`);
 });
 
-test('should always render the first task as complete for an existing order', async (t) => {
+test('should always render the complete tag for the first task and first item', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -199,7 +199,7 @@ test('should always render the second task and first item as a link', async (t) 
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/ordering-party`);
 });
 
-test('should not render the second task and first item as complete when returned as incomplete from the API', async (t) => {
+test('should not render the complete tag for the second task and first item when returned as incomplete from the API', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([{ id: 'ordering-party', status: 'incomplete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
@@ -210,7 +210,7 @@ test('should not render the second task and first item as complete when returned
     .expect(secondTaskFirstItemCompleteTag.exists).notOk();
 });
 
-test('should only render the second task and first item as complete when returned as complete from the API', async (t) => {
+test('should only render the complete tag for the second task and first item when returned as complete from the API', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([{ id: 'ordering-party', status: 'complete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
@@ -249,7 +249,7 @@ test('should always render the second task and second item as a link', async (t)
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/supplier`);
 });
 
-test('should not render the second task and second item as complete when returned as incomplete from the API', async (t) => {
+test('should not render the complete tag for the second task and second item when returned as incomplete from the API', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([{ id: 'supplier', status: 'incomplete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
@@ -260,7 +260,7 @@ test('should not render the second task and second item as complete when returne
     .expect(secondTaskSecondItemCompleteTag.exists).notOk();
 });
 
-test('should only render the second task and second item as complete when returned as complete from the API', async (t) => {
+test('should only render the complete tag for second task and second item when returned as complete from the API', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([{ id: 'supplier', status: 'complete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
@@ -317,7 +317,7 @@ test('should only render the third task and first item as a link if all dependen
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/commencement-date`);
 });
 
-test('should not render the third task and first item as complete when returned as incomplete from the API', async (t) => {
+test('should not render the complete tag for the third task and first item when returned as incomplete from the API', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([{ id: 'commencement-date', status: 'incomplete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
@@ -328,7 +328,7 @@ test('should not render the third task and first item as complete when returned 
     .expect(thirdTaskFirstItemCompleteTag.exists).notOk();
 });
 
-test('should only render the third task and first item as complete when returned as complete from the API', async (t) => {
+test('should only render the complete tag for the third task and first item when returned as complete from the API', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([{ id: 'commencement-date', status: 'complete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
@@ -387,7 +387,7 @@ test('should only render the forth task and first item as a link if all dependen
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/service-recipients`);
 });
 
-test('should not render the forth task and first item as complete when returned as incomplete from the API', async (t) => {
+test('should not render the complete tag for the forth task and first item when returned as incomplete from the API', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([{ id: 'service-recipients', status: 'incomplete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
@@ -398,7 +398,7 @@ test('should not render the forth task and first item as complete when returned 
     .expect(forthTaskFirstItemCompleteTag.exists).notOk();
 });
 
-test('should only render the forth task and first item as complete when returned as complete from the API', async (t) => {
+test('should only render the complete tag for the forth task and first item when returned as complete from the API', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([{ id: 'service-recipients', status: 'complete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
@@ -459,7 +459,7 @@ test('should only render the fifth task and first item as a link if all dependen
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/catalogue-solutions`);
 });
 
-test('should not render the fifth task and first item as complete when returned as incomplete from the API', async (t) => {
+test('should not render the complete tag for the fifth task and first item when returned as incomplete from the API', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([{ id: 'catalogue-solutions', status: 'incomplete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
@@ -470,7 +470,7 @@ test('should not render the fifth task and first item as complete when returned 
     .expect(fifthTaskFirstItemCompleteTag.exists).notOk();
 });
 
-test('should only render the fifth task and first item as complete when returned as complete from the API', async (t) => {
+test('should only render the complete tag for the fifth task and first item when returned as complete from the API', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([{ id: 'catalogue-solutions', status: 'complete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
