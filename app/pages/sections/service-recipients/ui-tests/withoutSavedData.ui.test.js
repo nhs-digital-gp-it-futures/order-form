@@ -13,16 +13,13 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const mockOapiData = [
-  {
-    name: 'Some service recipient 1',
-    odsCode: 'ods1',
-  },
-  {
-    name: 'Some service recipient 2',
-    odsCode: 'ods2',
-  },
-];
+const mockOapiData = [{
+  name: 'Some service recipient 1',
+  odsCode: 'ods1',
+}, {
+  name: 'Some service recipient 2',
+  odsCode: 'ods2',
+}];
 
 const mocks = () => {
   nock(organisationApiUrl)
