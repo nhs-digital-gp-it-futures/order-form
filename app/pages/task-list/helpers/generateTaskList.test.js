@@ -15,11 +15,11 @@ const taskListManifest = {
     sections: [{
       id: 'task2item1',
       title: 'task 1 item 1',
-      dependencies: ['task1item1'],
+      statusDependencies: ['task1item1'],
     }, {
       id: 'task2item2',
       title: 'task 1 item 2',
-      dependencies: ['task1item1', 'task2item1'],
+      statusDependencies: ['task1item1', 'task2item1'],
     }],
   }],
 };
@@ -95,7 +95,7 @@ describe('generateTaskList', () => {
         let itemWithNoDependanciesFound;
         taskList.forEach((task, i) => {
           task.items.forEach((item, j) => {
-            if (!taskListManifest.tasks[i].sections[j].dependencies) {
+            if (!taskListManifest.tasks[i].sections[j].statusDependencies) {
               itemWithNoDependanciesFound = true;
               expect(item.href).toBeTruthy();
             }
@@ -109,7 +109,7 @@ describe('generateTaskList', () => {
         let itemWithDependanciesFound;
         taskList.forEach((task, i) => {
           task.items.forEach((item, j) => {
-            if (taskListManifest.tasks[i].sections[j].dependencies) {
+            if (taskListManifest.tasks[i].sections[j].statusDependencies) {
               itemWithDependanciesFound = true;
               expect(item.href).toBeFalsy();
             }
@@ -125,7 +125,7 @@ describe('generateTaskList', () => {
         let itemWithNoDependanciesFound;
         taskList.forEach((task, i) => {
           task.items.forEach((item, j) => {
-            if (!taskListManifest.tasks[i].sections[j].dependencies) {
+            if (!taskListManifest.tasks[i].sections[j].statusDependencies) {
               itemWithNoDependanciesFound = true;
               expect(item.href).toBeTruthy();
             }
