@@ -79,6 +79,7 @@ describe('catalogue-solutions page', () => {
   it('should render the "Add Catalogue Solution" button', componentTester(setup, (harness) => {
     const context = {
       addSolutionButtonText: 'Add Catalogue Solution',
+      addSolutionButtonHref: '#',
     };
 
     harness.request(context, ($) => {
@@ -87,6 +88,7 @@ describe('catalogue-solutions page', () => {
       expect(addSolutionButton.length).toEqual(1);
       expect(addSolutionButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
       expect(addSolutionButton.text().trim()).toEqual(context.addSolutionButtonText);
+      expect(addSolutionButton.find('a').attr('href')).toEqual('#');
     });
   }));
 
