@@ -1,8 +1,8 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import content from './manifest.json';
-import { orderApiUrl, organisationApiUrl } from '../../../config';
+import content from '../manifest.json';
+import { orderApiUrl, organisationApiUrl } from '../../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/order-id/ordering-party';
 
