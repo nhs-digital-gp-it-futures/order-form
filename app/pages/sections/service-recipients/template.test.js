@@ -11,6 +11,7 @@ const context = {
   ...manifest,
   title: 'Service Recipients for order-id',
   backLinkHref: '/organisation/order-1',
+  csrfToken: 'mockCsrfToken',
   tableData: [{
     organisationName: {
       id: 'ods1-id',
@@ -33,6 +34,7 @@ const context = {
 };
 
 describe('service-recipients page', () => {
+
   it('should render a backLink', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
@@ -63,6 +65,13 @@ describe('service-recipients page', () => {
       const insetAdvice = $('[data-test-id="service-recipients-page-insetAdvice"]');
       expect(insetAdvice.length).toEqual(1);
       expect(insetAdvice.text().trim()).toContain(context.insetAdvice);
+    });
+  }));
+  it('should render the select-deselect button', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const button = $('[data-test-id="select-deselect-button"] button');
+      expect(button.length).toEqual(1);
+      expect(button.text().trim()).toEqual(context.selectDeselectButton.selectText);
     });
   }));
 
@@ -122,11 +131,12 @@ describe('service-recipients page', () => {
     }));
   });
 
-  it('should render the select-deselect button', componentTester(setup, (harness) => {
+  it('should render hidden input with csrf token', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const button = $('[data-test-id="select-deselect-button"] button');
-      expect(button.length).toEqual(1);
-      expect(button.text().trim()).toEqual(context.selectDeselectButton.selectText);
+      const formElement = $('input[name=_csrf]');
+      expect(formElement.length).toEqual(1);
+      expect(formElement.attr('type')).toEqual('hidden');
+      expect(formElement.attr('value')).toEqual(context.csrfToken);
     });
   }));
 
