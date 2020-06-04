@@ -72,7 +72,7 @@ test('should render checked checkbox for each service recipient', async (t) => {
     .expect(checkbox1Input.getAttribute('name')).eql('ods1-name')
     .expect(checkbox1Input.getAttribute('id')).eql('ods1-id')
     .expect(checkbox1Input.getAttribute('type')).eql('checkbox')
-    .expect(checkbox1Input.getAttribute('checked')).eql('')
+    .expect(checkbox2Input.find(':checked')).ok()
     .expect(checkbox1Label.exists).ok()
     .expect(await extractInnerText(checkbox1Label)).eql(mockOapiData[0].name)
     .expect(checkbox1Label.getAttribute('for')).eql('ods1-id')
@@ -80,7 +80,7 @@ test('should render checked checkbox for each service recipient', async (t) => {
     .expect(checkbox2Input.getAttribute('name')).eql('ods2-name')
     .expect(checkbox2Input.getAttribute('id')).eql('ods2-id')
     .expect(checkbox2Input.getAttribute('type')).eql('checkbox')
-    .expect(checkbox2Input.getAttribute('checked')).eql('')
+    .expect(checkbox2Input.find(':checked')).ok()
     .expect(checkbox2Label.exists).ok()
     .expect(await extractInnerText(checkbox2Label)).eql(mockOapiData[1].name)
     .expect(checkbox2Label.getAttribute('for')).eql('ods2-id');
