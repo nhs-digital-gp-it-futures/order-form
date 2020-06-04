@@ -160,7 +160,7 @@ test('should render the second task as "Organisation information" and "supplier"
     .expect(secondTaskSecondItem.find('a').exists).notOk();
 });
 
-test('should render the third task as "Commencement date" and "data" as text not link', async (t) => {
+test('should render the third task as "Commencement date" and "commencement date" as text not link', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -178,7 +178,7 @@ test('should render the third task as "Commencement date" and "data" as text not
     .expect(thirdTaskFirstItem.find('a').exists).notOk();
 });
 
-test('should render the fourth task as "Service recipients" and "data" as text not link', async (t) => {
+test('should render the fourth task as "Select Service Recipients" and "service recipients" as text not link', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
@@ -194,6 +194,24 @@ test('should render the fourth task as "Service recipients" and "data" as text n
     .expect(fourthTaskFirstItem.exists).ok()
     .expect(await extractInnerText(fourthTaskFirstItem)).eql('Select the organisations you are ordering for')
     .expect(fourthTaskFirstItem.find('a').exists).notOk();
+});
+
+test('should render the fifth task as "Add Catalogue Solutions" and "catalogue solutions" as text not link', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const taskList = Selector('[data-test-id="task-list"]');
+  const fifthTask = Selector('li[data-test-id="task-4"]');
+  const fifthTaskFirstItem = Selector('li[data-test-id="task-4-item-0"]');
+
+  await t
+    .expect(taskList.exists).ok()
+    .expect(fifthTask.exists).ok()
+    .expect(await extractInnerText(fifthTask.find('h2 span'))).eql('5.')
+    .expect(await extractInnerText(fifthTask.find('h2 div'))).eql('Add Catalogue Solutions')
+    .expect(fifthTaskFirstItem.exists).ok()
+    .expect(await extractInnerText(fifthTaskFirstItem)).eql('Add Catalogue Solutions to your order')
+    .expect(fifthTaskFirstItem.find('a').exists).notOk();
 });
 
 test('should render the "Delete order" button', async (t) => {
