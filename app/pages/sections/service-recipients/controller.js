@@ -27,5 +27,5 @@ export const getServiceRecipientsContext = async ({ orderId, orgId, accessToken 
     throw new Error();
   }
 
-  return getContext({ orderId });
+  return getContext({ orderId, serviceRecipientsData });
 };
