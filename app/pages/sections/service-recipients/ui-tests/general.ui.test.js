@@ -21,7 +21,7 @@ const mocks = () => {
     .reply(200, []);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/service-recipients')
-    .reply(200, { serviceRecipients: []});
+    .reply(200, { serviceRecipients: [] });
 };
 
 const pageSetup = async (t, withAuth = false) => {
