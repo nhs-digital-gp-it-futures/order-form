@@ -4,9 +4,9 @@ import { baseUrl } from '../../../config';
 export const getContext = ({ orderId, serviceRecipientsData = [] }) => {
   const tableData = serviceRecipientsData.map(data => ({
     organisationName: {
-      id: `${data.odsCode}-id`,
-      name: `${data.odsCode}-name`,
-      value: data.odsCode,
+      id: data.odsCode,
+      name: data.odsCode,
+      value: data.name,
       text: data.name,
       checked: false,
     },
