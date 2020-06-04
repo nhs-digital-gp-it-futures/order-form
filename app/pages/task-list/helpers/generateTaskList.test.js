@@ -174,7 +174,7 @@ describe('generateTaskList', () => {
         expect(taskList[2].items[0].href).toBeFalsy();
       });
 
-      it('should add href to item if all statusDependencies are complete but countDependencies is 0', () => {
+      it('should add href to item if all statusDependencies are complete and countDependencies is > 0', () => {
         const sectionDataWithCount = [
           {
             id: 'task1item1',
