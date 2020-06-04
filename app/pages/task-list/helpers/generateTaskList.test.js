@@ -21,6 +21,14 @@ const taskListManifest = {
       title: 'task 1 item 2',
       statusDependencies: ['task1item1', 'task2item1'],
     }],
+  }, {
+    name: 'task 3',
+    sections: [{
+      id: 'task3item1',
+      title: 'task 3 item 1',
+      statusDependencies: ['task1item1', 'task2item1', 'task2item2'],
+      countDependencies: ['task2item2'],
+    }],
   }],
 };
 
@@ -142,6 +150,11 @@ describe('generateTaskList', () => {
       it('should not add href to item if one or more dependencies are incomplete', () => {
         const taskList = generateTaskList({ orderId, taskListManifest, sectionsData });
         expect(taskList[1].items[1].href).toBeFalsy();
+      });
+
+      it('should add href to item if all statusDependencies are complete and countDependencies > 0', () => {
+        const taskList = generateTaskList({ orderId, taskListManifest, sectionsData });
+        expect(taskList[1].items[0].href).toBeTruthy();
       });
     });
   });
