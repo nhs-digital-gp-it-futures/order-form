@@ -7,16 +7,6 @@ export const getServiceRecipientsContext = async ({ orderId, orgId, accessToken 
   let selectedData;
 
   const serviceRecipientEndpoint = getEndpoint({ endpointLocator: 'getServiceRecipientsFromOapi', options: { orgId } });
-  // const serviceRecipientsData = [
-  //   {
-  //     name: 'Some service recipient 1',
-  //     odsCode: 'XXX1',
-  //   },
-  //   {
-  //     name: 'Some service recipient 2',
-  //     odsCode: 'XXX2',
-  //   },
-  // ];
   const serviceRecipientsData = await getData({
     endpoint: serviceRecipientEndpoint,
     accessToken,
