@@ -34,7 +34,6 @@ const context = {
 };
 
 describe('service-recipients page', () => {
-
   it('should render a backLink', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
