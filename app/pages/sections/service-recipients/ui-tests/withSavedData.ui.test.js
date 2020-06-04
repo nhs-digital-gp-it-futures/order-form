@@ -50,7 +50,7 @@ const pageSetup = async (t, withAuth = false) => {
   }
 };
 
-fixture('service-recipients page - general')
+fixture('service-recipients page - with saved data')
   .page('http://localhost:1234/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -64,7 +64,7 @@ fixture('service-recipients page - general')
   });
 
 test('should render checked checkbox for each service recipient', async (t) => {
-  await pageSetup(t, true, mockOapiData);
+  await pageSetup(t, true);
   await t.navigateTo(pageUrl);
   const checkbox1Input = Selector('[data-test-id="organisation-name-checkbox-ods1"] input');
   const checkbox1Label = Selector('[data-test-id="organisation-name-checkbox-ods1"] label');
@@ -90,7 +90,7 @@ test('should render checked checkbox for each service recipient', async (t) => {
 });
 
 test('should render ods code for each service recipient', async (t) => {
-  await pageSetup(t, true, mockOapiData);
+  await pageSetup(t, true);
   await t.navigateTo(pageUrl);
   const odsCode1 = Selector('[data-test-id="ods-code-ods1"]');
   const odsCode2 = Selector('[data-test-id="ods-code-ods2"]');

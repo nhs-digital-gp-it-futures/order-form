@@ -13,22 +13,6 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-
-const mocks = (oapiData, ordapiData) => {
-  nock(organisationApiUrl)
-    .get('/api/v1/Organisations/org-id/service-recipients')
-    .reply(200, oapiData);
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/service-recipients')
-    .reply(200, ordapiData);
-};
-
-const pageSetup = async (t, withAuth = false, oapiData = [], ordapiData = {}) => {
-  if (withAuth) {
-    mocks(oapiData, ordapiData);
-    await setCookies();
-  }
-};
 const mockOapiData = [
   {
     name: 'Some service recipient 1',
@@ -39,6 +23,22 @@ const mockOapiData = [
     odsCode: 'ods2',
   },
 ];
+
+const mocks = () => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id/service-recipients')
+    .reply(200, mockOapiData);
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/service-recipients')
+    .reply(200, { serviceRecipients: []});
+};
+
+const pageSetup = async (t, withAuth = false) => {
+  if (withAuth) {
+    mocks();
+    await setCookies();
+  }
+};
 
 fixture('service-recipients page - without saved data')
   .page('http://localhost:1234/some-fake-page')
@@ -54,7 +54,7 @@ fixture('service-recipients page - without saved data')
   });
 
 test('should render unchecked checkbox for each service recipient', async (t) => {
-  await pageSetup(t, true, mockOapiData);
+  await pageSetup(t, true);
   await t.navigateTo(pageUrl);
   const checkbox1Input = Selector('[data-test-id="organisation-name-checkbox-ods1"] input');
   const checkbox1Label = Selector('[data-test-id="organisation-name-checkbox-ods1"] label');
@@ -80,7 +80,7 @@ test('should render unchecked checkbox for each service recipient', async (t) =>
 });
 
 test('should render ods code for each service recipient', async (t) => {
-  await pageSetup(t, true, mockOapiData);
+  await pageSetup(t, true);
   await t.navigateTo(pageUrl);
   const odsCode1 = Selector('[data-test-id="ods-code-ods1"]');
   const odsCode2 = Selector('[data-test-id="ods-code-ods2"]');
