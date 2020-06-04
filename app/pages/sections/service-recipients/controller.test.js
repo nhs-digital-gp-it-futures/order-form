@@ -10,6 +10,17 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
+const dataFromOapi = [
+  {
+    name: 'Some service recipient 1',
+    odsCode: 'ods1',
+  },
+  {
+    name: 'Some service recipient 2',
+    odsCode: 'ods2',
+  },
+];
+
 describe('service-recipients controller', () => {
   describe('getServiceRecipientsContext', () => {
     afterEach(() => {
@@ -38,7 +49,7 @@ describe('service-recipients controller', () => {
 
     it('calls getContext once with correct params if data returned', async () => {
       getData
-        .mockResolvedValueOnce({})
+        .mockResolvedValueOnce(dataFromOapi)
         .mockResolvedValueOnce({ serviceRecipients: [] });
       contextCreator.getContext
         .mockResolvedValueOnce();
@@ -46,7 +57,7 @@ describe('service-recipients controller', () => {
       await getServiceRecipientsContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id' });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', serviceRecipientsData: dataFromOapi });
     });
   });
 });
