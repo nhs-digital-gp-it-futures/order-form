@@ -15,12 +15,12 @@
         {
           "id": "ordering-party",
           "title": "Provide Call-off Ordering Party information",
-          "dependencies": ["description"]
+          "statusDependencies": ["description"]
         },
         {
           "id": "supplier",
           "title": "Provide Supplier information",
-          "dependencies": ["description"]
+          "statusDependencies": ["description"]
         }
       ]
     },
@@ -30,7 +30,7 @@
         {
           "id": "commencement-date",
           "title": "Provide commencement date for this agreement",
-          "dependencies": ["description", "ordering-party", "supplier"]
+          "statusDependencies": ["description", "ordering-party", "supplier"]
         }
       ]
     },
@@ -40,7 +40,18 @@
         {
           "id": "service-recipients",
           "title": "Select the organisations you are ordering for",
-          "dependencies": ["description", "ordering-party", "supplier", "commencement-date"]
+          "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date"]
+        }
+      ]
+    },
+    {
+      "name": "Add Catalogue Solutions",
+      "sections": [
+        {
+          "id": "catalogue-solutions",
+          "title": "Add Catalogue Solutions to your order",
+          "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients"],
+          "countDependencies": ["service-recipients"]
         }
       ]
     }

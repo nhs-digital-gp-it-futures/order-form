@@ -5,7 +5,7 @@ import commonContent from '../commonManifest.json';
 import existingorderPageContent from './manifest.json';
 import { baseUrl, orderApiUrl } from '../../../config';
 
-const mockExistingOrder = {
+const mockExistingOrderSummary = {
   orderId: 'order-id',
   description: 'Some description',
   sections: [
@@ -29,20 +29,30 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const mocks = () => {
+const mocks = (data) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/summary')
-    .reply(200, mockExistingOrder);
+    .reply(200, data);
 };
 
-const pageSetup = async (t, withAuth = false) => {
+const pageSetup = async (t, withAuth = false, data = mockExistingOrderSummary) => {
   if (withAuth) {
-    mocks();
+    mocks(data);
     await setCookies();
   }
 };
 
 const getLocation = ClientFunction(() => document.location.href);
+
+const generateMockOrderSummary = sectionData => (
+  {
+    ...mockExistingOrderSummary,
+    sections: [
+      ...mockExistingOrderSummary.sections,
+      ...sectionData,
+    ],
+  }
+);
 
 fixture('existingorder task-list page')
   .page('http://localhost:1234/some-fake-page')
@@ -120,107 +130,358 @@ test('should render the order description details', async (t) => {
     .expect(orderDescriptionTitle.exists).ok()
     .expect(await extractInnerText(orderDescriptionTitle)).eql(existingorderPageContent.orderDescriptionTitle)
     .expect(orderDescription.exists).ok()
-    .expect(await extractInnerText(orderDescription)).eql(mockExistingOrder.description);
+    .expect(await extractInnerText(orderDescription)).eql(mockExistingOrderSummary.description);
 });
 
-test('should render the first task and tag it as complete', async (t) => {
+// Task 1 Item 1 Tests
+test('should render task 1 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const taskList = Selector('[data-test-id="task-list"]');
-  const firstTask = Selector('li[data-test-id="task-0"]');
-  const firstTaskFirstItem = Selector('li[data-test-id="task-0-item-0"]');
-  const firstTaskFirstItemCompleteTag = Selector('[data-test-id="task-0-item-0-complete-tag"]');
+  const task1 = Selector('li[data-test-id="task-0"]');
+  const task1Item1 = Selector('[data-test-id="task-0-item-0"]');
 
   await t
-    .expect(taskList.exists).ok()
-    .expect(firstTask.exists).ok()
-    .expect(await extractInnerText(firstTask.find('h2 span'))).eql('1.')
-    .expect(await extractInnerText(firstTask.find('h2 div'))).eql('Start your order')
-    .expect(firstTaskFirstItem.exists).ok()
-    .expect(await extractInnerText(firstTaskFirstItem.find('a'))).eql('Provide a description of your order')
-    .expect(firstTaskFirstItem.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/description`)
-    .expect(firstTaskFirstItemCompleteTag.exists).ok()
-    .click(firstTaskFirstItem.find('a'))
+    .expect(task1.exists).ok()
+    .expect(await extractInnerText(task1.find('h2 span'))).eql('1.')
+    .expect(await extractInnerText(task1.find('h2 div'))).eql('Start your order')
+    .expect(task1Item1.exists).ok()
+    .expect(await extractInnerText(task1Item1.find('span'))).eql('Provide a description of your order');
+});
+
+test('should always render task 1 item 1 as a link', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const task1Item1 = Selector('li[data-test-id="task-0-item-0"]');
+
+  await t
+    .expect(task1Item1.find('a').exists).ok()
+    .click(task1Item1.find('a'))
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/description`);
 });
 
-test('should render the second task as "Organisation information" and "call-off party" as link not text', async (t) => {
+test('should always render the complete tag for task 1 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const taskList = Selector('[data-test-id="task-list"]');
-  const secondTask = Selector('li[data-test-id="task-1"]');
-  const secondTaskFirstItem = Selector('li[data-test-id="task-1-item-0"]');
+  const task1Item1CompleteTag = Selector('[data-test-id="task-0-item-0-complete-tag"]');
 
   await t
-    .expect(taskList.exists).ok()
-    .expect(secondTask.exists).ok()
-    .expect(await extractInnerText(secondTask.find('h2 span'))).eql('2.')
-    .expect(await extractInnerText(secondTask.find('h2 div'))).eql('Organisation information')
-    .expect(secondTaskFirstItem.exists).ok()
-    .expect(await extractInnerText(secondTaskFirstItem)).eql('Provide Call-off Ordering Party information')
-    .expect(secondTaskFirstItem.find('a').exists).ok()
-    .click(secondTaskFirstItem.find('a'))
+    .expect(task1Item1CompleteTag.exists).ok();
+});
+
+// Task 2 Item 1 Tests
+test('should render task 2 item 1', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const task2 = Selector('li[data-test-id="task-1"]');
+  const task2Item1 = Selector('li[data-test-id="task-1-item-0"]');
+
+  await t
+    .expect(task2.exists).ok()
+    .expect(await extractInnerText(task2.find('h2 span'))).eql('2.')
+    .expect(await extractInnerText(task2.find('h2 div'))).eql('Organisation information')
+    .expect(task2Item1.exists).ok()
+    .expect(await extractInnerText(task2Item1.find('span'))).eql('Provide Call-off Ordering Party information');
+});
+
+test('should always render task 2 item 1 as a link', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const task2Item1 = Selector('li[data-test-id="task-1-item-0"]');
+
+  await t
+    .expect(task2Item1.find('a').exists).ok()
+    .click(task2Item1.find('a'))
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/ordering-party`);
 });
 
-test('should render the second task as "Organisation information" and "supplier" as link not text', async (t) => {
+test('should not render the complete tag for task 2 item 1 when returned as incomplete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'ordering-party', status: 'incomplete' }]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task2Item1CompleteTag = Selector('[data-test-id="task-1-item-0-complete-tag"]');
+
+  await t
+    .expect(task2Item1CompleteTag.exists).notOk();
+});
+
+test('should only render the complete tag for task 2 item 1 when returned as complete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'ordering-party', status: 'complete' }]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task2Item1CompleteTag = Selector('[data-test-id="task-1-item-0-complete-tag"]');
+
+  await t
+    .expect(task2Item1CompleteTag.exists).ok();
+});
+
+// Task 2 Item 2 Tests
+test('should render task 2 item 2', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const taskList = Selector('[data-test-id="task-list"]');
-  const secondTask = Selector('li[data-test-id="task-1"]');
-  const secondTaskSecondItem = Selector('li[data-test-id="task-1-item-1"]');
+  const task2 = Selector('li[data-test-id="task-1"]');
+  const task2Item2 = Selector('li[data-test-id="task-1-item-1"]');
 
   await t
-    .expect(taskList.exists).ok()
-    .expect(secondTask.exists).ok()
-    .expect(await extractInnerText(secondTask.find('h2 span'))).eql('2.')
-    .expect(await extractInnerText(secondTask.find('h2 div'))).eql('Organisation information')
-    .expect(secondTaskSecondItem.exists).ok()
-    .expect(await extractInnerText(secondTaskSecondItem)).eql('Provide Supplier information')
-    .expect(secondTaskSecondItem.find('a').exists).ok()
-    .click(secondTaskSecondItem.find('a'))
+    .expect(task2.exists).ok()
+    .expect(await extractInnerText(task2.find('h2 span'))).eql('2.')
+    .expect(await extractInnerText(task2.find('h2 div'))).eql('Organisation information')
+    .expect(task2Item2.exists).ok()
+    .expect(await extractInnerText(task2Item2.find('span'))).eql('Provide Supplier information');
+});
+
+test('should always render task 2 item 2 as a link', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const task2Item2 = Selector('li[data-test-id="task-1-item-1"]');
+
+  await t
+    .expect(task2Item2.find('a').exists).ok()
+    .click(task2Item2.find('a'))
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/supplier`);
 });
 
-test('should render the third task as "Commencement date" and "data" as text not link', async (t) => {
+test('should not render the complete tag for task 2 item 2 when returned as incomplete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'supplier', status: 'incomplete' }]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task2Item2CompleteTag = Selector('[data-test-id="task-1-item-1-complete-tag"]');
+
+  await t
+    .expect(task2Item2CompleteTag.exists).notOk();
+});
+
+test('should only render the complete tag for task 2 item 2 when returned as complete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'supplier', status: 'complete' }]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task2Item2CompleteTag = Selector('[data-test-id="task-1-item-1-complete-tag"]');
+
+  await t
+    .expect(task2Item2CompleteTag.exists).ok();
+});
+
+// Task 3 Item 1 Tests
+test('should render task 3 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const taskList = Selector('[data-test-id="task-list"]');
-  const thirdTask = Selector('li[data-test-id="task-2"]');
-  const thirdTaskFirstItem = Selector('li[data-test-id="task-2-item-0"]');
+  const task3 = Selector('li[data-test-id="task-2"]');
+  const task3Item1 = Selector('li[data-test-id="task-2-item-0"]');
 
   await t
-    .expect(taskList.exists).ok()
-    .expect(thirdTask.exists).ok()
-    .expect(await extractInnerText(thirdTask.find('h2 span'))).eql('3.')
-    .expect(await extractInnerText(thirdTask.find('h2 div'))).eql('Commencement date')
-    .expect(thirdTaskFirstItem.exists).ok()
-    .expect(await extractInnerText(thirdTaskFirstItem)).eql('Provide commencement date for this agreement')
-    .expect(thirdTaskFirstItem.find('a').exists).notOk();
+    .expect(task3.exists).ok()
+    .expect(await extractInnerText(task3.find('h2 span'))).eql('3.')
+    .expect(await extractInnerText(task3.find('h2 div'))).eql('Commencement date')
+    .expect(task3Item1.exists).ok()
+    .expect(await extractInnerText(task3Item1.find('span'))).eql('Provide commencement date for this agreement');
 });
 
-test('should render the fourth task as "Service recipients" and "data" as text not link', async (t) => {
+test('should render task 3 item 1 as text if all dependencies are not met', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'incomplete' },
+  ]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task3Item1 = Selector('li[data-test-id="task-2-item-0"]');
+
+  await t
+    .expect(task3Item1.find('a').exists).notOk();
+});
+
+test('should only render task 3 item 1 as a link if all dependencies are met', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+  ]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task3Item1 = Selector('li[data-test-id="task-2-item-0"]');
+
+  await t
+    .expect(task3Item1.find('a').exists).ok()
+    .click(task3Item1.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/commencement-date`);
+});
+
+test('should not render the complete tag for task 3 item 1 when returned as incomplete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'commencement-date', status: 'incomplete' }]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task3Item1CompleteTag = Selector('[data-test-id="task-2-item-0-complete-tag"]');
+
+  await t
+    .expect(task3Item1CompleteTag.exists).notOk();
+});
+
+test('should only render the complete tag for task 3 item 1 when returned as complete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'commencement-date', status: 'complete' }]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task3Item1CompleteTag = Selector('[data-test-id="task-2-item-0-complete-tag"]');
+
+  await t
+    .expect(task3Item1CompleteTag.exists).ok();
+});
+
+// Task 4 Item 1 Tests
+test('should render task 4 item 1', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const taskList = Selector('[data-test-id="task-list"]');
-  const fourthTask = Selector('li[data-test-id="task-3"]');
-  const fourthTaskFirstItem = Selector('li[data-test-id="task-3-item-0"]');
+  const task4 = Selector('li[data-test-id="task-3"]');
+  const task4Item1 = Selector('li[data-test-id="task-3-item-0"]');
 
   await t
-    .expect(taskList.exists).ok()
-    .expect(fourthTask.exists).ok()
-    .expect(await extractInnerText(fourthTask.find('h2 span'))).eql('4.')
-    .expect(await extractInnerText(fourthTask.find('h2 div'))).eql('Select Service Recipients')
-    .expect(fourthTaskFirstItem.exists).ok()
-    .expect(await extractInnerText(fourthTaskFirstItem)).eql('Select the organisations you are ordering for')
-    .expect(fourthTaskFirstItem.find('a').exists).notOk();
+    .expect(task4.exists).ok()
+    .expect(await extractInnerText(task4.find('h2 span'))).eql('4.')
+    .expect(await extractInnerText(task4.find('h2 div'))).eql('Select Service Recipients')
+    .expect(task4Item1.exists).ok()
+    .expect(await extractInnerText(task4Item1.find('span'))).eql('Select the organisations you are ordering for');
 });
 
+test('should render task 4 item 1 as text if all dependencies are not met', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'incomplete' },
+  ]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task4Item1 = Selector('li[data-test-id="task-3-item-0"]');
+
+  await t
+    .expect(task4Item1.find('a').exists).notOk();
+});
+
+test('should only render task 4 item 1 as a link if all dependencies are met', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+  ]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task4Item1 = Selector('li[data-test-id="task-3-item-0"]');
+
+  await t
+    .expect(task4Item1.find('a').exists).ok()
+    .click(task4Item1.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/service-recipients`);
+});
+
+test('should not render the complete tag for task 4 item 1 when returned as incomplete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'service-recipients', status: 'incomplete' }]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task4Item1CompleteTag = Selector('[data-test-id="task-3-item-0-complete-tag"]');
+
+  await t
+    .expect(task4Item1CompleteTag.exists).notOk();
+});
+
+test('should only render the complete tag for task 4 item 1 when returned as complete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'service-recipients', status: 'complete' }]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task4Item1CompleteTag = Selector('[data-test-id="task-3-item-0-complete-tag"]');
+
+  await t
+    .expect(task4Item1CompleteTag.exists).ok();
+});
+
+// Task 5 Item 1 Tests
+test('should render task 5 item 1', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const task5 = Selector('li[data-test-id="task-4"]');
+  const task5Item1 = Selector('li[data-test-id="task-4-item-0"]');
+
+  await t
+    .expect(task5.exists).ok()
+    .expect(await extractInnerText(task5.find('h2 span'))).eql('5.')
+    .expect(await extractInnerText(task5.find('h2 div'))).eql('Add Catalogue Solutions')
+    .expect(task5Item1.exists).ok()
+    .expect(await extractInnerText(task5Item1.find('span'))).eql('Add Catalogue Solutions to your order');
+});
+
+test('should render task 5 item 1 as text if all dependencies are not met', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+    { id: 'service-recipients', status: 'complete', count: 0 },
+  ]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task5Item1 = Selector('li[data-test-id="task-4-item-0"]');
+
+  await t
+    .expect(task5Item1.find('a').exists).notOk();
+});
+
+test('should only render task 5 item 1 as a link if all dependencies are met', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+    { id: 'service-recipients', status: 'complete', count: 1 },
+  ]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task5Item1 = Selector('li[data-test-id="task-4-item-0"]');
+
+  await t
+    .expect(task5Item1.find('a').exists).ok()
+    .click(task5Item1.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/catalogue-solutions`);
+});
+
+test('should not render the complete tag for task 5 item 1 when returned as incomplete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'catalogue-solutions', status: 'incomplete' }]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task5Item1CompleteTag = Selector('[data-test-id="task-4-item-0-complete-tag"]');
+
+  await t
+    .expect(task5Item1CompleteTag.exists).notOk();
+});
+
+test('should only render the complete tag for task 5 item 1 when returned as complete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'catalogue-solutions', status: 'complete' }]);
+  await pageSetup(t, true, mockOrderSummary);
+  await t.navigateTo(pageUrl);
+
+  const task5Item1CompleteTag = Selector('[data-test-id="task-4-item-0-complete-tag"]');
+
+  await t
+    .expect(task5Item1CompleteTag.exists).ok();
+});
+
+// Buttons tests
 test('should render the "Delete order" button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
