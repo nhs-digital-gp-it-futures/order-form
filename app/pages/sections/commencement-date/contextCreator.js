@@ -4,7 +4,7 @@ import { formatCommencementDate } from '../../../helpers/dateFormatter';
 
 const addDataToManifest = (commencementDate) => {
   if (commencementDate) {
-    const [day, month, year] = formatCommencementDate(commencementDate);
+    const [day, month, year] = commencementDate;
     return {
       ...manifest,
       questions: [{
@@ -17,7 +17,7 @@ const addDataToManifest = (commencementDate) => {
 };
 
 export const getContext = ({ orderId, data }) => ({
-  ...addDataToManifest(data),
+  ...addDataToManifest(formatCommencementDate(data)),
   title: `${manifest.title} ${orderId}`,
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
 });
@@ -33,7 +33,7 @@ const addErrorsToManifest = ({ validationErrors, modifiedManifest }) => {
 };
 
 export const getErrorContext = ({ validationErrors, orderId, data }) => {
-  const formattedDate = `${data['commencementDate-year']}-${data['commencementDate-month']}-${data['commencementDate-day']}`;
+  const formattedDate = [data['commencementDate-day'], data['commencementDate-month'], data['commencementDate-year']];
   const modifiedManifest = addDataToManifest(formattedDate);
   const manifestWithErrors = addErrorsToManifest({ validationErrors, modifiedManifest });
 
