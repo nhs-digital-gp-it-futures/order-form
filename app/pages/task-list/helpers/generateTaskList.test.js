@@ -14,11 +14,11 @@ const taskListManifest = {
     name: 'task 2',
     sections: [{
       id: 'task2item1',
-      title: 'task 1 item 1',
+      title: 'task 2 item 1',
       statusDependencies: ['task1item1'],
     }, {
       id: 'task2item2',
-      title: 'task 1 item 2',
+      title: 'task 2 item 2',
       statusDependencies: ['task1item1', 'task2item1'],
     }],
   }, {
@@ -152,9 +152,48 @@ describe('generateTaskList', () => {
         expect(taskList[1].items[1].href).toBeFalsy();
       });
 
-      it('should add href to item if all statusDependencies are complete and countDependencies > 0', () => {
-        const taskList = generateTaskList({ orderId, taskListManifest, sectionsData });
-        expect(taskList[1].items[0].href).toBeTruthy();
+      it('should not add href to item if all statusDependencies are complete but countDependencies is 0', () => {
+        const sectionDataWithCount = [
+          {
+            id: 'task1item1',
+            status: 'complete',
+          },
+          {
+            id: 'task2item1',
+            status: 'complete',
+          },
+          {
+            id: 'task2item2',
+            status: 'complete',
+            count: 0,
+          },
+        ];
+        const taskList = generateTaskList({
+          orderId, taskListManifest, sectionsData: sectionDataWithCount,
+        });
+        expect(taskList[2].items[0].href).toBeFalsy();
+      });
+
+      it('should add href to item if all statusDependencies are complete but countDependencies is 0', () => {
+        const sectionDataWithCount = [
+          {
+            id: 'task1item1',
+            status: 'complete',
+          },
+          {
+            id: 'task2item1',
+            status: 'complete',
+          },
+          {
+            id: 'task2item2',
+            status: 'complete',
+            count: 1,
+          },
+        ];
+        const taskList = generateTaskList({
+          orderId, taskListManifest, sectionsData: sectionDataWithCount,
+        });
+        expect(taskList[2].items[0].href).toBeTruthy();
       });
     });
   });
