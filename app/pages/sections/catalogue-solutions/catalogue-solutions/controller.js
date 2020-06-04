@@ -15,3 +15,7 @@ export const getCatalogueSolutionsPageContext = async ({ orderId, accessToken })
     catalogueSolutions: addedSolutionsData.catalogueSolutions,
   });
 };
+
+export const putCatalogueSolutions = async ({ orderId, accessToken }) => {
+  return { success: true };
+};

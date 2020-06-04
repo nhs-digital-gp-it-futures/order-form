@@ -4,10 +4,15 @@ import {
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
   fakeSessionManager,
+  testPostPathWithoutCsrf,
+  testAuthorisedPostPathForUnauthenticatedUser,
+  testAuthorisedPostPathForUnauthorisedUsers,
+  getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
+import { baseUrl } from '../../../config';
 
 jest.mock('../../../logger');
 
@@ -65,6 +70,74 @@ describe('catalogue-solutions section routes', () => {
         .then((res) => {
           expect(res.text.includes('data-test-id="catalogue-solutions-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
+  });
+
+  describe('POST /organisation/:orderId/catalogue-solutions', () => {
+    const path = '/organisation/order-id/catalogue-solutions';
+    afterEach(() => {
+      catalogueSolutionsController.getCatalogueSolutionsPageContext.mockRestore();
+    });
+
+    it('should return 403 forbidden if no csrf token is available', () => {
+      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+      });
+    });
+
+    it('should redirect to the login page if the user is not logged in', () => {
+      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+        expectedRedirectPath: 'http://identity-server/login',
+      });
+    });
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      });
+    });
+
+    it('should return the correct status and text if response.success is true', async () => {
+      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+        .mockResolvedValue({ success: true });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
   });
