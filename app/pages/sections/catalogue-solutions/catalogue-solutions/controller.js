@@ -24,7 +24,7 @@ export const putCatalogueSolutions = async ({ orderId, accessToken }) => {
     });
     return { success: true };
   } catch (err) {
-    logger.error('Error updating catalogue-solutions for order');
+    logger.error(`Error updating catalogue-solutions for ${orderId}`);
     throw new Error();
   }
 };
