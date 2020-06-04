@@ -81,7 +81,7 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should return 403 forbidden if no csrf token is available', () => {
-      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+      catalogueSolutionsController.putCatalogueSolutions = jest.fn()
         .mockResolvedValue({});
 
       return testPostPathWithoutCsrf({
@@ -90,7 +90,7 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should redirect to the login page if the user is not logged in', () => {
-      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+      catalogueSolutionsController.putCatalogueSolutions = jest.fn()
         .mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthenticatedUser({
@@ -104,7 +104,7 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+      catalogueSolutionsController.putCatalogueSolutions = jest.fn()
         .mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -119,7 +119,7 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should return the correct status and text if response.success is true', async () => {
-      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+      catalogueSolutionsController.putCatalogueSolutions = jest.fn()
         .mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
