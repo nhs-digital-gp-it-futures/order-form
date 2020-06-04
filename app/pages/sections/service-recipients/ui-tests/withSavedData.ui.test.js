@@ -76,6 +76,7 @@ test('should render checked checkbox for each service recipient', async (t) => {
     .expect(checkbox1Label.exists).ok()
     .expect(await extractInnerText(checkbox1Label)).eql(mockOapiData[0].name)
     .expect(checkbox1Label.getAttribute('for')).eql('ods1-id')
+
     .expect(checkbox2Input.exists).ok()
     .expect(checkbox2Input.getAttribute('name')).eql('ods2-name')
     .expect(checkbox2Input.getAttribute('id')).eql('ods2-id')
