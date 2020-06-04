@@ -4,7 +4,7 @@ import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 
 export const getServiceRecipientsContext = async ({ orderId, orgId, accessToken }) => {
-  let selectedServiceRecipientsData;
+  let selectedRecipientsData;
 
   const serviceRecipientEndpoint = getEndpoint({ endpointLocator: 'getServiceRecipientsFromOapi', options: { orgId } });
   const serviceRecipientsData = await getData({
@@ -12,20 +12,24 @@ export const getServiceRecipientsContext = async ({ orderId, orgId, accessToken 
     accessToken,
     logger,
   });
-  logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI. ${serviceRecipientsData}`);
+  logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI.`);
 
   try {
     const selectedServiceRecipientsEndpoint = getEndpoint({ endpointLocator: 'getSelectedServiceRecipientsFromOrdapi', options: { orderId } });
-    selectedServiceRecipientsData = await getData({
+    selectedRecipientsData = await getData({
       endpoint: selectedServiceRecipientsEndpoint,
       accessToken,
       logger,
     });
-    logger.info(`${selectedServiceRecipientsData.serviceRecipients.length} selected service recipients found in ORDAPI.`);
+    logger.info(`${selectedRecipientsData.serviceRecipients.length} selected service recipients found in ORDAPI.`);
   } catch (err) {
     logger.error(`No service recipients data returned from ORDAPI for org id: ${orgId}. ${err}`);
     throw new Error();
   }
 
-  return getContext({ orderId, serviceRecipientsData });
+  return getContext({
+    orderId,
+    serviceRecipientsData,
+    selectedServiceRecipientsData: selectedRecipientsData.serviceRecipients,
+  });
 };

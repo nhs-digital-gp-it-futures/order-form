@@ -20,6 +20,12 @@ const dataFromOapi = [
     odsCode: 'ods2',
   },
 ];
+const dataFromOrdapi = {
+  serviceRecipients: [{
+    name: 'Some service recipient 2',
+    odsCode: 'ods2',
+  }],
+};
 
 describe('service-recipients controller', () => {
   describe('getServiceRecipientsContext', () => {
@@ -47,7 +53,7 @@ describe('service-recipients controller', () => {
       });
     });
 
-    it('calls getContext once with correct params if data returned', async () => {
+    it('calls getContext once with correct params if data returned from OAPI', async () => {
       getData
         .mockResolvedValueOnce(dataFromOapi)
         .mockResolvedValueOnce({ serviceRecipients: [] });
@@ -57,7 +63,28 @@ describe('service-recipients controller', () => {
       await getServiceRecipientsContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', serviceRecipientsData: dataFromOapi });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({
+        orderId: 'order-id',
+        serviceRecipientsData: dataFromOapi,
+        selectedServiceRecipientsData: [],
+      });
+    });
+
+    it('calls getContext once with correct params if data returned from OAPI and selected recipients data is returned from ORDAPI', async () => {
+      getData
+        .mockResolvedValueOnce(dataFromOapi)
+        .mockResolvedValueOnce(dataFromOrdapi);
+      contextCreator.getContext
+        .mockResolvedValueOnce();
+
+      await getServiceRecipientsContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
+
+      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getContext).toHaveBeenCalledWith({
+        orderId: 'order-id',
+        serviceRecipientsData: dataFromOapi,
+        selectedServiceRecipientsData: dataFromOrdapi.serviceRecipients,
+      });
     });
   });
 });
