@@ -2,6 +2,7 @@
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/inset-text/macro.njk' import insetText %}
+{% from 'components/checkboxes/macro.njk' import checkboxes %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="service-recipients-page">
@@ -29,20 +30,33 @@
         })}}
 
         <div class="nhsuk-grid-row nhsuk-u-font-size-19 nhsuk-u-font-weight-bold">
-          <div data-test-id="organisation-heading" class="nhsuk-grid-column-one-half">
+          <div data-test-id="organisation-heading" class="nhsuk-grid-column-two-thirds">
             {{ organisationHeading }}
           </div>
-          <div data-test-id="ods-code-heading" class="nhsuk-grid-column-one-half">
+          <div data-test-id="ods-code-heading" class="nhsuk-grid-column-one-third">
             {{ odsCodeHeading }}
           </div>
         </div>
       </div>
     </div>
 
-    <hr class="bc-c-order-table--hr nhsuk-grid-column-full nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4"/>
+    <hr class="bc-c-order-table__hr nhsuk-grid-column-full nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4"/>
+    
 
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds">
+      <div class="nhsuk-grid-column-two-thirds nhsuk-u-font-size-16">
+        {% for row in tableData %}
+          <div class="nhsuk-grid-row">
+            <div data-test-id="organisation-name-checkbox-{{row.odsCode}}" class="nhsuk-grid-column-two-thirds">
+              {{ checkboxes({
+                  items: [row.organisationName]
+                }) }}
+            </div>
+            <div data-test-id="ods-code-{{row.odsCode}}" class="nhsuk-grid-column-one-third bc-c-service-recipients-table__ods">
+              {{ row.odsCode }}
+            </div>
+          </div>
+        {% endfor %}
         {{ bcButton({
             dataTestId: "continue-button",
             text: continueButtonText,
