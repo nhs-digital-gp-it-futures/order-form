@@ -131,7 +131,7 @@ test('should render the Add Catalogue Solution button', async (t) => {
     .expect(await extractInnerText(addSolutionButton)).eql(content.addSolutionButtonText);
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/select with clicking the Add Catalogue Solution button', async (t) => {
+test('should navigate to /organisation/order-id/catalogue-solutions/select when Add Catalogue Solution button is clicked', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
