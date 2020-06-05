@@ -81,10 +81,14 @@ describe('catalogue-solutions select page', () => {
     };
 
     harness.request(context, ($) => {
-      const selectSupplierRadioOptions = $('[data-test-id="question-selectSolution"]');
-      expect(selectSupplierRadioOptions.length).toEqual(1);
-      expect(selectSupplierRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
-      expect(selectSupplierRadioOptions.find('input').length).toEqual(2);
+      const selectSolutionRadioOptions = $('[data-test-id="question-selectSolution"]');
+      expect(selectSolutionRadioOptions.length).toEqual(1);
+      expect(selectSolutionRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
+      expect(selectSolutionRadioOptions.find('input').length).toEqual(2);
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('solution-1');
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Solution 1');
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('solution-2');
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('Solution 2');
     });
   }));
 
