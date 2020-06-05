@@ -8,7 +8,9 @@ import {
 } from './catalogue-solutions/controller';
 import {
   getSolutionsSelectPageContext,
-} from './select/controller';
+  findSolutions,
+  getSupplierId,
+} from './select-solution/controller';
 import {
   getSolutionsPricePageContext,
 } from './select-price/controller';
@@ -39,13 +41,16 @@ export const catalogueSolutionsRoutes = (authProvider, addContext) => {
     return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
 
-  router.get('/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/select-solution', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const supplierId = await getSupplierId({ orderId, accessToken });
+    const solutions = await findSolutions({ supplierId, accessToken });
 
-    const context = await getSolutionsSelectPageContext({ orderId });
+    const context = await getSolutionsSelectPageContext({ orderId, solutions });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select solution page`);
-    return res.render('pages/sections/catalogue-solutions/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/catalogue-solutions/select-solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/select-solution/select-price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {

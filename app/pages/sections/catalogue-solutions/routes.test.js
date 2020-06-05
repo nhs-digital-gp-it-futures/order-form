@@ -11,6 +11,7 @@ import {
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
 import * as catalogueSolutionsPriceController from './select-price/controller';
+import * as selectSolutionController from './select-solution/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';
@@ -143,8 +144,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/select', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select';
+  describe('GET /organisation/:orderId/catalogue-solutions/select-solution', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/select-solution';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -162,9 +163,15 @@ describe('catalogue-solutions section routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select page if authorised', () => {
-      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+    it('should return the catalogue-solutions select-solution page if authorised', () => {
+      selectSolutionController.getSolutionsSelectPageContext = jest.fn()
         .mockResolvedValue({});
+
+      selectSolutionController.getSupplierId = jest.fn()
+        .mockResolvedValue('supp-1');
+
+      selectSolutionController.findSolutions = jest.fn()
+        .mockResolvedValue([]);
 
       return request(setUpFakeApp())
         .get(path)

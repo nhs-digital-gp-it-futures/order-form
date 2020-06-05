@@ -3,7 +3,7 @@ import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/sections/catalogue-solutions/select/template.njk',
+    path: 'pages/sections/catalogue-solutions/select-solution/template.njk',
   },
 };
 
@@ -57,6 +57,38 @@ describe('catalogue-solutions select page', () => {
       expect(formElement.length).toEqual(1);
       expect(formElement.attr('type')).toEqual('hidden');
       expect(formElement.attr('value')).toEqual(context.csrfToken);
+    });
+  }));
+
+  it('should render the "Select Catalogue Solutions" radio button options component', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectSolution',
+          mainAdvice: 'Select Catalogue Solution',
+          options: [
+            {
+              value: 'solution-1',
+              text: 'Solution 1',
+            },
+            {
+              value: 'solution-2',
+              text: 'Solution 2',
+            },
+          ],
+        },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const selectSolutionRadioOptions = $('[data-test-id="question-selectSolution"]');
+      expect(selectSolutionRadioOptions.length).toEqual(1);
+      expect(selectSolutionRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
+      expect(selectSolutionRadioOptions.find('input').length).toEqual(2);
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('solution-1');
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Solution 1');
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('solution-2');
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('Solution 2');
     });
   }));
 
