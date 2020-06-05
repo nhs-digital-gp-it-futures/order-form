@@ -176,8 +176,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/select-price', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select-price';
+  describe('GET /organisation/:orderId/catalogue-solutions/select-solution/select-price', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/select-solution/select-price';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
