@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/catalogue-solutions/select';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -22,7 +22,7 @@ const pageSetup = async (t, withAuth = false) => {
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Catalogue-solutions select page - general')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {

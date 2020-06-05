@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl, organisationApiUrl } from '../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/ordering-party';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/ordering-party';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -99,7 +99,7 @@ const putOrderingPartyErrorResponse = {
 };
 
 fixture('ordering-party page')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {

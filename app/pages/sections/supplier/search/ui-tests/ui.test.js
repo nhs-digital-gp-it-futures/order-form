@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/supplier/search';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier/search';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -32,7 +32,7 @@ const orderData = { name: 'a lovely order' };
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Supplier search page')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {

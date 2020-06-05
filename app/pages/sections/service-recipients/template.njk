@@ -23,11 +23,14 @@
           }) }}
         </div>
 
-        {{ bcButton({
-            dataTestId: "select-deselect-button",
-            text: selectDeselectButton.selectText,
-            classes: "nhsuk-button--secondary"
-        })}}
+        <form method="get" action="{{selectDeselectButtonAction}}">
+          <input type="hidden" name="selectStatus" value="{{selectStatus}}" />
+          {{ bcButton({
+              dataTestId: "select-deselect-button",
+              text: selectDeselectButtonText,
+              classes: "nhsuk-button--secondary"
+          })}}
+        </form>
 
         <div class="nhsuk-grid-row nhsuk-u-font-size-19 nhsuk-u-font-weight-bold">
           <div data-test-id="organisation-heading" class="nhsuk-grid-column-two-thirds">
@@ -43,7 +46,7 @@
     <hr class="bc-c-order-table__hr nhsuk-grid-column-full nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4"/>
 
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds nhsuk-u-font-size-16">
+      <div class="nhsuk-grid-column-two-thirds nhsuk-u-font-size-19">
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
           {% for row in tableData %}

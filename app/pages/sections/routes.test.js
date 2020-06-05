@@ -453,6 +453,16 @@ describe('section routes', () => {
         expect(res.text.includes('data-test-id="service-recipients-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
+
+    it('should return the correct status and text when the user is authorised and the path has query string', () => request(setUpFakeApp())
+      .get(`${path}?selectStatus=select`)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.text.includes('data-test-id="service-recipients-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+      }));
   });
 
   describe('POST /organisation/:orderId/service-recipients', () => {
