@@ -1,7 +1,7 @@
 import { getData } from 'buying-catalogue-library';
 import { getEndpoint } from '../../../../endpoints';
 import { logger } from '../../../../logger';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 
 export const getSolutionsSelectPageContext = params => getContext(params);
 
@@ -20,3 +20,5 @@ export const getSupplierId = async ({ orderId, accessToken }) => {
 
   return ordapiSupplierData.supplierId;
 };
+
+export const getSolutionsSelectErrorPageContext = params => getErrorContext(params);
