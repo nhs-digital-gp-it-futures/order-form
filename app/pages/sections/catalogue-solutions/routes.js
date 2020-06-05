@@ -6,6 +6,9 @@ import {
   getCatalogueSolutionsPageContext,
   putCatalogueSolutions,
 } from './catalogue-solutions/controller';
+import {
+  getSolutionsSelectPageContext,
+} from './select/controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -36,8 +39,10 @@ export const catalogueSolutionsRoutes = (authProvider, addContext) => {
   router.get('/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
 
+    const context = await getSolutionsSelectPageContext({ orderId });
+
     logger.info(`navigating to order ${orderId} catalogue-solutions select solution page`);
-    return res.send('select solution page');
+    return res.render('pages/sections/catalogue-solutions/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
