@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/supplier';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -99,7 +99,7 @@ const pageSetup = async (t, withAuth = false, withSessionState = false, ordapiDa
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Supplier page')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {

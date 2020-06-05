@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { baseUrl, orderApiUrl } from '../../../config';
 import mockOrdersData from '../../../test-utils/mockData/mockOrders.json';
 
-const pageUrl = 'http://localhost:1234/organisation';
+const pageUrl = 'http://localhost:1234/order/organisation';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -35,7 +35,7 @@ const pageSetup = async (t, withAuth = false) => {
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Dashboard page')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {
@@ -145,7 +145,7 @@ test('should navigate to ? page when proxy link is clicked', async (t) => {
   await t
     .expect(link.exists).ok()
     .click(link)
-    .expect(getLocation()).eql('http://localhost:1234/organisation#');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation#');
 });
 
 test('should render the unsubmitted orders table', async (t) => {

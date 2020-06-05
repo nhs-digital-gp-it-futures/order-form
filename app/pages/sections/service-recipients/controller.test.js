@@ -27,8 +27,8 @@ const dataFromOrdapi = {
 
 const mockData = {
   _csrf: 'testCSRF',
-  XXX1: 'Some service recipient 1',
-  XXX2: 'Some service recipient 2',
+  XX1: 'Some service recipient 1',
+  XX2: 'Some service recipient 2',
 };
 
 const formattedMockData = {
