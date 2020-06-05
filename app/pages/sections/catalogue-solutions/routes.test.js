@@ -10,6 +10,7 @@ import {
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
+import * as catalogueSolutionsPriceController from './select-price/controller';
 import * as selectSolutionController from './select-solution/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
@@ -203,7 +204,7 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should return the catalogue-solutions select price text if authorised', () => {
-      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+      catalogueSolutionsPriceController.getSolutionsPricePageContext = jest.fn()
         .mockResolvedValue({});
 
       return request(setUpFakeApp())
@@ -211,7 +212,7 @@ describe('catalogue-solutions section routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('select solution page')).toBeTruthy();
+          expect(res.text.includes('data-test-id="solutions-price-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });
