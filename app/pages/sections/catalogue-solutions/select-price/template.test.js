@@ -3,11 +3,11 @@ import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/sections/catalogue-solutions/price/template.njk',
+    path: 'pages/sections/catalogue-solutions/select-price/template.njk',
   },
 };
 
-describe('catalogue-solutions page', () => {
+describe('catalogue-solutions select-price page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
       orderId: 'order-1',

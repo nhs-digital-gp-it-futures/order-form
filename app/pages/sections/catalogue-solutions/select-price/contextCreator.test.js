@@ -25,11 +25,6 @@ describe('catalogue-solutions select-price contextCreator', () => {
       expect(context.description).toEqual(manifest.description);
     });
 
-    it('should return the listPriceHeading', () => {
-      const context = getContext({ orderId: 'order-1' });
-      expect(context.listPriceHeading).toEqual(manifest.listPriceHeading);
-    });
-
     it('should return the continueButtonText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);

@@ -1,7 +1,6 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
-{% from 'components/inset-text/macro.njk' import insetText %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="solutions-price-page">
@@ -16,8 +15,6 @@
       <div class="nhsuk-grid-column-two-thirds">
         <h1 data-test-id="solutions-price-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
         <h2 data-test-id="solutions-price-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
-
-        <h3 data-test-id="order-description-heading" class="nhsuk-u-margin-bottom-3">{{ listPriceHeading }}</h3>
 
           {{ bcButton({
               dataTestId: "continue-button",
