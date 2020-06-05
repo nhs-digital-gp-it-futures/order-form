@@ -26,7 +26,7 @@ describe('catalogue-solutions select contextCreator', () => {
       expect(context.description).toEqual(manifest.description);
     });
 
-    it('should return the select supplier question', () => {
+    it('should return the select solution question', () => {
       const expectedContext = {
         questions: [
           {
