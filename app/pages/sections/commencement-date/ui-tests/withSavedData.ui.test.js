@@ -94,7 +94,6 @@ test('should show the correct error summary and input error when date is removed
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .debug()
     .expect(errorMessage.exists).notOk()
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
     .selectText(dayInput).pressKey('delete')
@@ -233,7 +232,6 @@ test('should show the correct error summary and input error when a year > 4 char
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .debug()
     .expect(errorMessage.exists).notOk()
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
