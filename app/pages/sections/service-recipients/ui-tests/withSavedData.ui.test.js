@@ -31,6 +31,8 @@ const mockOrdapiData = {
   }],
 };
 
+const getLocation = ClientFunction(() => document.location.href);
+
 const mocks = () => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
@@ -69,22 +71,22 @@ test('should render checked checkbox for each service recipient', async (t) => {
   const checkbox2Label = Selector('[data-test-id="organisation-name-checkbox-ods2"] label');
   await t
     .expect(checkbox1Input.exists).ok()
-    .expect(checkbox1Input.getAttribute('name')).eql('ods1-name')
-    .expect(checkbox1Input.getAttribute('id')).eql('ods1-id')
+    .expect(checkbox1Input.getAttribute('name')).eql('ods1')
+    .expect(checkbox1Input.getAttribute('id')).eql('ods1')
     .expect(checkbox1Input.getAttribute('type')).eql('checkbox')
     .expect(checkbox2Input.find(':checked')).ok()
     .expect(checkbox1Label.exists).ok()
     .expect(await extractInnerText(checkbox1Label)).eql(mockOapiData[0].name)
-    .expect(checkbox1Label.getAttribute('for')).eql('ods1-id')
+    .expect(checkbox1Label.getAttribute('for')).eql('ods1')
 
     .expect(checkbox2Input.exists).ok()
-    .expect(checkbox2Input.getAttribute('name')).eql('ods2-name')
-    .expect(checkbox2Input.getAttribute('id')).eql('ods2-id')
+    .expect(checkbox2Input.getAttribute('name')).eql('ods2')
+    .expect(checkbox2Input.getAttribute('id')).eql('ods2')
     .expect(checkbox2Input.getAttribute('type')).eql('checkbox')
     .expect(checkbox2Input.find(':checked')).ok()
     .expect(checkbox2Label.exists).ok()
     .expect(await extractInnerText(checkbox2Label)).eql(mockOapiData[1].name)
-    .expect(checkbox2Label.getAttribute('for')).eql('ods2-id');
+    .expect(checkbox2Label.getAttribute('for')).eql('ods2');
 });
 
 test('should render ods code for each service recipient', async (t) => {
@@ -98,4 +100,20 @@ test('should render ods code for each service recipient', async (t) => {
     .expect(await extractInnerText(odsCode1)).eql(mockOapiData[0].odsCode)
     .expect(odsCode2.exists).ok()
     .expect(await extractInnerText(odsCode2)).eql(mockOapiData[1].odsCode);
+});
+
+test('should navigate to task list page if continue button is clicked', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/service-recipients')
+    .reply(200, {});
+
+  await pageSetup(t, true, mockOapiData, mockOrdapiData);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="continue-button"] button');
+
+  await t
+    .expect(saveButton.exists).ok()
+    .click(saveButton)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });

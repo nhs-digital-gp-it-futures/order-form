@@ -45,16 +45,16 @@ describe('service-recipients contextCreator', () => {
     it('should construct the tableDate whenever serviceRecipientsData is provided with no selected recipients', () => {
       const context = getContext({ orderId, serviceRecipientsData });
       expect(context.tableData.length).toEqual(serviceRecipientsData.length);
-      expect(context.tableData[0].organisationName.id).toEqual('ods1-id');
-      expect(context.tableData[0].organisationName.name).toEqual('ods1-name');
-      expect(context.tableData[0].organisationName.value).toEqual('ods1');
+      expect(context.tableData[0].organisationName.id).toEqual('ods1');
+      expect(context.tableData[0].organisationName.name).toEqual('ods1');
+      expect(context.tableData[0].organisationName.value).toEqual('Some service recipient 1');
       expect(context.tableData[0].organisationName.text).toEqual('Some service recipient 1');
       expect(context.tableData[0].organisationName.checked).toEqual(false);
       expect(context.tableData[0].odsCode).toEqual('ods1');
 
-      expect(context.tableData[1].organisationName.id).toEqual('ods2-id');
-      expect(context.tableData[1].organisationName.name).toEqual('ods2-name');
-      expect(context.tableData[1].organisationName.value).toEqual('ods2');
+      expect(context.tableData[1].organisationName.id).toEqual('ods2');
+      expect(context.tableData[1].organisationName.name).toEqual('ods2');
+      expect(context.tableData[1].organisationName.value).toEqual('Some service recipient 2');
       expect(context.tableData[1].organisationName.text).toEqual('Some service recipient 2');
       expect(context.tableData[1].organisationName.checked).toEqual(false);
       expect(context.tableData[1].odsCode).toEqual('ods2');
