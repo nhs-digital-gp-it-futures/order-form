@@ -81,6 +81,26 @@ describe('service-recipients controller', () => {
       });
     });
 
+    it('calls getContext once with correct params if data returned from OAPI and selectStatus is passed in', async () => {
+      getData
+        .mockResolvedValueOnce(dataFromOapi)
+        .mockResolvedValueOnce({ serviceRecipients: [] });
+      contextCreator.getContext
+        .mockResolvedValueOnce();
+
+      await getServiceRecipientsContext({
+        orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token', selectStatus: 'select',
+      });
+
+      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getContext).toHaveBeenCalledWith({
+        orderId: 'order-id',
+        serviceRecipientsData: dataFromOapi,
+        selectedServiceRecipientsData: [],
+        selectStatus: 'select',
+      });
+    });
+
     it('calls getContext once with correct params if data returned from OAPI and selected recipients data is returned from ORDAPI', async () => {
       getData
         .mockResolvedValueOnce(dataFromOapi)
