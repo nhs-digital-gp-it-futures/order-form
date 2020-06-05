@@ -40,5 +40,12 @@ export const catalogueSolutionsRoutes = (authProvider, addContext) => {
     return res.send('select solution page');
   }));
 
+  router.get('/select-price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    logger.info(`navigating to order ${orderId} catalogue-solutions select price solution page`);
+    return res.send('select solution page');
+  }));
+
   return router;
 };
