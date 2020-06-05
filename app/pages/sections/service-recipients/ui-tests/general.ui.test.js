@@ -15,31 +15,21 @@ const setCookies = ClientFunction(() => {
 });
 
 
-const mocks = (oapiData, ordapiData) => {
+const mocks = () => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
-    .reply(200, oapiData);
+    .reply(200, []);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/service-recipients')
-    .reply(200, ordapiData);
+    .reply(200, { serviceRecipients: [] });
 };
 
-const pageSetup = async (t, withAuth = false, oapiData = [], ordapiData = {}) => {
+const pageSetup = async (t, withAuth = false) => {
   if (withAuth) {
-    mocks(oapiData, ordapiData);
+    mocks();
     await setCookies();
   }
 };
-const mockOapiData = [
-  {
-    name: 'Some service recipient 1',
-    odsCode: 'ods1',
-  },
-  {
-    name: 'Some service recipient 2',
-    odsCode: 'ods2',
-  },
-];
 
 const getLocation = ClientFunction(() => document.location.href);
 

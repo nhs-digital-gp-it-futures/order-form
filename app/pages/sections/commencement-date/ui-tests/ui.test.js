@@ -1,8 +1,8 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import content from './manifest.json';
-import { orderApiUrl } from '../../../config';
+import content from '../manifest.json';
+import { orderApiUrl } from '../../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/order-id/commencement-date';
 
@@ -214,13 +214,9 @@ test('should navigate to task list page if save button is clicked and data is va
   const yearInput = inputFields.nth(2);
 
   await t
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '01')
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '01')
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '2020')
-    .expect(saveButton.exists).ok()
     .click(saveButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
@@ -237,13 +233,9 @@ test('should show the correct error summary and input error when no date is ente
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -253,11 +245,9 @@ test('should show the correct error summary and input error when no date is ente
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Enter a commencement date')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
     .expect(dayInput.hasClass('nhsuk-input--error')).ok()
-    .expect(monthInput.exists).ok()
     .expect(monthInput.hasClass('nhsuk-input--error')).ok()
-    .expect(yearInput.exists).ok()
     .expect(yearInput.hasClass('nhsuk-input--error')).ok();
 });
 
@@ -273,14 +263,10 @@ test('should show the correct error summary and input error when no day is enter
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '2020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
@@ -291,11 +277,13 @@ test('should show the correct error summary and input error when no day is enter
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must include a day')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
     .expect(dayInput.hasClass('nhsuk-input--error')).ok()
-    .expect(monthInput.exists).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk();
 });
 
@@ -311,14 +299,10 @@ test('should show the correct error summary and input error when no month is ent
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '2020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
@@ -329,11 +313,13 @@ test('should show the correct error summary and input error when no month is ent
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must include a month')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
+    .expect(dayInput.getAttribute('value')).eql('02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
+
     .expect(monthInput.hasClass('nhsuk-input--error')).ok()
-    .expect(yearInput.exists).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk();
 });
 
@@ -349,15 +335,11 @@ test('should show the correct error summary and input error when no year is ente
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -367,11 +349,13 @@ test('should show the correct error summary and input error when no year is ente
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must include a year')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
+    .expect(dayInput.getAttribute('value')).eql('02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
+
     .expect(yearInput.hasClass('nhsuk-input--error')).ok();
 });
 
@@ -387,15 +371,11 @@ test('should show the correct error summary and input error when a year > 4 char
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '202020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
@@ -406,11 +386,14 @@ test('should show the correct error summary and input error when a year > 4 char
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Year must be four numbers')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
+    .expect(dayInput.getAttribute('value')).eql('02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('202020')
     .expect(yearInput.hasClass('nhsuk-input--error')).ok();
 });
 
@@ -426,15 +409,11 @@ test('should show the correct error summary and input error when a year < 4 char
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '20')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
@@ -445,11 +424,14 @@ test('should show the correct error summary and input error when a year < 4 char
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Year must be four numbers')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
+    .expect(dayInput.getAttribute('value')).eql('02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('20')
     .expect(yearInput.hasClass('nhsuk-input--error')).ok();
 });
 
@@ -465,15 +447,11 @@ test('should show the correct error summary and input error when a day > 31 is e
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '32')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '2020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
@@ -484,11 +462,14 @@ test('should show the correct error summary and input error when a day > 31 is e
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must be a real date')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
+    .expect(dayInput.getAttribute('value')).eql('32')
     .expect(dayInput.hasClass('nhsuk-input--error')).ok()
-    .expect(monthInput.exists).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk();
 });
 
@@ -504,15 +485,11 @@ test('should show the correct error summary and input error when a month > 12 is
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '13')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '2020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
@@ -523,11 +500,14 @@ test('should show the correct error summary and input error when a month > 12 is
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must be a real date')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
+    .expect(dayInput.getAttribute('value')).eql('02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('13')
     .expect(monthInput.hasClass('nhsuk-input--error')).ok()
-    .expect(yearInput.exists).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk();
 });
 
@@ -543,15 +523,11 @@ test('should show the correct error summary and input error when a year < 1000 i
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '0999')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
@@ -562,11 +538,14 @@ test('should show the correct error summary and input error when a year < 1000 i
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must be a real date')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
+    .expect(dayInput.getAttribute('value')).eql('02')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('0999')
     .expect(yearInput.hasClass('nhsuk-input--error')).ok();
 });
 
@@ -582,15 +561,11 @@ test('should show the correct error summary and input error when incorrect day/m
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '31')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '02')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '2020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
@@ -601,11 +576,14 @@ test('should show the correct error summary and input error when incorrect day/m
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must be a real date')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
+    .expect(dayInput.getAttribute('value')).eql('31')
     .expect(dayInput.hasClass('nhsuk-input--error')).ok()
-    .expect(monthInput.exists).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
     .expect(monthInput.hasClass('nhsuk-input--error')).ok()
-    .expect(yearInput.exists).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk();
 });
 
@@ -626,15 +604,11 @@ test('should show text fields as errors with error message when there are BE val
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '01')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '01')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '2000')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
@@ -645,11 +619,14 @@ test('should show text fields as errors with error message when there are BE val
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must be in the future or within the last 60 days')
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(dayInput.exists).ok()
+
+    .expect(dayInput.getAttribute('value')).eql('01')
     .expect(dayInput.hasClass('nhsuk-input--error')).ok()
-    .expect(monthInput.exists).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('01')
     .expect(monthInput.hasClass('nhsuk-input--error')).ok()
-    .expect(yearInput.exists).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2000')
     .expect(yearInput.hasClass('nhsuk-input--error')).ok();
 });
 
@@ -669,19 +646,14 @@ test('should anchor to the field when clicking on the error link in errorSummary
   const yearInput = Selector('#commencementDate-year');
 
   await t
-    .expect(errorSummary.exists).notOk()
     .expect(errorMessage.exists).notOk()
-    .expect(dayInput.exists).ok()
     .typeText(dayInput, '01')
-    .expect(monthInput.exists).ok()
     .typeText(monthInput, '01')
-    .expect(yearInput.exists).ok()
     .typeText(yearInput, '2000')
     .click(saveButton);
 
   await t
     .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#commencementDate`);
 });
