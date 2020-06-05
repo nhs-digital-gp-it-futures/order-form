@@ -10,7 +10,7 @@ export const findSolutions = async ({ supplierId, accessToken }) => {
   const solutionsFound = await getData({ endpoint, accessToken, logger });
   logger.info(`Searching for solutions for Supplier "${supplierId}" returned ${solutionsFound.length} solutions`);
 
-  return solutionsFound;
+  return solutionsFound.solutions;
 };
 
 export const getSupplierId = async ({ orderId, accessToken }) => {

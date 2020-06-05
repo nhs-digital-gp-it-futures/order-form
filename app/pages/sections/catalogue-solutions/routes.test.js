@@ -170,7 +170,7 @@ describe('catalogue-solutions section routes', () => {
         .mockResolvedValue('supp-1');
 
       selectSolutionController.findSolutions = jest.fn()
-        .mockResolvedValue({ solutions: [] });
+        .mockResolvedValue([]);
 
       return request(setUpFakeApp())
         .get(path)

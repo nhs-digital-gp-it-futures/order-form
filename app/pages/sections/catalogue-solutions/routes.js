@@ -42,12 +42,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const supplierId = await getSupplierId({ orderId, accessToken });
-    const solutionsData = await findSolutions({ supplierId, accessToken });
+    const solutions = await findSolutions({ supplierId, accessToken });
 
-    const context = await getSolutionsSelectPageContext({
-      orderId,
-      solutions: solutionsData.solutions,
-    });
+    const context = await getSolutionsSelectPageContext({ orderId, solutions });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select solution page`);
     return res.render('pages/sections/catalogue-solutions/select-solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
