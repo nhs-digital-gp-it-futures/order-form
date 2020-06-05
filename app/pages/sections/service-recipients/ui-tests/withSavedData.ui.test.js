@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl, organisationApiUrl } from '../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/service-recipients';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/service-recipients';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -50,7 +50,7 @@ const pageSetup = async (t, withAuth = false) => {
 };
 
 fixture('service-recipients page - with saved data')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {
@@ -116,4 +116,52 @@ test('should navigate to task list page if continue button is clicked', async (t
     .expect(saveButton.exists).ok()
     .click(saveButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+});
+
+test('should check all checkboxes and change button text when "Select all button" is clicked', async (t) => {
+  mocks();
+  await pageSetup(t, true);
+  await t.navigateTo(`${pageUrl}?selectStatus=deselect`);
+
+  const button = Selector('[data-test-id="select-deselect-button"] button');
+  const checkbox1Input = Selector('[data-test-id="organisation-name-checkbox-ods1"] input');
+  const checkbox2Input = Selector('[data-test-id="organisation-name-checkbox-ods2"] input');
+
+  await t
+    .expect(checkbox1Input.exists).ok()
+    .expect(checkbox1Input.getAttribute('checked')).eql(undefined)
+    .expect(checkbox2Input.exists).ok()
+    .expect(checkbox2Input.getAttribute('checked')).eql(undefined)
+    .expect(button.exists).ok()
+    .expect(await extractInnerText(button)).eql('Select all')
+    .click(button);
+
+  await t
+    .expect(await extractInnerText(button)).eql('Deselect all')
+    .expect(checkbox1Input.getAttribute('checked')).eql('')
+    .expect(checkbox2Input.getAttribute('checked')).eql('');
+});
+
+test('should uncheck all checkboxes and change button text when all are selected and "Deselect all button" is clicked', async (t) => {
+  mocks();
+  await pageSetup(t, true);
+  await t.navigateTo(`${pageUrl}?selectStatus=select`);
+
+  const button = Selector('[data-test-id="select-deselect-button"] button');
+  const checkbox1Input = Selector('[data-test-id="organisation-name-checkbox-ods1"] input');
+  const checkbox2Input = Selector('[data-test-id="organisation-name-checkbox-ods2"] input');
+
+  await t
+    .expect(checkbox1Input.exists).ok()
+    .expect(checkbox1Input.getAttribute('checked')).eql('')
+    .expect(checkbox2Input.exists).ok()
+    .expect(checkbox2Input.getAttribute('checked')).eql('')
+    .expect(button.exists).ok()
+    .expect(await extractInnerText(button)).eql('Deselect all')
+    .click(button);
+
+  await t
+    .expect(await extractInnerText(button)).eql('Select all')
+    .expect(checkbox1Input.getAttribute('checked')).eql(undefined)
+    .expect(checkbox2Input.getAttribute('checked')).eql(undefined);
 });
