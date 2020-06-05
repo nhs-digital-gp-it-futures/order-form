@@ -102,7 +102,7 @@ test('should render ods code for each service recipient', async (t) => {
     .expect(await extractInnerText(odsCode2)).eql(mockOapiData[1].odsCode);
 });
 
-test.only('should navigate to task list page if continue button is clicked', async (t) => {
+test('should navigate to task list page if continue button is clicked', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-id/sections/service-recipients')
     .reply(200, {});
