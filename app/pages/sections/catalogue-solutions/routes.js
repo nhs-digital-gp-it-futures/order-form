@@ -59,7 +59,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const response = validateSolutionSelectForm({ data: req.body });
 
     if (response.success) {
-      sessionManager.saveToSession({ req, key: 'selectedSupplier', value: req.body.selectSupplier });
+      sessionManager.saveToSession({ req, key: 'selectedSolution', value: req.body.selectSupplier });
       logger.info('redirecting catalogue solutions select-price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution/select-price`);
     }

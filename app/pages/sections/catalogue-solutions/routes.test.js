@@ -184,7 +184,7 @@ describe('catalogue-solutions section routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('data-test-id="solutions-select-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="solution-select-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });
@@ -244,7 +244,7 @@ describe('catalogue-solutions section routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('data-test-id="solutions-select-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="solution-select-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });

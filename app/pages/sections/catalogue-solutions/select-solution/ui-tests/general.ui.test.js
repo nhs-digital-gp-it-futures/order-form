@@ -25,6 +25,21 @@ const mockSolutions = [
   },
 ];
 
+const solutionsFoundState = ClientFunction(() => {
+  const cookieValue = JSON.stringify([
+    {
+      id: 'solution-1',
+      name: 'Solution 1',
+    },
+    {
+      id: 'solution-2',
+      name: 'Solution 2',
+    },
+  ]);
+
+  document.cookie = `solutionsFound=${cookieValue}`;
+});
+
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
@@ -34,11 +49,12 @@ const mocks = () => {
     .reply(200, { solutions: mockSolutions });
 };
 
-const pageSetup = async (t, withAuth = false) => {
+const pageSetup = async (t, withAuth = false, withSolutionsFoundState = false) => {
   if (withAuth) {
     mocks();
     await setCookies();
   }
+  if (withSolutionsFoundState) await solutionsFoundState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -67,16 +83,16 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render Catalogue-solutions select page', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true);
   await t.navigateTo(pageUrl);
-  const page = Selector('[data-test-id="solutions-select-page"]');
+  const page = Selector('[data-test-id="solution-select-page"]');
 
   await t
     .expect(page.exists).ok();
 });
 
 test('should navigate to /organisation/order-id/catalogue-solutions when click on backlink', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -88,10 +104,10 @@ test('should navigate to /organisation/order-id/catalogue-solutions when click o
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const title = Selector('h1[data-test-id="solutions-select-page-title"]');
+  const title = Selector('h1[data-test-id="solution-select-page-title"]');
 
   await t
     .expect(title.exists).ok()
@@ -99,10 +115,10 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="solutions-select-page-description"]');
+  const description = Selector('h2[data-test-id="solution-select-page-description"]');
 
   await t
     .expect(description.exists).ok()
@@ -110,7 +126,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render a selectSolution question as radio button options', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
   const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolution"]');
@@ -128,7 +144,7 @@ test('should render a selectSolution question as radio button options', async (t
 });
 
 test('should render the Continue button', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(t, true);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -136,4 +152,70 @@ test('should render the Continue button', async (t) => {
   await t
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
+});
+
+test('should redirect to /organisation/order-id/catalogue-solutions/select-solution/select-price when a solution is selected', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolution"]');
+  const firstSolution = selectSolutionRadioOptions.find('input').nth(0);
+  const button = Selector('[data-test-id="continue-button"] button');
+
+  await t
+    .click(firstSolution)
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select-solution/select-price');
+});
+
+test('should show the error summary when there are validation errors', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a Catalogue Solution');
+});
+
+test('should render select solution field as errors with error message when there are validation errors', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const solutionSelectPage = Selector('[data-test-id="solution-select-page"]');
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const solutionSelectField = solutionSelectPage.find('[data-test-id="question-selectSolution"]');
+
+  await t
+    .expect(solutionSelectField.find('[data-test-id="radiobutton-options-error"]').exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(solutionSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
+    .expect(await extractInnerText(solutionSelectField.find('#selectSolution-error'))).contains('Select a Catalogue Solution');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#selectSolution`);
 });

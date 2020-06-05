@@ -9,7 +9,7 @@
     }
   ],
   "errorMessages": {
-    "SelectSolutionRequired": "Select Catalogue Solution"
+    "SelectSolutionRequired": "Select a Catalogue Solution"
   },
   "continueButtonText": "Continue"
 }

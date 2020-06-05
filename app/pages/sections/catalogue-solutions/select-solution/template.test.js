@@ -54,7 +54,7 @@ describe('catalogue-solutions select page', () => {
     };
 
     harness.request(context, ($) => {
-      const title = $('h1[data-test-id="solutions-select-page-title"]');
+      const title = $('h1[data-test-id="solution-select-page-title"]');
       expect(title.length).toEqual(1);
       expect(title.text().trim()).toEqual(context.title);
     });
@@ -66,7 +66,7 @@ describe('catalogue-solutions select page', () => {
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="solutions-select-page-description"]');
+      const description = $('h2[data-test-id="solution-select-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
