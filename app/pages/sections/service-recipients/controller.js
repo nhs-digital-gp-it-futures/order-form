@@ -14,13 +14,6 @@ export const getServiceRecipientsContext = async ({
     accessToken,
     logger,
   });
-  // const serviceRecipientsData = [{
-  //   name: 'Some service recipient 1',
-  //   odsCode: 'ods1',
-  // }, {
-  //   name: 'Some service recipient 2',
-  //   odsCode: 'ods2',
-  // }]
   logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI.`);
 
   try {
