@@ -26,6 +26,41 @@ describe('catalogue-solutions select contextCreator', () => {
       expect(context.description).toEqual(manifest.description);
     });
 
+    it('should return the select supplier question', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectSolution',
+            mainAdvice: 'Select Catalogue Solution',
+            options: [
+              {
+                value: 'solution-1',
+                text: 'Solution 1',
+              },
+              {
+                value: 'solution-2',
+                text: 'Solution 2',
+              },
+            ],
+          },
+        ],
+      };
+
+      const solutions = [
+        {
+          id: 'solution-1',
+          name: 'Solution 1',
+        },
+        {
+          id: 'solution-2',
+          name: 'Solution 2',
+        },
+      ];
+
+      const context = getContext({ solutions });
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
+
     it('should return the continueButtonText', () => {
       const context = getContext({});
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
