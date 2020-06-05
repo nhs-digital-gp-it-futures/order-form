@@ -17,6 +17,7 @@ const endpoints = {
   getAddedCatalogueSolutions: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions`,
   getServiceRecipientsFromOapi: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}/service-recipients`,
   getSelectedServiceRecipientsFromOrdapi: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/service-recipients`,
+  getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
   // PUT endpoints
   putDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
   putOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
