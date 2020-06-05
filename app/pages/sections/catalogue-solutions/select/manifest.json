@@ -2,5 +2,11 @@
   "backLinkText": "Go back",
   "title": "Add Catalogue Solution for",
   "description": "These are the Catalogue Solutions provided by the supplier you’ve chosen. Select the one you want to purchase from the list.",
+  "questions": [
+    {
+      "id": "selectSolution",
+      "mainAdvice": "Select Catalogue Solution"
+    }
+  ],
   "continueButtonText": "Continue"
 }

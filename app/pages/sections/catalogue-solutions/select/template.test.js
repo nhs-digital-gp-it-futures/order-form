@@ -60,6 +60,34 @@ describe('catalogue-solutions select page', () => {
     });
   }));
 
+  it('should render the "Select Catalogue Solutions" radio button options component', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectSolution',
+          mainAdvice: 'Select Catalogue Solution',
+          options: [
+            {
+              value: 'solution-1',
+              text: 'Solution 1',
+            },
+            {
+              value: 'solution-2',
+              text: 'Solution 2',
+            },
+          ],
+        },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const selectSupplierRadioOptions = $('[data-test-id="question-selectSolution"]');
+      expect(selectSupplierRadioOptions.length).toEqual(1);
+      expect(selectSupplierRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
+      expect(selectSupplierRadioOptions.find('input').length).toEqual(2);
+    });
+  }));
+
   it('should render the "Continue" button', componentTester(setup, (harness) => {
     const context = {
       continueButtonText: 'Continue',
