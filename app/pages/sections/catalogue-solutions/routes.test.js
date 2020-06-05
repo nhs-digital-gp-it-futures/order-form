@@ -161,7 +161,7 @@ describe('catalogue-solutions section routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select text if authorised', () => {
+    it('should return the catalogue-solutions select page if authorised', () => {
       catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
         .mockResolvedValue({});
 
@@ -170,7 +170,7 @@ describe('catalogue-solutions section routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('select solution page')).toBeTruthy();
+          expect(res.text.includes('data-test-id="solutions-select-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });
