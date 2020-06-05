@@ -204,7 +204,7 @@ describe('catalogue-solutions section routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('select solution page')).toBeTruthy();
+          expect(res.text.includes('data-test-id="solutions-price-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });
