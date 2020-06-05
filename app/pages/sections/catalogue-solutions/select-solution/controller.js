@@ -12,3 +12,11 @@ export const findSolutions = async ({ supplierId, accessToken }) => {
 
   return solutionsFound;
 };
+
+export const getSupplierId = async ({ orderId, accessToken }) => {
+  const endpoint = getEndpoint({ endpointLocator: 'getOrdapiSupplier', options: { orderId } });
+  const ordapiSupplierData = await getData({ endpoint, accessToken, logger });
+  logger.info(`Get selected supplier for "${orderId}" is ${ordapiSupplierData.supplierId}`);
+
+  return ordapiSupplierData.supplierId;
+};

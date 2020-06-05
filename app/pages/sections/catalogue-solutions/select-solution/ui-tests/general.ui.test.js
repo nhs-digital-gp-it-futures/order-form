@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
+import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
 
 const pageUrl = 'http://localhost:1234/organisation/order-id/catalogue-solutions/select-solution';
 
@@ -13,8 +14,29 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
+const mockSolutions = [
+  {
+    id: 'solution-1',
+    name: 'Solution 1',
+  },
+  {
+    id: 'solution-2',
+    name: 'Solution 2',
+  },
+];
+
+const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, { supplierId: 'supp-1' });
+  nock(solutionsApiUrl)
+    .get('/api/v1/solutions?supplierId=supp-1')
+    .reply(200, { solutions: mockSolutions });
+};
+
 const pageSetup = async (t, withAuth = false) => {
   if (withAuth) {
+    mocks();
     await setCookies();
   }
 };
@@ -85,6 +107,24 @@ test('should render the description', async (t) => {
   await t
     .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
+});
+
+test('should render a selectSolution question as radio button options', async (t) => {
+  await pageSetup(t, true, true);
+  await t.navigateTo(pageUrl);
+
+  const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolution"]');
+
+  await t
+    .expect(selectSolutionRadioOptions.exists).ok()
+    .expect(await extractInnerText(selectSolutionRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
+    .expect(selectSolutionRadioOptions.find('input').count).eql(2)
+
+    .expect(selectSolutionRadioOptions.find('input').nth(0).getAttribute('value')).eql('solution-1')
+    .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(0))).eql('Solution 1')
+
+    .expect(selectSolutionRadioOptions.find('input').nth(1).getAttribute('value')).eql('solution-2')
+    .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(1))).eql('Solution 2');
 });
 
 test('should render the Continue button', async (t) => {

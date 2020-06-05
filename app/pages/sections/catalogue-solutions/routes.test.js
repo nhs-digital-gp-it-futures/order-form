@@ -10,6 +10,7 @@ import {
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
+import * as selectSolutionController from './select-solution/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';
@@ -162,8 +163,14 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should return the catalogue-solutions select-solution page if authorised', () => {
-      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+      selectSolutionController.getSolutionsSelectPageContext = jest.fn()
         .mockResolvedValue({});
+
+      selectSolutionController.getSupplierId = jest.fn()
+        .mockResolvedValue('supp-1');
+
+      selectSolutionController.findSolutions = jest.fn()
+        .mockResolvedValue({ solutions: [] });
 
       return request(setUpFakeApp())
         .get(path)

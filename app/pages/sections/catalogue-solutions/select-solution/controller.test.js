@@ -1,7 +1,7 @@
 import { getData } from 'buying-catalogue-library';
-import { solutionsApiUrl } from '../../../../config';
+import { solutionsApiUrl, orderApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
-import { getSolutionsSelectPageContext, findSolutions } from './controller';
+import { getSolutionsSelectPageContext, findSolutions, getSupplierId } from './controller';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
@@ -23,7 +23,7 @@ describe('catalogue-solutions select controller', () => {
     });
   });
 
-  describe('findSuppliers', () => {
+  describe('findSolutions', () => {
     afterEach(() => {
       getData.mockReset();
     });
@@ -37,6 +37,28 @@ describe('catalogue-solutions select controller', () => {
       expect(getData).toHaveBeenCalledWith({
         endpoint: `${solutionsApiUrl}/api/v1/solutions?supplierId=supp-1`,
         accessToken: 'access_token',
+        logger,
+      });
+    });
+  });
+
+  describe('getSupplierId', () => {
+    afterEach(() => {
+      getData.mockReset();
+      contextCreator.getContext.mockReset();
+    });
+
+    const accessToken = 'access_token';
+    const orderId = 'order-id';
+
+    it('should call getData with the correct params when hasSavedData is true', async () => {
+      getData.mockResolvedValueOnce({ supplierId: 'supp-1' });
+
+      await getSupplierId({ orderId, accessToken });
+      expect(getData.mock.calls.length).toEqual(1);
+      expect(getData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/supplier`,
+        accessToken,
         logger,
       });
     });
