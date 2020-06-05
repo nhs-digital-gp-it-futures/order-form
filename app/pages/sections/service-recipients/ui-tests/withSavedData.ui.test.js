@@ -31,6 +31,8 @@ const mockOrdapiData = {
   }],
 };
 
+const getLocation = ClientFunction(() => document.location.href);
+
 const mocks = () => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
@@ -98,4 +100,20 @@ test('should render ods code for each service recipient', async (t) => {
     .expect(await extractInnerText(odsCode1)).eql(mockOapiData[0].odsCode)
     .expect(odsCode2.exists).ok()
     .expect(await extractInnerText(odsCode2)).eql(mockOapiData[1].odsCode);
+});
+
+test.only('should navigate to task list page if continue button is clicked', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/service-recipients')
+    .reply(200, {});
+
+  await pageSetup(t, true, mockOapiData, mockOrdapiData);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="continue-button"] button');
+
+  await t
+    .expect(saveButton.exists).ok()
+    .click(saveButton)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
