@@ -131,6 +131,17 @@ test('should render the Add Catalogue Solution button', async (t) => {
     .expect(await extractInnerText(addSolutionButton)).eql(content.addSolutionButtonText);
 });
 
+test('should navigate to /organisation/order-id/catalogue-solutions/select when Add Catalogue Solution button is clicked', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const addSolutionButton = Selector('[data-test-id="add-solution-button"] a');
+
+  await t
+    .click(addSolutionButton)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select');
+});
+
 test('should render the Continue button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);

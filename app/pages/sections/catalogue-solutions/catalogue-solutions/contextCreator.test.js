@@ -55,6 +55,11 @@ describe('catalogue-solutions contextCreator', () => {
       expect(context.addSolutionButtonText).toEqual(manifest.addSolutionButtonText);
     });
 
+    it('should return the addSolutionButtonHref', () => {
+      const context = getContext({ orderId: 'order-1' });
+      expect(context.addSolutionButtonHref).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select`);
+    });
+
     it('should return the continueButtonText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
