@@ -5,7 +5,7 @@ import commonContent from '../../commonManifest.json';
 import neworderPageContent from '../manifest.json';
 import { baseUrl } from '../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/neworder';
+const pageUrl = 'http://localhost:1234/order/organisation/neworder';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -27,7 +27,7 @@ const pageSetup = async (t, withAuth = false) => {
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('neworder task-list page')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {

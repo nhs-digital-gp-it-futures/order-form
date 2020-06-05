@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl, organisationApiUrl } from '../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/service-recipients';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/service-recipients';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -34,7 +34,7 @@ const pageSetup = async (t, withAuth = false) => {
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('service-recipients page - general')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {
@@ -120,7 +120,7 @@ test('should render the "Select/Deselect" button', async (t) => {
 
   await t
     .expect(button.exists).ok()
-    .expect(await extractInnerText(button)).eql(content.selectDeselectButton.selectText);
+    .expect(await extractInnerText(button)).eql(content.selectDeselectButtonText.select);
 });
 
 test('should render the organisation heading', async (t) => {

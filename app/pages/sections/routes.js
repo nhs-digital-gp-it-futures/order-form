@@ -98,7 +98,10 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.get('/service-recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const context = await getServiceRecipientsContext({ orderId, orgId: req.user.primaryOrganisationId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    const { selectStatus } = req.query;
+    const context = await getServiceRecipientsContext({
+      orderId, orgId: req.user.primaryOrganisationId, selectStatus, accessToken: extractAccessToken({ req, tokenType: 'access' }),
+    });
     logger.info(`navigating to order ${orderId} service-recipients page`);
     res.render('pages/sections/service-recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
