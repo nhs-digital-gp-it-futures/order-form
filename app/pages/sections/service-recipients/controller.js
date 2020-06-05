@@ -12,7 +12,7 @@ export const getServiceRecipientsContext = async ({ orderId, orgId, accessToken 
     accessToken,
     logger,
   });
-  logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI. ${serviceRecipientsData}`);
+  logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI.`);
 
   try {
     const selectedServiceRecipientsEndpoint = getEndpoint({ endpointLocator: 'getSelectedServiceRecipientsFromOrdapi', options: { orderId } });
@@ -27,7 +27,11 @@ export const getServiceRecipientsContext = async ({ orderId, orgId, accessToken 
     throw new Error();
   }
 
-  return getContext({ orderId, serviceRecipientsData });
+  return getContext({
+    orderId,
+    serviceRecipientsData,
+    selectedServiceRecipientsData: selectedData.serviceRecipients,
+  });
 };
 
 const formatPutData = data => Object.entries(data).filter(item => item[0] !== '_csrf')

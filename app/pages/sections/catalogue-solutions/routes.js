@@ -33,5 +33,12 @@ export const catalogueSolutionsRoutes = (authProvider, addContext) => {
     return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
 
+  router.get('/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    logger.info(`navigating to order ${orderId} catalogue-solutions select solution page`);
+    return res.send('select solution page');
+  }));
+
   return router;
 };
