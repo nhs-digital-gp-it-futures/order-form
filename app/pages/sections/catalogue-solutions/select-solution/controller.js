@@ -22,3 +22,17 @@ export const getSupplierId = async ({ orderId, accessToken }) => {
 };
 
 export const getSolutionsSelectErrorPageContext = params => getErrorContext(params);
+
+export const validateSolutionSelectForm = ({ data }) => {
+  if (data.selectSolution && data.selectSolution.trim().length > 0) {
+    return { success: true };
+  }
+
+  const errors = [
+    {
+      field: 'selectSolution',
+      id: 'SelectSolutionRequired',
+    },
+  ];
+  return { success: false, errors };
+};
