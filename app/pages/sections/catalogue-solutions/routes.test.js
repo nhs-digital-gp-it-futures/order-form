@@ -142,8 +142,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/select', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select';
+  describe('GET /organisation/:orderId/catalogue-solutions/select-solution', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/select-solution';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -161,7 +161,7 @@ describe('catalogue-solutions section routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select page if authorised', () => {
+    it('should return the catalogue-solutions select-solution page if authorised', () => {
       catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
         .mockResolvedValue({});
 

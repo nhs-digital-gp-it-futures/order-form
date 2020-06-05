@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/catalogue-solutions/select';
+const pageUrl = 'http://localhost:1234/organisation/order-id/catalogue-solutions/select-solution';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({

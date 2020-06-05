@@ -8,7 +8,7 @@ import {
 } from './catalogue-solutions/controller';
 import {
   getSolutionsSelectPageContext,
-} from './select/controller';
+} from './select-solution/controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -36,13 +36,13 @@ export const catalogueSolutionsRoutes = (authProvider, addContext) => {
     return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
 
-  router.get('/select', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/select-solution', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
 
     const context = await getSolutionsSelectPageContext({ orderId });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select solution page`);
-    return res.render('pages/sections/catalogue-solutions/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/catalogue-solutions/select-solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
