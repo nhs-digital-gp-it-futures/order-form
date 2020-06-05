@@ -10,7 +10,7 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-describe('catalogue-solutions select controller', () => {
+describe('catalogue-solutions select-solution controller', () => {
   describe('getSolutionsSelectPageContext', () => {
     it('should call getContext with the correct params', async () => {
       contextCreator.getContext
