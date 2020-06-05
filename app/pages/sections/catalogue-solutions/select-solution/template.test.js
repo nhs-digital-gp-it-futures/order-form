@@ -23,6 +23,31 @@ describe('catalogue-solutions select page', () => {
     });
   }));
 
+  it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectSolution',
+          error: [{ message: 'some select solution error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some select solution error message', href: '#selectSolution' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(context.errors.length);
+      context.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
+    });
+  }));
+
   it('should render the solutions-select page title', componentTester(setup, (harness) => {
     const context = {
       title: 'Add Catalogue Solution for order-1',
@@ -89,6 +114,26 @@ describe('catalogue-solutions select page', () => {
       expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Solution 1');
       expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('solution-2');
       expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('Solution 2');
+    });
+  }));
+
+  it('should render errors on selectSolution field if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectSolution',
+          error: [{ message: 'some select solution error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some select solution error message', href: '#selectSolution' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const supplierNameQuestion = $('div[data-test-id="question-selectSolution"]');
+      expect(supplierNameQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
+      expect(supplierNameQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
     });
   }));
 
