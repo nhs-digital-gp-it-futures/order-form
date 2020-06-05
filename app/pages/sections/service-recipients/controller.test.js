@@ -33,8 +33,8 @@ const mockData = {
 
 const formattedMockData = {
   serviceRecipients: [
-    { name: 'Some service recipient 1', odsCode: 'XXX1' },
-    { name: 'Some service recipient 2', odsCode: 'XXX2' },
+    { name: 'Some service recipient 1', odsCode: 'XX1' },
+    { name: 'Some service recipient 2', odsCode: 'XX2' },
   ],
 };
 
@@ -77,7 +77,7 @@ describe('service-recipients controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({
         orderId: 'order-id',
         serviceRecipientsData: dataFromOapi,
-        selectedServiceRecipientsData: [],
+        selectedRecipientsData: [],
       });
     });
 
@@ -96,7 +96,7 @@ describe('service-recipients controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({
         orderId: 'order-id',
         serviceRecipientsData: dataFromOapi,
-        selectedServiceRecipientsData: [],
+        selectedRecipientsData: [],
         selectStatus: 'select',
       });
     });
@@ -114,7 +114,7 @@ describe('service-recipients controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({
         orderId: 'order-id',
         serviceRecipientsData: dataFromOapi,
-        selectedServiceRecipientsData: dataFromOrdapi.serviceRecipients,
+        selectedRecipientsData: dataFromOrdapi.serviceRecipients,
       });
     });
   });
