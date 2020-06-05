@@ -41,6 +41,11 @@ const mockOapiData = [
   },
 ];
 
+const mockOrdApiData = {
+  name: 'Some service recipient 1',
+  odsCode: 'ods1',
+};
+
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('service-recipients page - general')
@@ -188,4 +193,20 @@ test('should render the "Continue" button', async (t) => {
   await t
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
+});
+
+test.only('should navigate to task list page if continue button is clicked and data is valid', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/service-recipients')
+    .reply(200, {});
+
+  await pageSetup(t, true, mockOapiData);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="continue-button"] button');
+
+  await t
+    .expect(saveButton.exists).ok()
+    .click(saveButton)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
