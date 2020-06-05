@@ -266,7 +266,7 @@ describe('catalogue-solutions section routes', () => {
         .type('form')
         .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsFoundCookie])
         .send({
-          selectSupplier: 'supp-1',
+          selectSolution: 'solution-1',
           _csrf: csrfToken,
         })
         .expect(302)
