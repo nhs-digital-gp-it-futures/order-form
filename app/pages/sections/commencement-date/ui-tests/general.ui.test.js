@@ -14,16 +14,15 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-
-const mocks = (mockData) => {
+const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/commencement-date')
-    .reply(200, mockData);
+    .reply(200, {});
 };
 
-const pageSetup = async (t, withAuth = false, mockData = {}) => {
+const pageSetup = async (t, withAuth = false) => {
   if (withAuth) {
-    mocks(mockData);
+    mocks();
     await setCookies();
   }
 };
@@ -37,7 +36,7 @@ const putCommencementDateErrorResponse = {
   }],
 };
 
-fixture('commencement-date page')
+fixture('commencement-date page - general')
   .page('http://localhost:1234/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -169,24 +168,6 @@ test('should render input fields for day, month and year', async (t) => {
     .expect(yearInput.getAttribute('type')).eql('number');
 });
 
-test('should populate input fields for day, month and year if data is returned from api', async (t) => {
-  await pageSetup(t, true, { commencementDate: '2020-02-01T00:00:00' });
-  await t.navigateTo(pageUrl);
-
-  const inputFields = Selector('#commencementDate input:not([name=_csrf])');
-  const dayInput = inputFields.nth(0);
-  const monthInput = inputFields.nth(1);
-  const yearInput = inputFields.nth(2);
-
-  await t
-    .expect(dayInput.exists).ok()
-    .expect(dayInput.getAttribute('value')).eql('01')
-    .expect(monthInput.exists).ok()
-    .expect(monthInput.getAttribute('value')).eql('02')
-    .expect(yearInput.exists).ok()
-    .expect(yearInput.getAttribute('value')).eql('2020');
-});
-
 test('should render save button', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
@@ -198,7 +179,6 @@ test('should render save button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });
 
-// FE Validation tests
 test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-id/sections/commencement-date')
@@ -214,13 +194,14 @@ test('should navigate to task list page if save button is clicked and data is va
   const yearInput = inputFields.nth(2);
 
   await t
-    .typeText(dayInput, '01')
-    .typeText(monthInput, '01')
-    .typeText(yearInput, '2020')
+    .typeText(dayInput, '01', { paste: true })
+    .typeText(monthInput, '01', { paste: true })
+    .typeText(yearInput, '2020', { paste: true })
     .click(saveButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
 
+// FE Validation tests
 test('should show the correct error summary and input error when no date is entered and save is clicked', async (t) => {
   await pageSetup(t, true);
   await t.navigateTo(pageUrl);
@@ -265,9 +246,9 @@ test('should show the correct error summary and input error when no day is enter
   await t
     .expect(errorMessage.exists).notOk()
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(monthInput, '02')
+    .typeText(monthInput, '02', { paste: true })
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(yearInput, '2020')
+    .typeText(yearInput, '2020', { paste: true })
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -300,10 +281,10 @@ test('should show the correct error summary and input error when no month is ent
 
   await t
     .expect(errorMessage.exists).notOk()
-    .typeText(dayInput, '02')
+    .typeText(dayInput, '02', { paste: true })
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(yearInput, '2020')
+    .typeText(yearInput, '2020', { paste: true })
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -336,9 +317,9 @@ test('should show the correct error summary and input error when no year is ente
 
   await t
     .expect(errorMessage.exists).notOk()
-    .typeText(dayInput, '02')
+    .typeText(dayInput, '02', { paste: true })
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(monthInput, '02')
+    .typeText(monthInput, '02', { paste: true })
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
@@ -372,11 +353,11 @@ test('should show the correct error summary and input error when a year > 4 char
 
   await t
     .expect(errorMessage.exists).notOk()
-    .typeText(dayInput, '02')
+    .typeText(dayInput, '02', { paste: true })
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(monthInput, '02')
+    .typeText(monthInput, '02', { paste: true })
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(yearInput, '202020')
+    .typeText(yearInput, '202020', { paste: true })
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -410,11 +391,11 @@ test('should show the correct error summary and input error when a year < 4 char
 
   await t
     .expect(errorMessage.exists).notOk()
-    .typeText(dayInput, '02')
+    .typeText(dayInput, '02', { paste: true })
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(monthInput, '02')
+    .typeText(monthInput, '02', { paste: true })
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(yearInput, '20')
+    .typeText(yearInput, '20', { paste: true })
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -448,11 +429,11 @@ test('should show the correct error summary and input error when a day > 31 is e
 
   await t
     .expect(errorMessage.exists).notOk()
-    .typeText(dayInput, '32')
+    .typeText(dayInput, '32', { paste: true })
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(monthInput, '02')
+    .typeText(monthInput, '02', { paste: true })
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(yearInput, '2020')
+    .typeText(yearInput, '2020', { paste: true })
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -486,11 +467,11 @@ test('should show the correct error summary and input error when a month > 12 is
 
   await t
     .expect(errorMessage.exists).notOk()
-    .typeText(dayInput, '02')
+    .typeText(dayInput, '02', { paste: true })
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(monthInput, '13')
+    .typeText(monthInput, '13', { paste: true })
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(yearInput, '2020')
+    .typeText(yearInput, '2020', { paste: true })
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -524,11 +505,11 @@ test('should show the correct error summary and input error when a year < 1000 i
 
   await t
     .expect(errorMessage.exists).notOk()
-    .typeText(dayInput, '02')
+    .typeText(dayInput, '02', { paste: true })
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(monthInput, '02')
+    .typeText(monthInput, '02', { paste: true })
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(yearInput, '0999')
+    .typeText(yearInput, '0999', { paste: true })
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -562,11 +543,11 @@ test('should show the correct error summary and input error when incorrect day/m
 
   await t
     .expect(errorMessage.exists).notOk()
-    .typeText(dayInput, '31')
+    .typeText(dayInput, '31', { paste: true })
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(monthInput, '02')
+    .typeText(monthInput, '02', { paste: true })
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(yearInput, '2020')
+    .typeText(yearInput, '2020', { paste: true })
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -605,11 +586,11 @@ test('should show text fields as errors with error message when there are BE val
 
   await t
     .expect(errorMessage.exists).notOk()
-    .typeText(dayInput, '01')
+    .typeText(dayInput, '01', { paste: true })
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(monthInput, '01')
+    .typeText(monthInput, '01', { paste: true })
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .typeText(yearInput, '2000')
+    .typeText(yearInput, '2000', { paste: true })
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(saveButton);
 
@@ -647,9 +628,9 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
   await t
     .expect(errorMessage.exists).notOk()
-    .typeText(dayInput, '01')
-    .typeText(monthInput, '01')
-    .typeText(yearInput, '2000')
+    .typeText(dayInput, '01', { paste: true })
+    .typeText(monthInput, '01', { paste: true })
+    .typeText(yearInput, '2000', { paste: true })
     .click(saveButton);
 
   await t
