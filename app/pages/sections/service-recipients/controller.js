@@ -32,7 +32,7 @@ export const getServiceRecipientsContext = async ({
   return getContext({
     orderId,
     serviceRecipientsData,
-    selectedServiceRecipientsData: selectedData ? selectedData.serviceRecipients : [],
+    selectedRecipientsData: selectedData ? selectedData.serviceRecipients : [],
     selectStatus,
   });
 };

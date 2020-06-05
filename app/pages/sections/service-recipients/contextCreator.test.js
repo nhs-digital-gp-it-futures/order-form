@@ -11,7 +11,7 @@ const serviceRecipientsData = [{
   odsCode: 'ods2',
 }];
 
-const selectedServiceRecipientsData = [{
+const selectedRecipientsData = [{
   name: 'Some service recipient 2',
   odsCode: 'ods2',
 }];
@@ -23,10 +23,6 @@ describe('service-recipients contextCreator', () => {
       expect(context.backLinkText).toEqual(manifest.backLinkText);
       expect(context.description).toEqual(manifest.description);
       expect(context.insetAdvice).toEqual(manifest.insetAdvice);
-      expect(context.selectDeselectButton.selectText)
-        .toEqual(manifest.selectDeselectButton.selectText);
-      expect(context.selectDeselectButton.deselectText)
-        .toEqual(manifest.selectDeselectButton.deselectText);
       expect(context.organisationHeading).toEqual(manifest.organisationHeading);
       expect(context.odsCodeHeading).toEqual(manifest.odsCodeHeading);
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
@@ -60,11 +56,47 @@ describe('service-recipients contextCreator', () => {
       expect(context.tableData[1].odsCode).toEqual('ods2');
     });
 
-    it('should construct the correct checked value when selected recipients data is available', () => {
-      const context = getContext({ orderId, serviceRecipientsData, selectedServiceRecipientsData });
+    it('should construct the correct checked value when selected recipients data is available and selectStatus is undefined', () => {
+      const context = getContext({ orderId, serviceRecipientsData, selectedRecipientsData });
       expect(context.tableData.length).toEqual(serviceRecipientsData.length);
       expect(context.tableData[0].organisationName.checked).toEqual(false);
       expect(context.tableData[1].organisationName.checked).toEqual(true);
+    });
+
+    it('should mark all checked as true when selectStatus = select', () => {
+      const context = getContext({
+        orderId, serviceRecipientsData, selectStatus: 'select',
+      });
+      expect(context.tableData.length).toEqual(serviceRecipientsData.length);
+      expect(context.tableData[0].organisationName.checked).toEqual(true);
+      expect(context.tableData[1].organisationName.checked).toEqual(true);
+    });
+
+    it('should mark all checked as true when selectStatus = select and data is found in ORDAPI', () => {
+      const context = getContext({
+        orderId, serviceRecipientsData, selectedRecipientsData, selectStatus: 'select',
+      });
+      expect(context.tableData.length).toEqual(serviceRecipientsData.length);
+      expect(context.tableData[0].organisationName.checked).toEqual(true);
+      expect(context.tableData[1].organisationName.checked).toEqual(true);
+    });
+
+    it('should mark all checked as false when selectStatus = deselect', () => {
+      const context = getContext({
+        orderId, serviceRecipientsData, selectStatus: 'deselect',
+      });
+      expect(context.tableData.length).toEqual(serviceRecipientsData.length);
+      expect(context.tableData[0].organisationName.checked).toEqual(false);
+      expect(context.tableData[1].organisationName.checked).toEqual(false);
+    });
+
+    it('should mark all checked as true when selectStatus = deselect and data is found in ORDAPI', () => {
+      const context = getContext({
+        orderId, serviceRecipientsData, selectedRecipientsData, selectStatus: 'deselect',
+      });
+      expect(context.tableData.length).toEqual(serviceRecipientsData.length);
+      expect(context.tableData[0].organisationName.checked).toEqual(false);
+      expect(context.tableData[1].organisationName.checked).toEqual(false);
     });
   });
 });
