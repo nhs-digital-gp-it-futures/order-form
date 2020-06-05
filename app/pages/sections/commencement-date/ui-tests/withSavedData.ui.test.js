@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/commencement-date';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/commencement-date';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -36,7 +36,7 @@ const putCommencementDateErrorResponse = {
 };
 
 fixture('commencement-date page - with saved data')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {

@@ -23,11 +23,14 @@
           }) }}
         </div>
 
-        {{ bcButton({
-            dataTestId: "select-deselect-button",
-            text: selectDeselectButton.selectText,
-            classes: "nhsuk-button--secondary"
-        })}}
+        <form method="get" action="{{selectDeselectButtonAction}}">
+          <input type="hidden" name="selectStatus" value="{{selectStatus}}" />
+          {{ bcButton({
+              dataTestId: "select-deselect-button",
+              text: selectDeselectButtonText,
+              classes: "nhsuk-button--secondary"
+          })}}
+        </form>
 
         <div class="nhsuk-grid-row nhsuk-u-font-size-19 nhsuk-u-font-weight-bold">
           <div data-test-id="organisation-heading" class="nhsuk-grid-column-two-thirds">
@@ -44,23 +47,26 @@
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-two-thirds nhsuk-u-font-size-19">
-        {% for row in tableData %}
-          <div class="nhsuk-grid-row">
-            <div data-test-id="organisation-name-checkbox-{{row.odsCode}}" class="nhsuk-grid-column-two-thirds">
-              {{ checkboxes({
-                  items: [row.organisationName]
-                }) }}
+        <form method="post">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          {% for row in tableData %}
+            <div class="nhsuk-grid-row">
+              <div data-test-id="organisation-name-checkbox-{{row.odsCode}}" class="nhsuk-grid-column-two-thirds">
+                {{ checkboxes({
+                    items: [row.organisationName]
+                  }) }}
+              </div>
+              <div data-test-id="ods-code-{{row.odsCode}}" class="nhsuk-grid-column-one-third bc-c-service-recipients-table__ods">
+                {{ row.odsCode }}
+              </div>
             </div>
-            <div data-test-id="ods-code-{{row.odsCode}}" class="nhsuk-grid-column-one-third bc-c-service-recipients-table__ods">
-              {{ row.odsCode }}
-            </div>
-          </div>
-        {% endfor %}
-        {{ bcButton({
-            dataTestId: "continue-button",
-            text: continueButtonText,
-            classes: "nhsuk-u-margin-top-9"
-        })}}
+          {% endfor %}
+          {{ bcButton({
+              dataTestId: "continue-button",
+              text: continueButtonText,
+              classes: "nhsuk-u-margin-top-9"
+          })}}
+        </form>
     </div>
   </div>
 {% endblock %}
