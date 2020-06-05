@@ -31,6 +31,9 @@ const context = {
     },
     odsCode: 'ods2',
   }],
+  selectDeselectButtonAction: '/organisation/order-1/service-recipients',
+  selectStatus: 'select',
+  selectDeselectButtonText: 'Select all',
 };
 
 describe('service-recipients page', () => {
@@ -66,13 +69,25 @@ describe('service-recipients page', () => {
       expect(insetAdvice.text().trim()).toContain(context.insetAdvice);
     });
   }));
-  it('should render the select-deselect button', componentTester(setup, (harness) => {
-    harness.request(context, ($) => {
-      const button = $('[data-test-id="select-deselect-button"] button');
-      expect(button.length).toEqual(1);
-      expect(button.text().trim()).toEqual(context.selectDeselectButton.selectText);
-    });
-  }));
+
+  describe('selectDeselect button', () => {
+    it('should render the select-deselect button', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const button = $('[data-test-id="select-deselect-button"] button');
+        expect(button.length).toEqual(1);
+        expect(button.text().trim()).toEqual('Select all');
+      });
+    }));
+
+    it('should render hidden input with selectStatus', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const formElement = $('input[name=selectStatus]');
+        expect(formElement.length).toEqual(1);
+        expect(formElement.attr('type')).toEqual('hidden');
+        expect(formElement.attr('value')).toEqual(context.selectStatus);
+      });
+    }));
+  });
 
   describe('table', () => {
     it('should render the organisation heading', componentTester(setup, (harness) => {
