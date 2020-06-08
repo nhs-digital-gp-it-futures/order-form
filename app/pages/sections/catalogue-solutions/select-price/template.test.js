@@ -47,6 +47,33 @@ describe('catalogue-solutions select-price page', () => {
     });
   }));
 
+  it('should render the "Select list price" radio button options component', componentTester(setup, (harness) => {
+    const context = {
+      prices: [{
+        id: 'selectSolutionPrice',
+        mainAdvice: 'Select list price',
+        options: [{
+          value: 'price-1',
+          text: 'Price 1',
+        }, {
+          value: 'price-2',
+          text: 'Price 2',
+        }],
+      }],
+    };
+
+    harness.request(context, ($) => {
+      const selectSolutionRadioOptions = $('[data-test-id="question-selectSolutionPrice"]');
+      expect(selectSolutionRadioOptions.length).toEqual(1);
+      expect(selectSolutionRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
+      expect(selectSolutionRadioOptions.find('input').length).toEqual(2);
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('price-1');
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Price 1');
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('price-2');
+      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('Price 2');
+    });
+  }));
+
   it('should render the "Continue" button', componentTester(setup, (harness) => {
     const context = {
       continueButtonText: 'Continue',
