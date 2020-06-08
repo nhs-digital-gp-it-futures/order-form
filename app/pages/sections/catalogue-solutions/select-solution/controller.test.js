@@ -90,9 +90,20 @@ describe('catalogue-solutions select-solution controller', () => {
         },
       ];
 
-      it('should return an array of one validation error and success as false', () => {
+      it('should return an array of one validation error and success as false if empty string is passed in', () => {
         const data = {
           selectSolution: '',
+        };
+
+        const response = validateSolutionSelectForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return an array of one validation error and success as false if whitespace only is passed in', () => {
+        const data = {
+          selectSolution: '   ',
         };
 
         const response = validateSolutionSelectForm({ data });

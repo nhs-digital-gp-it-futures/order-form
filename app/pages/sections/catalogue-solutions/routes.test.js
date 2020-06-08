@@ -18,7 +18,7 @@ import { baseUrl } from '../../../config';
 
 jest.mock('../../../logger');
 
-const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
+const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
 const mockAuthorisedJwtPayload = JSON.stringify({
   id: '88421113',
@@ -225,12 +225,12 @@ describe('catalogue-solutions section routes', () => {
 
     it('should show the solution select page with errors if there are validation errors', async () => {
       selectSolutionController.validateSolutionSelectForm = jest.fn()
-        .mockImplementation(() => ({ success: false }));
+        .mockReturnValue({ success: false });
 
       selectSolutionController.getSolutionsSelectErrorPageContext = jest.fn()
-        .mockImplementation(() => Promise.resolve({
+        .mockResolvedValue({
           errors: [{ text: 'Select a solution', href: '#selectSolution' }],
-        }));
+        });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -253,7 +253,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should redirect to /organisation/some-order-id/catalogue-solutions/select-solution/select-price if a solution is selected', async () => {
       selectSolutionController.validateSolutionSelectForm = jest.fn()
-        .mockImplementation(() => ({ success: true }));
+        .mockReturnValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
