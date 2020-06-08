@@ -3,7 +3,7 @@ import { solutionsApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
 import * as contextCreator from './contextCreator';
 import {
-  getSolutionsPricePageContext,
+  getsolutionPricePageContext,
 } from './controller';
 
 jest.mock('buying-catalogue-library');
@@ -16,7 +16,7 @@ const accessToken = 'access_token';
 const orderId = 'order-id';
 const supplierId = 'supp-1';
 
-const solutionsPricingData = {
+const solutionPricingData = {
   id: supplierId,
   name: 'name',
   prices: [
@@ -46,7 +46,7 @@ describe('catalogue-solutions controller', () => {
     it('should call getData with the correct params', async () => {
       getData.mockResolvedValueOnce({});
 
-      await getSolutionsPricePageContext({ orderId, supplierId, accessToken });
+      await getsolutionPricePageContext({ orderId, supplierId, accessToken });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
         endpoint: `${solutionsApiUrl}/api/v1/solutions/${supplierId}/pricing`,
@@ -56,12 +56,12 @@ describe('catalogue-solutions controller', () => {
     });
 
     it('should call getContext with the correct params', async () => {
-      getData.mockResolvedValueOnce(solutionsPricingData);
+      getData.mockResolvedValueOnce(solutionPricingData);
       contextCreator.getContext.mockResolvedValueOnce({});
 
-      await getSolutionsPricePageContext({ orderId, supplierId, accessToken });
+      await getsolutionPricePageContext({ orderId, supplierId, accessToken });
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, solutionsPricingData });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, solutionPricingData });
     });
   });
 });

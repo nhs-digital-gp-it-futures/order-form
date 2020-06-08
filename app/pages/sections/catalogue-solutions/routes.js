@@ -12,7 +12,7 @@ import {
   getSupplierId,
 } from './select-solution/controller';
 import {
-  getSolutionsPricePageContext,
+  getSolutionPricePageContext,
 } from './select-price/controller';
 
 const router = express.Router({ mergeParams: true });
@@ -56,7 +56,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext) => {
   router.get('/select-solution/select-price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    const context = await getSolutionsPricePageContext({ orderId });
+    const context = await getSolutionPricePageContext({ orderId });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select price page`);
     return res.render('pages/sections/catalogue-solutions/select-price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
