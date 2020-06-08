@@ -8,5 +8,8 @@
       "mainAdvice": "Select Catalogue Solution"
     }
   ],
+  "errorMessages": {
+    "SelectSolutionRequired": "Select a Catalogue Solution"
+  },
   "continueButtonText": "Continue"
 }

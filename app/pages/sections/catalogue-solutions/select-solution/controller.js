@@ -1,7 +1,7 @@
 import { getData } from 'buying-catalogue-library';
 import { getEndpoint } from '../../../../endpoints';
 import { logger } from '../../../../logger';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 
 export const getSolutionsSelectPageContext = params => getContext(params);
 
@@ -19,4 +19,20 @@ export const getSupplierId = async ({ orderId, accessToken }) => {
   logger.info(`Supplier ID for order "${orderId}" is ${ordapiSupplierData.supplierId}`);
 
   return ordapiSupplierData.supplierId;
+};
+
+export const getSolutionsSelectErrorPageContext = params => getErrorContext(params);
+
+export const validateSolutionSelectForm = ({ data }) => {
+  if (data.selectSolution && data.selectSolution.trim().length > 0) {
+    return { success: true };
+  }
+
+  const errors = [
+    {
+      field: 'selectSolution',
+      id: 'SelectSolutionRequired',
+    },
+  ];
+  return { success: false, errors };
 };

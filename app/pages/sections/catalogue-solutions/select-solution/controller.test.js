@@ -1,7 +1,12 @@
 import { getData } from 'buying-catalogue-library';
 import { solutionsApiUrl, orderApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
-import { getSolutionsSelectPageContext, findSolutions, getSupplierId } from './controller';
+import {
+  getSolutionsSelectPageContext,
+  findSolutions,
+  getSupplierId,
+  validateSolutionSelectForm,
+} from './controller';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
@@ -60,6 +65,59 @@ describe('catalogue-solutions select-solution controller', () => {
         endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/supplier`,
         accessToken,
         logger,
+      });
+    });
+  });
+
+  describe('validateSolutionSelectForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return success as true', () => {
+        const data = {
+          selectSolution: 'some-solution-id',
+        };
+
+        const response = validateSolutionSelectForm({ data });
+
+        expect(response.success).toEqual(true);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const expectedValidationErrors = [
+        {
+          field: 'selectSolution',
+          id: 'SelectSolutionRequired',
+        },
+      ];
+
+      it('should return an array of one validation error and success as false if empty string is passed in', () => {
+        const data = {
+          selectSolution: '',
+        };
+
+        const response = validateSolutionSelectForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return an array of one validation error and success as false if whitespace only is passed in', () => {
+        const data = {
+          selectSolution: '   ',
+        };
+
+        const response = validateSolutionSelectForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return a validation error if supplierName is undefined', () => {
+        const data = {};
+
+        const response = validateSolutionSelectForm({ data });
+
+        expect(response.errors).toEqual(expectedValidationErrors);
       });
     });
   });
