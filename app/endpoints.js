@@ -18,6 +18,7 @@ const endpoints = {
   getServiceRecipientsFromOapi: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}/service-recipients`,
   getSelectedServiceRecipientsFromOrdapi: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/service-recipients`,
   getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
+  getSolutionPricing: options => `${solutionsApiUrl}/api/v1/solutions/${options.supplierId}/pricing`,
   // PUT endpoints
   putDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
   putOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
