@@ -45,11 +45,9 @@ const mocks = () => {
     .reply(200, mockDataFromOapi);
 };
 
-const pageSetup = async (t, withAuth = false) => {
-  if (withAuth) {
-    mocks();
-    await setCookies();
-  }
+const pageSetup = async () => {
+  mocks();
+  await setCookies();
 };
 
 fixture('ordering-party page - wothout saved data')
@@ -64,7 +62,7 @@ fixture('ordering-party page - wothout saved data')
   });
 
 test('should render organisation name with data from OAPI', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const heading = Selector('h3[data-test-id="organisation-name-heading"]');
@@ -78,7 +76,7 @@ test('should render organisation name with data from OAPI', async (t) => {
 });
 
 test('should render organisation ods code with data from OAPI', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const heading = Selector('h3[data-test-id="organisation-ods-code-heading"]');
@@ -92,7 +90,7 @@ test('should render organisation ods code with data from OAPI', async (t) => {
 });
 
 test('should render organisation address with data from OAPI', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const heading = Selector('h3[data-test-id="organisation-address-heading"]');
@@ -130,7 +128,7 @@ test('should render organisation address with data from OAPI', async (t) => {
 });
 
 test('should render the primary contact details form with populated data from OAPI', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const firstName = Selector('[data-test-id="question-firstName"]');

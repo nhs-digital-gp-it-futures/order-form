@@ -20,7 +20,7 @@ const mocks = (data) => {
     .reply(200, data);
 };
 
-const pageSetup = async (t, withAuth = false, data = {}) => {
+const pageSetup = async (withAuth = true, data = {}) => {
   if (withAuth) {
     mocks(data);
     await setCookies();
@@ -43,11 +43,11 @@ fixture('Supplier search page')
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
-  await pageSetup(t);
   nock('http://identity-server')
     .get('/login')
     .reply(200);
 
+  await pageSetup(false);
   await t.navigateTo(pageUrl);
 
   await t
@@ -55,7 +55,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render Supplier search page', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="supplier-search-page"]');
 
@@ -64,7 +64,7 @@ test('should render Supplier search page', async (t) => {
 });
 
 test('should navigate to /organisation/order-id when click on backLink', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -76,7 +76,7 @@ test('should navigate to /organisation/order-id when click on backLink', async (
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="supplier-search-page-title"]');
@@ -87,7 +87,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="supplier-search-page-description"]');
@@ -98,7 +98,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render a supplierName question as a textfield', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const supplierNameInput = Selector('[data-test-id="question-supplierName"]');
@@ -109,7 +109,7 @@ test('should render a supplierName question as a textfield', async (t) => {
 });
 
 test('should render the Search button', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const searchButton = Selector('[data-test-id="search-button"] button');
@@ -124,7 +124,7 @@ test('should redirect to /organisation/order-id/supplier/search/select when supp
     .get('/api/v1/suppliers?name=some-supp&solutionPublicationStatus=Published')
     .reply(200, [{}]);
 
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const supplierNameInput = Selector('[data-test-id="question-supplierName"]');
@@ -141,7 +141,7 @@ test('should render the error page if no suppliers are found', async (t) => {
     .get('/api/v1/suppliers?name=some-supp&solutionPublicationStatus=Published')
     .reply(200, []);
 
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const supplierNameInput = Selector('[data-test-id="question-supplierName"]');
@@ -165,7 +165,7 @@ test('should render the error page if no suppliers are found', async (t) => {
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const searchButton = Selector('[data-test-id="search-button"] button');
@@ -181,8 +181,8 @@ test('should show the error summary when there are validation errors', async (t)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Enter a supplier name or part of a supplier name');
 });
 
-test('should show text fields as errors with error message when there are validation errors', async (t) => {
-  await pageSetup(t, true);
+test('should show text field as errors with error message when there are validation errors', async (t) => {
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const supplierSearchPage = Selector('[data-test-id="supplier-search-page"]');
@@ -199,7 +199,7 @@ test('should show text fields as errors with error message when there are valida
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const searchButton = Selector('[data-test-id="search-button"] button');
@@ -217,7 +217,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
 });
 
 test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
-  await pageSetup(t, true, orderData);
+  await pageSetup(true, orderData);
   await t.navigateTo(pageUrl);
 
   await t

@@ -30,21 +30,6 @@ const mockOrgData = {
   },
 };
 
-const mocks = () => {
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/ordering-party')
-    .reply(200, mockOrgData);
-};
-
-const pageSetup = async (t, withAuth = false) => {
-  if (withAuth) {
-    mocks();
-    await setCookies();
-  }
-};
-
-const getLocation = ClientFunction(() => document.location.href);
-
 const putOrderingPartyErrorResponse = {
   errors: [
     {
@@ -66,6 +51,26 @@ const putOrderingPartyErrorResponse = {
   ],
 };
 
+const mocks = (putErrorNock) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/ordering-party')
+    .reply(200, mockOrgData);
+  if (putErrorNock) {
+    nock(orderApiUrl)
+      .put('/api/v1/orders/order-id/sections/ordering-party')
+      .reply(400, putOrderingPartyErrorResponse);
+  }
+};
+
+const pageSetup = async (withAuth = true, putErrorNock = false) => {
+  if (withAuth) {
+    mocks(putErrorNock);
+    await setCookies();
+  }
+};
+
+const getLocation = ClientFunction(() => document.location.href);
+
 fixture('ordering-party page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
@@ -78,11 +83,11 @@ fixture('ordering-party page - general')
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
-  await pageSetup(t);
   nock('http://identity-server')
     .get('/login')
     .reply(200);
 
+  await pageSetup(false);
   await t.navigateTo(pageUrl);
 
   await t
@@ -90,7 +95,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render ordering-party page', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="ordering-party-page"]');
 
@@ -99,7 +104,7 @@ test('should render ordering-party page', async (t) => {
 });
 
 test('should navigate to /organisation/order-id when click on backLink', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -111,7 +116,7 @@ test('should navigate to /organisation/order-id when click on backLink', async (
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="ordering-party-page-title"]');
@@ -122,7 +127,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="ordering-party-page-description"]');
@@ -133,7 +138,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render a text field for each question', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const firstName = Selector('[data-test-id="question-firstName"]');
@@ -174,7 +179,7 @@ test('should render a text field for each question', async (t) => {
 });
 
 test('should render save button', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="save-button"] button');
@@ -189,7 +194,7 @@ test('should navigate to task list page if save button is clicked and data is va
     .put('/api/v1/orders/order-id/sections/ordering-party')
     .reply(200, {});
 
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -201,11 +206,7 @@ test('should navigate to task list page if save button is clicked and data is va
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/ordering-party')
-    .reply(400, putOrderingPartyErrorResponse);
-
-  await pageSetup(t, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -225,11 +226,7 @@ test('should show the error summary when there are validation errors', async (t)
 });
 
 test('should ensure details are repopulated when there are validation errors', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/ordering-party')
-    .reply(400, putOrderingPartyErrorResponse);
-
-  await pageSetup(t, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -273,11 +270,7 @@ test('should ensure details are repopulated when there are validation errors', a
 });
 
 test('should show text fields as errors with error message when there are validation errors', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/ordering-party')
-    .reply(400, putOrderingPartyErrorResponse);
-
-  await pageSetup(t, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const page = Selector('[data-test-id="ordering-party-page"]');
@@ -307,11 +300,7 @@ test('should show text fields as errors with error message when there are valida
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/ordering-party')
-    .reply(400, putOrderingPartyErrorResponse);
-
-  await pageSetup(t, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');

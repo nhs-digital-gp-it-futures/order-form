@@ -20,11 +20,9 @@ const mocks = () => {
     .reply(200, { orderDescription: 'Some order', catalogueSolutions: [] });
 };
 
-const pageSetup = async (t, withAuth = false) => {
-  if (withAuth) {
-    mocks();
-    await setCookies();
-  }
+const pageSetup = async () => {
+  mocks();
+  await setCookies();
 };
 
 fixture('Catalogue-solution page - without saved data')
@@ -39,7 +37,7 @@ fixture('Catalogue-solution page - without saved data')
   });
 
 test('should render the No solutions text when no catalogueSolutions are returned from ORDAPI', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const noAddedSolutions = Selector('[data-test-id="no-added-solutions"]');
