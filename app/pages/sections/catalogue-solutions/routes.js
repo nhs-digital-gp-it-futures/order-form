@@ -88,5 +88,12 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     return res.render('pages/sections/catalogue-solutions/select-price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.get('/select-solution/select-price/select-recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    logger.info(`navigating to order ${orderId} catalogue-solutions select recipient page`);
+    return res.send('select recipient page');
+  }));
+
   return router;
 };
