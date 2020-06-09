@@ -23,20 +23,20 @@ const mockOapiData = [{
 
 const getLocation = ClientFunction(() => document.location.href);
 
-const mocks = () => {
+const mocks = (timesToCallMocks) => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
+    .times(timesToCallMocks)
     .reply(200, mockOapiData);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/service-recipients')
+    .times(timesToCallMocks)
     .reply(200, { serviceRecipients: [] });
 };
 
-const pageSetup = async (t, withAuth = false) => {
-  if (withAuth) {
-    mocks();
-    await setCookies();
-  }
+const pageSetup = async (timesToCallMocks = 1) => {
+  mocks(timesToCallMocks);
+  await setCookies();
 };
 
 fixture('service-recipients page - without saved data')
@@ -53,7 +53,7 @@ fixture('service-recipients page - without saved data')
   });
 
 test('should render unchecked checkbox for each service recipient', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
   const checkbox1Input = Selector('[data-test-id="organisation-name-checkbox-ods1"] input');
   const checkbox1Label = Selector('[data-test-id="organisation-name-checkbox-ods1"] label');
@@ -80,7 +80,7 @@ test('should render unchecked checkbox for each service recipient', async (t) =>
 });
 
 test('should render ods code for each service recipient', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
   const odsCode1 = Selector('[data-test-id="ods-code-ods1"]');
   const odsCode2 = Selector('[data-test-id="ods-code-ods2"]');
@@ -109,8 +109,7 @@ test('should navigate to task list page if continue button is clicked', async (t
 });
 
 test('should check all checkboxes and change button text when "Select all button" is clicked', async (t) => {
-  mocks();
-  await pageSetup(t, true);
+  await pageSetup(2);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="select-deselect-button"] button');
@@ -133,8 +132,7 @@ test('should check all checkboxes and change button text when "Select all button
 });
 
 test('should uncheck all checkboxes and change button text when all are selected and "Deselect all button" is clicked', async (t) => {
-  mocks();
-  await pageSetup(t, true);
+  await pageSetup(2);
   await t.navigateTo(`${pageUrl}?selectStatus=select`);
 
   const button = Selector('[data-test-id="select-deselect-button"] button');

@@ -20,7 +20,7 @@ const mocks = () => {
     .reply(200, { orderDescription: 'Some order' });
 };
 
-const pageSetup = async (t, withAuth = false) => {
+const pageSetup = async (withAuth = true) => {
   if (withAuth) {
     mocks();
     await setCookies();
@@ -29,7 +29,7 @@ const pageSetup = async (t, withAuth = false) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Catalogue-solution page - general')
+fixture('Catalogue-solutions page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -41,11 +41,11 @@ fixture('Catalogue-solution page - general')
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
-  await pageSetup(t);
   nock('http://identity-server')
     .get('/login')
     .reply(200);
 
+  await pageSetup(false);
   await t.navigateTo(pageUrl);
 
   await t
@@ -53,7 +53,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render catalogue-solutions page', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="catalogue-solutions-page"]');
 
@@ -62,7 +62,7 @@ test('should render catalogue-solutions page', async (t) => {
 });
 
 test('should navigate to /organisation/order-id when click on backLink', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -74,7 +74,7 @@ test('should navigate to /organisation/order-id when click on backLink', async (
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="catalogue-solutions-page-title"]');
@@ -85,7 +85,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="catalogue-solutions-page-description"]');
@@ -96,7 +96,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render the inset advice', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const insetAdvice = Selector('[data-test-id="catalogue-solutions-page-insetAdvice"]');
@@ -107,7 +107,7 @@ test('should render the inset advice', async (t) => {
 });
 
 test('should render the orderDescription', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const orderDescriptionHeading = Selector('h3[data-test-id="order-description-heading"]');
@@ -121,7 +121,7 @@ test('should render the orderDescription', async (t) => {
 });
 
 test('should render the Add Catalogue Solution button', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const addSolutionButton = Selector('[data-test-id="add-solution-button"] a');
@@ -132,7 +132,7 @@ test('should render the Add Catalogue Solution button', async (t) => {
 });
 
 test('should navigate to /organisation/order-id/catalogue-solutions/select when Add Catalogue Solution button is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const addSolutionButton = Selector('[data-test-id="add-solution-button"] a');
@@ -143,7 +143,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select when 
 });
 
 test('should render the Continue button', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');
@@ -158,7 +158,7 @@ test('should redirect to /organisation/order-id when clicking the Continue butto
     .put('/api/v1/orders/order-id/sections/catalogue-solutions')
     .reply(200);
 
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');
