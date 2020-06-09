@@ -54,7 +54,7 @@ const generateMockOrderSummary = sectionData => (
   }
 );
 
-fixture('existingorder task-list page')
+fixture('Task-list page - existing order')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
