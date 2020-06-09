@@ -330,13 +330,13 @@ describe('catalogue-solutions section routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select recipient text if authorised', () => (
+    it('should return the catalogue-solutions select recipient page if authorised', () => (
       request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('select recipient page')).toBeTruthy();
+          expect(res.text.includes('data-test-id="solution-recipient-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         })
     ));
