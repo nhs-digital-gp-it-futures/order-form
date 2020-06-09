@@ -17,7 +17,7 @@ const orderId = 'order-id';
 const solutionId = 'sol-1';
 
 const solutionPricingData = {
-  id: 'supp-1',
+  id: 'sol-1',
   name: 'name',
   prices: [
     {

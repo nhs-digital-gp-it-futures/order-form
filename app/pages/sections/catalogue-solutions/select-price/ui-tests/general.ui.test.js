@@ -24,7 +24,7 @@ const mockSolutionPricing = {
   prices: [
     {
       type: 'flat',
-      currencyCode: 'GBP', // ISO Currency Code
+      currencyCode: 'GBP',
       itemUnit: {
         name: 'patient',
         description: 'per patient',
@@ -37,7 +37,7 @@ const mockSolutionPricing = {
     },
     {
       type: 'flat',
-      currencyCode: 'GBP', // ISO Currency Code
+      currencyCode: 'GBP',
       itemUnit: {
         name: 'licence',
         description: 'per licence',
@@ -46,7 +46,7 @@ const mockSolutionPricing = {
     },
     {
       type: 'tiered',
-      currencyCode: 'GBP', // ISO Currency Code
+      currencyCode: 'GBP',
       itemUnit: {
         name: 'consultation',
         description: 'per consultation',
@@ -174,6 +174,7 @@ test('should render a selectSolutionPrice question as radio button options', asy
 
     .expect(selectSolutionPriceRadioOptions.find('input').nth(1).getAttribute('value')).eql('£525.052 per licence ')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(1))).eql('£525.052 per licence')
+
     .expect(selectSolutionPriceRadioOptions.find('input').nth(2).getAttribute('value')).eql('<div>1 - 10 consultations £700 per consultation per month</div><div>11+ consultations £400 per consultation per month</div>')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(2))).eql('1 - 10 consultations £700 per consultation per month\n11+ consultations £400 per consultation per month');
 });

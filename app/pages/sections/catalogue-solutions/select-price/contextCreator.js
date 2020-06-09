@@ -1,14 +1,12 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
 
-const generatePriceList = solutionPricingData => solutionPricingData.prices.map((mappedPrice) => {
-  const timeUnitdescription = (mappedPrice.timeUnit || {}).description ? mappedPrice.timeUnit.description : '';
-  if (mappedPrice.type === 'flat') {
-    return {
-      value: `£${mappedPrice.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}`,
-      text: `£${mappedPrice.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}`,
-    };
-  }
+const generateFlatPriceItem = (mappedPrice, timeUnitdescription) => ({
+  value: `£${mappedPrice.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}`,
+  text: `£${mappedPrice.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}`,
+});
+
+const generateTieredPriceItem = (mappedPrice, timeUnitdescription) => {
   let tieredHtml = '';
   mappedPrice.tiers.forEach((tier) => {
     const tieredRange = tier.end ? `${tier.start} - ${tier.end}` : `${tier.start}+`;
@@ -18,6 +16,14 @@ const generatePriceList = solutionPricingData => solutionPricingData.prices.map(
     value: tieredHtml,
     html: tieredHtml,
   };
+};
+
+const generatePriceList = solutionPricingData => solutionPricingData.prices.map((mappedPrice) => {
+  const timeUnitdescription = (mappedPrice.timeUnit || {}).description ? mappedPrice.timeUnit.description : '';
+  if (mappedPrice.type === 'flat') {
+    return generateFlatPriceItem(mappedPrice, timeUnitdescription);
+  }
+  return generateTieredPriceItem(mappedPrice, timeUnitdescription);
 });
 
 const generateQuestionsContext = solutionPricingData => manifest.questions.map(question => ({
@@ -27,7 +33,7 @@ const generateQuestionsContext = solutionPricingData => manifest.questions.map(q
 
 export const getContext = ({ orderId, solutionPricingData }) => ({
   ...manifest,
-  title: `${manifest.title} ${orderId}`,
+  title: `${manifest.title} ${solutionPricingData.name}`,
   backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution`,
   prices: solutionPricingData && generateQuestionsContext(solutionPricingData),
 });

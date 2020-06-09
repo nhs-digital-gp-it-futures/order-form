@@ -3,12 +3,12 @@ import { getContext } from './contextCreator';
 import { baseUrl } from '../../../../config';
 
 const solutionPricingData = {
-  id: 'supp-1',
-  name: 'name',
+  id: 'sol-1',
+  name: 'Solution name',
   prices: [
     {
       type: 'flat',
-      currencyCode: 'GBP', // ISO Currency Code
+      currencyCode: 'GBP',
       itemUnit: {
         name: 'patient',
         description: 'per patient',
@@ -21,7 +21,7 @@ const solutionPricingData = {
     },
     {
       type: 'flat',
-      currencyCode: 'GBP', // ISO Currency Code
+      currencyCode: 'GBP',
       itemUnit: {
         name: 'licence',
         description: 'per licence',
@@ -30,7 +30,7 @@ const solutionPricingData = {
     },
     {
       type: 'tiered',
-      currencyCode: 'GBP', // ISO Currency Code
+      currencyCode: 'GBP',
       itemUnit: {
         name: 'consultation',
         description: 'per consultation',
@@ -74,28 +74,28 @@ const returnedPriceArray = [{
 describe('catalogue-solutions select-price contextCreator', () => {
   describe('getContext', () => {
     it('should return the backLinkText', () => {
-      const context = getContext({ orderId: 'order-1' });
+      const context = getContext({ orderId: 'order-1', solutionPricingData });
       expect(context.backLinkText).toEqual(manifest.backLinkText);
     });
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId });
+      const context = getContext({ orderId, solutionPricingData });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution`);
     });
 
     it('should return the title', () => {
-      const context = getContext({ orderId: 'order-1' });
-      expect(context.title).toEqual(`${manifest.title} order-1`);
+      const context = getContext({ orderId: 'order-1', solutionPricingData });
+      expect(context.title).toEqual(`${manifest.title} Solution name`);
     });
 
     it('should return the description', () => {
-      const context = getContext({ orderId: 'order-1' });
+      const context = getContext({ orderId: 'order-1', solutionPricingData });
       expect(context.description).toEqual(manifest.description);
     });
 
     it('should return the continueButtonText', () => {
-      const context = getContext({ orderId: 'order-1' });
+      const context = getContext({ orderId: 'order-1', solutionPricingData });
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
     });
 
