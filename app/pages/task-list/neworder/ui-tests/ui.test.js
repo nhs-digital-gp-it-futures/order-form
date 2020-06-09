@@ -26,7 +26,7 @@ const pageSetup = async (t, withAuth = false) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('neworder task-list page')
+fixture('Task-list page - new order')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();

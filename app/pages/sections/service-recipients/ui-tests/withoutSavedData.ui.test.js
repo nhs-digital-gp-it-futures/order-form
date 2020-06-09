@@ -39,7 +39,7 @@ const pageSetup = async (timesToCallMocks = 1) => {
   await setCookies();
 };
 
-fixture('service-recipients page - without saved data')
+fixture('Service-recipients page - without saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
