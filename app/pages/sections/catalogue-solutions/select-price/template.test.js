@@ -65,7 +65,7 @@ describe('catalogue-solutions select-price page', () => {
     harness.request(context, ($) => {
       const selectSolutionRadioOptions = $('[data-test-id="question-selectSolutionPrice"]');
       expect(selectSolutionRadioOptions.length).toEqual(1);
-      expect(selectSolutionRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
+      expect(selectSolutionRadioOptions.find('legend').text().trim()).toEqual('Select list price');
       expect(selectSolutionRadioOptions.find('input').length).toEqual(2);
       expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('price-1');
       expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Price 1');

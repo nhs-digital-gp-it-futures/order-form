@@ -5,31 +5,29 @@ const generatePriceList = solutionPricingData => solutionPricingData.prices.map(
   const timeUnitdescription = (mappedPrice.timeUnit || {}).description ? mappedPrice.timeUnit.description : '';
   if (mappedPrice.type === 'flat') {
     return {
-      value: mappedPrice,
+      value: `£${mappedPrice.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}`,
       text: `£${mappedPrice.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}`,
     };
   }
-  let tierdHtml = '';
+  let tieredHtml = '';
   mappedPrice.tiers.forEach((tier) => {
     const tieredRange = tier.end ? `${tier.start} - ${tier.end}` : `${tier.start}+`;
-    tierdHtml += `<div>£${tieredRange} ${mappedPrice.itemUnit.tierName} ${tier.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}</div>`;
+    tieredHtml += `<div>${tieredRange} ${mappedPrice.itemUnit.tierName} £${tier.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}</div>`;
   });
   return {
-    value: mappedPrice,
-    html: tierdHtml,
+    value: tieredHtml,
+    html: tieredHtml,
   };
 });
 
-const generateQuestionsContext = solutionPricingData => (
-  manifest.questions.map(question => ({
-    ...question,
-    options: generatePriceList(solutionPricingData),
-  }))
-);
+const generateQuestionsContext = solutionPricingData => manifest.questions.map(question => ({
+  ...question,
+  options: generatePriceList(solutionPricingData),
+}));
 
 export const getContext = ({ orderId, solutionPricingData }) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
-  backLinkHref: `${baseUrl}/organisation/${orderId}`,
+  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution`,
   prices: solutionPricingData && generateQuestionsContext(solutionPricingData),
 });

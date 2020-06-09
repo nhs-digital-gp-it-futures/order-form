@@ -61,19 +61,13 @@ const returnedPriceArray = [{
   mainAdvice: 'Select list price',
   options: [{
     text: '£1.64 per patient per year',
-    value: {
-      currencyCode: 'GBP', itemUnit: { description: 'per patient', name: 'patient' }, price: 1.64, timeUnit: { description: 'per year', name: 'year' }, type: 'flat',
-    },
+    value: '£1.64 per patient per year',
   }, {
     text: '£525.052 per licence ',
-    value: {
-      currencyCode: 'GBP', itemUnit: { description: 'per licence', name: 'licence' }, price: 525.052, type: 'flat',
-    },
+    value: '£525.052 per licence ',
   }, {
-    html: '<div>£1 - 10 consultations 700 per consultation per month</div><div>£11+ consultations 400 per consultation per month</div>',
-    value: {
-      currencyCode: 'GBP', itemUnit: { description: 'per consultation', name: 'consultation', tierName: 'consultations' }, tieringPeriod: 3, tiers: [{ end: 10, price: 700, start: 1 }, { price: 400, start: 11 }], timeUnit: { description: 'per month', name: 'month' }, type: 'tiered',
-    },
+    html: '<div>1 - 10 consultations £700 per consultation per month</div><div>11+ consultations £400 per consultation per month</div>',
+    value: '<div>1 - 10 consultations £700 per consultation per month</div><div>11+ consultations £400 per consultation per month</div>',
   }],
 }];
 
@@ -87,7 +81,7 @@ describe('catalogue-solutions select-price contextCreator', () => {
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution`);
     });
 
     it('should return the title', () => {

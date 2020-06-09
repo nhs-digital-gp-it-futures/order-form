@@ -14,10 +14,10 @@ jest.mock('./contextCreator', () => ({
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
-const supplierId = 'supp-1';
+const solutionId = 'sol-1';
 
 const solutionPricingData = {
-  id: supplierId,
+  id: 'supp-1',
   name: 'name',
   prices: [
     {
@@ -46,10 +46,10 @@ describe('select-price controller', () => {
     it('should call getData with the correct params', async () => {
       getData.mockResolvedValueOnce({});
 
-      await getSolutionPricePageContext({ orderId, supplierId, accessToken });
+      await getSolutionPricePageContext({ orderId, solutionId, accessToken });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${solutionsApiUrl}/api/v1/solutions/${supplierId}/pricing`,
+        endpoint: `${solutionsApiUrl}/api/v1/solutions/${solutionId}/pricing`,
         accessToken,
         logger,
       });
@@ -59,7 +59,7 @@ describe('select-price controller', () => {
       getData.mockResolvedValueOnce(solutionPricingData);
       contextCreator.getContext.mockResolvedValueOnce({});
 
-      await getSolutionPricePageContext({ orderId, supplierId, accessToken });
+      await getSolutionPricePageContext({ orderId, solutionId, accessToken });
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, solutionPricingData });
     });
