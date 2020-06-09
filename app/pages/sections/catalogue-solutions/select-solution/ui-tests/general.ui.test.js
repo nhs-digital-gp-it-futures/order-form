@@ -49,7 +49,7 @@ const mocks = () => {
     .reply(200, { solutions: mockSolutions });
 };
 
-const pageSetup = async (t, withAuth = false, withSolutionsFoundState = false) => {
+const pageSetup = async (withAuth = true, withSolutionsFoundState = false) => {
   if (withAuth) {
     mocks();
     await setCookies();
@@ -71,11 +71,11 @@ fixture('Catalogue-solutions select page - general')
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
-  await pageSetup(t);
   nock('http://identity-server')
     .get('/login')
     .reply(200);
 
+  await pageSetup(false);
   await t.navigateTo(pageUrl);
 
   await t
@@ -83,7 +83,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render Catalogue-solutions select page', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="solution-select-page"]');
 
@@ -92,7 +92,7 @@ test('should render Catalogue-solutions select page', async (t) => {
 });
 
 test('should navigate to /organisation/order-id/catalogue-solutions when click on backlink', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -104,7 +104,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions when click o
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="solution-select-page-title"]');
@@ -115,7 +115,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="solution-select-page-description"]');
@@ -126,7 +126,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render a selectSolution question as radio button options', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolution"]');
@@ -144,7 +144,7 @@ test('should render a selectSolution question as radio button options', async (t
 });
 
 test('should render the Continue button', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -155,7 +155,7 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-id/catalogue-solutions/select-solution/select-price when a solution is selected', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolution"]');
@@ -169,7 +169,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select-solut
 });
 
 test('should show the error summary when no solution selected causing validation error', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -186,7 +186,7 @@ test('should show the error summary when no solution selected causing validation
 });
 
 test('should render select solution field as errors with error message when no solution selected causing validation error', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const solutionSelectPage = Selector('[data-test-id="solution-select-page"]');
@@ -203,7 +203,7 @@ test('should render select solution field as errors with error message when no s
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');

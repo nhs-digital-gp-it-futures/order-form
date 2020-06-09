@@ -14,27 +14,32 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const mocks = () => {
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/commencement-date')
-    .reply(200, {});
-};
-
-const pageSetup = async (t, withAuth = false) => {
-  if (withAuth) {
-    mocks();
-    await setCookies();
-  }
-};
-
-const getLocation = ClientFunction(() => document.location.href);
-
 const putCommencementDateErrorResponse = {
   errors: [{
     field: 'CommencementDate',
     id: 'CommencementDateGreaterThan',
   }],
 };
+
+const mocks = (putErrorNock) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/commencement-date')
+    .reply(200, {});
+  if (putErrorNock) {
+    nock(orderApiUrl)
+      .put('/api/v1/orders/order-id/sections/commencement-date')
+      .reply(400, putCommencementDateErrorResponse);
+  }
+};
+
+const pageSetup = async (withAuth = true, putErrorNock = false) => {
+  if (withAuth) {
+    mocks(putErrorNock);
+    await setCookies();
+  }
+};
+
+const getLocation = ClientFunction(() => document.location.href);
 
 fixture('commencement-date page - general')
   .page('http://localhost:1234/order/some-fake-page')
@@ -50,11 +55,11 @@ fixture('commencement-date page - general')
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
-  await pageSetup(t);
   nock('http://identity-server')
     .get('/login')
     .reply(200);
 
+  await pageSetup(false);
   await t.navigateTo(pageUrl);
 
   await t
@@ -62,7 +67,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render commencement-date page', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="commencement-date-page"]');
 
@@ -71,7 +76,7 @@ test('should render commencement-date page', async (t) => {
 });
 
 test('should navigate to /organisation/order-id when click on backLink', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -83,7 +88,7 @@ test('should navigate to /organisation/order-id when click on backLink', async (
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="commencement-date-page-title"]');
@@ -94,7 +99,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="commencement-date-page-description"]');
@@ -105,7 +110,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render legend with mainAdvice', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const mainAdvice = Selector('legend');
@@ -116,7 +121,7 @@ test('should render legend with mainAdvice', async (t) => {
 });
 
 test('should render additionalAdvice', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const additionalAdvice = Selector('[data-test-id="date-field-input"] span.nhsuk-hint');
@@ -127,7 +132,7 @@ test('should render additionalAdvice', async (t) => {
 });
 
 test('should render labels for day, month and year inputs', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const labels = Selector('label');
@@ -145,7 +150,7 @@ test('should render labels for day, month and year inputs', async (t) => {
 });
 
 test('should render input fields for day, month and year', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const inputFields = Selector('#commencementDate input:not([name=_csrf])');
@@ -169,7 +174,7 @@ test('should render input fields for day, month and year', async (t) => {
 });
 
 test('should render save button', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="save-button"] button');
@@ -184,7 +189,7 @@ test('should navigate to task list page if save button is clicked and data is va
     .put('/api/v1/orders/order-id/sections/commencement-date')
     .reply(200, {});
 
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -203,7 +208,7 @@ test('should navigate to task list page if save button is clicked and data is va
 
 // FE Validation tests
 test('should show the correct error summary and input error when no date is entered and save is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -233,7 +238,7 @@ test('should show the correct error summary and input error when no date is ente
 });
 
 test('should show the correct error summary and input error when no day is entered and save is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -269,7 +274,7 @@ test('should show the correct error summary and input error when no day is enter
 });
 
 test('should show the correct error summary and input error when no month is entered and save is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -305,7 +310,7 @@ test('should show the correct error summary and input error when no month is ent
 });
 
 test('should show the correct error summary and input error when no year is entered and save is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -341,7 +346,7 @@ test('should show the correct error summary and input error when no year is ente
 });
 
 test('should show the correct error summary and input error when a year > 4 chars is entered and save is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -379,7 +384,7 @@ test('should show the correct error summary and input error when a year > 4 char
 });
 
 test('should show the correct error summary and input error when a year < 4 chars is entered and save is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -417,7 +422,7 @@ test('should show the correct error summary and input error when a year < 4 char
 });
 
 test('should show the correct error summary and input error when a day > 31 is entered and save is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -455,7 +460,7 @@ test('should show the correct error summary and input error when a day > 31 is e
 });
 
 test('should show the correct error summary and input error when a month > 12 is entered and save is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -493,7 +498,7 @@ test('should show the correct error summary and input error when a month > 12 is
 });
 
 test('should show the correct error summary and input error when a year < 1000 is entered and save is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -531,7 +536,7 @@ test('should show the correct error summary and input error when a year < 1000 i
 });
 
 test('should show the correct error summary and input error when incorrect day/month combo is entered and save is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -570,11 +575,7 @@ test('should show the correct error summary and input error when incorrect day/m
 
 // BE Validation tests
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/commencement-date')
-    .reply(400, putCommencementDateErrorResponse);
-
-  await pageSetup(t, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -612,11 +613,7 @@ test('should show text fields as errors with error message when there are BE val
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/commencement-date')
-    .reply(400, putCommencementDateErrorResponse);
-
-  await pageSetup(t, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
