@@ -79,8 +79,10 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.get('/select-solution/select-price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolution' });
 
-    const context = await getSolutionPricePageContext({ orderId });
+    const context = await getSolutionPricePageContext({ orderId, accessToken, solutionId });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select price page`);
     return res.render('pages/sections/catalogue-solutions/select-price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
