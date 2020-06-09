@@ -42,7 +42,7 @@ const pageSetup = async (withAuth = true, putErrorNock = false) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Description page (existing order)')
+fixture('Description page - existing order')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();

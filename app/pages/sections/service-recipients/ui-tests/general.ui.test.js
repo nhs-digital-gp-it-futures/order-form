@@ -32,7 +32,7 @@ const pageSetup = async (withAuth = true) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('service-recipients page - general')
+fixture('Service-recipients page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
