@@ -1,9 +1,11 @@
 import {
-  oidcBaseUri, orderApiUrl, organisationApiUrl, solutionsApiUrl,
+  oidcBaseUri, orderApiUrl, organisationApiUrl, solutionsApiUrl, documentApiHost,
 } from './config';
 
 const endpoints = {
   getIdentityApiHealth: () => `${oidcBaseUri}/health/ready`,
+  getDocumentApiHealth: () => `${documentApiHost}/health/ready`,
+  getDocument: options => `${documentApiHost}/api/v1/documents/${options.documentName}`,
   // GET endpoints
   getOrders: options => `${orderApiUrl}/api/v1/organisations/${options.orgId}/orders`,
   getOrderSummary: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/summary`,
