@@ -30,4 +30,6 @@ const endpoints = {
   postDescription: () => `${orderApiUrl}/api/v1/orders`,
 };
 
-export const getEndpoint = ({ endpointLocator, options }) => endpoints[endpointLocator](options);
+export const getEndpoint = ({ endpointLocator, options }) => (
+  encodeURI(endpoints[endpointLocator](options))
+);
