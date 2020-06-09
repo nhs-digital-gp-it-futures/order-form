@@ -30,6 +30,10 @@ export const getHealthCheckDependencies = () => {
       endpoint: getEndpoint({ endpointLocator: 'getIdentityApiHealth' }),
       critical: true,
     },
+    {
+      name: 'Document API',
+      endpoint: getEndpoint({ endpointLocator: 'getDocumentApiHealth' }),
+    },
   ];
 
   return dependencies;
