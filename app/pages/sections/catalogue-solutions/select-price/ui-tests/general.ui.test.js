@@ -20,9 +20,10 @@ const solutionsFoundState = ClientFunction(() => {
 
 const mockSolutionPricing = {
   id: 'solution-1',
-  name: 'name',
+  name: 'Solution name',
   prices: [
     {
+      priceId: '0001',
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -36,6 +37,7 @@ const mockSolutionPricing = {
       price: 1.64,
     },
     {
+      priceId: '0002',
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -45,6 +47,7 @@ const mockSolutionPricing = {
       price: 525.052,
     },
     {
+      priceId: '0003',
       type: 'tiered',
       currencyCode: 'GBP',
       itemUnit: {
@@ -144,7 +147,7 @@ test('should render the title', async (t) => {
 
   await t
     .expect(title.exists).ok()
-    .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
+    .expect(await extractInnerText(title)).eql(`${content.title} Solution name`);
 });
 
 test('should render the description', async (t) => {
@@ -169,13 +172,13 @@ test('should render a selectSolutionPrice question as radio button options', asy
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
     .expect(selectSolutionPriceRadioOptions.find('input').count).eql(3)
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(0).getAttribute('value')).eql('£1.64 per patient per year')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(0).getAttribute('value')).eql('0001')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(0))).eql('£1.64 per patient per year')
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(1).getAttribute('value')).eql('£525.052 per licence ')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(1).getAttribute('value')).eql('0002')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(1))).eql('£525.052 per licence')
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(2).getAttribute('value')).eql('<div>1 - 10 consultations £700 per consultation per month</div><div>11+ consultations £400 per consultation per month</div>')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(2).getAttribute('value')).eql('0003')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(2))).eql('1 - 10 consultations £700 per consultation per month\n11+ consultations £400 per consultation per month');
 });
 

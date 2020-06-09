@@ -7,6 +7,7 @@ const solutionPricingData = {
   name: 'Solution name',
   prices: [
     {
+      priceId: '0001',
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -20,6 +21,7 @@ const solutionPricingData = {
       price: 1.64,
     },
     {
+      priceId: '0002',
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -29,6 +31,7 @@ const solutionPricingData = {
       price: 525.052,
     },
     {
+      priceId: '0003',
       type: 'tiered',
       currencyCode: 'GBP',
       itemUnit: {
@@ -61,13 +64,13 @@ const returnedPriceArray = [{
   mainAdvice: 'Select list price',
   options: [{
     text: '£1.64 per patient per year',
-    value: '£1.64 per patient per year',
+    value: '0001',
   }, {
     text: '£525.052 per licence ',
-    value: '£525.052 per licence ',
+    value: '0002',
   }, {
     html: '<div>1 - 10 consultations £700 per consultation per month</div><div>11+ consultations £400 per consultation per month</div>',
-    value: '<div>1 - 10 consultations £700 per consultation per month</div><div>11+ consultations £400 per consultation per month</div>',
+    value: '0003',
   }],
 }];
 

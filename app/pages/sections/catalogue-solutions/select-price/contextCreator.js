@@ -2,7 +2,7 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
 
 const generateFlatPriceItem = (mappedPrice, timeUnitdescription) => ({
-  value: `£${mappedPrice.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}`,
+  value: mappedPrice.priceId,
   text: `£${mappedPrice.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}`,
 });
 
@@ -13,7 +13,7 @@ const generateTieredPriceItem = (mappedPrice, timeUnitdescription) => {
     tieredHtml += `<div>${tieredRange} ${mappedPrice.itemUnit.tierName} £${tier.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}</div>`;
   });
   return {
-    value: tieredHtml,
+    value: mappedPrice.priceId,
     html: tieredHtml,
   };
 };
