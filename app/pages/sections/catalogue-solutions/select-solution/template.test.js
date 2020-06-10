@@ -131,9 +131,9 @@ describe('catalogue-solutions select page', () => {
     };
 
     harness.request(context, ($) => {
-      const supplierNameQuestion = $('div[data-test-id="question-selectSolution"]');
-      expect(supplierNameQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
-      expect(supplierNameQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
+      const selectSolutionQuestion = $('div[data-test-id="question-selectSolution"]');
+      expect(selectSolutionQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
+      expect(selectSolutionQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
     });
   }));
 
