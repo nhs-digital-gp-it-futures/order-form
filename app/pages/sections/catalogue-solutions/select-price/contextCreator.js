@@ -1,5 +1,6 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
+import { getSectionErrorContext } from '../../getSectionErrorContext';
 
 const generateFlatPriceItem = (mappedPrice, timeUnitdescription) => ({
   value: mappedPrice.priceId,
@@ -18,7 +19,7 @@ const generateTieredPriceItem = (mappedPrice, timeUnitdescription) => {
   };
 };
 
-const generatePriceList = solutionPricingData => solutionPricingData.prices.map((mappedPrice) => {
+const generatePriceList = solutionPrices => solutionPrices.map((mappedPrice) => {
   const timeUnitdescription = (mappedPrice.timeUnit || {}).description ? mappedPrice.timeUnit.description : '';
   if (mappedPrice.type === 'flat') {
     return generateFlatPriceItem(mappedPrice, timeUnitdescription);
@@ -26,14 +27,25 @@ const generatePriceList = solutionPricingData => solutionPricingData.prices.map(
   return generateTieredPriceItem(mappedPrice, timeUnitdescription);
 });
 
-const generateQuestionsContext = solutionPricingData => manifest.questions.map(question => ({
+const generateQuestionsContext = solutionPrices => manifest.questions.map(question => ({
   ...question,
-  options: generatePriceList(solutionPricingData),
+  options: generatePriceList(solutionPrices.prices),
 }));
 
-export const getContext = ({ orderId, solutionPricingData }) => ({
+export const getContext = ({ orderId, solutionPrices }) => ({
   ...manifest,
-  title: `${manifest.title} ${solutionPricingData.name}`,
+  title: `${manifest.title} ${solutionPrices.name}`,
   backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution`,
-  prices: solutionPricingData && generateQuestionsContext(solutionPricingData),
+  questions: solutionPrices && generateQuestionsContext(solutionPrices),
 });
+
+export const getErrorContext = (params) => {
+  const updatedManifest = getContext({
+    orderId: params.orderId,
+    solutionPrices: params.solutionPrices,
+  });
+
+  return {
+    ...getSectionErrorContext({ ...params, manifest: updatedManifest }),
+  };
+};
