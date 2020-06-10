@@ -1,7 +1,7 @@
 import { getData } from 'buying-catalogue-library';
 import { getEndpoint } from '../../../../endpoints';
 import { logger } from '../../../../logger';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 
 export const getSolutionRecipientPageContext = params => getContext(params);
 
@@ -19,4 +19,20 @@ export const getRecipients = async ({ orderId, accessToken }) => {
   logger.info(`${serviceRecipientsData.length} service recipients returned for ${orderId}`);
 
   return serviceRecipientsData.serviceRecipients;
+};
+
+export const getRecipientSelectErrorPageContext = params => getErrorContext(params);
+
+export const validateRecipientSelectForm = ({ data }) => {
+  if (data.selectRecipient && data.selectRecipient.trim().length > 0) {
+    return { success: true };
+  }
+
+  const errors = [
+    {
+      field: 'selectRecipient',
+      id: 'SelectRecipientRequired',
+    },
+  ];
+  return { success: false, errors };
 };
