@@ -1,9 +1,10 @@
 import { getData } from 'buying-catalogue-library';
-import { orderApiUrl } from '../../../../config';
+import { orderApiUrl, solutionsApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
 import {
   getSolutionRecipientPageContext,
   getRecipients,
+  getSolution,
 } from './controller';
 import * as contextCreator from './contextCreator';
 
@@ -40,6 +41,28 @@ describe('catalogue-solutions select-solution controller', () => {
       expect(getData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order-1/sections/service-recipients`,
         accessToken: 'access_token',
+        logger,
+      });
+    });
+  });
+
+  describe('getSolution', () => {
+    afterEach(() => {
+      getData.mockReset();
+      contextCreator.getContext.mockReset();
+    });
+
+    const accessToken = 'access_token';
+    const solutionId = 'sol-1';
+
+    it('should call getData with the correct params when hasSavedData is true', async () => {
+      getData.mockResolvedValueOnce({ supplierId: 'supp-1' });
+
+      await getSolution({ solutionId, accessToken });
+      expect(getData.mock.calls.length).toEqual(1);
+      expect(getData).toHaveBeenCalledWith({
+        endpoint: `${solutionsApiUrl}/api/v1/solutions/${solutionId}`,
+        accessToken,
         logger,
       });
     });
