@@ -2,5 +2,11 @@
   "backLinkText": "Go back",
   "title": "Service Recipient for",
   "description": "Select the organisation you're ordering this Catalogue Solution for.",
+  "questions": [
+    {
+      "id": "selectRecipient",
+      "mainAdvice": "Select Service Recipient (ODS code)"
+    }
+  ],
   "continueButtonText": "Continue"
 }
