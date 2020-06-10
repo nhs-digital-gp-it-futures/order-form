@@ -1,0 +1,37 @@
+{% extends 'includes/layout.njk' %}
+{% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
+{% from 'components/radiobutton-options/macro.njk' import radiobuttonOptions %}
+
+{% block body %}
+  <div class="nhsuk-width-container" data-test-id="solution-recipient-page">
+    <div data-test-id="go-back-link">
+      {{ backLink({
+        href: backLinkHref,
+        text: backLinkText
+      }) }}
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <h1 data-test-id="solution-recipient-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
+        <h2 data-test-id="solution-recipient-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
+
+        <form method="post">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+          {{
+            radiobuttonOptions({
+              question: questions[0]
+            })
+          }}
+
+          {{ bcButton({
+              dataTestId: "continue-button",
+              text: continueButtonText,
+              classes: "nhsuk-u-margin-top-9"
+          })}}
+        </form>
+    </div>
+  </div>
+{% endblock %}

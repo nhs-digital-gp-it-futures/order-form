@@ -64,7 +64,7 @@ const pageSetup = async (withSessionState = true) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Supplier page')
+fixture('Supplier page - without saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
