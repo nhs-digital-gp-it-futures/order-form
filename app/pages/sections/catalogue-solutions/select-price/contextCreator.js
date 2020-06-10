@@ -19,7 +19,7 @@ const generateTieredPriceItem = (mappedPrice, timeUnitdescription) => {
   };
 };
 
-const generatePriceList = solutionPrices => solutionPrices.prices.map((mappedPrice) => {
+const generatePriceList = solutionPrices => solutionPrices.map((mappedPrice) => {
   const timeUnitdescription = (mappedPrice.timeUnit || {}).description ? mappedPrice.timeUnit.description : '';
   if (mappedPrice.type === 'flat') {
     return generateFlatPriceItem(mappedPrice, timeUnitdescription);
@@ -29,7 +29,7 @@ const generatePriceList = solutionPrices => solutionPrices.prices.map((mappedPri
 
 const generateQuestionsContext = solutionPrices => manifest.questions.map(question => ({
   ...question,
-  options: generatePriceList(solutionPrices),
+  options: generatePriceList(solutionPrices.prices),
 }));
 
 export const getContext = ({ orderId, solutionPrices }) => ({

@@ -75,7 +75,7 @@ const mockSolutionPricing = {
   ],
 };
 
-const solutionPricesFoundState = ClientFunction(() => {
+const solutionPricesState = ClientFunction(() => {
   const cookieValue = JSON.stringify({
     id: 'solution-1',
     name: 'Solution name',
@@ -132,7 +132,7 @@ const solutionPricesFoundState = ClientFunction(() => {
       },
     ],
   });
-  document.cookie = `solutionPricesFound=${cookieValue}`;
+  document.cookie = `solutionPrices=${cookieValue}`;
 });
 
 const mocks = () => {
@@ -141,13 +141,13 @@ const mocks = () => {
     .reply(200, mockSolutionPricing);
 };
 
-const pageSetup = async (withAuth = false, withSolutionsFoundState = false, withSolutionPricesFoundState = false) => {
+const pageSetup = async (withAuth = false, withSolutionsFoundState = true, withsolutionPricesState = false) => {
   if (withAuth) {
     mocks();
     await setCookies();
   }
   if (withSolutionsFoundState) await solutionsFoundState();
-  if (withSolutionPricesFoundState) await solutionPricesFoundState();
+  if (withsolutionPricesState) await solutionPricesState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -176,7 +176,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render Catalogue-solutions price page', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup(true);
 
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="solution-price-page"]');
@@ -186,7 +186,7 @@ test('should render Catalogue-solutions price page', async (t) => {
 });
 
 test('should navigate to /organisation/order-id/catalogue-solutions/select-solution when click on backlink', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup(true);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, { supplierId: 'supp-1' });
@@ -201,7 +201,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select-solut
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="solution-price-page-title"]');
@@ -212,7 +212,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="solution-price-page-description"]');
@@ -223,7 +223,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render a selectSolutionPrice question as radio button options', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const selectSolutionPriceRadioOptions = Selector('[data-test-id="question-selectSolutionPrice"]');
@@ -244,7 +244,7 @@ test('should render a selectSolutionPrice question as radio button options', asy
 });
 
 test('should render the Continue button', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -255,7 +255,7 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-id/catalogue-solutions/select-solution/select-price/select-recipient when a price is selected', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolutionPrice"]');
@@ -291,7 +291,6 @@ test('should render select solution field as errors with error message when no p
 
   const solutionSelectPage = Selector('[data-test-id="solution-price-page"]');
   const continueButton = Selector('[data-test-id="continue-button"] button');
-  // const solutionSelectField = solutionSelectPage.find('[data-test-id="question-selectSolutionPrice"]');
   const solutionSelectField = solutionSelectPage.find('[data-test-id="question-selectSolutionPrice"]');
 
   await t

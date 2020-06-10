@@ -72,7 +72,7 @@ const mockSolutionPrices = JSON.stringify({
     },
   ],
 });
-const mockSolutionPricesFoundCookie = `solutionPricesFound=${mockSolutionPrices}`;
+const mocksolutionPricesCookie = `solutionPrices=${mockSolutionPrices}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
@@ -403,7 +403,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
       getPath: path,
       postPath: path,
       getPathCookies: [mockAuthorisedCookie, mockSolutionsFoundCookie],
-      postPathCookies: [mockSolutionPricesFoundCookie],
+      postPathCookies: [mocksolutionPricesCookie],
       expectedRedirectPath: 'http://identity-server/login',
     })
   ));
@@ -441,7 +441,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
     return request(setUpFakeApp())
       .post(path)
       .type('form')
-      .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsFoundCookie, mockSolutionPricesFoundCookie])
+      .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsFoundCookie, mocksolutionPricesCookie])
       .send({ _csrf: csrfToken })
       .expect(200)
       .then((res) => {
@@ -464,7 +464,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
     return request(setUpFakeApp())
       .post(path)
       .type('form')
-      .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsFoundCookie, mockSolutionPricesFoundCookie])
+      .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsFoundCookie, mocksolutionPricesCookie])
       .send({
         selectSolutionPrice: '0001',
         _csrf: csrfToken,
