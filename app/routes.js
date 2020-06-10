@@ -74,7 +74,6 @@ export const routes = (authProvider, sessionManager) => {
   });
 
   errorHandler(router, (error, req, res) => {
-    // console.trace(error)
     logger.error(`${error.title} - ${error.description}`);
     return res.render('pages/error/template.njk', addContext({ context: error, user: req.user }));
   });
