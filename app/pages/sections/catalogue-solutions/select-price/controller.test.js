@@ -4,7 +4,6 @@ import { logger } from '../../../../logger';
 import * as contextCreator from './contextCreator';
 import {
   findSolutionPrices,
-  getSolutionPriceErrorPageContext,
   getSolutionPricePageContext,
   validateSolutionSelectPriceForm,
 } from './controller';
