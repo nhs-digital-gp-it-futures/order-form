@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
+import { orderApiUrl } from '../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select-solution/select-price/select-recipient';
 
@@ -13,7 +14,21 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
+const mockServiceRecipients = [
+  {
+    odsCode: 'recipient-1',
+    name: 'Recipient 1',
+  },
+  {
+    odsCode: 'recipient-2',
+    name: 'Recipient 2',
+  },
+];
+
 const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/service-recipients')
+    .reply(200, { serviceRecipients: mockServiceRecipients });
 };
 
 const pageSetup = async (withAuth = true) => {
@@ -57,7 +72,7 @@ test('should render Catalogue-solutions select-recipient page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test.only('should navigate to /organisation/order-id/catalogue-solutions/select-solution/select-price when click on backlink', async (t) => {
+test('should navigate to /organisation/order-id/catalogue-solutions/select-solution/select-price when click on backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -90,6 +105,25 @@ test('should render the description', async (t) => {
     .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
+
+test('should render a selectRecipient question as radio button options', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const selectRecipientRadioOptions = Selector('[data-test-id="question-selectRecipient"]');
+
+  await t
+    .expect(selectRecipientRadioOptions.exists).ok()
+    .expect(await extractInnerText(selectRecipientRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
+    .expect(selectRecipientRadioOptions.find('input').count).eql(2)
+
+    .expect(selectRecipientRadioOptions.find('input').nth(0).getAttribute('value')).eql('recipient-1')
+    .expect(await extractInnerText(selectRecipientRadioOptions.find('label').nth(0))).eql('Recipient 1 (recipient-1)')
+
+    .expect(selectRecipientRadioOptions.find('input').nth(1).getAttribute('value')).eql('recipient-2')
+    .expect(await extractInnerText(selectRecipientRadioOptions.find('label').nth(1))).eql('Recipient 2 (recipient-2)');
+});
+
 
 test('should render the Continue button', async (t) => {
   await pageSetup();
