@@ -82,19 +82,25 @@ describe('routes', () => {
       })
     ));
 
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
+    it('should call getDocumentByFileName with the correct paramswhen the user is authorised', () => request(setUpFakeApp())
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
+      .then(() => {
         expect(documentController.getDocumentByFileName.mock.calls.length).toEqual(1);
         expect(documentController.getDocumentByFileName).toHaveBeenCalledWith({
           res: expect.any(Object),
           documentName: 'a-document',
           contentType: 'application/pdf',
         });
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         documentController.getDocumentByFileName.mockReset();
+      }));
+
+    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
   });
 
