@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl } from '../../../../../config';
+import { orderApiUrl, solutionsApiUrl } from '../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select-solution/select-price/select-recipient';
 
@@ -12,6 +12,12 @@ const setCookies = ClientFunction(() => {
   });
 
   document.cookie = `fakeToken=${cookieValue}`;
+});
+
+const selectedSolutionState = ClientFunction(() => {
+  const cookieValue = 'solution-1';
+
+  document.cookie = `selectedSolution=${cookieValue}`;
 });
 
 const mockServiceRecipients = [
@@ -26,6 +32,9 @@ const mockServiceRecipients = [
 ];
 
 const mocks = () => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/solutions/solution-1')
+    .reply(200, { id: 'solution-1', name: 'Solution One' });
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/service-recipients')
     .reply(200, { serviceRecipients: mockServiceRecipients });
@@ -35,6 +44,7 @@ const pageSetup = async (withAuth = true) => {
   if (withAuth) {
     mocks();
     await setCookies();
+    await selectedSolutionState();
   }
 };
 

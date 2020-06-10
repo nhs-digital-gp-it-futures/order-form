@@ -332,11 +332,14 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should return the catalogue-solutions select recipient page if authorised', () => {
-      selectRecipientController.getSolutionRecipientPageContext = jest.fn()
+      selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({});
 
       selectRecipientController.getRecipients = jest.fn()
         .mockResolvedValue([]);
+
+      selectRecipientController.getSolutionRecipientPageContext = jest.fn()
+        .mockResolvedValue({});
 
       return request(setUpFakeApp())
         .get(path)
