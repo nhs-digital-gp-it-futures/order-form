@@ -5,6 +5,7 @@ import {
   getSolutionRecipientPageContext,
   getRecipients,
   getSolution,
+  validateRecipientSelectForm,
 } from './controller';
 import * as contextCreator from './contextCreator';
 
@@ -64,6 +65,59 @@ describe('catalogue-solutions select-solution controller', () => {
         endpoint: `${solutionsApiUrl}/api/v1/solutions/${solutionId}`,
         accessToken,
         logger,
+      });
+    });
+  });
+
+  describe('validateRecipientSelectForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return success as true', () => {
+        const data = {
+          selectRecipient: 'some-recipient-id',
+        };
+
+        const response = validateRecipientSelectForm({ data });
+
+        expect(response.success).toEqual(true);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const expectedValidationErrors = [
+        {
+          field: 'selectRecipient',
+          id: 'SelectRecipientRequired',
+        },
+      ];
+
+      it('should return an array of one validation error and success as false if empty string is passed in', () => {
+        const data = {
+          selectRecipient: '',
+        };
+
+        const response = validateRecipientSelectForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return an array of one validation error and success as false if whitespace only is passed in', () => {
+        const data = {
+          selectRecipient: '   ',
+        };
+
+        const response = validateRecipientSelectForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return a validation error if supplierName is undefined', () => {
+        const data = {};
+
+        const response = validateRecipientSelectForm({ data });
+
+        expect(response.errors).toEqual(expectedValidationErrors);
       });
     });
   });
