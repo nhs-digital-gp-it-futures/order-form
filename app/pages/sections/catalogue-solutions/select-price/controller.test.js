@@ -3,7 +3,10 @@ import { solutionsApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
 import * as contextCreator from './contextCreator';
 import {
+  findSolutionPrices,
+  getSolutionPriceErrorPageContext,
   getSolutionPricePageContext,
+  validateSolutionSelectPriceForm,
 } from './controller';
 
 jest.mock('buying-catalogue-library');
@@ -16,7 +19,7 @@ const accessToken = 'access_token';
 const orderId = 'order-id';
 const solutionId = 'sol-1';
 
-const solutionPricingData = {
+const solutionPrices = {
   id: 'sol-1',
   name: 'name',
   prices: [
@@ -38,30 +41,86 @@ const solutionPricingData = {
 
 describe('select-price controller', () => {
   describe('getSolutionPricePageContext', () => {
+    it('should call getContext with the correct params', async () => {
+      contextCreator.getContext
+        .mockResolvedValueOnce();
+
+      await getSolutionPricePageContext({ orderId, solutionPrices });
+
+      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, solutionPrices });
+    });
+  });
+
+  describe('findSolutionPrices', () => {
     afterEach(() => {
       getData.mockReset();
-      contextCreator.getContext.mockReset();
     });
 
-    it('should call getData with the correct params', async () => {
-      getData.mockResolvedValueOnce({});
+    it('should call getData once with the correct params', async () => {
+      getData
+        .mockResolvedValueOnce({ data: {} });
 
-      await getSolutionPricePageContext({ orderId, solutionId, accessToken });
+      await findSolutionPrices({ accessToken, solutionId });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
         endpoint: `${solutionsApiUrl}/api/v1/solutions/${solutionId}/pricing`,
-        accessToken,
+        accessToken: 'access_token',
         logger,
       });
     });
+  });
 
-    it('should call getContext with the correct params', async () => {
-      getData.mockResolvedValueOnce(solutionPricingData);
-      contextCreator.getContext.mockResolvedValueOnce({});
+  describe('validateSolutionSelectForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return success as true', () => {
+        const data = {
+          selectSolutionPrice: 'some-solution-id',
+        };
 
-      await getSolutionPricePageContext({ orderId, solutionId, accessToken });
-      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, solutionPricingData });
+        const response = validateSolutionSelectPriceForm({ data });
+
+        expect(response.success).toEqual(true);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const expectedValidationErrors = [
+        {
+          field: 'selectSolutionPrice',
+          id: 'SelectSolutionPriceRequired',
+        },
+      ];
+
+      it('should return an array of one validation error and success as false if empty string is passed in', () => {
+        const data = {
+          selectSolution: '',
+        };
+
+        const response = validateSolutionSelectPriceForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return an array of one validation error and success as false if whitespace only is passed in', () => {
+        const data = {
+          selectSolution: '   ',
+        };
+
+        const response = validateSolutionSelectPriceForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return a validation error if supplierName is undefined', () => {
+        const data = {};
+
+        const response = validateSolutionSelectPriceForm({ data });
+
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
     });
   });
 });

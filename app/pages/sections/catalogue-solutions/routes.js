@@ -7,14 +7,17 @@ import {
   putCatalogueSolutions,
 } from './catalogue-solutions/controller';
 import {
-  getSolutionsSelectPageContext,
   findSolutions,
   getSupplierId,
-  validateSolutionSelectForm,
   getSolutionsSelectErrorPageContext,
+  getSolutionsSelectPageContext,
+  validateSolutionSelectForm,
 } from './select-solution/controller';
 import {
+  findSolutionPrices,
+  getSolutionPriceErrorPageContext,
   getSolutionPricePageContext,
+  validateSolutionSelectPriceForm,
 } from './select-price/controller';
 
 const router = express.Router({ mergeParams: true });
@@ -81,10 +84,33 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolution' });
+    const solutionPrices = await findSolutionPrices({ solutionId, accessToken });
+    sessionManager.saveToSession({ req, key: 'solutionPricesFound', value: solutionPrices });
 
-    const context = await getSolutionPricePageContext({ orderId, accessToken, solutionId });
+    const context = await getSolutionPricePageContext({ orderId, solutionPrices });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select price page`);
+    return res.render('pages/sections/catalogue-solutions/select-price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/select-solution/select-price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    const response = validateSolutionSelectPriceForm({ data: req.body });
+    if (response.success) {
+      sessionManager.saveToSession({ req, key: 'selectedSolutionPrice', value: req.body.selectSolutionPrice });
+      logger.info('redirecting catalogue solutions select-price-recipient page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution/select-price/select-recipient`);
+    }
+
+    const solutionPrices = sessionManager.getFromSession({ req, key: 'solutionPricesFound' });
+    const context = await getSolutionPriceErrorPageContext({
+      orderId,
+      solutionPrices,
+      validationErrors: response.errors,
+    });
+
+
     return res.render('pages/sections/catalogue-solutions/select-price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 

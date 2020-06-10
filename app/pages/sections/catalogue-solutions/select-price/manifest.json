@@ -8,5 +8,8 @@
       "mainAdvice": "Select list price"
     }
   ],
+  "errorMessages": {
+    "SelectSolutionPriceRequired": "Select a List price"
+  },
   "continueButtonText": "Continue"
 }
