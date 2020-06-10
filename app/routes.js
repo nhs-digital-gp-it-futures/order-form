@@ -9,6 +9,7 @@ import { getDashboardContext } from './pages/dashboard/controller';
 import { sectionRoutes } from './pages/sections/routes';
 import includesContext from './includes/manifest.json';
 import { getTaskListPageContext } from './pages/task-list/controller';
+import { getDocumentByFileName } from './documentController';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -30,7 +31,14 @@ export const routes = (authProvider, sessionManager) => {
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     logger.info('redirecting to organisation orders page');
-    res.redirect(`${config.baseUrl}/organisation`);
+    return res.redirect(`${config.baseUrl}/organisation`);
+  }));
+
+  router.get('/document/:documentName', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { documentName } = req.params;
+    const contentType = 'application/pdf';
+    await getDocumentByFileName({ res, documentName, contentType });
+    res.end();
   }));
 
   router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -66,6 +74,7 @@ export const routes = (authProvider, sessionManager) => {
   });
 
   errorHandler(router, (error, req, res) => {
+    // console.trace(error)
     logger.error(`${error.title} - ${error.description}`);
     return res.render('pages/error/template.njk', addContext({ context: error, user: req.user }));
   });
