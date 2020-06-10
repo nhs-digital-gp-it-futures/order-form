@@ -12,6 +12,7 @@ import {
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
 import * as catalogueSolutionPriceController from './select-price/controller';
 import * as selectSolutionController from './select-solution/controller';
+import * as selectRecipientController from './select-recipient/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';
@@ -330,15 +331,24 @@ describe('catalogue-solutions section routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select recipient page if authorised', () => (
-      request(setUpFakeApp())
+    it('should return the catalogue-solutions select recipient page if authorised', () => {
+      selectRecipientController.getSolution = jest.fn()
+        .mockResolvedValue({});
+
+      selectRecipientController.getRecipients = jest.fn()
+        .mockResolvedValue([]);
+
+      selectRecipientController.getSolutionRecipientPageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="solution-recipient-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        })
-    ));
+        });
+    });
   });
 });
