@@ -23,6 +23,31 @@ describe('catalogue-solutions select recipient page', () => {
     });
   }));
 
+  it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectRecipient',
+          error: [{ message: 'some select recipient error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some select recipient error message', href: '#selectRecipient' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(context.errors.length);
+      context.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
+    });
+  }));
+
   it('should render the solutions-recipient page title', componentTester(setup, (harness) => {
     const context = {
       title: 'Service Recipient for Solution One',
@@ -57,6 +82,58 @@ describe('catalogue-solutions select recipient page', () => {
       expect(formElement.length).toEqual(1);
       expect(formElement.attr('type')).toEqual('hidden');
       expect(formElement.attr('value')).toEqual(context.csrfToken);
+    });
+  }));
+
+  it('should render the "Select Service Recipient" radio button options component', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectRecipient',
+          mainAdvice: 'Select Service Recipient (ODS code)',
+          options: [
+            {
+              value: 'recipient-1',
+              text: 'Recipient 1 (recipient-1)',
+            },
+            {
+              value: 'recipient-2',
+              text: 'Recipient 2 (recipient-2)',
+            },
+          ],
+        },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const selectRecipientRadioOptions = $('[data-test-id="question-selectRecipient"]');
+      expect(selectRecipientRadioOptions.length).toEqual(1);
+      expect(selectRecipientRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
+      expect(selectRecipientRadioOptions.find('input').length).toEqual(2);
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('recipient-1');
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Recipient 1 (recipient-1)');
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('recipient-2');
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('Recipient 2 (recipient-2)');
+    });
+  }));
+
+  it('should render errors on selectRecipient field if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectRecipient',
+          error: [{ message: 'some select recipient error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some select recipient error message', href: '#selectRecipient' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const selectRecipientQuestion = $('div[data-test-id="question-selectRecipient"]');
+      expect(selectRecipientQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
+      expect(selectRecipientQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
     });
   }));
 
