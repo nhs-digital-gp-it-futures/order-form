@@ -10,9 +10,9 @@ import {
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
-import * as catalogueSolutionPriceController from './select-price/controller';
-import * as selectSolutionController from './select-solution/controller';
-import * as selectRecipientController from './select-recipient/controller';
+import * as catalogueSolutionPriceController from './price/controller';
+import * as selectSolutionController from './solution/controller';
+import * as selectRecipientController from './recipient/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';
@@ -192,8 +192,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/select-solution', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select-solution';
+  describe('GET /organisation/:orderId/catalogue-solutions/solution', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/solution';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -232,8 +232,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/catalogue-solutions/select-solution', () => {
-    const path = '/organisation/order-1/catalogue-solutions/select-solution';
+  describe('POST /organisation/:orderId/catalogue-solutions/solution', () => {
+    const path = '/organisation/order-1/catalogue-solutions/solution';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -292,7 +292,7 @@ describe('catalogue-solutions section routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/catalogue-solutions/select-solution/select-price if a solution is selected', async () => {
+    it('should redirect to /organisation/some-order-id/catalogue-solutions/solution/price if a solution is selected', async () => {
       selectSolutionController.validateSolutionSelectForm = jest.fn()
         .mockReturnValue({ success: true });
 
@@ -313,13 +313,13 @@ describe('catalogue-solutions section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select-solution/select-price`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/solution/price`);
         });
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/select-solution/select-price', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select-solution/select-price';
+  describe('GET /organisation/:orderId/catalogue-solutions/solution/price', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/solution/price';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -355,8 +355,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/select-solution/select-price/select-recipient', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select-solution/select-price/select-recipient';
+  describe('GET /organisation/:orderId/catalogue-solutions/solution/price/recipient', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/solution/price/recipient';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -395,8 +395,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select-price/select-recipient', () => {
-    const path = '/organisation/order-1/catalogue-solutions/select-solution/select-price/select-recipient';
+  describe('POST /organisation/:orderId/catalogue-solutions/solution/price/recipient', () => {
+    const path = '/organisation/order-1/catalogue-solutions/solution/price/recipient';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -510,8 +510,8 @@ describe('catalogue-solutions section routes', () => {
   });
 });
 
-describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select-price', () => {
-  const path = '/organisation/order-1/catalogue-solutions/select-solution/select-price';
+describe('POST /organisation/:orderId/catalogue-solutions/solution/price', () => {
+  const path = '/organisation/order-1/catalogue-solutions/solution/price';
 
   it('should return 403 forbidden if no csrf token is available', () => (
     testPostPathWithoutCsrf({
@@ -573,7 +573,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
       });
   });
 
-  it('should redirect to /organisation/some-order-id/catalogue-solutions/select-solution/select-price if a solution is selected', async () => {
+  it('should redirect to /organisation/some-order-id/catalogue-solutions/solution/price if a solution is selected', async () => {
     catalogueSolutionPriceController.validateSolutionSelectPriceForm = jest.fn()
       .mockReturnValue({ success: true });
 
@@ -594,7 +594,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
       .expect(302)
       .then((res) => {
         expect(res.redirect).toEqual(true);
-        expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select-solution/select-price/select-recipient`);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/solution/price/recipient`);
       });
   });
 });

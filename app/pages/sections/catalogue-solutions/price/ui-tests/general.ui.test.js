@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl, solutionsApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select-solution/select-price';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution/price';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -152,7 +152,7 @@ const pageSetup = async (withAuth = false, withSolutionsFoundState = true, withs
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Catalogue-solutions price page - general')
+fixture('Catalogue-solutions - price page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -185,7 +185,7 @@ test('should render Catalogue-solutions price page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/select-solution when click on backlink', async (t) => {
+test('should navigate to /organisation/order-id/catalogue-solutions/solution when click on backlink', async (t) => {
   await pageSetup(true);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
@@ -197,7 +197,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select-solut
   await t
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select-solution');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution');
 });
 
 test('should render the title', async (t) => {
@@ -254,7 +254,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/select-solution/select-price/select-recipient when a price is selected', async (t) => {
+test('should redirect to /organisation/order-id/catalogue-solutions/solution/price/recipient when a price is selected', async (t) => {
   await pageSetup(true);
   await t.navigateTo(pageUrl);
 
@@ -265,7 +265,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select-solut
   await t
     .click(firstSolution)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select-solution/select-price/select-recipient');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution/price/recipient');
 });
 
 test('should show the error summary when no price selected causing validation error', async (t) => {

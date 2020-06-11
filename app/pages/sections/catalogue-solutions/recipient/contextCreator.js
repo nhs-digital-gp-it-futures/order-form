@@ -20,7 +20,7 @@ export const getContext = ({ orderId, solutionName, recipients }) => ({
   ...manifest,
   title: `${manifest.title} ${solutionName}`,
   questions: recipients && generateQuestionsContext({ recipients }),
-  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution/select-price`,
+  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/solution/price`,
 });
 
 export const getErrorContext = (params) => {
