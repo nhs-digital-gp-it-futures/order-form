@@ -543,7 +543,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/solution/price', () =>
   ));
 
   it('should show the solution select page with errors if there are validation errors', async () => {
-    catalogueSolutionPriceController.validateSolutionSelectPriceForm = jest.fn()
+    catalogueSolutionPriceController.validateSolutionPriceForm = jest.fn()
       .mockReturnValue({ success: false });
 
     catalogueSolutionPriceController.findSolutionPrices = jest.fn()
@@ -574,7 +574,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/solution/price', () =>
   });
 
   it('should redirect to /organisation/some-order-id/catalogue-solutions/solution/price if a solution is selected', async () => {
-    catalogueSolutionPriceController.validateSolutionSelectPriceForm = jest.fn()
+    catalogueSolutionPriceController.validateSolutionPriceForm = jest.fn()
       .mockReturnValue({ success: true });
 
     const { cookies, csrfToken } = await getCsrfTokenFromGet({

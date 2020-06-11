@@ -5,7 +5,7 @@ import * as contextCreator from './contextCreator';
 import {
   findSolutionPrices,
   getSolutionPricePageContext,
-  validateSolutionSelectPriceForm,
+  validateSolutionPriceForm,
 } from './controller';
 
 jest.mock('buying-catalogue-library');
@@ -77,7 +77,7 @@ describe('select-price controller', () => {
           selectSolutionPrice: 'some-solution-id',
         };
 
-        const response = validateSolutionSelectPriceForm({ data });
+        const response = validateSolutionPriceForm({ data });
 
         expect(response.success).toEqual(true);
       });
@@ -96,7 +96,7 @@ describe('select-price controller', () => {
           selectSolution: '',
         };
 
-        const response = validateSolutionSelectPriceForm({ data });
+        const response = validateSolutionPriceForm({ data });
 
         expect(response.success).toEqual(false);
         expect(response.errors).toEqual(expectedValidationErrors);
@@ -107,7 +107,7 @@ describe('select-price controller', () => {
           selectSolution: '   ',
         };
 
-        const response = validateSolutionSelectPriceForm({ data });
+        const response = validateSolutionPriceForm({ data });
 
         expect(response.success).toEqual(false);
         expect(response.errors).toEqual(expectedValidationErrors);
@@ -116,7 +116,7 @@ describe('select-price controller', () => {
       it('should return a validation error if supplierName is undefined', () => {
         const data = {};
 
-        const response = validateSolutionSelectPriceForm({ data });
+        const response = validateSolutionPriceForm({ data });
 
         expect(response.errors).toEqual(expectedValidationErrors);
       });

@@ -17,7 +17,7 @@ import {
   findSolutionPrices,
   getSolutionPriceErrorPageContext,
   getSolutionPricePageContext,
-  validateSolutionSelectPriceForm,
+  validateSolutionPriceForm,
 } from './price/controller';
 import {
   getSolutionRecipientPageContext,
@@ -105,7 +105,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.post('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    const response = validateSolutionSelectPriceForm({ data: req.body });
+    const response = validateSolutionPriceForm({ data: req.body });
     if (response.success) {
       sessionManager.saveToSession({ req, key: 'selectedPriceId', value: req.body.selectSolutionPrice });
       logger.info('redirecting catalogue solutions select recipient page');
