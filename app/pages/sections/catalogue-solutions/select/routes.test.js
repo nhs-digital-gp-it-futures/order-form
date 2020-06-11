@@ -62,6 +62,46 @@ const setUpFakeApp = () => {
 };
 
 describe('catalogue-solutions select routes', () => {
+  describe('GET /organisation/:orderId/catalogue-solutions/select', () => {
+    const path = '/organisation/order-1/catalogue-solutions/select';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should redirect to the catalogue-solutions/select/solution', () => {
+      selectSolutionController.getSolutionsPageContext = jest.fn()
+        .mockResolvedValue({});
+
+      selectSolutionController.getSupplierId = jest.fn()
+        .mockResolvedValue('supp-1');
+
+      selectSolutionController.findSolutions = jest.fn()
+        .mockResolvedValue([]);
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select/solution`);
+        });
+    });
+  });
+
   describe('GET /organisation/:orderId/catalogue-solutions/select/solution', () => {
     const path = '/organisation/some-order-id/catalogue-solutions/select/solution';
 

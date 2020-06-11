@@ -26,6 +26,11 @@ import {
 const router = express.Router({ mergeParams: true });
 
 export const catalogueSolutionsSelectRoutes = (authProvider, addContext, sessionManager) => {
+  router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`);
+  }));
+
   router.get('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
