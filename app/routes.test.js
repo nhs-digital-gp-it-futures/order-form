@@ -65,6 +65,14 @@ describe('routes', () => {
 
   describe('GET /document/:documentName', () => {
     const path = '/document/a-document';
+    beforeEach(() => {
+      documentController.getDocumentByFileName = jest.fn()
+        .mockResolvedValue({ on: (a, b) => b() });
+    });
+
+    afterEach(() => {
+      documentController.getDocumentByFileName.mockReset();
+    });
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({

@@ -37,8 +37,8 @@ export const routes = (authProvider, sessionManager) => {
   router.get('/document/:documentName', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { documentName } = req.params;
     const contentType = 'application/pdf';
-    await getDocumentByFileName({ res, documentName, contentType });
-    res.end();
+    const stream = await getDocumentByFileName({ res, documentName, contentType });
+    stream.on('close', () => res.end());
   }));
 
   router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
