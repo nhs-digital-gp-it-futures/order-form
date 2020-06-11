@@ -14,10 +14,10 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const selectedSolutionState = ClientFunction(() => {
+const selectedSolutionIdState = ClientFunction(() => {
   const cookieValue = 'solution-1';
 
-  document.cookie = `selectedSolution=${cookieValue}`;
+  document.cookie = `selectedSolutionId=${cookieValue}`;
 });
 
 const mockServiceRecipients = [
@@ -63,7 +63,7 @@ const pageSetup = async (withAuth = true, withSessionState = false) => {
   if (withAuth) {
     mocks();
     await setCookies();
-    await selectedSolutionState();
+    await selectedSolutionIdState();
   }
   if (withSessionState) {
     await recipientsFoundState();

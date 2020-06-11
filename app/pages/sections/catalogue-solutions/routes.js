@@ -73,8 +73,8 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const response = validateSolutionSelectForm({ data: req.body });
 
     if (response.success) {
-      sessionManager.saveToSession({ req, key: 'selectedSolution', value: req.body.selectSolution });
-      logger.info('redirecting catalogue solutions select-price page');
+      sessionManager.saveToSession({ req, key: 'selectedSolutionId', value: req.body.selectSolution });
+      logger.info('redirecting catalogue solutions select price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/solution/price`);
     }
 
@@ -91,7 +91,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.get('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolution' });
+    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const solutionPrices = await findSolutionPrices({ solutionId, accessToken });
     sessionManager.saveToSession({ req, key: 'solutionPrices', value: solutionPrices });
 
@@ -106,7 +106,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
     const response = validateSolutionSelectPriceForm({ data: req.body });
     if (response.success) {
-      sessionManager.saveToSession({ req, key: 'selectedSolutionPrice', value: req.body.selectSolutionPrice });
+      sessionManager.saveToSession({ req, key: 'selectedSolutionIdPrice', value: req.body.selectSolutionPrice });
       logger.info('redirecting catalogue solutions select-price-recipient page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/solution/price/recipient`);
     }
@@ -125,7 +125,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolution' });
+    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const solutionData = await getSolution({ solutionId });
 
     const recipients = await getRecipients({ orderId, accessToken });
@@ -151,7 +151,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/newsolution`);
     }
 
-    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolution' });
+    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const solutionData = await getSolution({ solutionId });
 
     const recipientsFound = sessionManager.getFromSession({ req, key: 'recipientsFound' });

@@ -49,7 +49,7 @@ const mockRecipientsFoundState = JSON.stringify([
 
 const mockRecipientsFoundCookie = `recipientsFound=${mockRecipientsFoundState}`;
 
-const mockSelectedSolutionCookie = 'selectedSolution=solution-1';
+const mockSelectedSolutionCookie = 'selectedSolutionId=solution-1';
 const mockSolutionPrices = JSON.stringify({
   id: 'sol-1',
   name: 'Solution name',

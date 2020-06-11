@@ -15,7 +15,7 @@ const setCookies = ClientFunction(() => {
 });
 
 const solutionsState = ClientFunction(() => {
-  document.cookie = 'selectedSolution=solution-1';
+  document.cookie = 'selectedSolutionId=solution-1';
 });
 
 const mockSolutionPricing = {
