@@ -1,9 +1,9 @@
-import { componentTester } from '../../../../test-utils/componentTester';
+import { componentTester } from '../../../../../test-utils/componentTester';
 import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/sections/catalogue-solutions/price/template.njk',
+    path: 'pages/sections/catalogue-solutions/select/price/template.njk',
   },
 };
 

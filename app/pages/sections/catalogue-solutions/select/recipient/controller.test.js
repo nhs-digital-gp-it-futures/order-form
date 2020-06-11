@@ -1,6 +1,6 @@
 import { getData } from 'buying-catalogue-library';
-import { orderApiUrl, solutionsApiUrl } from '../../../../config';
-import { logger } from '../../../../logger';
+import { orderApiUrl, solutionsApiUrl } from '../../../../../config';
+import { logger } from '../../../../../logger';
 import {
   getRecipientPageContext,
   getRecipients,
