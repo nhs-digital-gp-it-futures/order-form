@@ -212,7 +212,7 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should return the catalogue-solutions select-solution page if authorised', () => {
-      selectSolutionController.getSolutionsSelectPageContext = jest.fn()
+      selectSolutionController.getSolutionsPageContext = jest.fn()
         .mockResolvedValue({});
 
       selectSolutionController.getSupplierId = jest.fn()
@@ -265,10 +265,10 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should show the solution select page with errors if there are validation errors', async () => {
-      selectSolutionController.validateSolutionSelectForm = jest.fn()
+      selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: false });
 
-      selectSolutionController.getSolutionsSelectErrorPageContext = jest.fn()
+      selectSolutionController.getSolutionsErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a solution', href: '#selectSolution' }],
         });
@@ -293,7 +293,7 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/catalogue-solutions/solution/price if a solution is selected', async () => {
-      selectSolutionController.validateSolutionSelectForm = jest.fn()
+      selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({

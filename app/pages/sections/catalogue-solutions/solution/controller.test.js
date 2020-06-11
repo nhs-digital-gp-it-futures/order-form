@@ -2,10 +2,10 @@ import { getData } from 'buying-catalogue-library';
 import { solutionsApiUrl, orderApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
 import {
-  getSolutionsSelectPageContext,
+  getSolutionsPageContext,
   findSolutions,
   getSupplierId,
-  validateSolutionSelectForm,
+  validateSolutionForm,
 } from './controller';
 import * as contextCreator from './contextCreator';
 
@@ -16,12 +16,12 @@ jest.mock('./contextCreator', () => ({
 }));
 
 describe('catalogue-solutions select-solution controller', () => {
-  describe('getSolutionsSelectPageContext', () => {
+  describe('getSolutionsPageContext', () => {
     it('should call getContext with the correct params', async () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
 
-      await getSolutionsSelectPageContext({ orderId: 'order-1' });
+      await getSolutionsPageContext({ orderId: 'order-1' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1' });
@@ -69,14 +69,14 @@ describe('catalogue-solutions select-solution controller', () => {
     });
   });
 
-  describe('validateSolutionSelectForm', () => {
+  describe('validateSolutionForm', () => {
     describe('when there are no validation errors', () => {
       it('should return success as true', () => {
         const data = {
           selectSolution: 'some-solution-id',
         };
 
-        const response = validateSolutionSelectForm({ data });
+        const response = validateSolutionForm({ data });
 
         expect(response.success).toEqual(true);
       });
@@ -95,7 +95,7 @@ describe('catalogue-solutions select-solution controller', () => {
           selectSolution: '',
         };
 
-        const response = validateSolutionSelectForm({ data });
+        const response = validateSolutionForm({ data });
 
         expect(response.success).toEqual(false);
         expect(response.errors).toEqual(expectedValidationErrors);
@@ -106,7 +106,7 @@ describe('catalogue-solutions select-solution controller', () => {
           selectSolution: '   ',
         };
 
-        const response = validateSolutionSelectForm({ data });
+        const response = validateSolutionForm({ data });
 
         expect(response.success).toEqual(false);
         expect(response.errors).toEqual(expectedValidationErrors);
@@ -115,7 +115,7 @@ describe('catalogue-solutions select-solution controller', () => {
       it('should return a validation error if supplierName is undefined', () => {
         const data = {};
 
-        const response = validateSolutionSelectForm({ data });
+        const response = validateSolutionForm({ data });
 
         expect(response.errors).toEqual(expectedValidationErrors);
       });

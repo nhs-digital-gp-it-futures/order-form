@@ -9,9 +9,9 @@ import {
 import {
   findSolutions,
   getSupplierId,
-  getSolutionsSelectErrorPageContext,
-  getSolutionsSelectPageContext,
-  validateSolutionSelectForm,
+  getSolutionsErrorPageContext,
+  getSolutionsPageContext,
+  validateSolutionForm,
 } from './solution/controller';
 import {
   findSolutionPrices,
@@ -61,7 +61,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const solutions = await findSolutions({ supplierId, accessToken });
     sessionManager.saveToSession({ req, key: 'solutions', value: solutions });
 
-    const context = await getSolutionsSelectPageContext({ orderId, solutions });
+    const context = await getSolutionsPageContext({ orderId, solutions });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select solution page`);
     return res.render('pages/sections/catalogue-solutions/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -70,7 +70,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.post('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    const response = validateSolutionSelectForm({ data: req.body });
+    const response = validateSolutionForm({ data: req.body });
 
     if (response.success) {
       sessionManager.saveToSession({ req, key: 'selectedSolutionId', value: req.body.selectSolution });
@@ -79,7 +79,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     }
 
     const solutions = sessionManager.getFromSession({ req, key: 'solutions' });
-    const context = await getSolutionsSelectErrorPageContext({
+    const context = await getSolutionsErrorPageContext({
       orderId,
       solutions,
       validationErrors: response.errors,

@@ -70,7 +70,7 @@ describe('select-price controller', () => {
     });
   });
 
-  describe('validateSolutionSelectForm', () => {
+  describe('validateSolutionForm', () => {
     describe('when there are no validation errors', () => {
       it('should return success as true', () => {
         const data = {
