@@ -95,7 +95,7 @@ describe('supplier search controller', () => {
       });
     });
 
-    it('should encode the url', async () => {
+    it('should encode search term in the url', async () => {
       getData
         .mockResolvedValueOnce({ data: [] });
 
