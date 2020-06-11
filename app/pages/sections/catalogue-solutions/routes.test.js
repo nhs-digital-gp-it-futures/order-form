@@ -10,9 +10,6 @@ import {
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
-import * as catalogueSolutionPriceController from './select/price/controller';
-import * as selectSolutionController from './select/solution/controller';
-import * as selectRecipientController from './select/recipient/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';
@@ -33,27 +30,6 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
   id: '88421113', name: 'Cool Dude',
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
-
-const mockSessionSolutionsState = JSON.stringify([
-  { id: 'solution-1', name: 'Solution 1' },
-  { id: 'solution-2', name: 'Solution 2' },
-]);
-const mockSolutionsCookie = `suppliersFound=${mockSessionSolutionsState}`;
-
-const mockRecipientSessionState = JSON.stringify([
-  { id: 'recipient-1', name: 'Recipient 1' },
-  { id: 'recipient-2', name: 'Recipient 2' },
-]);
-const mockRecipientsCookie = `recipients=${mockRecipientSessionState}`;
-
-const mockSelectedSolutionIdCookie = 'selectedSolutionId=solution-1';
-
-const mockSolutionPrices = JSON.stringify({
-  id: 'sol-1',
-  name: 'Solution name',
-  prices: [],
-});
-const mocksolutionPricesCookie = `solutionPrices=${mockSolutionPrices}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);

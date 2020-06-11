@@ -17,7 +17,7 @@ describe('catalogue-solutions select-recipient contextCreator', () => {
     it('should construct the backLinkHref', () => {
       const orderId = 'order-1';
       const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/solution/price`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`);
     });
 
     it('should return the title', () => {
