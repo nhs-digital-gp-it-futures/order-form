@@ -3,7 +3,7 @@ import { getEndpoint } from '../../../../endpoints';
 import { logger } from '../../../../logger';
 import { getContext, getErrorContext } from './contextCreator';
 
-export const getSolutionRecipientPageContext = params => getContext(params);
+export const getRecipientPageContext = params => getContext(params);
 
 export const getSolution = async ({ solutionId, accessToken }) => {
   const endpoint = getEndpoint({ endpointLocator: 'getSolution', options: { solutionId } });
@@ -21,9 +21,9 @@ export const getRecipients = async ({ orderId, accessToken }) => {
   return serviceRecipientsData.serviceRecipients;
 };
 
-export const getRecipientSelectErrorPageContext = params => getErrorContext(params);
+export const getRecipientErrorPageContext = params => getErrorContext(params);
 
-export const validateRecipientSelectForm = ({ data }) => {
+export const validateRecipientForm = ({ data }) => {
   if (data.selectRecipient && data.selectRecipient.trim().length > 0) {
     return { success: true };
   }

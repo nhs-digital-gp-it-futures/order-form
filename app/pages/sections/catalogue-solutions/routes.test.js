@@ -381,7 +381,7 @@ describe('catalogue-solutions section routes', () => {
       selectRecipientController.getRecipients = jest.fn()
         .mockResolvedValue([]);
 
-      selectRecipientController.getSolutionRecipientPageContext = jest.fn()
+      selectRecipientController.getRecipientPageContext = jest.fn()
         .mockResolvedValue({});
 
       return request(setUpFakeApp())
@@ -443,13 +443,13 @@ describe('catalogue-solutions section routes', () => {
       selectRecipientController.getRecipients = jest.fn()
         .mockResolvedValue([]);
 
-      selectRecipientController.validateRecipientSelectForm = jest.fn()
+      selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: false });
 
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({ name: 'Solution One ' });
 
-      selectRecipientController.getRecipientSelectErrorPageContext = jest.fn()
+      selectRecipientController.getRecipientErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a recipient', href: '#selectRecipient' }],
         });
@@ -482,7 +482,7 @@ describe('catalogue-solutions section routes', () => {
       selectRecipientController.getRecipients = jest.fn()
         .mockResolvedValue([]);
 
-      selectRecipientController.validateRecipientSelectForm = jest.fn()
+      selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({

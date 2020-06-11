@@ -20,11 +20,11 @@ import {
   validateSolutionPriceForm,
 } from './price/controller';
 import {
-  getSolutionRecipientPageContext,
+  getRecipientPageContext,
   getRecipients,
   getSolution,
-  validateRecipientSelectForm,
-  getRecipientSelectErrorPageContext,
+  validateRecipientForm,
+  getRecipientErrorPageContext,
 } from './recipient/controller';
 
 const router = express.Router({ mergeParams: true });
@@ -132,7 +132,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const recipients = await getRecipients({ orderId, accessToken });
     sessionManager.saveToSession({ req, key: 'recipients', value: recipients });
 
-    const context = await getSolutionRecipientPageContext({
+    const context = await getRecipientPageContext({
       orderId,
       solutionName: solutionData.name,
       recipients,
@@ -145,7 +145,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.post('/solution/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    const response = validateRecipientSelectForm({ data: req.body });
+    const response = validateRecipientForm({ data: req.body });
     if (response.success) {
       sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: req.body.selectRecipient });
       logger.info('Redirect to new solution page');
@@ -156,7 +156,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const solutionData = await getSolution({ solutionId });
 
     const recipients = sessionManager.getFromSession({ req, key: 'recipients' });
-    const context = await getRecipientSelectErrorPageContext({
+    const context = await getRecipientErrorPageContext({
       orderId,
       solutionName: solutionData.name,
       recipients,
