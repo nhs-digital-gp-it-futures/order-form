@@ -56,9 +56,10 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.get('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
+
     const supplierId = await getSupplierId({ orderId, accessToken });
     const solutions = await findSolutions({ supplierId, accessToken });
-    sessionManager.saveToSession({ req, key: 'solutionsFound', value: solutions });
+    sessionManager.saveToSession({ req, key: 'solutions', value: solutions });
 
     const context = await getSolutionsSelectPageContext({ orderId, solutions });
 
@@ -77,10 +78,10 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/solution/price`);
     }
 
-    const solutionsFound = sessionManager.getFromSession({ req, key: 'solutionsFound' });
+    const solutions = sessionManager.getFromSession({ req, key: 'solutions' });
     const context = await getSolutionsSelectErrorPageContext({
       orderId,
-      solutions: solutionsFound,
+      solutions,
       validationErrors: response.errors,
     });
 

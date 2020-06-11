@@ -7,10 +7,10 @@ export const getSolutionsSelectPageContext = params => getContext(params);
 
 export const findSolutions = async ({ supplierId, accessToken }) => {
   const endpoint = getEndpoint({ endpointLocator: 'getSolutionsForSupplier', options: { supplierId } });
-  const solutionsFound = await getData({ endpoint, accessToken, logger });
-  logger.info(`Searching for solutions for Supplier "${supplierId}" returned ${solutionsFound.length} solutions`);
+  const solutions = await getData({ endpoint, accessToken, logger });
+  logger.info(`Searching for solutions for Supplier "${supplierId}" returned ${solutions.length} solutions`);
 
-  return solutionsFound.solutions;
+  return solutions.solutions;
 };
 
 export const getSupplierId = async ({ orderId, accessToken }) => {

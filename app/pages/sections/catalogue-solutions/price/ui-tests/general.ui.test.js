@@ -14,7 +14,7 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const solutionsFoundState = ClientFunction(() => {
+const solutionsState = ClientFunction(() => {
   document.cookie = 'selectedSolution=solution-1';
 });
 
@@ -146,7 +146,7 @@ const pageSetup = async (withAuth = false, withSolutionsFoundState = true, withs
     mocks();
     await setCookies();
   }
-  if (withSolutionsFoundState) await solutionsFoundState();
+  if (withSolutionsFoundState) await solutionsState();
   if (withsolutionPricesState) await solutionPricesState();
 };
 

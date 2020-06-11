@@ -25,7 +25,7 @@ const mockSolutions = [
   },
 ];
 
-const solutionsFoundState = ClientFunction(() => {
+const solutionsState = ClientFunction(() => {
   const cookieValue = JSON.stringify([
     {
       id: 'solution-1',
@@ -37,7 +37,7 @@ const solutionsFoundState = ClientFunction(() => {
     },
   ]);
 
-  document.cookie = `solutionsFound=${cookieValue}`;
+  document.cookie = `solutions=${cookieValue}`;
 });
 
 const mocks = () => {
@@ -54,7 +54,7 @@ const pageSetup = async (withAuth = true, withSolutionsFoundState = false) => {
     mocks();
     await setCookies();
   }
-  if (withSolutionsFoundState) await solutionsFoundState();
+  if (withSolutionsFoundState) await solutionsState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
