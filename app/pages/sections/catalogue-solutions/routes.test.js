@@ -10,9 +10,9 @@ import {
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
-import * as catalogueSolutionPriceController from './price/controller';
-import * as selectSolutionController from './solution/controller';
-import * as selectRecipientController from './recipient/controller';
+import * as catalogueSolutionPriceController from './select/price/controller';
+import * as selectSolutionController from './select/solution/controller';
+import * as selectRecipientController from './select/recipient/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';

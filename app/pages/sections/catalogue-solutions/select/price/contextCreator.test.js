@@ -1,9 +1,9 @@
 import manifest from './manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
-import { baseUrl } from '../../../../config';
-import * as errorContext from '../../getSectionErrorContext';
+import { baseUrl } from '../../../../../config';
+import * as errorContext from '../../../getSectionErrorContext';
 
-jest.mock('../../getSectionErrorContext', () => ({
+jest.mock('../../../getSectionErrorContext', () => ({
   getSectionErrorContext: jest.fn(),
 }));
 

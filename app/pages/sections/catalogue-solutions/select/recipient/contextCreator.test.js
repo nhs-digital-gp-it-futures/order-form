@@ -1,13 +1,13 @@
 import manifest from './manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
-import { baseUrl } from '../../../../config';
-import * as errorContext from '../../getSectionErrorContext';
+import { baseUrl } from '../../../../../config';
+import * as errorContext from '../../../getSectionErrorContext';
 
-jest.mock('../../getSectionErrorContext', () => ({
+jest.mock('../../../getSectionErrorContext', () => ({
   getSectionErrorContext: jest.fn(),
 }));
 
-describe('catalogue-solutions select contextCreator', () => {
+describe('catalogue-solutions select-recipient contextCreator', () => {
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1' });
@@ -17,13 +17,13 @@ describe('catalogue-solutions select contextCreator', () => {
     it('should construct the backLinkHref', () => {
       const orderId = 'order-1';
       const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/solution/price`);
     });
 
     it('should return the title', () => {
-      const orderId = 'order-1';
-      const context = getContext({ orderId });
-      expect(context.title).toEqual(`${manifest.title} ${orderId}`);
+      const solutionName = 'Solution One';
+      const context = getContext({ solutionName });
+      expect(context.title).toEqual(`${manifest.title} ${solutionName}`);
     });
 
     it('should return the description', () => {
@@ -31,38 +31,38 @@ describe('catalogue-solutions select contextCreator', () => {
       expect(context.description).toEqual(manifest.description);
     });
 
-    it('should return the select solution question', () => {
+    it('should return the select recipient question', () => {
       const expectedContext = {
         questions: [
           {
-            id: 'selectSolution',
-            mainAdvice: 'Select Catalogue Solution',
+            id: 'selectRecipient',
+            mainAdvice: 'Select Service Recipient (ODS code)',
             options: [
               {
-                value: 'solution-1',
-                text: 'Solution 1',
+                value: 'recipient-1',
+                text: 'Recipient 1 (recipient-1)',
               },
               {
-                value: 'solution-2',
-                text: 'Solution 2',
+                value: 'recipient-2',
+                text: 'Recipient 2 (recipient-2)',
               },
             ],
           },
         ],
       };
 
-      const solutions = [
+      const recipients = [
         {
-          id: 'solution-1',
-          name: 'Solution 1',
+          odsCode: 'recipient-1',
+          name: 'Recipient 1',
         },
         {
-          id: 'solution-2',
-          name: 'Solution 2',
+          odsCode: 'recipient-2',
+          name: 'Recipient 2',
         },
       ];
 
-      const context = getContext({ solutions });
+      const context = getContext({ recipients });
       expect(context.questions).toEqual(expectedContext.questions);
     });
 
@@ -74,14 +74,16 @@ describe('catalogue-solutions select contextCreator', () => {
 
   describe('getErrorContext', () => {
     const mockValidationErrors = [{
-      field: 'selectSolution',
-      id: 'SelectSolutionRequired',
+      field: 'selectRecipient',
+      id: 'SelectRecipientRequired',
     }];
 
-    const solutions = [
-      { id: 'solution-1', name: 'Solution 1' },
-      { id: 'solution-2', name: 'Solution 2' },
+    const recipients = [
+      { id: 'recipient-1', name: 'Recipient 1' },
+      { id: 'recipient-2', name: 'Recipient 2' },
     ];
+
+    const solutionName = 'Solution One';
 
     afterEach(() => {
       errorContext.getSectionErrorContext.mockReset();
@@ -94,7 +96,8 @@ describe('catalogue-solutions select contextCreator', () => {
       const params = {
         orderId: 'order-id',
         validationErrors: mockValidationErrors,
-        solutions,
+        solutionName,
+        recipients,
       };
 
       getErrorContext(params);

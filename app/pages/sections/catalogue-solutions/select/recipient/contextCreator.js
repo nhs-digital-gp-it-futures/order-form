@@ -1,6 +1,6 @@
 import manifest from './manifest.json';
-import { baseUrl } from '../../../../config';
-import { getSectionErrorContext } from '../../getSectionErrorContext';
+import { baseUrl } from '../../../../../config';
+import { getSectionErrorContext } from '../../../getSectionErrorContext';
 
 const generateRecipientOptions = ({ recipients }) => (
   recipients.map(recipient => ({

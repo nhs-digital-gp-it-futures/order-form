@@ -12,20 +12,20 @@ import {
   getSolutionsErrorPageContext,
   getSolutionsPageContext,
   validateSolutionForm,
-} from './solution/controller';
+} from './select/solution/controller';
 import {
   findSolutionPrices,
   getSolutionPriceErrorPageContext,
   getSolutionPricePageContext,
   validateSolutionPriceForm,
-} from './price/controller';
+} from './select/price/controller';
 import {
   getRecipientPageContext,
   getRecipients,
   getSolution,
   validateRecipientForm,
   getRecipientErrorPageContext,
-} from './recipient/controller';
+} from './select/recipient/controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -64,7 +64,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const context = await getSolutionsPageContext({ orderId, solutions });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select solution page`);
-    return res.render('pages/sections/catalogue-solutions/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/catalogue-solutions/select/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -85,7 +85,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       validationErrors: response.errors,
     });
 
-    return res.render('pages/sections/catalogue-solutions/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/catalogue-solutions/select/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -99,7 +99,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const context = await getSolutionPricePageContext({ orderId, solutionPrices });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select price page`);
-    return res.render('pages/sections/catalogue-solutions/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/catalogue-solutions/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -119,7 +119,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       validationErrors: response.errors,
     });
 
-    return res.render('pages/sections/catalogue-solutions/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/catalogue-solutions/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/solution/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -139,7 +139,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select recipient page`);
-    return res.render('pages/sections/catalogue-solutions/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/catalogue-solutions/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/solution/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
@@ -163,7 +163,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       validationErrors: response.errors,
     });
 
-    return res.render('pages/sections/catalogue-solutions/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/catalogue-solutions/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;

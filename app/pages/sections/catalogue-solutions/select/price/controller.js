@@ -1,7 +1,7 @@
 import { getData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
-import { getEndpoint } from '../../../../endpoints';
-import { logger } from '../../../../logger';
+import { getEndpoint } from '../../../../../endpoints';
+import { logger } from '../../../../../logger';
 
 export const getSolutionPricePageContext = params => getContext(params);
 
