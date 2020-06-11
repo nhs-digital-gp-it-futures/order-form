@@ -33,7 +33,7 @@ const putCommencementDateErrorResponse = {
   }],
 };
 
-fixture('commencement-date page - with saved data')
+fixture('Commencement-date page - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();

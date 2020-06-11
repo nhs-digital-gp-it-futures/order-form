@@ -41,7 +41,7 @@ const pageSetup = async (withAuth = true, putErrorNock = false) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('commencement-date page - general')
+fixture('Commencement-date page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();

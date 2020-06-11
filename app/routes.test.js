@@ -10,10 +10,14 @@ import { routes } from './routes';
 import { baseUrl } from './config';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
+import * as documentController from './documentController';
 
 jest.mock('./logger');
 
 dashboardController.getDashboardContext = jest.fn()
+  .mockResolvedValue({});
+
+documentController.getDocumentByFileName = jest.fn()
   .mockResolvedValue({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
@@ -56,6 +60,55 @@ describe('routes', () => {
       .then((res) => {
         expect(res.redirect).toEqual(true);
         expect(res.headers.location).toEqual(`${baseUrl}/organisation`);
+      }));
+  });
+
+  describe('GET /document/:documentName', () => {
+    const path = '/document/a-document';
+    beforeEach(() => {
+      documentController.getDocumentByFileName = jest.fn()
+        .mockResolvedValue({ on: (a, b) => b() });
+    });
+
+    afterEach(() => {
+      documentController.getDocumentByFileName.mockReset();
+    });
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should call getDocumentByFileName with the correct paramswhen the user is authorised', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .then(() => {
+        expect(documentController.getDocumentByFileName.mock.calls.length).toEqual(1);
+        expect(documentController.getDocumentByFileName).toHaveBeenCalledWith({
+          res: expect.any(Object),
+          documentName: 'a-document',
+          contentType: 'application/pdf',
+        });
+        documentController.getDocumentByFileName.mockReset();
+      }));
+
+    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
   });
 

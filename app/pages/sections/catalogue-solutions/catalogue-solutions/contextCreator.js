@@ -6,6 +6,6 @@ export const getContext = ({ orderId, orderDescription, catalogueSolutions }) =>
   title: `${manifest.title} ${orderId}`,
   orderDescription,
   catalogueSolutions,
-  addSolutionButtonHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select`,
+  addSolutionButtonHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution`,
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
 });

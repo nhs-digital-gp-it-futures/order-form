@@ -3,23 +3,23 @@ import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/sections/catalogue-solutions/select-solution/template.njk',
+    path: 'pages/sections/catalogue-solutions/select-recipient/template.njk',
   },
 };
 
-describe('catalogue-solutions select page', () => {
+describe('catalogue-solutions select recipient page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation/order-1/catalogue-solutions',
+      backLinkHref: '/organisation/order-1',
     };
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1/catalogue-solutions');
+      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
     });
   }));
 
@@ -27,12 +27,12 @@ describe('catalogue-solutions select page', () => {
     const context = {
       questions: [
         {
-          id: 'selectSolution',
-          error: [{ message: 'some select solution error message' }],
+          id: 'selectRecipient',
+          error: [{ message: 'some select recipient error message' }],
         },
       ],
       errors: [
-        { text: 'some select solution error message', href: '#selectSolution' },
+        { text: 'some select recipient error message', href: '#selectRecipient' },
       ],
     };
 
@@ -48,25 +48,25 @@ describe('catalogue-solutions select page', () => {
     });
   }));
 
-  it('should render the solutions-select page title', componentTester(setup, (harness) => {
+  it('should render the solutions-recipient page title', componentTester(setup, (harness) => {
     const context = {
-      title: 'Add Catalogue Solution for order-1',
+      title: 'Service Recipient for Solution One',
     };
 
     harness.request(context, ($) => {
-      const title = $('h1[data-test-id="solution-select-page-title"]');
+      const title = $('h1[data-test-id="solution-recipient-page-title"]');
       expect(title.length).toEqual(1);
       expect(title.text().trim()).toEqual(context.title);
     });
   }));
 
-  it('should render the solutions-select page description', componentTester(setup, (harness) => {
+  it('should render the solutions-recipient page description', componentTester(setup, (harness) => {
     const context = {
       description: manifest.description,
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="solution-select-page-description"]');
+      const description = $('h2[data-test-id="solution-recipient-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -85,20 +85,20 @@ describe('catalogue-solutions select page', () => {
     });
   }));
 
-  it('should render the "Select Catalogue Solutions" radio button options component', componentTester(setup, (harness) => {
+  it('should render the "Select Service Recipient" radio button options component', componentTester(setup, (harness) => {
     const context = {
       questions: [
         {
-          id: 'selectSolution',
-          mainAdvice: 'Select Catalogue Solution',
+          id: 'selectRecipient',
+          mainAdvice: 'Select Service Recipient (ODS code)',
           options: [
             {
-              value: 'solution-1',
-              text: 'Solution 1',
+              value: 'recipient-1',
+              text: 'Recipient 1 (recipient-1)',
             },
             {
-              value: 'solution-2',
-              text: 'Solution 2',
+              value: 'recipient-2',
+              text: 'Recipient 2 (recipient-2)',
             },
           ],
         },
@@ -106,34 +106,34 @@ describe('catalogue-solutions select page', () => {
     };
 
     harness.request(context, ($) => {
-      const selectSolutionRadioOptions = $('[data-test-id="question-selectSolution"]');
-      expect(selectSolutionRadioOptions.length).toEqual(1);
-      expect(selectSolutionRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
-      expect(selectSolutionRadioOptions.find('input').length).toEqual(2);
-      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('solution-1');
-      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Solution 1');
-      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('solution-2');
-      expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('Solution 2');
+      const selectRecipientRadioOptions = $('[data-test-id="question-selectRecipient"]');
+      expect(selectRecipientRadioOptions.length).toEqual(1);
+      expect(selectRecipientRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
+      expect(selectRecipientRadioOptions.find('input').length).toEqual(2);
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('recipient-1');
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Recipient 1 (recipient-1)');
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('recipient-2');
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('Recipient 2 (recipient-2)');
     });
   }));
 
-  it('should render errors on selectSolution field if there are errors', componentTester(setup, (harness) => {
+  it('should render errors on selectRecipient field if there are errors', componentTester(setup, (harness) => {
     const context = {
       questions: [
         {
-          id: 'selectSolution',
-          error: [{ message: 'some select solution error message' }],
+          id: 'selectRecipient',
+          error: [{ message: 'some select recipient error message' }],
         },
       ],
       errors: [
-        { text: 'some select solution error message', href: '#selectSolution' },
+        { text: 'some select recipient error message', href: '#selectRecipient' },
       ],
     };
 
     harness.request(context, ($) => {
-      const selectSolutionQuestion = $('div[data-test-id="question-selectSolution"]');
-      expect(selectSolutionQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
-      expect(selectSolutionQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
+      const selectRecipientQuestion = $('div[data-test-id="question-selectRecipient"]');
+      expect(selectRecipientQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
+      expect(selectRecipientQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
     });
   }));
 

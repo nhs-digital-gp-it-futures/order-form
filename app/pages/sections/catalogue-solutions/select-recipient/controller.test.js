@@ -1,57 +1,34 @@
 import { getData } from 'buying-catalogue-library';
-import { solutionsApiUrl } from '../../../../config';
+import { orderApiUrl, solutionsApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
-import * as contextCreator from './contextCreator';
 import {
-  findSolutionPrices,
-  getSolutionPricePageContext,
-  validateSolutionSelectPriceForm,
+  getSolutionRecipientPageContext,
+  getRecipients,
+  getSolution,
+  validateRecipientSelectForm,
 } from './controller';
+import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
-jest.mock('../../../../logger');
+
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-const accessToken = 'access_token';
-const orderId = 'order-id';
-const solutionId = 'sol-1';
-
-const solutionPrices = {
-  id: 'sol-1',
-  name: 'name',
-  prices: [
-    {
-      type: 'flat',
-      currencyCode: 'GBP',
-      itemUnit: {
-        name: 'patient',
-        description: 'per patient',
-      },
-      timeUnit: {
-        name: 'year',
-        description: 'per year',
-      },
-      price: 1.64,
-    },
-  ],
-};
-
-describe('select-price controller', () => {
-  describe('getSolutionPricePageContext', () => {
+describe('catalogue-solutions select-solution controller', () => {
+  describe('getSolutionRecipientPageContext', () => {
     it('should call getContext with the correct params', async () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
 
-      await getSolutionPricePageContext({ orderId, solutionPrices });
+      await getSolutionRecipientPageContext({ orderId: 'order-1', solutionName: 'Solution One' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, solutionPrices });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', solutionName: 'Solution One' });
     });
   });
 
-  describe('findSolutionPrices', () => {
+  describe('getRecipients', () => {
     afterEach(() => {
       getData.mockReset();
     });
@@ -60,24 +37,46 @@ describe('select-price controller', () => {
       getData
         .mockResolvedValueOnce({ data: {} });
 
-      await findSolutionPrices({ accessToken, solutionId });
+      await getRecipients({ orderId: 'order-1', accessToken: 'access_token' });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${solutionsApiUrl}/api/v1/solutions/${solutionId}/pricing`,
+        endpoint: `${orderApiUrl}/api/v1/orders/order-1/sections/service-recipients`,
         accessToken: 'access_token',
         logger,
       });
     });
   });
 
-  describe('validateSolutionSelectForm', () => {
+  describe('getSolution', () => {
+    afterEach(() => {
+      getData.mockReset();
+      contextCreator.getContext.mockReset();
+    });
+
+    const accessToken = 'access_token';
+    const solutionId = 'sol-1';
+
+    it('should call getData with the correct params when hasSavedData is true', async () => {
+      getData.mockResolvedValueOnce({ supplierId: 'supp-1' });
+
+      await getSolution({ solutionId, accessToken });
+      expect(getData.mock.calls.length).toEqual(1);
+      expect(getData).toHaveBeenCalledWith({
+        endpoint: `${solutionsApiUrl}/api/v1/solutions/${solutionId}`,
+        accessToken,
+        logger,
+      });
+    });
+  });
+
+  describe('validateRecipientSelectForm', () => {
     describe('when there are no validation errors', () => {
       it('should return success as true', () => {
         const data = {
-          selectSolutionPrice: 'some-solution-id',
+          selectRecipient: 'some-recipient-id',
         };
 
-        const response = validateSolutionSelectPriceForm({ data });
+        const response = validateRecipientSelectForm({ data });
 
         expect(response.success).toEqual(true);
       });
@@ -86,17 +85,17 @@ describe('select-price controller', () => {
     describe('when there are validation errors', () => {
       const expectedValidationErrors = [
         {
-          field: 'selectSolutionPrice',
-          id: 'SelectSolutionPriceRequired',
+          field: 'selectRecipient',
+          id: 'SelectRecipientRequired',
         },
       ];
 
       it('should return an array of one validation error and success as false if empty string is passed in', () => {
         const data = {
-          selectSolution: '',
+          selectRecipient: '',
         };
 
-        const response = validateSolutionSelectPriceForm({ data });
+        const response = validateRecipientSelectForm({ data });
 
         expect(response.success).toEqual(false);
         expect(response.errors).toEqual(expectedValidationErrors);
@@ -104,10 +103,10 @@ describe('select-price controller', () => {
 
       it('should return an array of one validation error and success as false if whitespace only is passed in', () => {
         const data = {
-          selectSolution: '   ',
+          selectRecipient: '   ',
         };
 
-        const response = validateSolutionSelectPriceForm({ data });
+        const response = validateRecipientSelectForm({ data });
 
         expect(response.success).toEqual(false);
         expect(response.errors).toEqual(expectedValidationErrors);
@@ -116,7 +115,7 @@ describe('select-price controller', () => {
       it('should return a validation error if supplierName is undefined', () => {
         const data = {};
 
-        const response = validateSolutionSelectPriceForm({ data });
+        const response = validateRecipientSelectForm({ data });
 
         expect(response.errors).toEqual(expectedValidationErrors);
       });
