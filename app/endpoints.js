@@ -12,7 +12,7 @@ const endpoints = {
   getDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
   getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
   getOrganisationById: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}`,
-  getSearchSuppliers: options => `${solutionsApiUrl}/api/v1/suppliers?name=${options.name}&solutionPublicationStatus=Published`,
+  getSearchSuppliers: options => `${solutionsApiUrl}/api/v1/suppliers?name=${encodeURIComponent(options.name)}&solutionPublicationStatus=Published`,
   getSupplier: options => `${solutionsApiUrl}/api/v1/suppliers/${options.supplierId}`,
   getOrdapiSupplier: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/supplier`,
   getCommencementDate: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/commencement-date`,
@@ -33,6 +33,4 @@ const endpoints = {
   postDescription: () => `${orderApiUrl}/api/v1/orders`,
 };
 
-export const getEndpoint = ({ endpointLocator, options }) => (
-  encodeURI(endpoints[endpointLocator](options))
-);
+export const getEndpoint = ({ endpointLocator, options }) => endpoints[endpointLocator](options);
