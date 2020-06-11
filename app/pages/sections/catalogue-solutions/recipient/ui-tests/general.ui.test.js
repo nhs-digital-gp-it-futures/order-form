@@ -31,7 +31,7 @@ const mockServiceRecipients = [
   },
 ];
 
-const recipientsFoundState = ClientFunction(() => {
+const recipientsState = ClientFunction(() => {
   const cookieValue = JSON.stringify([
     {
       odsCode: 'recipient-1',
@@ -43,7 +43,7 @@ const recipientsFoundState = ClientFunction(() => {
     },
   ]);
 
-  document.cookie = `recipientsFound=${cookieValue}`;
+  document.cookie = `recipients=${cookieValue}`;
 });
 
 const selectedSupplierState = ClientFunction(() => {
@@ -66,7 +66,7 @@ const pageSetup = async (withAuth = true, withSessionState = false) => {
     await selectedSolutionIdState();
   }
   if (withSessionState) {
-    await recipientsFoundState();
+    await recipientsState();
     await selectedSupplierState();
   }
 };

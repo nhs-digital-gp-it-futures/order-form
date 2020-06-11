@@ -1,15 +1,15 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../config';
 
-const getCheckedStatus = ({ selectStatus, data, selectedRecipientsData = [] }) => {
+const getCheckedStatus = ({ selectStatus, data, selectedRecipientIdsData = [] }) => {
   if (selectStatus === 'select') return true;
   if (selectStatus === 'deselect') return false;
-  return !!selectedRecipientsData
+  return !!selectedRecipientIdsData
     .find(checkedRecipient => checkedRecipient.odsCode === data.odsCode);
 };
 
 const formatTableData = ({
-  selectStatus, serviceRecipientsData, selectedRecipientsData,
+  selectStatus, serviceRecipientsData, selectedRecipientIdsData,
 }) => serviceRecipientsData
   .map(data => ({
     organisationName: {
@@ -17,13 +17,13 @@ const formatTableData = ({
       name: data.odsCode,
       value: data.name,
       text: data.name,
-      checked: getCheckedStatus({ selectStatus, data, selectedRecipientsData }),
+      checked: getCheckedStatus({ selectStatus, data, selectedRecipientIdsData }),
     },
     odsCode: data.odsCode,
   }));
 
 export const getContext = ({
-  orderId, serviceRecipientsData = [], selectedRecipientsData = [], selectStatus,
+  orderId, serviceRecipientsData = [], selectedRecipientIdsData = [], selectStatus,
 }) => {
   const toggledStatus = selectStatus === 'select' ? 'deselect' : 'select';
   return {
@@ -31,7 +31,7 @@ export const getContext = ({
     title: `${manifest.title} ${orderId}`,
     backLinkHref: `${baseUrl}/organisation/${orderId}`,
     tableData: formatTableData({
-      selectStatus, serviceRecipientsData, selectedRecipientsData,
+      selectStatus, serviceRecipientsData, selectedRecipientIdsData,
     }),
     selectDeselectButtonAction: `${baseUrl}/organisation/${orderId}/service-recipients`,
     selectStatus: toggledStatus,

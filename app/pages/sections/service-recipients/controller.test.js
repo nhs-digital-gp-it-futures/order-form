@@ -77,7 +77,7 @@ describe('service-recipients controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({
         orderId: 'order-id',
         serviceRecipientsData: dataFromOapi,
-        selectedRecipientsData: [],
+        selectedRecipientIdsData: [],
       });
     });
 
@@ -96,7 +96,7 @@ describe('service-recipients controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({
         orderId: 'order-id',
         serviceRecipientsData: dataFromOapi,
-        selectedRecipientsData: [],
+        selectedRecipientIdsData: [],
         selectStatus: 'select',
       });
     });
@@ -114,7 +114,7 @@ describe('service-recipients controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({
         orderId: 'order-id',
         serviceRecipientsData: dataFromOapi,
-        selectedRecipientsData: dataFromOrdapi.serviceRecipients,
+        selectedRecipientIdsData: dataFromOrdapi.serviceRecipients,
       });
     });
   });
