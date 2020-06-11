@@ -35,7 +35,7 @@ const generateQuestionsContext = solutionPrices => manifest.questions.map(questi
 export const getContext = ({ orderId, solutionPrices }) => ({
   ...manifest,
   title: `${manifest.title} ${solutionPrices.name}`,
-  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/solution`,
+  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`,
   questions: solutionPrices && generateQuestionsContext(solutionPrices),
 });
 

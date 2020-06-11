@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl, solutionsApiUrl } from '../../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution/price';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -185,7 +185,7 @@ test('should render Catalogue-solutions price page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/solution when click on backlink', async (t) => {
+test('should navigate to /organisation/order-id/catalogue-solutions/select/solution when click on backlink', async (t) => {
   await pageSetup(true);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
@@ -197,7 +197,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/solution whe
   await t
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution');
 });
 
 test('should render the title', async (t) => {
@@ -254,7 +254,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/solution/price/recipient when a price is selected', async (t) => {
+test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when a price is selected', async (t) => {
   await pageSetup(true);
   await t.navigateTo(pageUrl);
 
@@ -265,7 +265,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/solution/pri
   await t
     .click(firstSolution)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution/price/recipient');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
 });
 
 test('should show the error summary when no price selected causing validation error', async (t) => {
