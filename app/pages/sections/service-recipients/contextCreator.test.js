@@ -11,7 +11,7 @@ const serviceRecipientsData = [{
   odsCode: 'ods2',
 }];
 
-const selectedRecipientsData = [{
+const selectedRecipientIdsData = [{
   name: 'Some service recipient 2',
   odsCode: 'ods2',
 }];
@@ -57,7 +57,7 @@ describe('service-recipients contextCreator', () => {
     });
 
     it('should construct the correct checked value when selected recipients data is available and selectStatus is undefined', () => {
-      const context = getContext({ orderId, serviceRecipientsData, selectedRecipientsData });
+      const context = getContext({ orderId, serviceRecipientsData, selectedRecipientIdsData });
       expect(context.tableData.length).toEqual(serviceRecipientsData.length);
       expect(context.tableData[0].organisationName.checked).toEqual(false);
       expect(context.tableData[1].organisationName.checked).toEqual(true);
@@ -74,7 +74,7 @@ describe('service-recipients contextCreator', () => {
 
     it('should mark all checked as true when selectStatus = select and data is found in ORDAPI', () => {
       const context = getContext({
-        orderId, serviceRecipientsData, selectedRecipientsData, selectStatus: 'select',
+        orderId, serviceRecipientsData, selectedRecipientIdsData, selectStatus: 'select',
       });
       expect(context.tableData.length).toEqual(serviceRecipientsData.length);
       expect(context.tableData[0].organisationName.checked).toEqual(true);
@@ -92,7 +92,7 @@ describe('service-recipients contextCreator', () => {
 
     it('should mark all checked as true when selectStatus = deselect and data is found in ORDAPI', () => {
       const context = getContext({
-        orderId, serviceRecipientsData, selectedRecipientsData, selectStatus: 'deselect',
+        orderId, serviceRecipientsData, selectedRecipientIdsData, selectStatus: 'deselect',
       });
       expect(context.tableData.length).toEqual(serviceRecipientsData.length);
       expect(context.tableData[0].organisationName.checked).toEqual(false);

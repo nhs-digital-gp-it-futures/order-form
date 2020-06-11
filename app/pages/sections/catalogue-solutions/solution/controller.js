@@ -3,14 +3,14 @@ import { getEndpoint } from '../../../../endpoints';
 import { logger } from '../../../../logger';
 import { getContext, getErrorContext } from './contextCreator';
 
-export const getSolutionsSelectPageContext = params => getContext(params);
+export const getSolutionsPageContext = params => getContext(params);
 
 export const findSolutions = async ({ supplierId, accessToken }) => {
   const endpoint = getEndpoint({ endpointLocator: 'getSolutionsForSupplier', options: { supplierId } });
-  const solutionsFound = await getData({ endpoint, accessToken, logger });
-  logger.info(`Searching for solutions for Supplier "${supplierId}" returned ${solutionsFound.length} solutions`);
+  const solutions = await getData({ endpoint, accessToken, logger });
+  logger.info(`Searching for solutions for Supplier "${supplierId}" returned ${solutions.length} solutions`);
 
-  return solutionsFound.solutions;
+  return solutions.solutions;
 };
 
 export const getSupplierId = async ({ orderId, accessToken }) => {
@@ -21,9 +21,9 @@ export const getSupplierId = async ({ orderId, accessToken }) => {
   return ordapiSupplierData.supplierId;
 };
 
-export const getSolutionsSelectErrorPageContext = params => getErrorContext(params);
+export const getSolutionsErrorPageContext = params => getErrorContext(params);
 
-export const validateSolutionSelectForm = ({ data }) => {
+export const validateSolutionForm = ({ data }) => {
   if (data.selectSolution && data.selectSolution.trim().length > 0) {
     return { success: true };
   }

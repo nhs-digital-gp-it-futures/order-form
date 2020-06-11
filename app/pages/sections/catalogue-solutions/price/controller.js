@@ -20,7 +20,7 @@ export const findSolutionPrices = async ({ accessToken, solutionId }) => {
 
 export const getSolutionPriceErrorPageContext = params => getErrorContext(params);
 
-export const validateSolutionSelectPriceForm = ({ data }) => {
+export const validateSolutionPriceForm = ({ data }) => {
   if (data.selectSolutionPrice && data.selectSolutionPrice.trim().length > 0) {
     return { success: true };
   }

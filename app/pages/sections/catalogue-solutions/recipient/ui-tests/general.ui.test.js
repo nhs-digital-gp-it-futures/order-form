@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl, solutionsApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select-solution/select-price/select-recipient';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution/price/recipient';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -14,10 +14,10 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const selectedSolutionState = ClientFunction(() => {
+const selectedSolutionIdState = ClientFunction(() => {
   const cookieValue = 'solution-1';
 
-  document.cookie = `selectedSolution=${cookieValue}`;
+  document.cookie = `selectedSolutionId=${cookieValue}`;
 });
 
 const mockServiceRecipients = [
@@ -31,7 +31,7 @@ const mockServiceRecipients = [
   },
 ];
 
-const recipientsFoundState = ClientFunction(() => {
+const recipientsState = ClientFunction(() => {
   const cookieValue = JSON.stringify([
     {
       odsCode: 'recipient-1',
@@ -43,7 +43,7 @@ const recipientsFoundState = ClientFunction(() => {
     },
   ]);
 
-  document.cookie = `recipientsFound=${cookieValue}`;
+  document.cookie = `recipients=${cookieValue}`;
 });
 
 const selectedSupplierState = ClientFunction(() => {
@@ -63,17 +63,17 @@ const pageSetup = async (withAuth = true, withSessionState = false) => {
   if (withAuth) {
     mocks();
     await setCookies();
-    await selectedSolutionState();
+    await selectedSolutionIdState();
   }
   if (withSessionState) {
-    await recipientsFoundState();
+    await recipientsState();
     await selectedSupplierState();
   }
 };
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Catalogue-solutions select recipient - general')
+fixture('Catalogue-solutions - recipient page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -105,7 +105,7 @@ test('should render Catalogue-solutions select-recipient page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/select-solution/select-price when click on backlink', async (t) => {
+test('should navigate to /organisation/order-id/catalogue-solutions/solution/price when click on backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -114,7 +114,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select-solut
   await t
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select-solution/select-price');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution/price');
 });
 
 test('should render the title', async (t) => {

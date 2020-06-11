@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select-solution';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -25,7 +25,7 @@ const mockSolutions = [
   },
 ];
 
-const solutionsFoundState = ClientFunction(() => {
+const solutionsState = ClientFunction(() => {
   const cookieValue = JSON.stringify([
     {
       id: 'solution-1',
@@ -37,7 +37,7 @@ const solutionsFoundState = ClientFunction(() => {
     },
   ]);
 
-  document.cookie = `solutionsFound=${cookieValue}`;
+  document.cookie = `solutions=${cookieValue}`;
 });
 
 const mocks = () => {
@@ -54,12 +54,12 @@ const pageSetup = async (withAuth = true, withSolutionsFoundState = false) => {
     mocks();
     await setCookies();
   }
-  if (withSolutionsFoundState) await solutionsFoundState();
+  if (withSolutionsFoundState) await solutionsState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Catalogue-solutions select page - general')
+fixture('Catalogue-solutions - solution page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -154,7 +154,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/select-solution/select-price when a solution is selected', async (t) => {
+test('should redirect to /organisation/order-id/catalogue-solutions/solution/price when a solution is selected', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
@@ -165,7 +165,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select-solut
   await t
     .click(firstSolution)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select-solution/select-price');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution/price');
 });
 
 test('should show the error summary when no solution selected causing validation error', async (t) => {

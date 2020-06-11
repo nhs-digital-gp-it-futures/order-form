@@ -10,9 +10,9 @@ import {
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
-import * as catalogueSolutionPriceController from './select-price/controller';
-import * as selectSolutionController from './select-solution/controller';
-import * as selectRecipientController from './select-recipient/controller';
+import * as catalogueSolutionPriceController from './price/controller';
+import * as selectSolutionController from './solution/controller';
+import * as selectRecipientController from './recipient/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';
@@ -27,7 +27,6 @@ const mockAuthorisedJwtPayload = JSON.stringify({
   ordering: 'manage',
   primaryOrganisationId: 'org-id',
 });
-
 const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
 
 const mockUnauthorisedJwtPayload = JSON.stringify({
@@ -35,50 +34,24 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 
-const mockSolutionsFoundState = JSON.stringify([
+const mockSessionSolutionsState = JSON.stringify([
   { id: 'solution-1', name: 'Solution 1' },
   { id: 'solution-2', name: 'Solution 2' },
 ]);
+const mockSolutionsCookie = `suppliersFound=${mockSessionSolutionsState}`;
 
-const mockSolutionsFoundCookie = `suppliersFound=${mockSolutionsFoundState}`;
-
-const mockRecipientsFoundState = JSON.stringify([
+const mockRecipientSessionState = JSON.stringify([
   { id: 'recipient-1', name: 'Recipient 1' },
   { id: 'recipient-2', name: 'Recipient 2' },
 ]);
+const mockRecipientsCookie = `recipients=${mockRecipientSessionState}`;
 
-const mockRecipientsFoundCookie = `recipientsFound=${mockRecipientsFoundState}`;
+const mockSelectedSolutionIdCookie = 'selectedSolutionId=solution-1';
 
-const mockSelectedSolutionCookie = 'selectedSolution=solution-1';
 const mockSolutionPrices = JSON.stringify({
   id: 'sol-1',
   name: 'Solution name',
-  prices: [
-    {
-      priceId: '0001',
-      type: 'flat',
-      currencyCode: 'GBP',
-      itemUnit: {
-        name: 'patient',
-        description: 'per patient',
-      },
-      timeUnit: {
-        name: 'year',
-        description: 'per year',
-      },
-      price: 1.64,
-    },
-    {
-      priceId: '0002',
-      type: 'flat',
-      currencyCode: 'GBP',
-      itemUnit: {
-        name: 'licence',
-        description: 'per licence',
-      },
-      price: 525.052,
-    },
-  ],
+  prices: [],
 });
 const mocksolutionPricesCookie = `solutionPrices=${mockSolutionPrices}`;
 
@@ -192,8 +165,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/select-solution', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select-solution';
+  describe('GET /organisation/:orderId/catalogue-solutions/solution', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/solution';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -212,7 +185,7 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should return the catalogue-solutions select-solution page if authorised', () => {
-      selectSolutionController.getSolutionsSelectPageContext = jest.fn()
+      selectSolutionController.getSolutionsPageContext = jest.fn()
         .mockResolvedValue({});
 
       selectSolutionController.getSupplierId = jest.fn()
@@ -232,8 +205,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/catalogue-solutions/select-solution', () => {
-    const path = '/organisation/order-1/catalogue-solutions/select-solution';
+  describe('POST /organisation/:orderId/catalogue-solutions/solution', () => {
+    const path = '/organisation/order-1/catalogue-solutions/solution';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -246,8 +219,8 @@ describe('catalogue-solutions section routes', () => {
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
-        getPathCookies: [mockAuthorisedCookie, mockSolutionsFoundCookie],
-        postPathCookies: [mockSolutionsFoundCookie],
+        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
+        postPathCookies: [mockSolutionsCookie],
         expectedRedirectPath: 'http://identity-server/login',
       })
     ));
@@ -257,7 +230,7 @@ describe('catalogue-solutions section routes', () => {
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
-        getPathCookies: [mockAuthorisedCookie, mockSolutionsFoundCookie],
+        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
         postPathCookies: [mockUnauthorisedCookie],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
@@ -265,10 +238,10 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should show the solution select page with errors if there are validation errors', async () => {
-      selectSolutionController.validateSolutionSelectForm = jest.fn()
+      selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: false });
 
-      selectSolutionController.getSolutionsSelectErrorPageContext = jest.fn()
+      selectSolutionController.getSolutionsErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a solution', href: '#selectSolution' }],
         });
@@ -276,13 +249,13 @@ describe('catalogue-solutions section routes', () => {
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
-        getPathCookies: [mockAuthorisedCookie, mockSolutionsFoundCookie],
+        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsFoundCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsCookie])
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
@@ -292,20 +265,20 @@ describe('catalogue-solutions section routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/catalogue-solutions/select-solution/select-price if a solution is selected', async () => {
-      selectSolutionController.validateSolutionSelectForm = jest.fn()
+    it('should redirect to /organisation/some-order-id/catalogue-solutions/solution/price if a solution is selected', async () => {
+      selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
-        getPathCookies: [mockAuthorisedCookie, mockSolutionsFoundCookie],
+        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsFoundCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsCookie])
         .send({
           selectSolution: 'solution-1',
           _csrf: csrfToken,
@@ -313,13 +286,13 @@ describe('catalogue-solutions section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select-solution/select-price`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/solution/price`);
         });
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/select-solution/select-price', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select-solution/select-price';
+  describe('GET /organisation/:orderId/catalogue-solutions/solution/price', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/solution/price';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -346,7 +319,7 @@ describe('catalogue-solutions section routes', () => {
 
       return request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie, mockSolutionsFoundCookie])
+        .set('Cookie', [mockAuthorisedCookie, mockSolutionsCookie])
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="solution-price-page"')).toBeTruthy();
@@ -355,8 +328,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/select-solution/select-price/select-recipient', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select-solution/select-price/select-recipient';
+  describe('GET /organisation/:orderId/catalogue-solutions/solution/price/recipient', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/solution/price/recipient';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -381,7 +354,7 @@ describe('catalogue-solutions section routes', () => {
       selectRecipientController.getRecipients = jest.fn()
         .mockResolvedValue([]);
 
-      selectRecipientController.getSolutionRecipientPageContext = jest.fn()
+      selectRecipientController.getRecipientPageContext = jest.fn()
         .mockResolvedValue({});
 
       return request(setUpFakeApp())
@@ -395,8 +368,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select-price/select-recipient', () => {
-    const path = '/organisation/order-1/catalogue-solutions/select-solution/select-price/select-recipient';
+  describe('POST /organisation/:orderId/catalogue-solutions/solution/price/recipient', () => {
+    const path = '/organisation/order-1/catalogue-solutions/solution/price/recipient';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -410,9 +383,9 @@ describe('catalogue-solutions section routes', () => {
         getPath: path,
         postPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsFoundCookie, mockSelectedSolutionCookie,
+          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
         ],
-        postPathCookies: [mockRecipientsFoundCookie, mockSelectedSolutionCookie],
+        postPathCookies: [mockRecipientsCookie, mockSelectedSolutionIdCookie],
         expectedRedirectPath: 'http://identity-server/login',
       })
     ));
@@ -429,10 +402,10 @@ describe('catalogue-solutions section routes', () => {
         getPath: path,
         postPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsFoundCookie, mockSelectedSolutionCookie,
+          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
         ],
         postPathCookies: [
-          mockUnauthorisedCookie, mockRecipientsFoundCookie, mockSelectedSolutionCookie,
+          mockUnauthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
         ],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
@@ -443,13 +416,13 @@ describe('catalogue-solutions section routes', () => {
       selectRecipientController.getRecipients = jest.fn()
         .mockResolvedValue([]);
 
-      selectRecipientController.validateRecipientSelectForm = jest.fn()
+      selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: false });
 
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({ name: 'Solution One ' });
 
-      selectRecipientController.getRecipientSelectErrorPageContext = jest.fn()
+      selectRecipientController.getRecipientErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a recipient', href: '#selectRecipient' }],
         });
@@ -458,14 +431,14 @@ describe('catalogue-solutions section routes', () => {
         app: request(setUpFakeApp()),
         getPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsFoundCookie, mockSelectedSolutionCookie,
+          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
         ],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsFoundCookie, mockSelectedSolutionCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie])
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
@@ -482,21 +455,21 @@ describe('catalogue-solutions section routes', () => {
       selectRecipientController.getRecipients = jest.fn()
         .mockResolvedValue([]);
 
-      selectRecipientController.validateRecipientSelectForm = jest.fn()
+      selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsFoundCookie, mockSelectedSolutionCookie,
+          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
         ],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsFoundCookie, mockSelectedSolutionCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie])
         .send({
           selectRecipient: 'recipient-1',
           _csrf: csrfToken,
@@ -510,8 +483,8 @@ describe('catalogue-solutions section routes', () => {
   });
 });
 
-describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select-price', () => {
-  const path = '/organisation/order-1/catalogue-solutions/select-solution/select-price';
+describe('POST /organisation/:orderId/catalogue-solutions/solution/price', () => {
+  const path = '/organisation/order-1/catalogue-solutions/solution/price';
 
   it('should return 403 forbidden if no csrf token is available', () => (
     testPostPathWithoutCsrf({
@@ -524,7 +497,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
       app: request(setUpFakeApp()),
       getPath: path,
       postPath: path,
-      getPathCookies: [mockAuthorisedCookie, mockSolutionsFoundCookie],
+      getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
       postPathCookies: [mocksolutionPricesCookie],
       expectedRedirectPath: 'http://identity-server/login',
     })
@@ -535,7 +508,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
       app: request(setUpFakeApp()),
       getPath: path,
       postPath: path,
-      getPathCookies: [mockAuthorisedCookie, mockSolutionsFoundCookie],
+      getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
       postPathCookies: [mockUnauthorisedCookie],
       expectedPageId: 'data-test-id="error-title"',
       expectedPageMessage: 'You are not authorised to view this page',
@@ -543,7 +516,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
   ));
 
   it('should show the solution select page with errors if there are validation errors', async () => {
-    catalogueSolutionPriceController.validateSolutionSelectPriceForm = jest.fn()
+    catalogueSolutionPriceController.validateSolutionPriceForm = jest.fn()
       .mockReturnValue({ success: false });
 
     catalogueSolutionPriceController.findSolutionPrices = jest.fn()
@@ -557,13 +530,13 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
     const { cookies, csrfToken } = await getCsrfTokenFromGet({
       app: request(setUpFakeApp()),
       getPath: path,
-      getPathCookies: [mockAuthorisedCookie, mockSolutionsFoundCookie],
+      getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
     });
 
     return request(setUpFakeApp())
       .post(path)
       .type('form')
-      .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsFoundCookie, mocksolutionPricesCookie])
+      .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsCookie, mocksolutionPricesCookie])
       .send({ _csrf: csrfToken })
       .expect(200)
       .then((res) => {
@@ -573,20 +546,20 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
       });
   });
 
-  it('should redirect to /organisation/some-order-id/catalogue-solutions/select-solution/select-price if a solution is selected', async () => {
-    catalogueSolutionPriceController.validateSolutionSelectPriceForm = jest.fn()
+  it('should redirect to /organisation/some-order-id/catalogue-solutions/solution/price if a solution is selected', async () => {
+    catalogueSolutionPriceController.validateSolutionPriceForm = jest.fn()
       .mockReturnValue({ success: true });
 
     const { cookies, csrfToken } = await getCsrfTokenFromGet({
       app: request(setUpFakeApp()),
       getPath: path,
-      getPathCookies: [mockAuthorisedCookie, mockSolutionsFoundCookie],
+      getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
     });
 
     return request(setUpFakeApp())
       .post(path)
       .type('form')
-      .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsFoundCookie, mocksolutionPricesCookie])
+      .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsCookie, mocksolutionPricesCookie])
       .send({
         selectSolutionPrice: '0001',
         _csrf: csrfToken,
@@ -594,7 +567,7 @@ describe('POST /organisation/:orderId/catalogue-solutions/select-solution/select
       .expect(302)
       .then((res) => {
         expect(res.redirect).toEqual(true);
-        expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select-solution/select-price/select-recipient`);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/solution/price/recipient`);
       });
   });
 });
