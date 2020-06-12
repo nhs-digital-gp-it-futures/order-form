@@ -1,9 +1,9 @@
 import manifest from './manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
-import { baseUrl } from '../../../../config';
-import * as errorContext from '../../getSectionErrorContext';
+import { baseUrl } from '../../../../../config';
+import * as errorContext from '../../../getSectionErrorContext';
 
-jest.mock('../../getSectionErrorContext', () => ({
+jest.mock('../../../getSectionErrorContext', () => ({
   getSectionErrorContext: jest.fn(),
 }));
 
@@ -89,7 +89,7 @@ describe('catalogue-solutions select-price contextCreator', () => {
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId, solutionPrices });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`);
     });
 
     it('should return the title', () => {

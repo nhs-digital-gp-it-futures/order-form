@@ -1,10 +1,11 @@
 import { getData } from 'buying-catalogue-library';
-import { orderApiUrl, solutionsApiUrl } from '../../../../config';
-import { logger } from '../../../../logger';
+import { orderApiUrl, solutionsApiUrl } from '../../../../../config';
+import { logger } from '../../../../../logger';
 import {
-  getSolutionRecipientPageContext,
+  getRecipientPageContext,
   getRecipients,
   getSolution,
+  validateRecipientForm,
 } from './controller';
 import * as contextCreator from './contextCreator';
 
@@ -15,12 +16,12 @@ jest.mock('./contextCreator', () => ({
 }));
 
 describe('catalogue-solutions select-solution controller', () => {
-  describe('getSolutionRecipientPageContext', () => {
+  describe('getRecipientPageContext', () => {
     it('should call getContext with the correct params', async () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
 
-      await getSolutionRecipientPageContext({ orderId: 'order-1', solutionName: 'Solution One' });
+      await getRecipientPageContext({ orderId: 'order-1', solutionName: 'Solution One' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', solutionName: 'Solution One' });
@@ -64,6 +65,59 @@ describe('catalogue-solutions select-solution controller', () => {
         endpoint: `${solutionsApiUrl}/api/v1/solutions/${solutionId}`,
         accessToken,
         logger,
+      });
+    });
+  });
+
+  describe('validateRecipientForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return success as true', () => {
+        const data = {
+          selectRecipient: 'some-recipient-id',
+        };
+
+        const response = validateRecipientForm({ data });
+
+        expect(response.success).toEqual(true);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const expectedValidationErrors = [
+        {
+          field: 'selectRecipient',
+          id: 'SelectRecipientRequired',
+        },
+      ];
+
+      it('should return an array of one validation error and success as false if empty string is passed in', () => {
+        const data = {
+          selectRecipient: '',
+        };
+
+        const response = validateRecipientForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return an array of one validation error and success as false if whitespace only is passed in', () => {
+        const data = {
+          selectRecipient: '   ',
+        };
+
+        const response = validateRecipientForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return a validation error if supplierName is undefined', () => {
+        const data = {};
+
+        const response = validateRecipientForm({ data });
+
+        expect(response.errors).toEqual(expectedValidationErrors);
       });
     });
   });

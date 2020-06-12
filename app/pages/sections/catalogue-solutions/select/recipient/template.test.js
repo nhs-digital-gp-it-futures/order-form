@@ -1,9 +1,9 @@
-import { componentTester } from '../../../../test-utils/componentTester';
+import { componentTester } from '../../../../../test-utils/componentTester';
 import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/sections/catalogue-solutions/select-recipient/template.njk',
+    path: 'pages/sections/catalogue-solutions/select/recipient/template.njk',
   },
 };
 
@@ -20,6 +20,31 @@ describe('catalogue-solutions select recipient page', () => {
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
       expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+    });
+  }));
+
+  it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectRecipient',
+          error: [{ message: 'some select recipient error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some select recipient error message', href: '#selectRecipient' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(context.errors.length);
+      context.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
     });
   }));
 
@@ -89,6 +114,26 @@ describe('catalogue-solutions select recipient page', () => {
       expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Recipient 1 (recipient-1)');
       expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('recipient-2');
       expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('Recipient 2 (recipient-2)');
+    });
+  }));
+
+  it('should render errors on selectRecipient field if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectRecipient',
+          error: [{ message: 'some select recipient error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some select recipient error message', href: '#selectRecipient' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const selectRecipientQuestion = $('div[data-test-id="question-selectRecipient"]');
+      expect(selectRecipientQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
+      expect(selectRecipientQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
     });
   }));
 

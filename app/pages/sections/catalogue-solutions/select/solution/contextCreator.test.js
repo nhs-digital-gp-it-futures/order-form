@@ -1,13 +1,13 @@
 import manifest from './manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
-import { baseUrl } from '../../../../config';
-import * as errorContext from '../../getSectionErrorContext';
+import { baseUrl } from '../../../../../config';
+import * as errorContext from '../../../getSectionErrorContext';
 
-jest.mock('../../getSectionErrorContext', () => ({
+jest.mock('../../../getSectionErrorContext', () => ({
   getSectionErrorContext: jest.fn(),
 }));
 
-describe('catalogue-solutions select contextCreator', () => {
+describe('catalogue-solutions solution contextCreator', () => {
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1' });

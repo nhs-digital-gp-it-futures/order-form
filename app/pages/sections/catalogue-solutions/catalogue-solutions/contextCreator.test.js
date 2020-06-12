@@ -57,7 +57,7 @@ describe('catalogue-solutions contextCreator', () => {
 
     it('should return the addSolutionButtonHref', () => {
       const context = getContext({ orderId: 'order-1' });
-      expect(context.addSolutionButtonHref).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select-solution`);
+      expect(context.addSolutionButtonHref).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select/solution`);
     });
 
     it('should return the continueButtonText', () => {

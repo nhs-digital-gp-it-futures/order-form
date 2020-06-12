@@ -1,6 +1,6 @@
 import manifest from './manifest.json';
-import { baseUrl } from '../../../../config';
-import { getSectionErrorContext } from '../../getSectionErrorContext';
+import { baseUrl } from '../../../../../config';
+import { getSectionErrorContext } from '../../../getSectionErrorContext';
 
 const generateFlatPriceItem = (mappedPrice, timeUnitdescription) => ({
   value: mappedPrice.priceId,
@@ -35,7 +35,7 @@ const generateQuestionsContext = solutionPrices => manifest.questions.map(questi
 export const getContext = ({ orderId, solutionPrices }) => ({
   ...manifest,
   title: `${manifest.title} ${solutionPrices.name}`,
-  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select-solution`,
+  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`,
   questions: solutionPrices && generateQuestionsContext(solutionPrices),
 });
 
