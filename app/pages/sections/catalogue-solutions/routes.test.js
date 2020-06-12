@@ -160,16 +160,13 @@ describe('catalogue-solutions section routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select recipient page if authorised', () => {
-
-      return request(setUpFakeApp())
-        .get(path)
-        .set('Cookie', [mockAuthorisedCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('Order item')).toBeTruthy();
-          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
-    });
+    it('should return the catalogue-solutions select recipient page if authorised', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.text.includes('Order item')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+      }));
   });
 });
