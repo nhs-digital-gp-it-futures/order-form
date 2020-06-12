@@ -140,4 +140,33 @@ describe('catalogue-solutions section routes', () => {
         });
     });
   });
+
+  describe('GET /organisation/:orderId/catalogue-solutions/:orderItemId', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/some-order-item-id';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should return the catalogue-solutions select recipient page if authorised', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.text.includes('Order item')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+      }));
+  });
 });
