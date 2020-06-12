@@ -27,12 +27,12 @@ export const getHealthCheckDependencies = () => {
   const dependencies = [
     {
       name: 'Identity Server',
-      endpoint: getEndpoint({ endpointLocator: 'getIdentityApiHealth' }),
+      endpoint: getEndpoint({ api: 'identity', endpointLocator: 'getApiHealth' }),
       critical: true,
     },
     {
       name: 'Document API',
-      endpoint: getEndpoint({ endpointLocator: 'getDocumentApiHealth' }),
+      endpoint: getEndpoint({ api: 'dapi', endpointLocator: 'getApiHealth' }),
     },
   ];
 

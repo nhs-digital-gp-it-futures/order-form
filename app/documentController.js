@@ -7,6 +7,7 @@ export const getDocumentByFileName = async ({
 }) => {
   logger.info(`Downloading ${documentName}`);
   const endpoint = getEndpoint({
+    api: 'dapi',
     endpointLocator: 'getDocument',
     options: { documentName },
   });

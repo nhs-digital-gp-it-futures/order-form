@@ -6,7 +6,7 @@ import { getContext, getErrorContext } from './contextCreator';
 export const getRecipientPageContext = params => getContext(params);
 
 export const getSolution = async ({ solutionId, accessToken }) => {
-  const endpoint = getEndpoint({ endpointLocator: 'getSolution', options: { solutionId } });
+  const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSolution', options: { solutionId } });
   const solutionData = await getData({ endpoint, accessToken, logger });
   logger.info(`Retrived solution data from BAPI for ${solutionId}`);
 
@@ -14,7 +14,7 @@ export const getSolution = async ({ solutionId, accessToken }) => {
 };
 
 export const getRecipients = async ({ orderId, accessToken }) => {
-  const endpoint = getEndpoint({ endpointLocator: 'getSelectedServiceRecipientsFromOrdapi', options: { orderId } });
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getSelectedServiceRecipients', options: { orderId } });
   const serviceRecipientsData = await getData({ endpoint, accessToken, logger });
   logger.info(`${serviceRecipientsData.length} service recipients returned for ${orderId}`);
 
