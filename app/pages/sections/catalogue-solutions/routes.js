@@ -37,5 +37,12 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.use('/select', catalogueSolutionsSelectRoutes(authProvider, addContext, sessionManager));
 
+  router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
+    return res.status(200).send('Order item');
+  }));
+
   return router;
 };
