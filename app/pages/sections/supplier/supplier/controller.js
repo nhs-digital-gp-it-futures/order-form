@@ -29,7 +29,7 @@ export const getSupplierPageContext = async ({
   orderId, supplierId, accessToken, hasSavedData,
 }) => {
   if (hasSavedData) {
-    const ordapiSupplierDataEndpoint = getEndpoint({ endpointLocator: 'getOrdapiSupplier', options: { orderId } });
+    const ordapiSupplierDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getSupplier', options: { orderId } });
     const ordapiSupplierData = await getData({
       endpoint: ordapiSupplierDataEndpoint, accessToken, logger,
     });
@@ -44,7 +44,7 @@ export const getSupplierPageContext = async ({
 
   if (supplierId) {
     logger.info(`SupplierId found in session for ${orderId} - ${supplierId}`);
-    const getSupplierDataEndpoint = getEndpoint({ endpointLocator: 'getSupplier', options: { supplierId } });
+    const getSupplierDataEndpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSupplier', options: { supplierId } });
     const supplierData = await getData({ endpoint: getSupplierDataEndpoint, accessToken, logger });
 
     const context = getContext({ orderId, supplierData });
@@ -58,7 +58,7 @@ export const getSupplierPageContext = async ({
 export const putSupplier = async ({
   orderId, data, accessToken,
 }) => {
-  const endpoint = getEndpoint({ endpointLocator: 'putSupplier', options: { orderId } });
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putSupplier', options: { orderId } });
   const body = formatFormData(data);
   try {
     await putData({

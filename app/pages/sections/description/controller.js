@@ -6,7 +6,7 @@ import { logger } from '../../../logger';
 export const getDescriptionContext = async ({ orderId, accessToken }) => {
   let descriptionData = '';
   if (orderId !== 'neworder') {
-    const endpoint = getEndpoint({ endpointLocator: 'getDescription', options: { orderId } });
+    const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getDescription', options: { orderId } });
     descriptionData = await getData({ endpoint, accessToken, logger });
     logger.info(`Description for order id: ${orderId} returned`);
   }
@@ -20,8 +20,8 @@ export const postOrPutDescription = async ({
 }) => {
   const isNewOrder = orderId === 'neworder';
   const endpoint = isNewOrder
-    ? getEndpoint({ endpointLocator: 'postDescription' })
-    : getEndpoint({ endpointLocator: 'putDescription', options: { orderId } });
+    ? getEndpoint({ api: 'ordapi', endpointLocator: 'postDescription' })
+    : getEndpoint({ api: 'ordapi', endpointLocator: 'putDescription', options: { orderId } });
   const apiCallParams = {
     endpoint,
     body: isNewOrder ? {

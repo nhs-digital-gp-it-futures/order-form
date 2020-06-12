@@ -6,7 +6,7 @@ import { logger } from '../../../../../logger';
 export const getSolutionPricePageContext = params => getContext(params);
 
 export const findSolutionPrices = async ({ accessToken, solutionId }) => {
-  const solutionPricingEndpoint = getEndpoint({ endpointLocator: 'getSolutionPricing', options: { solutionId } });
+  const solutionPricingEndpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSolutionPricing', options: { solutionId } });
   const solutionPricingData = await getData({
     endpoint: solutionPricingEndpoint,
     accessToken,

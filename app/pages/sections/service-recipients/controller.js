@@ -8,7 +8,7 @@ export const getServiceRecipientsContext = async ({
 }) => {
   let selectedData;
 
-  const serviceRecipientEndpoint = getEndpoint({ endpointLocator: 'getServiceRecipientsFromOapi', options: { orgId } });
+  const serviceRecipientEndpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipients', options: { orgId } });
   const serviceRecipientsData = await getData({
     endpoint: serviceRecipientEndpoint,
     accessToken,
@@ -17,7 +17,7 @@ export const getServiceRecipientsContext = async ({
   logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI.`);
 
   try {
-    const selectedServiceRecipientsEndpoint = getEndpoint({ endpointLocator: 'getSelectedServiceRecipientsFromOrdapi', options: { orderId } });
+    const selectedServiceRecipientsEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getSelectedServiceRecipients', options: { orderId } });
     selectedData = await getData({
       endpoint: selectedServiceRecipientsEndpoint,
       accessToken,
@@ -41,7 +41,7 @@ const formatPutData = data => Object.entries(data).filter(item => item[0] !== '_
   .map(([odsCode, name]) => ({ name, odsCode }));
 
 export const putServiceRecipients = async ({ accessToken, data, orderId }) => {
-  const endpoint = getEndpoint({ endpointLocator: 'putServiceRecipients', options: { orderId } });
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putServiceRecipients', options: { orderId } });
   const body = { serviceRecipients: formatPutData(data) };
   await putData({
     endpoint,

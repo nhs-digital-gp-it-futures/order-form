@@ -26,7 +26,7 @@ const formatFormData = data => ({
 });
 
 export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessToken }) => {
-  const callOffOrgDataEndpoint = getEndpoint({ endpointLocator: 'getCallOffOrderingParty', options: { orderId } });
+  const callOffOrgDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCallOffOrderingParty', options: { orderId } });
   const callOffOrgData = await getData({ endpoint: callOffOrgDataEndpoint, accessToken, logger });
   if (callOffOrgData && callOffOrgData.name) {
     logger.info(`Call off ordering party found in ORDAPI for ${orderId}`);
@@ -37,7 +37,7 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
   }
   logger.info(`No call off ordering party found in ORDAPI for ${orderId}.`);
   try {
-    const orgDataEndpoint = getEndpoint({ endpointLocator: 'getOrganisationById', options: { orgId } });
+    const orgDataEndpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getOrganisation', options: { orgId } });
     const organisationData = await getData({ endpoint: orgDataEndpoint, accessToken, logger });
     logger.info(`Organisation with id: ${orgId} found in OAPI`);
     return getContext({
@@ -64,7 +64,7 @@ export const getCallOffOrderingPartyErrorContext = async (params) => {
 export const putCallOffOrderingParty = async ({
   orderId, data, accessToken,
 }) => {
-  const endpoint = getEndpoint({ endpointLocator: 'putOrderingParty', options: { orderId } });
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putOrderingParty', options: { orderId } });
   const body = formatFormData(data);
   try {
     await putData({
