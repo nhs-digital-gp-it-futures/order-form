@@ -40,16 +40,17 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId, orderItemId } = req.params;
-    sessionManager.saveToSession({ req, key: 'selectedSolutionId', value: '100000-001' });
+
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
-    sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: 'fake-recipient-id' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
+    const recipients = sessionManager.getFromSession({ req, key: 'recipients' });
 
     const context = await getOrderItemContext({
       orderId,
       orderItemId,
       selectedSolutionId,
       selectedRecipientId,
+      recipients,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
