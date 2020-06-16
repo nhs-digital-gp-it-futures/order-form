@@ -1,5 +1,31 @@
 {
   "description": "same description for every page",
+  "plannedDateQuestions": [{
+    "id": "plannedDeliveryDate",
+    "mainAdvice": "Planned delivery date",
+    "additionalAdvice": "For example 14 01 2020"
+  }],
+  "quantityQuestions": [{
+    "id": "quantity",
+    "mainAdvice": "Quantity",
+    "rows": 3
+  }],
+  "estimationPeriodQuestions": [
+    {
+      "id": "selectEstimationPeriod",
+      "mainAdvice": "Estimation period",
+      "options": [
+      {
+        "value": "perMonth",
+        "text": "Per month"
+      },
+      {
+        "value": "perYear",
+        "text": "Per year"
+      }
+    ]
+    }
+  ],
   "deleteButtonText": "Delete",
   "saveButtonText": "Save"
 }

@@ -7,7 +7,8 @@ export const getOrderItemContext = async ({
   recipients,
   accessToken,
 }) => {
-  const solutionName = await getSolution({ solutionId: selectedSolutionId, accessToken }).name;
+  // const solutionName = await getSolution({ solutionId: selectedSolutionId, accessToken }).name;
+  const solutionName = 'name';
   const serviceRecipientName = recipients.find(
     recipient => recipient.odsCode === selectedRecipientId,
   ).name;
