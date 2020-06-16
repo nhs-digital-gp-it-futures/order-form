@@ -6,8 +6,15 @@ jest.mock('buying-catalogue-library');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
+
 jest.mock('../select/recipient/controller', () => ({
   getSolution: () => ({ name: 'solution-name' }),
+  getRecipients: () => ([
+    {
+      name: 'Some service recipient 1',
+      odsCode: 'fake-recipient-id',
+    },
+  ]),
 }));
 
 describe('catalogue-solutions order-item controller', () => {
@@ -17,14 +24,9 @@ describe('catalogue-solutions order-item controller', () => {
         .mockResolvedValueOnce();
 
       await getOrderItemContext({
-        selectedSolutionId: 'order-1',
+        orderId: 'order-1',
+        selectedSolutionId: 'solution-1',
         selectedRecipientId: 'fake-recipient-id',
-        recipients: [
-          {
-            name: 'Some service recipient 1',
-            odsCode: 'fake-recipient-id',
-          },
-        ],
         accessToken: 'token',
       });
 

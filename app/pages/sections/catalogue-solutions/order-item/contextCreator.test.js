@@ -14,12 +14,22 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
     it('should return the title', () => {
       const context = getContext({ solutionName, serviceRecipientName, odsCode });
-      expect(context.title).toEqual(`${solutionName} info for ${serviceRecipientName} (${odsCode})`);
+      expect(context.title).toEqual(`${solutionName} ${manifest.title} ${serviceRecipientName} (${odsCode})`);
     });
 
     it('should return the description', () => {
       const context = getContext({});
       expect(context.description).toEqual(manifest.description);
+    });
+
+    it('should return the delete button', () => {
+      const context = getContext({});
+      expect(context.deleteButtonText).toEqual(manifest.deleteButtonText);
+    });
+
+    it('should return the save button', () => {
+      const context = getContext({});
+      expect(context.saveButtonText).toEqual(manifest.saveButtonText);
     });
   });
 });

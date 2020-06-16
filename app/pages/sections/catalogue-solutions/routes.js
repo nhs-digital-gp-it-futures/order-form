@@ -58,14 +58,11 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     // });
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
-    const recipients = sessionManager.getFromSession({ req, key: 'recipients' });
 
     const context = await getOrderItemContext({
       orderId,
-      orderItemId,
       selectedSolutionId,
       selectedRecipientId,
-      recipients,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
