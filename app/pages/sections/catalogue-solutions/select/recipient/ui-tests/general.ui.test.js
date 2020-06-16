@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl, solutionsApiUrl } from '../../../../../../config';
+import { orderApiUrl, solutionsApiUrl, organisationApiUrl } from '../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient';
 
@@ -46,8 +46,8 @@ const recipientsState = ClientFunction(() => {
   document.cookie = `recipients=${cookieValue}`;
 });
 
-const selectedSupplierState = ClientFunction(() => {
-  document.cookie = 'selectedSupplier=solution-1';
+const selectedRecipientIdState = ClientFunction(() => {
+  document.cookie = 'selectedRecipientId=recipient-1';
 });
 
 const mocks = () => {
@@ -67,7 +67,7 @@ const pageSetup = async (withAuth = true, withSessionState = false) => {
   }
   if (withSessionState) {
     await recipientsState();
-    await selectedSupplierState();
+    await selectedRecipientIdState();
   }
 };
 
@@ -170,6 +170,14 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-id/catalogue-solutions/newsolution when a solution is selected', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/solutions/solution-1')
+    .reply(200, { id: 'solution-1', name: 'Solution One' });
+
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/recipient-1')
+    .reply(200, {});
+
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
