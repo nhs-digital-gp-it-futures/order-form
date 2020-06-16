@@ -7,7 +7,9 @@ import {
 } from './ordering-party/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './description/controller';
 import { getCommencementDateContext, putCommencementDate, getCommencementDateErrorContext } from './commencement-date/controller';
+import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
 import { supplierRoutes } from './supplier/routes';
+import { catalogueSolutionsRoutes } from './catalogue-solutions/routes';
 
 const router = express.Router({ mergeParams: true });
 
@@ -66,6 +68,8 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.use('/supplier', supplierRoutes(authProvider, addContext, sessionManager));
 
+  router.use('/catalogue-solutions', catalogueSolutionsRoutes(authProvider, addContext, sessionManager));
+
   router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const context = await getCommencementDateContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
@@ -90,6 +94,27 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       data: req.body,
     });
     return res.render('pages/sections/commencement-date/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.get('/service-recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const { selectStatus } = req.query;
+    const context = await getServiceRecipientsContext({
+      orderId, orgId: req.user.primaryOrganisationId, selectStatus, accessToken: extractAccessToken({ req, tokenType: 'access' }),
+    });
+    logger.info(`navigating to order ${orderId} service-recipients page`);
+    res.render('pages/sections/service-recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/service-recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    await putServiceRecipients({
+      orderId,
+      data: req.body,
+      accessToken: extractAccessToken({ req, tokenType: 'access' }),
+    });
+
+    return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
 
   return router;
