@@ -1,6 +1,6 @@
 {
-  "title": "info for",
-  "description": "same description for every page",
+  "title": "information for",
+  "description": "Provide the delivery date and price you've agreed with the supplier and the quantity you want to order.",
   "plannedDateQuestions": [{
     "id": "plannedDeliveryDate",
     "mainAdvice": "Planned delivery date",

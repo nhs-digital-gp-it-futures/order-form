@@ -20,6 +20,7 @@ const endpoints = {
   oapi: {
     getOrganisation: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}`,
     getServiceRecipients: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}/service-recipients`,
+    getServiceRecipient: options => `${organisationApiUrl}/api/v1/ods/${options.selectedRecipientId}`,
   },
   ordapi: {
     getOrders: options => `${orderApiUrl}/api/v1/organisations/${options.orgId}/orders`,
