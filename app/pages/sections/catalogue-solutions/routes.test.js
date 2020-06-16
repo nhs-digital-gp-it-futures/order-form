@@ -161,7 +161,7 @@ describe('catalogue-solutions section routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select recipient page if authorised', () => {
+    it('should return the catalogue-solutions order item page if authorised', () => {
       orderItemController.getOrderItemContext = jest.fn()
         .mockResolvedValue({});
 
@@ -170,7 +170,7 @@ describe('catalogue-solutions section routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('Order item')).toBeTruthy();
+          expect(res.text.includes('data-test-id="order-item-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });

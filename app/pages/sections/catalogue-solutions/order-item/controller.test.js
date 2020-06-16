@@ -22,7 +22,7 @@ describe('catalogue-solutions order-item controller', () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
     });
-    it.only('should call getContext with the correct params', async () => {
+    it('should call getContext with the correct params', async () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
       getData
