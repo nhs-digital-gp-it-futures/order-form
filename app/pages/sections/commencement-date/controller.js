@@ -14,7 +14,7 @@ const formatPutData = (data) => {
 };
 
 export const getCommencementDateContext = async ({ orderId, accessToken }) => {
-  const commencementDateDataEndpoint = getEndpoint({ endpointLocator: 'getCommencementDate', options: { orderId } });
+  const commencementDateDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCommencementDate', options: { orderId } });
   const commencementDateData = await getData({
     endpoint: commencementDateDataEndpoint, accessToken, logger,
   });
@@ -32,7 +32,7 @@ export const putCommencementDate = async ({
   const errors = [getDateErrors(data)];
   if (errors[0]) return { success: false, errors };
 
-  const endpoint = getEndpoint({ endpointLocator: 'putCommencementDate', options: { orderId } });
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putCommencementDate', options: { orderId } });
   try {
     const body = formatPutData(data);
     await putData({

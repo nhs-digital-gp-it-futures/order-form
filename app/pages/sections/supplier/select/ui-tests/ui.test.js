@@ -1,10 +1,10 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import content from './manifest.json';
-import { orderApiUrl } from '../../../../config';
+import content from '../manifest.json';
+import { orderApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/organisation/order-id/supplier/search/select';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier/search/select';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -35,7 +35,7 @@ const mocks = (data) => {
     .reply(200, data);
 };
 
-const pageSetup = async (t, withAuth = false, withSuppliersFoundState = false, withSelectedSuppliersState = false, data = {}) => {
+const pageSetup = async (withAuth = true, withSuppliersFoundState = false, withSelectedSuppliersState = false, data = {}) => {
   if (withAuth) {
     mocks(data);
     await setCookies();
@@ -49,7 +49,7 @@ const orderData = { name: 'a lovely order' };
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Supplier select page')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {
@@ -60,11 +60,11 @@ fixture('Supplier select page')
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
-  await pageSetup(t);
   nock('http://identity-server')
     .get('/login')
     .reply(200);
 
+  await pageSetup(false);
   await t.navigateTo(pageUrl);
 
   await t
@@ -72,7 +72,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render Supplier select page', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="supplier-select-page"]');
 
@@ -81,7 +81,7 @@ test('should render Supplier select page', async (t) => {
 });
 
 test('should navigate to /organisation/order-id/supplier/search when click on backlink', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -93,7 +93,7 @@ test('should navigate to /organisation/order-id/supplier/search when click on ba
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="supplier-select-page-title"]');
@@ -104,7 +104,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="supplier-select-page-description"]');
@@ -115,7 +115,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render a selectSupplier question as radio button options', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const selectSupplierRadioOptions = Selector('[data-test-id="question-selectSupplier"]');
@@ -133,7 +133,7 @@ test('should render a selectSupplier question as radio button options', async (t
 });
 
 test('should render the radioButton as checked for the selectedSupplier', async (t) => {
-  await pageSetup(t, true, true, true);
+  await pageSetup(true, true, true);
   await t.navigateTo(pageUrl);
 
   const selectSupplierRadioOptions = Selector('[data-test-id="question-selectSupplier"]');
@@ -146,7 +146,7 @@ test('should render the radioButton as checked for the selectedSupplier', async 
 });
 
 test('should render the Continue button', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -157,7 +157,7 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect back to /organisation/order-id/supplier/search no suppliers are returned', async (t) => {
-  await pageSetup(t, true, false);
+  await pageSetup(true, false);
   await t.navigateTo(pageUrl);
 
   await t
@@ -165,7 +165,7 @@ test('should redirect back to /organisation/order-id/supplier/search no supplier
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -182,7 +182,7 @@ test('should show the error summary when there are validation errors', async (t)
 });
 
 test('should select supplier field as errors with error message when there are validation errors', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const supplierSelectPage = Selector('[data-test-id="supplier-select-page"]');
@@ -199,7 +199,7 @@ test('should select supplier field as errors with error message when there are v
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(t, true, true);
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');
@@ -217,7 +217,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
 });
 
 test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
-  await pageSetup(t, true, true, false, orderData);
+  await pageSetup(true, true, false, orderData);
   await t.navigateTo(pageUrl);
 
   await t

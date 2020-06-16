@@ -26,8 +26,8 @@ module.exports = {
   // Solutions API aka Buying Catalogue API
   solutionsApiUrl: process.env.SOLUTIONS_API_URL || 'http://localhost:5100',
 
-  // BLOBSTORE_HOST
-  blobstoreHost: process.env.BLOBSTORE_HOST || 'https://gpitfuturesdevsa.blob.core.windows.net',
+  // DAPI
+  documentApiHost: process.env.DOCUMENT_HOST || 'http://localhost:5101',
 
   // LOGGER_LEVEL options are info, warn, error, off
   loggerLevel: process.env.LOGGER_LEVEL || 'error',

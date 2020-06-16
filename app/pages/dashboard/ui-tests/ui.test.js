@@ -1,11 +1,11 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import content from './manifest.json';
-import { baseUrl, orderApiUrl } from '../../config';
-import mockOrdersData from '../../test-utils/mockData/mockOrders.json';
+import content from '../manifest.json';
+import { baseUrl, orderApiUrl } from '../../../config';
+import mockOrdersData from '../../../test-utils/mockData/mockOrders.json';
 
-const pageUrl = 'http://localhost:1234/organisation';
+const pageUrl = 'http://localhost:1234/order/organisation';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -25,7 +25,7 @@ const mocks = () => {
     .reply(200, mockOrdersData);
 };
 
-const pageSetup = async (t, withAuth = false) => {
+const pageSetup = async (withAuth = true) => {
   if (withAuth) {
     mocks();
     await setCookies();
@@ -35,7 +35,7 @@ const pageSetup = async (t, withAuth = false) => {
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Dashboard page')
-  .page('http://localhost:1234/some-fake-page')
+  .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
     if (!isDone) {
@@ -46,11 +46,11 @@ fixture('Dashboard page')
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
-  await pageSetup(t);
   nock('http://identity-server')
     .get('/login')
     .reply(200);
 
+  await pageSetup(false);
   await t.navigateTo(pageUrl);
 
   await t
@@ -58,7 +58,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render dashboard page', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="dashboard-page"]');
 
@@ -67,7 +67,7 @@ test('should render dashboard page', async (t) => {
 });
 
 test('should navigate to /re-login when click Back', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -78,7 +78,7 @@ test('should navigate to /re-login when click Back', async (t) => {
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="dashboard-page-title"]');
@@ -89,7 +89,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="dashboard-page-description"]');
@@ -100,7 +100,7 @@ test('should render the description', async (t) => {
 });
 
 test('should render add new order button', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="new-order-button"] a');
@@ -112,7 +112,7 @@ test('should render add new order button', async (t) => {
 });
 
 test('should navigate to the new order page when add new order button is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="new-order-button"] a');
@@ -124,7 +124,7 @@ test('should navigate to the new order page when add new order button is clicked
 });
 
 test('should render the proxy link', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const link = Selector('div[data-test-id="proxy-link"] a');
@@ -137,7 +137,7 @@ test('should render the proxy link', async (t) => {
 
 // TODO: Change the expected location
 test('should navigate to ? page when proxy link is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const link = Selector('div[data-test-id="proxy-link"] a');
@@ -145,11 +145,11 @@ test('should navigate to ? page when proxy link is clicked', async (t) => {
   await t
     .expect(link.exists).ok()
     .click(link)
-    .expect(getLocation()).eql('http://localhost:1234/organisation#');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation#');
 });
 
 test('should render the unsubmitted orders table', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const unsubmittedTable = Selector('div[data-test-id="unsubmitted-orders-table"]');
@@ -177,7 +177,7 @@ test('should render the unsubmitted orders table', async (t) => {
 });
 
 test('should render the unsubmitted orders table content', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const table = Selector('div[data-test-id="unsubmitted-orders-table"]');
@@ -204,7 +204,7 @@ test('should render the unsubmitted orders table content', async (t) => {
 });
 
 test('should render the submitted orders table', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const submittedTable = Selector('div[data-test-id="submitted-orders-table"]');
@@ -232,7 +232,7 @@ test('should render the submitted orders table', async (t) => {
 });
 
 test('should render the submitted orders table content', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const table = Selector('div[data-test-id="submitted-orders-table"]');
@@ -259,7 +259,7 @@ test('should render the submitted orders table content', async (t) => {
 });
 
 test('should navigate to the order page when an order id is clicked', async (t) => {
-  await pageSetup(t, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const table = Selector('div[data-test-id="submitted-orders-table"]');
