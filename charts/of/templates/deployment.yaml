@@ -1,5 +1,4 @@
 {{- $name := include "of.fullname" . -}}
-{{- $cfgname := printf "%s-%s" "cfg" $name -}}
 
 apiVersion: apps/v1
 kind: Deployment
@@ -131,8 +130,15 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: {{ .name | quote }}
-                  key: {{ .key | quote }}            
-            {{- end }}            
+                  key: {{ .key | quote }}
+            {{- end }}
+            {{- with .Values.serviceDependencies.dapi }}
+            - name: DOCUMENT_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .name | quote }}
+                  key: {{ .key | quote }}
+            {{- end -}}
             {{- end }}                
             {{- if .Values.env.values -}}
             {{- range .Values.env.values }}
@@ -145,8 +151,8 @@ spec:
             - name: {{ .name }}
               valueFrom:
                 configMapKeyRef:
-                  name: {{ $cfgname }}
-                  key: {{ .key }}
+                  name: {{ .valueFrom.configMapKeyRef.name }}
+                  key: {{ .valueFrom.configMapKeyRef.key }}
             {{- end -}}
             {{- end }}
             {{- if .Values.env.secrets -}}

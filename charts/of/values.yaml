@@ -95,6 +95,9 @@ serviceDependencies:
   bapi:
     name:
     key:
+  dapi:
+    name:
+    key:
   redis:
     urlConfig:
       name: 
