@@ -6,6 +6,7 @@ import {
   getCatalogueSolutionsPageContext,
   putCatalogueSolutions,
 } from './catalogue-solutions/controller';
+import { getOrderItemContext } from './order-item/controller';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 
 
@@ -40,8 +41,18 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
 
+    const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
+    const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
+
+    const context = await getOrderItemContext({
+      orderId,
+      selectedSolutionId,
+      selectedRecipientId,
+      accessToken: extractAccessToken({ req, tokenType: 'access' }),
+    });
+
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
-    return res.status(200).send('Order item');
+    return res.render('pages/sections/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
