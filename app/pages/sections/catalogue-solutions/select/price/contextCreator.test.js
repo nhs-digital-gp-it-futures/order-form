@@ -73,6 +73,7 @@ const returnedPriceArray = [{
   }, {
     text: '£525.052 per licence ',
     value: '0002',
+    checked: true,
   }, {
     html: '<div>1 - 10 consultations £700 per consultation per month</div><div>11+ consultations £400 per consultation per month</div>',
     value: '0003',
@@ -108,7 +109,7 @@ describe('catalogue-solutions select-price contextCreator', () => {
     });
 
     it('should return the formatted list of questions', () => {
-      const context = getContext({ orderId: 'order-1', solutionPrices });
+      const context = getContext({ orderId: 'order-1', solutionPrices, selectedPriceId: '0002' });
       expect(context.questions).toEqual(returnedPriceArray);
     });
   });
