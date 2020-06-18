@@ -149,6 +149,7 @@ describe('catalogue-solutions order-item page', () => {
         expect(input.attr('id')).toEqual(context.questions.quantity.id);
         expect(input.attr('name')).toEqual(context.questions.quantity.id);
         expect(input.attr('type')).toEqual('text');
+        expect(input.hasClass('nhsuk-input--width-10')).toEqual(true);
       });
     }));
 
