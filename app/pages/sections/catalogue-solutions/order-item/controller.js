@@ -14,10 +14,10 @@ export const getRecipientName = async ({ selectedRecipientId, accessToken }) => 
 
 export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSelectedPrice', options: { selectedPriceId } });
-  const serviceRecipientData = await getData({ endpoint, accessToken, logger });
+  const selectedPriceData = await getData({ endpoint, accessToken, logger });
   logger.info(`Price details returned for ${selectedPriceId}`);
 
-  return serviceRecipientData;
+  return selectedPriceData;
 };
 
 export const getOrderItemContext = async ({

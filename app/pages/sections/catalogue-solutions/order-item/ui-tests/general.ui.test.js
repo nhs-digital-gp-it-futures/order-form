@@ -26,6 +26,24 @@ const selectedRecipientIdState = ClientFunction(() => {
   document.cookie = `selectedRecipientId=${cookieValue}`;
 });
 
+const selectedPriceIdState = ClientFunction(() => {
+  const cookieValue = 'price-1';
+
+  document.cookie = `selectedPriceId=${cookieValue}`;
+});
+
+const selectedPrice = {
+  priceId: 1,
+  provisioningModel: 'OnDemand',
+  type: 'flat',
+  currencyCode: 'GBP',
+  itemUnit: {
+    name: 'consultation',
+    description: 'per consultation',
+  },
+  price: 0.1,
+};
+
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/solutions/solution-1')
@@ -33,6 +51,9 @@ const mocks = () => {
   nock(organisationApiUrl)
     .get('/api/v1/ods/recipient-1')
     .reply(200, { odsCode: 'recipient-1', name: 'Recipient 1' });
+  nock(solutionsApiUrl)
+    .get('/api/v1/prices/price-1')
+    .reply(200, selectedPrice);
 };
 
 const pageSetup = async (withAuth = true) => {
@@ -41,6 +62,7 @@ const pageSetup = async (withAuth = true) => {
     await setCookies();
     await selectedRecipientIdState();
     await selectedSolutionIdState();
+    await selectedPriceIdState();
   }
 };
 
