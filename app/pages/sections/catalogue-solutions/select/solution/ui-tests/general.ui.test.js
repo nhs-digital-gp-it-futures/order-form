@@ -40,6 +40,12 @@ const solutionsState = ClientFunction(() => {
   document.cookie = `solutions=${cookieValue}`;
 });
 
+const selectedSolutionIdState = ClientFunction(() => {
+  const cookieValue = 'solution-2';
+
+  document.cookie = `selectedSolutionId=${cookieValue}`;
+});
+
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
@@ -49,12 +55,14 @@ const mocks = () => {
     .reply(200, { solutions: mockSolutions });
 };
 
-const pageSetup = async (withAuth = true, withSolutionsFoundState = false) => {
+const pageSetup = async (
+  withAuth = true, withSolutionsFoundState = false, withSelectedSolutionIdState = false) => {
   if (withAuth) {
     mocks();
     await setCookies();
   }
   if (withSolutionsFoundState) await solutionsState();
+  if (withSelectedSolutionIdState) await selectedSolutionIdState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -141,6 +149,19 @@ test('should render a selectSolution question as radio button options', async (t
 
     .expect(selectSolutionRadioOptions.find('input').nth(1).getAttribute('value')).eql('solution-2')
     .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(1))).eql('Solution 2');
+});
+
+test('should render the radioButton as checked for the selectedSolutionId', async (t) => {
+  await pageSetup(true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolution"]');
+
+  await t
+    .expect(selectSolutionRadioOptions.exists).ok()
+    .expect(selectSolutionRadioOptions.find('.nhsuk-radios__item').count).eql(2)
+    .expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input:checked').exists).notOk()
+    .expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input:checked').exists).ok();
 });
 
 test('should render the Continue button', async (t) => {
