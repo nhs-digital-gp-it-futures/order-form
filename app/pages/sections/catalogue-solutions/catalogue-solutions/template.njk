@@ -2,6 +2,7 @@
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/inset-text/macro.njk' import insetText %}
+{% from 'components/bc-table/macro.njk' import bcTable %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="catalogue-solutions-page">
@@ -36,8 +37,14 @@
         <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-3 bc-c-order-table__hr"/>
 
         <div data-test-id="show-added-solutions">
-          {% if catalogueSolutions | length %}
-            <div data-test-id="added-solutions"></div>
+          {% if addedSolutionTable.items | length %}
+            <div data-test-id="added-solutions">
+              {{ bcTable({
+                columnInfo: addedSolutionTable.columnInfo,
+                columnClass: addedSolutionTable.columnClass,
+                data: addedSolutionTable.items
+              }) }}
+            </div>
           {% else %}
             <div data-test-id="no-added-solutions">
               <p>{{ noSolutionsText }}</p>

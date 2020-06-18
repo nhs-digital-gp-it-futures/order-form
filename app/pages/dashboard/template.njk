@@ -1,7 +1,6 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
-{% from 'components/view-data-link/macro.njk' import viewDataLink %}
 {% from 'components/bc-table/macro.njk' import bcTable %}
 
 {% block body %}
@@ -39,7 +38,7 @@
               columnInfo: columnInfo,
               columnClass: columnClass,
               data: unsubmittedOrders
-            })}}
+            }) }}
           </div>
         </div>
 
