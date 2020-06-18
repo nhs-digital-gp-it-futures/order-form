@@ -12,6 +12,7 @@ const endpoints = {
     getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
     getSolution: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}`,
     getSolutionPricing: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}/pricing`,
+    getSelectedPrice: options => `${solutionsApiUrl}/api/v1/prices/${options.selectedPriceId}`,
   },
   dapi: {
     getApiHealth: () => `${documentApiHost}/health/ready`,
