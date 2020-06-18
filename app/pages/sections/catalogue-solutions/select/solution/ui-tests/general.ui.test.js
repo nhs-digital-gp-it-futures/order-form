@@ -143,6 +143,19 @@ test('should render a selectSolution question as radio button options', async (t
     .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(1))).eql('Solution 2');
 });
 
+test('should render the radioButton as checked for the selectedSolutionId', async (t) => {
+  await pageSetup(true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const selectSupplierRadioOptions = Selector('[data-test-id="question-selectSolution"]');
+
+  await t
+    .expect(selectSupplierRadioOptions.exists).ok()
+    .expect(selectSupplierRadioOptions.find('.nhsuk-radios__item').count).eql(2)
+    .expect(selectSupplierRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input:checked').exists).notOk()
+    .expect(selectSupplierRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input:checked').exists).ok();
+});
+
 test('should render the Continue button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
