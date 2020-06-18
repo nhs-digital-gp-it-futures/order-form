@@ -100,7 +100,6 @@ describe('catalogue-solutions order-item page', () => {
       });
     }));
 
-
     it('should render 3 input fields for date question', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const inputs = $('#plannedDeliveryDate input:not([name=_csrf])');
@@ -187,6 +186,7 @@ describe('catalogue-solutions order-item page', () => {
         },
       },
     };
+
     it('should render the "Estimation period" radio button options component', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const selectSolutionRadioOptions = $('[data-test-id="question-selectEstimationPeriod"]');
