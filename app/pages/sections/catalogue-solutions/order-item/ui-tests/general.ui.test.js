@@ -120,7 +120,7 @@ test('should render legend with mainAdvice', async (t) => {
 
   await t
     .expect(mainAdvice.exists).ok()
-    .expect(await extractInnerText(mainAdvice)).eql(content.plannedDateQuestions[0].mainAdvice);
+    .expect(await extractInnerText(mainAdvice)).eql(content.questions.plannedDate.mainAdvice);
 });
 
 test('should render additionalAdvice', async (t) => {
@@ -131,7 +131,7 @@ test('should render additionalAdvice', async (t) => {
 
   await t
     .expect(additionalAdvice.exists).ok()
-    .expect(await extractInnerText(additionalAdvice)).eql(content.plannedDateQuestions[0].additionalAdvice);
+    .expect(await extractInnerText(additionalAdvice)).eql(content.questions.plannedDate.additionalAdvice);
 });
 
 test('should render labels for day, month and year inputs', async (t) => {
@@ -185,7 +185,7 @@ test('should render a text field for the quantity question', async (t) => {
 
   await t
     .expect(quantity.exists).ok()
-    .expect(await extractInnerText(quantityLabel)).eql(content.quantityQuestions[0].mainAdvice)
+    .expect(await extractInnerText(quantityLabel)).eql(content.questions.quantity.mainAdvice)
     .expect(quantity.find('input').count).eql(1);
 });
 
@@ -197,12 +197,12 @@ test('should render an expandable section for the quantity question', async (t) 
 
   await t
     .expect(expandableSection.exists).ok()
-    .expect(await extractInnerText(expandableSection)).eql(content.quantityQuestions[0].expandableSection.title)
+    .expect(await extractInnerText(expandableSection)).eql(content.questions.quantity.expandableSection.title)
     .expect(expandableSection.find('details[open]').exists).notOk()
     .click(expandableSection.find('summary'))
     .expect(expandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
-    .eql(content.quantityQuestions[0].expandableSection.innerComponent);
+    .eql(content.questions.quantity.expandableSection.innerComponent);
 });
 
 test('should render a selectEstimationPeriod question as radio button options', async (t) => {
@@ -213,7 +213,7 @@ test('should render a selectEstimationPeriod question as radio button options', 
 
   await t
     .expect(selectEstimationPeriodRadioOptions.exists).ok()
-    .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('legend'))).eql(content.estimationPeriodQuestions[0].mainAdvice)
+    .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('legend'))).eql(content.questions.estimationPeriod.mainAdvice)
     .expect(selectEstimationPeriodRadioOptions.find('input').count).eql(2)
 
     .expect(selectEstimationPeriodRadioOptions.find('input').nth(0).getAttribute('value')).eql('perMonth')
@@ -231,12 +231,12 @@ test('should render an expandable section for the select estimation period', asy
 
   await t
     .expect(expandableSection.exists).ok()
-    .expect(await extractInnerText(expandableSection)).eql(content.estimationPeriodQuestions[0].expandableSection.title)
+    .expect(await extractInnerText(expandableSection)).eql(content.questions.estimationPeriod.expandableSection.title)
     .expect(expandableSection.find('details[open]').exists).notOk()
     .click(expandableSection.find('summary'))
     .expect(expandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
-    .eql(content.estimationPeriodQuestions[0].expandableSection.innerComponent);
+    .eql(content.questions.estimationPeriod.expandableSection.innerComponent);
 });
 
 test('should render the delete button', async (t) => {
@@ -260,17 +260,3 @@ test('should render the save button', async (t) => {
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });
-
-// test('should redirect to /organisation/order-id/catalogue-solutions/newsolution when a solution is selected', async (t) => {
-//   await pageSetup(true, true);
-//   await t.navigateTo(pageUrl);
-
-//   const selectRecipientRadioOptions = Selector('[data-test-id="question-selectRecipient"]');
-//   const firstRecipient = selectRecipientRadioOptions.find('input').nth(0);
-//   const button = Selector('[data-test-id="continue-button"] button');
-
-//   await t
-//     .click(firstRecipient)
-//     .click(button)
-//     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/newsolution');
-// });
