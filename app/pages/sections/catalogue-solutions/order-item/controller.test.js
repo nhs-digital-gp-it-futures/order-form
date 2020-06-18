@@ -41,6 +41,7 @@ describe('catalogue-solutions order-item controller', () => {
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({
         odsCode: 'fake-recipient-id',
+        orderId: 'order-1',
         serviceRecipientName: 'Some service recipient 1',
         solutionName: 'solution-name',
       });
