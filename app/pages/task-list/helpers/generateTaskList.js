@@ -5,29 +5,38 @@ const convertDataToDict = ({ sectionsData }) => (sectionsData && sectionsData.le
   : undefined);
 
 const areAllStatusDepedenciesMet = (dataDict, statusDependencies = []) => (
-  statusDependencies.length > 0 ? !statusDependencies.find(
-    statusDependency => !dataDict[statusDependency]
-      || (dataDict[statusDependency] && dataDict[statusDependency].status === 'incomplete'),
-  ) : true
+  statusDependencies.length > 0
+    ? statusDependencies
+      .map(statusDependency => (
+        !!dataDict[statusDependency] && dataDict[statusDependency].status === 'complete'))
+      .every(dependencyMet => dependencyMet === true)
+    : true
 );
 
 const areAllCountDepedenciesMet = (dataDict, countDependencies = []) => (
-  countDependencies.length > 0 ? !countDependencies.find(
-    countDependency => !dataDict[countDependency]
-      || (dataDict[countDependency] && dataDict[countDependency].count === 0),
-  ) : true
+  countDependencies.length > 0
+    ? countDependencies
+      .map(countDependency => (
+        !!dataDict[countDependency] && dataDict[countDependency].count > 0))
+      .every(dependencyMet => dependencyMet === true)
+    : true
 );
 
 const isSectionEnabled = (dataDict = {}, dependencies = []) => (
   dependencies.length > 0
-    ? dependencies.map(dependency => (
-      areAllStatusDepedenciesMet(dataDict, dependency.statusDependencies)
+    ? dependencies
+      .map(dependency => (
+        areAllStatusDepedenciesMet(dataDict, dependency.statusDependencies)
           && areAllCountDepedenciesMet(dataDict, dependency.countDependencies)))
       .includes(true)
     : true
 );
 
-const isSectionComplete = (sectionsDataDict = {}, section = {}) => !!(sectionsDataDict && sectionsDataDict[section.id] && sectionsDataDict[section.id].status === 'complete');
+const isSectionComplete = (sectionsDataDict = {}, section = {}) => (
+  !!(sectionsDataDict
+    && sectionsDataDict[section.id]
+    && sectionsDataDict[section.id].status === 'complete')
+);
 
 export const generateTaskList = ({ orderId, taskListManifest, sectionsData }) => {
   const sectionsDataDict = convertDataToDict({ sectionsData });

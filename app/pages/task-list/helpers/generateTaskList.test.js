@@ -44,11 +44,12 @@ const taskListManifest = {
       title: 'task 4 item 1',
       dependencies: [
         {
-          statusDependencies: ['task1item1', 'task2item1', 'task2item2'],
-          countDependencies: ['task2item2'],
+          statusDependencies: ['task1item1', 'task2item1', 'task2item2', 'task3item1'],
+          countDependencies: ['task2item2', 'task3item1'],
         },
         {
           statusDependencies: ['task1item1', 'task2item1', 'task3item1'],
+          countDependencies: ['task2item1', 'task2item2'],
         },
       ],
     }],
@@ -236,11 +237,42 @@ describe('generateTaskList', () => {
             status: 'complete',
             count: 1,
           },
+          {
+            id: 'task3item1',
+            status: 'complete',
+            count: 1,
+          },
         ];
         const taskList = generateTaskList({
           orderId, taskListManifest, sectionsData: sectionDataWithCount,
         });
-        expect(taskList[2].items[0].href).toBeTruthy();
+        expect(taskList[3].items[0].href).toBeTruthy();
+      });
+
+      it('should not add href to item if none of the dependencies are met', () => {
+        const sectionDataWithCount = [
+          {
+            id: 'task1item1',
+            status: 'complete',
+          },
+          {
+            id: 'task2item1',
+            status: 'complete',
+          },
+          {
+            id: 'task2item2',
+            status: 'complete',
+            count: 1,
+          },
+          {
+            id: 'task3item1',
+            status: 'complete',
+          },
+        ];
+        const taskList = generateTaskList({
+          orderId, taskListManifest, sectionsData: sectionDataWithCount,
+        });
+        expect(taskList[3].items[0].href).toBeFalsy();
       });
     });
   });
