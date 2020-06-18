@@ -3,6 +3,7 @@
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/date-field/macro.njk' import dateField %}
 {% from 'components/text-field/macro.njk' import textField %}
+{% from 'components/view/components/view-expandable-section/macro.njk' import viewExpandableSection %}
 {% from 'components/radiobutton-options/macro.njk' import radiobuttonOptions %}
 {% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
 
@@ -24,21 +25,23 @@
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
           <div class="nhsuk-u-margin-bottom-5">
-            {{ dateField({ question: plannedDateQuestions[0] }) }}
+            {{ dateField({ question: questions.plannedDate}) }}
           </div>
 
           <div class="nhsuk-u-margin-bottom-5">
-            <div class="nhsuk-grid-column-one-third">
-            {{ textField({ question: quantityQuestions[0] }) }}
+            <div class="">
+            {{ textField({ question: questions.quantity }) }}
+            {{ viewExpandableSection(questions.quantity.expandableSection) }}
             </div>
           </div>
 
           <div class="nhsuk-u-margin-bottom-5">
           {{
             radiobuttonOptions({
-              question: estimationPeriodQuestions[0]
+              question: questions.estimationPeriod
             })
           }}
+          {{ viewExpandableSection(questions.estimationPeriod.expandableSection) }}
           </div>
 
           {{ bcButton({

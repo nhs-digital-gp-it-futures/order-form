@@ -1,32 +1,42 @@
 {
   "title": "information for",
   "description": "Provide the delivery date and price you've agreed with the supplier and the quantity you want to order.",
-  "plannedDateQuestions": [{
-    "id": "plannedDeliveryDate",
-    "mainAdvice": "Planned delivery date",
-    "additionalAdvice": "For example 14 01 2020"
-  }],
-  "quantityQuestions": [{
-    "id": "quantity",
-    "mainAdvice": "Quantity",
-    "rows": 3
-  }],
-  "estimationPeriodQuestions": [
-    {
-      "id": "selectEstimationPeriod",
-      "mainAdvice": "Estimation period",
-      "options": [
-      {
-        "value": "perMonth",
-        "text": "Per month"
-      },
-      {
-        "value": "perYear",
-        "text": "Per year"
+  "questions": {
+    "plannedDate": {
+      "id": "plannedDeliveryDate",
+      "mainAdvice": "Planned delivery date",
+      "additionalAdvice": "For example 14 01 2020"
+    },
+    "quantity": {
+      "id": "quantity",
+      "mainAdvice": "Quantity",
+      "rows": 3,
+      "expandableSection": {
+        "dataTestId": "view-section-quantity-id",
+        "title": "What quantity should I enter?",
+        "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
       }
-    ]
+    },
+    "estimationPeriod": {
+        "id": "selectEstimationPeriod",
+        "mainAdvice": "Estimation period",
+        "options": [
+        {
+          "value": "perMonth",
+          "text": "Per month"
+        },
+        {
+          "value": "perYear",
+          "text": "Per year"
+        }
+      ],
+      "expandableSection": {
+        "dataTestId": "view-section-estimation-period-id",
+        "title": "What period should I enter?",
+        "innerComponent": "This should be based on how you estimated the quantity you want to order."
+      }
     }
-  ],
+  },
   "deleteButtonText": "Delete",
   "saveButtonText": "Save"
 }

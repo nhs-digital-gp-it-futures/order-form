@@ -13,12 +13,15 @@ export const getRecipientName = async ({ selectedRecipientId, accessToken }) => 
 };
 
 export const getOrderItemContext = async ({
+  orderId,
   selectedSolutionId,
   selectedRecipientId,
   accessToken,
 }) => {
-  const solutionName = await getSolution({ solutionId: selectedSolutionId, accessToken }).name;
+  const solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
   const serviceRecipientName = await getRecipientName({ selectedRecipientId, accessToken });
 
-  return getContext({ solutionName, serviceRecipientName, odsCode: selectedRecipientId });
+  return getContext({
+    orderId, solutionName, serviceRecipientName, odsCode: selectedRecipientId,
+  });
 };
