@@ -1,9 +1,9 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 
-export const getContext = ({ orderId, orderDescription }) => ({
+export const getContext = ({ orderId, orderData }) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
-  orderDescription,
+  orderDescription: orderData.description,
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
 });

@@ -3,6 +3,7 @@ import { orderApiUrl } from '../../config';
 import { logger } from '../../logger';
 import {
   getOrder,
+  getPreviewPageContext,
 } from './controller';
 import * as contextCreator from './contextCreator';
 
@@ -34,4 +35,17 @@ describe('order summary preview controller', () => {
       });
     });
   });
+
+  describe('getSolutionsPageContext', () => {
+    it('should call getContext with the correct params', async () => {
+      contextCreator.getContext
+        .mockResolvedValueOnce();
+
+      await getPreviewPageContext({ orderId: 'order-1', orderData: {} });
+
+      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', orderData: {} });
+    });
+  });
+
 });
