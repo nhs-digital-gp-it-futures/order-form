@@ -24,6 +24,7 @@ const endpoints = {
     getServiceRecipient: options => `${organisationApiUrl}/api/v1/ods/${options.selectedRecipientId}`,
   },
   ordapi: {
+    getOrder: options => `${orderApiUrl}/api/v1/orders/${options.orderId}`,
     getOrders: options => `${orderApiUrl}/api/v1/organisations/${options.orgId}/orders`,
     getOrderSummary: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/summary`,
     getDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
