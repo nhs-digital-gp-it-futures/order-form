@@ -109,7 +109,7 @@ describe('catalogue-solutions page', () => {
     });
   }));
 
-  describe('Added Catalogue Solutions table', () => {
+  describe('Added Order Items table', () => {
     const context = {
       addedOrderItemsTable: {
         columnInfo: [
