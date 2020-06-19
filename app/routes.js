@@ -63,6 +63,12 @@ export const routes = (authProvider, sessionManager) => {
     res.render('pages/task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
+  router.get('/organisation/:orderId/preview', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    res.send(`preview page for ${orderId}`);
+  }));
+
   router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
 
   router.get('*', (req) => {
