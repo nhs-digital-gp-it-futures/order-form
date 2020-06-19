@@ -261,7 +261,7 @@ test('should render an expandable section for the select estimation period', asy
     .eql(content.questions.estimationPeriod.expandableSection.innerComponent);
 });
 
-test('should render the price table table', async (t) => {
+test('should render the price table headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
