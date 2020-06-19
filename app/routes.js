@@ -65,7 +65,7 @@ export const routes = (authProvider, sessionManager) => {
   }));
 
   router.get('/organisation/:orderId/preview', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
-    const accessToken = extractAccessToken({ req, tokenType: 'access' })
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
 
     const order = await getOrder({ orderId, accessToken });

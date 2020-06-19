@@ -2,7 +2,7 @@ import { getData } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../config';
 import { logger } from '../../logger';
 import {
-  getOrder
+  getOrder,
 } from './controller';
 import * as contextCreator from './contextCreator';
 
