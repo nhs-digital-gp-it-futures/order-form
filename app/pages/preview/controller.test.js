@@ -47,5 +47,4 @@ describe('order summary preview controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', orderData: {} });
     });
   });
-
 });

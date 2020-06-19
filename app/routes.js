@@ -8,7 +8,7 @@ import { withCatch, getHealthCheckDependencies, extractAccessToken } from './hel
 import { getDocumentByFileName } from './documentController';
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getTaskListPageContext } from './pages/task-list/controller';
-import { getOrder } from './pages/preview/controller';
+import { getOrder, getPreviewPageContext } from './pages/preview/controller';
 import { sectionRoutes } from './pages/sections/routes';
 import includesContext from './includes/manifest.json';
 
@@ -68,9 +68,11 @@ export const routes = (authProvider, sessionManager) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
 
-    const order = await getOrder({ orderId, accessToken });
+    const orderData = await getOrder({ orderId, accessToken });
 
-    res.send(`preview page for ${orderId} and order details are ${order}`);
+    const context = await getPreviewPageContext({ orderId, orderData });
+
+    res.render('pages/preview/template.njk', addContext({ context, user: req.user }));
   }));
 
   router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));

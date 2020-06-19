@@ -11,6 +11,7 @@ import { baseUrl } from './config';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
 import * as documentController from './documentController';
+import * as previewController from './pages/preview/controller';
 
 jest.mock('./logger');
 
@@ -208,14 +209,22 @@ describe('routes', () => {
       })
     ));
 
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.text.includes('preview page for order-id')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
+    it('should return the correct status and text when the user is authorised', () => {
+      previewController.getOrder = jest.fn()
+        .mockResolvedValueOnce({});
+
+      previewController.getPreviewPageContext = jest.fn()
+        .mockResolvedValueOnce({});
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="preview-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
   });
 
   describe('GET *', () => {
