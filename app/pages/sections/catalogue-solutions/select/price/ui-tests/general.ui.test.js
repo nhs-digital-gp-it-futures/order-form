@@ -14,7 +14,7 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const solutionsState = ClientFunction(() => {
+const selectedSolutionIdState = ClientFunction(() => {
   document.cookie = 'selectedSolutionId=solution-1';
 });
 
@@ -135,19 +135,26 @@ const solutionPricesState = ClientFunction(() => {
   document.cookie = `solutionPrices=${cookieValue}`;
 });
 
+const selectedPriceIdState = ClientFunction(() => {
+  document.cookie = 'selectedPriceId=0002';
+});
+
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/solutions/solution-1/pricing')
     .reply(200, mockSolutionPricing);
 };
 
-const pageSetup = async (withAuth = false, withSolutionsFoundState = true, withsolutionPricesState = false) => {
+const pageSetup = async (
+  withAuth = false, withSelectedSolutionIdState = true, withSolutionPricesState = false, withSelectedPriceIdState = false,
+) => {
   if (withAuth) {
     mocks();
     await setCookies();
   }
-  if (withSolutionsFoundState) await solutionsState();
-  if (withsolutionPricesState) await solutionPricesState();
+  if (withSelectedSolutionIdState) await selectedSolutionIdState();
+  if (withSolutionPricesState) await solutionPricesState();
+  if (withSelectedPriceIdState) await selectedPriceIdState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -241,6 +248,20 @@ test('should render a selectSolutionPrice question as radio button options', asy
 
     .expect(selectSolutionPriceRadioOptions.find('input').nth(2).getAttribute('value')).eql('0003')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(2))).eql('1 - 10 consultations £700 per consultation per month\n11+ consultations £400 per consultation per month');
+});
+
+test('should render the radioButton as checked for the selectedPriceId', async (t) => {
+  await pageSetup(true, true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const selectSolutionPriceRadioOptions = Selector('[data-test-id="question-selectSolutionPrice"]');
+
+  await t
+    .expect(selectSolutionPriceRadioOptions.exists).ok()
+    .expect(selectSolutionPriceRadioOptions.find('.nhsuk-radios__item').count).eql(3)
+    .expect(selectSolutionPriceRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input:checked').exists).notOk()
+    .expect(selectSolutionPriceRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input:checked').exists).ok()
+    .expect(selectSolutionPriceRadioOptions.find('.nhsuk-radios__item:nth-child(3)').find('input:checked').exists).notOk();
 });
 
 test('should render the Continue button', async (t) => {

@@ -2,24 +2,25 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../../../../config';
 import { getSectionErrorContext } from '../../../getSectionErrorContext';
 
-const generateSolutionOptions = ({ solutions }) => (
+const generateSolutionOptions = ({ solutions, selectedSolutionId }) => (
   solutions.map(solution => ({
     value: solution.id,
     text: solution.name,
+    checked: solution.id === selectedSolutionId ? true : undefined,
   }))
 );
 
-const generateQuestionsContext = ({ solutions }) => (
+const generateQuestionsContext = ({ solutions, selectedSolutionId }) => (
   manifest.questions.map(question => ({
     ...question,
-    options: generateSolutionOptions({ solutions }),
+    options: generateSolutionOptions({ solutions, selectedSolutionId }),
   }))
 );
 
-export const getContext = ({ orderId, solutions }) => ({
+export const getContext = ({ orderId, solutions, selectedSolutionId }) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
-  questions: solutions && generateQuestionsContext({ solutions }),
+  questions: solutions && generateQuestionsContext({ solutions, selectedSolutionId }),
   backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
 });
 

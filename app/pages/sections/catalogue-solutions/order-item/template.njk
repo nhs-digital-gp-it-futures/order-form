@@ -1,7 +1,10 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
-{% from 'components/textarea-field-no-count/macro.njk' import textareaFieldNoCount %}
+{% from 'components/date-field/macro.njk' import dateField %}
+{% from 'components/text-field/macro.njk' import textField %}
+{% from 'components/view/components/view-expandable-section/macro.njk' import viewExpandableSection %}
+{% from 'components/radiobutton-options/macro.njk' import radiobuttonOptions %}
 {% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
 
 {% block body %}
@@ -20,6 +23,29 @@
 
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+          <div class="nhsuk-u-margin-bottom-5">
+            {{ dateField({ question: questions.plannedDate}) }}
+          </div>
+
+          <div class="nhsuk-u-margin-bottom-5">
+            <div class="">
+            {{ textField({ 
+              question: questions.quantity,
+              classes: "nhsuk-input--width-10"
+            }) }}
+            {{ viewExpandableSection(questions.quantity.expandableSection) }}
+            </div>
+          </div>
+
+          <div class="nhsuk-u-margin-bottom-5">
+          {{
+            radiobuttonOptions({
+              question: questions.estimationPeriod
+            })
+          }}
+          {{ viewExpandableSection(questions.estimationPeriod.expandableSection) }}
+          </div>
 
           {{ bcButton({
               dataTestId: "delete-button",

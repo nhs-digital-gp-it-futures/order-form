@@ -66,6 +66,45 @@ describe('catalogue-solutions solution contextCreator', () => {
       expect(context.questions).toEqual(expectedContext.questions);
     });
 
+    it('should return select supplier question with the selectedSupplier checked', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectSolution',
+            mainAdvice: 'Select Catalogue Solution',
+            options: [
+              {
+                value: 'solution-1',
+                text: 'Solution 1',
+              },
+              {
+                value: 'solution-2',
+                text: 'Solution 2',
+                checked: true,
+              },
+            ],
+          },
+        ],
+      };
+
+      const solutions = [
+        {
+          id: 'solution-1',
+          name: 'Solution 1',
+        },
+        {
+          id: 'solution-2',
+          name: 'Solution 2',
+        },
+      ];
+
+      const selectedSolutionId = 'solution-2';
+
+      const context = getContext({ solutions, selectedSolutionId });
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
+
+
     it('should return the continueButtonText', () => {
       const context = getContext({});
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);

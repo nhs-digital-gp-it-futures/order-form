@@ -34,12 +34,12 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   router.get('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-
+    const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const supplierId = await getSupplierId({ orderId, accessToken });
     const solutions = await findSolutions({ supplierId, accessToken });
     sessionManager.saveToSession({ req, key: 'solutions', value: solutions });
 
-    const context = await getSolutionsPageContext({ orderId, solutions });
+    const context = await getSolutionsPageContext({ orderId, solutions, selectedSolutionId });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select solution page`);
     return res.render('pages/sections/catalogue-solutions/select/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -69,12 +69,12 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   router.get('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-
+    const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
     const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const solutionPrices = await findSolutionPrices({ solutionId, accessToken });
     sessionManager.saveToSession({ req, key: 'solutionPrices', value: solutionPrices });
 
-    const context = await getSolutionPricePageContext({ orderId, solutionPrices });
+    const context = await getSolutionPricePageContext({ orderId, solutionPrices, selectedPriceId });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select price page`);
     return res.render('pages/sections/catalogue-solutions/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
