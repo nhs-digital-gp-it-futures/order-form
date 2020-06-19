@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solutions';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -16,7 +16,7 @@ const setCookies = ClientFunction(() => {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/catalogue-solutions')
+    .get('/api/v1/orders/order-1/sections/catalogue-solutions')
     .reply(200, { orderDescription: 'Some order' });
 };
 
@@ -61,7 +61,7 @@ test('should render catalogue-solutions page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id when click on backLink', async (t) => {
+test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -70,7 +70,7 @@ test('should navigate to /organisation/order-id when click on backLink', async (
   await t
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
 });
 
 test('should render the title', async (t) => {
@@ -81,7 +81,7 @@ test('should render the title', async (t) => {
 
   await t
     .expect(title.exists).ok()
-    .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
+    .expect(await extractInnerText(title)).eql(`${content.title} order-1`);
 });
 
 test('should render the description', async (t) => {
@@ -131,7 +131,7 @@ test('should render the Add Catalogue Solution button', async (t) => {
     .expect(await extractInnerText(addSolutionButton)).eql(content.addSolutionButtonText);
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/select/solution when Add Catalogue Solution button is clicked', async (t) => {
+test('should navigate to /organisation/order-1/catalogue-solutions/select/solution when Add Catalogue Solution button is clicked', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -139,7 +139,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select/solut
 
   await t
     .click(addSolutionButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/catalogue-solutions/select/solution');
 });
 
 test('should render the Continue button', async (t) => {
@@ -153,9 +153,9 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(continueButton)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id when clicking the Continue button', async (t) => {
+test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/catalogue-solutions')
+    .put('/api/v1/orders/order-1/sections/catalogue-solutions')
     .reply(200);
 
   await pageSetup();
@@ -165,5 +165,5 @@ test('should redirect to /organisation/order-id when clicking the Continue butto
 
   await t
     .click(continueButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
 });

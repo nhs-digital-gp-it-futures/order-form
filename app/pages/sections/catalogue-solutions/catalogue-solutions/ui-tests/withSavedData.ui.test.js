@@ -1,10 +1,9 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import content from '../manifest.json';
-import { orderApiUrl } from '../../../../../config';
+import { baseUrl, orderApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solutions';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -17,17 +16,25 @@ const setCookies = ClientFunction(() => {
 const mockAddedCatalogueSolutions = [
   {
     orderItemId: 'orderItem1',
-    solutionName: 'Meditech Go',
+    solutionName: 'Solution One',
     serviceRecipient: {
-      name: 'Blue mountain',
-      odsCode: 'A12000',
+      name: 'Recipient One',
+      odsCode: 'recipient-1',
+    },
+  },
+  {
+    orderItemId: 'orderItem2',
+    solutionName: 'Solution One',
+    serviceRecipient: {
+      name: 'Recipient Two',
+      odsCode: 'recipient-2',
     },
   },
 ];
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/catalogue-solutions')
+    .get('/api/v1/orders/order-1/sections/catalogue-solutions')
     .reply(200, { orderDescription: 'Some order', catalogueSolutions: mockAddedCatalogueSolutions });
 };
 
@@ -47,12 +54,47 @@ fixture('Catalogue-solution page - without saved data')
     await t.expect(isDone).ok('Not all nock interceptors were used!');
   });
 
-test('should render the list of the added catalogue solutions returned from ORDAPI', async (t) => {
+test('should render the added catalogue solutions table with the column headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const addedSolutions = Selector('[data-test-id="added-solutions"]');
+  const addedSolutionsColumnHeading1 = addedSolutions.find('[data-test-id="column-heading-0"]');
+  const addedSolutionsColumnHeading2 = addedSolutions.find('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(addedSolutions.exists).ok();
+    .expect(addedSolutions.exists).ok()
+    .expect(addedSolutionsColumnHeading1.exists).ok()
+    .expect(await extractInnerText(addedSolutionsColumnHeading1)).eql('Catalogue Solution')
+
+    .expect(addedSolutionsColumnHeading2.exists).ok()
+    .expect(await extractInnerText(addedSolutionsColumnHeading2)).eql('Service Recipient (ODS code)');
+});
+
+test('should render the added catalogue solutions items in the table', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const addedSolutions = Selector('[data-test-id="added-solutions"]');
+  const row1 = addedSolutions.find('[data-test-id="table-row-0"]');
+  const row1SolutionName = row1.find('a[data-test-id="orderItem1-solutionName"]');
+  const row1ServiceRecipient = row1.find('div[data-test-id="orderItem1-serviceRecipient"]');
+  const row2 = addedSolutions.find('[data-test-id="table-row-1"]');
+  const row2SolutionName = row2.find('a[data-test-id="orderItem2-solutionName"]');
+  const row2ServiceRecipient = row2.find('div[data-test-id="orderItem2-serviceRecipient"]');
+
+  await t
+    .expect(row1.exists).ok()
+    .expect(row1SolutionName.exists).ok()
+    .expect(await extractInnerText(row1SolutionName)).eql('Solution One')
+    .expect(row1SolutionName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/catalogue-solutions/orderItem1`)
+    .expect(row1ServiceRecipient.exists).ok()
+    .expect(await extractInnerText(row1ServiceRecipient)).eql('Recipient One (recipient-1)')
+
+    .expect(row2.exists).ok()
+    .expect(row2SolutionName.exists).ok()
+    .expect(await extractInnerText(row2SolutionName)).eql('Solution One')
+    .expect(row2SolutionName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/catalogue-solutions/orderItem2`)
+    .expect(row2ServiceRecipient.exists).ok()
+    .expect(await extractInnerText(row2ServiceRecipient)).eql('Recipient Two (recipient-2)');
 });

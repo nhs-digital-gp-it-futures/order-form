@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solutions';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -16,7 +16,7 @@ const setCookies = ClientFunction(() => {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/catalogue-solutions')
+    .get('/api/v1/orders/order-1/sections/catalogue-solutions')
     .reply(200, { orderDescription: 'Some order', catalogueSolutions: [] });
 };
 
