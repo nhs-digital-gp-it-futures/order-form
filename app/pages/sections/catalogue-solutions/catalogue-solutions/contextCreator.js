@@ -1,35 +1,35 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
 
-const generateItems = ({ orderId, catalogueSolutions }) => {
-  const items = catalogueSolutions.map((solution) => {
+const generateItems = ({ orderId, orderItems }) => {
+  const items = orderItems.map((orderItem) => {
     const columns = [];
     columns.push(({
-      data: solution.solutionName,
-      href: `${baseUrl}/organisation/${orderId}/catalogue-solutions/${solution.orderItemId}`,
-      dataTestId: `${solution.orderItemId}-solutionName`,
+      data: orderItem.solutionName,
+      href: `${baseUrl}/organisation/${orderId}/catalogue-solutions/${orderItem.orderItemId}`,
+      dataTestId: `${orderItem.orderItemId}-solutionName`,
     }));
     columns.push(({
-      data: `${solution.serviceRecipient.name} (${solution.serviceRecipient.odsCode})`,
-      dataTestId: `${solution.orderItemId}-serviceRecipient`,
+      data: `${orderItem.serviceRecipient.name} (${orderItem.serviceRecipient.odsCode})`,
+      dataTestId: `${orderItem.orderItemId}-serviceRecipient`,
     }));
     return columns;
   });
   return items;
 };
 
-const generateAddedSolutionTable = ({ orderId, addedSolutionTable, catalogueSolutions }) => ({
-  ...addedSolutionTable,
-  items: generateItems({ orderId, catalogueSolutions }),
+const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItems }) => ({
+  ...addedOrderItemsTable,
+  items: generateItems({ orderId, orderItems }),
 });
 
-export const getContext = ({ orderId, orderDescription, catalogueSolutions = [] }) => ({
+export const getContext = ({ orderId, orderDescription, orderItems = [] }) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
   orderDescription,
-  addedSolutionTable: generateAddedSolutionTable({
-    orderId, addedSolutionTable: manifest.addedSolutionTable, catalogueSolutions,
+  addedOrderItemsTable: generateAddedOrderItemsTable({
+    orderId, addedOrderItemsTable: manifest.addedOrderItemsTable, orderItems,
   }),
-  addSolutionButtonHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`,
+  addOrderItemButtonHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`,
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
 });

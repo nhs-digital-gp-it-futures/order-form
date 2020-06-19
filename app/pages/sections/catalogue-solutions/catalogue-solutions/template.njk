@@ -28,26 +28,26 @@
         <h4 data-test-id="order-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ orderDescription }}</h4>
 
         {{ bcButton({
-            dataTestId: "add-solution-button",
-            text: addSolutionButtonText,
-            href: addSolutionButtonHref,
+            dataTestId: "add-orderItem-button",
+            text: addOrderItemButtonText,
+            href: addOrderItemButtonHref,
             classes: "nhsuk-button--secondary nhsuk-u-margin-top-9"
         }) }}
       
         <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-3 bc-c-order-table__hr"/>
 
-        <div data-test-id="show-added-solutions">
-          {% if addedSolutionTable.items | length %}
-            <div data-test-id="added-solutions">
+        <div data-test-id="show-added-orderItems">
+          {% if addedOrderItemsTable.items | length %}
+            <div data-test-id="added-orderItems">
               {{ bcTable({
-                columnInfo: addedSolutionTable.columnInfo,
-                columnClass: addedSolutionTable.columnClass,
-                data: addedSolutionTable.items
+                columnInfo: addedOrderItemsTable.columnInfo,
+                columnClass: addedOrderItemsTable.columnClass,
+                data: addedOrderItemsTable.items
               }) }}
             </div>
           {% else %}
-            <div data-test-id="no-added-solutions">
-              <p>{{ noSolutionsText }}</p>
+            <div data-test-id="no-added-orderItems">
+              <p>{{ noOrderItemsText }}</p>
             </div>
           {% endif %}
         </div>

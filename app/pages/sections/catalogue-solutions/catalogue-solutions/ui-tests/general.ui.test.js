@@ -124,21 +124,21 @@ test('should render the Add Catalogue Solution button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const addSolutionButton = Selector('[data-test-id="add-solution-button"] a');
+  const addOrderItemButton = Selector('[data-test-id="add-orderItem-button"] a');
 
   await t
-    .expect(addSolutionButton.exists).ok()
-    .expect(await extractInnerText(addSolutionButton)).eql(content.addSolutionButtonText);
+    .expect(addOrderItemButton.exists).ok()
+    .expect(await extractInnerText(addOrderItemButton)).eql(content.addOrderItemButtonText);
 });
 
 test('should navigate to /organisation/order-1/catalogue-solutions/select/solution when Add Catalogue Solution button is clicked', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const addSolutionButton = Selector('[data-test-id="add-solution-button"] a');
+  const addOrderItemButton = Selector('[data-test-id="add-orderItem-button"] a');
 
   await t
-    .click(addSolutionButton)
+    .click(addOrderItemButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/catalogue-solutions/select/solution');
 });
 

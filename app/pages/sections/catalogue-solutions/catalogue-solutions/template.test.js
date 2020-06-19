@@ -78,40 +78,40 @@ describe('catalogue-solutions page', () => {
 
   it('should render the "Add Catalogue Solution" button', componentTester(setup, (harness) => {
     const context = {
-      addSolutionButtonText: 'Add Catalogue Solution',
-      addSolutionButtonHref: '/organistaions/order-1/catalogue-solutions/select',
+      addOrderItemButtonText: 'Add Catalogue Solution',
+      addOrderItemButtonHref: '/organistaions/order-1/catalogue-solutions/select',
     };
 
     harness.request(context, ($) => {
-      const addSolutionButton = $('[data-test-id="add-solution-button"]');
+      const addOrderItemButton = $('[data-test-id="add-orderItem-button"]');
 
-      expect(addSolutionButton.length).toEqual(1);
-      expect(addSolutionButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
-      expect(addSolutionButton.text().trim()).toEqual(context.addSolutionButtonText);
-      expect(addSolutionButton.find('a').attr('href')).toEqual(context.addSolutionButtonHref);
+      expect(addOrderItemButton.length).toEqual(1);
+      expect(addOrderItemButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(addOrderItemButton.text().trim()).toEqual(context.addOrderItemButtonText);
+      expect(addOrderItemButton.find('a').attr('href')).toEqual(context.addOrderItemButtonHref);
     });
   }));
 
   it('should render no solutions text when the items provided is an empty array', componentTester(setup, (harness) => {
     const context = {
-      addedSolutionTable: {
+      addedOrderItemsTable: {
         items: [],
       },
-      noSolutionsText: manifest.noSolutionsText,
+      noOrderItemsText: manifest.noOrderItemsText,
     };
 
     harness.request(context, ($) => {
-      const addedSolutionsSection = $('[data-test-id="show-added-solutions"]');
-      const noAddedSolutionsSection = addedSolutionsSection.find('[data-test-id="no-added-solutions"]');
-      expect(addedSolutionsSection.length).toEqual(1);
-      expect(noAddedSolutionsSection.length).toEqual(1);
-      expect(noAddedSolutionsSection.text().trim()).toContain(context.noSolutionsText);
+      const addedOrderItemsSection = $('[data-test-id="show-added-orderItems"]');
+      const noAddedOrderItemsSection = addedOrderItemsSection.find('[data-test-id="no-added-orderItems"]');
+      expect(addedOrderItemsSection.length).toEqual(1);
+      expect(noAddedOrderItemsSection.length).toEqual(1);
+      expect(noAddedOrderItemsSection.text().trim()).toContain(context.noOrderItemsText);
     });
   }));
 
   describe('Added Catalogue Solutions table', () => {
     const context = {
-      addedSolutionTable: {
+      addedOrderItemsTable: {
         columnInfo: [
           {
             data: 'Catalogue Solution',
@@ -149,16 +149,16 @@ describe('catalogue-solutions page', () => {
 
     it('should render the table headings', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="added-solutions"]');
+        const table = $('div[data-test-id="added-orderItems"]');
         expect(table.length).toEqual(1);
-        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.addedSolutionTable.columnInfo[0].data);
-        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.addedSolutionTable.columnInfo[1].data);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Catalogue Solution');
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Service Recipient (ODS code)');
       });
     }));
 
     it('should render the data', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="added-solutions"]');
+        const table = $('div[data-test-id="added-orderItems"]');
         const row1 = table.find('[data-test-id="table-row-0"]');
         const row1SolutionName = row1.find('a[data-test-id="orderItem1-solutionName"]');
         const row1serviceRecipient = row1.find('div[data-test-id="orderItem1-serviceRecipient"]');

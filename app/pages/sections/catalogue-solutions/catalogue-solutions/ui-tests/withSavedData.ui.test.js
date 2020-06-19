@@ -13,7 +13,7 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const mockAddedCatalogueSolutions = [
+const mockAddedOrderItems = [
   {
     orderItemId: 'orderItem1',
     solutionName: 'Solution One',
@@ -35,7 +35,7 @@ const mockAddedCatalogueSolutions = [
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1/sections/catalogue-solutions')
-    .reply(200, { orderDescription: 'Some order', catalogueSolutions: mockAddedCatalogueSolutions });
+    .reply(200, { orderDescription: 'Some order', orderItems: mockAddedOrderItems });
 };
 
 const pageSetup = async () => {
@@ -58,28 +58,28 @@ test('should render the added catalogue solutions table with the column headings
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const addedSolutions = Selector('[data-test-id="added-solutions"]');
-  const addedSolutionsColumnHeading1 = addedSolutions.find('[data-test-id="column-heading-0"]');
-  const addedSolutionsColumnHeading2 = addedSolutions.find('[data-test-id="column-heading-1"]');
+  const addedOrderItems = Selector('[data-test-id="added-orderItems"]');
+  const addedOrderItemsColumnHeading1 = addedOrderItems.find('[data-test-id="column-heading-0"]');
+  const addedOrderItemsColumnHeading2 = addedOrderItems.find('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(addedSolutions.exists).ok()
-    .expect(addedSolutionsColumnHeading1.exists).ok()
-    .expect(await extractInnerText(addedSolutionsColumnHeading1)).eql('Catalogue Solution')
+    .expect(addedOrderItems.exists).ok()
+    .expect(addedOrderItemsColumnHeading1.exists).ok()
+    .expect(await extractInnerText(addedOrderItemsColumnHeading1)).eql('Catalogue Solution')
 
-    .expect(addedSolutionsColumnHeading2.exists).ok()
-    .expect(await extractInnerText(addedSolutionsColumnHeading2)).eql('Service Recipient (ODS code)');
+    .expect(addedOrderItemsColumnHeading2.exists).ok()
+    .expect(await extractInnerText(addedOrderItemsColumnHeading2)).eql('Service Recipient (ODS code)');
 });
 
 test('should render the added catalogue solutions items in the table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const addedSolutions = Selector('[data-test-id="added-solutions"]');
-  const row1 = addedSolutions.find('[data-test-id="table-row-0"]');
+  const addedOrderItems = Selector('[data-test-id="added-orderItems"]');
+  const row1 = addedOrderItems.find('[data-test-id="table-row-0"]');
   const row1SolutionName = row1.find('a[data-test-id="orderItem1-solutionName"]');
   const row1ServiceRecipient = row1.find('div[data-test-id="orderItem1-serviceRecipient"]');
-  const row2 = addedSolutions.find('[data-test-id="table-row-1"]');
+  const row2 = addedOrderItems.find('[data-test-id="table-row-1"]');
   const row2SolutionName = row2.find('a[data-test-id="orderItem2-solutionName"]');
   const row2ServiceRecipient = row2.find('div[data-test-id="orderItem2-serviceRecipient"]');
 

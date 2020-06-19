@@ -36,12 +36,12 @@ describe('catalogue-solutions controller', () => {
     });
 
     it('should call getContext with the correct params', async () => {
-      getData.mockResolvedValueOnce({ orderDescription: 'some order', catalogueSolutions: [] });
+      getData.mockResolvedValueOnce({ orderDescription: 'some order', orderItems: [] });
       contextCreator.getContext.mockResolvedValueOnce({});
 
       await getCatalogueSolutionsPageContext({ orderId, accessToken });
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, orderDescription: 'some order', catalogueSolutions: [] });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, orderDescription: 'some order', orderItems: [] });
     });
   });
 
