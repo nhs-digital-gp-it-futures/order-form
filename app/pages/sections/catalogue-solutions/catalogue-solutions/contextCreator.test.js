@@ -48,7 +48,8 @@ describe('catalogue-solutions contextCreator', () => {
     it('should return the addSolutionTable colummInfo and columnClass', () => {
       const context = getContext({ orderId: 'order-1', catalogueSolutions: [] });
       expect(context.addedSolutionTable.columnInfo).toEqual(manifest.addedSolutionTable.columnInfo);
-      expect(context.addedSolutionTable.columnClass).toEqual(manifest.addedSolutionTable.columnClass);
+      expect(context.addedSolutionTable.columnClass)
+        .toEqual(manifest.addedSolutionTable.columnClass);
     });
 
     it('should return the addSolutionTable without items if no catalogue solutions are provided', () => {
