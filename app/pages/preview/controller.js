@@ -8,6 +8,7 @@ export const getOrder = async ({ orderId, accessToken }) => {
   const orderData = await getData({
     endpoint: getOrderEndpoint, accessToken, logger,
   });
+  logger.info(`Order data returned for ${orderId}`);
 
   return orderData;
 };
