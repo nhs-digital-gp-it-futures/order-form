@@ -507,7 +507,8 @@ test('should render the "Preview order summary" button', async (t) => {
     .expect(await extractInnerText(previewOrderButton)).eql(commonContent.previewOrderButton.text)
     .expect(previewOrderButton.getAttribute('aria-label')).eql(commonContent.previewOrderButton.text)
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
-    .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(false);
+    .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(false)
+    .expect(previewOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/preview`);
 });
 
 test('should render the "Submit order" button', async (t) => {
