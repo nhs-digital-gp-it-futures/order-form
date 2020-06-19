@@ -4,7 +4,18 @@
   "description": "Add the Catalogue Solutions you want to be part of this order.",
   "insetAdvice": "If you do not want to add any, or have finished adding Catalogue Solutions, continue to the next step.",
   "orderDescriptionHeading": "Order description",
-  "noSolutionsText": "No Catalogue Solutions added",
-  "addSolutionButtonText": "Add Catalogue Solution",
+  "noOrderItemsText": "No Catalogue Solutions added",
+  "addOrderItemButtonText": "Add Catalogue Solution",
+  "addedOrderItemsTable": {
+    "columnInfo": [
+      {
+        "data": "Catalogue Solution"
+      },
+      {
+        "data": "Service Recipient (ODS code)"
+      }
+    ],
+    "columnClass": "nhsuk-grid-column-one-half nhsuk-u-font-size-16"
+  },
   "continueButtonText": "Continue"
 }

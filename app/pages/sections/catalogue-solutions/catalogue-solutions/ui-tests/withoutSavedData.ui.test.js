@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solutions';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -16,8 +16,8 @@ const setCookies = ClientFunction(() => {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/catalogue-solutions')
-    .reply(200, { orderDescription: 'Some order', catalogueSolutions: [] });
+    .get('/api/v1/orders/order-1/sections/catalogue-solutions')
+    .reply(200, { orderDescription: 'Some order', orderItems: [] });
 };
 
 const pageSetup = async () => {
@@ -36,13 +36,13 @@ fixture('Catalogue-solution page - without saved data')
     await t.expect(isDone).ok('Not all nock interceptors were used!');
   });
 
-test('should render the No solutions text when no catalogueSolutions are returned from ORDAPI', async (t) => {
+test('should render the No solutions text when no order items are returned from ORDAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const noAddedSolutions = Selector('[data-test-id="no-added-solutions"]');
+  const noAddedOrderItems = Selector('[data-test-id="no-added-orderItems"]');
 
   await t
-    .expect(noAddedSolutions.exists).ok()
-    .expect(await extractInnerText(noAddedSolutions)).eql(content.noSolutionsText);
+    .expect(noAddedOrderItems.exists).ok()
+    .expect(await extractInnerText(noAddedOrderItems)).eql(content.noOrderItemsText);
 });

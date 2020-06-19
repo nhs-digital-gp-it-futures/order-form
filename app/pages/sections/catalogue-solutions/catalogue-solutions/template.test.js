@@ -78,34 +78,110 @@ describe('catalogue-solutions page', () => {
 
   it('should render the "Add Catalogue Solution" button', componentTester(setup, (harness) => {
     const context = {
-      addSolutionButtonText: 'Add Catalogue Solution',
-      addSolutionButtonHref: '/organistaions/order-1/catalogue-solutions/select',
+      addOrderItemButtonText: 'Add Catalogue Solution',
+      addOrderItemButtonHref: '/organistaions/order-1/catalogue-solutions/select',
     };
 
     harness.request(context, ($) => {
-      const addSolutionButton = $('[data-test-id="add-solution-button"]');
+      const addOrderItemButton = $('[data-test-id="add-orderItem-button"]');
 
-      expect(addSolutionButton.length).toEqual(1);
-      expect(addSolutionButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
-      expect(addSolutionButton.text().trim()).toEqual(context.addSolutionButtonText);
-      expect(addSolutionButton.find('a').attr('href')).toEqual(context.addSolutionButtonHref);
+      expect(addOrderItemButton.length).toEqual(1);
+      expect(addOrderItemButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(addOrderItemButton.text().trim()).toEqual(context.addOrderItemButtonText);
+      expect(addOrderItemButton.find('a').attr('href')).toEqual(context.addOrderItemButtonHref);
     });
   }));
 
-  it('should render no solutions text when the catalogueSolutions provided is an empty array', componentTester(setup, (harness) => {
+  it('should render no solutions text when the items provided is an empty array', componentTester(setup, (harness) => {
     const context = {
-      catalogueSolutions: [],
-      noSolutionsText: manifest.noSolutionsText,
+      addedOrderItemsTable: {
+        items: [],
+      },
+      noOrderItemsText: manifest.noOrderItemsText,
     };
 
     harness.request(context, ($) => {
-      const addedSolutionsSection = $('[data-test-id="show-added-solutions"]');
-      const noAddedSolutionsSection = addedSolutionsSection.find('[data-test-id="no-added-solutions"]');
-      expect(addedSolutionsSection.length).toEqual(1);
-      expect(noAddedSolutionsSection.length).toEqual(1);
-      expect(noAddedSolutionsSection.text().trim()).toContain(context.noSolutionsText);
+      const addedOrderItemsSection = $('[data-test-id="show-added-orderItems"]');
+      const noAddedOrderItemsSection = addedOrderItemsSection.find('[data-test-id="no-added-orderItems"]');
+      expect(addedOrderItemsSection.length).toEqual(1);
+      expect(noAddedOrderItemsSection.length).toEqual(1);
+      expect(noAddedOrderItemsSection.text().trim()).toContain(context.noOrderItemsText);
     });
   }));
+
+  describe('Added Order Items table', () => {
+    const context = {
+      addedOrderItemsTable: {
+        columnInfo: [
+          {
+            data: 'Catalogue Solution',
+          },
+          {
+            data: 'Service Recipient (ODS code)',
+          },
+        ],
+        items: [
+          [
+            {
+              data: 'Solution One',
+              href: '/orderItem1',
+              dataTestId: 'orderItem1-solutionName',
+            },
+            {
+              data: 'Recipient One (recipient-1)',
+              dataTestId: 'orderItem1-serviceRecipient',
+            },
+          ],
+          [
+            {
+              data: 'Solution One',
+              href: '/orderItem2',
+              dataTestId: 'orderItem2-solutionName',
+            },
+            {
+              data: 'Recipient Two (recipient-2)',
+              dataTestId: 'orderItem2-serviceRecipient',
+            },
+          ],
+        ],
+      },
+    };
+
+    it('should render the table headings', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="added-orderItems"]');
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Catalogue Solution');
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Service Recipient (ODS code)');
+      });
+    }));
+
+    it('should render the data', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="added-orderItems"]');
+        const row1 = table.find('[data-test-id="table-row-0"]');
+        const row1SolutionName = row1.find('a[data-test-id="orderItem1-solutionName"]');
+        const row1serviceRecipient = row1.find('div[data-test-id="orderItem1-serviceRecipient"]');
+        const row2 = table.find('[data-test-id="table-row-1"]');
+        const row2solutionName = row2.find('a[data-test-id="orderItem2-solutionName"]');
+        const row2serviceRecipient = row2.find('div[data-test-id="orderItem2-serviceRecipient"]');
+
+        expect(row1.length).toEqual(1);
+        expect(row1SolutionName.length).toEqual(1);
+        expect(row1SolutionName.text().trim()).toEqual('Solution One');
+        expect(row1SolutionName.attr('href')).toEqual('/orderItem1');
+        expect(row1serviceRecipient.length).toEqual(1);
+        expect(row1serviceRecipient.text().trim()).toEqual('Recipient One (recipient-1)');
+
+        expect(row2.length).toEqual(1);
+        expect(row2solutionName.length).toEqual(1);
+        expect(row2solutionName.text().trim()).toEqual('Solution One');
+        expect(row2solutionName.attr('href')).toEqual('/orderItem2');
+        expect(row2serviceRecipient.length).toEqual(1);
+        expect(row2serviceRecipient.text().trim()).toEqual('Recipient Two (recipient-2)');
+      });
+    }));
+  });
 
   it('should render hidden input with csrf token', componentTester(setup, (harness) => {
     const context = {
