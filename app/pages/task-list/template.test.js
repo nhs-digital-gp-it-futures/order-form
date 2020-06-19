@@ -259,7 +259,7 @@ describe('existingorder task-list page', () => {
       orderId: 'neworder',
       previewOrderButton: {
         text: commonManifest.previewOrderButton.text,
-        href: '#',
+        href: '/organisation/order-id/preview',
       },
     };
 
@@ -270,6 +270,7 @@ describe('existingorder task-list page', () => {
       expect(previewOrderButton.attr('aria-label')).toEqual(commonManifest.previewOrderButton.text);
       expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
       expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(false);
+      expect(previewOrderButton.find('a').attr('href')).toEqual('/organisation/order-id/preview');
     });
   }));
 

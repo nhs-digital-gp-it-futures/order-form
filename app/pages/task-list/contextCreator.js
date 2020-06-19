@@ -45,7 +45,7 @@ export const getExistingOrderContext = ({ orderId, orderDescription, sectionsDat
   },
   previewOrderButton: {
     text: commonManifest.previewOrderButton.text,
-    href: '#',
+    href: `${baseUrl}/organisation/${orderId}/preview`,
   },
   submitOrderButton: {
     text: commonManifest.submitOrderButton.text,
