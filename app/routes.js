@@ -5,11 +5,12 @@ import {
 import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routerHelper';
+import { getDocumentByFileName } from './documentController';
 import { getDashboardContext } from './pages/dashboard/controller';
+import { getTaskListPageContext } from './pages/task-list/controller';
+import { getOrder } from './pages/preview/controller';
 import { sectionRoutes } from './pages/sections/routes';
 import includesContext from './includes/manifest.json';
-import { getTaskListPageContext } from './pages/task-list/controller';
-import { getDocumentByFileName } from './documentController';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -64,9 +65,12 @@ export const routes = (authProvider, sessionManager) => {
   }));
 
   router.get('/organisation/:orderId/preview', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const accessToken = extractAccessToken({ req, tokenType: 'access' })
     const { orderId } = req.params;
 
-    res.send(`preview page for ${orderId}`);
+    const order = await getOrder({ orderId, accessToken });
+
+    res.send(`preview page for ${orderId} and order details are ${order}`);
   }));
 
   router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
