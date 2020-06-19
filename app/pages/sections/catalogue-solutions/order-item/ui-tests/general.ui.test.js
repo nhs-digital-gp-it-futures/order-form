@@ -261,6 +261,47 @@ test('should render an expandable section for the select estimation period', asy
     .eql(content.questions.estimationPeriod.expandableSection.innerComponent);
 });
 
+test('should render the unsubmitted orders table', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const unsubmittedTable = Selector('div[data-test-id="price-table"]');
+  const unsubmittedColumnHeading1 = unsubmittedTable.find('[data-test-id="column-heading-0"]');
+  const unsubmittedColumnHeading2 = unsubmittedTable.find('[data-test-id="column-heading-1"]');
+
+  await t
+    .expect(unsubmittedTable.exists).ok()
+    .expect(unsubmittedColumnHeading1.exists).ok()
+    .expect(await extractInnerText(unsubmittedColumnHeading1)).eql(content.columnInfo[0].data)
+    .expect(unsubmittedColumnHeading2.exists).ok()
+    .expect(await extractInnerText(unsubmittedColumnHeading2)).eql(content.columnInfo[1].data);
+});
+
+test('should render the price table content', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="price-table"]');
+  const row = table.find('[data-test-id="table-row-0"]');
+  const priceInput = row.find('[data-test-id="question-price-input-id"] input');
+  const expandableSection = row.find('[data-test-id="view-section-input-id"]');
+  const orderUnit = row.find('div[data-test-id="order-unit-id"]');
+
+  await t
+    .expect(row.exists).ok()
+    .expect(priceInput.exists).ok()
+    .expect(priceInput.getAttribute('value')).eql(content.data[0][0].question.data)
+    .expect(expandableSection.exists).ok()
+    .expect(await extractInnerText(expandableSection)).eql(content.data[0][0].expandableSection.title)
+    .expect(expandableSection.find('details[open]').exists).notOk()
+    .click(expandableSection.find('summary'))
+    .expect(expandableSection.find('details[open]').exists).ok()
+    .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
+    .eql(content.data[0][0].expandableSection.innerComponent)
+    .expect(orderUnit.exists).ok()
+    .expect(await extractInnerText(orderUnit)).eql(content.data[0][1].data);
+});
+
 test('should render the delete button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
