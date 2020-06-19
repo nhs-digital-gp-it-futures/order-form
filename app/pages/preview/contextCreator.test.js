@@ -34,5 +34,16 @@ describe('order summary preview contextCreator', () => {
       const context = getContext({ orderId: 'order-1', orderData: { description: 'Some order description' } });
       expect(context.orderDescription).toEqual('Some order description');
     });
+
+    it('should return the dateSummaryCreatedLabel', () => {
+      const context = getContext({ orderId: 'order-1', orderData: { description: 'Some order description' } });
+      expect(context.dateSummaryCreatedLabel).toEqual(manifest.dateSummaryCreatedLabel);
+    });
+
+    it('should return the dateSummaryCreated as the current date', () => {
+      Date.now = jest.fn().mockReturnValue('2020-07-19T13:41:38.838Z');
+      const context = getContext({ orderId: 'order-1', orderData: { description: 'Some order description' } });
+      expect(context.dateSummaryCreated).toEqual('19 July 2020');
+    });
   });
 });
