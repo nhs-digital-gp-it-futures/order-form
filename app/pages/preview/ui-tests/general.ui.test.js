@@ -3,6 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../config';
+import { formatDate } from '../../../helpers/dateFormatter';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/preview';
 
@@ -56,13 +57,12 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test.only('should render Preview page', async (t) => {
+test('should render Preview page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="preview-page"]');
 
   await t
-    .debug()
     .expect(page.exists).ok();
 });
 
@@ -109,7 +109,19 @@ test('should render the orderDescription', async (t) => {
 
   await t
     .expect(orderDescriptionHeading.exists).ok()
-    .expect(await extractInnerText(orderDescriptionHeading)).contains(content.orderDescriptionHeading)
+    .expect(await extractInnerText(orderDescriptionHeading)).eql(content.orderDescriptionHeading)
     .expect(orderDescription.exists).ok()
-    .expect(await extractInnerText(orderDescription)).contains('some order description');
+    .expect(await extractInnerText(orderDescription)).eql('some order description');
+});
+
+test('should render the date summary created', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const formattedCurrentDate = formatDate(new Date());
+  const dateSummaryCreated = Selector('[data-test-id="date-summary-created"]');
+
+  await t
+    .expect(dateSummaryCreated.exists).ok()
+    .expect(await extractInnerText(dateSummaryCreated)).eql(`${content.dateSummaryCreatedLabel} ${formattedCurrentDate}`);
 });

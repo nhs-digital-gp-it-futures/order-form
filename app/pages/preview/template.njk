@@ -19,10 +19,12 @@
         <h4 data-test-id="order-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ orderDescription }}</h4>
       </div>
     </div>
-
-    <div class="nhsuk-grid-column-full">
-      <div data-test-id="date-summary-created">
-        {{ dateSummaryCreatedLabel }} {{ dateSummaryCreated }}
+  
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <div data-test-id="date-summary-created">
+          <span class="nhsuk-u-font-weight-bold">{{ dateSummaryCreatedLabel }}</span> {{ dateSummaryCreated }}
+        </div>
       </div>
     </div>
   </div>
