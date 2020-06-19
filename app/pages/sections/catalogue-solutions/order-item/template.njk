@@ -51,14 +51,10 @@
           </div>
         </div>
 
-        <div data-test-id="price-table" class="nhsuk-grid-column-full">
+        <div class="nhsuk-grid-column-full">
           <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-3 bc-c-order-table__hr"/>
-          <div class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
-            {{ bcTable({
-              columnInfo: columnInfo,
-              columnClass: columnClass,
-              data: data
-            })}}
+          <div data-test-id="price-table" class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
+            {{ bcTable(addPriceTable)}}
             </div>
         </div>
 

@@ -212,44 +212,46 @@ describe('catalogue-solutions order-item page', () => {
 
   describe('table', () => {
     const context = {
-      columnInfo: [
-        {
-          data: 'Price (£)',
-        },
-        {
-          data: 'Unit of order',
-        },
-      ],
-      data: [
-        [
+      addPriceTable: {
+        columnInfo: [
           {
-            question: {
-              type: 'input',
-              id: 'price-input-id',
-              data: '100',
-            },
-            classes: 'nhsuk-input--width-10',
-            expandableSection: {
-              dataTestId: 'view-section-input-id',
-              title: 'some title',
-              innerComponent: 'some inner text',
-            },
+            data: 'Price (£)',
           },
           {
-            data: 'per month',
-            dataTestId: 'order-unit-id',
+            data: 'Unit of order',
           },
         ],
-      ],
-      columnClass: 'nhsuk-grid-column-one-half nhsuk-u-font-size-16',
+        data: [
+          [
+            {
+              question: {
+                type: 'input',
+                id: 'price-input-id',
+                data: '100',
+              },
+              classes: 'nhsuk-input--width-10',
+              expandableSection: {
+                dataTestId: 'view-section-input-id',
+                title: 'some title',
+                innerComponent: 'some inner text',
+              },
+            },
+            {
+              data: 'per month',
+              dataTestId: 'order-unit-id',
+            },
+          ],
+        ],
+        columnClass: 'nhsuk-grid-column-one-half nhsuk-u-font-size-16',
+      },
     };
 
     it('should render the table headings', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const table = $('div[data-test-id="price-table"]');
         expect(table.length).toEqual(1);
-        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.columnInfo[0].data);
-        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.columnInfo[1].data);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Price (£)');
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Unit of order');
       });
     }));
 
@@ -266,12 +268,12 @@ describe('catalogue-solutions order-item page', () => {
         expect(table.find('[data-test-id="table-headings"]').length).toEqual(1);
         expect(row.length).toEqual(1);
         expect(priceInput.length).toEqual(1);
-        expect(priceInput.val()).toEqual(context.data[0][0].question.data);
+        expect(priceInput.val()).toEqual('100');
         expect(priceInput.hasClass('nhsuk-input nhsuk-input--width-10')).toEqual(true);
-        expect(expandableSection.find('span').text().trim()).toEqual(context.data[0][0].expandableSection.title);
-        expect(expandableSection.find('.nhsuk-details__text').text().trim()).toEqual(context.data[0][0].expandableSection.innerComponent);
+        expect(expandableSection.find('span').text().trim()).toEqual('some title');
+        expect(expandableSection.find('.nhsuk-details__text').text().trim()).toEqual('some inner text');
         expect(orderUnit.length).toEqual(1);
-        expect(orderUnit.text().trim()).toEqual(context.data[0][1].data);
+        expect(orderUnit.text().trim()).toEqual('per month');
       });
     }));
   });
