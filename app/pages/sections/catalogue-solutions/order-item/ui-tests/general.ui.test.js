@@ -33,15 +33,19 @@ const selectedPriceIdState = ClientFunction(() => {
 });
 
 const selectedPrice = {
-  priceId: 1,
-  provisioningModel: 'OnDemand',
+  priceId: 2,
+  provisioningType: 'Patient', // Patient, Declarative
   type: 'flat',
-  currencyCode: 'GBP',
+  currencyCode: 'GBP', // ISO Currency Code
   itemUnit: {
-    name: 'consultation',
-    description: 'per consultation',
+    name: 'patient',
+    description: 'per patient',
   },
-  price: 0.1,
+  timeUnit: {
+    name: 'year',
+    description: 'per year',
+  },
+  price: '1.64',
 };
 
 const mocks = () => {
@@ -227,7 +231,7 @@ test('should render an expandable section for the quantity question', async (t) 
     .eql(content.questions.quantity.expandableSection.innerComponent);
 });
 
-test('should render a selectEstimationPeriod question as radio button options', async (t) => {
+test.only('should render a selectEstimationPeriod question as radio button options', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -240,9 +244,11 @@ test('should render a selectEstimationPeriod question as radio button options', 
 
     .expect(selectEstimationPeriodRadioOptions.find('input').nth(0).getAttribute('value')).eql('perMonth')
     .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('label').nth(0))).eql('Per month')
+    .expect(selectEstimationPeriodRadioOptions.find('input').nth(0).hasAttribute('checked')).notOk()
 
     .expect(selectEstimationPeriodRadioOptions.find('input').nth(1).getAttribute('value')).eql('perYear')
-    .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('label').nth(1))).eql('Per year');
+    .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('label').nth(1))).eql('Per year')
+    .expect(selectEstimationPeriodRadioOptions.find('input').nth(1).hasAttribute('checked')).ok();
 });
 
 test('should render an expandable section for the select estimation period', async (t) => {
