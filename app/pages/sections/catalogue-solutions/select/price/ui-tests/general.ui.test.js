@@ -141,7 +141,7 @@ const selectedPriceIdState = ClientFunction(() => {
 
 const mocks = () => {
   nock(solutionsApiUrl)
-    .get('/api/v1/solutions/solution-1/pricing')
+    .get('/api/v1/solutions/solution-1/prices')
     .reply(200, mockSolutionPricing);
 };
 

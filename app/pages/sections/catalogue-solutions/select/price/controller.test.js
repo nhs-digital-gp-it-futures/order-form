@@ -63,7 +63,7 @@ describe('select-price controller', () => {
       await findSolutionPrices({ accessToken, solutionId });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${solutionsApiUrl}/api/v1/solutions/${solutionId}/pricing`,
+        endpoint: `${solutionsApiUrl}/api/v1/solutions/${solutionId}/prices`,
         accessToken: 'access_token',
         logger,
       });
