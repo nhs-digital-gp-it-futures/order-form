@@ -1,6 +1,5 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
-import { logger } from '../../../../logger';
 
 export const addData = ((selectedPrice) => {
   manifest.questions.estimationPeriod.options.forEach((option, i) => {
