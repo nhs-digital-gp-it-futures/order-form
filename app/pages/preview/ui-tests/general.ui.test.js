@@ -169,3 +169,31 @@ test('should render the commencement date label only when data not provided', as
     .expect(commencementDate.exists).ok()
     .expect(await extractInnerText(commencementDate)).eql(`${content.commencementDateLabel}`);
 });
+
+test('should render the one off cost heading and description', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const oneOffCostHeading = Selector('h3[data-test-id="one-off-cost-heading"]');
+  const oneOffCostDescription = Selector('h4[data-test-id="one-off-cost-description"]');
+
+  await t
+    .expect(oneOffCostHeading.exists).ok()
+    .expect(await extractInnerText(oneOffCostHeading)).eql(content.oneOffCostHeading)
+    .expect(oneOffCostDescription.exists).ok()
+    .expect(await extractInnerText(oneOffCostDescription)).eql(content.oneOffCostDescription);
+});
+
+test('should render the recurring cost heading and description', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const recurringCostHeading = Selector('h3[data-test-id="recurring-cost-heading"]');
+  const recurringCostDescription = Selector('h4[data-test-id="recurring-cost-description"]');
+
+  await t
+    .expect(recurringCostHeading.exists).ok()
+    .expect(await extractInnerText(recurringCostHeading)).eql(content.recurringCostHeading)
+    .expect(recurringCostDescription.exists).ok()
+    .expect(await extractInnerText(recurringCostDescription)).eql(content.recurringCostDescription);
+});
