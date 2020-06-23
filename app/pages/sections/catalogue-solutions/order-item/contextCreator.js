@@ -1,14 +1,16 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
 
-export const addData = ((selectedPrice) => {
+export const populateEstimationPeriod = ((selectedPrice) => {
   manifest.questions.estimationPeriod.options.forEach((option, i) => {
     manifest.questions.estimationPeriod.options[i]
       .checked = option.text.toLowerCase() === selectedPrice
         .timeUnit.description.toLowerCase()
         ? true : undefined;
   });
+});
 
+export const populateTable = ((selectedPrice) => {
   manifest.addPriceTable.data = [
     [
       {
@@ -35,7 +37,8 @@ export const addData = ((selectedPrice) => {
 export const getContext = ({
   orderId, solutionName, serviceRecipientName, odsCode, selectedPrice,
 }) => {
-  addData(selectedPrice);
+  populateEstimationPeriod(selectedPrice);
+  populateTable(selectedPrice);
 
   return ({
     ...manifest,
