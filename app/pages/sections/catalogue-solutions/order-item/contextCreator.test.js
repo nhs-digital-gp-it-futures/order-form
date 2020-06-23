@@ -6,9 +6,9 @@ const serviceRecipientName = 'service-recipient-name';
 const odsCode = 'ods-code';
 const selectedPrice = {
   priceId: 2,
-  provisioningType: 'Patient', // Patient, Declarative
+  provisioningType: 'Patient',
   type: 'flat',
-  currencyCode: 'GBP', // ISO Currency Code
+  currencyCode: 'GBP',
   itemUnit: {
     name: 'patient',
     description: 'per patient',
@@ -70,7 +70,6 @@ describe('catalogue-solutions order-item contextCreator', () => {
             {
               value: 'perMonth',
               text: 'Per month',
-              checked: undefined,
             },
             {
               value: 'perYear',

@@ -2,41 +2,25 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
 import { getSectionErrorContext } from '../../getSectionErrorContext';
 
-export const addData = ((selectedPrice) => {
+export const populateEstimationPeriod = ((selectedPrice) => {
   manifest.questions.estimationPeriod.options.forEach((option, i) => {
     manifest.questions.estimationPeriod.options[i]
       .checked = option.text.toLowerCase() === selectedPrice
         .timeUnit.description.toLowerCase()
         ? true : undefined;
   });
+});
 
-  manifest.addPriceTable.data = [
-    [
-      {
-        question: {
-          type: 'input',
-          id: 'price-input-id',
-          data: selectedPrice.price,
-        },
-        classes: 'nhsuk-input--width-10',
-        expandableSection: {
-          dataTestId: 'view-section-input-id',
-          title: 'What price should I enter?',
-          innerComponent: 'You can change the list price if you’ve agreed a different rate with the supplier.',
-        },
-      },
-      {
-        data: selectedPrice.itemUnit.description,
-        dataTestId: 'order-unit-id',
-      },
-    ],
-  ];
+export const populateTable = ((selectedPrice) => {
+  manifest.addPriceTable.data[0][0].question.data = selectedPrice.price;
+  manifest.addPriceTable.data[0][1].data = selectedPrice.itemUnit.description;
 });
 
 export const getContext = ({
   orderId, solutionName, serviceRecipientName, odsCode, selectedPrice,
 }) => {
-  addData(selectedPrice);
+  populateEstimationPeriod(selectedPrice);
+  populateTable(selectedPrice);
 
   return ({
     ...manifest,

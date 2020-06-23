@@ -34,9 +34,9 @@ const selectedPriceIdState = ClientFunction(() => {
 
 const selectedPrice = {
   priceId: 2,
-  provisioningType: 'Patient', // Patient, Declarative
+  provisioningType: 'Patient',
   type: 'flat',
-  currencyCode: 'GBP', // ISO Currency Code
+  currencyCode: 'GBP',
   itemUnit: {
     name: 'patient',
     description: 'per patient',
@@ -231,7 +231,7 @@ test('should render an expandable section for the quantity question', async (t) 
     .eql(content.questions.quantity.expandableSection.innerComponent);
 });
 
-test.only('should render a selectEstimationPeriod question as radio button options', async (t) => {
+test('should render a selectEstimationPeriod question as radio button options', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

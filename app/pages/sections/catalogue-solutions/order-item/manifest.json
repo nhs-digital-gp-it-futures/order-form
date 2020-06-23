@@ -46,6 +46,25 @@
         "data": "Unit of order"
       }
     ],
+    "data": [
+      [
+        {
+          "question": {
+            "type": "input",
+            "id": "price-input-id"
+          },
+          "classes": "nhsuk-input--width-10",
+          "expandableSection": {
+            "dataTestId": "view-section-input-id",
+            "title": "What price should I enter?",
+            "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
+          }
+        },
+        {
+          "dataTestId": "order-unit-id"
+        }
+      ]
+    ],
     "columnClass": "nhsuk-grid-column-one-half nhsuk-u-font-size-16"
   },
   "errorMessages": {
