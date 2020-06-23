@@ -77,4 +77,28 @@ describe('preview page', () => {
       expect(dateSummaryCreated.text().trim()).toContain(`${context.dateSummaryCreatedLabel} ${context.dateSummaryCreated}`);
     });
   }));
+
+  describe('Call-off Ordering Party and Supplier table', () => {
+    const context = {
+      callOffAndSupplierTable: {
+        columnInfo: [
+          {
+            data: 'Call-off Ordering Party',
+          },
+          {
+            data: 'Supplier',
+          },
+        ],
+      },
+    };
+
+    it('should render the table headings', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="calloff-and-supplier"]');
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Call-off Ordering Party');
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Supplier');
+      });
+    }));
+  });
 });

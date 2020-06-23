@@ -1,5 +1,6 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-table/macro.njk' import bcTable %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="preview-page">
@@ -27,5 +28,18 @@
         </div>
       </div>
     </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <div data-test-id="calloff-and-supplier"> 
+          {{ bcTable({
+            columnInfo: callOffAndSupplierTable.columnInfo,
+            columnClass: callOffAndSupplierTable.columnClass,
+            data: callOffAndSupplierTable.items
+          }) }}
+        </div>
+      </div>
+    </div>
+
   </div>
 {% endblock %}
