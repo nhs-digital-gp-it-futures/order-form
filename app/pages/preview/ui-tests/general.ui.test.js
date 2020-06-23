@@ -143,7 +143,7 @@ test('should render the Call-off ordering party and supplier table with the colu
     .expect(await extractInnerText(supplierColumnHeading)).eql('Supplier');
 });
 
-test('should not render the Call-off ordering party and supplier details in the table when not provided', async (t) => {
+test('should not render the Call-off ordering party and supplier details in the table when data not provided', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -157,4 +157,15 @@ test('should not render the Call-off ordering party and supplier details in the 
     .expect(calloffAndSupplierDetails.exists).ok()
     .expect(calloffPartyDetails.exists).notOk()
     .expect(supplierDetails.exists).notOk();
+});
+
+test('should render the commencement date label only when data not provided', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const commencementDate = Selector('[data-test-id="commencement-date"]');
+
+  await t
+    .expect(commencementDate.exists).ok()
+    .expect(await extractInnerText(commencementDate)).eql(`${content.commencementDateLabel}`);
 });

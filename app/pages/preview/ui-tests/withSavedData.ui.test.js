@@ -1,6 +1,7 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
+import content from '../manifest.json';
 import { orderApiUrl } from '../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/preview';
@@ -42,6 +43,7 @@ const mockOrder = {
       lastName: 'SuppLastName',
     },
   },
+  commencementDate: '2020-02-01T00:00:00',
 };
 
 const mocks = () => {
@@ -100,4 +102,15 @@ test('should render the Call-off ordering party and supplier details in the tabl
     .expect(await extractInnerText(supplierDetails.find('div').nth(4))).eql('Supplier Second Line')
     .expect(await extractInnerText(supplierDetails.find('div').nth(5))).eql('Supplier Town')
     .expect(await extractInnerText(supplierDetails.find('div').nth(6))).eql('SU12 1AA');
+});
+
+test('should render the commencement date label and date when data is provided', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const commencementDate = Selector('[data-test-id="commencement-date"]');
+
+  await t
+    .expect(commencementDate.exists).ok()
+    .expect(await extractInnerText(commencementDate)).eql(`${content.commencementDateLabel} 1 February 2020`);
 });
