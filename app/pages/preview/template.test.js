@@ -63,4 +63,18 @@ describe('preview page', () => {
       expect(orderDescription.text().trim()).toContain(context.orderDescription);
     });
   }));
+
+  it('should render the order summary created date', componentTester(setup, (harness) => {
+    const context = {
+      dateSummaryCreatedLabel: manifest.dateSummaryCreatedLabel,
+      dateSummaryCreated: '19 June 2020',
+    };
+
+    harness.request(context, ($) => {
+      const dateSummaryCreated = $('[data-test-id="date-summary-created"]');
+
+      expect(dateSummaryCreated.length).toEqual(1);
+      expect(dateSummaryCreated.text().trim()).toContain(`${context.dateSummaryCreatedLabel} ${context.dateSummaryCreated}`);
+    });
+  }));
 });

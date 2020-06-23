@@ -2,5 +2,6 @@
   "backLinkText": "Go back",
   "title": "Order summary for",
   "description": "Review your order before submitting. Once submitted, you'll be unable to make changes.",
-  "orderDescriptionHeading": "Order description"
+  "orderDescriptionHeading": "Order description",
+  "dateSummaryCreatedLabel": "Date order summary created:"
 }
