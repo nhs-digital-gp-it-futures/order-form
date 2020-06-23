@@ -2,7 +2,7 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 import { formatDate } from '../../helpers/dateFormatter';
 
-const generateCallOffColumn = ({ orderPartyData }) => ({
+const generateCallOffPartyDetails = ({ orderPartyData }) => ({
   multiLine: {
     data: [
       `${orderPartyData.primaryContact.firstName} ${orderPartyData.primaryContact.lastName}`,
@@ -23,7 +23,7 @@ const generateCallOffColumn = ({ orderPartyData }) => ({
   },
 });
 
-const generateSupplierColumn = ({ supplierData }) => ({
+const generateSupplierDetails = ({ supplierData }) => ({
   multiLine: {
     data: [
       `${supplierData.primaryContact.firstName} ${supplierData.primaryContact.lastName}`,
@@ -43,12 +43,12 @@ const generateSupplierColumn = ({ supplierData }) => ({
   },
 });
 
-const generateCallOffAndSuppliersItemsTable = ({
+const generateCallOffAndSupplierDetailsTable = ({
   callOffAndSupplierTable, orderPartyData, supplierData,
 }) => {
   const columns = [];
-  if (orderPartyData) columns.push(generateCallOffColumn({ orderPartyData }));
-  if (supplierData) columns.push(generateSupplierColumn({ supplierData }));
+  if (orderPartyData) columns.push(generateCallOffPartyDetails({ orderPartyData }));
+  if (supplierData) columns.push(generateSupplierDetails({ supplierData }));
 
   return ({
     ...callOffAndSupplierTable,
@@ -63,7 +63,7 @@ export const getContext = ({ orderId, orderData }) => ({
   title: `${manifest.title} ${orderId}`,
   orderDescription: orderData.description,
   dateSummaryCreated: getCurrentDate(),
-  callOffAndSupplierTable: generateCallOffAndSuppliersItemsTable({
+  callOffAndSupplierTable: generateCallOffAndSupplierDetailsTable({
     callOffAndSupplierTable: manifest.callOffAndSupplierTable,
     orderPartyData: orderData.orderParty,
     supplierData: orderData.supplier,
