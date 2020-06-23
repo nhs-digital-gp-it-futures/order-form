@@ -164,4 +164,18 @@ describe('preview page', () => {
       });
     }));
   });
+
+  it('should render the commencement date', componentTester(setup, (harness) => {
+    const context = {
+      commencementDateLabel: manifest.commencementDateLabel,
+      commencementDate: '19 June 2020',
+    };
+
+    harness.request(context, ($) => {
+      const commencementDate = $('[data-test-id="commencement-date"]');
+
+      expect(commencementDate.length).toEqual(1);
+      expect(commencementDate.text().trim()).toContain(`${context.commencementDateLabel} ${context.commencementDate}`);
+    });
+  }));
 });
