@@ -47,5 +47,93 @@ describe('order summary preview contextCreator', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
       expect(context.dateSummaryCreated).toEqual('19 July 2020');
     });
+
+    it('should return the callOffAndSupplierTable colummInfo and columnClass', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.callOffAndSupplierTable.columnInfo)
+        .toEqual(manifest.callOffAndSupplierTable.columnInfo);
+      expect(context.callOffAndSupplierTable.columnClass)
+        .toEqual(manifest.callOffAndSupplierTable.columnClass);
+    });
+
+    it('should return the callOffAndSupplierTable without items if orderData is empty', () => {
+      const context = getContext({ orderId: 'order-1', orderData: {} });
+      expect(context.callOffAndSupplierTable.items).toEqual([[]]);
+    });
+
+    it('should return the callOffAndSupplierTable with items when order items are provided', () => {
+      const expectedContext = {
+        callOffAndSupplierTable: {
+          ...manifest.callOffAndSupplierTable,
+          items: [
+            [
+              {
+                multiLine: {
+                  data: [
+                    'CallOffFirstName CallOffLastName',
+                    'Call off org Name',
+                    'A01',
+                    '',
+                    'Calloff First Line',
+                    'Calloff Second Line',
+                    'Calloff Town',
+                    'CO12 1AA',
+                  ],
+                  dataTestId: 'call-off-party',
+                },
+              },
+              {
+                multiLine: {
+                  data: [
+                    'SuppFirstName SuppLastName',
+                    'Supplier Name',
+                    '',
+                    'Supplier First Line',
+                    'Supplier Second Line',
+                    'Supplier Town',
+                    'SU12 1AA',
+                  ],
+                  dataTestId: 'supplier',
+                },
+              },
+            ],
+          ],
+        },
+      };
+
+      const mockOrderDataWithCallOffAndSupplier = {
+        ...mockOrderData,
+        orderParty: {
+          name: 'Call off org Name',
+          odsCode: 'A01',
+          address: {
+            line1: 'Calloff First Line',
+            line2: 'Calloff Second Line',
+            town: 'Calloff Town',
+            postcode: 'CO12 1AA',
+          },
+          primaryContact: {
+            firstName: 'CallOffFirstName',
+            lastName: 'CallOffLastName',
+          },
+        },
+        supplier: {
+          name: 'Supplier Name',
+          address: {
+            line1: 'Supplier First Line',
+            line2: 'Supplier Second Line',
+            town: 'Supplier Town',
+            postcode: 'SU12 1AA',
+          },
+          primaryContact: {
+            firstName: 'SuppFirstName',
+            lastName: 'SuppLastName',
+          },
+        },
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderDataWithCallOffAndSupplier });
+      expect(context.callOffAndSupplierTable).toEqual(expectedContext.callOffAndSupplierTable);
+    });
   });
 });
