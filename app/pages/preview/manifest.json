@@ -15,5 +15,9 @@
     ],
     "columnClass": "nhsuk-grid-column-one-half nhsuk-u-font-size-16"
   },
-  "commencementDateLabel": "Commencement date of the Call-off Agreement:"
+  "commencementDateLabel": "Commencement date of the Call-off Agreement:",
+  "oneOffCostHeading": "Order items (one-off cost)",
+  "oneOffCostDescription": "The following items carry a one-off cost for the duration of this Call-off Agreement. They're the Associated Services in this order you can use as and when required",
+  "recurringCostHeading": "Order items (recurring cost)",
+  "recurringCostDescription": "The following items carry a recurring annual cost for the duration of this Call-off Agreement. They're the Catalogue Solutions, Additional Services and Associated Services in this order that you'll be charged for at a monthly rate."
 }

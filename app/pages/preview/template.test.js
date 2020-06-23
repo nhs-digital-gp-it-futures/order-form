@@ -178,4 +178,38 @@ describe('preview page', () => {
       expect(commencementDate.text().trim()).toContain(`${context.commencementDateLabel} ${context.commencementDate}`);
     });
   }));
+
+  it('should render the one off cost heading and description', componentTester(setup, (harness) => {
+    const context = {
+      oneOffCostHeading: manifest.oneOffCostHeading,
+      oneOffCostDescription: manifest.oneOffCostDescription,
+    };
+
+    harness.request(context, ($) => {
+      const oneOffCostHeading = $('h3[data-test-id="one-off-cost-heading"]');
+      const oneOffCostDescription = $('h4[data-test-id="one-off-cost-description"]');
+
+      expect(oneOffCostHeading.length).toEqual(1);
+      expect(oneOffCostHeading.text().trim()).toContain(context.oneOffCostHeading);
+      expect(oneOffCostDescription.length).toEqual(1);
+      expect(oneOffCostDescription.text().trim()).toContain(context.oneOffCostDescription);
+    });
+  }));
+
+  it('should render the recurring cost heading and description', componentTester(setup, (harness) => {
+    const context = {
+      recurringCostHeading: manifest.recurringCostHeading,
+      recurringCostDescription: manifest.recurringCostDescription,
+    };
+
+    harness.request(context, ($) => {
+      const recurringCostHeading = $('h3[data-test-id="recurring-cost-heading"]');
+      const recurringCostDescription = $('h4[data-test-id="recurring-cost-description"]');
+
+      expect(recurringCostHeading.length).toEqual(1);
+      expect(recurringCostHeading.text().trim()).toContain(context.recurringCostHeading);
+      expect(recurringCostDescription.length).toEqual(1);
+      expect(recurringCostDescription.text().trim()).toContain(context.recurringCostDescription);
+    });
+  }));
 });
