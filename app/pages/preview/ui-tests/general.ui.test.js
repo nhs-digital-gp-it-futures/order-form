@@ -142,3 +142,19 @@ test('should render the Call-off ordering party and supplier table with the colu
     .expect(supplierColumnHeading.exists).ok()
     .expect(await extractInnerText(supplierColumnHeading)).eql('Supplier');
 });
+
+test('should not render the Call-off ordering party and supplier details in the table when not provided', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const calloffAndSupplierTable = Selector('[data-test-id="calloff-and-supplier"]');
+  const calloffAndSupplierDetails = calloffAndSupplierTable.find('[data-test-id="table-row-0"]');
+  const calloffPartyDetails = calloffAndSupplierDetails.find('div[data-test-id="call-off-party"]');
+  const supplierDetails = calloffAndSupplierDetails.find('div[data-test-id="supplier"]');
+
+  await t
+    .expect(calloffAndSupplierDetails.exists).ok()
+    .expect(calloffAndSupplierDetails.exists).ok()
+    .expect(calloffPartyDetails.exists).notOk()
+    .expect(supplierDetails.exists).notOk();
+});
