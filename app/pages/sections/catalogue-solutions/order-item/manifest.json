@@ -51,8 +51,7 @@
         {
           "question": {
             "type": "input",
-            "id": "price-input-id",
-            "data": "100"
+            "id": "price-input-id"
           },
           "classes": "nhsuk-input--width-10",
           "expandableSection": {
@@ -61,7 +60,7 @@
             "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
           }
         },
-        { "data": "per month",
+        {
           "dataTestId": "order-unit-id"
         }
       ]
