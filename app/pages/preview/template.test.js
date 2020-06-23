@@ -82,12 +82,8 @@ describe('preview page', () => {
     const context = {
       callOffAndSupplierTable: {
         columnInfo: [
-          {
-            data: 'Call-off Ordering Party',
-          },
-          {
-            data: 'Supplier',
-          },
+          { data: 'Call-off Ordering Party' },
+          { data: 'Supplier' },
         ],
         items: [
           [
@@ -212,4 +208,32 @@ describe('preview page', () => {
       expect(recurringCostDescription.text().trim()).toContain(context.recurringCostDescription);
     });
   }));
+
+  describe('One off cost table', () => {
+    const context = {
+      oneOffCostTable: {
+        columnInfo: [
+          { data: 'Recipient name (ODS code)' },
+          { data: 'Item ID' },
+          { data: 'Item name' },
+          { data: 'Price unit of order (£)' },
+          { data: 'Quantity' },
+          { data: 'Item cost (£)' },
+        ],
+      },
+    };
+
+    it('should render the table headings', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="one-off-costs-table"]');
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Recipient name (ODS code)');
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Item ID');
+        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual('Item name');
+        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual('Price unit of order (£)');
+        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual('Quantity');
+        expect(table.find('[data-test-id="column-heading-5"]').text().trim()).toEqual('Item cost (£)');
+      });
+    }));
+  });
 });

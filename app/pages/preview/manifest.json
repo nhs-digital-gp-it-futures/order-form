@@ -18,6 +18,29 @@
   "commencementDateLabel": "Commencement date of the Call-off Agreement:",
   "oneOffCostHeading": "Order items (one-off cost)",
   "oneOffCostDescription": "The following items carry a one-off cost for the duration of this Call-off Agreement. They're the Associated Services in this order you can use as and when required",
+  "oneOffCostTable": {
+    "columnInfo": [
+      {
+        "data": "Recipient name (ODS code)"
+      },
+      {
+        "data": "Item ID"
+      },
+      {
+        "data": "Item name"
+      },
+      {
+        "data": "Price unit of order (£)"
+      },
+      {
+        "data": "Quantity"
+      },
+      {
+        "data": "Item cost (£)"
+      }
+    ],
+    "columnClass": "nhsuk-u-font-size-16"
+  },
   "recurringCostHeading": "Order items (recurring cost)",
   "recurringCostDescription": "The following items carry a recurring annual cost for the duration of this Call-off Agreement. They're the Catalogue Solutions, Additional Services and Associated Services in this order that you'll be charged for at a monthly rate."
 }
