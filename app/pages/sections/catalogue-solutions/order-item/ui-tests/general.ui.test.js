@@ -33,15 +33,19 @@ const selectedPriceIdState = ClientFunction(() => {
 });
 
 const selectedPrice = {
-  priceId: 1,
-  provisioningModel: 'OnDemand',
+  priceId: 2,
+  provisioningType: 'Patient',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'consultation',
-    description: 'per consultation',
+    name: 'patient',
+    description: 'per patient',
   },
-  price: 0.1,
+  timeUnit: {
+    name: 'year',
+    description: 'per year',
+  },
+  price: '1.64',
 };
 
 const mocks = () => {
@@ -240,9 +244,11 @@ test('should render a selectEstimationPeriod question as radio button options', 
 
     .expect(selectEstimationPeriodRadioOptions.find('input').nth(0).getAttribute('value')).eql('perMonth')
     .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('label').nth(0))).eql('Per month')
+    .expect(selectEstimationPeriodRadioOptions.find('input').nth(0).hasAttribute('checked')).notOk()
 
     .expect(selectEstimationPeriodRadioOptions.find('input').nth(1).getAttribute('value')).eql('perYear')
-    .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('label').nth(1))).eql('Per year');
+    .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('label').nth(1))).eql('Per year')
+    .expect(selectEstimationPeriodRadioOptions.find('input').nth(1).hasAttribute('checked')).ok();
 });
 
 test('should render an expandable section for the select estimation period', async (t) => {
@@ -259,6 +265,47 @@ test('should render an expandable section for the select estimation period', asy
     .expect(expandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
     .eql(content.questions.estimationPeriod.expandableSection.innerComponent);
+});
+
+test('should render the price table headings', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const priceTable = Selector('div[data-test-id="price-table"]');
+  const priceColumnHeading = priceTable.find('[data-test-id="column-heading-0"]');
+  const unitColumnHeading = priceTable.find('[data-test-id="column-heading-1"]');
+
+  await t
+    .expect(priceTable.exists).ok()
+    .expect(priceColumnHeading.exists).ok()
+    .expect(await extractInnerText(priceColumnHeading)).eql(content.addPriceTable.columnInfo[0].data)
+    .expect(unitColumnHeading.exists).ok()
+    .expect(await extractInnerText(unitColumnHeading)).eql(content.addPriceTable.columnInfo[1].data);
+});
+
+test('should render the price table content', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="price-table"]');
+  const row = table.find('[data-test-id="table-row-0"]');
+  const priceInput = row.find('[data-test-id="question-price-input-id"] input');
+  const expandableSection = row.find('[data-test-id="view-section-input-id"]');
+  const orderUnit = row.find('div[data-test-id="order-unit-id"]');
+
+  await t
+    .expect(row.exists).ok()
+    .expect(priceInput.exists).ok()
+    .expect(priceInput.getAttribute('value')).eql(content.addPriceTable.data[0][0].question.data)
+    .expect(expandableSection.exists).ok()
+    .expect(await extractInnerText(expandableSection)).eql(content.addPriceTable.data[0][0].expandableSection.title)
+    .expect(expandableSection.find('details[open]').exists).notOk()
+    .click(expandableSection.find('summary'))
+    .expect(expandableSection.find('details[open]').exists).ok()
+    .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
+    .eql(content.addPriceTable.data[0][0].expandableSection.innerComponent)
+    .expect(orderUnit.exists).ok()
+    .expect(await extractInnerText(orderUnit)).eql(content.addPriceTable.data[0][1].data);
 });
 
 test('should render the delete button', async (t) => {

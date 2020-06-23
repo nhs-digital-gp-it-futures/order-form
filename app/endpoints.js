@@ -11,7 +11,7 @@ const endpoints = {
     getSupplier: options => `${solutionsApiUrl}/api/v1/suppliers/${options.supplierId}`,
     getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
     getSolution: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}`,
-    getSolutionPricing: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}/pricing`,
+    getSolutionPricing: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}/prices`,
     getSelectedPrice: options => `${solutionsApiUrl}/api/v1/prices/${options.selectedPriceId}`,
   },
   dapi: {
