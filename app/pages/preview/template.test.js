@@ -225,7 +225,7 @@ describe('preview page', () => {
 
     it('should render the table headings', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="one-off-costs-table"]');
+        const table = $('div[data-test-id="one-off-cost-table"]');
         expect(table.length).toEqual(1);
         expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Recipient name (ODS code)');
         expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Item ID');

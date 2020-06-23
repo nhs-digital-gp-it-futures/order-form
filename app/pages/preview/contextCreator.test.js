@@ -170,5 +170,13 @@ describe('order summary preview contextCreator', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
       expect(context.recurringCostDescription).toEqual(manifest.recurringCostDescription);
     });
+
+    it('should return the oneOffCostTable colummInfo and columnClass', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.oneOffCostTable.columnInfo)
+        .toEqual(manifest.oneOffCostTable.columnInfo);
+      expect(context.oneOffCostTable.columnClass)
+        .toEqual(manifest.oneOffCostTable.columnClass);
+    });
   });
 });
