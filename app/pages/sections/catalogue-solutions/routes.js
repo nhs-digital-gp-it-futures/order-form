@@ -6,7 +6,7 @@ import {
   getCatalogueSolutionsPageContext,
   putCatalogueSolutions,
 } from './catalogue-solutions/controller';
-import { getOrderItemContext } from './order-item/controller';
+import { getOrderItemContext, validateOrderItemForm } from './order-item/controller';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 
 
@@ -54,6 +54,26 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
     return res.render('pages/sections/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    const response = validateOrderItemForm({ data: req.body });
+    if (response.success) {
+      sessionManager.saveToSession({ req, key: 'selectedPriceId', value: req.body.selectSolutionPrice });
+      logger.info('redirecting catalogue solutions select recipient page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipient`);
+    }
+
+    const solutionPrices = sessionManager.getFromSession({ req, key: 'solutionPrices' });
+    const context = await getSolutionPriceErrorPageContext({
+      orderId,
+      solutionPrices,
+      validationErrors: response.errors,
+    });
+
+    return res.render('pages/sections/catalogue-solutions/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;

@@ -48,6 +48,9 @@
     ],
     "columnClass": "nhsuk-grid-column-one-half nhsuk-u-font-size-16"
   },
+  "errorMessages": {
+    "quantityRequired": "Enter a quantity"
+  },
   "deleteButtonText": "Delete",
   "saveButtonText": "Save"
 }

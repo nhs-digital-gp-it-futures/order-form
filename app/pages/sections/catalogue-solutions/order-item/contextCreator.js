@@ -1,5 +1,6 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
+import { getSectionErrorContext } from '../../getSectionErrorContext';
 
 export const addData = ((selectedPrice) => {
   manifest.questions.estimationPeriod.options.forEach((option, i) => {
@@ -43,4 +44,15 @@ export const getContext = ({
     deleteButtonHref: '#',
     backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/recipient`,
   });
+};
+
+export const getErrorContext = (params) => {
+  const updatedManifest = getContext({
+    orderId: params.orderId,
+    solutionPrices: params.solutionPrices,
+  });
+
+  return {
+    ...getSectionErrorContext({ ...params, manifest: updatedManifest }),
+  };
 };

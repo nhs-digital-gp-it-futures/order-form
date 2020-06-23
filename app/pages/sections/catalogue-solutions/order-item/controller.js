@@ -1,5 +1,5 @@
 import { getData } from 'buying-catalogue-library';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
 import { getSolution } from '../select/recipient/controller';
@@ -34,4 +34,20 @@ export const getOrderItemContext = async ({
   return getContext({
     orderId, solutionName, serviceRecipientName, odsCode: selectedRecipientId, selectedPrice,
   });
+};
+
+export const getOrderItemErrorPageContext = params => getErrorContext(params);
+
+export const validateOrderItemForm = ({ data }) => {
+  if (data.quantity && data.selectSolutionPrice.trim().length > 0) {
+    return { success: true };
+  }
+
+  const errors = [
+    {
+      field: 'quantity',
+      id: 'quantityRequired',
+    },
+  ];
+  return { success: false, errors };
 };
