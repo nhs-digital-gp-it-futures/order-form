@@ -135,5 +135,20 @@ describe('order summary preview contextCreator', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderDataWithCallOffAndSupplier });
       expect(context.callOffAndSupplierTable).toEqual(expectedContext.callOffAndSupplierTable);
     });
+
+    it('should return the commencementDateLabel', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.commencementDateLabel).toEqual(manifest.commencementDateLabel);
+    });
+
+    it('should return the commencementDate', () => {
+      const mockOrderDataWithCallOffAndSupplier = {
+        ...mockOrderData,
+        commencementDate: '2020-02-01T00:00:00',
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderDataWithCallOffAndSupplier });
+      expect(context.commencementDate).toEqual('1 February 2020');
+    });
   });
 });

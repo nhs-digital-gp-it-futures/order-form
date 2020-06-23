@@ -68,5 +68,6 @@ export const getContext = ({ orderId, orderData }) => ({
     orderPartyData: orderData.orderParty,
     supplierData: orderData.supplier,
   }),
+  commencementDate: formatDate(orderData.commencementDate),
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
 });
