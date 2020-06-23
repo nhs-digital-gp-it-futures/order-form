@@ -125,3 +125,20 @@ test('should render the date summary created', async (t) => {
     .expect(dateSummaryCreated.exists).ok()
     .expect(await extractInnerText(dateSummaryCreated)).eql(`${content.dateSummaryCreatedLabel} ${formattedCurrentDate}`);
 });
+
+test('should render the Call-off ordering party and supplier table with the column headings', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const calloffAndSupplierTable = Selector('[data-test-id="calloff-and-supplier"]');
+  const calloffColumnHeading = calloffAndSupplierTable.find('[data-test-id="column-heading-0"]');
+  const supplierColumnHeading = calloffAndSupplierTable.find('[data-test-id="column-heading-1"]');
+
+  await t
+    .expect(calloffAndSupplierTable.exists).ok()
+    .expect(calloffColumnHeading.exists).ok()
+    .expect(await extractInnerText(calloffColumnHeading)).eql('Call-off Ordering Party')
+
+    .expect(supplierColumnHeading.exists).ok()
+    .expect(await extractInnerText(supplierColumnHeading)).eql('Supplier');
+});
