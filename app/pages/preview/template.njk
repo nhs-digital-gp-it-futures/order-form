@@ -1,5 +1,6 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-table/macro.njk' import bcTable %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="preview-page">
@@ -20,12 +21,33 @@
       </div>
     </div>
   
-    <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
       <div class="nhsuk-grid-column-full">
         <div data-test-id="date-summary-created">
           <span class="nhsuk-u-font-weight-bold">{{ dateSummaryCreatedLabel }}</span> {{ dateSummaryCreated }}
         </div>
       </div>
     </div>
+
+    <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
+      <div class="nhsuk-grid-column-full">
+        <div data-test-id="calloff-and-supplier"> 
+          {{ bcTable({
+            columnInfo: callOffAndSupplierTable.columnInfo,
+            columnClass: callOffAndSupplierTable.columnClass,
+            data: callOffAndSupplierTable.items
+          }) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
+      <div class="nhsuk-grid-column-full">
+        <div data-test-id="commencement-date">
+          <span class="nhsuk-u-font-weight-bold">{{ commencementDateLabel }}</span> {{ commencementDate }}
+        </div>
+      </div>
+    </div>
+
   </div>
 {% endblock %}

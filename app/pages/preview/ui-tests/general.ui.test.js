@@ -125,3 +125,47 @@ test('should render the date summary created', async (t) => {
     .expect(dateSummaryCreated.exists).ok()
     .expect(await extractInnerText(dateSummaryCreated)).eql(`${content.dateSummaryCreatedLabel} ${formattedCurrentDate}`);
 });
+
+test('should render the Call-off ordering party and supplier table with the column headings', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const calloffAndSupplierTable = Selector('[data-test-id="calloff-and-supplier"]');
+  const calloffColumnHeading = calloffAndSupplierTable.find('[data-test-id="column-heading-0"]');
+  const supplierColumnHeading = calloffAndSupplierTable.find('[data-test-id="column-heading-1"]');
+
+  await t
+    .expect(calloffAndSupplierTable.exists).ok()
+    .expect(calloffColumnHeading.exists).ok()
+    .expect(await extractInnerText(calloffColumnHeading)).eql('Call-off Ordering Party')
+
+    .expect(supplierColumnHeading.exists).ok()
+    .expect(await extractInnerText(supplierColumnHeading)).eql('Supplier');
+});
+
+test('should not render the Call-off ordering party and supplier details in the table when data not provided', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const calloffAndSupplierTable = Selector('[data-test-id="calloff-and-supplier"]');
+  const calloffAndSupplierDetails = calloffAndSupplierTable.find('[data-test-id="table-row-0"]');
+  const calloffPartyDetails = calloffAndSupplierDetails.find('div[data-test-id="call-off-party"]');
+  const supplierDetails = calloffAndSupplierDetails.find('div[data-test-id="supplier"]');
+
+  await t
+    .expect(calloffAndSupplierDetails.exists).ok()
+    .expect(calloffAndSupplierDetails.exists).ok()
+    .expect(calloffPartyDetails.exists).notOk()
+    .expect(supplierDetails.exists).notOk();
+});
+
+test('should render the commencement date label only when data not provided', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const commencementDate = Selector('[data-test-id="commencement-date"]');
+
+  await t
+    .expect(commencementDate.exists).ok()
+    .expect(await extractInnerText(commencementDate)).eql(`${content.commencementDateLabel}`);
+});
