@@ -184,6 +184,41 @@ test('should render the one off cost heading and description', async (t) => {
     .expect(await extractInnerText(oneOffCostDescription)).eql(content.oneOffCostDescription);
 });
 
+test.only('should render the one off cost table with the column headings', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const oneOffCostTable = Selector('[data-test-id="one-off-cost-table"]');
+  const recipientNameColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-0"]');
+  const itemIdColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-1"]');
+  const itemNameColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-2"]');
+  const priceUnitColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-3"]');
+  const quantityColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-4"]');
+  const itemCostColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-5"]');
+
+  await t
+    .debug()
+    .expect(oneOffCostTable.exists).ok()
+
+    .expect(recipientNameColumnHeading.exists).ok()
+    .expect(await extractInnerText(recipientNameColumnHeading)).eql('Call-off Ordering Party')
+
+    .expect(itemIdColumnHeading.exists).ok()
+    .expect(await extractInnerText(itemIdColumnHeading)).eql('Recipient name (ODS code)')
+
+    .expect(itemNameColumnHeading.exists).ok()
+    .expect(await extractInnerText(itemNameColumnHeading)).eql('Item ID')
+
+    .expect(priceUnitColumnHeading.exists).ok()
+    .expect(await extractInnerText(priceUnitColumnHeading)).eql('Item name')
+
+    .expect(quantityColumnHeading.exists).ok()
+    .expect(await extractInnerText(quantityColumnHeading)).eql('Quantity')
+
+    .expect(itemCostColumnHeading.exists).ok()
+    .expect(await extractInnerText(itemCostColumnHeading)).eql('Item cost (£)');
+});
+
 test('should render the recurring cost heading and description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);

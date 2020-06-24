@@ -39,7 +39,14 @@
         "data": "Item cost (£)"
       }
     ],
-    "columnClass": "nhsuk-u-font-size-16"
+    "columnClass": [ 
+      "20%",
+      "10%",
+      "10%",
+      "20%",
+      "20%",
+      "20%"
+    ]
   },
   "recurringCostHeading": "Order items (recurring cost)",
   "recurringCostDescription": "The following items carry a recurring annual cost for the duration of this Call-off Agreement. They're the Catalogue Solutions, Additional Services and Associated Services in this order that you'll be charged for at a monthly rate."
