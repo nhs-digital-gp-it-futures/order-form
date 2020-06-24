@@ -22,19 +22,13 @@ export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
 
 export const getOrderItemContext = async ({
   orderId,
-  selectedSolutionId,
+  solutionName,
   selectedRecipientId,
-  selectedPriceId,
-  accessToken,
-}) => {
-  const solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
-  const serviceRecipientName = await getRecipientName({ selectedRecipientId, accessToken });
-  const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
-
-  return getContext({
-    orderId, solutionName, serviceRecipientName, odsCode: selectedRecipientId, selectedPrice,
-  });
-};
+  serviceRecipientName,
+  selectedPrice,
+}) => getContext({
+  orderId, solutionName, serviceRecipientName, odsCode: selectedRecipientId, selectedPrice,
+});
 
 export const getOrderItemErrorPageContext = params => getErrorContext(params);
 

@@ -16,11 +16,16 @@ export const populateTable = ((selectedPrice) => {
   manifest.addPriceTable.data[0][1].data = selectedPrice.itemUnit.description;
 });
 
+export const formatFormData = ((populatedData) => {
+  manifest.questions.quantity.data = populatedData.quantity ? populatedData.quantity.trim() : '';
+});
+
 export const getContext = ({
-  orderId, solutionName, serviceRecipientName, odsCode, selectedPrice,
+  orderId, solutionName, serviceRecipientName, odsCode, selectedPrice, populatedData = null,
 }) => {
   populateEstimationPeriod(selectedPrice);
   populateTable(selectedPrice);
+  // if (populatedData) formatFormData(populatedData);
 
   return ({
     ...manifest,
@@ -33,7 +38,10 @@ export const getContext = ({
 export const getErrorContext = (params) => {
   const updatedManifest = getContext({
     orderId: params.orderId,
-    solutionPrices: params.solutionPrices,
+    selectedSolutionName: params.selectedSolutionName,
+    selectedRecipientName: params.selectedRecipientName,
+    selectedPrice: params.selectedPrice,
+    populatedData: params.data,
   });
 
   return {
