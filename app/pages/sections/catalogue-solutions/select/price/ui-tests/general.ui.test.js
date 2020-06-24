@@ -23,7 +23,7 @@ const mockSolutionPricing = {
   name: 'Solution name',
   prices: [
     {
-      priceId: '0001',
+      priceId: 1,
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -37,7 +37,7 @@ const mockSolutionPricing = {
       price: 1.64,
     },
     {
-      priceId: '0002',
+      priceId: 2,
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -47,7 +47,7 @@ const mockSolutionPricing = {
       price: 525.052,
     },
     {
-      priceId: '0003',
+      priceId: 3,
       type: 'tiered',
       currencyCode: 'GBP',
       itemUnit: {
@@ -81,7 +81,7 @@ const solutionPricesState = ClientFunction(() => {
     name: 'Solution name',
     prices: [
       {
-        priceId: '0001',
+        priceId: 1,
         type: 'flat',
         currencyCode: 'GBP',
         itemUnit: {
@@ -95,7 +95,7 @@ const solutionPricesState = ClientFunction(() => {
         price: 1.64,
       },
       {
-        priceId: '0002',
+        priceId: 2,
         type: 'flat',
         currencyCode: 'GBP',
         itemUnit: {
@@ -105,7 +105,7 @@ const solutionPricesState = ClientFunction(() => {
         price: 525.052,
       },
       {
-        priceId: '0003',
+        priceId: 3,
         type: 'tiered',
         currencyCode: 'GBP',
         itemUnit: {
@@ -275,7 +275,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when a price is selected', async (t) => {
+test.only('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when a price is selected', async (t) => {
   await pageSetup(true);
   await t.navigateTo(pageUrl);
 
@@ -284,6 +284,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
   const button = Selector('[data-test-id="continue-button"] button');
 
   await t
+    .debug()
     .click(firstSolution)
     .click(button)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');

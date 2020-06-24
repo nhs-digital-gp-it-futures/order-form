@@ -12,7 +12,7 @@ const solutionPrices = {
   name: 'Solution name',
   prices: [
     {
-      priceId: '0001',
+      priceId: 1,
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -26,7 +26,7 @@ const solutionPrices = {
       price: 1.64,
     },
     {
-      priceId: '0002',
+      priceId: 2,
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -36,7 +36,7 @@ const solutionPrices = {
       price: 525.052,
     },
     {
-      priceId: '0003',
+      priceId: 3,
       type: 'tiered',
       currencyCode: 'GBP',
       itemUnit: {
