@@ -150,5 +150,37 @@ describe('order summary preview contextCreator', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderDataWithCallOffAndSupplier });
       expect(context.commencementDate).toEqual('1 February 2020');
     });
+
+    it('should return the oneOffCostHeading', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.oneOffCostHeading).toEqual(manifest.oneOffCostHeading);
+    });
+
+    it('should return the oneOffCostDescription', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.oneOffCostDescription).toEqual(manifest.oneOffCostDescription);
+    });
+
+    it('should return the recurringCostHeading', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.recurringCostHeading).toEqual(manifest.recurringCostHeading);
+    });
+
+    it('should return the recurringCostDescription', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.recurringCostDescription).toEqual(manifest.recurringCostDescription);
+    });
+
+    it('should return the oneOffCostTable colummInfo', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.oneOffCostTable.columnInfo)
+        .toEqual(manifest.oneOffCostTable.columnInfo);
+    });
+
+    it('should return the recurringCostTable colummInfo', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.oneOffCostTable.columnInfo)
+        .toEqual(manifest.oneOffCostTable.columnInfo);
+    });
   });
 });
