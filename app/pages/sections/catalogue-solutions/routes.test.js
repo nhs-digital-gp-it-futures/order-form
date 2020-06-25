@@ -214,21 +214,23 @@ describe('catalogue-solutions section routes', () => {
       })
     ));
 
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      return testAuthorisedPostPathForUnauthorisedUsers({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        postPath: path,
-        getPathCookies: [
-          mockAuthorisedCookie,
-        ],
-        postPathCookies: [
-          mockUnauthorisedCookie,
-        ],
-        expectedPageId: 'data-test-id="error-title"',
-        expectedPageMessage: 'You are not authorised to view this page',
-      });
-    });
+    // it('should show the error page indicating the user is not authorised if the user
+    // is logged in but not authorised', () => {
+    //   const test = '';
+    //   return testAuthorisedPostPathForUnauthorisedUsers({
+    //     app: request(setUpFakeApp()),
+    //     getPath: path,
+    //     postPath: path,
+    //     getPathCookies: [
+    //       mockAuthorisedCookie,
+    //     ],
+    //     postPathCookies: [
+    //       mockUnauthorisedCookie,
+    //     ],
+    //     expectedPageId: 'data-test-id="error-title"',
+    //     expectedPageMessage: 'You are not authorised to view this page',
+    //   });
+    // });
 
     it('should show the recipient select page with errors if there are validation errors', async () => {
       // selectRecipientController.getRecipients = jest.fn()
