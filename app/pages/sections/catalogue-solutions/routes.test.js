@@ -215,12 +215,6 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      // selectRecipientController.getSolution = jest.fn()
-      //   .mockResolvedValue({ name: 'Solution One ' });
-
-      // selectRecipientController.getRecipients = jest.fn()
-      //   .mockResolvedValue([]);
-
       return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
         getPath: path,
