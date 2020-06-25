@@ -26,12 +26,12 @@ import {
 const router = express.Router({ mergeParams: true });
 
 export const catalogueSolutionsSelectRoutes = (authProvider, addContext, sessionManager) => {
-  router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`);
   }));
 
-  router.get('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
@@ -45,7 +45,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     return res.render('pages/sections/catalogue-solutions/select/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.post('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
     const response = validateSolutionForm({ data: req.body });
@@ -66,7 +66,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     return res.render('pages/sections/catalogue-solutions/select/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.get('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
@@ -80,7 +80,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     return res.render('pages/sections/catalogue-solutions/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.post('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
     const response = validateSolutionPriceForm({ data: req.body });
@@ -100,7 +100,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     return res.render('pages/sections/catalogue-solutions/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.get('/solution/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/solution/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
@@ -120,7 +120,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     return res.render('pages/sections/catalogue-solutions/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/solution/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.post('/solution/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
     const response = validateRecipientForm({ data: req.body });

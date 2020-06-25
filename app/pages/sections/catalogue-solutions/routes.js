@@ -13,7 +13,7 @@ import { catalogueSolutionsSelectRoutes } from './select/routes';
 const router = express.Router({ mergeParams: true });
 
 export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManager) => {
-  router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
     const context = await getCatalogueSolutionsPageContext({
@@ -25,7 +25,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     return res.render('pages/sections/catalogue-solutions/catalogue-solutions/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
     await putCatalogueSolutions({
@@ -38,7 +38,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.use('/select', catalogueSolutionsSelectRoutes(authProvider, addContext, sessionManager));
 
-  router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
