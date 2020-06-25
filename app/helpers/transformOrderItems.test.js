@@ -12,18 +12,6 @@ const additionalService2 = {
   provisioningType: 'Declarative',
 };
 
-const additionalServiceOnDemand = {
-  catalogueItemType: 'Additional Service',
-  itemId: 'C000001-01-A10001-3',
-  provisioningType: 'On Demand',
-};
-
-const additionalServicePatient = {
-  catalogueItemType: 'Additional Service',
-  itemId: 'C000001-01-A10001-4',
-  provisioningType: 'Patient',
-};
-
 const associatedService1 = {
   catalogueItemType: 'Associated Service',
   itemId: 'C000001-01-08E-1',
@@ -34,6 +22,18 @@ const associatedService2 = {
   catalogueItemType: 'Associated Service',
   itemId: 'C000001-01-08E-2',
   provisioningType: 'Declarative',
+};
+
+const associatedServiceOnDemand = {
+  catalogueItemType: 'Associated Service',
+  itemId: 'C000001-01-08E-3',
+  provisioningType: 'On Demand',
+};
+
+const associatedServicePatient = {
+  catalogueItemType: 'Associated Service',
+  itemId: 'C000001-01-08E-4',
+  provisioningType: 'Patient',
 };
 
 const solution1 = {
@@ -48,17 +48,18 @@ const solution2 = {
   provisioningType: 'Declarative',
 };
 
-const recurringAdditionalServices = [additionalServiceOnDemand, additionalServicePatient];
-const bothAssociatedServices = [associatedService1, associatedService2];
 const bothSolutions = [solution1, solution2];
-const allItems = [additionalService1, additionalService2,
+const oneOffAssociatedServices = [associatedService1, associatedService2];
+const recurringAssociatedServices = [associatedServiceOnDemand, associatedServicePatient];
+
+const allItems = [solution1, solution2,
   associatedService1, associatedService2,
-  additionalServicePatient, additionalServiceOnDemand,
-  solution1, solution2];
+  associatedServiceOnDemand, associatedServicePatient,
+  additionalService1, additionalService2];
 
 const allRecurringCosts = [solution1, solution2,
-  additionalService1, additionalService2,
-  additionalServiceOnDemand, additionalServicePatient];
+  associatedServiceOnDemand, associatedServicePatient,
+  additionalService1, additionalService2];
 
 describe('transformOrderItems', () => {
   it.each`
@@ -66,10 +67,10 @@ describe('transformOrderItems', () => {
     ${[associatedService1]}        | ${{ oneOffCosts: [associatedService1], recurringCosts: [] }}
     ${[additionalService1]}        | ${{ oneOffCosts: [], recurringCosts: [additionalService1] }}
     ${[solution1]}                 | ${{ oneOffCosts: [], recurringCosts: [solution1] }}
-    ${bothAssociatedServices}      | ${{ oneOffCosts: bothAssociatedServices, recurringCosts: [] }}
+    ${oneOffAssociatedServices}    | ${{ oneOffCosts: oneOffAssociatedServices, recurringCosts: [] }}
     ${bothSolutions}               | ${{ oneOffCosts: [], recurringCosts: [solution1, solution2] }}
-    ${recurringAdditionalServices} | ${{ oneOffCosts: [], recurringCosts: recurringAdditionalServices }}
-    ${allItems}                    | ${{ oneOffCosts: bothAssociatedServices, recurringCosts: allRecurringCosts }}
+    ${recurringAssociatedServices} | ${{ oneOffCosts: [], recurringCosts: recurringAssociatedServices }}
+    ${allItems}                    | ${{ oneOffCosts: oneOffAssociatedServices, recurringCosts: allRecurringCosts }}
   `('transformOrderItems returns expected', ({ orderItems, expected }) => {
   expect(transformOrderItems(orderItems)).toEqual(expected);
 });

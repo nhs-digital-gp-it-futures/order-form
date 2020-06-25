@@ -3,8 +3,7 @@ const isOneOff = orderItem => orderItem.catalogueItemType === 'Associated Servic
 
 export const transformOrderItems = (orderItems) => {
   const oneOffCosts = orderItems.filter(o => isOneOff(o));
-  const recurringCosts = orderItems.filter(o => !isOneOff(o))
-    .sort((a, b) => a.itemId.localeCompare(b.itemId));
+  const recurringCosts = orderItems.filter(o => !isOneOff(o));
 
   return { oneOffCosts, recurringCosts };
 };
