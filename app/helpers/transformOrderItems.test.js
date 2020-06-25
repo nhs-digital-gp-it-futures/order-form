@@ -64,7 +64,7 @@ const allRecurringCosts = [solution1, solution2,
 describe('transformOrderItems', () => {
   it.each`
     key                                          | orderItems                     | expected
-    ${'single declarative one-off cost'}         | ${[associatedService1]}        | ${{ oneOffCosts: [associatedService1], recurringCosts: [] }}
+    ${'single declarative associated service'}   | ${[associatedService1]}        | ${{ oneOffCosts: [associatedService1], recurringCosts: [] }}
     ${'single additional service'}               | ${[additionalService1]}        | ${{ oneOffCosts: [], recurringCosts: [additionalService1] }}
     ${'single solution'}                         | ${[solution1]}                 | ${{ oneOffCosts: [], recurringCosts: [solution1] }}
     ${'two declarative associated services'}     | ${oneOffAssociatedServices}    | ${{ oneOffCosts: oneOffAssociatedServices, recurringCosts: [] }}
