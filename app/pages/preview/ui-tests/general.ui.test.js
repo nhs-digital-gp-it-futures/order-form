@@ -261,7 +261,7 @@ test('should render the recurring cost table with the column headings', async (t
     .expect(await extractInnerText(priceUnitColumnHeading)).eql('Price unit of order (£)')
 
     .expect(quantityColumnHeading.exists).ok()
-    .expect(await extractInnerText(quantityColumnHeading)).eql('Quantity/period')
+    .expect(await extractInnerText(quantityColumnHeading)).eql('Quantity /period')
 
     .expect(plannedDateColumnHeading.exists).ok()
     .expect(await extractInnerText(plannedDateColumnHeading)).eql('Planned delivery date')
