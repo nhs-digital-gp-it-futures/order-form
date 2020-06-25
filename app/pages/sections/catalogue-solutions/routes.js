@@ -12,8 +12,8 @@ import {
   getSelectedPrice,
   getOrderItemErrorPageContext,
   validateOrderItemForm,
+  getSolution,
 } from './order-item/controller';
-import { getSolution } from './select/recipient/controller';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 
 

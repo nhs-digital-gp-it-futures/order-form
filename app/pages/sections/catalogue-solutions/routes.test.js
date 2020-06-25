@@ -32,8 +32,10 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 
-// const mockselectedSolutionIdCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
-// const mockselectedRecipientIdCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
+const mockSelectedSolutionIdCookie = 'selectedSolutionId=solution-1';
+const mockSelectedRecipientIdCookie = 'selectedRecipientId=recipient-1';
+const mockSelectedPriceIdCookie = 'selectedPriceId=1';
+
 // const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 // const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 // const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
@@ -201,18 +203,26 @@ describe('catalogue-solutions section routes', () => {
       })
     ));
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedPostPathForUnauthenticatedUser({
+    it.only('should redirect to the login page if the user is not logged in', () => {
+      orderItemController.getSolution = jest.fn().mockResolvedValue({});
+      orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
+      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+
+      return testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
         getPathCookies: [
           mockAuthorisedCookie,
+          mockSelectedSolutionIdCookie,
+          mockSelectedRecipientIdCookie,
+          mockSelectedPriceIdCookie,
         ],
-        postPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
         expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     // it('should show the error page indicating the user is not authorised if the user
     // is logged in but not authorised', () => {
