@@ -63,15 +63,15 @@ const allRecurringCosts = [solution1, solution2,
 
 describe('transformOrderItems', () => {
   it.each`
-    orderItems                     | expected
-    ${[associatedService1]}        | ${{ oneOffCosts: [associatedService1], recurringCosts: [] }}
-    ${[additionalService1]}        | ${{ oneOffCosts: [], recurringCosts: [additionalService1] }}
-    ${[solution1]}                 | ${{ oneOffCosts: [], recurringCosts: [solution1] }}
-    ${oneOffAssociatedServices}    | ${{ oneOffCosts: oneOffAssociatedServices, recurringCosts: [] }}
-    ${bothSolutions}               | ${{ oneOffCosts: [], recurringCosts: bothSolutions }}
-    ${recurringAssociatedServices} | ${{ oneOffCosts: [], recurringCosts: recurringAssociatedServices }}
-    ${allItems}                    | ${{ oneOffCosts: oneOffAssociatedServices, recurringCosts: allRecurringCosts }}
-  `('transformOrderItems returns expected', ({ orderItems, expected }) => {
+    key                                          | orderItems                     | expected
+    ${'single declarative one-off cost'}         | ${[associatedService1]}        | ${{ oneOffCosts: [associatedService1], recurringCosts: [] }}
+    ${'single additional service'}               | ${[additionalService1]}        | ${{ oneOffCosts: [], recurringCosts: [additionalService1] }}
+    ${'single solution'}                         | ${[solution1]}                 | ${{ oneOffCosts: [], recurringCosts: [solution1] }}
+    ${'two declarative associated services'}     | ${oneOffAssociatedServices}    | ${{ oneOffCosts: oneOffAssociatedServices, recurringCosts: [] }}
+    ${'two solutions'}                           | ${bothSolutions}               | ${{ oneOffCosts: [], recurringCosts: bothSolutions }}
+    ${'two non-declarative associated services'} | ${recurringAssociatedServices} | ${{ oneOffCosts: [], recurringCosts: recurringAssociatedServices }}
+    ${'multiple one-off and recurring items'}    | ${allItems}                    | ${{ oneOffCosts: oneOffAssociatedServices, recurringCosts: allRecurringCosts }}
+  `('transformOrderItems $key returns expected output', ({ orderItems, expected }) => {
   expect(transformOrderItems(orderItems)).toEqual(expected);
 });
 });
