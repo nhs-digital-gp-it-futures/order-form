@@ -136,7 +136,7 @@ const solutionPricesState = ClientFunction(() => {
 });
 
 const selectedPriceIdState = ClientFunction(() => {
-  document.cookie = 'selectedPriceId=0002';
+  document.cookie = 'selectedPriceId=2';
 });
 
 const mocks = () => {
@@ -240,13 +240,13 @@ test('should render a selectSolutionPrice question as radio button options', asy
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
     .expect(selectSolutionPriceRadioOptions.find('input').count).eql(3)
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(0).getAttribute('value')).eql('0001')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(0).getAttribute('value')).eql('1')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(0))).eql('£1.64 per patient per year')
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(1).getAttribute('value')).eql('0002')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(1).getAttribute('value')).eql('2')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(1))).eql('£525.052 per licence')
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(2).getAttribute('value')).eql('0003')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(2).getAttribute('value')).eql('3')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(2))).eql('1 - 10 consultations £700 per consultation per month\n11+ consultations £400 per consultation per month');
 });
 
@@ -275,7 +275,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test.only('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when a price is selected', async (t) => {
+test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when a price is selected', async (t) => {
   await pageSetup(true);
   await t.navigateTo(pageUrl);
 
@@ -284,7 +284,6 @@ test.only('should redirect to /organisation/order-id/catalogue-solutions/select/
   const button = Selector('[data-test-id="continue-button"] button');
 
   await t
-    .debug()
     .click(firstSolution)
     .click(button)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
