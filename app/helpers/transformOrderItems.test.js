@@ -49,8 +49,8 @@ const solution2 = {
 };
 
 const recurringAdditionalServices = [additionalServiceOnDemand, additionalServicePatient];
-const twoAssociatedServices = [associatedService1, associatedService2];
-const twoSolutions = [solution1, solution2];
+const bothAssociatedServices = [associatedService1, associatedService2];
+const bothSolutions = [solution1, solution2];
 const allItems = [additionalService1, additionalService2,
   associatedService1, associatedService2,
   additionalServicePatient, additionalServiceOnDemand,
@@ -66,10 +66,10 @@ describe('transformOrderItems', () => {
     ${[associatedService1]}        | ${{ oneOffCosts: [associatedService1], recurringCosts: [] }}
     ${[additionalService1]}        | ${{ oneOffCosts: [], recurringCosts: [additionalService1] }}
     ${[solution1]}                 | ${{ oneOffCosts: [], recurringCosts: [solution1] }}
-    ${twoAssociatedServices}       | ${{ oneOffCosts: twoAssociatedServices, recurringCosts: [] }}
-    ${twoSolutions}                | ${{ oneOffCosts: [], recurringCosts: [solution1, solution2] }}
+    ${bothAssociatedServices}       | ${{ oneOffCosts: bothAssociatedServices, recurringCosts: [] }}
+    ${bothSolutions}                | ${{ oneOffCosts: [], recurringCosts: [solution1, solution2] }}
     ${recurringAdditionalServices} | ${{ oneOffCosts: [], recurringCosts: recurringAdditionalServices }}
-    ${allItems}                    | ${{ oneOffCosts: twoAssociatedServices, recurringCosts: allRecurringCosts }}
+    ${allItems}                    | ${{ oneOffCosts: bothAssociatedServices, recurringCosts: allRecurringCosts }}
   `('transformOrderItems returns expected', ({ orderItems, expected }) => {
   expect(transformOrderItems(orderItems)).toEqual(expected);
 });
