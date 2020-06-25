@@ -14,8 +14,7 @@
         "data": "Supplier",
         "width": "50%"
       }
-    ],
-    "columnClass": "nhsuk-u-font-size-16"
+    ]
   },
   "commencementDateLabel": "Commencement date of the Call-off Agreement:",
   "oneOffCostHeading": "Order items (one-off cost)",
