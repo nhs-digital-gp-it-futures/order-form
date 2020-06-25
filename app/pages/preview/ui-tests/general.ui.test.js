@@ -184,7 +184,7 @@ test('should render the one off cost heading and description', async (t) => {
     .expect(await extractInnerText(oneOffCostDescription)).eql(content.oneOffCostDescription);
 });
 
-test.only('should render the one off cost table with the column headings', async (t) => {
+test('should render the one off cost table with the column headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -197,7 +197,6 @@ test.only('should render the one off cost table with the column headings', async
   const itemCostColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-5"]');
 
   await t
-    .debug()
     .expect(oneOffCostTable.exists).ok()
 
     .expect(recipientNameColumnHeading.exists).ok()

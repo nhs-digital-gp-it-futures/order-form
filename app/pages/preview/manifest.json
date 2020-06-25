@@ -7,13 +7,15 @@
   "callOffAndSupplierTable": {
     "columnInfo": [
       {
-        "data": "Call-off Ordering Party"
+        "data": "Call-off Ordering Party",
+        "width": "50%"
       },
       {
-        "data": "Supplier"
+        "data": "Supplier",
+        "width": "50%"
       }
     ],
-    "columnClass": "nhsuk-grid-column-one-half nhsuk-u-font-size-16"
+    "columnClass": "nhsuk-u-font-size-16"
   },
   "commencementDateLabel": "Commencement date of the Call-off Agreement:",
   "oneOffCostHeading": "Order items (one-off cost)",
@@ -21,31 +23,29 @@
   "oneOffCostTable": {
     "columnInfo": [
       {
-        "data": "Recipient name (ODS code)"
+        "data": "Recipient name (ODS code)",
+        "width": "20%"
       },
       {
-        "data": "Item ID"
+        "data": "Item ID",
+        "width": "10%"
       },
       {
-        "data": "Item name"
+        "data": "Item name",
+        "width": "20%"
       },
       {
-        "data": "Price unit of order (£)"
+        "data": "Price unit of order (£)",
+        "width": "20%"
       },
       {
-        "data": "Quantity"
+        "data": "Quantity",
+        "width": "10%"
       },
       {
-        "data": "Item cost (£)"
+        "data": "Item cost (£)",
+        "width": "20%"
       }
-    ],
-    "columnClass": [ 
-      "20%",
-      "10%",
-      "10%",
-      "20%",
-      "20%",
-      "20%"
     ]
   },
   "recurringCostHeading": "Order items (recurring cost)",
