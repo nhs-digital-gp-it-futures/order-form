@@ -82,7 +82,7 @@ const solutionPricesState = ClientFunction(() => {
     prices: [
       {
         priceId: 1,
-        type: 'flat',
+        type: 'Flat',
         currencyCode: 'GBP',
         itemUnit: {
           name: 'patient',
@@ -96,7 +96,7 @@ const solutionPricesState = ClientFunction(() => {
       },
       {
         priceId: 2,
-        type: 'flat',
+        type: 'Flat',
         currencyCode: 'GBP',
         itemUnit: {
           name: 'licence',
@@ -106,7 +106,7 @@ const solutionPricesState = ClientFunction(() => {
       },
       {
         priceId: 3,
-        type: 'tiered',
+        type: 'Tiered',
         currencyCode: 'GBP',
         itemUnit: {
           name: 'consultation',
