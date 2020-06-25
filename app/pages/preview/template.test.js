@@ -82,12 +82,8 @@ describe('preview page', () => {
     const context = {
       callOffAndSupplierTable: {
         columnInfo: [
-          {
-            data: 'Call-off Ordering Party',
-          },
-          {
-            data: 'Supplier',
-          },
+          { data: 'Call-off Ordering Party' },
+          { data: 'Supplier' },
         ],
         items: [
           [
@@ -178,4 +174,96 @@ describe('preview page', () => {
       expect(commencementDate.text().trim()).toContain(`${context.commencementDateLabel} ${context.commencementDate}`);
     });
   }));
+
+  it('should render the one off cost heading and description', componentTester(setup, (harness) => {
+    const context = {
+      oneOffCostHeading: manifest.oneOffCostHeading,
+      oneOffCostDescription: manifest.oneOffCostDescription,
+    };
+
+    harness.request(context, ($) => {
+      const oneOffCostHeading = $('h3[data-test-id="one-off-cost-heading"]');
+      const oneOffCostDescription = $('h4[data-test-id="one-off-cost-description"]');
+
+      expect(oneOffCostHeading.length).toEqual(1);
+      expect(oneOffCostHeading.text().trim()).toContain(context.oneOffCostHeading);
+      expect(oneOffCostDescription.length).toEqual(1);
+      expect(oneOffCostDescription.text().trim()).toContain(context.oneOffCostDescription);
+    });
+  }));
+
+  describe('One off cost table', () => {
+    const context = {
+      oneOffCostTable: {
+        columnInfo: [
+          { data: 'Recipient name (ODS code)' },
+          { data: 'Item ID' },
+          { data: 'Item name' },
+          { data: 'Price unit of order (£)' },
+          { data: 'Quantity' },
+          { data: 'Item cost (£)' },
+        ],
+      },
+    };
+
+    it('should render the table headings', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="one-off-cost-table"]');
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Recipient name (ODS code)');
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Item ID');
+        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual('Item name');
+        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual('Price unit of order (£)');
+        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual('Quantity');
+        expect(table.find('[data-test-id="column-heading-5"]').text().trim()).toEqual('Item cost (£)');
+      });
+    }));
+  });
+
+  it('should render the recurring cost heading and description', componentTester(setup, (harness) => {
+    const context = {
+      recurringCostHeading: manifest.recurringCostHeading,
+      recurringCostDescription: manifest.recurringCostDescription,
+    };
+
+    harness.request(context, ($) => {
+      const recurringCostHeading = $('h3[data-test-id="recurring-cost-heading"]');
+      const recurringCostDescription = $('h4[data-test-id="recurring-cost-description"]');
+
+      expect(recurringCostHeading.length).toEqual(1);
+      expect(recurringCostHeading.text().trim()).toContain(context.recurringCostHeading);
+      expect(recurringCostDescription.length).toEqual(1);
+      expect(recurringCostDescription.text().trim()).toContain(context.recurringCostDescription);
+    });
+  }));
+
+  describe('Recurring cost table', () => {
+    const context = {
+      recurringCostTable: {
+        columnInfo: [
+          { data: 'Recipient name (ODS code)' },
+          { data: 'Item ID' },
+          { data: 'Item name' },
+          { data: 'Price unit of order (£)' },
+          { data: 'Quantity/period' },
+          { data: 'Planned delivery date' },
+          { data: 'Item cost per year(£)' },
+        ],
+      },
+    };
+
+    it('should render the table headings', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="recurring-cost-table"]');
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Recipient name (ODS code)');
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Item ID');
+        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual('Item name');
+        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual('Price unit of order (£)');
+        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual('Quantity/period');
+        expect(table.find('[data-test-id="column-heading-5"]').text().trim()).toEqual('Planned delivery date');
+        expect(table.find('[data-test-id="column-heading-6"]').text().trim()).toEqual('Item cost per year(£)');
+      });
+    }));
+  });
 });
