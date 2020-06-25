@@ -49,5 +49,37 @@
     ]
   },
   "recurringCostHeading": "Order items (recurring cost)",
-  "recurringCostDescription": "The following items carry a recurring annual cost for the duration of this Call-off Agreement. They're the Catalogue Solutions, Additional Services and Associated Services in this order that you'll be charged for at a monthly rate."
+  "recurringCostDescription": "The following items carry a recurring annual cost for the duration of this Call-off Agreement. They're the Catalogue Solutions, Additional Services and Associated Services in this order that you'll be charged for at a monthly rate.",
+  "recurringCostTable": {
+    "columnInfo": [
+      {
+        "data": "Recipient name (ODS code)",
+        "width": "15%"
+      },
+      {
+        "data": "Item ID",
+        "width": "10%"
+      },
+      {
+        "data": "Item name",
+        "width": "20%"
+      },
+      {
+        "data": "Price unit of order (£)",
+        "width": "15%"
+      },
+      {
+        "data": "Quantity/period",
+        "width": "10%"
+      },
+      {
+        "data": "Planned delivery date",
+        "width": "15%"
+      },
+      {
+        "data": "Item cost per year (£)",
+        "width": "15%"
+      }
+    ]
+  }
 }

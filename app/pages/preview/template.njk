@@ -54,7 +54,7 @@
         <div data-test-id="order-items-one-off-costs">
           <h3 data-test-id="one-off-cost-heading" class="nhsuk-u-margin-bottom-3">{{ oneOffCostHeading }}</h3>
           <h4 data-test-id="one-off-cost-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ oneOffCostDescription }}</h4>
-          <div data-test-id="one-off-cost-table" style="position: absolute;">
+          <div data-test-id="one-off-cost-table" style="width: 120%;">
             {{ bcTableFlexible({
               columnInfo: oneOffCostTable.columnInfo,
               columnClass: oneOffCostTable.columnClass,
@@ -70,6 +70,13 @@
         <div data-test-id="order-items-recurring-costs">
           <h3 data-test-id="recurring-cost-heading" class="nhsuk-u-margin-bottom-3">{{ recurringCostHeading }}</h3>
           <h4 data-test-id="recurring-cost-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ recurringCostDescription }}</h4>
+          <div data-test-id="recurring-cost-table" style="width: 120%;">
+            {{ bcTableFlexible({
+              columnInfo: recurringCostTable.columnInfo,
+              columnClass: recurringCostTable.columnClass,
+              data: recurringCostTable.items
+            }) }}
+          </div>
         </div>
       </div>
     </div>

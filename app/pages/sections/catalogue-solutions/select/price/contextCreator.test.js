@@ -69,14 +69,14 @@ const returnedPriceArray = [{
   mainAdvice: 'Select list price',
   options: [{
     text: '£1.64 per patient per year',
-    value: '0001',
+    value: 1,
   }, {
     text: '£525.052 per licence ',
-    value: '0002',
+    value: 2,
     checked: true,
   }, {
     html: '<div>1 - 10 consultations £700 per consultation per month</div><div>11+ consultations £400 per consultation per month</div>',
-    value: '0003',
+    value: 3,
   }],
 }];
 
@@ -109,7 +109,7 @@ describe('catalogue-solutions select-price contextCreator', () => {
     });
 
     it('should return the formatted list of questions', () => {
-      const context = getContext({ orderId: 'order-1', solutionPrices, selectedPriceId: '0002' });
+      const context = getContext({ orderId: 'order-1', solutionPrices, selectedPriceId: 2 });
       expect(context.questions).toEqual(returnedPriceArray);
     });
   });
