@@ -66,8 +66,8 @@ describe('transformOrderItems', () => {
     ${[associatedService1]}        | ${{ oneOffCosts: [associatedService1], recurringCosts: [] }}
     ${[additionalService1]}        | ${{ oneOffCosts: [], recurringCosts: [additionalService1] }}
     ${[solution1]}                 | ${{ oneOffCosts: [], recurringCosts: [solution1] }}
-    ${bothAssociatedServices}       | ${{ oneOffCosts: bothAssociatedServices, recurringCosts: [] }}
-    ${bothSolutions}                | ${{ oneOffCosts: [], recurringCosts: [solution1, solution2] }}
+    ${bothAssociatedServices}      | ${{ oneOffCosts: bothAssociatedServices, recurringCosts: [] }}
+    ${bothSolutions}               | ${{ oneOffCosts: [], recurringCosts: [solution1, solution2] }}
     ${recurringAdditionalServices} | ${{ oneOffCosts: [], recurringCosts: recurringAdditionalServices }}
     ${allItems}                    | ${{ oneOffCosts: bothAssociatedServices, recurringCosts: allRecurringCosts }}
   `('transformOrderItems returns expected', ({ orderItems, expected }) => {
