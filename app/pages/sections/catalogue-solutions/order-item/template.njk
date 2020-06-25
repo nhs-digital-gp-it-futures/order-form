@@ -19,6 +19,11 @@
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-two-thirds">
+      {% if (errors.length > 0) %}
+          {{ bcErrorSummary({
+            errors: errors
+          }) }}
+        {% endif %}
         <h1 data-test-id="order-item-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
         <h2 data-test-id="order-item-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
       </div>
@@ -28,25 +33,25 @@
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
             <div class="nhsuk-u-margin-bottom-5">
-              {{ dateField({ question: questions.plannedDate}) }}
+              {{ dateField({ question: questions[0]}) }}
             </div>
 
           <div class="nhsuk-u-margin-bottom-5">
             <div class="">
             {{ textField({ 
-              question: questions.quantity,
+              question: questions[1],
               classes: "nhsuk-input--width-10"
             }) }}
-            {{ viewExpandableSection(questions.quantity.expandableSection) }}
+            {{ viewExpandableSection(questions[1].expandableSection) }}
             </div>
 
             <div class="nhsuk-u-margin-bottom-5">
             {{
               radiobuttonOptions({
-                question: questions.estimationPeriod
+                question: questions[2]
               })
             }}
-            {{ viewExpandableSection(questions.estimationPeriod.expandableSection) }}
+            {{ viewExpandableSection(questions[2].expandableSection) }}
             </div>
           </div>
         </div>

@@ -3,8 +3,8 @@ import { baseUrl } from '../../../../config';
 import { getSectionErrorContext } from '../../getSectionErrorContext';
 
 export const populateEstimationPeriod = ((selectedPrice) => {
-  manifest.questions.estimationPeriod.options.forEach((option, i) => {
-    manifest.questions.estimationPeriod.options[i]
+  manifest.questions[2].options.forEach((option, i) => {
+    manifest.questions[2].options[i]
       .checked = option.text.toLowerCase() === selectedPrice
         .timeUnit.description.toLowerCase()
         ? true : undefined;
@@ -17,7 +17,7 @@ export const populateTable = ((selectedPrice) => {
 });
 
 export const formatFormData = ((populatedData) => {
-  manifest.questions.quantity.data = populatedData.quantity ? populatedData.quantity.trim() : '';
+  manifest.questions[2].data = populatedData.quantity ? populatedData.quantity.trim() : '';
 });
 
 export const getContext = ({
@@ -25,7 +25,7 @@ export const getContext = ({
 }) => {
   populateEstimationPeriod(selectedPrice);
   populateTable(selectedPrice);
-  // if (populatedData) formatFormData(populatedData);
+  if (populatedData) formatFormData(populatedData);
 
   return ({
     ...manifest,
@@ -35,16 +35,31 @@ export const getContext = ({
   });
 };
 
-export const getErrorContext = (params) => {
-  const updatedManifest = getContext({
+const addErrorsToTableQuestions = ({ updatedManifest, validationErrors }) => {
+  const manifestWithErrors = { ...updatedManifest };
+  const foundError = validationErrors.find(error => error.field === updatedManifest
+    .addPriceTable.data[0][0].question.id);
+  if (foundError) {
+    const errorMessage = updatedManifest.errorMessages[foundError.id];
+    manifestWithErrors.addPriceTable.data[0][0].question.error = { message: errorMessage };
+  }
+
+  return manifestWithErrors;
+};
+
+export const getErrorContext = async (params) => {
+  let updatedManifest = getContext({
     orderId: params.orderId,
-    selectedSolutionName: params.selectedSolutionName,
-    selectedRecipientName: params.selectedRecipientName,
+    solutionName: params.solutionName,
+    serviceRecipientName: params.serviceRecipientName,
+    odsCode: params.selectedRecipientId,
     selectedPrice: params.selectedPrice,
     populatedData: params.data,
   });
 
+  updatedManifest = getSectionErrorContext({ ...params, manifest: updatedManifest });
+
   return {
-    ...getSectionErrorContext({ ...params, manifest: updatedManifest }),
+    ...addErrorsToTableQuestions({ ...params, updatedManifest }),
   };
 };

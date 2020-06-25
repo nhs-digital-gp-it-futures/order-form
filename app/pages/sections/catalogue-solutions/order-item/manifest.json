@@ -1,13 +1,11 @@
 {
   "title": "information for",
   "description": "Provide the delivery date and price you've agreed with the supplier and the quantity you want to order.",
-  "questions": {
-    "plannedDate": {
+  "questions": [{
       "id": "plannedDeliveryDate",
       "mainAdvice": "Planned delivery date",
       "additionalAdvice": "For example 14 01 2020"
-    },
-    "quantity": {
+    }, {
       "id": "quantity",
       "mainAdvice": "Quantity",
       "rows": 3,
@@ -16,8 +14,8 @@
         "title": "What quantity should I enter?",
         "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
       }
-    },
-    "estimationPeriod": {
+    }, 
+    {
         "id": "selectEstimationPeriod",
         "mainAdvice": "Estimation period",
         "options": [
@@ -35,8 +33,12 @@
         "title": "What period should I enter?",
         "innerComponent": "This should be based on how you estimated the quantity you want to order."
       }
+    },
+    {
+      "type": "input",
+      "id": "price"
     }
-  },
+  ],
   "addPriceTable": {
     "columnInfo": [
       {
@@ -51,7 +53,7 @@
         {
           "question": {
             "type": "input",
-            "id": "price-input-id"
+            "id": "price"
           },
           "classes": "nhsuk-input--width-10",
           "expandableSection": {
@@ -68,7 +70,8 @@
     "columnClass": "nhsuk-grid-column-one-half nhsuk-u-font-size-16"
   },
   "errorMessages": {
-    "quantityRequired": "Enter a quantity"
+    "quantityRequired": "Enter a quantity",
+    "priceRequired": "Enter a price"
   },
   "deleteButtonText": "Delete",
   "saveButtonText": "Save"

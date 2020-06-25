@@ -7,7 +7,11 @@ import {
   putCatalogueSolutions,
 } from './catalogue-solutions/controller';
 import {
-  getOrderItemContext, getRecipientName, getOrderItemErrorPageContext, validateOrderItemForm,
+  getOrderItemContext,
+  getRecipientName,
+  getSelectedPrice,
+  getOrderItemErrorPageContext,
+  validateOrderItemForm,
 } from './order-item/controller';
 import { getSolution } from './select/recipient/controller';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
@@ -45,34 +49,16 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
-    const selectedRecipientId = 'odsId';
-    // const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
+    const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
 
-    const solutionName = 'solution-name';
-    // const solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
+    const solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
     sessionManager.saveToSession({ req, key: 'solutionName', value: solutionName });
 
-    const serviceRecipientName = 'recipient-name';
-    // const serviceRecipientName = await getRecipientName({ selectedRecipientId, accessToken });
+    const serviceRecipientName = await getRecipientName({ selectedRecipientId, accessToken });
     sessionManager.saveToSession({ req, key: 'serviceRecipientName', value: serviceRecipientName });
-    
+
     const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
-    // const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
-    const selectedPrice = {
-      priceId: 2,
-      provisioningType: 'Patient', // Patient, Declarative
-      type: 'flat',
-      currencyCode: 'GBP', // ISO Currency Code
-      itemUnit: {
-        name: 'patient',
-        description: 'per patient',
-      },
-      timeUnit: {
-        name: 'year',
-        description: 'per year',
-      },
-      price: 1.64,
-    };
+    const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     sessionManager.saveToSession({ req, key: 'selectedPrice', value: selectedPrice });
 
     const context = await getOrderItemContext({
@@ -95,15 +81,18 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const response = validateOrderItemForm({ data: req.body });
     if (response.success) {
       logger.info('redirecting catalogue solutions main page');
-      // return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
     }
     const solutionName = sessionManager.getFromSession({ req, key: 'solutionName' });
+    const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'serviceRecipientName' });
     const selectedPrice = sessionManager.getFromSession({ req, key: 'selectedPrice' });
+    console.log('here');
 
     const context = await getOrderItemErrorPageContext({
       orderId,
       solutionName,
+      selectedRecipientId,
       serviceRecipientName,
       selectedPrice,
       data: req.body,

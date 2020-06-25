@@ -2,7 +2,6 @@ import { getData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
-import { getSolution } from '../select/recipient/controller';
 
 export const getRecipientName = async ({ selectedRecipientId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipient', options: { selectedRecipientId } });
@@ -33,7 +32,7 @@ export const getOrderItemContext = async ({
 export const getOrderItemErrorPageContext = params => getErrorContext(params);
 
 export const validateOrderItemForm = ({ data }) => {
-  if (data.quantity && data.selectSolutionPrice.trim().length > 0) {
+  if (data.quantity && data.quantity.trim().length > 0 && data.price.trim().length > 0) {
     return { success: true };
   }
 
@@ -41,6 +40,10 @@ export const validateOrderItemForm = ({ data }) => {
     {
       field: 'quantity',
       id: 'quantityRequired',
+    },
+    {
+      field: 'price',
+      id: 'priceRequired',
     },
   ];
   return { success: false, errors };

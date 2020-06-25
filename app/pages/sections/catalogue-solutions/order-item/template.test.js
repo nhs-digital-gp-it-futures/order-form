@@ -23,6 +23,57 @@ describe('catalogue-solutions order-item page', () => {
     });
   }));
 
+  it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {},
+        {
+          id: 'quantity',
+          error: [{ message: 'quantity error message' }],
+        },
+        {},
+        {
+          id: 'price',
+          error: [{ message: 'price error message' }],
+        },
+      ],
+      addPriceTable: {
+        columnInfo: [
+          {
+            data: 'Price (£)',
+          },
+        ],
+        data: [
+          [
+            {
+              question: {
+                type: 'input',
+                id: 'price',
+                data: '100',
+                error: [{ message: 'price error message' }],
+              },
+            },
+          ],
+        ],
+      },
+      errors: [
+        { text: 'quantity error message', href: '#quantity' },
+        { text: 'price error message', href: '#price' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(context.errors.length);
+      context.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
+    });
+  }));
+
   it('should render the order item page title', componentTester(setup, (harness) => {
     const context = {
       title: 'List price fororder-1',
@@ -62,20 +113,19 @@ describe('catalogue-solutions order-item page', () => {
 
   describe('Planned date', () => {
     const context = {
-      questions: {
-        plannedDate: {
+      questions: [
+        {
           id: 'plannedDeliveryDate',
           mainAdvice: 'Planned delivery date',
           additionalAdvice: 'For example 14 01 2020',
         },
-      },
+      ],
     };
-
     it('should render legend with mainAdvice', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const legend = $('legend');
         expect(legend.length).toEqual(1);
-        expect(legend.text().trim()).toEqual(context.questions.plannedDate.mainAdvice);
+        expect(legend.text().trim()).toEqual(context.questions[0].mainAdvice);
       });
     }));
 
@@ -83,19 +133,19 @@ describe('catalogue-solutions order-item page', () => {
       harness.request(context, ($) => {
         const addAdvice = $('[data-test-id="date-field-input"] span.nhsuk-hint');
         expect(addAdvice.length).toEqual(1);
-        expect(addAdvice.text().trim()).toEqual(context.questions.plannedDate.additionalAdvice);
+        expect(addAdvice.text().trim()).toEqual(context.questions[0].additionalAdvice);
       });
     }));
 
     it('should render 3 labels for date question', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const labels = $('label');
+        const labels = $('[id="plannedDeliveryDate"] label');
         expect(labels.length).toEqual(3);
-        expect(labels[0].attribs.for).toEqual(`${manifest.questions.plannedDate.id}-day`);
+        expect(labels[0].attribs.for).toEqual(`${manifest.questions[0].id}-day`);
         expect(labels[0].children[0].data.trim()).toEqual('Day');
-        expect(labels[1].attribs.for).toEqual(`${manifest.questions.plannedDate.id}-month`);
+        expect(labels[1].attribs.for).toEqual(`${manifest.questions[0].id}-month`);
         expect(labels[1].children[0].data.trim()).toEqual('Month');
-        expect(labels[2].attribs.for).toEqual(`${manifest.questions.plannedDate.id}-year`);
+        expect(labels[2].attribs.for).toEqual(`${manifest.questions[0].id}-year`);
         expect(labels[2].children[0].data.trim()).toEqual('Year');
       });
     }));
@@ -104,14 +154,14 @@ describe('catalogue-solutions order-item page', () => {
       harness.request(context, ($) => {
         const inputs = $('#plannedDeliveryDate input:not([name=_csrf])');
         expect(inputs.length).toEqual(3);
-        expect(inputs[0].attribs.id).toEqual(`${manifest.questions.plannedDate.id}-day`);
-        expect(inputs[0].attribs.name).toEqual(`${manifest.questions.plannedDate.id}-day`);
+        expect(inputs[0].attribs.id).toEqual(`${manifest.questions[0].id}-day`);
+        expect(inputs[0].attribs.name).toEqual(`${manifest.questions[0].id}-day`);
         expect(inputs[0].attribs.type).toEqual('number');
-        expect(inputs[1].attribs.id).toEqual(`${manifest.questions.plannedDate.id}-month`);
-        expect(inputs[1].attribs.name).toEqual(`${manifest.questions.plannedDate.id}-month`);
+        expect(inputs[1].attribs.id).toEqual(`${manifest.questions[0].id}-month`);
+        expect(inputs[1].attribs.name).toEqual(`${manifest.questions[0].id}-month`);
         expect(inputs[1].attribs.type).toEqual('number');
-        expect(inputs[2].attribs.id).toEqual(`${manifest.questions.plannedDate.id}-year`);
-        expect(inputs[2].attribs.name).toEqual(`${manifest.questions.plannedDate.id}-year`);
+        expect(inputs[2].attribs.id).toEqual(`${manifest.questions[0].id}-year`);
+        expect(inputs[2].attribs.name).toEqual(`${manifest.questions[0].id}-year`);
         expect(inputs[2].attribs.type).toEqual('number');
       });
     }));
@@ -119,8 +169,9 @@ describe('catalogue-solutions order-item page', () => {
 
   describe('quantity', () => {
     const context = {
-      questions: {
-        quantity: {
+      questions: [
+        {},
+        {
           id: 'quantity',
           mainAdvice: 'Quantity',
           rows: 3,
@@ -130,14 +181,13 @@ describe('catalogue-solutions order-item page', () => {
             innerComponent: "Estimate the quantity you think you'll need either per month or per year.",
           },
         },
-      },
+      ],
     };
-
     it('should render a label for quantity', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const labels = $('[data-test-id="question-quantity"] label');
-        expect(labels[0].attribs.for).toEqual(context.questions.quantity.id);
-        expect(labels[0].children[0].data.trim()).toEqual(context.questions.quantity.mainAdvice);
+        expect(labels[0].attribs.for).toEqual(context.questions[1].id);
+        expect(labels[0].children[0].data.trim()).toEqual(context.questions[1].mainAdvice);
       });
     }));
 
@@ -146,8 +196,8 @@ describe('catalogue-solutions order-item page', () => {
         const input = $('[data-test-id="question-quantity"] input');
 
         expect(input.length).toEqual(1);
-        expect(input.attr('id')).toEqual(context.questions.quantity.id);
-        expect(input.attr('name')).toEqual(context.questions.quantity.id);
+        expect(input.attr('id')).toEqual(context.questions[1].id);
+        expect(input.attr('name')).toEqual(context.questions[1].id);
         expect(input.attr('type')).toEqual('text');
         expect(input.hasClass('nhsuk-input--width-10')).toEqual(true);
       });
@@ -160,12 +210,22 @@ describe('catalogue-solutions order-item page', () => {
         expect(expandableSection.find('.nhsuk-details__text').text().trim()).toEqual('Estimate the quantity you think you\'ll need either per month or per year.');
       });
     }));
+
+    it('should render errors on selectSolutionPrice field if there are errors', componentTester(setup, (harness) => {
+      context.questions[1].error = { message: 'quantity error message' };
+
+      harness.request(context, ($) => {
+        const supplierNameQuestion = $('div[data-test-id="question-quantity"]');
+        expect(supplierNameQuestion.find('div[data-test-id="text-field-input-error"]').length).toEqual(1);
+        expect(supplierNameQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error: quantity error message');
+      });
+    }));
   });
 
   describe('estimation period', () => {
     const context = {
-      questions: {
-        estimationPeriod:
+      questions: [
+        {}, {},
         {
           id: 'selectEstimationPeriod',
           mainAdvice: 'Estimation period',
@@ -185,7 +245,7 @@ describe('catalogue-solutions order-item page', () => {
             innerComponent: 'This should be based on how you estimated the quantity you want to order.',
           },
         },
-      },
+      ],
     };
 
     it('should render the "Estimation period" radio button options component', componentTester(setup, (harness) => {
@@ -226,7 +286,7 @@ describe('catalogue-solutions order-item page', () => {
             {
               question: {
                 type: 'input',
-                id: 'price-input-id',
+                id: 'price',
                 data: '100',
               },
               classes: 'nhsuk-input--width-10',
@@ -259,7 +319,7 @@ describe('catalogue-solutions order-item page', () => {
       harness.request(context, ($) => {
         const table = $('div[data-test-id="price-table"]');
         const row = table.find('[data-test-id="table-row-0"]');
-        const priceInput = row.find('[data-test-id="question-price-input-id"] input');
+        const priceInput = row.find('[data-test-id="question-price"] input');
         const orderUnit = row.find('div[data-test-id="order-unit-id"]');
         const expandableSection = $('[data-test-id="view-section-input-id"]');
 
@@ -276,29 +336,38 @@ describe('catalogue-solutions order-item page', () => {
         expect(orderUnit.text().trim()).toEqual('per month');
       });
     }));
+
+    it('should render errors on price input field if there are errors', componentTester(setup, (harness) => {
+      context.addPriceTable.data[0][0].question.error = { message: 'price error message' };
+      harness.request(context, ($) => {
+        const supplierNameQuestion = $('div[data-test-id="question-price"]');
+        expect(supplierNameQuestion.find('div[data-test-id="text-field-input-error"]').length).toEqual(1);
+        expect(supplierNameQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error: price error message');
+      });
+    }));
   });
 
   it('should render the "Delete" button', componentTester(setup, (harness) => {
-    const context = {
+    const deleteContext = {
       deleteButtonText: 'Delete',
     };
 
-    harness.request(context, ($) => {
+    harness.request(deleteContext, ($) => {
       const button = $('[data-test-id="delete-button"] button');
       expect(button.length).toEqual(1);
-      expect(button.text().trim()).toEqual(context.deleteButtonText);
+      expect(button.text().trim()).toEqual(deleteContext.deleteButtonText);
     });
   }));
 
   it('should render the "Save" button', componentTester(setup, (harness) => {
-    const context = {
+    const saveContext = {
       saveButtonText: 'Save',
     };
 
-    harness.request(context, ($) => {
+    harness.request(saveContext, ($) => {
       const button = $('[data-test-id="save-button"] button');
       expect(button.length).toEqual(1);
-      expect(button.text().trim()).toEqual(context.saveButtonText);
+      expect(button.text().trim()).toEqual(saveContext.saveButtonText);
     });
   }));
 });

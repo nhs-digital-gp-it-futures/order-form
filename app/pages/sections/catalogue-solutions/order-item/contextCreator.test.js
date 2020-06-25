@@ -1,5 +1,10 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
+import * as errorContext from '../../getSectionErrorContext';
+
+jest.mock('../../getSectionErrorContext', () => ({
+  getSectionErrorContext: jest.fn(),
+}));
 
 const solutionName = 'solution-name';
 const serviceRecipientName = 'service-recipient-name';
@@ -47,43 +52,46 @@ describe('catalogue-solutions order-item contextCreator', () => {
     });
 
     it('should return the questions', () => {
-      const questions = {
-        plannedDate: {
-          id: 'plannedDeliveryDate',
-          mainAdvice: 'Planned delivery date',
-          additionalAdvice: 'For example 14 01 2020',
+      const questions = [{
+        id: 'plannedDeliveryDate',
+        mainAdvice: 'Planned delivery date',
+        additionalAdvice: 'For example 14 01 2020',
+      },
+      {
+        id: 'quantity',
+        mainAdvice: 'Quantity',
+        rows: 3,
+        expandableSection: {
+          dataTestId: 'view-section-quantity-id',
+          title: 'What quantity should I enter?',
+          innerComponent: "Estimate the quantity you think you'll need either per month or per year.",
         },
-        quantity: {
-          id: 'quantity',
-          mainAdvice: 'Quantity',
-          rows: 3,
-          expandableSection: {
-            dataTestId: 'view-section-quantity-id',
-            title: 'What quantity should I enter?',
-            innerComponent: "Estimate the quantity you think you'll need either per month or per year.",
+      },
+      {
+        id: 'selectEstimationPeriod',
+        mainAdvice: 'Estimation period',
+        options: [
+          {
+            value: 'perMonth',
+            text: 'Per month',
           },
-        },
-        estimationPeriod: {
-          id: 'selectEstimationPeriod',
-          mainAdvice: 'Estimation period',
-          options: [
-            {
-              value: 'perMonth',
-              text: 'Per month',
-            },
-            {
-              value: 'perYear',
-              text: 'Per year',
-              checked: true,
-            },
-          ],
-          expandableSection: {
-            dataTestId: 'view-section-estimation-period-id',
-            title: 'What period should I enter?',
-            innerComponent: 'This should be based on how you estimated the quantity you want to order.',
+          {
+            value: 'perYear',
+            text: 'Per year',
+            checked: true,
           },
+        ],
+        expandableSection: {
+          dataTestId: 'view-section-estimation-period-id',
+          title: 'What period should I enter?',
+          innerComponent: 'This should be based on how you estimated the quantity you want to order.',
         },
-      };
+      },
+      {
+        type: 'input',
+        id: 'price',
+      },
+      ];
 
       const context = getContext({ selectedPrice });
       expect(context.questions).toEqual(questions);
@@ -111,7 +119,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
             },
             question: {
               data: 1.64,
-              id: 'price-input-id',
+              id: 'price',
               type: 'input',
             },
           },
@@ -128,6 +136,79 @@ describe('catalogue-solutions order-item contextCreator', () => {
     it('should return the save button', () => {
       const context = getContext({ selectedPrice });
       expect(context.saveButtonText).toEqual(manifest.saveButtonText);
+    });
+  });
+  describe('getErrorContext', () => {
+    const mockValidationErrors = [{
+      field: 'quantity',
+      id: 'quantityRequired',
+    },
+    {
+      field: 'price',
+      id: 'priceRequired',
+    }];
+    const manifestWithErrors = {
+      questions:
+      [{
+        id: 'quantity',
+        mainAdvice: 'Quantity',
+        rows: 3,
+        error: {
+          message: 'quantity error',
+        },
+      }],
+      addPriceTable:
+      {
+        data: [[{
+          question: {
+            type: 'input',
+            id: 'price',
+          },
+        }]],
+      },
+      errorMessages:
+      {
+        quantityRequired: 'Enter a quantity',
+        priceRequired: 'Enter a price',
+      },
+    };
+
+    afterEach(() => {
+      errorContext.getSectionErrorContext.mockReset();
+    });
+
+    it('should call getSectionErrorContext with correct params', () => {
+      errorContext.getSectionErrorContext
+        .mockReturnValue(manifestWithErrors);
+
+      const params = {
+        orderId: 'order-id',
+        solutionName: 'solution-name',
+        serviceRecipientName: 'recipient-name',
+        odsCode: 'ods-code',
+        selectedPrice,
+        validationErrors: mockValidationErrors,
+      };
+
+      getErrorContext(params);
+      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
+    });
+
+    it('should call add error message to the table data', async () => {
+      errorContext.getSectionErrorContext
+        .mockReturnValue(manifestWithErrors);
+
+      const params = {
+        orderId: 'order-id',
+        solutionName: 'solution-name',
+        serviceRecipientName: 'recipient-name',
+        odsCode: 'ods-code',
+        selectedPrice,
+        validationErrors: mockValidationErrors,
+      };
+
+      const returnedErrorContext = await getErrorContext(params);
+      expect(returnedErrorContext.addPriceTable.data[0][0].question.error.message).toEqual('Enter a price');
     });
   });
 });

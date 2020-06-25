@@ -1,17 +1,15 @@
 import { getData } from 'buying-catalogue-library';
 import { solutionsApiUrl, organisationApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
-import { getRecipientName, getSelectedPrice, getOrderItemContext } from './controller';
+import {
+  getRecipientName, getSelectedPrice, getOrderItemContext, validateOrderItemForm,
+} from './controller';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
 
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
-}));
-
-jest.mock('../select/recipient/controller', () => ({
-  getSolution: () => ({ name: 'solution-name' }),
 }));
 
 const selectedPrice = {
@@ -28,29 +26,14 @@ const selectedPrice = {
 
 describe('catalogue-solutions order-item controller', () => {
   describe('getOrderItemContext', () => {
-    afterEach(() => {
-      getData.mockReset();
-
-      contextCreator.getContext
-        .mockResolvedValueOnce();
-    });
     it('should call getContext with the correct params', async () => {
-      contextCreator.getContext
-        .mockResolvedValueOnce();
-      getData
-        .mockResolvedValueOnce({
-          name: 'Some service recipient 1',
-          odsCode: 'fake-recipient-id',
-        });
-      getData
-        .mockResolvedValueOnce(selectedPrice);
-
       await getOrderItemContext({
         orderId: 'order-1',
-        selectedSolutionId: 'solution-1',
+        solutionName: 'solution-name',
         selectedRecipientId: 'fake-recipient-id',
+        serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
-        accessToken: 'token',
+        selectedPrice,
       });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
@@ -98,6 +81,64 @@ describe('catalogue-solutions order-item controller', () => {
         endpoint: `${solutionsApiUrl}/api/v1/prices/price-1`,
         accessToken: 'access_token',
         logger,
+      });
+    });
+  });
+
+  describe('validateOrderItemForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return success as true', () => {
+        const data = {
+          quantity: 'some-quantity-id',
+          price: 'some-price-id',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(true);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const expectedValidationErrors = [
+        {
+          field: 'quantity',
+          id: 'quantityRequired',
+        },
+        {
+          field: 'price',
+          id: 'priceRequired',
+        },
+      ];
+
+      it('should return an array of one validation error and success as false if empty string is passed in', () => {
+        const data = {
+          selectSolution: '',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return an array of one validation error and success as false if whitespace only is passed in', () => {
+        const data = {
+          selectSolution: '   ',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return a validation error if supplierName is undefined', () => {
+        const data = {};
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.errors).toEqual(expectedValidationErrors);
       });
     });
   });
