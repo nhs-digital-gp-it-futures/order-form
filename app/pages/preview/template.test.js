@@ -1,6 +1,5 @@
 import { componentTester } from '../../test-utils/componentTester';
 import manifest from './manifest.json';
-import { template } from '@babel/core';
 
 const setup = {
   template: {
