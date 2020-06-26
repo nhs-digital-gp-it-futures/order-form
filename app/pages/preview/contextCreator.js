@@ -59,7 +59,7 @@ const generateCallOffAndSupplierDetailsTable = ({
 const getCurrentDate = () => formatDate(new Date(Date.now()));
 
 const generateRecurringCostDetailsTable = ({
-  recurringCostTable, recurringCostItems, serviceRecipients,
+  recurringCostTable, recurringCostItems = [], serviceRecipients,
 }) => {
   const items = recurringCostItems.map((item) => {
     const columns = [];

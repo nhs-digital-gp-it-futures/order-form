@@ -183,7 +183,7 @@ describe('order summary preview contextCreator', () => {
         .toEqual(manifest.oneOffCostTable.columnInfo);
     });
 
-    it.only('should return the recurring cost table with items when order items are provided', () => {
+    it('should return the recurring cost table with items when order items are provided', () => {
       const expectedContext = {
         recurringCostTable: {
           ...manifest.recurringCostTable,
@@ -228,6 +228,18 @@ describe('order summary preview contextCreator', () => {
       };
 
       const context = getContext({ orderId: 'order-1', orderData: mockOrderDataWithServiceRecipients, recurringCostItems: mockRecurringCosts });
+      expect(context.recurringCostTable).toEqual(expectedContext.recurringCostTable);
+    });
+
+    it('should return an empty recurring cost table when no order items are provided', () => {
+      const expectedContext = {
+        recurringCostTable: {
+          ...manifest.recurringCostTable,
+          items: [],
+        },
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: {} });
       expect(context.recurringCostTable).toEqual(expectedContext.recurringCostTable);
     });
   });

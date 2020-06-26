@@ -74,4 +74,8 @@ describe('transformOrderItems', () => {
   `('transformOrderItems $key returns expected output', ({ orderItems, expected }) => {
   expect(transformOrderItems(orderItems)).toEqual(expected);
 });
+
+  it('returns when there are no order items', () => {
+    expect(transformOrderItems()).toEqual({ oneOffCosts: [], recurringCosts: [] });
+  });
 });
