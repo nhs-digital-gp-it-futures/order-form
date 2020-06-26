@@ -58,10 +58,10 @@ describe('order summary preview controller', () => {
 
       transformOrderItems.transformOrderItems.mockResolvedValueOnce();
 
-      await getPreviewPageContext({ orderId: 'order-1', orderData: { } });
+      await getPreviewPageContext({ orderId: 'order-1', orderData: {} });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', orderData: { } });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', orderData: {} });
     });
   });
 });
