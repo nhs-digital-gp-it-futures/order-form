@@ -9,7 +9,7 @@
     }
   ],
   "errorMessages": {
-    "SelectSolutionPriceRequired": "Select a List price"
+    "SelectSolutionPriceRequired": "Select a list price"
   },
   "continueButtonText": "Continue"
 }
