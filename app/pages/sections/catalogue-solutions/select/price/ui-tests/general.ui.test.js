@@ -303,7 +303,7 @@ test('should show the error summary when no price selected causing validation er
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a List price');
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a list price');
 });
 
 test('should render select solution field as errors with error message when no price selected causing validation error', async (t) => {
@@ -320,7 +320,7 @@ test('should render select solution field as errors with error message when no p
 
   await t
     .expect(solutionSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
-    .expect(await extractInnerText(solutionSelectField.find('#selectSolutionPrice-error'))).contains('Select a List price');
+    .expect(await extractInnerText(solutionSelectField.find('#selectSolutionPrice-error'))).contains('Select a list price');
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
