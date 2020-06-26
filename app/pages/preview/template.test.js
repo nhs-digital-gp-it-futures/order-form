@@ -1,5 +1,6 @@
 import { componentTester } from '../../test-utils/componentTester';
 import manifest from './manifest.json';
+import { template } from '@babel/core';
 
 const setup = {
   template: {
@@ -277,16 +278,40 @@ describe('preview page', () => {
       });
     }));
 
-    it.only('should render the call-off party and supplier details', componentTester(setup, (harness) => {
+    it.only('should render the recurring cost details', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const table = $('div[data-test-id="recurring-cost-table"]');
         const recurringCost1Row = table.find('[data-test-id="table-row-0"]');
         const recipientNameDetails = recurringCost1Row.find('div[data-test-id="recipient-name"]');
+        const itemId = recurringCost1Row.find('div[data-test-id="item-id"]');
+        const itemName = recurringCost1Row.find('div[data-test-id="item-name"]');
+        const priceUnit = recurringCost1Row.find('div[data-test-id="price-unit"]');
+        const quantity = recurringCost1Row.find('div[data-test-id="quantity"]');
+        const plannedDate = recurringCost1Row.find('div[data-test-id="planned-date"]');
+        const itemCost = recurringCost1Row.find('div[data-test-id="item-cost"]');
 
         expect(recurringCost1Row.length).toEqual(1);
 
         expect(recipientNameDetails.length).toEqual(1);
         expect(recipientNameDetails.text().trim()).toEqual('Some Recipient Name');
+
+        expect(itemId.length).toEqual(1);
+        expect(itemId.text().trim()).toEqual('item-1');
+
+        expect(itemName.length).toEqual(1);
+        expect(itemName.text().trim()).toEqual('Some item name');
+
+        expect(priceUnit.length).toEqual(1);
+        expect(priceUnit.text().trim()).toEqual('£1.26 per Patient per Year');
+
+        expect(quantity.length).toEqual(1);
+        expect(quantity.text().trim()).toEqual('500 per month');
+
+        expect(plannedDate.length).toEqual(1);
+        expect(plannedDate.text().trim()).toEqual('24 February 2020');
+
+        expect(itemCost.length).toEqual(1);
+        expect(itemCost.text().trim()).toEqual('5000');
       });
     }));
   });
