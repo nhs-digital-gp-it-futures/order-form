@@ -220,6 +220,10 @@ describe('preview page', () => {
     }));
   });
 
+  describe('One off cost totals table', () => {
+    it('')
+  });
+
   it('should render the recurring cost heading and description', componentTester(setup, (harness) => {
     const context = {
       recurringCostHeading: manifest.recurringCostHeading,
