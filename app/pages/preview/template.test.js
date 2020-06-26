@@ -249,6 +249,17 @@ describe('preview page', () => {
           { data: 'Planned delivery date' },
           { data: 'Item cost per year(£)' },
         ],
+        items: [
+          [
+            { data: 'Some Recipient Name', dataTestId: 'recipient-name' },
+            { data: 'item-1', dataTestId: 'item-id' },
+            { data: 'Some item name', dataTestId: 'item-name' },
+            { data: '£1.26 per Patient per Year', dataTestId: 'price-unit' },
+            { data: '500 per month', dataTestId: 'quantity' },
+            { data: '24 February 2020', dataTestId: 'planned-date' },
+            { data: '5000', dataTestId: 'item-cost' },
+          ],
+        ],
       },
     };
 
@@ -263,6 +274,19 @@ describe('preview page', () => {
         expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual('Quantity/period');
         expect(table.find('[data-test-id="column-heading-5"]').text().trim()).toEqual('Planned delivery date');
         expect(table.find('[data-test-id="column-heading-6"]').text().trim()).toEqual('Item cost per year(£)');
+      });
+    }));
+
+    it.only('should render the call-off party and supplier details', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="recurring-cost-table"]');
+        const recurringCost1Row = table.find('[data-test-id="table-row-0"]');
+        const recipientNameDetails = recurringCost1Row.find('div[data-test-id="recipient-name"]');
+
+        expect(recurringCost1Row.length).toEqual(1);
+
+        expect(recipientNameDetails.length).toEqual(1);
+        expect(recipientNameDetails.text().trim()).toEqual('Some Recipient Name');
       });
     }));
   });
