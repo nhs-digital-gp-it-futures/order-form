@@ -53,6 +53,13 @@
       }
     ]
   },
+  "oneOffCostTotalsTable": {
+    "columnInfo": [
+      { "data": "", "width": "50%" },
+      { "data": "", "width": "25%" },
+      { "data": "", "width": "25%" }
+    ]
+  },
   "recurringCostHeading": "Order items (recurring cost)",
   "recurringCostDescription": "The following items carry a recurring annual cost for the duration of this Call-off Agreement. They're the Catalogue Solutions, Additional Services and Associated Services in this order that you'll be charged for at a monthly rate.",
   "recurringCostTable": {
