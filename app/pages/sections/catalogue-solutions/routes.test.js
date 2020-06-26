@@ -166,10 +166,12 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should return the catalogue-solutions order item page if authorised', () => {
-      orderItemController.getOrderItemContext = jest.fn()
-        .mockResolvedValue({});
+      orderItemController.getSolution = jest.fn().mockResolvedValue({});
+      orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
+      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
-      request(setUpFakeApp())
+      return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
