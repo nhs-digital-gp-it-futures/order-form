@@ -58,7 +58,58 @@ const generateCallOffAndSupplierDetailsTable = ({
 
 const getCurrentDate = () => formatDate(new Date(Date.now()));
 
-export const getContext = ({ orderId, orderData }) => ({
+const generateRecurringCostDetailsTable = ({
+  recurringCostTable, recurringCostItems, serviceRecipients,
+}) => {
+  const items = recurringCostItems.map((item) => {
+    const columns = [];
+
+    columns.push(({
+      data: serviceRecipients.find(recipient => recipient.odsCode === item.serviceRecipientsOdsCode)
+        .name,
+      dataTestId: 'recipient-name',
+    }));
+
+    columns.push(({
+      data: item.itemId,
+      dataTestId: 'item-id',
+    }));
+
+    columns.push(({
+      data: item.catalogueItemName,
+      dataTestId: 'item-name',
+    }));
+
+    columns.push(({
+      data: `£${item.price} ${item.itemUnitDescription} ${item.timeUnitDescription}`,
+      dataTestId: 'price-unit',
+    }));
+
+    columns.push(({
+      data: `${item.quantity} ${item.quantityPeriodDescription}`,
+      dataTestId: 'quantity',
+    }));
+
+    columns.push(({
+      data: formatDate(item.deliveryDate),
+      dataTestId: 'planned-date',
+    }));
+
+    columns.push(({
+      data: `${item.costPerYear}`,
+      dataTestId: 'item-cost',
+    }));
+
+    return columns;
+  });
+
+  return ({
+    ...recurringCostTable,
+    items,
+  });
+};
+
+export const getContext = ({ orderId, orderData, recurringCostItems }) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
   orderDescription: orderData.description,
@@ -67,6 +118,11 @@ export const getContext = ({ orderId, orderData }) => ({
     callOffAndSupplierTable: manifest.callOffAndSupplierTable,
     orderPartyData: orderData.orderParty,
     supplierData: orderData.supplier,
+  }),
+  recurringCostTable: generateRecurringCostDetailsTable({
+    recurringCostTable: manifest.recurringCostTable,
+    recurringCostItems,
+    serviceRecipients: orderData.serviceRecipients,
   }),
   commencementDate: formatDate(orderData.commencementDate),
   backLinkHref: `${baseUrl}/organisation/${orderId}`,

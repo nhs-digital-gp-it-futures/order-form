@@ -182,5 +182,53 @@ describe('order summary preview contextCreator', () => {
       expect(context.oneOffCostTable.columnInfo)
         .toEqual(manifest.oneOffCostTable.columnInfo);
     });
+
+    it.only('should return the recurring cost table with items when order items are provided', () => {
+      const expectedContext = {
+        recurringCostTable: {
+          ...manifest.recurringCostTable,
+          items: [
+            [
+              { data: 'Some Recipient Name', dataTestId: 'recipient-name' },
+              { data: 'item-1', dataTestId: 'item-id' },
+              { data: 'Some item name', dataTestId: 'item-name' },
+              { data: '£1.26 per patient per year', dataTestId: 'price-unit' },
+              { data: '500 per month', dataTestId: 'quantity' },
+              { data: '24 February 2020', dataTestId: 'planned-date' },
+              { data: '5000', dataTestId: 'item-cost' },
+            ],
+          ],
+        },
+      };
+
+      const mockRecurringCosts = [{
+        catalogueItemType: 'Solution',
+        itemId: 'item-1',
+        provisioningType: 'Declarative',
+        serviceRecipientsOdsCode: 'A10001',
+        cataloguePriceType: 'Flat',
+        catalogueItemName: 'Some item name',
+        price: 1.260,
+        itemUnitDescription: 'per patient',
+        timeUnitDescription: 'per year',
+        quantity: 500,
+        quantityPeriodDescription: 'per month',
+        deliveryDate: '2020-02-24',
+        costPerYear: 5000.000,
+      }];
+
+      const mockOrderDataWithServiceRecipients = {
+        ...mockOrderData,
+        serviceRecipients: [
+          {
+            name: 'Some Recipient Name',
+            odsCode: 'A10001',
+          },
+        ],
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderDataWithServiceRecipients, recurringCostItems: mockRecurringCosts });
+      expect(context.recurringCostTable).toEqual(expectedContext.recurringCostTable);
+    });
   });
 });

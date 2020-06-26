@@ -277,7 +277,7 @@ describe('preview page', () => {
       });
     }));
 
-    it.only('should render the recurring cost details', componentTester(setup, (harness) => {
+    it('should render the recurring cost details', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const table = $('div[data-test-id="recurring-cost-table"]');
         const recurringCost1Row = table.find('[data-test-id="table-row-0"]');
