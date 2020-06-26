@@ -223,15 +223,32 @@ describe('preview page', () => {
   describe('One off cost totals table', () => {
     const context = {
       oneOffCostTotalsTable: {
+        columnInfo: [
+          { data: '', width: '50%' }, { data: '', width: '25%' }, { data: '', width: '25%' },
+        ],
         items: [
           [
-            { width: '50%', data: '', dataTestId: 'black-cell' },
-            { data: 'Total one off cost (indicative)', width: '25%', dataTestId: 'total-cost-label' },
-            { data: '1981.02', width: '25%', dataTestId: 'total-cost-value' },
+            { data: '', dataTestId: 'black-cell' },
+            { data: 'Total one off cost (indicative)', dataTestId: 'total-cost-label' },
+            { data: '1981.02', dataTestId: 'total-cost-value' },
           ],
         ],
       },
     };
+
+    it('should render the table headings with no headings', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="one-off-cost-totals-table"]');
+        const column1 = table.find('[data-test-id="column-heading-0"]');
+        const column2 = table.find('th[data-test-id="column-heading-1"]');
+        const column3 = table.find('th[data-test-id="column-heading-2"]');
+
+        expect(table.length).toEqual(1);
+        expect(column1.text().trim()).toEqual('');
+        expect(column2.text().trim()).toEqual('');
+        expect(column3.text().trim()).toEqual('');
+      });
+    }));
 
     it('should render the one off cost totals table', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
