@@ -221,7 +221,32 @@ describe('preview page', () => {
   });
 
   describe('One off cost totals table', () => {
-    it('')
+    const context = {
+      oneOffCostTotalsTable: {
+        items: [
+          [
+            { width: '50%', data: '', dataTestId: 'black-cell' },
+            { data: 'Total one off cost (indicative)', width: '25%', dataTestId: 'total-cost-label' },
+            { data: '1981.02', width: '25%', dataTestId: 'total-cost-value' },
+          ],
+        ],
+      },
+    };
+
+    it('should render the one off cost totals table', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="one-off-cost-totals-table"]');
+        const row1 = table.find('[data-test-id="table-row-0"]');
+        const blankCell = row1.find('div[data-test-id="blank-cell"]');
+        const totalCostLabelCell = row1.find('div[data-test-id="total-cost-label"]');
+        const totalCostValueCell = row1.find('div[data-test-id="total-cost-value"]');
+
+        expect(table.length).toEqual(1);
+        expect(blankCell.text().trim()).toEqual('');
+        expect(totalCostLabelCell.text().trim()).toEqual('Total one off cost (indicative)');
+        expect(totalCostValueCell.text().trim()).toEqual('1981.02');
+      });
+    }));
   });
 
   it('should render the recurring cost heading and description', componentTester(setup, (harness) => {

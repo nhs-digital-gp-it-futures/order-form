@@ -61,6 +61,13 @@
               data: oneOffCostTable.items
             }) }}
           </div>
+          <div data-test-id="one-off-cost-totals-table">
+            {{ bcTableFlexible({
+              columnInfo: oneOffCostTotalsTable.columnInfo,
+              classes: oneOffCostTotalsTable.classes,
+              data: oneOffCostTotalsTable.items
+            }) }}
+          </div>
         </div>
       </div>
     </div>
