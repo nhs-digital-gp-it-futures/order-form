@@ -30,19 +30,19 @@ export const routes = (authProvider, sessionManager) => {
     router, authProvider, tokenType: 'id', logoutRedirectPath: config.logoutRedirectPath, logger,
   });
 
-  router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     logger.info('redirecting to organisation orders page');
     return res.redirect(`${config.baseUrl}/organisation`);
   }));
 
-  router.get('/document/:documentName', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/document/:documentName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { documentName } = req.params;
     const contentType = 'application/pdf';
     const stream = await getDocumentByFileName({ res, documentName, contentType });
     stream.on('close', () => res.end());
   }));
 
-  router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const context = await getDashboardContext({
       accessToken,
@@ -53,7 +53,7 @@ export const routes = (authProvider, sessionManager) => {
     res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
 
@@ -64,7 +64,7 @@ export const routes = (authProvider, sessionManager) => {
     res.render('pages/task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.get('/organisation/:orderId/preview', authProvider.authorise({ claim: 'ordering' }), withCatch(authProvider, async (req, res) => {
+  router.get('/organisation/:orderId/preview', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
 

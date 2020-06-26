@@ -125,3 +125,147 @@ test('should render the date summary created', async (t) => {
     .expect(dateSummaryCreated.exists).ok()
     .expect(await extractInnerText(dateSummaryCreated)).eql(`${content.dateSummaryCreatedLabel} ${formattedCurrentDate}`);
 });
+
+test('should render the Call-off ordering party and supplier table with the column headings', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const calloffAndSupplierTable = Selector('[data-test-id="calloff-and-supplier"]');
+  const calloffColumnHeading = calloffAndSupplierTable.find('[data-test-id="column-heading-0"]');
+  const supplierColumnHeading = calloffAndSupplierTable.find('[data-test-id="column-heading-1"]');
+
+  await t
+    .expect(calloffAndSupplierTable.exists).ok()
+    .expect(calloffColumnHeading.exists).ok()
+    .expect(await extractInnerText(calloffColumnHeading)).eql('Call-off Ordering Party')
+
+    .expect(supplierColumnHeading.exists).ok()
+    .expect(await extractInnerText(supplierColumnHeading)).eql('Supplier');
+});
+
+test('should not render the Call-off ordering party and supplier details in the table when data not provided', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const calloffAndSupplierTable = Selector('[data-test-id="calloff-and-supplier"]');
+  const calloffAndSupplierDetails = calloffAndSupplierTable.find('[data-test-id="table-row-0"]');
+  const calloffPartyDetails = calloffAndSupplierDetails.find('div[data-test-id="call-off-party"]');
+  const supplierDetails = calloffAndSupplierDetails.find('div[data-test-id="supplier"]');
+
+  await t
+    .expect(calloffAndSupplierDetails.exists).ok()
+    .expect(calloffAndSupplierDetails.exists).ok()
+    .expect(calloffPartyDetails.exists).notOk()
+    .expect(supplierDetails.exists).notOk();
+});
+
+test('should render the commencement date label only when data not provided', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const commencementDate = Selector('[data-test-id="commencement-date"]');
+
+  await t
+    .expect(commencementDate.exists).ok()
+    .expect(await extractInnerText(commencementDate)).eql(`${content.commencementDateLabel}`);
+});
+
+test('should render the one off cost heading and description', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const oneOffCostHeading = Selector('h3[data-test-id="one-off-cost-heading"]');
+  const oneOffCostDescription = Selector('h4[data-test-id="one-off-cost-description"]');
+
+  await t
+    .expect(oneOffCostHeading.exists).ok()
+    .expect(await extractInnerText(oneOffCostHeading)).eql(content.oneOffCostHeading)
+    .expect(oneOffCostDescription.exists).ok()
+    .expect(await extractInnerText(oneOffCostDescription)).eql(content.oneOffCostDescription);
+});
+
+test('should render the one off cost table with the column headings', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const oneOffCostTable = Selector('[data-test-id="one-off-cost-table"]');
+  const recipientNameColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-0"]');
+  const itemIdColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-1"]');
+  const itemNameColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-2"]');
+  const priceUnitColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-3"]');
+  const quantityColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-4"]');
+  const itemCostColumnHeading = oneOffCostTable.find('[data-test-id="column-heading-5"]');
+
+  await t
+    .expect(oneOffCostTable.exists).ok()
+
+    .expect(recipientNameColumnHeading.exists).ok()
+    .expect(await extractInnerText(recipientNameColumnHeading)).eql('Recipient name (ODS code)')
+
+    .expect(itemIdColumnHeading.exists).ok()
+    .expect(await extractInnerText(itemIdColumnHeading)).eql('Item ID')
+
+    .expect(itemNameColumnHeading.exists).ok()
+    .expect(await extractInnerText(itemNameColumnHeading)).eql('Item name')
+
+    .expect(priceUnitColumnHeading.exists).ok()
+    .expect(await extractInnerText(priceUnitColumnHeading)).eql('Price unit of order (£)')
+
+    .expect(quantityColumnHeading.exists).ok()
+    .expect(await extractInnerText(quantityColumnHeading)).eql('Quantity')
+
+    .expect(itemCostColumnHeading.exists).ok()
+    .expect(await extractInnerText(itemCostColumnHeading)).eql('Item cost (£)');
+});
+
+test('should render the recurring cost heading and description', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const recurringCostHeading = Selector('h3[data-test-id="recurring-cost-heading"]');
+  const recurringCostDescription = Selector('h4[data-test-id="recurring-cost-description"]');
+
+  await t
+    .expect(recurringCostHeading.exists).ok()
+    .expect(await extractInnerText(recurringCostHeading)).eql(content.recurringCostHeading)
+    .expect(recurringCostDescription.exists).ok()
+    .expect(await extractInnerText(recurringCostDescription)).eql(content.recurringCostDescription);
+});
+
+test('should render the recurring cost table with the column headings', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const recurringCostTable = Selector('[data-test-id="recurring-cost-table"]');
+  const recipientNameColumnHeading = recurringCostTable.find('[data-test-id="column-heading-0"]');
+  const itemIdColumnHeading = recurringCostTable.find('[data-test-id="column-heading-1"]');
+  const itemNameColumnHeading = recurringCostTable.find('[data-test-id="column-heading-2"]');
+  const priceUnitColumnHeading = recurringCostTable.find('[data-test-id="column-heading-3"]');
+  const quantityColumnHeading = recurringCostTable.find('[data-test-id="column-heading-4"]');
+  const plannedDateColumnHeading = recurringCostTable.find('[data-test-id="column-heading-5"]');
+  const itemCostColumnHeading = recurringCostTable.find('[data-test-id="column-heading-6"]');
+
+  await t
+    .expect(recurringCostTable.exists).ok()
+
+    .expect(recipientNameColumnHeading.exists).ok()
+    .expect(await extractInnerText(recipientNameColumnHeading)).eql('Recipient name (ODS code)')
+
+    .expect(itemIdColumnHeading.exists).ok()
+    .expect(await extractInnerText(itemIdColumnHeading)).eql('Item ID')
+
+    .expect(itemNameColumnHeading.exists).ok()
+    .expect(await extractInnerText(itemNameColumnHeading)).eql('Item name')
+
+    .expect(priceUnitColumnHeading.exists).ok()
+    .expect(await extractInnerText(priceUnitColumnHeading)).eql('Price unit of order (£)')
+
+    .expect(quantityColumnHeading.exists).ok()
+    .expect(await extractInnerText(quantityColumnHeading)).eql('Quantity /period')
+
+    .expect(plannedDateColumnHeading.exists).ok()
+    .expect(await extractInnerText(plannedDateColumnHeading)).eql('Planned delivery date')
+
+    .expect(itemCostColumnHeading.exists).ok()
+    .expect(await extractInnerText(itemCostColumnHeading)).eql('Item cost per year (£)');
+});

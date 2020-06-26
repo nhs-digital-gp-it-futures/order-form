@@ -23,7 +23,7 @@ const mockSolutionPricing = {
   name: 'Solution name',
   prices: [
     {
-      priceId: '0001',
+      priceId: 1,
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -37,7 +37,7 @@ const mockSolutionPricing = {
       price: 1.64,
     },
     {
-      priceId: '0002',
+      priceId: 2,
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -47,7 +47,7 @@ const mockSolutionPricing = {
       price: 525.052,
     },
     {
-      priceId: '0003',
+      priceId: 3,
       type: 'tiered',
       currencyCode: 'GBP',
       itemUnit: {
@@ -81,8 +81,8 @@ const solutionPricesState = ClientFunction(() => {
     name: 'Solution name',
     prices: [
       {
-        priceId: '0001',
-        type: 'flat',
+        priceId: 1,
+        type: 'Flat',
         currencyCode: 'GBP',
         itemUnit: {
           name: 'patient',
@@ -95,8 +95,8 @@ const solutionPricesState = ClientFunction(() => {
         price: 1.64,
       },
       {
-        priceId: '0002',
-        type: 'flat',
+        priceId: 2,
+        type: 'Flat',
         currencyCode: 'GBP',
         itemUnit: {
           name: 'licence',
@@ -105,8 +105,8 @@ const solutionPricesState = ClientFunction(() => {
         price: 525.052,
       },
       {
-        priceId: '0003',
-        type: 'tiered',
+        priceId: 3,
+        type: 'Tiered',
         currencyCode: 'GBP',
         itemUnit: {
           name: 'consultation',
@@ -136,7 +136,7 @@ const solutionPricesState = ClientFunction(() => {
 });
 
 const selectedPriceIdState = ClientFunction(() => {
-  document.cookie = 'selectedPriceId=0002';
+  document.cookie = 'selectedPriceId=2';
 });
 
 const mocks = () => {
@@ -240,13 +240,13 @@ test('should render a selectSolutionPrice question as radio button options', asy
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
     .expect(selectSolutionPriceRadioOptions.find('input').count).eql(3)
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(0).getAttribute('value')).eql('0001')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(0).getAttribute('value')).eql('1')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(0))).eql('£1.64 per patient per year')
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(1).getAttribute('value')).eql('0002')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(1).getAttribute('value')).eql('2')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(1))).eql('£525.052 per licence')
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(2).getAttribute('value')).eql('0003')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(2).getAttribute('value')).eql('3')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(2))).eql('1 - 10 consultations £700 per consultation per month\n11+ consultations £400 per consultation per month');
 });
 

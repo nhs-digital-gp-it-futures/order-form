@@ -2,7 +2,7 @@ import { ErrorContext } from 'buying-catalogue-library';
 import { appBaseUri } from '../config';
 import { getEndpoint } from '../endpoints';
 
-export const withCatch = (authProvider, route) => async (req, res, next) => {
+export const withCatch = (logger, authProvider, route) => async (req, res, next) => {
   try {
     return await route(req, res, next);
   } catch (err) {
@@ -15,6 +15,7 @@ export const withCatch = (authProvider, route) => async (req, res, next) => {
       return authProvider.login()(req, res, next);
     }
 
+    logger.error(`Unexpected Error:\n${err.stack}`);
     const defaultError = new ErrorContext({ status: 500 });
     return next(defaultError);
   }

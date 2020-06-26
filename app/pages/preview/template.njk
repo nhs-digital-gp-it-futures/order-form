@@ -1,8 +1,9 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-table-flexible/macro.njk' import bcTableFlexible %}
 
 {% block body %}
-  <div class="nhsuk-width-container" data-test-id="preview-page">
+  <div data-test-id="preview-page">
     <div data-test-id="go-back-link">
       {{ backLink({
         "href": backLinkHref,
@@ -20,12 +21,65 @@
       </div>
     </div>
   
-    <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
       <div class="nhsuk-grid-column-full">
         <div data-test-id="date-summary-created">
           <span class="nhsuk-u-font-weight-bold">{{ dateSummaryCreatedLabel }}</span> {{ dateSummaryCreated }}
         </div>
       </div>
     </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <div data-test-id="calloff-and-supplier"> 
+          {{ bcTableFlexible({
+            columnInfo: callOffAndSupplierTable.columnInfo,
+            classes: callOffAndSupplierTable.classes,
+            data: callOffAndSupplierTable.items
+          }) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
+      <div class="nhsuk-grid-column-full">
+        <div data-test-id="commencement-date">
+          <span class="nhsuk-u-font-weight-bold">{{ commencementDateLabel }}</span> {{ commencementDate }}
+        </div>
+      </div>
+    </div>
+
+    <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
+      <div class="nhsuk-grid-column-full">
+        <div data-test-id="order-items-one-off-costs">
+          <h3 data-test-id="one-off-cost-heading" class="nhsuk-u-margin-bottom-3">{{ oneOffCostHeading }}</h3>
+          <h4 data-test-id="one-off-cost-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ oneOffCostDescription }}</h4>
+          <div data-test-id="one-off-cost-table">
+            {{ bcTableFlexible({
+              columnInfo: oneOffCostTable.columnInfo,
+              classes: oneOffCostTable.classes,
+              data: oneOffCostTable.items
+            }) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
+      <div class="nhsuk-grid-column-full">
+        <div data-test-id="order-items-recurring-costs">
+          <h3 data-test-id="recurring-cost-heading" class="nhsuk-u-margin-bottom-3">{{ recurringCostHeading }}</h3>
+          <h4 data-test-id="recurring-cost-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ recurringCostDescription }}</h4>
+          <div data-test-id="recurring-cost-table" >
+            {{ bcTableFlexible({
+              columnInfo: recurringCostTable.columnInfo,
+              classes: recurringCostTable.classes,
+              data: recurringCostTable.items
+            }) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 {% endblock %}
