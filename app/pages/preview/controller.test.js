@@ -36,7 +36,7 @@ describe('order summary preview controller', () => {
     });
   });
 
-  describe('getSolutionsPageContext', () => {
+  describe('getPreviewPageContext', () => {
     it('should call getContext with the correct params', async () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
