@@ -56,6 +56,31 @@ const generateCallOffAndSupplierDetailsTable = ({
   });
 };
 
+const generateOneOffCostTotalsTable = ({
+  oneOffCostTotalsTable, oneOffCostTotalValue,
+}) => {
+  const columns = [];
+  columns.push({
+    data: '',
+    dataTestId: 'blank-cell',
+  });
+
+  columns.push({
+    data: 'Total one off cost (indicative)',
+    dataTestId: 'total-cost-label',
+  });
+
+  columns.push({
+    data: oneOffCostTotalValue ? oneOffCostTotalValue !== undefined : '',
+    dataTestId: 'total-cost-value',
+  });
+
+  return ({
+    ...oneOffCostTotalsTable,
+    items: [columns],
+  });
+};
+
 const getCurrentDate = () => formatDate(new Date(Date.now()));
 
 export const getContext = ({ orderId, orderData }) => ({
@@ -67,6 +92,10 @@ export const getContext = ({ orderId, orderData }) => ({
     callOffAndSupplierTable: manifest.callOffAndSupplierTable,
     orderPartyData: orderData.orderParty,
     supplierData: orderData.supplier,
+  }),
+  oneOffCostTotalsTable: generateOneOffCostTotalsTable({
+    oneOffCostTotalsTable: manifest.oneOffCostTotalsTable,
+    oneOffCostTotalValue: orderData.totalOneOffCost,
   }),
   commencementDate: formatDate(orderData.commencementDate),
   backLinkHref: `${baseUrl}/organisation/${orderId}`,

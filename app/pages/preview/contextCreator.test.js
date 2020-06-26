@@ -181,6 +181,24 @@ describe('order summary preview contextCreator', () => {
         .toEqual(manifest.oneOffCostTotalsTable.columnInfo);
     });
 
+    it('should return the oneOffCostTotalsTable with items without the total cost value when not provided', () => {
+      const expectedContext = {
+        oneOffCostTotalsTable: {
+          ...manifest.oneOffCostTotalsTable,
+          items: [
+            [
+              { data: '', dataTestId: 'blank-cell' },
+              { data: 'Total one off cost (indicative)', dataTestId: 'total-cost-label' },
+              { data: '', dataTestId: 'total-cost-value' },
+            ],
+          ],
+        },
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.oneOffCostTotalsTable).toEqual(expectedContext.oneOffCostTotalsTable);
+    });
+
     it('should return the recurringCostTable colummInfo', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
       expect(context.oneOffCostTable.columnInfo)

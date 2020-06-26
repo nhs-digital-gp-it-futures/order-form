@@ -228,7 +228,7 @@ describe('preview page', () => {
         ],
         items: [
           [
-            { data: '', dataTestId: 'black-cell' },
+            { data: '', dataTestId: 'blank-cell' },
             { data: 'Total one off cost (indicative)', dataTestId: 'total-cost-label' },
             { data: '1981.02', dataTestId: 'total-cost-value' },
           ],
