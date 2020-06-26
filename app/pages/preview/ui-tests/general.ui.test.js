@@ -57,12 +57,13 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render Preview page', async (t) => {
+test.only('should render Preview page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="preview-page"]');
 
   await t
+    .debug()
     .expect(page.exists).ok();
 });
 

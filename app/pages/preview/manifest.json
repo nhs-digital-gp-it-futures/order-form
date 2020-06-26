@@ -55,9 +55,9 @@
   },
   "oneOffCostTotalsTable": {
     "columnInfo": [
-      { "data": "", "width": "50%" },
-      { "data": "", "width": "25%" },
-      { "data": "", "width": "25%" }
+      { "data": "", "width": "40%" },
+      { "data": "", "width": "45%" },
+      { "data": "", "width": "15%" }
     ]
   },
   "recurringCostHeading": "Order items (recurring cost)",

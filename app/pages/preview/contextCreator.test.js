@@ -181,15 +181,26 @@ describe('order summary preview contextCreator', () => {
         .toEqual(manifest.oneOffCostTotalsTable.columnInfo);
     });
 
-    it('should return the oneOffCostTotalsTable with items without the total cost value when not provided', () => {
+    it('should return the oneOffCostTotalsTable with items and the total cost value set to 0 when not provided', () => {
       const expectedContext = {
         oneOffCostTotalsTable: {
           ...manifest.oneOffCostTotalsTable,
           items: [
             [
-              { data: '', dataTestId: 'blank-cell' },
-              { data: 'Total one off cost (indicative)', dataTestId: 'total-cost-label' },
-              { data: '', dataTestId: 'total-cost-value' },
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+              {
+                data: 'Total one off cost (indicative)',
+                classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
+                dataTestId: 'total-cost-label',
+              },
+              {
+                data: '0',
+                classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
+                dataTestId: 'total-cost-value',
+              },
             ],
           ],
         },

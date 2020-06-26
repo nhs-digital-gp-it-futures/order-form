@@ -67,11 +67,13 @@ const generateOneOffCostTotalsTable = ({
 
   columns.push({
     data: 'Total one off cost (indicative)',
+    classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
     dataTestId: 'total-cost-label',
   });
 
   columns.push({
-    data: oneOffCostTotalValue ? oneOffCostTotalValue !== undefined : '',
+    data: oneOffCostTotalValue ? oneOffCostTotalValue !== undefined : '0',
+    classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
     dataTestId: 'total-cost-value',
   });
 
