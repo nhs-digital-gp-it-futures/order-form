@@ -48,12 +48,10 @@ describe('order summary preview contextCreator', () => {
       expect(context.dateSummaryCreated).toEqual('19 July 2020');
     });
 
-    it('should return the callOffAndSupplierTable colummInfo and columnClass', () => {
+    it('should return the callOffAndSupplierTable colummInfo', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
       expect(context.callOffAndSupplierTable.columnInfo)
         .toEqual(manifest.callOffAndSupplierTable.columnInfo);
-      expect(context.callOffAndSupplierTable.columnClass)
-        .toEqual(manifest.callOffAndSupplierTable.columnClass);
     });
 
     it('should return the callOffAndSupplierTable without items if orderData is empty', () => {
@@ -175,6 +173,12 @@ describe('order summary preview contextCreator', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
       expect(context.oneOffCostTable.columnInfo)
         .toEqual(manifest.oneOffCostTable.columnInfo);
+    });
+
+    it('should return the oneOffCostTotalsTable colummInfo', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.oneOffCostTotalsTable.columnInfo)
+        .toEqual(manifest.oneOffCostTotalsTable.columnInfo);
     });
 
     it('should return the recurringCostTable colummInfo', () => {
