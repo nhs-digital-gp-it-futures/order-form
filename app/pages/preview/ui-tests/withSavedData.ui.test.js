@@ -138,7 +138,7 @@ test('should render the commencement date label and date when data is provided',
     .expect(await extractInnerText(commencementDate)).eql(`${content.commencementDateLabel} 1 February 2020`);
 });
 
-test.only('should render the recurring cost item details in the table', async (t) => {
+test('should render the recurring cost item details in the table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
