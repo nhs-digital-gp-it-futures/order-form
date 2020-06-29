@@ -15,6 +15,6 @@ export const getOrder = async ({ orderId, accessToken }) => {
 };
 
 export const getPreviewPageContext = ({ orderId, orderData }) => {
-  const { recurringCosts } = transformOrderItems(orderData.orderItems);
-  return getContext({ orderId, orderData, recurringCosts });
+  const { recurringCostItems } = transformOrderItems(orderData.orderItems);
+  return getContext({ orderId, orderData, recurringCostItems });
 };

@@ -64,9 +64,12 @@ const generateRecurringCostDetailsTable = ({
   const items = recurringCostItems.map((item) => {
     const columns = [];
 
+    const serviceRecipient = serviceRecipients.find(
+      recipient => recipient.odsCode === item.serviceRecipientsOdsCode,
+    );
+
     columns.push(({
-      data: serviceRecipients.find(recipient => recipient.odsCode === item.serviceRecipientsOdsCode)
-        .name,
+      data: `${serviceRecipient.name} (${serviceRecipient.odsCode})`,
       dataTestId: 'recipient-name',
     }));
 
@@ -81,12 +84,12 @@ const generateRecurringCostDetailsTable = ({
     }));
 
     columns.push(({
-      data: `£${item.price} ${item.itemUnitDescription} ${item.timeUnitDescription}`,
+      data: `£${item.price.toLocaleString()} ${item.itemUnitDescription} ${item.timeUnitDescription}`,
       dataTestId: 'price-unit',
     }));
 
     columns.push(({
-      data: `${item.quantity} ${item.quantityPeriodDescription}`,
+      data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription}`,
       dataTestId: 'quantity',
     }));
 
@@ -96,7 +99,7 @@ const generateRecurringCostDetailsTable = ({
     }));
 
     columns.push(({
-      data: `${item.costPerYear}`,
+      data: `${item.costPerYear.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       dataTestId: 'item-cost',
     }));
 
