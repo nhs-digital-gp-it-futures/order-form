@@ -68,37 +68,46 @@ const generateRecurringCostDetailsTable = ({
       recipient => recipient.odsCode === item.serviceRecipientsOdsCode,
     );
 
+    const classes = 'nhsuk-u-font-size-14';
+
     columns.push(({
+      classes,
       data: `${serviceRecipient.name} (${serviceRecipient.odsCode})`,
       dataTestId: 'recipient-name',
     }));
 
     columns.push(({
+      classes,
       data: item.itemId,
       dataTestId: 'item-id',
     }));
 
     columns.push(({
+      classes,
       data: item.catalogueItemName,
       dataTestId: 'item-name',
     }));
 
     columns.push(({
+      classes,
       data: `£${item.price.toLocaleString()} ${item.itemUnitDescription} ${item.timeUnitDescription}`,
       dataTestId: 'price-unit',
     }));
 
     columns.push(({
+      classes,
       data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription}`,
       dataTestId: 'quantity',
     }));
 
     columns.push(({
+      classes,
       data: formatDate(item.deliveryDate),
       dataTestId: 'planned-date',
     }));
 
     columns.push(({
+      classes,
       data: `${item.costPerYear.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       dataTestId: 'item-cost',
     }));
