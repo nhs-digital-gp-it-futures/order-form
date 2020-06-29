@@ -18,6 +18,11 @@ export const populateTable = ((selectedPrice) => {
 
 export const formatFormData = ((populatedData) => {
   manifest.questions[2].data = populatedData.quantity ? populatedData.quantity.trim() : '';
+  if (populatedData.price) {
+    manifest.addPriceTable.data[0][0].question.data = populatedData.price.trim();
+  } else {
+    manifest.addPriceTable.data[0][0].question.data = '';
+  }
 });
 
 export const getContext = ({

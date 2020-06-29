@@ -32,20 +32,24 @@ export const getOrderItemContext = async ({
 export const getOrderItemErrorPageContext = params => getErrorContext(params);
 
 export const validateOrderItemForm = ({ data }) => {
-  if (data.quantity && data.quantity.trim().length > 0 && data.price.trim().length > 0) {
-    return { success: true };
-  }
-
-  const errors = [
-    {
+  const errors = [];
+  if (!data.quantity || data.quantity.trim().length <= 0) {
+    errors.push({
       field: 'quantity',
       id: 'quantityRequired',
-    },
-    {
+    });
+  }
+
+  if (!data.price || data.price.trim().length <= 0) {
+    errors.push({
       field: 'price',
       id: 'priceRequired',
-    },
-  ];
+    });
+  }
+
+  if (errors.length === 0) {
+    return { success: true };
+  }
   return { success: false, errors };
 };
 

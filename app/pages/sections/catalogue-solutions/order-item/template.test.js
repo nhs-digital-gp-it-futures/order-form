@@ -211,7 +211,7 @@ describe('catalogue-solutions order-item page', () => {
       });
     }));
 
-    it('should render errors on selectSolutionPrice field if there are errors', componentTester(setup, (harness) => {
+    it('should render errors on quantity field if there are errors', componentTester(setup, (harness) => {
       context.questions[1].error = { message: 'quantity error message' };
 
       harness.request(context, ($) => {

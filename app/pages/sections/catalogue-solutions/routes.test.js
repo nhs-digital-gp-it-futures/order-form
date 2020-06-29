@@ -185,10 +185,6 @@ describe('catalogue-solutions section routes', () => {
   describe('POST /organisation/:orderId/catalogue-solutions/:orderItemId', () => {
     const path = '/organisation/some-order-id/catalogue-solutions/some-order-item-id';
 
-    afterEach(() => {
-      orderItemController.getOrderItemContext.mockRestore();
-    });
-
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
         app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
