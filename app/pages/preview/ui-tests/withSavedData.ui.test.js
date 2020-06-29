@@ -146,7 +146,6 @@ test('should render the recurring cost item details in the table', async (t) => 
   const recurringCost = recurringCostTable.find('[data-test-id="table-row-0"]');
 
   await t
-    .debug()
     .expect(recurringCost.exists).ok()
 
     .expect(await extractInnerText(recurringCost.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
