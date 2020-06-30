@@ -2,7 +2,7 @@ import { getData } from 'buying-catalogue-library';
 import { getEndpoint } from '../../endpoints';
 import { logger } from '../../logger';
 import { getContext } from './contextCreator';
-import { transformOrderItems } from './transformOrderItems';
+import { transformOrderItems } from './helpers/transformOrderItems';
 
 export const getOrder = async ({ orderId, accessToken }) => {
   const getOrderEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getOrder', options: { orderId } });
@@ -16,5 +16,6 @@ export const getOrder = async ({ orderId, accessToken }) => {
 
 export const getPreviewPageContext = ({ orderId, orderData }) => {
   const { recurringCostItems } = transformOrderItems(orderData.orderItems);
+
   return getContext({ orderId, orderData, recurringCostItems });
 };
