@@ -1,6 +1,7 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 import { formatDate } from '../../helpers/dateFormatter';
+import { formatPrice } from '../../helpers/priceFormatter';
 
 const generateCallOffPartyDetails = ({ orderPartyData }) => ({
   multiLine: {
@@ -73,9 +74,7 @@ const generateOneOffCostTotalsTable = ({
 
   columns.push({
     data: oneOffCostTotalValue !== undefined
-      ? oneOffCostTotalValue.toLocaleString(undefined, {
-        minimumFractionDigits: 2, maximumFractionDigits: 2,
-      })
+      ? formatPrice(oneOffCostTotalValue)
       : '0.00',
     classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
     dataTestId: 'total-cost-value',
@@ -84,6 +83,97 @@ const generateOneOffCostTotalsTable = ({
   return ({
     ...oneOffCostTotalsTable,
     items: [columns],
+  });
+};
+
+const generateRowForTotal = ({
+  labelCellData,
+  labelCellClasses,
+  labelCellTestId,
+  valueCellData,
+  valueCellClasses,
+  valueCellTestId,
+  showValueColumn = true,
+}) => {
+  const columns = [];
+  columns.push({
+    data: '',
+    dataTestId: 'blank-cell',
+  });
+
+  columns.push({
+    data: labelCellData,
+    classes: labelCellClasses,
+    dataTestId: labelCellTestId,
+  });
+
+  if (showValueColumn) {
+    columns.push({
+      data: valueCellData !== undefined
+        ? formatPrice(valueCellData)
+        : '0.00',
+      classes: valueCellClasses,
+      dataTestId: valueCellTestId,
+    });
+  } else {
+    columns.push({
+      data: '',
+      dataTestId: 'blank-cell',
+    });
+  }
+
+  return columns;
+};
+
+const generateRecurringCostTotalsTable = ({
+  recurringCostTotalsTable, recurringYearCost, recurringMonthCost, ownershipCost,
+}) => {
+  const items = [];
+  items.push(
+    generateRowForTotal({
+      labelCellData: recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
+      labelCellClasses: recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
+      labelCellTestId: 'total-year-cost-label',
+      valueCellData: recurringYearCost,
+      valueCellClasses: recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
+      valueCellTestId: 'total-year-cost-value',
+    }),
+  );
+
+  items.push(
+    generateRowForTotal({
+      labelCellData: recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
+      labelCellClasses: recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
+      labelCellTestId: 'total-monthly-cost-label',
+      valueCellData: recurringMonthCost,
+      valueCellClasses: recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
+      valueCellTestId: 'total-monthly-cost-value',
+    }),
+  );
+
+  items.push(
+    generateRowForTotal({
+      labelCellData: recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
+      labelCellClasses: recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
+      labelCellTestId: 'total-ownership-cost-label',
+      valueCellData: ownershipCost,
+      valueCellClasses: recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.classes,
+      valueCellTestId: 'total-ownership-cost-value',
+    }),
+  );
+
+  items.push(
+    generateRowForTotal({
+      labelCellData: recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
+      labelCellClasses: recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
+      labelCellTestId: 'total-ownership-terms',
+      showValueColumn: false,
+    }),
+  );
+
+  return ({
+    ...recurringCostTotalsTable,
+    items,
   });
 };
 
@@ -102,6 +192,12 @@ export const getContext = ({ orderId, orderData }) => ({
   oneOffCostTotalsTable: generateOneOffCostTotalsTable({
     oneOffCostTotalsTable: manifest.oneOffCostTotalsTable,
     oneOffCostTotalValue: orderData.totalOneOffCost,
+  }),
+  recurringCostTotalsTable: generateRecurringCostTotalsTable({
+    recurringCostTotalsTable: manifest.recurringCostTotalsTable,
+    recurringYearCost: orderData.totalRecurringCostPerYear,
+    recurringMonthCost: orderData.totalRecurringCostPerMonth,
+    ownershipCost: orderData.totalOwnershipCost,
   }),
   commencementDate: formatDate(orderData.commencementDate),
   backLinkHref: `${baseUrl}/organisation/${orderId}`,

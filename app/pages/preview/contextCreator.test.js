@@ -181,7 +181,7 @@ describe('order summary preview contextCreator', () => {
         .toEqual(manifest.oneOffCostTotalsTable.columnInfo);
     });
 
-    it('should return the oneOffCostTotalsTable with items and the total cost value set to 0 when not provided', () => {
+    it('should return the oneOffCostTotalsTable with items and the total cost value set to 0.00 when not provided', () => {
       const expectedContext = {
         oneOffCostTotalsTable: {
           ...manifest.oneOffCostTotalsTable,
@@ -248,6 +248,166 @@ describe('order summary preview contextCreator', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
       expect(context.oneOffCostTable.columnInfo)
         .toEqual(manifest.oneOffCostTable.columnInfo);
+    });
+
+    it('should return the recurringCostTotalsTable with items and the total costs set to 0.00 when not provided', () => {
+      const expectedContext = {
+        recurringCostTotalsTable: {
+          ...manifest.recurringCostTotalsTable,
+          items: [
+            [
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+              {
+                data: manifest.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
+                dataTestId: 'total-year-cost-label',
+              },
+              {
+                data: '0.00',
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
+                dataTestId: 'total-year-cost-value',
+              },
+            ],
+            [
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+              {
+                data: manifest.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
+                dataTestId: 'total-monthly-cost-label',
+              },
+              {
+                data: '0.00',
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.classes,
+                dataTestId: 'total-monthly-cost-value',
+              },
+            ],
+            [
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+              {
+                data: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
+                dataTestId: 'total-ownership-cost-label',
+              },
+              {
+                data: '0.00',
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.classes,
+                dataTestId: 'total-ownership-cost-value',
+              },
+            ],
+            [
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+              {
+                data: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
+                dataTestId: 'total-ownership-terms',
+              },
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+            ],
+          ],
+        },
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+
+      expect(context.recurringCostTotalsTable).toEqual(expectedContext.recurringCostTotalsTable);
+    });
+
+    it('should return the recurringCostTotalsTable with items and the total cost value set to when provided', () => {
+      const expectedContext = {
+        recurringCostTotalsTable: {
+          ...manifest.recurringCostTotalsTable,
+          items: [
+            [
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+              {
+                data: manifest.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
+                dataTestId: 'total-year-cost-label',
+              },
+              {
+                data: '1,981.02',
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
+                dataTestId: 'total-year-cost-value',
+              },
+            ],
+            [
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+              {
+                data: manifest.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
+                dataTestId: 'total-monthly-cost-label',
+              },
+              {
+                data: '191.69',
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.classes,
+                dataTestId: 'total-monthly-cost-value',
+              },
+            ],
+            [
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+              {
+                data: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
+                dataTestId: 'total-ownership-cost-label',
+              },
+              {
+                data: '2,345.43',
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.classes,
+                dataTestId: 'total-ownership-cost-value',
+              },
+            ],
+            [
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+              {
+                data: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
+                classes: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
+                dataTestId: 'total-ownership-terms',
+              },
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+            ],
+          ],
+        },
+      };
+
+      const mockDataWithTotalRecurringCosts = {
+        ...mockOrderData,
+        totalRecurringCostPerYear: 1981.028,
+        totalRecurringCostPerMonth: 191.691,
+        totalOwnershipCost: 2345.430,
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: mockDataWithTotalRecurringCosts });
+      expect(context.recurringCostTotalsTable).toEqual(expectedContext.recurringCostTotalsTable);
     });
   });
 });
