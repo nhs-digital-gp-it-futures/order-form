@@ -414,7 +414,7 @@ test('should render select price field as errors with error message when no pric
     .expect(await extractInnerText(priceField.find('#price-error'))).contains('Enter a price');
 });
 
-test('should anchor to the quantity field when clicking on the error link in errorSummary ', async (t) => {
+test('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
@@ -432,8 +432,8 @@ test('should anchor to the quantity field when clicking on the error link in err
     .expect(getLocation()).eql(`${pageUrl}#quantity`);
 });
 
-test('should anchor to the price field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true, true);
+test('should anchor to the quantity field when clicking on the numerical quantity error link in errorSummary ', async (t) => {
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="save-button"] button');
@@ -447,5 +447,41 @@ test('should anchor to the price field when clicking on the error link in errorS
     .expect(errorSummary.exists).ok()
 
     .click(errorSummary.find('li a').nth(1))
+    .expect(getLocation()).eql(`${pageUrl}#quantity`);
+});
+
+test('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
+  await pageSetup(true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(2))
+    .expect(getLocation()).eql(`${pageUrl}#price`);
+});
+
+test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
+  await pageSetup(true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(3))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });

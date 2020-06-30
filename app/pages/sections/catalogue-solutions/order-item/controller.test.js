@@ -89,8 +89,8 @@ describe('catalogue-solutions order-item controller', () => {
     describe('when there are no validation errors', () => {
       it('should return success as true', () => {
         const data = {
-          quantity: 'some-quantity-id',
-          price: 'some-price-id',
+          quantity: '1',
+          price: '1',
         };
 
         const response = validateOrderItemForm({ data });
@@ -100,45 +100,79 @@ describe('catalogue-solutions order-item controller', () => {
     });
 
     describe('when there are validation errors', () => {
-      const expectedValidationErrors = [
-        {
-          field: 'quantity',
-          id: 'quantityRequired',
-        },
-        {
-          field: 'price',
-          id: 'priceRequired',
-        },
-      ];
+      const quantityRequired = {
+        field: 'quantity',
+        id: 'quantityRequired',
+      };
+      const numericalQuantity = {
+        field: 'quantity',
+        id: 'numericQuantityRequired',
+      };
+      const priceRequired = {
+        field: 'price',
+        id: 'priceRequired',
+      };
+      const numericalPrice = {
+        field: 'price',
+        id: 'numericPriceRequired',
+      };
 
-      it('should return an array of one validation error and success as false if empty string is passed in', () => {
+      it('should return an array of one validation error and success as false if empty string for quantity is passed in', () => {
         const data = {
-          selectSolution: '',
+          quantity: '',
+          price: '1.5',
         };
 
         const response = validateOrderItemForm({ data });
 
         expect(response.success).toEqual(false);
-        expect(response.errors).toEqual(expectedValidationErrors);
+        expect(response.errors).toEqual([quantityRequired, numericalQuantity]);
       });
 
-      it('should return an array of one validation error and success as false if whitespace only is passed in', () => {
+      it('should return an array of one validation error and success as false if quantity is not a number', () => {
         const data = {
-          selectSolution: '   ',
+          quantity: 'not a number',
+          price: '1.5',
         };
 
         const response = validateOrderItemForm({ data });
 
         expect(response.success).toEqual(false);
-        expect(response.errors).toEqual(expectedValidationErrors);
+        expect(response.errors).toEqual([numericalQuantity]);
       });
 
-      it('should return a validation error if supplierName is undefined', () => {
+      it('should return an array of one validation error and success as false if empty string for price is passed in', () => {
+        const data = {
+          quantity: '1',
+          price: '',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([priceRequired, numericalPrice]);
+      });
+
+      it('should return an array of one validation error and success as false if empty string for price is passed in', () => {
+        const data = {
+          quantity: '1',
+          price: 'not a number',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([numericalPrice]);
+      });
+
+      it('should return a validation error if all values are undefined', () => {
         const data = {};
 
         const response = validateOrderItemForm({ data });
 
-        expect(response.errors).toEqual(expectedValidationErrors);
+        expect(response.errors).toEqual(
+          [quantityRequired, numericalQuantity, priceRequired, numericalPrice],
+        );
       });
     });
   });

@@ -71,7 +71,9 @@
   },
   "errorMessages": {
     "quantityRequired": "Enter a quantity",
-    "priceRequired": "Enter a price"
+    "numericQuantityRequired": "Quantity must be a number",
+    "priceRequired": "Enter a price",
+    "numericPriceRequired": "Price must be a number"
   },
   "deleteButtonText": "Delete",
   "saveButtonText": "Save"

@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import { getData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
@@ -40,10 +41,24 @@ export const validateOrderItemForm = ({ data }) => {
     });
   }
 
+  if (!data.quantity || isNaN(data.quantity)) {
+    errors.push({
+      field: 'quantity',
+      id: 'numericQuantityRequired',
+    });
+  }
+
   if (!data.price || data.price.trim().length <= 0) {
     errors.push({
       field: 'price',
       id: 'priceRequired',
+    });
+  }
+
+  if (!data.price || isNaN(data.price)) {
+    errors.push({
+      field: 'price',
+      id: 'numericPriceRequired',
     });
   }
 
