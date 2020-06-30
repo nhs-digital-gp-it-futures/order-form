@@ -1,10 +1,11 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
 import { getSectionErrorContext } from '../../getSectionErrorContext';
+import { questionExtractor } from '../../../../helpers/questionExtractor';
 
 export const populateEstimationPeriod = ((selectedPrice) => {
-  manifest.questions[2].options.forEach((option, i) => {
-    manifest.questions[2].options[i]
+  questionExtractor('selectEstimationPeriod', manifest).options.forEach((option, i) => {
+    questionExtractor('selectEstimationPeriod', manifest).options[i]
       .checked = option.text.toLowerCase() === selectedPrice
         .timeUnit.description.toLowerCase()
         ? true : undefined;
@@ -17,7 +18,7 @@ export const populateTable = ((selectedPrice) => {
 });
 
 export const formatFormData = ((populatedData) => {
-  manifest.questions[2].data = populatedData.quantity ? populatedData.quantity.trim() : '';
+  questionExtractor('quantity', manifest).data = populatedData.quantity ? populatedData.quantity.trim() : '';
   if (populatedData.price) {
     manifest.addPriceTable.data[0][0].question.data = populatedData.price.trim();
   } else {
