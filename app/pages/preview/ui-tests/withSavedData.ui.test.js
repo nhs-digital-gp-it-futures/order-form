@@ -43,6 +43,7 @@ const mockOrder = {
       lastName: 'SuppLastName',
     },
   },
+  totalOneOffCost: 1981.020,
   commencementDate: '2020-02-01T00:00:00',
 };
 
@@ -113,4 +114,23 @@ test('should render the commencement date label and date when data is provided',
   await t
     .expect(commencementDate.exists).ok()
     .expect(await extractInnerText(commencementDate)).eql(`${content.commencementDateLabel} 1 February 2020`);
+});
+
+test('should render the one off cost totals table with one off cost total price', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const oneOffCostTotalsTable = Selector('[data-test-id="one-off-cost-totals-table"]');
+  const row1 = oneOffCostTotalsTable.find('[data-test-id="table-row-0"]');
+  const totalCostLabelCell = row1.find('div[data-test-id="total-cost-label"]');
+  const totalCostValueCell = row1.find('div[data-test-id="total-cost-value"]');
+
+  await t
+    .expect(oneOffCostTotalsTable.exists).ok()
+
+    .expect(totalCostLabelCell.exists).ok()
+    .expect(await extractInnerText(totalCostLabelCell)).eql('Total one off cost (indicative)')
+
+    .expect(totalCostValueCell.exists).ok()
+    .expect(await extractInnerText(totalCostValueCell)).eql('1,981.02');
 });

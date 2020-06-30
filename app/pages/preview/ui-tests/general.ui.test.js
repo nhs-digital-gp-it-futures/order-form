@@ -57,13 +57,12 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test.only('should render Preview page', async (t) => {
+test('should render Preview page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="preview-page"]');
 
   await t
-    .debug()
     .expect(page.exists).ok();
 });
 
@@ -217,6 +216,25 @@ test('should render the one off cost table with the column headings', async (t) 
 
     .expect(itemCostColumnHeading.exists).ok()
     .expect(await extractInnerText(itemCostColumnHeading)).eql('Item cost (£)');
+});
+
+test('should render the one off cost totals table with 0.00 for the price', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const oneOffCostTotalsTable = Selector('[data-test-id="one-off-cost-totals-table"]');
+  const row1 = oneOffCostTotalsTable.find('[data-test-id="table-row-0"]');
+  const totalCostLabelCell = row1.find('div[data-test-id="total-cost-label"]');
+  const totalCostValueCell = row1.find('div[data-test-id="total-cost-value"]');
+
+  await t
+    .expect(oneOffCostTotalsTable.exists).ok()
+
+    .expect(totalCostLabelCell.exists).ok()
+    .expect(await extractInnerText(totalCostLabelCell)).eql('Total one off cost (indicative)')
+
+    .expect(totalCostValueCell.exists).ok()
+    .expect(await extractInnerText(totalCostValueCell)).eql('0.00');
 });
 
 test('should render the recurring cost heading and description', async (t) => {

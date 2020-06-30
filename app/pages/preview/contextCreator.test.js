@@ -197,7 +197,7 @@ describe('order summary preview contextCreator', () => {
                 dataTestId: 'total-cost-label',
               },
               {
-                data: '0',
+                data: '0.00',
                 classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
                 dataTestId: 'total-cost-value',
               },
@@ -207,6 +207,40 @@ describe('order summary preview contextCreator', () => {
       };
 
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      expect(context.oneOffCostTotalsTable).toEqual(expectedContext.oneOffCostTotalsTable);
+    });
+
+    it('should return the oneOffCostTotalsTable with items and the total cost value set to when provided', () => {
+      const expectedContext = {
+        oneOffCostTotalsTable: {
+          ...manifest.oneOffCostTotalsTable,
+          items: [
+            [
+              {
+                data: '',
+                dataTestId: 'blank-cell',
+              },
+              {
+                data: 'Total one off cost (indicative)',
+                classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
+                dataTestId: 'total-cost-label',
+              },
+              {
+                data: '1,981.02',
+                classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
+                dataTestId: 'total-cost-value',
+              },
+            ],
+          ],
+        },
+      };
+
+      const mockDataWithTotalOneOffCost = {
+        ...mockOrderData,
+        totalOneOffCost: 1981.020,
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: mockDataWithTotalOneOffCost });
       expect(context.oneOffCostTotalsTable).toEqual(expectedContext.oneOffCostTotalsTable);
     });
 

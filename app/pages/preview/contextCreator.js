@@ -72,7 +72,11 @@ const generateOneOffCostTotalsTable = ({
   });
 
   columns.push({
-    data: oneOffCostTotalValue ? oneOffCostTotalValue !== undefined : '0',
+    data: oneOffCostTotalValue !== undefined
+      ? oneOffCostTotalValue.toLocaleString(undefined, {
+        minimumFractionDigits: 2, maximumFractionDigits: 2,
+      })
+      : '0.00',
     classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
     dataTestId: 'total-cost-value',
   });

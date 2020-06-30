@@ -236,7 +236,7 @@ describe('preview page', () => {
       },
     };
 
-    it('should render the table headings with no headings and widths provided', componentTester(setup, (harness) => {
+    it('should render the table with no headings and widths provided', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const table = $('div[data-test-id="one-off-cost-totals-table"]');
 
