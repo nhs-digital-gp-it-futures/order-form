@@ -84,6 +84,13 @@
               data: recurringCostTable.items
             }) }}
           </div>
+          <div data-test-id="recurring-cost-totals-table">
+            {{ bcTableFlexible({
+              columnInfo: recurringCostTotalsTable.columnInfo,
+              classes: recurringCostTotalsTable.classes,
+              data: recurringCostTotalsTable.items
+            }) }}
+          </div>
         </div>
       </div>
     </div>

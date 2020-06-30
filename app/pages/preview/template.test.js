@@ -313,4 +313,96 @@ describe('preview page', () => {
       });
     }));
   });
+
+  describe('Recurring cost totals table', () => {
+    const context = {
+      recurringCostTotalsTable: {
+        columnInfo: [
+          { data: '', width: '40%' }, { data: '', width: '45%' }, { data: '', width: '15%' },
+        ],
+        items: [
+          [
+            { data: '', dataTestId: 'blank-cell' },
+            { data: 'Total cost for one year (indicative)', dataTestId: 'total-year-cost-label' },
+            { data: '1981.02', dataTestId: 'total-year-cost-value' },
+          ],
+          [
+            { data: '', dataTestId: 'blank-cell' },
+            { data: 'Total monthly cost (indicative)', dataTestId: 'total-monthly-cost-label' },
+            { data: '191.69', dataTestId: 'total-monthly-cost-value' },
+          ],
+          [
+            { data: '', dataTestId: 'blank-cell' },
+            { data: 'Total cost of ownership (indicative)', dataTestId: 'total-ownership-cost-label' },
+            { data: '2345.43', dataTestId: 'total-ownership-cost-value' },
+          ],
+          [
+            { data: '', dataTestId: 'blank-cell' },
+            { data: 'Total cost of ownership blurb', dataTestId: 'total-ownership-terms' },
+            { data: '', dataTestId: 'blank-cell' },
+          ],
+        ],
+      },
+    };
+
+    it('should render the table with no headings and widths provided', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="recurring-cost-totals-table"]');
+
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('');
+        expect(table.find('th[data-test-id="column-heading-1"]').text().trim()).toEqual('');
+        expect(table.find('th[data-test-id="column-heading-2"]').text().trim()).toEqual('');
+
+        expect(table.find('[data-test-id="column-heading-0"]').attr('style')).toEqual('width:40%');
+        expect(table.find('[data-test-id="column-heading-1"]').attr('style')).toEqual('width:45%');
+        expect(table.find('[data-test-id="column-heading-2"]').attr('style')).toEqual('width:15%');
+      });
+    }));
+
+    it('should render the recurring cost totals table', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="recurring-cost-totals-table"]');
+
+        const row1 = table.find('[data-test-id="table-row-0"]');
+        const row1BlankCell = row1.find('div[data-test-id="blank-cell"]');
+        const totalYearCostLabelCell = row1.find('div[data-test-id="total-year-cost-label"]');
+        const totalYearCostValueCell = row1.find('div[data-test-id="total-year-cost-value"]');
+
+        const row2 = table.find('[data-test-id="table-row-1"]');
+        const row2BlankCell = row2.find('div[data-test-id="blank-cell"]');
+        const totalMonthlyCostLabelCell = row2.find('div[data-test-id="total-monthly-cost-label"]');
+        const totalMonthlyCostValueCell = row2.find('div[data-test-id="total-monthly-cost-value"]');
+
+        const row3 = table.find('[data-test-id="table-row-2"]');
+        const row3BlankCell = row3.find('div[data-test-id="blank-cell"]');
+        const totalOwnershipCostLabelCell = row3.find('div[data-test-id="total-ownership-cost-label"]');
+        const totalOwnershipCostValueCell = row3.find('div[data-test-id="total-ownership-cost-value"]');
+
+        const row4 = table.find('[data-test-id="table-row-3"]');
+        const row4FirstBlankCell = row4.find('div[data-test-id="blank-cell"]:nth-child(0)');
+        const totalOwnershipTermsLabelCell = row4.find('div[data-test-id="total-ownership-terms"]');
+        const row4SecondBlankCell = row4.find('div[data-test-id="blank-cell"]:nth-child(1)');
+
+        expect(table.length).toEqual(1);
+
+        expect(row1BlankCell.text().trim()).toEqual('');
+        expect(totalYearCostLabelCell.text().trim()).toEqual('Total cost for one year (indicative)');
+        expect(totalYearCostValueCell.text().trim()).toEqual('1981.02');
+
+        expect(row2BlankCell.text().trim()).toEqual('');
+        expect(totalMonthlyCostLabelCell.text().trim()).toEqual('Total monthly cost (indicative)');
+        expect(totalMonthlyCostValueCell.text().trim()).toEqual('191.69');
+
+        expect(row3BlankCell.text().trim()).toEqual('');
+        expect(totalOwnershipCostLabelCell.text().trim()).toEqual('Total cost of ownership (indicative)');
+        expect(totalOwnershipCostValueCell.text().trim()).toEqual('2345.43');
+
+        expect(row4FirstBlankCell.text().trim()).toEqual('');
+        expect(totalOwnershipTermsLabelCell.text().trim()).toEqual('Total cost of ownership blurb');
+        expect(row4SecondBlankCell.text().trim()).toEqual('');
+      });
+    }));
+  });
+
 });
