@@ -1,6 +1,7 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 import { formatDate } from '../../helpers/dateFormatter';
+import { logger } from '../../logger';
 
 const generateCallOffPartyDetails = ({ orderPartyData }) => ({
   multiLine: {
@@ -58,7 +59,74 @@ const generateCallOffAndSupplierDetailsTable = ({
 
 const getCurrentDate = () => formatDate(new Date(Date.now()));
 
-export const getContext = ({ orderId, orderData }) => ({
+const generateRecurringCostDetailsTable = ({
+  recurringCostTable, recurringCostItems = [], serviceRecipients = {},
+}) => {
+  const items = recurringCostItems.map((item) => {
+    const classes = 'nhsuk-u-font-size-14';
+    const columns = [];
+
+    if (!serviceRecipients[item.serviceRecipientsOdsCode]) {
+      logger.error(`service recipient ${item.serviceRecipientsOdsCode} not found`);
+      throw new Error();
+    }
+
+    const serviceRecipient = serviceRecipients[item.serviceRecipientsOdsCode];
+
+    columns.push(({
+      classes,
+      data: `${serviceRecipient.name} (${serviceRecipient.odsCode})`,
+      dataTestId: 'recipient-name',
+    }));
+
+    columns.push(({
+      classes,
+      data: item.itemId,
+      dataTestId: 'item-id',
+    }));
+
+    columns.push(({
+      classes,
+      data: item.catalogueItemName,
+      dataTestId: 'item-name',
+    }));
+
+    columns.push(({
+      classes,
+      data: `${item.price.toLocaleString()} ${item.itemUnitDescription} ${item.timeUnitDescription}`,
+      dataTestId: 'price-unit',
+    }));
+
+    columns.push(({
+      classes,
+      data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription}`,
+      dataTestId: 'quantity',
+    }));
+
+    columns.push(({
+      classes,
+      data: formatDate(item.deliveryDate),
+      dataTestId: 'planned-date',
+    }));
+
+    columns.push(({
+      classes: `${classes} bc-u-float-right`,
+      data: `${item.costPerYear.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      dataTestId: 'item-cost',
+    }));
+
+    return columns;
+  });
+
+  return ({
+    ...recurringCostTable,
+    items,
+  });
+};
+
+export const getContext = ({
+  orderId, orderData, recurringCostItems, serviceRecipients,
+}) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
   orderDescription: orderData.description,
@@ -67,6 +135,11 @@ export const getContext = ({ orderId, orderData }) => ({
     callOffAndSupplierTable: manifest.callOffAndSupplierTable,
     orderPartyData: orderData.orderParty,
     supplierData: orderData.supplier,
+  }),
+  recurringCostTable: generateRecurringCostDetailsTable({
+    recurringCostTable: manifest.recurringCostTable,
+    recurringCostItems,
+    serviceRecipients,
   }),
   commencementDate: formatDate(orderData.commencementDate),
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
