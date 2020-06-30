@@ -107,7 +107,7 @@ const generateRecurringCostDetailsTable = ({
     }));
 
     columns.push(({
-      classes,
+      classes: `${classes} bc-u-float-right`,
       data: `${item.costPerYear.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       dataTestId: 'item-cost',
     }));
