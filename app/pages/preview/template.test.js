@@ -404,5 +404,4 @@ describe('preview page', () => {
       });
     }));
   });
-
 });
