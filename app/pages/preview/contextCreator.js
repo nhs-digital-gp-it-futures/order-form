@@ -1,6 +1,7 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 import { formatDate } from '../../helpers/dateFormatter';
+import { logger } from '../../logger';
 
 const generateCallOffPartyDetails = ({ orderPartyData }) => ({
   multiLine: {
@@ -65,8 +66,9 @@ const generateRecurringCostDetailsTable = ({
     const classes = 'nhsuk-u-font-size-14';
     const columns = [];
 
-    if (!Object.prototype.hasOwnProperty.call(serviceRecipients, item.serviceRecipientsOdsCode)) {
-      throw new Error(`service recipient ${item.serviceRecipientsOdsCode} not found`);
+    if (!serviceRecipients[item.serviceRecipientsOdsCode]) {
+      logger.error(`service recipient ${item.serviceRecipientsOdsCode} not found`);
+      throw new Error();
     }
 
     const serviceRecipient = serviceRecipients[item.serviceRecipientsOdsCode];
