@@ -1,17 +1,15 @@
 import { getData } from 'buying-catalogue-library';
 import { solutionsApiUrl, organisationApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
-import { getRecipientName, getSelectedPrice, getOrderItemContext } from './controller';
+import {
+  getRecipientName, getSelectedPrice, getOrderItemContext, validateOrderItemForm,
+} from './controller';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
 
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
-}));
-
-jest.mock('../select/recipient/controller', () => ({
-  getSolution: () => ({ name: 'solution-name' }),
 }));
 
 const selectedPrice = {
@@ -28,29 +26,14 @@ const selectedPrice = {
 
 describe('catalogue-solutions order-item controller', () => {
   describe('getOrderItemContext', () => {
-    afterEach(() => {
-      getData.mockReset();
-
-      contextCreator.getContext
-        .mockResolvedValueOnce();
-    });
     it('should call getContext with the correct params', async () => {
-      contextCreator.getContext
-        .mockResolvedValueOnce();
-      getData
-        .mockResolvedValueOnce({
-          name: 'Some service recipient 1',
-          odsCode: 'fake-recipient-id',
-        });
-      getData
-        .mockResolvedValueOnce(selectedPrice);
-
       await getOrderItemContext({
         orderId: 'order-1',
-        selectedSolutionId: 'solution-1',
+        solutionName: 'solution-name',
         selectedRecipientId: 'fake-recipient-id',
+        serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
-        accessToken: 'token',
+        selectedPrice,
       });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
@@ -98,6 +81,98 @@ describe('catalogue-solutions order-item controller', () => {
         endpoint: `${solutionsApiUrl}/api/v1/prices/price-1`,
         accessToken: 'access_token',
         logger,
+      });
+    });
+  });
+
+  describe('validateOrderItemForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return success as true', () => {
+        const data = {
+          quantity: '1',
+          price: '1',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(true);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const quantityRequired = {
+        field: 'quantity',
+        id: 'quantityRequired',
+      };
+      const numericalQuantity = {
+        field: 'quantity',
+        id: 'numericQuantityRequired',
+      };
+      const priceRequired = {
+        field: 'price',
+        id: 'priceRequired',
+      };
+      const numericalPrice = {
+        field: 'price',
+        id: 'numericPriceRequired',
+      };
+
+      it('should return an array of one validation error and success as false if empty string for quantity is passed in', () => {
+        const data = {
+          quantity: '',
+          price: '1.5',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([quantityRequired]);
+      });
+
+      it('should return an array of one validation error and success as false if quantity is not a number', () => {
+        const data = {
+          quantity: 'not a number',
+          price: '1.5',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([numericalQuantity]);
+      });
+
+      it('should return an array of one validation error and success as false if empty string for price is passed in', () => {
+        const data = {
+          quantity: '1',
+          price: '',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([priceRequired]);
+      });
+
+      it('should return an array of one validation error and success as false if empty string for price is passed in', () => {
+        const data = {
+          quantity: '1',
+          price: 'not a number',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([numericalPrice]);
+      });
+
+      it('should return a validation error if all values are undefined', () => {
+        const data = {};
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.errors).toEqual(
+          [quantityRequired, priceRequired],
+        );
       });
     });
   });
