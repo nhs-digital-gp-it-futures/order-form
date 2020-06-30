@@ -151,7 +151,7 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCost.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
     .expect(await extractInnerText(recurringCost.find('div').nth(1))).eql('C000001-01-A10001-1')
     .expect(await extractInnerText(recurringCost.find('div').nth(2))).eql('Some catalogue name')
-    .expect(await extractInnerText(recurringCost.find('div').nth(3))).eql('£1.26 per patient per year')
+    .expect(await extractInnerText(recurringCost.find('div').nth(3))).eql('1.26 per patient per year')
     .expect(await extractInnerText(recurringCost.find('div').nth(4))).eql('3,415 per month')
     .expect(await extractInnerText(recurringCost.find('div').nth(5))).eql('6 July 2020')
     .expect(await extractInnerText(recurringCost.find('div').nth(6))).eql('4,302.90');
