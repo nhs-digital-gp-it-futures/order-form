@@ -27,7 +27,7 @@ export const formatFormData = ((populatedData) => {
 });
 
 export const getContext = ({
-  orderId, solutionName, serviceRecipientName, odsCode, selectedPrice, populatedData = null,
+  orderId, solutionName, serviceRecipientName, odsCode, selectedPrice, populatedData,
 }) => {
   populateEstimationPeriod(selectedPrice);
   populateTable(selectedPrice);
