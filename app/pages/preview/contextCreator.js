@@ -59,16 +59,17 @@ const generateCallOffAndSupplierDetailsTable = ({
 const getCurrentDate = () => formatDate(new Date(Date.now()));
 
 const generateRecurringCostDetailsTable = ({
-  recurringCostTable, recurringCostItems = [], serviceRecipients,
+  recurringCostTable, recurringCostItems = [], serviceRecipients = {},
 }) => {
   const items = recurringCostItems.map((item) => {
+    const classes = 'nhsuk-u-font-size-14';
     const columns = [];
 
-    const serviceRecipient = serviceRecipients.find(
-      recipient => recipient.odsCode === item.serviceRecipientsOdsCode,
-    );
+    if (!Object.prototype.hasOwnProperty.call(serviceRecipients, item.serviceRecipientsOdsCode)) {
+      throw new Error(`service recipient ${item.serviceRecipientsOdsCode} not found`);
+    }
 
-    const classes = 'nhsuk-u-font-size-14';
+    const serviceRecipient = serviceRecipients[item.serviceRecipientsOdsCode];
 
     columns.push(({
       classes,
@@ -121,7 +122,9 @@ const generateRecurringCostDetailsTable = ({
   });
 };
 
-export const getContext = ({ orderId, orderData, recurringCostItems }) => ({
+export const getContext = ({
+  orderId, orderData, recurringCostItems, serviceRecipients,
+}) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
   orderDescription: orderData.description,
@@ -134,7 +137,7 @@ export const getContext = ({ orderId, orderData, recurringCostItems }) => ({
   recurringCostTable: generateRecurringCostDetailsTable({
     recurringCostTable: manifest.recurringCostTable,
     recurringCostItems,
-    serviceRecipients: orderData.serviceRecipients,
+    serviceRecipients,
   }),
   commencementDate: formatDate(orderData.commencementDate),
   backLinkHref: `${baseUrl}/organisation/${orderId}`,

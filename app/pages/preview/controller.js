@@ -2,6 +2,7 @@ import { getData } from 'buying-catalogue-library';
 import { getEndpoint } from '../../endpoints';
 import { logger } from '../../logger';
 import { getContext } from './contextCreator';
+import { getServiceRecipients } from './helpers/getServiceRecipients';
 import { transformOrderItems } from './helpers/transformOrderItems';
 
 export const getOrder = async ({ orderId, accessToken }) => {
@@ -15,7 +16,10 @@ export const getOrder = async ({ orderId, accessToken }) => {
 };
 
 export const getPreviewPageContext = ({ orderId, orderData }) => {
+  const serviceRecipients = getServiceRecipients(orderData.serviceRecipients);
   const { recurringCostItems } = transformOrderItems(orderData.orderItems);
 
-  return getContext({ orderId, orderData, recurringCostItems });
+  return getContext({
+    orderId, orderData, recurringCostItems, serviceRecipients,
+  });
 };

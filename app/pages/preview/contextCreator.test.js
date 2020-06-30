@@ -184,18 +184,19 @@ describe('order summary preview contextCreator', () => {
     });
 
     it('should return the recurring cost table with items when order items are provided', () => {
+      const classes = 'nhsuk-u-font-size-14';
       const expectedContext = {
         recurringCostTable: {
           ...manifest.recurringCostTable,
           items: [
             [
-              { data: 'Some Recipient Name', dataTestId: 'recipient-name' },
-              { data: 'item-1', dataTestId: 'item-id' },
-              { data: 'Some item name', dataTestId: 'item-name' },
-              { data: '£1.26 per patient per year', dataTestId: 'price-unit' },
-              { data: '500 per month', dataTestId: 'quantity' },
-              { data: '24 February 2020', dataTestId: 'planned-date' },
-              { data: '5000', dataTestId: 'item-cost' },
+              { classes, data: 'Some Recipient Name (A10001)', dataTestId: 'recipient-name' },
+              { classes, data: 'item-1', dataTestId: 'item-id' },
+              { classes, data: 'Some item name', dataTestId: 'item-name' },
+              { classes, data: '1.26 per patient per year', dataTestId: 'price-unit' },
+              { classes, data: '500 per month', dataTestId: 'quantity' },
+              { classes, data: '24 February 2020', dataTestId: 'planned-date' },
+              { classes: `${classes} bc-u-float-right`, data: '5,000.00', dataTestId: 'item-cost' },
             ],
           ],
         },
@@ -217,17 +218,19 @@ describe('order summary preview contextCreator', () => {
         costPerYear: 5000.000,
       }];
 
-      const mockOrderDataWithServiceRecipients = {
-        ...mockOrderData,
-        serviceRecipients: [
-          {
+      const contextData = {
+        orderId: 'order-1',
+        orderData: mockOrderData,
+        recurringCostItems: mockRecurringCosts,
+        serviceRecipients: {
+          A10001: {
             name: 'Some Recipient Name',
             odsCode: 'A10001',
           },
-        ],
+        },
       };
 
-      const context = getContext({ orderId: 'order-1', orderData: mockOrderDataWithServiceRecipients, recurringCostItems: mockRecurringCosts });
+      const context = getContext(contextData);
       expect(context.recurringCostTable).toEqual(expectedContext.recurringCostTable);
     });
 
@@ -241,6 +244,21 @@ describe('order summary preview contextCreator', () => {
 
       const context = getContext({ orderId: 'order-1', orderData: {} });
       expect(context.recurringCostTable).toEqual(expectedContext.recurringCostTable);
+    });
+
+    it('should throw an error when a service recipient cannot be found', () => {
+      const mockRecurringCosts = [{
+        serviceRecipientsOdsCode: 'A10001',
+      }];
+
+      const contextData = {
+        orderId: 'order-1',
+        orderData: mockOrderData,
+        recurringCostItems: mockRecurringCosts,
+        serviceRecipients: {},
+      };
+
+      expect(() => getContext(contextData)).toThrow(Error);
     });
   });
 });
