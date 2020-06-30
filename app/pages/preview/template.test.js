@@ -224,7 +224,7 @@ describe('preview page', () => {
     const context = {
       oneOffCostTotalsTable: {
         columnInfo: [
-          { data: '', width: '50%' }, { data: '', width: '25%' }, { data: '', width: '25%' },
+          { data: '', width: '40%' }, { data: '', width: '45%' }, { data: '', width: '15%' },
         ],
         items: [
           [
@@ -236,17 +236,18 @@ describe('preview page', () => {
       },
     };
 
-    it('should render the table headings with no headings', componentTester(setup, (harness) => {
+    it('should render the table headings with no headings and widths provided', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const table = $('div[data-test-id="one-off-cost-totals-table"]');
-        const column1 = table.find('[data-test-id="column-heading-0"]');
-        const column2 = table.find('th[data-test-id="column-heading-1"]');
-        const column3 = table.find('th[data-test-id="column-heading-2"]');
 
         expect(table.length).toEqual(1);
-        expect(column1.text().trim()).toEqual('');
-        expect(column2.text().trim()).toEqual('');
-        expect(column3.text().trim()).toEqual('');
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('');
+        expect(table.find('th[data-test-id="column-heading-1"]').text().trim()).toEqual('');
+        expect(table.find('th[data-test-id="column-heading-2"]').text().trim()).toEqual('');
+
+        expect(table.find('[data-test-id="column-heading-0"]').attr('style')).toEqual('width:40%');
+        expect(table.find('[data-test-id="column-heading-1"]').attr('style')).toEqual('width:45%');
+        expect(table.find('[data-test-id="column-heading-2"]').attr('style')).toEqual('width:15%');
       });
     }));
 
