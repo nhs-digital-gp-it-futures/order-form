@@ -1,4 +1,4 @@
-export const getServiceRecipients = (serviceRecipients = []) => {
+export const createServiceRecipientsDict = (serviceRecipients = []) => {
   const reducer = (dict, serviceRecipient) => (
     {
       ...dict,

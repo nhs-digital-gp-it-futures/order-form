@@ -1,4 +1,4 @@
-import { getServiceRecipients } from './getServiceRecipients';
+import { createServiceRecipientsDict } from './createServiceRecipientsDict';
 
 const plovdivSoftware = {
   name: 'Plovdiv Software',
@@ -13,7 +13,7 @@ const sofiaSoftware = {
 const singleRecipient = [plovdivSoftware];
 const multipleRecipients = [plovdivSoftware, sofiaSoftware];
 
-describe('getServiceRecipients', () => {
+describe('createServiceRecipientsDict', () => {
   it.each`
     key                               | serviceRecipients     | expected
     ${'single service recipient'}     | ${singleRecipient}    | ${{ A100001: plovdivSoftware }}
@@ -21,6 +21,6 @@ describe('getServiceRecipients', () => {
     ${'no service recipients'}        | ${[]}                 | ${{}}
     ${'undefined service recipients'} | ${undefined}          | ${{}}
   `('getServiceRecipients $key returns expected output', ({ serviceRecipients, expected }) => {
-  expect(getServiceRecipients(serviceRecipients)).toEqual(expected);
+  expect(createServiceRecipientsDict(serviceRecipients)).toEqual(expected);
 });
 });

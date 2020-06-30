@@ -6,7 +6,7 @@ import {
   getPreviewPageContext,
 } from './controller';
 import * as contextCreator from './contextCreator';
-import * as getServiceRecipients from './helpers/getServiceRecipients';
+import * as createServiceRecipientsDict from './helpers/createServiceRecipientsDict';
 import * as transformOrderItems from './helpers/transformOrderItems';
 
 jest.mock('buying-catalogue-library');
@@ -15,8 +15,8 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-jest.mock('./helpers/getServiceRecipients', () => ({
-  getServiceRecipients: jest.fn(),
+jest.mock('./helpers/createServiceRecipientsDict', () => ({
+  createServiceRecipientsDict: jest.fn(),
 }));
 
 jest.mock('./helpers/transformOrderItems', () => ({
@@ -49,12 +49,12 @@ describe('order summary preview controller', () => {
   describe('getPreviewPageContext', () => {
     afterEach(() => {
       contextCreator.getContext.mockReset();
-      getServiceRecipients.getServiceRecipients.mockReset();
+      createServiceRecipientsDict.createServiceRecipientsDict.mockReset();
       transformOrderItems.transformOrderItems.mockReset();
     });
 
     it('should call getServiceRecipients with the correct params', () => {
-      getServiceRecipients.getServiceRecipients.mockResolvedValueOnce();
+      createServiceRecipientsDict.createServiceRecipientsDict.mockResolvedValueOnce();
       transformOrderItems.transformOrderItems.mockResolvedValueOnce();
 
       const serviceRecipients = [{ odsCode: 'fakeRecipient' }];
@@ -62,12 +62,13 @@ describe('order summary preview controller', () => {
 
       getPreviewPageContext({ orderId: 'order-1', orderData });
 
-      expect(getServiceRecipients.getServiceRecipients.mock.calls.length).toEqual(1);
-      expect(getServiceRecipients.getServiceRecipients).toHaveBeenCalledWith(serviceRecipients);
+      expect(createServiceRecipientsDict.createServiceRecipientsDict.mock.calls.length).toEqual(1);
+      expect(createServiceRecipientsDict.createServiceRecipientsDict)
+        .toHaveBeenCalledWith(serviceRecipients);
     });
 
     it('should call transformOrderItems with the correct params', () => {
-      getServiceRecipients.getServiceRecipients.mockResolvedValueOnce();
+      createServiceRecipientsDict.createServiceRecipientsDict.mockResolvedValueOnce();
       transformOrderItems.transformOrderItems.mockResolvedValueOnce();
 
       getPreviewPageContext({ orderId: 'order-1', orderData: { orderItems: [17] } });
@@ -84,7 +85,9 @@ describe('order summary preview controller', () => {
       const serviceRecipients = { fakeRecipient: { odsCode: 'fakeRecipient' } };
 
       contextCreator.getContext.mockResolvedValueOnce();
-      getServiceRecipients.getServiceRecipients.mockReturnValueOnce(serviceRecipients);
+      createServiceRecipientsDict
+        .createServiceRecipientsDict
+        .mockReturnValueOnce(serviceRecipients);
 
       transformOrderItems
         .transformOrderItems
