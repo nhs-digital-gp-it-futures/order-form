@@ -90,7 +90,7 @@ const generateRecurringCostDetailsTable = ({
 
     columns.push(({
       classes,
-      data: `£${item.price.toLocaleString()} ${item.itemUnitDescription} ${item.timeUnitDescription}`,
+      data: `${item.price.toLocaleString()} ${item.itemUnitDescription} ${item.timeUnitDescription}`,
       dataTestId: 'price-unit',
     }));
 
