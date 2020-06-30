@@ -52,49 +52,8 @@ describe('catalogue-solutions order-item contextCreator', () => {
     });
 
     it('should return the questions', () => {
-      const questions = [{
-        id: 'plannedDeliveryDate',
-        mainAdvice: 'Planned delivery date',
-        additionalAdvice: 'For example 14 01 2020',
-      },
-      {
-        id: 'quantity',
-        mainAdvice: 'Quantity',
-        rows: 3,
-        expandableSection: {
-          dataTestId: 'view-section-quantity-id',
-          title: 'What quantity should I enter?',
-          innerComponent: "Estimate the quantity you think you'll need either per month or per year.",
-        },
-      },
-      {
-        id: 'selectEstimationPeriod',
-        mainAdvice: 'Estimation period',
-        options: [
-          {
-            value: 'perMonth',
-            text: 'Per month',
-          },
-          {
-            value: 'perYear',
-            text: 'Per year',
-            checked: true,
-          },
-        ],
-        expandableSection: {
-          dataTestId: 'view-section-estimation-period-id',
-          title: 'What period should I enter?',
-          innerComponent: 'This should be based on how you estimated the quantity you want to order.',
-        },
-      },
-      {
-        type: 'input',
-        id: 'price',
-      },
-      ];
-
       const context = getContext({ selectedPrice });
-      expect(context.questions).toEqual(questions);
+      expect(context.questions).toEqual(manifest.questions);
     });
 
     it('should return the table headings', () => {
@@ -139,14 +98,10 @@ describe('catalogue-solutions order-item contextCreator', () => {
     });
   });
   describe('getErrorContext', () => {
-    const mockValidationErrors = [{
-      field: 'quantity',
-      id: 'quantityRequired',
-    },
-    {
-      field: 'price',
-      id: 'priceRequired',
-    }];
+    const mockValidationErrors = [
+      { field: 'quantity', id: 'quantityRequired' },
+      { field: 'price', id: 'priceRequired' },
+    ];
     const manifestWithErrors = {
       questions:
       [{
@@ -194,7 +149,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
       expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
     });
 
-    it('should call add error message to the table data', async () => {
+    it('should add error message to the table data', async () => {
       errorContext.getSectionErrorContext
         .mockReturnValue(manifestWithErrors);
 

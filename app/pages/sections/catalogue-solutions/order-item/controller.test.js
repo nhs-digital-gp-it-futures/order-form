@@ -126,7 +126,7 @@ describe('catalogue-solutions order-item controller', () => {
         const response = validateOrderItemForm({ data });
 
         expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([quantityRequired, numericalQuantity]);
+        expect(response.errors).toEqual([quantityRequired]);
       });
 
       it('should return an array of one validation error and success as false if quantity is not a number', () => {
@@ -150,7 +150,7 @@ describe('catalogue-solutions order-item controller', () => {
         const response = validateOrderItemForm({ data });
 
         expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([priceRequired, numericalPrice]);
+        expect(response.errors).toEqual([priceRequired]);
       });
 
       it('should return an array of one validation error and success as false if empty string for price is passed in', () => {
@@ -171,7 +171,7 @@ describe('catalogue-solutions order-item controller', () => {
         const response = validateOrderItemForm({ data });
 
         expect(response.errors).toEqual(
-          [quantityRequired, numericalQuantity, priceRequired, numericalPrice],
+          [quantityRequired, priceRequired],
         );
       });
     });

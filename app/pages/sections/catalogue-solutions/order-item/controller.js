@@ -39,9 +39,7 @@ export const validateOrderItemForm = ({ data }) => {
       field: 'quantity',
       id: 'quantityRequired',
     });
-  }
-
-  if (!data.quantity || isNaN(data.quantity)) {
+  } else if (isNaN(data.quantity)) {
     errors.push({
       field: 'quantity',
       id: 'numericQuantityRequired',
@@ -53,9 +51,7 @@ export const validateOrderItemForm = ({ data }) => {
       field: 'price',
       id: 'priceRequired',
     });
-  }
-
-  if (!data.price || isNaN(data.price)) {
+  } else if (isNaN(data.price)) {
     errors.push({
       field: 'price',
       id: 'numericPriceRequired',
