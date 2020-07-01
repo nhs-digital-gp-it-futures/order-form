@@ -16,7 +16,7 @@
     "lint:css": "sass-lint 'app/**/*.scss' -v -q",
     "nuke": "npm run clean && rm -rf node_modules/",
     "start:dev": "cross-env babel-node ./app/server",
-    "start:rednpis": "docker-compose -f \"docker-compose-redis.yml\" up -d",
+    "start:redis": "docker-compose -f \"docker-compose-redis.yml\" up -d",
     "test:ui": "cross-env NODE_ENV=test LOGGER_LEVEL=off babel-node testcafeRunner.js",
     "test:integration": "cross-env NODE_ENV=pipeline LOGGER_LEVEL=off babel-node testcafeRunner.js",
     "test": "jest",
