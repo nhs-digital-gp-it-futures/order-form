@@ -66,6 +66,21 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Add Additional Services",
+      "sections": [
+        {
+          "id": "additional-services",
+          "title": "Add Additional Services to your order",
+          "dependencies": [
+            {
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","catalogue-solutions"],
+              "countDependencies": ["service-recipients","catalogue-solutions"]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
