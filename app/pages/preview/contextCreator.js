@@ -189,8 +189,6 @@ const generateRecurringCostDetailsTable = ({
   const items = recurringCostItems.map((item) => {
     const columns = [];
 
-    console.log('item', JSON.stringify(item, null, 2))
-
     if (!serviceRecipients[item.serviceRecipientsOdsCode]) {
       logger.error(`service recipient ${item.serviceRecipientsOdsCode} not found`);
       throw new Error();
