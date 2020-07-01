@@ -231,7 +231,7 @@ test('should render the one off cost totals table with 0.00 for the price', asyn
     .expect(oneOffCostTotalsTable.exists).ok()
 
     .expect(totalCostLabelCell.exists).ok()
-    .expect(await extractInnerText(totalCostLabelCell)).eql('Total one off cost (indicative)')
+    .expect(await extractInnerText(totalCostLabelCell)).eql(content.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data)
 
     .expect(totalCostValueCell.exists).ok()
     .expect(await extractInnerText(totalCostValueCell)).eql('0.00');
@@ -289,7 +289,7 @@ test('should render the recurring cost table with the column headings', async (t
     .expect(await extractInnerText(itemCostColumnHeading)).eql('Item cost per year (£)');
 });
 
-test.only('should render the recurring cost totals table with 0.00 for the price', async (t) => {
+test('should render the recurring cost totals table with 0.00 for the price', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -311,24 +311,23 @@ test.only('should render the recurring cost totals table with 0.00 for the price
   const totalOwnershipTermsLabelCell = row4.find('div[data-test-id="total-ownership-terms"]');
 
   await t
-    .debug()
     .expect(recurringCostTotalsTable.exists).ok()
 
     .expect(totalYearCostLabelCell.exists).ok()
-    .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel)
+    .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data)
     .expect(totalYearCostValueCell.exists).ok()
     .expect(await extractInnerText(totalYearCostValueCell)).eql('0.00')
 
     .expect(totalMonthlyCostLabelCell.exists).ok()
-    .expect(await extractInnerText(totalMonthlyCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel)
+    .expect(await extractInnerText(totalMonthlyCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data)
     .expect(totalMonthlyCostValueCell.exists).ok()
     .expect(await extractInnerText(totalMonthlyCostValueCell)).eql('0.00')
 
     .expect(totalOwnershipCostLabelCell.exists).ok()
-    .expect(await extractInnerText(totalOwnershipCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel)
+    .expect(await extractInnerText(totalOwnershipCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data)
     .expect(totalOwnershipCostValueCell.exists).ok()
     .expect(await extractInnerText(totalOwnershipCostValueCell)).eql('0.00')
 
     .expect(totalOwnershipTermsLabelCell.exists).ok()
-    .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipTerms);
+    .expect(await extractInnerText(totalOwnershipTermsLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data);
 });

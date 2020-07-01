@@ -45,6 +45,29 @@ const mockOrder = {
   },
   totalOneOffCost: 1981.020,
   commencementDate: '2020-02-01T00:00:00',
+  orderItems: [
+    {
+      itemId: 'C000001-01-A10001-1',
+      serviceRecipientsOdsCode: 'A10001',
+      cataloguePriceType: 'Flat',
+      catalogueItemType: 'Solution',
+      catalogueItemName: 'Some catalogue name',
+      provisioningType: 'Patient',
+      price: 1.260,
+      itemUnitDescription: 'per patient',
+      timeUnitDescription: 'per year',
+      quantity: 3415,
+      quantityPeriodDescription: 'per month',
+      deliveryDate: '2020-07-06',
+      costPerYear: 4302.900,
+    },
+  ],
+  serviceRecipients: [
+    {
+      name: 'Blue Mountain Medical Practice',
+      odsCode: 'A10001',
+    },
+  ],
 };
 
 const mocks = () => {
@@ -133,4 +156,23 @@ test('should render the one off cost totals table with one off cost total price'
 
     .expect(totalCostValueCell.exists).ok()
     .expect(await extractInnerText(totalCostValueCell)).eql('1,981.02');
+});
+
+test('should render the recurring cost item details in the table', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const recurringCostTable = Selector('[data-test-id="recurring-cost-table"]');
+  const recurringCost = recurringCostTable.find('[data-test-id="table-row-0"]');
+
+  await t
+    .expect(recurringCost.exists).ok()
+
+    .expect(await extractInnerText(recurringCost.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCost.find('div').nth(1))).eql('C000001-01-A10001-1')
+    .expect(await extractInnerText(recurringCost.find('div').nth(2))).eql('Some catalogue name')
+    .expect(await extractInnerText(recurringCost.find('div').nth(3))).eql('1.26 per patient per year')
+    .expect(await extractInnerText(recurringCost.find('div').nth(4))).eql('3,415 per month')
+    .expect(await extractInnerText(recurringCost.find('div').nth(5))).eql('6 July 2020')
+    .expect(await extractInnerText(recurringCost.find('div').nth(6))).eql('4,302.90');
 });

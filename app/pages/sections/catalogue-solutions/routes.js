@@ -6,7 +6,14 @@ import {
   getCatalogueSolutionsPageContext,
   putCatalogueSolutions,
 } from './catalogue-solutions/controller';
-import { getOrderItemContext } from './order-item/controller';
+import {
+  getOrderItemContext,
+  getRecipientName,
+  getSelectedPrice,
+  getOrderItemErrorPageContext,
+  validateOrderItemForm,
+  getSolution,
+} from './order-item/controller';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 
 
@@ -40,19 +47,57 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
+
+    const solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
+    sessionManager.saveToSession({ req, key: 'solutionName', value: solutionName });
+
+    const serviceRecipientName = await getRecipientName({ selectedRecipientId, accessToken });
+    sessionManager.saveToSession({ req, key: 'serviceRecipientName', value: serviceRecipientName });
+
     const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
+    const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
+    sessionManager.saveToSession({ req, key: 'selectedPrice', value: selectedPrice });
 
     const context = await getOrderItemContext({
       orderId,
-      selectedSolutionId,
+      solutionName,
       selectedRecipientId,
+      serviceRecipientName,
       selectedPriceId,
-      accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      selectedPrice,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
+    return res.render('pages/sections/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    logger.info('posting things');
+
+    const response = validateOrderItemForm({ data: req.body });
+    if (response.success) {
+      logger.info('redirecting catalogue solutions main page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
+    }
+    const solutionName = sessionManager.getFromSession({ req, key: 'solutionName' });
+    const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
+    const serviceRecipientName = sessionManager.getFromSession({ req, key: 'serviceRecipientName' });
+    const selectedPrice = sessionManager.getFromSession({ req, key: 'selectedPrice' });
+
+    const context = await getOrderItemErrorPageContext({
+      orderId,
+      solutionName,
+      selectedRecipientId,
+      serviceRecipientName,
+      selectedPrice,
+      data: req.body,
+      validationErrors: response.errors,
+    });
+
     return res.render('pages/sections/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
