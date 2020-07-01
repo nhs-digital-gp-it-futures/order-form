@@ -180,7 +180,7 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCost.find('div').nth(6))).eql('4,302.90');
 });
 
-test.only('should render the recurring cost totals table with the totals provided', async (t) => {
+test('should render the recurring cost totals table with the totals provided', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -202,7 +202,6 @@ test.only('should render the recurring cost totals table with the totals provide
   const totalOwnershipTermsLabelCell = row4.find('div[data-test-id="total-ownership-terms"]');
 
   await t
-    .debug()
     .expect(recurringCostTotalsTable.exists).ok()
 
     .expect(totalYearCostLabelCell.exists).ok()
