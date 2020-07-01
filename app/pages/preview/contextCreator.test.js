@@ -255,7 +255,7 @@ describe('order summary preview contextCreator', () => {
               { classes, data: '1.26 per patient per year', dataTestId: 'price-unit' },
               { classes, data: '500 per month', dataTestId: 'quantity' },
               { classes, data: '24 February 2020', dataTestId: 'planned-date' },
-              { classes: `${classes} bc-u-float-right`, data: '5,000.00', dataTestId: 'item-cost' },
+              { classes: `${classes}  nhsuk-table__cell--numeric`, data: '5,000.00', dataTestId: 'item-cost' },
             ],
           ],
         },

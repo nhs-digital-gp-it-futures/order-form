@@ -187,8 +187,9 @@ const generateRecurringCostDetailsTable = ({
   recurringCostTable, recurringCostItems = [], serviceRecipients = {},
 }) => {
   const items = recurringCostItems.map((item) => {
-    const classes = 'nhsuk-u-font-size-14';
     const columns = [];
+
+    console.log('item', JSON.stringify(item, null, 2))
 
     if (!serviceRecipients[item.serviceRecipientsOdsCode]) {
       logger.error(`service recipient ${item.serviceRecipientsOdsCode} not found`);
@@ -198,44 +199,44 @@ const generateRecurringCostDetailsTable = ({
     const serviceRecipient = serviceRecipients[item.serviceRecipientsOdsCode];
 
     columns.push(({
-      classes,
+      classes: manifest.recurringCostTable.cellInfo.recipientName.classes,
       data: `${serviceRecipient.name} (${serviceRecipient.odsCode})`,
       dataTestId: 'recipient-name',
     }));
 
     columns.push(({
-      classes,
+      classes: manifest.recurringCostTable.cellInfo.itemId.classes,
       data: item.itemId,
       dataTestId: 'item-id',
     }));
 
     columns.push(({
-      classes,
+      classes: manifest.recurringCostTable.cellInfo.itemName.classes,
       data: item.catalogueItemName,
       dataTestId: 'item-name',
     }));
 
     columns.push(({
-      classes,
-      data: `${item.price.toLocaleString()} ${item.itemUnitDescription} ${item.timeUnitDescription}`,
+      classes: manifest.recurringCostTable.cellInfo.priceUnit.classes,
+      data: `${formatPrice(item.price)} ${item.itemUnitDescription} ${item.timeUnitDescription}`,
       dataTestId: 'price-unit',
     }));
 
     columns.push(({
-      classes,
+      classes: manifest.recurringCostTable.cellInfo.quantity.classes,
       data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription}`,
       dataTestId: 'quantity',
     }));
 
     columns.push(({
-      classes,
+      classes: manifest.recurringCostTable.cellInfo.plannedDeliveryDate.classes,
       data: formatDate(item.deliveryDate),
       dataTestId: 'planned-date',
     }));
 
     columns.push(({
-      classes: `${classes} bc-u-float-right`,
-      data: `${item.costPerYear.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      classes: manifest.recurringCostTable.cellInfo.itemCost.classes,
+      data: formatPrice(item.costPerYear),
       dataTestId: 'item-cost',
     }));
 

@@ -107,7 +107,30 @@
         "width": "9%",
         "classes": "nhsuk-u-font-size-14"
       }
-    ]
+    ],
+    "cellInfo": {
+      "recipientName": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemId": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemName": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "priceUnit": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "quantity": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "plannedDeliveryDate": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemCost": {
+        "classes": "nhsuk-u-font-size-14 nhsuk-table__cell--numeric"
+      }
+    }
   },
   "recurringCostTotalsTable": {
     "columnInfo": [
