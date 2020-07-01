@@ -23,7 +23,7 @@ const generateTieredPriceItem = (mappedPrice, timeUnitdescription, selectedPrice
 
 const generatePriceList = (solutionPrices, selectedPriceId) => solutionPrices.map((mappedPrice) => {
   const timeUnitdescription = (mappedPrice.timeUnit || {}).description ? mappedPrice.timeUnit.description : '';
-  if (mappedPrice.type === 'flat') {
+  if (mappedPrice.type.toLowerCase() === 'flat') {
     return generateFlatPriceItem(mappedPrice, timeUnitdescription, selectedPriceId);
   }
   return generateTieredPriceItem(mappedPrice, timeUnitdescription, selectedPriceId);
