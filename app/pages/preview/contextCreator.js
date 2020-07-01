@@ -57,35 +57,6 @@ const generateCallOffAndSupplierDetailsTable = ({
   });
 };
 
-const generateOneOffCostTotalsTable = ({
-  oneOffCostTotalsTable, oneOffCostTotalValue,
-}) => {
-  const columns = [];
-  columns.push({
-    data: '',
-    dataTestId: 'blank-cell',
-  });
-
-  columns.push({
-    data: 'Total one off cost (indicative)',
-    classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
-    dataTestId: 'total-cost-label',
-  });
-
-  columns.push({
-    data: oneOffCostTotalValue !== undefined
-      ? formatPrice(oneOffCostTotalValue)
-      : '0.00',
-    classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
-    dataTestId: 'total-cost-value',
-  });
-
-  return ({
-    ...oneOffCostTotalsTable,
-    items: [columns],
-  });
-};
-
 const generateRowForTotal = ({
   labelCellData,
   labelCellClasses,
@@ -96,10 +67,6 @@ const generateRowForTotal = ({
   showValueColumn = true,
 }) => {
   const columns = [];
-  columns.push({
-    data: '',
-    dataTestId: 'blank-cell',
-  });
 
   columns.push({
     data: labelCellData,
@@ -125,6 +92,27 @@ const generateRowForTotal = ({
   return columns;
 };
 
+const generateOneOffCostTotalsTable = ({
+  oneOffCostTotalsTable, oneOffCostTotalValue,
+}) => {
+  const items = [];
+  items.push(
+    generateRowForTotal({
+      labelCellData: oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data,
+      labelCellClasses: oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.classes,
+      labelCellTestId: 'total-cost-label',
+      valueCellData: oneOffCostTotalValue,
+      valueCellClasses: oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.classes,
+      valueCellTestId: 'total-cost-value',
+    }),
+  );
+
+  return ({
+    ...oneOffCostTotalsTable,
+    items,
+  });
+};
+
 const generateRecurringCostTotalsTable = ({
   recurringCostTotalsTable, recurringYearCost, recurringMonthCost, ownershipCost,
 }) => {
@@ -146,7 +134,7 @@ const generateRecurringCostTotalsTable = ({
       labelCellClasses: recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
       labelCellTestId: 'total-monthly-cost-label',
       valueCellData: recurringMonthCost,
-      valueCellClasses: recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
+      valueCellClasses: recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.classes,
       valueCellTestId: 'total-monthly-cost-value',
     }),
   );

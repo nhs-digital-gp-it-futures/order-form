@@ -188,17 +188,13 @@ describe('order summary preview contextCreator', () => {
           items: [
             [
               {
-                data: '',
-                dataTestId: 'blank-cell',
-              },
-              {
-                data: 'Total one off cost (indicative)',
-                classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
+                data: manifest.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data,
+                classes: manifest.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.classes,
                 dataTestId: 'total-cost-label',
               },
               {
                 data: '0.00',
-                classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
+                classes: manifest.oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.classes,
                 dataTestId: 'total-cost-value',
               },
             ],
@@ -217,17 +213,13 @@ describe('order summary preview contextCreator', () => {
           items: [
             [
               {
-                data: '',
-                dataTestId: 'blank-cell',
-              },
-              {
-                data: 'Total one off cost (indicative)',
-                classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
+                data: manifest.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data,
+                classes: manifest.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.classes,
                 dataTestId: 'total-cost-label',
               },
               {
                 data: '1,981.02',
-                classes: 'nhsuk-u-font-weight-bold bc-u-float-right nhsuk-u-font-size-16',
+                classes: manifest.oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.classes,
                 dataTestId: 'total-cost-value',
               },
             ],
@@ -257,10 +249,6 @@ describe('order summary preview contextCreator', () => {
           items: [
             [
               {
-                data: '',
-                dataTestId: 'blank-cell',
-              },
-              {
                 data: manifest.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
                 classes: manifest.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
                 dataTestId: 'total-year-cost-label',
@@ -272,10 +260,6 @@ describe('order summary preview contextCreator', () => {
               },
             ],
             [
-              {
-                data: '',
-                dataTestId: 'blank-cell',
-              },
               {
                 data: manifest.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
                 classes: manifest.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
@@ -289,10 +273,6 @@ describe('order summary preview contextCreator', () => {
             ],
             [
               {
-                data: '',
-                dataTestId: 'blank-cell',
-              },
-              {
                 data: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
                 classes: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
                 dataTestId: 'total-ownership-cost-label',
@@ -304,10 +284,6 @@ describe('order summary preview contextCreator', () => {
               },
             ],
             [
-              {
-                data: '',
-                dataTestId: 'blank-cell',
-              },
               {
                 data: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
                 classes: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
@@ -334,10 +310,6 @@ describe('order summary preview contextCreator', () => {
           items: [
             [
               {
-                data: '',
-                dataTestId: 'blank-cell',
-              },
-              {
                 data: manifest.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
                 classes: manifest.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
                 dataTestId: 'total-year-cost-label',
@@ -349,10 +321,6 @@ describe('order summary preview contextCreator', () => {
               },
             ],
             [
-              {
-                data: '',
-                dataTestId: 'blank-cell',
-              },
               {
                 data: manifest.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
                 classes: manifest.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
@@ -366,10 +334,6 @@ describe('order summary preview contextCreator', () => {
             ],
             [
               {
-                data: '',
-                dataTestId: 'blank-cell',
-              },
-              {
                 data: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
                 classes: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
                 dataTestId: 'total-ownership-cost-label',
@@ -381,10 +345,6 @@ describe('order summary preview contextCreator', () => {
               },
             ],
             [
-              {
-                data: '',
-                dataTestId: 'blank-cell',
-              },
               {
                 data: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
                 classes: manifest.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
