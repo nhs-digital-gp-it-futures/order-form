@@ -1,0 +1,97 @@
+{
+  "backLinkText": "Go back",
+  "title": "Order summary for",
+  "description": "Review your order before submitting. Once submitted, you'll be unable to make changes.",
+  "orderDescriptionHeading": "Order description",
+  "dateSummaryCreatedLabel": "Date order summary created:",
+  "callOffAndSupplierTable": {
+    "columnInfo": [
+      {
+        "data": "Call-off Ordering Party",
+        "width": "50%"
+      },
+      {
+        "data": "Supplier",
+        "width": "50%"
+      }
+    ]
+  },
+  "commencementDateLabel": "Commencement date of the Call-off Agreement:",
+  "oneOffCostHeading": "Order items (one-off cost)",
+  "oneOffCostDescription": "The following items carry a one-off cost for the duration of this Call-off Agreement. They're the Associated Services in this order you can use as and when required",
+  "oneOffCostTable": {
+    "columnInfo": [
+      {
+        "data": "Recipient name (ODS code)",
+        "width": "20%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item ID",
+        "width": "15%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item name",
+        "width": "25%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Price unit of order (£)",
+        "width": "20%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Quantity",
+        "width": "10%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item cost (£)",
+        "width": "10%",
+        "classes": "nhsuk-u-font-size-14"
+      }
+    ]
+  },
+  "recurringCostHeading": "Order items (recurring cost)",
+  "recurringCostDescription": "The following items carry a recurring annual cost for the duration of this Call-off Agreement. They're the Catalogue Solutions, Additional Services and Associated Services in this order that you'll be charged for at a monthly rate.",
+  "recurringCostTable": {
+    "columnInfo": [
+      {
+        "data": "Recipient name (ODS code)",
+        "width": "21%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item ID",
+        "width": "12%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item name",
+        "width": "23%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Price unit of order (£)",
+        "width": "15%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Quantity /period",
+        "width": "5%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Planned delivery date",
+        "width": "15%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item cost per year (£)",
+        "width": "9%",
+        "classes": "nhsuk-u-font-size-14"
+      }
+    ]
+  }
+}

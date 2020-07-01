@@ -11,7 +11,8 @@ const endpoints = {
     getSupplier: options => `${solutionsApiUrl}/api/v1/suppliers/${options.supplierId}`,
     getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
     getSolution: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}`,
-    getSolutionPricing: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}/pricing`,
+    getSolutionPricing: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}/prices`,
+    getSelectedPrice: options => `${solutionsApiUrl}/api/v1/prices/${options.selectedPriceId}`,
   },
   dapi: {
     getApiHealth: () => `${documentApiHost}/health/ready`,
@@ -23,6 +24,7 @@ const endpoints = {
     getServiceRecipient: options => `${organisationApiUrl}/api/v1/ods/${options.selectedRecipientId}`,
   },
   ordapi: {
+    getOrder: options => `${orderApiUrl}/api/v1/orders/${options.orderId}`,
     getOrders: options => `${orderApiUrl}/api/v1/organisations/${options.orgId}/orders`,
     getOrderSummary: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/summary`,
     getDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,

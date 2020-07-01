@@ -14,7 +14,7 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const solutionsState = ClientFunction(() => {
+const selectedSolutionIdState = ClientFunction(() => {
   document.cookie = 'selectedSolutionId=solution-1';
 });
 
@@ -23,7 +23,7 @@ const mockSolutionPricing = {
   name: 'Solution name',
   prices: [
     {
-      priceId: '0001',
+      priceId: 1,
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -37,7 +37,7 @@ const mockSolutionPricing = {
       price: 1.64,
     },
     {
-      priceId: '0002',
+      priceId: 2,
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -47,7 +47,7 @@ const mockSolutionPricing = {
       price: 525.052,
     },
     {
-      priceId: '0003',
+      priceId: 3,
       type: 'tiered',
       currencyCode: 'GBP',
       itemUnit: {
@@ -81,8 +81,8 @@ const solutionPricesState = ClientFunction(() => {
     name: 'Solution name',
     prices: [
       {
-        priceId: '0001',
-        type: 'flat',
+        priceId: 1,
+        type: 'Flat',
         currencyCode: 'GBP',
         itemUnit: {
           name: 'patient',
@@ -95,8 +95,8 @@ const solutionPricesState = ClientFunction(() => {
         price: 1.64,
       },
       {
-        priceId: '0002',
-        type: 'flat',
+        priceId: 2,
+        type: 'Flat',
         currencyCode: 'GBP',
         itemUnit: {
           name: 'licence',
@@ -105,8 +105,8 @@ const solutionPricesState = ClientFunction(() => {
         price: 525.052,
       },
       {
-        priceId: '0003',
-        type: 'tiered',
+        priceId: 3,
+        type: 'Tiered',
         currencyCode: 'GBP',
         itemUnit: {
           name: 'consultation',
@@ -135,19 +135,26 @@ const solutionPricesState = ClientFunction(() => {
   document.cookie = `solutionPrices=${cookieValue}`;
 });
 
+const selectedPriceIdState = ClientFunction(() => {
+  document.cookie = 'selectedPriceId=2';
+});
+
 const mocks = () => {
   nock(solutionsApiUrl)
-    .get('/api/v1/solutions/solution-1/pricing')
+    .get('/api/v1/solutions/solution-1/prices')
     .reply(200, mockSolutionPricing);
 };
 
-const pageSetup = async (withAuth = false, withSolutionsFoundState = true, withsolutionPricesState = false) => {
+const pageSetup = async (
+  withAuth = false, withSelectedSolutionIdState = true, withSolutionPricesState = false, withSelectedPriceIdState = false,
+) => {
   if (withAuth) {
     mocks();
     await setCookies();
   }
-  if (withSolutionsFoundState) await solutionsState();
-  if (withsolutionPricesState) await solutionPricesState();
+  if (withSelectedSolutionIdState) await selectedSolutionIdState();
+  if (withSolutionPricesState) await solutionPricesState();
+  if (withSelectedPriceIdState) await selectedPriceIdState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -233,14 +240,28 @@ test('should render a selectSolutionPrice question as radio button options', asy
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
     .expect(selectSolutionPriceRadioOptions.find('input').count).eql(3)
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(0).getAttribute('value')).eql('0001')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(0).getAttribute('value')).eql('1')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(0))).eql('£1.64 per patient per year')
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(1).getAttribute('value')).eql('0002')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(1).getAttribute('value')).eql('2')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(1))).eql('£525.052 per licence')
 
-    .expect(selectSolutionPriceRadioOptions.find('input').nth(2).getAttribute('value')).eql('0003')
+    .expect(selectSolutionPriceRadioOptions.find('input').nth(2).getAttribute('value')).eql('3')
     .expect(await extractInnerText(selectSolutionPriceRadioOptions.find('label').nth(2))).eql('1 - 10 consultations £700 per consultation per month\n11+ consultations £400 per consultation per month');
+});
+
+test('should render the radioButton as checked for the selectedPriceId', async (t) => {
+  await pageSetup(true, true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const selectSolutionPriceRadioOptions = Selector('[data-test-id="question-selectSolutionPrice"]');
+
+  await t
+    .expect(selectSolutionPriceRadioOptions.exists).ok()
+    .expect(selectSolutionPriceRadioOptions.find('.nhsuk-radios__item').count).eql(3)
+    .expect(selectSolutionPriceRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input:checked').exists).notOk()
+    .expect(selectSolutionPriceRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input:checked').exists).ok()
+    .expect(selectSolutionPriceRadioOptions.find('.nhsuk-radios__item:nth-child(3)').find('input:checked').exists).notOk();
 });
 
 test('should render the Continue button', async (t) => {
@@ -282,7 +303,7 @@ test('should show the error summary when no price selected causing validation er
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a List price');
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a list price');
 });
 
 test('should render select solution field as errors with error message when no price selected causing validation error', async (t) => {
@@ -299,7 +320,7 @@ test('should render select solution field as errors with error message when no p
 
   await t
     .expect(solutionSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
-    .expect(await extractInnerText(solutionSelectField.find('#selectSolutionPrice-error'))).contains('Select a List price');
+    .expect(await extractInnerText(solutionSelectField.find('#selectSolutionPrice-error'))).contains('Select a list price');
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {

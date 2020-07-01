@@ -12,7 +12,7 @@ const solutionPrices = {
   name: 'Solution name',
   prices: [
     {
-      priceId: '0001',
+      priceId: 1,
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -26,7 +26,7 @@ const solutionPrices = {
       price: 1.64,
     },
     {
-      priceId: '0002',
+      priceId: 2,
       type: 'flat',
       currencyCode: 'GBP',
       itemUnit: {
@@ -36,7 +36,7 @@ const solutionPrices = {
       price: 525.052,
     },
     {
-      priceId: '0003',
+      priceId: 3,
       type: 'tiered',
       currencyCode: 'GBP',
       itemUnit: {
@@ -69,13 +69,14 @@ const returnedPriceArray = [{
   mainAdvice: 'Select list price',
   options: [{
     text: '£1.64 per patient per year',
-    value: '0001',
+    value: 1,
   }, {
     text: '£525.052 per licence ',
-    value: '0002',
+    value: 2,
+    checked: true,
   }, {
     html: '<div>1 - 10 consultations £700 per consultation per month</div><div>11+ consultations £400 per consultation per month</div>',
-    value: '0003',
+    value: 3,
   }],
 }];
 
@@ -108,7 +109,7 @@ describe('catalogue-solutions select-price contextCreator', () => {
     });
 
     it('should return the formatted list of questions', () => {
-      const context = getContext({ orderId: 'order-1', solutionPrices });
+      const context = getContext({ orderId: 'order-1', solutionPrices, selectedPriceId: 2 });
       expect(context.questions).toEqual(returnedPriceArray);
     });
   });
