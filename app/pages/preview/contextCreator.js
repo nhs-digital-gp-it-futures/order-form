@@ -61,9 +61,11 @@ const generateRowForTotal = ({
   labelCellData,
   labelCellClasses,
   labelCellTestId,
+  labelHideSeperator,
   valueCellData,
   valueCellClasses,
   valueCellTestId,
+  valueHideSeperator,
   showValueColumn = true,
 }) => {
   const columns = [];
@@ -72,6 +74,7 @@ const generateRowForTotal = ({
     data: labelCellData,
     classes: labelCellClasses,
     dataTestId: labelCellTestId,
+    hideSeperator: labelHideSeperator,
   });
 
   if (showValueColumn) {
@@ -81,11 +84,13 @@ const generateRowForTotal = ({
         : '0.00',
       classes: valueCellClasses,
       dataTestId: valueCellTestId,
+      hideSeperator: valueHideSeperator,
     });
   } else {
     columns.push({
       data: '',
       dataTestId: 'blank-cell',
+      hideSeperator: valueHideSeperator,
     });
   }
 
@@ -101,9 +106,11 @@ const generateOneOffCostTotalsTable = ({
       labelCellData: oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data,
       labelCellClasses: oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.classes,
       labelCellTestId: 'total-cost-label',
+      labelHideSeperator: oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.hideSeperator,
       valueCellData: oneOffCostTotalValue,
       valueCellClasses: oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.classes,
       valueCellTestId: 'total-cost-value',
+      valueHideSeperator: oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.hideSeperator,
     }),
   );
 
@@ -122,9 +129,11 @@ const generateRecurringCostTotalsTable = ({
       labelCellData: recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
       labelCellClasses: recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
       labelCellTestId: 'total-year-cost-label',
+      labelHideSeperator: recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.hideSeperator,
       valueCellData: recurringYearCost,
       valueCellClasses: recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
       valueCellTestId: 'total-year-cost-value',
+      valueHideSeperator: recurringCostTotalsTable.cellInfo.totalOneYearCostValue.hideSeperator,
     }),
   );
 
@@ -133,9 +142,11 @@ const generateRecurringCostTotalsTable = ({
       labelCellData: recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
       labelCellClasses: recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
       labelCellTestId: 'total-monthly-cost-label',
+      labelHideSeperator: recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.hideSeperator,
       valueCellData: recurringMonthCost,
       valueCellClasses: recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.classes,
       valueCellTestId: 'total-monthly-cost-value',
+      valueHideSeperator: recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.hideSeperator,
     }),
   );
 
@@ -144,9 +155,11 @@ const generateRecurringCostTotalsTable = ({
       labelCellData: recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
       labelCellClasses: recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
       labelCellTestId: 'total-ownership-cost-label',
+      labelHideSeperator: recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.hideSeperator,
       valueCellData: ownershipCost,
       valueCellClasses: recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.classes,
       valueCellTestId: 'total-ownership-cost-value',
+      valueHideSeperator: recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.hideSeperator,
     }),
   );
 
@@ -155,6 +168,8 @@ const generateRecurringCostTotalsTable = ({
       labelCellData: recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
       labelCellClasses: recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
       labelCellTestId: 'total-ownership-terms',
+      labelHideSeperator: recurringCostTotalsTable.cellInfo.totalOwnershipTerms.hideSeperator,
+      valueHideSeperator: recurringCostTotalsTable.cellInfo.totalOwnershipTerms.hideSeperator,
       showValueColumn: false,
     }),
   );

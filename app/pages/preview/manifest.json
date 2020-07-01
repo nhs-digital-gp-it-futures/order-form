@@ -55,8 +55,8 @@
   },
   "oneOffCostTotalsTable": {
     "columnInfo": [
-      { "data": "", "width": "75%" },
-      { "data": "", "width": "25%" }
+      { "data": "", "width": "80%" },
+      { "data": "", "width": "20%" }
     ],
     "cellInfo": {
       "totalOneOffCostLabel": {
@@ -111,16 +111,18 @@
   },
   "recurringCostTotalsTable": {
     "columnInfo": [
-      { "data": "", "width": "75%" },
-      { "data": "", "width": "25%" }
+      { "data": "", "width": "80%" },
+      { "data": "", "width": "20%" }
     ],
     "cellInfo": {
       "totalOneYearCostLabel": {
         "data": "Total cost for one year (indicative)",
-        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19"
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19",
+        "hideSeperator": true
       },
       "totalOneYearCostValue": {
-        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19"
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19",
+        "hideSeperator": true
       },
       "totalMonthlyCostLabel": {
         "data": "Total monthly cost (indicative)",
@@ -131,14 +133,17 @@
       },
       "totalOwnershipCostLabel": {
         "data": "Total cost of ownership (indicative)",
-        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-22 nhsuk-u-margin-top-5"
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-22 nhsuk-u-margin-top-5",
+        "hideSeperator": true
       },
       "totalOwnershipCostValue": {
-        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-22 nhsuk-u-margin-top-5"
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-22 nhsuk-u-margin-top-5",
+        "hideSeperator": true
       },
       "totalOwnershipTerms": {
         "data": "This is the total estimated cost for the entire duration of the Call-off Agreement, which is usually 3 years. The figure is made up of the one-off costs and the estimated yearly cost multiplied by 3.",
-        "classes": "nhsuk-table__cell--numeric nhsuk-u-font-size-14"
+        "classes": "nhsuk-grid-column-two-thirds bc-u-float-right nhsuk-table__cell--numeric nhsuk-u-padding-right-0 nhsuk-u-font-size-14",
+        "hideSeperator": true
       }
     }
   }
