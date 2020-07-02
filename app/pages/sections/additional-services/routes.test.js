@@ -25,7 +25,6 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 
-
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
   const app = new App(authProvider).createApp();
