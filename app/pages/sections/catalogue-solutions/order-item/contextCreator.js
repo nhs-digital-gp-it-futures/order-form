@@ -58,7 +58,9 @@ const populateQuestionsWithData = ({ selectedPriceManifest, selectedPrice }) => 
 //   }
 // });
 
-const generateAddPriceTable = ({ addPriceTable, price, itemUnitDescription }) => {
+const generateAddPriceTable = ({
+  addPriceTable, price, itemUnitDescription, errorMap,
+}) => {
   const columns = [];
 
   columns.push({
@@ -66,6 +68,9 @@ const generateAddPriceTable = ({ addPriceTable, price, itemUnitDescription }) =>
     question: {
       ...addPriceTable.cellInfo.price.question,
       data: price,
+      error: errorMap && errorMap.price
+        ? { message: errorMap.price.errorMessages.join(', ') }
+        : undefined,
     },
   });
 
@@ -123,6 +128,7 @@ export const getContext = ({
     addPriceTable: selectedPriceManifest.addPriceTable,
     price: selectedPrice && selectedPrice.price,
     itemUnitDescription: selectedPrice && selectedPrice.itemUnit.description,
+    errorMap,
   }),
   deleteButtonHref: '#',
   backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/recipient`,

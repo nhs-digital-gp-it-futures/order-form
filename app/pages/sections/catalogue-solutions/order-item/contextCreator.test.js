@@ -95,7 +95,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
       it('should return error for quantity', () => {
         const expectedContext = {
           errors: [
-            { href: 'quantity', text: flatOndemandManifest.errorMessages.quantityRequired },
+            { href: '#quantity', text: flatOndemandManifest.errorMessages.quantityRequired },
           ],
           questions: {
             ...flatOndemandManifest.questions,
@@ -114,7 +114,50 @@ describe('catalogue-solutions order-item contextCreator', () => {
           validationErrors: [{ field: 'quantity', id: 'quantityRequired' }],
         });
 
+        expect(context.errors).toEqual(expectedContext.errors);
         expect(context.questions).toEqual(expectedContext.questions);
+      });
+
+      it('should return error for price', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#price', text: flatOndemandManifest.errorMessages.priceRequired },
+          ],
+          addPriceTable: {
+            ...flatOndemandManifest.addPriceTable,
+            items: [
+              [
+                {
+                  ...flatOndemandManifest.addPriceTable.cellInfo.price,
+                  question: {
+                    ...flatOndemandManifest.addPriceTable.cellInfo.price.question,
+                    error: {
+                      message: flatOndemandManifest.errorMessages.priceRequired,
+                    },
+                  },
+                },
+                {
+                  ...flatOndemandManifest.addPriceTable.cellInfo.unitOfOrder,
+                  data: 'per consultation',
+                },
+              ],
+            ],
+          },
+        };
+
+        const selectedPrice = {
+          itemUnit: { description: 'per consultation' },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatOndemandManifest,
+          validationErrors: [{ field: 'price', id: 'priceRequired' }],
+          selectedPrice,
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
       });
     });
   });
