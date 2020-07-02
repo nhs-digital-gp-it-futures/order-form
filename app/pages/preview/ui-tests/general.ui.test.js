@@ -218,6 +218,25 @@ test('should render the one off cost table with the column headings', async (t) 
     .expect(await extractInnerText(itemCostColumnHeading)).eql('Item cost (£)');
 });
 
+test('should render the one off cost totals table with 0.00 for the price', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const oneOffCostTotalsTable = Selector('[data-test-id="one-off-cost-totals-table"]');
+  const row1 = oneOffCostTotalsTable.find('[data-test-id="table-row-0"]');
+  const totalCostLabelCell = row1.find('div[data-test-id="total-cost-label"]');
+  const totalCostValueCell = row1.find('div[data-test-id="total-cost-value"]');
+
+  await t
+    .expect(oneOffCostTotalsTable.exists).ok()
+
+    .expect(totalCostLabelCell.exists).ok()
+    .expect(await extractInnerText(totalCostLabelCell)).eql(content.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data)
+
+    .expect(totalCostValueCell.exists).ok()
+    .expect(await extractInnerText(totalCostValueCell)).eql('0.00');
+});
+
 test('should render the recurring cost heading and description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -268,4 +287,47 @@ test('should render the recurring cost table with the column headings', async (t
 
     .expect(itemCostColumnHeading.exists).ok()
     .expect(await extractInnerText(itemCostColumnHeading)).eql('Item cost per year (£)');
+});
+
+test('should render the recurring cost totals table with 0.00 for the price', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const recurringCostTotalsTable = Selector('[data-test-id="recurring-cost-totals-table"]');
+
+  const row1 = recurringCostTotalsTable.find('[data-test-id="table-row-0"]');
+  const totalYearCostLabelCell = row1.find('div[data-test-id="total-year-cost-label"]');
+  const totalYearCostValueCell = row1.find('div[data-test-id="total-year-cost-value"]');
+
+  const row2 = recurringCostTotalsTable.find('[data-test-id="table-row-1"]');
+  const totalMonthlyCostLabelCell = row2.find('div[data-test-id="total-monthly-cost-label"]');
+  const totalMonthlyCostValueCell = row2.find('div[data-test-id="total-monthly-cost-value"]');
+
+  const row3 = recurringCostTotalsTable.find('[data-test-id="table-row-2"]');
+  const totalOwnershipCostLabelCell = row3.find('div[data-test-id="total-ownership-cost-label"]');
+  const totalOwnershipCostValueCell = row3.find('div[data-test-id="total-ownership-cost-value"]');
+
+  const row4 = recurringCostTotalsTable.find('[data-test-id="table-row-3"]');
+  const totalOwnershipTermsLabelCell = row4.find('div[data-test-id="total-ownership-terms"]');
+
+  await t
+    .expect(recurringCostTotalsTable.exists).ok()
+
+    .expect(totalYearCostLabelCell.exists).ok()
+    .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data)
+    .expect(totalYearCostValueCell.exists).ok()
+    .expect(await extractInnerText(totalYearCostValueCell)).eql('0.00')
+
+    .expect(totalMonthlyCostLabelCell.exists).ok()
+    .expect(await extractInnerText(totalMonthlyCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data)
+    .expect(totalMonthlyCostValueCell.exists).ok()
+    .expect(await extractInnerText(totalMonthlyCostValueCell)).eql('0.00')
+
+    .expect(totalOwnershipCostLabelCell.exists).ok()
+    .expect(await extractInnerText(totalOwnershipCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data)
+    .expect(totalOwnershipCostValueCell.exists).ok()
+    .expect(await extractInnerText(totalOwnershipCostValueCell)).eql('0.00')
+
+    .expect(totalOwnershipTermsLabelCell.exists).ok()
+    .expect(await extractInnerText(totalOwnershipTermsLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data);
 });

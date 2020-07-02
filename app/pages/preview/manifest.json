@@ -53,6 +53,21 @@
       }
     ]
   },
+  "oneOffCostTotalsTable": {
+    "columnInfo": [
+      { "data": "", "width": "80%" },
+      { "data": "", "width": "20%" }
+    ],
+    "cellInfo": {
+      "totalOneOffCostLabel": {
+        "data": "Total one off cost (indicative)",
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19"
+      },
+      "totalOneOffCostValue": {
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19"
+      }
+    }
+  },
   "recurringCostHeading": "Order items (recurring cost)",
   "recurringCostDescription": "The following items carry a recurring annual cost for the duration of this Call-off Agreement. They're the Catalogue Solutions, Additional Services and Associated Services in this order that you'll be charged for at a monthly rate.",
   "recurringCostTable": {
@@ -92,6 +107,67 @@
         "width": "9%",
         "classes": "nhsuk-u-font-size-14"
       }
-    ]
+    ],
+    "cellInfo": {
+      "recipientName": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemId": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemName": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "priceUnit": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "quantity": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "plannedDeliveryDate": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemCost": {
+        "classes": "nhsuk-u-font-size-14 nhsuk-table__cell--numeric"
+      }
+    }
+  },
+  "recurringCostTotalsTable": {
+    "columnInfo": [
+      { "data": "", "width": "80%" },
+      { "data": "", "width": "20%" }
+    ],
+    "cellInfo": {
+      "totalOneYearCostLabel": {
+        "data": "Total cost for one year (indicative)",
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19",
+        "hideSeperator": true
+      },
+      "totalOneYearCostValue": {
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19",
+        "hideSeperator": true
+      },
+      "totalMonthlyCostLabel": {
+        "data": "Total monthly cost (indicative)",
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-16"
+      },
+      "totalMonthlyCostValue": {
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-16"
+      },
+      "totalOwnershipCostLabel": {
+        "data": "Total cost of ownership (indicative)",
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-22 nhsuk-u-margin-top-5",
+        "hideSeperator": true
+      },
+      "totalOwnershipCostValue": {
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-22 nhsuk-u-margin-top-5",
+        "hideSeperator": true
+      },
+      "totalOwnershipTerms": {
+        "data": "This is the total estimated cost for the entire duration of the Call-off Agreement, which is usually 3 years. The figure is made up of the one-off costs and the estimated yearly cost multiplied by 3.",
+        "classes": "nhsuk-grid-column-two-thirds bc-u-float-right nhsuk-table__cell--numeric nhsuk-u-padding-right-0 nhsuk-u-font-size-14",
+        "hideSeperator": true
+      }
+    }
   }
 }
