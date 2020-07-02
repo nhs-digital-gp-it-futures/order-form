@@ -206,7 +206,7 @@ describe('order summary preview contextCreator', () => {
       expect(context.oneOffCostTotalsTable).toEqual(expectedContext.oneOffCostTotalsTable);
     });
 
-    it('should return the oneOffCostTotalsTable with items and the total cost value set to when provided', () => {
+    it('should return the oneOffCostTotalsTable with items and the total cost value when provided', () => {
       const expectedContext = {
         oneOffCostTotalsTable: {
           ...manifest.oneOffCostTotalsTable,
@@ -387,7 +387,7 @@ describe('order summary preview contextCreator', () => {
       expect(context.recurringCostTotalsTable).toEqual(expectedContext.recurringCostTotalsTable);
     });
 
-    it('should return the recurringCostTotalsTable with items and the total cost value set to when provided', () => {
+    it('should return the recurringCostTotalsTable with items and the total cost value when provided', () => {
       const expectedContext = {
         recurringCostTotalsTable: {
           ...manifest.recurringCostTotalsTable,
