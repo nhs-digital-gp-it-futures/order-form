@@ -322,6 +322,42 @@ test('should not render the complete tag for task 5 item 1', async (t) => {
     .expect(task5Item1CompleteTag.exists).notOk();
 });
 
+// Task 6 Item 1 Tests
+test('should render task 6 item 1', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const task6 = Selector('li[data-test-id="task-5"]');
+  const task6Item1 = Selector('[data-test-id="task-5-item-0"]');
+
+  await t
+    .expect(task6.exists).ok()
+    .expect(await extractInnerText(task6.find('h2 span'))).eql('6.')
+    .expect(await extractInnerText(task6.find('h2 div'))).eql('Add Additional Services')
+    .expect(task6Item1.exists).ok()
+    .expect(await extractInnerText(task6Item1.find('span'))).eql('Add Additional Services to your order');
+});
+
+test('should render task 6 item 1 as a text', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const task6Item1 = Selector('li[data-test-id="task-5-item-0"]');
+
+  await t
+    .expect(task6Item1.find('a').exists).notOk();
+});
+
+test('should not render the complete tag for task 6 item 1', async (t) => {
+  await pageSetup(t, true);
+  await t.navigateTo(pageUrl);
+
+  const task6Item1CompleteTag = Selector('[data-test-id="task-5-item-0-complete-tag"]');
+
+  await t
+    .expect(task6Item1CompleteTag.exists).notOk();
+});
+
 // Buttons tests
 test('should render the "Delete order" button', async (t) => {
   await pageSetup(t, true);
