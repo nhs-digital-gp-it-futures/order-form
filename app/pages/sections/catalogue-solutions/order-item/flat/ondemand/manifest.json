@@ -1,12 +1,11 @@
 {
-  "questions": [
-    {
+  "questions": {
+    "plannedDeliveryDate": {
       "id": "plannedDeliveryDate",
       "mainAdvice": "Planned delivery date",
       "additionalAdvice": "For example 14 01 2020"
     },
-    {
-      "id": "quantity",
+    "quantity": {
       "mainAdvice": "Quantity",
       "rows": 3,
       "expandableSection": {
@@ -15,8 +14,7 @@
         "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
       }
     }, 
-    {
-      "id": "selectEstimationPeriod",
+    "selectEstimationPeriod": {
       "mainAdvice": "Estimation period",
       "options": [
         {
@@ -34,7 +32,7 @@
         "innerComponent": "This should be based on how you estimated the quantity you want to order."
       }
     }
-  ],
+  },
   "addPriceTable": {
     "columnInfo": [
       {

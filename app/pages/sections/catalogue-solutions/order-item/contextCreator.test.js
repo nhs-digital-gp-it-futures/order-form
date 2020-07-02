@@ -1,12 +1,6 @@
 import commonManifest from './commonManifest.json';
 import flatOndemandManifest from './flat/ondemand/manifest.json';
-import { getContext, getErrorContext } from './contextCreator';
-import * as errorContext from '../../getSectionErrorContext';
-
-jest.mock('../../getSectionErrorContext', () => ({
-  getSectionErrorContext: jest.fn(),
-}));
-
+import { getContext, getErrorContext, generateErrorMessageMap } from './contextCreator';
 
 describe('catalogue-solutions order-item contextCreator', () => {
   describe('getContext', () => {
@@ -97,78 +91,31 @@ describe('catalogue-solutions order-item contextCreator', () => {
   });
 
   describe('getErrorContext', () => {
-    const mockValidationErrors = [
-      { field: 'quantity', id: 'quantityRequired' },
-      { field: 'price', id: 'priceRequired' },
-    ];
-
-    const selectedPrice = {
-      price: 0.1,
-      itemUnit: { description: 'per consultation' },
-    };
-
-    const manifestWithErrors = {
-      questions:
-      [{
-        id: 'quantity',
-        mainAdvice: 'Quantity',
-        rows: 3,
-        error: {
-          message: 'quantity error',
-        },
-      }],
-      addPriceTable:
-      {
-        data: [[{
-          question: {
-            type: 'input',
-            id: 'price',
+    describe('flat - ondemand', () => {
+      it('should return error for quantity', () => {
+        const expectedContext = {
+          errors: [
+            { href: 'quantity', text: flatOndemandManifest.errorMessages.quantityRequired },
+          ],
+          questions: {
+            ...flatOndemandManifest.questions,
+            quantity: {
+              ...flatOndemandManifest.questions.quantity,
+              error: {
+                message: flatOndemandManifest.errorMessages.quantityRequired,
+              },
+            },
           },
-        }]],
-      },
-      errorMessages:
-      {
-        quantityRequired: 'Enter a quantity',
-        priceRequired: 'Enter a price',
-      },
-    };
+        };
 
-    afterEach(() => {
-      errorContext.getSectionErrorContext.mockReset();
-    });
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatOndemandManifest,
+          validationErrors: [{ field: 'quantity', id: 'quantityRequired' }],
+        });
 
-    it('should call getSectionErrorContext with correct params', () => {
-      errorContext.getSectionErrorContext.mockReturnValue(manifestWithErrors);
-
-      const params = {
-        commonManifest,
-        selectedPriceManifest: {},
-        orderId: 'order-id',
-        solutionName: 'solution-name',
-        serviceRecipientName: 'recipient-name',
-        odsCode: 'ods-code',
-        selectedPrice,
-        validationErrors: mockValidationErrors,
-      };
-
-      getErrorContext(params);
-      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
-    });
-
-    it('should add error message to the table data', async () => {
-      errorContext.getSectionErrorContext.mockReturnValue(manifestWithErrors);
-
-      const params = {
-        orderId: 'order-id',
-        solutionName: 'solution-name',
-        serviceRecipientName: 'recipient-name',
-        odsCode: 'ods-code',
-        selectedPrice,
-        validationErrors: mockValidationErrors,
-      };
-
-      const returnedErrorContext = await getErrorContext(params);
-      expect(returnedErrorContext.addPriceTable.data[0][0].question.error.message).toEqual('Enter a price');
+        expect(context.questions).toEqual(expectedContext.questions);
+      });
     });
   });
 });
