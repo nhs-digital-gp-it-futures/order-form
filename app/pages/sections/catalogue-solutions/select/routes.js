@@ -128,7 +128,9 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const response = validateRecipientForm({ data: req.body });
     if (response.success) {
       const selectedRecipientId = req.body.selectRecipient;
-      const selectedRecipientName = getServiceRecipientName({ serviceRecipientId: selectedRecipientId, recipients });
+      const selectedRecipientName = getServiceRecipientName(
+        { serviceRecipientId: selectedRecipientId, recipients },
+      );
 
       sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: selectedRecipientId });
       sessionManager.saveToSession({ req, key: 'selectedRecipientName', value: selectedRecipientName });

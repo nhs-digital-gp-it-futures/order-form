@@ -8,7 +8,6 @@ import {
 } from './catalogue-solutions/controller';
 import {
   getOrderItemContext,
-  getRecipientName,
   getSelectedPrice,
   getOrderItemErrorPageContext,
   validateOrderItemForm,
