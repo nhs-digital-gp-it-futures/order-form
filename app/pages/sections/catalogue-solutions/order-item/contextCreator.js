@@ -1,41 +1,49 @@
-import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
 import { getSectionErrorContext } from '../../getSectionErrorContext';
 import { questionExtractor } from '../../../../helpers/questionExtractor';
 
-export const populateEstimationPeriod = ((selectedPrice) => {
-  questionExtractor('selectEstimationPeriod', manifest).options.forEach((option, i) => {
-    questionExtractor('selectEstimationPeriod', manifest).options[i]
+export const populateEstimationPeriod = ((selectedPriceManifest, selectedPrice) => {
+  questionExtractor('selectEstimationPeriod', selectedPriceManifest).options.forEach((option, i) => {
+    questionExtractor('selectEstimationPeriod', selectedPriceManifest).options[i]
       .checked = option.text.toLowerCase() === selectedPrice
         .timeUnit.description.toLowerCase()
         ? true : undefined;
   });
 });
 
-export const populateTable = ((selectedPrice) => {
-  manifest.addPriceTable.data[0][0].question.data = selectedPrice.price;
-  manifest.addPriceTable.data[0][1].data = selectedPrice.itemUnit.description;
+export const populateTable = ((selectedPriceManifest, selectedPrice) => {
+  selectedPriceManifest.addPriceTable.data[0][0].question.data = selectedPrice.price;
+  selectedPriceManifest.addPriceTable.data[0][1].data = selectedPrice.itemUnit.description;
 });
 
-export const formatFormData = ((populatedData) => {
-  questionExtractor('quantity', manifest).data = populatedData.quantity ? populatedData.quantity.trim() : '';
+export const formatFormData = ((selectedPriceManifest, populatedData) => {
+  questionExtractor('quantity', selectedPriceManifest).data = populatedData.quantity ? populatedData.quantity.trim() : '';
   if (populatedData.price) {
-    manifest.addPriceTable.data[0][0].question.data = populatedData.price.trim();
+    selectedPriceManifest.addPriceTable.data[0][0].question.data = populatedData.price.trim();
   } else {
-    manifest.addPriceTable.data[0][0].question.data = '';
+    selectedPriceManifest.addPriceTable.data[0][0].question.data = '';
   }
 });
 
+// update this take in the common manifest and the priceType manifest
 export const getContext = ({
-  orderId, solutionName, serviceRecipientName, odsCode, selectedPrice, populatedData,
+  commonManifest,
+  selectedPriceManifest,
+  orderId,
+  solutionName,
+  serviceRecipientName,
+  odsCode,
+  selectedPrice,
+  populatedData,
 }) => {
-  populateEstimationPeriod(selectedPrice);
-  populateTable(selectedPrice);
-  if (populatedData) formatFormData(populatedData);
+  populateEstimationPeriod(selectedPriceManifest, selectedPrice);
+  populateTable(selectedPriceManifest, selectedPrice);
+  if (populatedData) formatFormData(selectedPriceManifest, populatedData);
 
   return ({
-    ...manifest,
-    title: `${solutionName} ${manifest.title} ${serviceRecipientName} (${odsCode})`,
+    ...commonManifest,
+    ...selectedPriceManifest,
+    title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
     deleteButtonHref: '#',
     backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/recipient`,
   });

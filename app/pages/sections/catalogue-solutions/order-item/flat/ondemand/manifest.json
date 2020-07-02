@@ -1,11 +1,11 @@
 {
-  "title": "information for",
-  "description": "Provide the delivery date and price you've agreed with the supplier and the quantity you want to order.",
-  "questions": [{
+  "questions": [
+    {
       "id": "plannedDeliveryDate",
       "mainAdvice": "Planned delivery date",
       "additionalAdvice": "For example 14 01 2020"
-    }, {
+    },
+    {
       "id": "quantity",
       "mainAdvice": "Quantity",
       "rows": 3,
@@ -74,7 +74,5 @@
     "numericQuantityRequired": "Quantity must be a number",
     "priceRequired": "Enter a price",
     "numericPriceRequired": "Price must be a number"
-  },
-  "deleteButtonText": "Delete",
-  "saveButtonText": "Save"
+  }
 }

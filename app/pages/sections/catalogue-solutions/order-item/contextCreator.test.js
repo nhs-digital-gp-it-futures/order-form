@@ -1,4 +1,5 @@
-import manifest from './manifest.json';
+import commonManifest from './commonManifest.json';
+import flatOndemandManifest from './flat/ondemand/manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
 import * as errorContext from '../../getSectionErrorContext';
 
@@ -29,74 +30,79 @@ describe('catalogue-solutions order-item contextCreator', () => {
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({
-        solutionName, serviceRecipientName, odsCode, selectedPrice,
+        commonManifest,
       });
-      expect(context.backLinkText).toEqual(manifest.backLinkText);
+      expect(context.backLinkText).toEqual(commonManifest.backLinkText);
     });
 
     it('should return the title', () => {
       const context = getContext({
-        solutionName, serviceRecipientName, odsCode, selectedPrice,
+        commonManifest, solutionName, serviceRecipientName, odsCode,
       });
-      expect(context.title).toEqual(`${solutionName} ${manifest.title} ${serviceRecipientName} (${odsCode})`);
+      expect(context.title).toEqual(`${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`);
     });
 
     it('should return the description', () => {
-      const context = getContext({ selectedPrice });
-      expect(context.description).toEqual(manifest.description);
+      const context = getContext({ commonManifest });
+      expect(context.description).toEqual(commonManifest.description);
     });
 
     it('should return the delete button', () => {
-      const context = getContext({ selectedPrice });
-      expect(context.deleteButtonText).toEqual(manifest.deleteButtonText);
-    });
-
-    it('should return the questions', () => {
-      const context = getContext({ selectedPrice });
-      expect(context.questions).toEqual(manifest.questions);
-    });
-
-    it('should return the table headings', () => {
-      const context = getContext({ selectedPrice });
-      expect(context.addPriceTable.columnInfo).toEqual(manifest.addPriceTable.columnInfo);
-    });
-
-    it('should return the table class', () => {
-      const context = getContext({ selectedPrice });
-      expect(context.addPriceTable.columnClass).toEqual(manifest.addPriceTable.columnClass);
-    });
-
-    it('should return the table data', () => {
-      const tableData = [
-        [
-          {
-            classes: 'nhsuk-input--width-10',
-            expandableSection: {
-              dataTestId: 'view-section-input-id',
-              innerComponent: 'You can change the list price if you’ve agreed a different rate with the supplier.',
-              title: 'What price should I enter?',
-            },
-            question: {
-              data: 1.64,
-              id: 'price',
-              type: 'input',
-            },
-          },
-          {
-            data: 'per patient',
-            dataTestId: 'order-unit-id',
-          },
-        ],
-      ];
-      const context = getContext({ selectedPrice });
-      expect(context.addPriceTable.data).toEqual(tableData);
+      const context = getContext({ commonManifest });
+      expect(context.deleteButtonText).toEqual(commonManifest.deleteButtonText);
     });
 
     it('should return the save button', () => {
       const context = getContext({ selectedPrice });
-      expect(context.saveButtonText).toEqual(manifest.saveButtonText);
+      expect(context.saveButtonText).toEqual(commonManifest.saveButtonText);
+    });
+
+    describe('flat - ondemand questions', () => {
+      it('should return the questions', () => {
+        const context = getContext({ selectedPriceManifest: flatOndemandManifest });
+        expect(context.questions).toEqual(flatOndemandManifest.questions);
+      });
+
+      it('should return the table headings', () => {
+        const context = getContext({ selectedPriceManifest: flatOndemandManifest });
+        expect(context.addPriceTable.columnInfo)
+          .toEqual(flatOndemandManifest.addPriceTable.columnInfo);
+      });
+
+      it('should return the table class', () => {
+        const context = getContext({ selectedPriceManifest: flatOndemandManifest });
+        expect(context.addPriceTable.columnClass)
+          .toEqual(flatOndemandManifest.addPriceTable.columnClass);
+      });
+
+      it('should return the table data', () => {
+        const tableData = [
+          [
+            {
+              classes: 'nhsuk-input--width-10',
+              expandableSection: {
+                dataTestId: 'view-section-input-id',
+                innerComponent: 'You can change the list price if you’ve agreed a different rate with the supplier.',
+                title: 'What price should I enter?',
+              },
+              question: {
+                data: 1.64,
+                id: 'price',
+                type: 'input',
+              },
+            },
+            {
+              data: 'per patient',
+              dataTestId: 'order-unit-id',
+            },
+          ],
+        ];
+        const context = getContext({ selectedPriceManifest: flatOndemandManifest, selectedPrice });
+        expect(context.addPriceTable.data).toEqual(tableData);
+      });
     });
   });
+
   describe('getErrorContext', () => {
     const mockValidationErrors = [
       { field: 'quantity', id: 'quantityRequired' },

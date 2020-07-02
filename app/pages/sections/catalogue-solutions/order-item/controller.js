@@ -3,6 +3,7 @@ import { getData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
+import commonManifest from './commonManifest.json';
 
 export const getRecipientName = async ({ selectedRecipientId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipient', options: { selectedRecipientId } });
@@ -26,9 +27,21 @@ export const getOrderItemContext = async ({
   selectedRecipientId,
   serviceRecipientName,
   selectedPrice,
-}) => getContext({
-  orderId, solutionName, serviceRecipientName, odsCode: selectedRecipientId, selectedPrice,
-});
+}) => {
+  // get common manifest
+
+  // get price and provisioning type manifest - call manifest provider
+
+  // pass these on to getContext
+  return getContext({
+    commonManifest,
+    orderId,
+    solutionName,
+    serviceRecipientName,
+    odsCode: selectedRecipientId,
+    selectedPrice,
+  });
+};
 
 export const getOrderItemErrorPageContext = params => getErrorContext(params);
 
