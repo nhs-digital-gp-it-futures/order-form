@@ -484,6 +484,9 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: true });
 
+      selectRecipientController.getServiceRecipientName = jest.fn()
+        .mockReturnValue('service recipient one');
+
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,

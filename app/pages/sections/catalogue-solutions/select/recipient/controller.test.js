@@ -6,6 +6,7 @@ import {
   getRecipients,
   getSolution,
   validateRecipientForm,
+  getServiceRecipientName,
 } from './controller';
 import * as contextCreator from './contextCreator';
 
@@ -119,6 +120,51 @@ describe('catalogue-solutions select-solution controller', () => {
 
         expect(response.errors).toEqual(expectedValidationErrors);
       });
+    });
+  });
+
+  describe('getServiceRecipientName', () => {
+    it('when service recipient id is found should return correct name', () => {
+      const data = {
+        serviceRecipientId: 'some-ods-code',
+        recipients: [
+          {
+            odsCode: 'some-ods-code',
+            name: 'some-recipient-name',
+          },
+          {
+            odsCode: 'some-other-ods-code',
+            name: 'some-other-recipient-name',
+          },
+        ],
+      };
+
+      const name = getServiceRecipientName(data);
+
+      expect(name).toEqual('some-recipient-name');
+    });
+
+    it('when service recipient id is not found should throw error', () => {
+      const data = {
+        serviceRecipientId: 'some-other-ods-code',
+        recipients: [
+          {
+            odsCode: 'some-ods-code',
+            name: 'some-recipient-name',
+          },
+        ],
+      };
+
+      expect(() => getServiceRecipientName(data)).toThrow(Error);
+    });
+
+    it('when recipients is empty should throw error', () => {
+      const data = {
+        serviceRecipientId: 'some-ods-code',
+        recipients: [],
+      };
+
+      expect(() => getServiceRecipientName(data)).toThrow(Error);
     });
   });
 });
