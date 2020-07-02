@@ -24,7 +24,7 @@ const populateQuestionsWithData = ({ selectedPriceManifest, selectedPrice }) => 
         questionsWithData.push(
           populateEstimationPeriodQuestion({
             questionManifest: question,
-            timeUnit: selectedPrice && selectedPrice.timeUnit && selectedPrice.timeUnit.description,
+            timeUnitDescription: selectedPrice && selectedPrice.timeUnit && selectedPrice.timeUnit.description,
           }),
         );
       } else if (question.id === 'quantity') {
@@ -57,7 +57,30 @@ const populateQuestionsWithData = ({ selectedPriceManifest, selectedPrice }) => 
 //   }
 // });
 
-// update this take in the common manifest and the priceType manifest
+const generateAddPriceTable = ({ addPriceTable, price, itemUnitDescription }) => {
+  const columns = [];
+
+  columns.push({
+    ...addPriceTable.cellInfo.price,
+    question: {
+      ...addPriceTable.cellInfo.price.question,
+      data: price,
+    },
+  });
+
+  columns.push({
+    ...addPriceTable.cellInfo.unitOfOrder,
+    data: itemUnitDescription,
+  });
+
+  const items = [columns];
+  return ({
+    ...addPriceTable,
+    items,
+  });
+};
+
+
 export const getContext = ({
   commonManifest,
   selectedPriceManifest,
@@ -74,9 +97,13 @@ export const getContext = ({
 
   return ({
     ...commonManifest,
-    questions: populateQuestionsWithData({ selectedPriceManifest, selectedPrice }),
-    // addPriceTable: populateTableWithData(selectedPriceManifest, selectedPrice),
     title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
+    questions: selectedPriceManifest && selectedPriceManifest.questions,
+    addPriceTable: selectedPriceManifest && generateAddPriceTable({
+      addPriceTable: selectedPriceManifest.addPriceTable,
+      price: selectedPrice && selectedPrice.price,
+      itemUnitDescription: selectedPrice && selectedPrice.itemUnit.description,
+    }),
     deleteButtonHref: '#',
     backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/recipient`,
   });
@@ -96,6 +123,8 @@ const addErrorsToTableQuestions = ({ updatedManifest, validationErrors }) => {
 
 export const getErrorContext = async (params) => {
   let updatedManifest = getContext({
+    commonManifest: params.commonManifest,
+    selectedPriceManifest: params.selectedPriceManifest,
     orderId: params.orderId,
     solutionName: params.solutionName,
     serviceRecipientName: params.serviceRecipientName,

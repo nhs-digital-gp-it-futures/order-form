@@ -33,41 +33,38 @@
         "title": "What period should I enter?",
         "innerComponent": "This should be based on how you estimated the quantity you want to order."
       }
-    },
-    {
-      "type": "input",
-      "id": "price"
     }
   ],
   "addPriceTable": {
     "columnInfo": [
       {
-        "data": "Price (£)"
+        "data": "Price (£)",
+        "width": "50%",
+        "classes": "nhsuk-u-font-size-16"
       },
       {
-        "data": "Unit of order"
+        "data": "Unit of order",
+        "width": "50%",
+        "classes": "nhsuk-u-font-size-16"
       }
     ],
-    "data": [
-      [
-        {
-          "question": {
-            "type": "input",
-            "id": "price"
-          },
-          "classes": "nhsuk-input--width-10",
-          "expandableSection": {
-            "dataTestId": "view-section-input-id",
-            "title": "What price should I enter?",
-            "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
-          }
+    "cellInfo": {
+      "price": {
+        "question": {
+          "type": "input",
+          "id": "price"
         },
-        {
-          "dataTestId": "order-unit-id"
+        "classes": "nhsuk-input--width-10",
+        "expandableSection": {
+          "dataTestId": "view-section-input-id",
+          "title": "What price should I enter?",
+          "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
         }
-      ]
-    ],
-    "columnClass": "nhsuk-grid-column-one-half nhsuk-u-font-size-16"
+      },
+      "unitOfOrder": {
+        "dataTestId": "unit-of-order"
+      }
+    }
   },
   "errorMessages": {
     "quantityRequired": "Enter a quantity",
