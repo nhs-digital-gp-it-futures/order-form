@@ -21,6 +21,7 @@ import {
   getSolution,
   validateRecipientForm,
   getRecipientErrorPageContext,
+  getServiceRecipientName,
 } from './recipient/controller';
 
 const router = express.Router({ mergeParams: true });
@@ -122,10 +123,17 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
 
   router.post('/solution/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const recipients = sessionManager.getFromSession({ req, key: 'recipients' });
 
     const response = validateRecipientForm({ data: req.body });
     if (response.success) {
-      sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: req.body.selectRecipient });
+      const selectedRecipientId = req.body.selectRecipient;
+      const selectedRecipientName = getServiceRecipientName(
+        { serviceRecipientId: selectedRecipientId, recipients },
+      );
+
+      sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: selectedRecipientId });
+      sessionManager.saveToSession({ req, key: 'selectedRecipientName', value: selectedRecipientName });
       logger.info('Redirect to new solution page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/newsolution`);
     }
@@ -133,7 +141,6 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const solutionData = await getSolution({ solutionId });
 
-    const recipients = sessionManager.getFromSession({ req, key: 'recipients' });
     const context = await getRecipientErrorPageContext({
       orderId,
       solutionName: solutionData.name,

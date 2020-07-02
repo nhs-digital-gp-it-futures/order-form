@@ -8,7 +8,6 @@ import {
 } from './catalogue-solutions/controller';
 import {
   getOrderItemContext,
-  getRecipientName,
   getSelectedPrice,
   getOrderItemErrorPageContext,
   validateOrderItemForm,
@@ -50,12 +49,10 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
+    const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
 
     const solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
     sessionManager.saveToSession({ req, key: 'solutionName', value: solutionName });
-
-    const serviceRecipientName = await getRecipientName({ selectedRecipientId, accessToken });
-    sessionManager.saveToSession({ req, key: 'serviceRecipientName', value: serviceRecipientName });
 
     const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
