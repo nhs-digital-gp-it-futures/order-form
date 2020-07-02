@@ -10,6 +10,7 @@ import { getCommencementDateContext, putCommencementDate, getCommencementDateErr
 import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './catalogue-solutions/routes';
+import { additionalServicesRoutes } from './additional-services/routes';
 
 const router = express.Router({ mergeParams: true });
 
@@ -69,6 +70,8 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.use('/supplier', supplierRoutes(authProvider, addContext, sessionManager));
 
   router.use('/catalogue-solutions', catalogueSolutionsRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/additional-services', additionalServicesRoutes(authProvider, addContext, sessionManager));
 
   router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
