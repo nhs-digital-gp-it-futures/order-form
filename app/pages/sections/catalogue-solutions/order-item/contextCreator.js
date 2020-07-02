@@ -1,29 +1,61 @@
 import { baseUrl } from '../../../../config';
 import { getSectionErrorContext } from '../../getSectionErrorContext';
-import { questionExtractor } from '../../../../helpers/questionExtractor';
+// import { questionExtractor } from '../../../../helpers/questionExtractor';
 
-export const populateEstimationPeriod = ((selectedPriceManifest, selectedPrice) => {
-  questionExtractor('selectEstimationPeriod', selectedPriceManifest).options.forEach((option, i) => {
-    questionExtractor('selectEstimationPeriod', selectedPriceManifest).options[i]
-      .checked = option.text.toLowerCase() === selectedPrice
-        .timeUnit.description.toLowerCase()
-        ? true : undefined;
+const populateEstimationPeriodQuestion = ({ questionManifest, timeUnitDescription = '' }) => {
+  const options = questionManifest.options.map(option => ({
+    ...option,
+    checked: option.text.toLowerCase() === timeUnitDescription.toLowerCase()
+      ? true : undefined,
+  }));
+
+  return ({
+    ...questionManifest,
+    options,
   });
-});
+};
 
-export const populateTable = ((selectedPriceManifest, selectedPrice) => {
-  selectedPriceManifest.addPriceTable.data[0][0].question.data = selectedPrice.price;
-  selectedPriceManifest.addPriceTable.data[0][1].data = selectedPrice.itemUnit.description;
-});
+const populateQuestionsWithData = ({ selectedPriceManifest, selectedPrice }) => {
+  const questionsWithData = [];
 
-export const formatFormData = ((selectedPriceManifest, populatedData) => {
-  questionExtractor('quantity', selectedPriceManifest).data = populatedData.quantity ? populatedData.quantity.trim() : '';
-  if (populatedData.price) {
-    selectedPriceManifest.addPriceTable.data[0][0].question.data = populatedData.price.trim();
-  } else {
-    selectedPriceManifest.addPriceTable.data[0][0].question.data = '';
+  if (selectedPriceManifest && selectedPriceManifest.questions) {
+    selectedPriceManifest.questions.map((question) => {
+      if (question.id === 'selectEstimationPeriod') {
+        questionsWithData.push(
+          populateEstimationPeriodQuestion({
+            questionManifest: question,
+            timeUnit: selectedPrice && selectedPrice.timeUnit && selectedPrice.timeUnit.description,
+          }),
+        );
+      } else if (question.id === 'quantity') {
+        questionsWithData.push({
+          ...question,
+          data: selectedPrice && selectedPrice.quantity,
+        });
+      } else {
+        questionsWithData.push({
+          ...question,
+        });
+      }
+    });
   }
-});
+
+  return questionsWithData;
+};
+
+// const populateTable = ((selectedPriceManifest, selectedPrice) => {
+//   selectedPriceManifest.addPriceTable.data[0][0].question.data = selectedPrice.price;
+//   selectedPriceManifest.addPriceTable.data[0][1].data = selectedPrice.itemUnit.description;
+// });
+
+// export const formatFormData = ((selectedPriceManifest, populatedData) => {
+//   questionExtractor('quantity', selectedPriceManifest).data = populatedData.quantity ? populatedData.quantity.trim() : '';
+//   if (populatedData.price) {
+//     selectedPriceManifest.addPriceTable.data[0][0].question.data = populatedData.price.trim();
+//   } else {
+//     selectedPriceManifest.addPriceTable.data[0][0].question.data = '';
+//   }
+// });
 
 // update this take in the common manifest and the priceType manifest
 export const getContext = ({
@@ -34,15 +66,16 @@ export const getContext = ({
   serviceRecipientName,
   odsCode,
   selectedPrice,
-  populatedData,
+  // populatedData,
 }) => {
-  populateEstimationPeriod(selectedPriceManifest, selectedPrice);
-  populateTable(selectedPriceManifest, selectedPrice);
-  if (populatedData) formatFormData(selectedPriceManifest, populatedData);
+  // populateEstimationPeriod(selectedPriceManifest, selectedPrice);
+  // populateTable(selectedPriceManifest, selectedPrice);
+  // if (populatedData) formatFormData(selectedPriceManifest, populatedData);
 
   return ({
     ...commonManifest,
-    ...selectedPriceManifest,
+    questions: populateQuestionsWithData({ selectedPriceManifest, selectedPrice }),
+    // addPriceTable: populateTableWithData(selectedPriceManifest, selectedPrice),
     title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
     deleteButtonHref: '#',
     backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/recipient`,

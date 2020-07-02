@@ -16,9 +16,9 @@
       }
     }, 
     {
-        "id": "selectEstimationPeriod",
-        "mainAdvice": "Estimation period",
-        "options": [
+      "id": "selectEstimationPeriod",
+      "mainAdvice": "Estimation period",
+      "options": [
         {
           "value": "perMonth",
           "text": "Per month"

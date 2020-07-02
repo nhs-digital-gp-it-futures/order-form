@@ -53,14 +53,42 @@ describe('catalogue-solutions order-item contextCreator', () => {
     });
 
     it('should return the save button', () => {
-      const context = getContext({ selectedPrice });
+      const context = getContext({ commonManifest });
       expect(context.saveButtonText).toEqual(commonManifest.saveButtonText);
     });
 
-    describe('flat - ondemand questions', () => {
+    describe('flat - ondemand', () => {
       it('should return the questions', () => {
-        const context = getContext({ selectedPriceManifest: flatOndemandManifest });
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOndemandManifest,
+        });
         expect(context.questions).toEqual(flatOndemandManifest.questions);
+      });
+
+      it('should return the selectEstimationPeriod question as checked when provided', () => {
+        const expectedContext = {
+          questions: [
+            {
+              ...flatOndemandManifest.questions[1],
+              options: [
+                {
+                  value: 'perMonth',
+                  text: 'Per month',
+                  checked: true,
+                },
+                {
+                  value: 'perYear',
+                  text: 'Per year',
+                },
+              ],
+            },
+          ],
+        };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOndemandManifest,
+        });
+        expect(context.questions).toEqual(expectedContext.questions);
       });
 
       it('should return the table headings', () => {

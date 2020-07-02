@@ -28,8 +28,6 @@ export const getOrderItemContext = async ({
   serviceRecipientName,
   selectedPrice,
 }) => {
-  // get common manifest
-
   // get price and provisioning type manifest - call manifest provider
 
   // pass these on to getContext
