@@ -1,0 +1,10 @@
+{
+  "backLinkText": "Go back",
+  "title": "Additional Service for",
+  "description": "Add the Additional Services you want to be part of this order.",
+  "insetAdvice": "If you do not want to add any, or have finished adding Additional Services, continue to the next step.",
+  "orderDescriptionHeading": "Order description",
+  "noOrderItemsText": "No Additional Services added",
+  "addOrderItemButtonText": "Add Additional Service",
+  "continueButtonText": "Continue"
+}
