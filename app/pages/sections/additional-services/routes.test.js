@@ -33,7 +33,7 @@ const setUpFakeApp = () => {
   return app;
 };
 
-describe('catalogue-solutions section routes', () => {
+describe('additional-services section routes', () => {
   describe('GET /organisation/:orderId/additional-services', () => {
     const path = '/organisation/some-order-id/additional-services';
 
