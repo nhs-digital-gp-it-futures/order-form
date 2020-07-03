@@ -1,5 +1,6 @@
 import { baseUrl } from '../../../../config';
 import { getSectionErrorContext } from '../../getSectionErrorContext';
+import { generateErrorMap } from '../../../../helpers/generateErrorMap';
 // import { questionExtractor } from '../../../../helpers/questionExtractor';
 
 const populateEstimationPeriodQuestion = ({ questionManifest, timeUnitDescription = '' }) => {
@@ -24,7 +25,7 @@ const populateQuestionsWithData = ({ selectedPriceManifest, selectedPrice }) => 
         questionsWithData.push(
           populateEstimationPeriodQuestion({
             questionManifest: question,
-            timeUnit: selectedPrice && selectedPrice.timeUnit && selectedPrice.timeUnit.description,
+            timeUnitDescription: selectedPrice && selectedPrice.timeUnit && selectedPrice.timeUnit.description,
           }),
         );
       } else if (question.id === 'quantity') {
@@ -57,7 +58,55 @@ const populateQuestionsWithData = ({ selectedPriceManifest, selectedPrice }) => 
 //   }
 // });
 
-// update this take in the common manifest and the priceType manifest
+const generateAddPriceTable = ({
+  addPriceTable, price, itemUnitDescription, errorMap,
+}) => {
+  const columns = [];
+
+  columns.push({
+    ...addPriceTable.cellInfo.price,
+    question: {
+      ...addPriceTable.cellInfo.price.question,
+      data: price,
+      error: errorMap && errorMap.price
+        ? { message: errorMap.price.errorMessages.join(', ') }
+        : undefined,
+    },
+  });
+
+  columns.push({
+    ...addPriceTable.cellInfo.unitOfOrder,
+    data: itemUnitDescription,
+  });
+
+  const items = [columns];
+  return ({
+    ...addPriceTable,
+    items,
+  });
+};
+
+const generateQuestions = ({ questions, errorMap }) => {
+  const { questionsAcc: modifiedQuestions } = Object.entries(questions)
+    .reduce(({ questionsAcc }, [questionId, questionManifest]) => {
+      const questionError = errorMap && errorMap[questionId]
+        ? { message: errorMap[questionId].errorMessages.join(', ') }
+        : undefined;
+
+      return ({
+        questionsAcc: {
+          ...questionsAcc,
+          [questionId]: {
+            ...questionManifest,
+            error: questionError,
+          },
+        },
+      });
+    }, { questionsAcc: {} });
+
+  return modifiedQuestions;
+};
+
 export const getContext = ({
   commonManifest,
   selectedPriceManifest,
@@ -66,47 +115,53 @@ export const getContext = ({
   serviceRecipientName,
   odsCode,
   selectedPrice,
+  errorMap,
   // populatedData,
-}) => {
-  // populateEstimationPeriod(selectedPriceManifest, selectedPrice);
-  // populateTable(selectedPriceManifest, selectedPrice);
-  // if (populatedData) formatFormData(selectedPriceManifest, populatedData);
+}) => ({
+  ...commonManifest,
+  title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
+  questions: selectedPriceManifest && generateQuestions({
+    questions: selectedPriceManifest.questions,
+    errorMap,
+  }),
+  addPriceTable: selectedPriceManifest && generateAddPriceTable({
+    addPriceTable: selectedPriceManifest.addPriceTable,
+    price: selectedPrice && selectedPrice.price,
+    itemUnitDescription: selectedPrice && selectedPrice.itemUnit.description,
+    errorMap,
+  }),
+  deleteButtonHref: '#',
+  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/recipient`,
+});
 
-  return ({
-    ...commonManifest,
-    questions: populateQuestionsWithData({ selectedPriceManifest, selectedPrice }),
-    // addPriceTable: populateTableWithData(selectedPriceManifest, selectedPrice),
-    title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
-    deleteButtonHref: '#',
-    backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/recipient`,
+const generateErrorSummary = ({ errorMap }) => (
+  Object.entries(errorMap).map(([questionId, errors]) => ({
+    href: `#${questionId}`,
+    text: errors.errorMessages.join(', '),
+  }))
+);
+
+export const getErrorContext = (params) => {
+  const errorMap = generateErrorMap({
+    validationErrors: params.validationErrors,
+    errorMessagesFromManifest: params.selectedPriceManifest.errorMessages,
   });
-};
 
-const addErrorsToTableQuestions = ({ updatedManifest, validationErrors }) => {
-  const manifestWithErrors = { ...updatedManifest };
-  const foundError = validationErrors.find(error => error.field === updatedManifest
-    .addPriceTable.data[0][0].question.id);
-  if (foundError) {
-    const errorMessage = updatedManifest.errorMessages[foundError.id];
-    manifestWithErrors.addPriceTable.data[0][0].question.error = { message: errorMessage };
-  }
-
-  return manifestWithErrors;
-};
-
-export const getErrorContext = async (params) => {
-  let updatedManifest = getContext({
+  const contextWithErrors = getContext({
+    commonManifest: params.commonManifest,
+    selectedPriceManifest: params.selectedPriceManifest,
     orderId: params.orderId,
     solutionName: params.solutionName,
     serviceRecipientName: params.serviceRecipientName,
     odsCode: params.selectedRecipientId,
     selectedPrice: params.selectedPrice,
-    populatedData: params.data,
+    errorMap,
   });
 
-  updatedManifest = getSectionErrorContext({ ...params, manifest: updatedManifest });
+  const errorSummary = generateErrorSummary({ errorMap });
 
-  return {
-    ...addErrorsToTableQuestions({ ...params, updatedManifest }),
-  };
+  return ({
+    errors: errorSummary,
+    ...contextWithErrors,
+  });
 };

@@ -1,30 +1,6 @@
 import commonManifest from './commonManifest.json';
 import flatOndemandManifest from './flat/ondemand/manifest.json';
-import { getContext, getErrorContext } from './contextCreator';
-import * as errorContext from '../../getSectionErrorContext';
-
-jest.mock('../../getSectionErrorContext', () => ({
-  getSectionErrorContext: jest.fn(),
-}));
-
-const solutionName = 'solution-name';
-const serviceRecipientName = 'service-recipient-name';
-const odsCode = 'ods-code';
-const selectedPrice = {
-  priceId: 2,
-  provisioningType: 'Patient',
-  type: 'flat',
-  currencyCode: 'GBP',
-  itemUnit: {
-    name: 'patient',
-    description: 'per patient',
-  },
-  timeUnit: {
-    name: 'year',
-    description: 'per year',
-  },
-  price: 1.64,
-};
+import { getContext, getErrorContext, generateErrorMessageMap } from './contextCreator';
 
 describe('catalogue-solutions order-item contextCreator', () => {
   describe('getContext', () => {
@@ -36,6 +12,10 @@ describe('catalogue-solutions order-item contextCreator', () => {
     });
 
     it('should return the title', () => {
+      const solutionName = 'solution-name';
+      const serviceRecipientName = 'service-recipient-name';
+      const odsCode = 'ods-code';
+
       const context = getContext({
         commonManifest, solutionName, serviceRecipientName, odsCode,
       });
@@ -65,139 +45,120 @@ describe('catalogue-solutions order-item contextCreator', () => {
         expect(context.questions).toEqual(flatOndemandManifest.questions);
       });
 
-      it('should return the selectEstimationPeriod question as checked when provided', () => {
-        const expectedContext = {
-          questions: [
-            {
-              ...flatOndemandManifest.questions[1],
-              options: [
-                {
-                  value: 'perMonth',
-                  text: 'Per month',
-                  checked: true,
-                },
-                {
-                  value: 'perYear',
-                  text: 'Per year',
-                },
-              ],
-            },
-          ],
-        };
-
+      it('should return the addPriceTable colummInfo', () => {
         const context = getContext({
           commonManifest, selectedPriceManifest: flatOndemandManifest,
         });
-        expect(context.questions).toEqual(expectedContext.questions);
-      });
 
-      it('should return the table headings', () => {
-        const context = getContext({ selectedPriceManifest: flatOndemandManifest });
         expect(context.addPriceTable.columnInfo)
           .toEqual(flatOndemandManifest.addPriceTable.columnInfo);
       });
 
-      it('should return the table class', () => {
-        const context = getContext({ selectedPriceManifest: flatOndemandManifest });
-        expect(context.addPriceTable.columnClass)
-          .toEqual(flatOndemandManifest.addPriceTable.columnClass);
-      });
+      it('should return the addPriceTable with items and the price input and unit of order populated', () => {
+        const expectedContext = {
+          addPriceTable: {
+            ...flatOndemandManifest.addPriceTable,
+            items: [
+              [
+                {
+                  ...flatOndemandManifest.addPriceTable.cellInfo.price,
+                  question: {
+                    ...flatOndemandManifest.addPriceTable.cellInfo.price.question,
+                    data: 0.1,
+                  },
+                },
+                {
+                  ...flatOndemandManifest.addPriceTable.cellInfo.unitOfOrder,
+                  data: 'per consultation',
+                },
+              ],
+            ],
+          },
+        };
 
-      it('should return the table data', () => {
-        const tableData = [
-          [
-            {
-              classes: 'nhsuk-input--width-10',
-              expandableSection: {
-                dataTestId: 'view-section-input-id',
-                innerComponent: 'You can change the list price if you’ve agreed a different rate with the supplier.',
-                title: 'What price should I enter?',
-              },
-              question: {
-                data: 1.64,
-                id: 'price',
-                type: 'input',
-              },
-            },
-            {
-              data: 'per patient',
-              dataTestId: 'order-unit-id',
-            },
-          ],
-        ];
-        const context = getContext({ selectedPriceManifest: flatOndemandManifest, selectedPrice });
-        expect(context.addPriceTable.data).toEqual(tableData);
+        const selectedPrice = {
+          price: 0.1,
+          itemUnit: { description: 'per consultation' },
+        };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOndemandManifest, selectedPrice,
+        });
+
+        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
       });
     });
   });
 
   describe('getErrorContext', () => {
-    const mockValidationErrors = [
-      { field: 'quantity', id: 'quantityRequired' },
-      { field: 'price', id: 'priceRequired' },
-    ];
-    const manifestWithErrors = {
-      questions:
-      [{
-        id: 'quantity',
-        mainAdvice: 'Quantity',
-        rows: 3,
-        error: {
-          message: 'quantity error',
-        },
-      }],
-      addPriceTable:
-      {
-        data: [[{
-          question: {
-            type: 'input',
-            id: 'price',
+    describe('flat - ondemand', () => {
+      it('should return error for quantity', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#quantity', text: flatOndemandManifest.errorMessages.quantityRequired },
+          ],
+          questions: {
+            ...flatOndemandManifest.questions,
+            quantity: {
+              ...flatOndemandManifest.questions.quantity,
+              error: {
+                message: flatOndemandManifest.errorMessages.quantityRequired,
+              },
+            },
           },
-        }]],
-      },
-      errorMessages:
-      {
-        quantityRequired: 'Enter a quantity',
-        priceRequired: 'Enter a price',
-      },
-    };
+        };
 
-    afterEach(() => {
-      errorContext.getSectionErrorContext.mockReset();
-    });
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatOndemandManifest,
+          validationErrors: [{ field: 'quantity', id: 'quantityRequired' }],
+        });
 
-    it('should call getSectionErrorContext with correct params', () => {
-      errorContext.getSectionErrorContext
-        .mockReturnValue(manifestWithErrors);
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.questions).toEqual(expectedContext.questions);
+      });
 
-      const params = {
-        orderId: 'order-id',
-        solutionName: 'solution-name',
-        serviceRecipientName: 'recipient-name',
-        odsCode: 'ods-code',
-        selectedPrice,
-        validationErrors: mockValidationErrors,
-      };
+      it('should return error for price', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#price', text: flatOndemandManifest.errorMessages.priceRequired },
+          ],
+          addPriceTable: {
+            ...flatOndemandManifest.addPriceTable,
+            items: [
+              [
+                {
+                  ...flatOndemandManifest.addPriceTable.cellInfo.price,
+                  question: {
+                    ...flatOndemandManifest.addPriceTable.cellInfo.price.question,
+                    error: {
+                      message: flatOndemandManifest.errorMessages.priceRequired,
+                    },
+                  },
+                },
+                {
+                  ...flatOndemandManifest.addPriceTable.cellInfo.unitOfOrder,
+                  data: 'per consultation',
+                },
+              ],
+            ],
+          },
+        };
 
-      getErrorContext(params);
-      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
-    });
+        const selectedPrice = {
+          itemUnit: { description: 'per consultation' },
+        };
 
-    it('should add error message to the table data', async () => {
-      errorContext.getSectionErrorContext
-        .mockReturnValue(manifestWithErrors);
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatOndemandManifest,
+          validationErrors: [{ field: 'price', id: 'priceRequired' }],
+          selectedPrice,
+        });
 
-      const params = {
-        orderId: 'order-id',
-        solutionName: 'solution-name',
-        serviceRecipientName: 'recipient-name',
-        odsCode: 'ods-code',
-        selectedPrice,
-        validationErrors: mockValidationErrors,
-      };
-
-      const returnedErrorContext = await getErrorContext(params);
-      expect(returnedErrorContext.addPriceTable.data[0][0].question.error.message).toEqual('Enter a price');
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+      });
     });
   });
 });
