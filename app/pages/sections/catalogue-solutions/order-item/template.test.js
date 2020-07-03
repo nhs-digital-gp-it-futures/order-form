@@ -103,7 +103,8 @@ describe('catalogue-solutions order-item page', () => {
       harness.request(context, ($) => {
         const addAdvice = $('[data-test-id="date-field-input"] span.nhsuk-hint');
         expect(addAdvice.length).toEqual(1);
-        expect(addAdvice.text().trim()).toEqual(context.questions.plannedDeliveryDate.additionalAdvice);
+        expect(addAdvice.text().trim())
+          .toEqual(context.questions.plannedDeliveryDate.additionalAdvice);
       });
     }));
 
