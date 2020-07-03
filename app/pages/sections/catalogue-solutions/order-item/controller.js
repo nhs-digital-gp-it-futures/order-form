@@ -45,11 +45,18 @@ export const getOrderItemContext = async ({
   });
 };
 
-export const getOrderItemErrorPageContext = params => getErrorContext(params);
+export const getOrderItemErrorPageContext = (params) => {
+  const selectedPriceManifest = getSelectedPriceManifest({
+    provisioningType: params.selectedPrice.provisioningType,
+    type: params.selectedPrice.type,
+  });
+
+  return getErrorContext({ ...params, commonManifest, selectedPriceManifest });
+};
 
 export const validateOrderItemForm = ({ data }) => {
   const errors = [];
-  if (!data.quantity || data.quantity.trim().length <= 0) {
+  if (!data.quantity || data.quantity.trim().length === 0) {
     errors.push({
       field: 'quantity',
       id: 'quantityRequired',
@@ -61,7 +68,7 @@ export const validateOrderItemForm = ({ data }) => {
     });
   }
 
-  if (!data.price || data.price.trim().length <= 0) {
+  if (!data.price || data.price.trim().length === 0) {
     errors.push({
       field: 'price',
       id: 'priceRequired',
