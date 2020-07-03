@@ -118,6 +118,32 @@ describe('catalogue-solutions order-item contextCreator', () => {
         expect(context.questions).toEqual(expectedContext.questions);
       });
 
+      it('should return error for estimation period', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#selectEstimationPeriod', text: flatOndemandManifest.errorMessages.estimationPeriodRequired },
+          ],
+          questions: {
+            ...flatOndemandManifest.questions,
+            selectEstimationPeriod: {
+              ...flatOndemandManifest.questions.selectEstimationPeriod,
+              error: {
+                message: flatOndemandManifest.errorMessages.estimationPeriodRequired,
+              },
+            },
+          },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatOndemandManifest,
+          validationErrors: [{ field: 'selectEstimationPeriod', id: 'estimationPeriodRequired' }],
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.questions).toEqual(expectedContext.questions);
+      });
+
       it('should return error for price', () => {
         const expectedContext = {
           errors: [

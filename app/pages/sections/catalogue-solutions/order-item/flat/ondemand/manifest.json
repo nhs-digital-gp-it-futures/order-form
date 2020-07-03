@@ -67,6 +67,7 @@
   "errorMessages": {
     "quantityRequired": "Enter a quantity",
     "numericQuantityRequired": "Quantity must be a number",
+    "estimationPeriodRequired": "Select an estimation period",
     "priceRequired": "Enter a price",
     "numericPriceRequired": "Price must be a number"
   }
