@@ -95,7 +95,7 @@ describe('catalogue-solutions order-item page', () => {
       harness.request(context, ($) => {
         const legend = $('legend');
         expect(legend.length).toEqual(1);
-        expect(legend.text().trim()).toEqual(context.questions[0].mainAdvice);
+        expect(legend.text().trim()).toEqual(context.questions.plannedDeliveryDate.mainAdvice);
       });
     }));
 
@@ -103,7 +103,8 @@ describe('catalogue-solutions order-item page', () => {
       harness.request(context, ($) => {
         const addAdvice = $('[data-test-id="date-field-input"] span.nhsuk-hint');
         expect(addAdvice.length).toEqual(1);
-        expect(addAdvice.text().trim()).toEqual(context.questions[0].additionalAdvice);
+        expect(addAdvice.text().trim())
+          .toEqual(context.questions.plannedDeliveryDate.additionalAdvice);
       });
     }));
 
