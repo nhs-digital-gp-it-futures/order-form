@@ -4,6 +4,7 @@ import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
 import commonManifest from './commonManifest.json';
+import { getSelectedPriceManifest } from './manifestProvider';
 
 export const getRecipientName = async ({ selectedRecipientId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipient', options: { selectedRecipientId } });
@@ -28,11 +29,14 @@ export const getOrderItemContext = async ({
   serviceRecipientName,
   selectedPrice,
 }) => {
-  // get price and provisioning type manifest - call manifest provider
+  const selectedPriceManifest = getSelectedPriceManifest({
+    provisioningType: selectedPrice.provisioningType,
+    type: selectedPrice.type,
+  });
 
-  // pass these on to getContext
   return getContext({
     commonManifest,
+    selectedPriceManifest,
     orderId,
     solutionName,
     serviceRecipientName,
