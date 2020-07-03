@@ -66,9 +66,6 @@ const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/solutions/solution-1')
     .reply(200, { id: 'solution-1', name: 'Solution One' });
-  nock(organisationApiUrl)
-    .get('/api/v1/ods/recipient-1')
-    .reply(200, { odsCode: 'recipient-1', name: 'Recipient 1' });
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);

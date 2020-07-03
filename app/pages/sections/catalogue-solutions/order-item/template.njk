@@ -45,6 +45,7 @@
               {{ viewExpandableSection(questions.quantity.expandableSection) }}
             </div>
 
+            {% if (questions.selectEstimationPeriod) %}
             <div class="nhsuk-u-margin-bottom-5">
               {{
                 radiobuttonOptions({
@@ -53,6 +54,7 @@
               }}
               {{ viewExpandableSection(questions.selectEstimationPeriod.expandableSection) }}
             </div>
+            {% endif %}
           </div>
         </div>
 
