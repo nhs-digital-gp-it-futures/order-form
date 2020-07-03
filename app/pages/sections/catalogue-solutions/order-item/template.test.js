@@ -241,42 +241,20 @@ describe('catalogue-solutions order-item page', () => {
   });
 
   describe('table', () => {
-    const context = {
-      addPriceTable: {
-        columnInfo: [
-          {
-            data: 'Price (£)',
-          },
-          {
-            data: 'Unit of order',
-          },
-        ],
-        data: [
-          [
+    it('should render the table headings', componentTester(setup, (harness) => {
+      const context = {
+        addPriceTable: {
+          columnInfo: [
             {
-              question: {
-                type: 'input',
-                id: 'price',
-                data: '100',
-              },
-              classes: 'nhsuk-input--width-10',
-              expandableSection: {
-                dataTestId: 'view-section-input-id',
-                title: 'some title',
-                innerComponent: 'some inner text',
-              },
+              data: 'Price (£)',
             },
             {
-              data: 'per month',
-              dataTestId: 'order-unit-id',
+              data: 'Unit of order',
             },
           ],
-        ],
-        columnClass: 'nhsuk-grid-column-one-half nhsuk-u-font-size-16',
-      },
-    };
+        },
+      };
 
-    it('should render the table headings', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const table = $('div[data-test-id="price-table"]');
         expect(table.length).toEqual(1);
@@ -286,16 +264,39 @@ describe('catalogue-solutions order-item page', () => {
     }));
 
     it('should render the data', componentTester(setup, (harness) => {
+      const context = {
+        addPriceTable: {
+          items: [
+            [
+              {
+                question: {
+                  type: 'input',
+                  id: 'price',
+                  data: '100',
+                },
+                classes: 'nhsuk-input--width-10',
+                expandableSection: {
+                  dataTestId: 'view-section-input-id',
+                  title: 'some title',
+                  innerComponent: 'some inner text',
+                },
+              },
+              {
+                data: 'per month',
+                dataTestId: 'unit-of-order',
+              },
+            ],
+          ],
+        },
+      };
+
       harness.request(context, ($) => {
         const table = $('div[data-test-id="price-table"]');
         const row = table.find('[data-test-id="table-row-0"]');
         const priceInput = row.find('[data-test-id="question-price"] input');
-        const orderUnit = row.find('div[data-test-id="order-unit-id"]');
+        const orderUnit = row.find('div[data-test-id="unit-of-order"]');
         const expandableSection = $('[data-test-id="view-section-input-id"]');
 
-        expect(table.length).toEqual(1);
-        expect(table.find('[data-test-id="table"]').length).toEqual(1);
-        expect(table.find('[data-test-id="table-headings"]').length).toEqual(1);
         expect(row.length).toEqual(1);
         expect(priceInput.length).toEqual(1);
         expect(priceInput.val()).toEqual('100');
@@ -308,7 +309,24 @@ describe('catalogue-solutions order-item page', () => {
     }));
 
     it('should render errors on price input field if there are errors', componentTester(setup, (harness) => {
-      context.addPriceTable.data[0][0].question.error = { message: 'price error message' };
+      const context = {
+        addPriceTable: {
+          items: [
+            [
+              {
+                question: {
+                  type: 'input',
+                  id: 'price',
+                  error: {
+                    message: 'price error message',
+                  },
+                },
+              },
+            ],
+          ],
+        },
+      };
+
       harness.request(context, ($) => {
         const supplierNameQuestion = $('div[data-test-id="question-price"]');
         expect(supplierNameQuestion.find('div[data-test-id="text-field-input-error"]').length).toEqual(1);

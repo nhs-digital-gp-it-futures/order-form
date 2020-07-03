@@ -1,7 +1,7 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import content from '../manifest.json';
+import content from '../commonManifest.json';
 import { organisationApiUrl, solutionsApiUrl } from '../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/order-item-id';
@@ -45,19 +45,15 @@ const selectedPriceIdState = ClientFunction(() => {
 });
 
 const selectedPrice = {
-  priceId: 2,
-  provisioningType: 'Patient',
-  type: 'flat',
+  priceId: 1,
+  provisioningType: 'OnDemand',
+  type: 'Flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'patient',
-    description: 'per patient',
+    name: 'consultation',
+    description: 'per consultation',
   },
-  timeUnit: {
-    name: 'year',
-    description: 'per year',
-  },
-  price: '1.64',
+  price: 0.1,
 };
 
 const selectedPriceState = ClientFunction((selectedPriceValue) => {
@@ -139,7 +135,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select/solut
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/recipient');
 });
 
-test('should render the title', async (t) => {
+test.only('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
