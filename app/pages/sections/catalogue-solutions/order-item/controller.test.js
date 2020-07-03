@@ -127,6 +127,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: '1',
           price: '1',
+          selectEstimationPeriod: 'perMonth',
         };
 
         const response = validateOrderItemForm({ data });
@@ -144,6 +145,10 @@ describe('catalogue-solutions order-item controller', () => {
         field: 'quantity',
         id: 'numericQuantityRequired',
       };
+      const estimationPeriodRequired = {
+        field: 'selectEstimationPeriod',
+        id: 'estimationPeriodRequired',
+      };
       const priceRequired = {
         field: 'price',
         id: 'priceRequired',
@@ -157,6 +162,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: '',
           price: '1.5',
+          selectEstimationPeriod: 'perMonth',
         };
 
         const response = validateOrderItemForm({ data });
@@ -169,6 +175,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: 'not a number',
           price: '1.5',
+          selectEstimationPeriod: 'perMonth',
         };
 
         const response = validateOrderItemForm({ data });
@@ -177,10 +184,23 @@ describe('catalogue-solutions order-item controller', () => {
         expect(response.errors).toEqual([numericalQuantity]);
       });
 
+      it('should return an array of one validation error and success as false if an estimation period is not selected', () => {
+        const data = {
+          quantity: '1',
+          price: '1.5',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([estimationPeriodRequired]);
+      });
+
       it('should return an array of one validation error and success as false if empty string for price is passed in', () => {
         const data = {
           quantity: '1',
           price: '',
+          selectEstimationPeriod: 'perMonth',
         };
 
         const response = validateOrderItemForm({ data });
@@ -189,10 +209,11 @@ describe('catalogue-solutions order-item controller', () => {
         expect(response.errors).toEqual([priceRequired]);
       });
 
-      it('should return an array of one validation error and success as false if empty string for price is passed in', () => {
+      it('should return an array of one validation error and success as false if price is not a number', () => {
         const data = {
           quantity: '1',
           price: 'not a number',
+          selectEstimationPeriod: 'perMonth',
         };
 
         const response = validateOrderItemForm({ data });
@@ -207,7 +228,7 @@ describe('catalogue-solutions order-item controller', () => {
         const response = validateOrderItemForm({ data });
 
         expect(response.errors).toEqual(
-          [quantityRequired, priceRequired],
+          [quantityRequired, estimationPeriodRequired, priceRequired],
         );
       });
     });

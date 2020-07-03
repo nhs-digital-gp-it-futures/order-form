@@ -68,6 +68,13 @@ export const validateOrderItemForm = ({ data }) => {
     });
   }
 
+  if (!data.selectEstimationPeriod) {
+    errors.push({
+      field: 'selectEstimationPeriod',
+      id: 'estimationPeriodRequired',
+    });
+  }
+
   if (!data.price || data.price.trim().length === 0) {
     errors.push({
       field: 'price',
