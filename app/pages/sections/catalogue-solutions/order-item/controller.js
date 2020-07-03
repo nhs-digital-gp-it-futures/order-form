@@ -22,12 +22,15 @@ export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
   return selectedPriceData;
 };
 
-const formatFormData = ({ formData, selectedPrice }) => ({
-  ...selectedPrice,
-  plannedDeliveryDate: formData.plannedDeliveryDate ? formData.plannedDeliveryDate.trim() : null,
-  quantity: formData.quantity ? formData.quantity.trim() : null,
-  price: formData.price && formData.price.length > 0 ? formData.price.trim() : selectedPrice.price,
-  selectEstimationPeriod: formData.selectEstimationPeriod ? formData.selectEstimationPeriod.trim() : null,
+const formatFormData = ({ formData }) => ({
+  plannedDeliveryDate: formData.plannedDeliveryDate
+    ? formData.plannedDeliveryDate.trim() : null,
+  quantity: formData.quantity
+    ? formData.quantity.trim() : null,
+  price: formData.price && formData.price.length > 0
+    ? formData.price.trim() : null,
+  selectEstimationPeriod: formData.selectEstimationPeriod
+    ? formData.selectEstimationPeriod.trim() : null,
 });
 
 export const getOrderItemContext = async ({
@@ -36,14 +39,15 @@ export const getOrderItemContext = async ({
   selectedRecipientId,
   serviceRecipientName,
   selectedPrice,
-  formData,
 }) => {
   const selectedPriceManifest = getSelectedPriceManifest({
     provisioningType: selectedPrice.provisioningType,
     type: selectedPrice.type,
   });
 
-  const formattedData = formatFormData({ formData, selectedPrice });
+  const populatedData = {
+    price: selectedPrice.price,
+  };
 
   return getContext({
     commonManifest,
@@ -53,14 +57,13 @@ export const getOrderItemContext = async ({
     serviceRecipientName,
     odsCode: selectedRecipientId,
     selectedPrice,
-    formData: formattedData,
+    formData: populatedData,
   });
 };
 
 export const getOrderItemErrorPageContext = (params) => {
-  console.log('formData', JSON.stringify(params.formData, null, 2))
   const formattedData = formatFormData({
-    formData: params.formData, selectedPrice: params.selectedPrice,
+    formData: params.formData,
   });
 
   const selectedPriceManifest = getSelectedPriceManifest({

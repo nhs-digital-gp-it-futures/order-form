@@ -57,9 +57,7 @@ describe('catalogue-solutions order-item controller', () => {
 
     it('should call getContext with the correct params', async () => {
       const selectedPriceManifest = { description: 'fake manifest' };
-      getSelectedPriceManifest
-        .getSelectedPriceManifest
-        .mockReturnValue(selectedPriceManifest);
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
 
       await getOrderItemContext({
         orderId: 'order-1',
@@ -79,6 +77,7 @@ describe('catalogue-solutions order-item controller', () => {
         serviceRecipientName: 'Some service recipient 1',
         solutionName: 'solution-name',
         selectedPrice,
+        formData: { price: 0.1 },
       });
     });
   });

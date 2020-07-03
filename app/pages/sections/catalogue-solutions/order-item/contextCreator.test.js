@@ -1,6 +1,6 @@
 import commonManifest from './commonManifest.json';
 import flatOndemandManifest from './flat/ondemand/manifest.json';
-import { getContext, getErrorContext, generateErrorMessageMap } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 
 describe('catalogue-solutions order-item contextCreator', () => {
   describe('getContext', () => {
@@ -45,6 +45,57 @@ describe('catalogue-solutions order-item contextCreator', () => {
         expect(context.questions).toEqual(flatOndemandManifest.questions);
       });
 
+      it('should populate the quantity with data provided', () => {
+        const expectedContext = {
+          questions: {
+            quantity: {
+              ...flatOndemandManifest.questions.quantity,
+              data: 'some quantity data',
+            },
+          },
+        };
+
+        const formData = {
+          quantity: 'some quantity data',
+        };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOndemandManifest, formData,
+        });
+        expect(context.questions.quantity).toEqual(expectedContext.questions.quantity);
+      });
+
+      it('should return the selected estimation period as checked', () => {
+        const expectedContext = {
+          questions: {
+            selectEstimationPeriod: {
+              ...flatOndemandManifest.questions.selectEstimationPeriod,
+              options: [
+                {
+                  value: 'perMonth',
+                  text: 'Per month',
+                  checked: true,
+                },
+                {
+                  value: 'perYear',
+                  text: 'Per year',
+                },
+              ],
+            },
+          },
+        };
+
+        const formData = {
+          selectEstimationPeriod: 'perMonth',
+        };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOndemandManifest, formData,
+        });
+        expect(context.questions.selectEstimationPeriod)
+          .toEqual(expectedContext.questions.selectEstimationPeriod);
+      });
+
       it('should return the addPriceTable colummInfo', () => {
         const context = getContext({
           commonManifest, selectedPriceManifest: flatOndemandManifest,
@@ -81,8 +132,10 @@ describe('catalogue-solutions order-item contextCreator', () => {
           itemUnit: { description: 'per consultation' },
         };
 
+        const formData = { price: 0.1 };
+
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatOndemandManifest, selectedPrice,
+          commonManifest, selectedPriceManifest: flatOndemandManifest, selectedPrice, formData,
         });
 
         expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
