@@ -21,7 +21,9 @@ describe('additional-services controller', () => {
 
       await getAdditionalServicesPageContext({ orderId });
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, orderDescription: undefined });
+      expect(contextCreator.getContext).toHaveBeenCalledWith(
+        { orderId, orderDescription: undefined },
+      );
     });
   });
 });
