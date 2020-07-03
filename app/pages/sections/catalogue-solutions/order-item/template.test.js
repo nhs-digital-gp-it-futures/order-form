@@ -194,9 +194,8 @@ describe('catalogue-solutions order-item page', () => {
 
   describe('estimation period', () => {
     const context = {
-      questions: [
-        {}, {},
-        {
+      questions: {
+        selectEstimationPeriod: {
           id: 'selectEstimationPeriod',
           mainAdvice: 'Estimation period',
           options: [
@@ -215,7 +214,7 @@ describe('catalogue-solutions order-item page', () => {
             innerComponent: 'This should be based on how you estimated the quantity you want to order.',
           },
         },
-      ],
+      },
     };
 
     it('should render the "Estimation period" radio button options component', componentTester(setup, (harness) => {
