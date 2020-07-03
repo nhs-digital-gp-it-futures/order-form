@@ -25,7 +25,6 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 
-
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
   const app = new App(authProvider).createApp();
@@ -33,7 +32,7 @@ const setUpFakeApp = () => {
   return app;
 };
 
-describe('catalogue-solutions section routes', () => {
+describe('additional-services section routes', () => {
   describe('GET /organisation/:orderId/additional-services', () => {
     const path = '/organisation/some-order-id/additional-services';
 
