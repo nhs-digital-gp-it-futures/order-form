@@ -1,6 +1,5 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
-import content from '../manifest.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services';
 
