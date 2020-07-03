@@ -238,6 +238,20 @@ describe('catalogue-solutions order-item page', () => {
         expect(expandableSection.find('.nhsuk-details__text').text().trim()).toEqual('This should be based on how you estimated the quantity you want to order.');
       });
     }));
+
+    it('should not render the estimation period question or exandable section if not provided', componentTester(setup, (harness) => {
+      const contextWithoutEstimationPeriod = {
+        questions: {},
+      };
+
+      harness.request(contextWithoutEstimationPeriod, ($) => {
+        const selectSolutionRadioOptions = $('[data-test-id="question-selectEstimationPeriod"]');
+        const expandableSection = $('[data-test-id="view-section-estimation-period-id"]');
+
+        expect(selectSolutionRadioOptions.length).toEqual(0);
+        expect(expandableSection.length).toEqual(0);
+      });
+    }));
   });
 
   describe('table', () => {
