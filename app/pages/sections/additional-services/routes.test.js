@@ -58,7 +58,7 @@ describe('additional-services section routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('Additional service page')).toBeTruthy();
+          expect(res.text.includes('data-test-id="additional-services-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         })
     ));
