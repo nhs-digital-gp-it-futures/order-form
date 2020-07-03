@@ -22,17 +22,28 @@ export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
   return selectedPriceData;
 };
 
+const formatFormData = ({ formData, selectedPrice }) => ({
+  ...selectedPrice,
+  plannedDeliveryDate: formData.plannedDeliveryDate ? formData.plannedDeliveryDate.trim() : null,
+  quantity: formData.quantity ? formData.quantity.trim() : null,
+  price: formData.price && formData.price.length > 0 ? formData.price.trim() : selectedPrice.price,
+  selectEstimationPeriod: formData.selectEstimationPeriod ? formData.selectEstimationPeriod.trim() : null,
+});
+
 export const getOrderItemContext = async ({
   orderId,
   solutionName,
   selectedRecipientId,
   serviceRecipientName,
   selectedPrice,
+  formData,
 }) => {
   const selectedPriceManifest = getSelectedPriceManifest({
     provisioningType: selectedPrice.provisioningType,
     type: selectedPrice.type,
   });
+
+  const formattedData = formatFormData({ formData, selectedPrice });
 
   return getContext({
     commonManifest,
@@ -42,16 +53,29 @@ export const getOrderItemContext = async ({
     serviceRecipientName,
     odsCode: selectedRecipientId,
     selectedPrice,
+    formData: formattedData,
   });
 };
 
 export const getOrderItemErrorPageContext = (params) => {
+  console.log('formData', JSON.stringify(params.formData, null, 2))
+  const formattedData = formatFormData({
+    formData: params.formData, selectedPrice: params.selectedPrice,
+  });
+
   const selectedPriceManifest = getSelectedPriceManifest({
     provisioningType: params.selectedPrice.provisioningType,
     type: params.selectedPrice.type,
   });
 
-  return getErrorContext({ ...params, commonManifest, selectedPriceManifest });
+  const updatedParams = {
+    ...params,
+    commonManifest,
+    selectedPriceManifest,
+    formData: formattedData,
+  };
+
+  return getErrorContext(updatedParams);
 };
 
 export const validateOrderItemForm = ({ data }) => {

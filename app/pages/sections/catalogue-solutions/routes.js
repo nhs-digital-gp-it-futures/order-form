@@ -68,6 +68,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       serviceRecipientName,
       selectedPriceId,
       selectedPrice,
+      formData: req.body,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
@@ -94,7 +95,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       selectedRecipientId,
       serviceRecipientName,
       selectedPrice,
-      data: req.body,
+      formData: req.body,
       validationErrors: response.errors,
     });
 

@@ -86,7 +86,7 @@ const generateAddPriceTable = ({
   });
 };
 
-const generateQuestions = ({ questions, errorMap }) => {
+const generateQuestions = ({ questions, formData, errorMap }) => {
   const { questionsAcc: modifiedQuestions } = Object.entries(questions)
     .reduce(({ questionsAcc }, [questionId, questionManifest]) => {
       const questionError = errorMap && errorMap[questionId]
@@ -98,6 +98,7 @@ const generateQuestions = ({ questions, errorMap }) => {
           ...questionsAcc,
           [questionId]: {
             ...questionManifest,
+            data: formData && formData[questionId] ? formData[questionId] : undefined,
             error: questionError,
           },
         },
@@ -115,6 +116,7 @@ export const getContext = ({
   serviceRecipientName,
   odsCode,
   selectedPrice,
+  formData,
   errorMap,
   // populatedData,
 }) => ({
@@ -122,11 +124,12 @@ export const getContext = ({
   title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
   questions: selectedPriceManifest && generateQuestions({
     questions: selectedPriceManifest.questions,
+    formData,
     errorMap,
   }),
   addPriceTable: selectedPriceManifest && generateAddPriceTable({
     addPriceTable: selectedPriceManifest.addPriceTable,
-    price: selectedPrice && selectedPrice.price,
+    price: formData && formData.price,
     itemUnitDescription: selectedPrice && selectedPrice.itemUnit.description,
     errorMap,
   }),
@@ -155,6 +158,7 @@ export const getErrorContext = (params) => {
     serviceRecipientName: params.serviceRecipientName,
     odsCode: params.selectedRecipientId,
     selectedPrice: params.selectedPrice,
+    formData: params.formData,
     errorMap,
   });
 
