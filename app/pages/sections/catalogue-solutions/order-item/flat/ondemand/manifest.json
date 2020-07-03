@@ -6,6 +6,7 @@
       "additionalAdvice": "For example 14 01 2020"
     },
     "quantity": {
+      "id": "quantity",
       "mainAdvice": "Quantity",
       "rows": 3,
       "expandableSection": {
@@ -15,6 +16,7 @@
       }
     }, 
     "selectEstimationPeriod": {
+      "id": "selectEstimationPeriod",
       "mainAdvice": "Estimation period",
       "options": [
         {

@@ -1,5 +1,5 @@
 import { componentTester } from '../../../../test-utils/componentTester';
-import manifest from './manifest.json';
+import commonManifest from './commonManifest.json';
 
 const setup = {
   template: {
@@ -25,37 +25,6 @@ describe('catalogue-solutions order-item page', () => {
 
   it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
     const context = {
-      questions: [
-        {},
-        {
-          id: 'quantity',
-          error: [{ message: 'quantity error message' }],
-        },
-        {},
-        {
-          id: 'price',
-          error: [{ message: 'price error message' }],
-        },
-      ],
-      addPriceTable: {
-        columnInfo: [
-          {
-            data: 'Price (£)',
-          },
-        ],
-        data: [
-          [
-            {
-              question: {
-                type: 'input',
-                id: 'price',
-                data: '100',
-                error: [{ message: 'price error message' }],
-              },
-            },
-          ],
-        ],
-      },
       errors: [
         { text: 'quantity error message', href: '#quantity' },
         { text: 'price error message', href: '#price' },
@@ -76,7 +45,7 @@ describe('catalogue-solutions order-item page', () => {
 
   it('should render the order item page title', componentTester(setup, (harness) => {
     const context = {
-      title: 'List price fororder-1',
+      title: 'List price for order-1',
     };
 
     harness.request(context, ($) => {
@@ -88,7 +57,7 @@ describe('catalogue-solutions order-item page', () => {
 
   it('should render the order item page description', componentTester(setup, (harness) => {
     const context = {
-      description: manifest.description,
+      description: commonManifest.description,
     };
 
     harness.request(context, ($) => {
@@ -113,14 +82,15 @@ describe('catalogue-solutions order-item page', () => {
 
   describe('Planned date', () => {
     const context = {
-      questions: [
-        {
+      questions: {
+        plannedDeliveryDate: {
           id: 'plannedDeliveryDate',
           mainAdvice: 'Planned delivery date',
           additionalAdvice: 'For example 14 01 2020',
         },
-      ],
+      },
     };
+
     it('should render legend with mainAdvice', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const legend = $('legend');
@@ -141,11 +111,11 @@ describe('catalogue-solutions order-item page', () => {
       harness.request(context, ($) => {
         const labels = $('[id="plannedDeliveryDate"] label');
         expect(labels.length).toEqual(3);
-        expect(labels[0].attribs.for).toEqual(`${manifest.questions[0].id}-day`);
+        expect(labels[0].attribs.for).toEqual('plannedDeliveryDate-day');
         expect(labels[0].children[0].data.trim()).toEqual('Day');
-        expect(labels[1].attribs.for).toEqual(`${manifest.questions[0].id}-month`);
+        expect(labels[1].attribs.for).toEqual('plannedDeliveryDate-month');
         expect(labels[1].children[0].data.trim()).toEqual('Month');
-        expect(labels[2].attribs.for).toEqual(`${manifest.questions[0].id}-year`);
+        expect(labels[2].attribs.for).toEqual('plannedDeliveryDate-year');
         expect(labels[2].children[0].data.trim()).toEqual('Year');
       });
     }));
@@ -154,14 +124,14 @@ describe('catalogue-solutions order-item page', () => {
       harness.request(context, ($) => {
         const inputs = $('#plannedDeliveryDate input:not([name=_csrf])');
         expect(inputs.length).toEqual(3);
-        expect(inputs[0].attribs.id).toEqual(`${manifest.questions[0].id}-day`);
-        expect(inputs[0].attribs.name).toEqual(`${manifest.questions[0].id}-day`);
+        expect(inputs[0].attribs.id).toEqual('plannedDeliveryDate-day');
+        expect(inputs[0].attribs.name).toEqual('plannedDeliveryDate-day');
         expect(inputs[0].attribs.type).toEqual('number');
-        expect(inputs[1].attribs.id).toEqual(`${manifest.questions[0].id}-month`);
-        expect(inputs[1].attribs.name).toEqual(`${manifest.questions[0].id}-month`);
+        expect(inputs[1].attribs.id).toEqual('plannedDeliveryDate-month');
+        expect(inputs[1].attribs.name).toEqual('plannedDeliveryDate-month');
         expect(inputs[1].attribs.type).toEqual('number');
-        expect(inputs[2].attribs.id).toEqual(`${manifest.questions[0].id}-year`);
-        expect(inputs[2].attribs.name).toEqual(`${manifest.questions[0].id}-year`);
+        expect(inputs[2].attribs.id).toEqual('plannedDeliveryDate-year');
+        expect(inputs[2].attribs.name).toEqual('plannedDeliveryDate-year');
         expect(inputs[2].attribs.type).toEqual('number');
       });
     }));
@@ -169,9 +139,8 @@ describe('catalogue-solutions order-item page', () => {
 
   describe('quantity', () => {
     const context = {
-      questions: [
-        {},
-        {
+      questions: {
+        quantity: {
           id: 'quantity',
           mainAdvice: 'Quantity',
           rows: 3,
@@ -181,13 +150,14 @@ describe('catalogue-solutions order-item page', () => {
             innerComponent: "Estimate the quantity you think you'll need either per month or per year.",
           },
         },
-      ],
+      },
     };
+
     it('should render a label for quantity', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
         const labels = $('[data-test-id="question-quantity"] label');
-        expect(labels[0].attribs.for).toEqual(context.questions[1].id);
-        expect(labels[0].children[0].data.trim()).toEqual(context.questions[1].mainAdvice);
+        expect(labels[0].attribs.for).toEqual(context.questions.quantity.id);
+        expect(labels[0].children[0].data.trim()).toEqual(context.questions.quantity.mainAdvice);
       });
     }));
 
@@ -196,8 +166,8 @@ describe('catalogue-solutions order-item page', () => {
         const input = $('[data-test-id="question-quantity"] input');
 
         expect(input.length).toEqual(1);
-        expect(input.attr('id')).toEqual(context.questions[1].id);
-        expect(input.attr('name')).toEqual(context.questions[1].id);
+        expect(input.attr('id')).toEqual(context.questions.quantity.id);
+        expect(input.attr('name')).toEqual(context.questions.quantity.id);
         expect(input.attr('type')).toEqual('text');
         expect(input.hasClass('nhsuk-input--width-10')).toEqual(true);
       });
@@ -212,7 +182,7 @@ describe('catalogue-solutions order-item page', () => {
     }));
 
     it('should render errors on quantity field if there are errors', componentTester(setup, (harness) => {
-      context.questions[1].error = { message: 'quantity error message' };
+      context.questions.quantity.error = { message: 'quantity error message' };
 
       harness.request(context, ($) => {
         const supplierNameQuestion = $('div[data-test-id="question-quantity"]');

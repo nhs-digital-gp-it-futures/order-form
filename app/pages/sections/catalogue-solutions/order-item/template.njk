@@ -33,25 +33,25 @@
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
           <div class="nhsuk-u-margin-bottom-5">
-            {{ dateField({ question: questions[0]}) }}
+            {{ dateField({ question: questions.plannedDeliveryDate}) }}
           </div>
 
           <div class="nhsuk-u-margin-bottom-5">
             <div class="">
               {{ textField({ 
-                question: questions[1],
+                question: questions.quantity,
                 classes: "nhsuk-input--width-10"
               }) }}
-              {{ viewExpandableSection(questions[1].expandableSection) }}
+              {{ viewExpandableSection(questions.quantity.expandableSection) }}
             </div>
 
             <div class="nhsuk-u-margin-bottom-5">
               {{
                 radiobuttonOptions({
-                  question: questions[2]
+                  question: questions.selectEstimationPeriod
                 })
               }}
-              {{ viewExpandableSection(questions[2].expandableSection) }}
+              {{ viewExpandableSection(questions.selectEstimationPeriod.expandableSection) }}
             </div>
           </div>
         </div>
@@ -59,7 +59,11 @@
         <div class="nhsuk-grid-column-full">
           <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-3 bc-c-order-table__hr"/>
           <div data-test-id="price-table" class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
-            {{ bcTable(addPriceTable)}}
+            {{ bcTableFlexible({
+              columnInfo: addPriceTable.columnInfo,
+              classes: addPriceTable.classes,
+              data: addPriceTable.items
+            }) }}
           </div>
         </div>
 
