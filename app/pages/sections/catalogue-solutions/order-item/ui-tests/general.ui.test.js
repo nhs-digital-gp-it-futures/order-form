@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../commonManifest.json';
-import { organisationApiUrl, solutionsApiUrl } from '../../../../../config';
+import { solutionsApiUrl } from '../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/order-item-id';
 
@@ -32,10 +32,10 @@ const selectedRecipientIdState = ClientFunction(() => {
   document.cookie = `selectedRecipientId=${cookieValue}`;
 });
 
-const serviceRecipientNameState = ClientFunction(() => {
+const selectedRecipientNameState = ClientFunction(() => {
   const cookieValue = 'recipient-name';
 
-  document.cookie = `serviceRecipientName=${cookieValue}`;
+  document.cookie = `selectedRecipientName=${cookieValue}`;
 });
 
 const selectedPriceIdState = ClientFunction(() => {
@@ -45,19 +45,15 @@ const selectedPriceIdState = ClientFunction(() => {
 });
 
 const selectedPrice = {
-  priceId: 2,
-  provisioningType: 'onDemand',
-  type: 'flat',
+  priceId: 1,
+  provisioningType: 'OnDemand',
+  type: 'Flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'onDemand',
-    description: 'per patient',
+    name: 'consultation',
+    description: 'per consultation',
   },
-  timeUnit: {
-    name: 'year',
-    description: 'per year',
-  },
-  price: '1.64',
+  price: 0.1,
 };
 
 const selectedPriceState = ClientFunction((selectedPriceValue) => {
@@ -70,9 +66,7 @@ const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/solutions/solution-1')
     .reply(200, { id: 'solution-1', name: 'Solution One' });
-  nock(organisationApiUrl)
-    .get('/api/v1/ods/recipient-1')
-    .reply(200, { odsCode: 'recipient-1', name: 'Recipient 1' });
+
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
@@ -83,11 +77,11 @@ const pageSetup = async (withAuth = true, postRoute = false, priceValidation = f
     mocks(priceValidation);
     await setCookies();
     await selectedRecipientIdState();
+    await selectedRecipientNameState();
     await selectedSolutionIdState();
     await selectedPriceIdState();
     if (postRoute) {
       await solutionNameState();
-      await serviceRecipientNameState();
       await selectedPriceState(selectedPrice);
     }
   }
@@ -139,7 +133,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select/solut
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/recipient');
 });
 
-test('should render the title', async (t) => {
+test.only('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -147,7 +141,7 @@ test('should render the title', async (t) => {
 
   await t
     .expect(title.exists).ok()
-    .expect(await extractInnerText(title)).eql('Solution One information for Recipient 1 (recipient-1)');
+    .expect(await extractInnerText(title)).eql('Solution One information for recipient-name (recipient-1)');
 });
 
 test('should render the description', async (t) => {

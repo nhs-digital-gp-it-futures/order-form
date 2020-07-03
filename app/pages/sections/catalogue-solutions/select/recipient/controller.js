@@ -36,3 +36,7 @@ export const validateRecipientForm = ({ data }) => {
   ];
   return { success: false, errors };
 };
+
+export const getServiceRecipientName = ({ serviceRecipientId, recipients }) => (
+  recipients.find(recipient => serviceRecipientId === recipient.odsCode).name
+);

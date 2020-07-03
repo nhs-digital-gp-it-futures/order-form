@@ -22,6 +22,17 @@ export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
   return selectedPriceData;
 };
 
+const formatFormData = ({ formData }) => ({
+  plannedDeliveryDate: formData.plannedDeliveryDate
+    ? formData.plannedDeliveryDate.trim() : null,
+  quantity: formData.quantity
+    ? formData.quantity.trim() : null,
+  price: formData.price && formData.price.length > 0
+    ? formData.price.trim() : null,
+  selectEstimationPeriod: formData.selectEstimationPeriod
+    ? formData.selectEstimationPeriod.trim() : null,
+});
+
 export const getOrderItemContext = async ({
   orderId,
   solutionName,
@@ -34,6 +45,10 @@ export const getOrderItemContext = async ({
     type: selectedPrice.type,
   });
 
+  const populatedData = {
+    price: selectedPrice.price,
+  };
+
   return getContext({
     commonManifest,
     selectedPriceManifest,
@@ -42,14 +57,33 @@ export const getOrderItemContext = async ({
     serviceRecipientName,
     odsCode: selectedRecipientId,
     selectedPrice,
+    formData: populatedData,
   });
 };
 
-export const getOrderItemErrorPageContext = params => getErrorContext(params);
+export const getOrderItemErrorPageContext = (params) => {
+  const formattedData = formatFormData({
+    formData: params.formData,
+  });
+
+  const selectedPriceManifest = getSelectedPriceManifest({
+    provisioningType: params.selectedPrice.provisioningType,
+    type: params.selectedPrice.type,
+  });
+
+  const updatedParams = {
+    ...params,
+    commonManifest,
+    selectedPriceManifest,
+    formData: formattedData,
+  };
+
+  return getErrorContext(updatedParams);
+};
 
 export const validateOrderItemForm = ({ data }) => {
   const errors = [];
-  if (!data.quantity || data.quantity.trim().length <= 0) {
+  if (!data.quantity || data.quantity.trim().length === 0) {
     errors.push({
       field: 'quantity',
       id: 'quantityRequired',
@@ -61,7 +95,14 @@ export const validateOrderItemForm = ({ data }) => {
     });
   }
 
-  if (!data.price || data.price.trim().length <= 0) {
+  if (!data.selectEstimationPeriod) {
+    errors.push({
+      field: 'selectEstimationPeriod',
+      id: 'estimationPeriodRequired',
+    });
+  }
+
+  if (!data.price || data.price.trim().length === 0) {
     errors.push({
       field: 'price',
       id: 'priceRequired',

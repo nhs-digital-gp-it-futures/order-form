@@ -67,19 +67,25 @@
           </div>
         </div>
 
-        <div class="nhsuk-grid-column-two-thirds">
-          {{ bcButton({
-              dataTestId: "delete-button",
-              text: deleteButtonText,
-              href: deleteButtonHref,
-              classes: "nhsuk-u-margin-top-9 nhsuk-button--secondary"
-          })}}
-
-          {{ bcButton({
-              dataTestId: "save-button",
-              text: saveButtonText,
-              classes: "nhsuk-u-margin-top-9"
-          })}}
+        <div class="nhsuk-grid-column-full">
+          <div class="bc-u-float-right">
+            <div class="bc-u-inline-block">
+              {{ bcButton({
+                  dataTestId: "delete-button",
+                  text: deleteButtonText,
+                  href: deleteButtonHref,
+                  classes: "nhsuk-u-margin-top-9 nhsuk-button--secondary nhsuk-u-margin-right-5"
+              }) }}
+            </div>
+            
+            <div class="bc-u-inline-block">
+              {{ bcButton({
+                  dataTestId: "save-button",
+                  text: saveButtonText,
+                  classes: "nhsuk-u-margin-top-9"
+              }) }}
+            </div>
+          </div>
         </div>
       </form>
     </div>

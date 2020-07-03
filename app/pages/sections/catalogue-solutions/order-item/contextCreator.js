@@ -1,62 +1,17 @@
 import { baseUrl } from '../../../../config';
-// import { getSectionErrorContext } from '../../getSectionErrorContext';
 import { generateErrorMap } from '../../../../helpers/generateErrorMap';
-// import { questionExtractor } from '../../../../helpers/questionExtractor';
 
 const populateEstimationPeriodQuestion = ({ questionManifest, timeUnitDescription = '' }) => {
-  const options = questionManifest.options.map(option => ({
+  const populatedOptions = questionManifest.options.map(option => ({
     ...option,
-    checked: option.text.toLowerCase() === timeUnitDescription.toLowerCase()
+    checked: option.value.toLowerCase() === timeUnitDescription.toLowerCase()
       ? true : undefined,
   }));
 
-  return ({
-    ...questionManifest,
-    options,
-  });
+  return {
+    options: populatedOptions,
+  };
 };
-
-const populateQuestionsWithData = ({ selectedPriceManifest, selectedPrice }) => {
-  const questionsWithData = [];
-
-  if (selectedPriceManifest && selectedPriceManifest.questions) {
-    selectedPriceManifest.questions.map((question) => {
-      if (question.id === 'selectEstimationPeriod') {
-        questionsWithData.push(
-          populateEstimationPeriodQuestion({
-            questionManifest: question,
-            timeUnitDescription: selectedPrice && selectedPrice.timeUnit && selectedPrice.timeUnit.description,
-          }),
-        );
-      } else if (question.id === 'quantity') {
-        questionsWithData.push({
-          ...question,
-          data: selectedPrice && selectedPrice.quantity,
-        });
-      } else {
-        questionsWithData.push({
-          ...question,
-        });
-      }
-    });
-  }
-
-  return questionsWithData;
-};
-
-// const populateTable = ((selectedPriceManifest, selectedPrice) => {
-//   selectedPriceManifest.addPriceTable.data[0][0].question.data = selectedPrice.price;
-//   selectedPriceManifest.addPriceTable.data[0][1].data = selectedPrice.itemUnit.description;
-// });
-
-// export const formatFormData = ((selectedPriceManifest, populatedData) => {
-//   questionExtractor('quantity', selectedPriceManifest).data = populatedData.quantity ? populatedData.quantity.trim() : '';
-//   if (populatedData.price) {
-//     selectedPriceManifest.addPriceTable.data[0][0].question.data = populatedData.price.trim();
-//   } else {
-//     selectedPriceManifest.addPriceTable.data[0][0].question.data = '';
-//   }
-// });
 
 const generateAddPriceTable = ({
   addPriceTable, price, itemUnitDescription, errorMap,
@@ -86,11 +41,28 @@ const generateAddPriceTable = ({
   });
 };
 
-const generateQuestions = ({ questions, errorMap }) => {
+const populateQuestionWithData = ({ questionManifest, questionData }) => {
+  if (questionManifest.id === 'selectEstimationPeriod') {
+    return populateEstimationPeriodQuestion({
+      questionManifest,
+      timeUnitDescription: questionData,
+    });
+  }
+
+  return {
+    data: questionData,
+  };
+};
+
+const generateQuestions = ({ questions, formData, errorMap }) => {
   const { questionsAcc: modifiedQuestions } = Object.entries(questions)
     .reduce(({ questionsAcc }, [questionId, questionManifest]) => {
       const questionError = errorMap && errorMap[questionId]
         ? { message: errorMap[questionId].errorMessages.join(', ') }
+        : undefined;
+
+      const questionData = formData && formData[questionId]
+        ? populateQuestionWithData({ questionManifest, questionData: formData[questionId] })
         : undefined;
 
       return ({
@@ -98,6 +70,7 @@ const generateQuestions = ({ questions, errorMap }) => {
           ...questionsAcc,
           [questionId]: {
             ...questionManifest,
+            ...questionData,
             error: questionError,
           },
         },
@@ -115,18 +88,19 @@ export const getContext = ({
   serviceRecipientName,
   odsCode,
   selectedPrice,
+  formData,
   errorMap,
-  // populatedData,
 }) => ({
   ...commonManifest,
   title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
   questions: selectedPriceManifest && generateQuestions({
     questions: selectedPriceManifest.questions,
+    formData,
     errorMap,
   }),
   addPriceTable: selectedPriceManifest && generateAddPriceTable({
     addPriceTable: selectedPriceManifest.addPriceTable,
-    price: selectedPrice && selectedPrice.price,
+    price: formData && formData.price,
     itemUnitDescription: selectedPrice && selectedPrice.itemUnit.description,
     errorMap,
   }),
@@ -155,6 +129,7 @@ export const getErrorContext = (params) => {
     serviceRecipientName: params.serviceRecipientName,
     odsCode: params.selectedRecipientId,
     selectedPrice: params.selectedPrice,
+    formData: params.formData,
     errorMap,
   });
 
