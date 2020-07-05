@@ -1,6 +1,4 @@
-const transformFieldId = (fieldId) => {
-  return fieldId.charAt(0).toLowerCase() + fieldId.slice(1);
-};
+const transformFieldId = fieldId => fieldId.charAt(0).toLowerCase() + fieldId.slice(1);
 
 export const generateErrorMap = ({ validationErrors, errorMessagesFromManifest }) => {
   const { errorMapAcc: errorMap } = validationErrors.reduce(({ errorMapAcc }, validationError) => {
