@@ -176,6 +176,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
           commonManifest, selectedPriceManifest: flatPatientNumbersManifest,
         });
         expect(context.questions).toEqual(flatPatientNumbersManifest.questions);
+        expect(context.questions.selectEstimationPeriod).toEqual(undefined);
       });
 
       it('should populate the planned delivery data with data provided', () => {
@@ -395,6 +396,108 @@ describe('catalogue-solutions order-item contextCreator', () => {
         const context = getErrorContext({
           commonManifest,
           selectedPriceManifest: flatOndemandManifest,
+          validationErrors: [{ field: 'Price', id: 'PriceRequired' }],
+          selectedPrice,
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+      });
+    });
+
+    describe('flat - patientnumbers', () => {
+      it('should return error for deliveryDate', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#deliveryDate', text: flatPatientNumbersManifest.errorMessages.DeliveryDateRequired },
+          ],
+          questions: {
+            ...flatPatientNumbersManifest.questions,
+            deliveryDate: {
+              ...flatPatientNumbersManifest.questions.deliveryDate,
+              error: {
+                message: flatPatientNumbersManifest.errorMessages.DeliveryDateRequired,
+                fields: ['day', 'month', 'year'],
+              },
+            },
+          },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatPatientNumbersManifest,
+          validationErrors: [{
+            field: 'DeliveryDate',
+            id: 'DeliveryDateRequired',
+            part: ['day', 'month', 'year'],
+          }],
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.questions).toEqual(expectedContext.questions);
+      });
+
+      it('should return error for quantity', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#quantity', text: flatPatientNumbersManifest.errorMessages.QuantityRequired },
+          ],
+          questions: {
+            ...flatPatientNumbersManifest.questions,
+            quantity: {
+              ...flatPatientNumbersManifest.questions.quantity,
+              error: {
+                message: flatPatientNumbersManifest.errorMessages.QuantityRequired,
+              },
+            },
+          },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatPatientNumbersManifest,
+          validationErrors: [{ field: 'Quantity', id: 'QuantityRequired' }],
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.questions).toEqual(expectedContext.questions);
+      });
+
+      it('should return error for price', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#price', text: flatPatientNumbersManifest.errorMessages.PriceRequired },
+          ],
+          addPriceTable: {
+            ...flatPatientNumbersManifest.addPriceTable,
+            items: [
+              [
+                {
+                  ...flatPatientNumbersManifest.addPriceTable.cellInfo.price,
+                  question: {
+                    ...flatPatientNumbersManifest.addPriceTable.cellInfo.price.question,
+                    error: {
+                      message: flatPatientNumbersManifest.errorMessages.PriceRequired,
+                    },
+                  },
+                },
+                {
+                  ...flatPatientNumbersManifest.addPriceTable.cellInfo.unitOfOrder,
+                  data: 'per patient per year',
+                },
+              ],
+            ],
+          },
+        };
+
+        const selectedPrice = {
+          itemUnit: { description: 'per patient' },
+          timeUnit: { description: 'per year' },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatPatientNumbersManifest,
           validationErrors: [{ field: 'Price', id: 'PriceRequired' }],
           selectedPrice,
         });
