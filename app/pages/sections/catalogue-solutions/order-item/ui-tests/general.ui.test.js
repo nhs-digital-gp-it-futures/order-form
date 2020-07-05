@@ -182,13 +182,14 @@ test('should show the correct error summary and input error when no date is ente
 
   const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
+    .debug()
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
@@ -212,10 +213,10 @@ test('should show the correct error summary and input error when no day is enter
 
   const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -248,10 +249,10 @@ test('should show the correct error summary and input error when no month is ent
 
   const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -284,10 +285,10 @@ test('should show the correct error summary and input error when no year is ente
 
   const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -320,10 +321,10 @@ test('should show the correct error summary and input error when a year > 4 char
 
   const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -358,10 +359,10 @@ test('should show the correct error summary and input error when a year < 4 char
 
   const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -396,10 +397,10 @@ test('should show the correct error summary and input error when a day > 31 is e
 
   const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -434,10 +435,10 @@ test('should show the correct error summary and input error when a month > 12 is
 
   const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -472,10 +473,10 @@ test('should show the correct error summary and input error when a year < 1000 i
 
   const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -510,10 +511,10 @@ test('should show the correct error summary and input error when incorrect day/m
 
   const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
