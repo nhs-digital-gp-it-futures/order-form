@@ -13,7 +13,6 @@ import {
   validateOrderItemForm,
   getSolution,
   postSolution,
-  extractDeliveryDate
 } from './order-item/controller';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 
