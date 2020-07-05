@@ -39,6 +39,7 @@ const endpoints = {
     putCommencementDate: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/commencement-date`,
     putSupplier: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/supplier`,
     putCatalogueSolutions: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions`,
+    putAdditionalServices: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/additional-services`,
     putServiceRecipients: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/service-recipients`,
     postDescription: () => `${orderApiUrl}/api/v1/orders`,
   },
