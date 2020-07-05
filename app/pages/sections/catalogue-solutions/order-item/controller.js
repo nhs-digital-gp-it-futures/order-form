@@ -111,6 +111,11 @@ export const validateOrderItemForm = ({ data, selectedPrice }) => {
         field: 'Quantity',
         id: 'QuantityMustBeANumber',
       });
+    } else if (data.quantity.indexOf('.') !== -1) {
+      errors.push({
+        field: 'Quantity',
+        id: 'QuantityInvalid',
+      });
     }
   }
 
@@ -133,6 +138,11 @@ export const validateOrderItemForm = ({ data, selectedPrice }) => {
       errors.push({
         field: 'Price',
         id: 'PriceMustBeANumber',
+      });
+    } else if (data.price.split('.')[1].length > 3) {
+      errors.push({
+        field: 'Price',
+        id: 'PriceMoreThan3dp',
       });
     }
   }
