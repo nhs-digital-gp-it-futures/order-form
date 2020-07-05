@@ -73,7 +73,7 @@ describe('additional-services controller', () => {
     });
   });
 
-  it('should return succes: true if put is successful', async () => {
+  it('should return success: true if put is successful', async () => {
     putData.mockResolvedValueOnce({});
 
     const response = await putAdditionalServices({
