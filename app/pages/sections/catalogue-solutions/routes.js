@@ -65,6 +65,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       serviceRecipientName,
       selectedPriceId,
       selectedPrice,
+      formData: req.body,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
@@ -73,17 +74,16 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    logger.info('posting things');
+    const selectedPrice = sessionManager.getFromSession({ req, key: 'selectedPrice' });
 
-    const response = validateOrderItemForm({ data: req.body });
+    const response = validateOrderItemForm({ data: req.body, selectedPrice });
     if (response.success) {
       logger.info('redirecting catalogue solutions main page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
     }
     const solutionName = sessionManager.getFromSession({ req, key: 'solutionName' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
-    const serviceRecipientName = sessionManager.getFromSession({ req, key: 'serviceRecipientName' });
-    const selectedPrice = sessionManager.getFromSession({ req, key: 'selectedPrice' });
+    const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
 
     const context = await getOrderItemErrorPageContext({
       orderId,
@@ -91,7 +91,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       selectedRecipientId,
       serviceRecipientName,
       selectedPrice,
-      data: req.body,
+      formData: req.body,
       validationErrors: response.errors,
     });
 

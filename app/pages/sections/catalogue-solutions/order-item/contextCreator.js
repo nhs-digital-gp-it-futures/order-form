@@ -1,71 +1,172 @@
-import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
-import { getSectionErrorContext } from '../../getSectionErrorContext';
-import { questionExtractor } from '../../../../helpers/questionExtractor';
+import { generateErrorMap } from '../../../../helpers/generateErrorMap';
 
-export const populateEstimationPeriod = ((selectedPrice) => {
-  questionExtractor('selectEstimationPeriod', manifest).options.forEach((option, i) => {
-    questionExtractor('selectEstimationPeriod', manifest).options[i]
-      .checked = option.text.toLowerCase() === selectedPrice
-        .timeUnit.description.toLowerCase()
-        ? true : undefined;
+const populateEstimationPeriodQuestion = ({ questionManifest, timeUnitDescription = '' }) => {
+  const populatedOptions = questionManifest.options.map(option => ({
+    ...option,
+    checked: option.value.toLowerCase() === timeUnitDescription.toLowerCase()
+      ? true : undefined,
+  }));
+
+  return {
+    options: populatedOptions,
+  };
+};
+
+const populateDeliveryDateQuestion = ({
+  questionManifest, day, month, year,
+}) => {
+  const plannedDeliveryDatePopulated = ({
+    ...questionManifest,
+    data: {
+      day,
+      month,
+      year,
+    },
   });
-});
+  return plannedDeliveryDatePopulated;
+};
 
-export const populateTable = ((selectedPrice) => {
-  manifest.addPriceTable.data[0][0].question.data = selectedPrice.price;
-  manifest.addPriceTable.data[0][1].data = selectedPrice.itemUnit.description;
-});
+const generateAddPriceTable = ({
+  addPriceTable, price, itemUnitDescription, timeUnitDescription = '', errorMap,
+}) => {
+  const columns = [];
 
-export const formatFormData = ((populatedData) => {
-  questionExtractor('quantity', manifest).data = populatedData.quantity ? populatedData.quantity.trim() : '';
-  if (populatedData.price) {
-    manifest.addPriceTable.data[0][0].question.data = populatedData.price.trim();
-  } else {
-    manifest.addPriceTable.data[0][0].question.data = '';
+  columns.push({
+    ...addPriceTable.cellInfo.price,
+    question: {
+      ...addPriceTable.cellInfo.price.question,
+      data: price,
+      error: errorMap && errorMap.price
+        ? { message: errorMap.price.errorMessages.join(', ') }
+        : undefined,
+    },
+  });
+
+  columns.push({
+    ...addPriceTable.cellInfo.unitOfOrder,
+    data: `${itemUnitDescription} ${timeUnitDescription}`,
+  });
+
+  const items = [columns];
+  return ({
+    ...addPriceTable,
+    items,
+  });
+};
+
+const populateQuestionWithData = ({ questionManifest, formData, questionId }) => {
+  if (questionId === 'selectEstimationPeriod') {
+    return populateEstimationPeriodQuestion({
+      questionManifest,
+      timeUnitDescription: formData && formData[questionId],
+    });
   }
-});
+  if (questionId === 'deliveryDate') {
+    return populateDeliveryDateQuestion({
+      questionManifest,
+      day: formData[`${questionId}-day`],
+      month: formData[`${questionId}-month`],
+      year: formData[`${questionId}-year`],
+    });
+  }
+
+  return {
+    data: formData && formData[questionId],
+  };
+};
+
+const generateQuestions = ({ questions, formData, errorMap }) => {
+  const { questionsAcc: modifiedQuestions } = Object.entries(questions)
+    .reduce(({ questionsAcc }, [questionId, questionManifest]) => {
+      const questionError = errorMap && errorMap[questionId]
+        ? {
+          message: errorMap[questionId].errorMessages.join(', '),
+          fields: errorMap[questionId].fields,
+        }
+        : undefined;
+
+      const questionData = formData
+        ? populateQuestionWithData({ questionManifest, formData, questionId })
+        : undefined;
+
+      return ({
+        questionsAcc: {
+          ...questionsAcc,
+          [questionId]: {
+            ...questionManifest,
+            ...questionData,
+            error: questionError,
+          },
+        },
+      });
+    }, { questionsAcc: {} });
+
+  return modifiedQuestions;
+};
 
 export const getContext = ({
-  orderId, solutionName, serviceRecipientName, odsCode, selectedPrice, populatedData,
-}) => {
-  populateEstimationPeriod(selectedPrice);
-  populateTable(selectedPrice);
-  if (populatedData) formatFormData(populatedData);
+  commonManifest,
+  selectedPriceManifest,
+  orderId,
+  solutionName,
+  serviceRecipientName,
+  odsCode,
+  selectedPrice,
+  formData,
+  errorMap,
+}) => ({
+  ...commonManifest,
+  title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
+  questions: selectedPriceManifest && generateQuestions({
+    questions: selectedPriceManifest.questions,
+    formData,
+    errorMap,
+  }),
+  addPriceTable: selectedPriceManifest && generateAddPriceTable({
+    addPriceTable: selectedPriceManifest.addPriceTable,
+    price: formData && formData.price,
+    itemUnitDescription: selectedPrice
+      && selectedPrice.itemUnit
+      && selectedPrice.itemUnit.description,
+    timeUnitDescription: selectedPrice
+      && selectedPrice.timeUnit
+      && selectedPrice.timeUnit.description,
+    errorMap,
+  }),
+  deleteButtonHref: '#',
+  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/recipient`,
+});
 
-  return ({
-    ...manifest,
-    title: `${solutionName} ${manifest.title} ${serviceRecipientName} (${odsCode})`,
-    deleteButtonHref: '#',
-    backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/recipient`,
+const generateErrorSummary = ({ errorMap }) => (
+  Object.entries(errorMap).map(([questionId, errors]) => ({
+    href: `#${questionId}`,
+    text: errors.errorMessages.join(', '),
+  }))
+);
+
+export const getErrorContext = (params) => {
+  const errorMap = generateErrorMap({
+    validationErrors: params.validationErrors,
+    errorMessagesFromManifest: params.selectedPriceManifest.errorMessages,
   });
-};
 
-const addErrorsToTableQuestions = ({ updatedManifest, validationErrors }) => {
-  const manifestWithErrors = { ...updatedManifest };
-  const foundError = validationErrors.find(error => error.field === updatedManifest
-    .addPriceTable.data[0][0].question.id);
-  if (foundError) {
-    const errorMessage = updatedManifest.errorMessages[foundError.id];
-    manifestWithErrors.addPriceTable.data[0][0].question.error = { message: errorMessage };
-  }
-
-  return manifestWithErrors;
-};
-
-export const getErrorContext = async (params) => {
-  let updatedManifest = getContext({
+  const contextWithErrors = getContext({
+    commonManifest: params.commonManifest,
+    selectedPriceManifest: params.selectedPriceManifest,
     orderId: params.orderId,
     solutionName: params.solutionName,
     serviceRecipientName: params.serviceRecipientName,
     odsCode: params.selectedRecipientId,
     selectedPrice: params.selectedPrice,
-    populatedData: params.data,
+    formData: params.formData,
+    errorMap,
   });
 
-  updatedManifest = getSectionErrorContext({ ...params, manifest: updatedManifest });
+  const errorSummary = generateErrorSummary({ errorMap });
 
-  return {
-    ...addErrorsToTableQuestions({ ...params, updatedManifest }),
-  };
+  return ({
+    errors: errorSummary,
+    ...contextWithErrors,
+  });
 };
