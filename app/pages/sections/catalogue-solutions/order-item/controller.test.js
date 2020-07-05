@@ -13,6 +13,10 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
+// jest.mock('../../../../helpers/getDateErrors', () => ({
+//   getDateErrors: jest.fn(),
+// }));
+
 jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
 
 jest.mock('./manifestProvider', () => ({
@@ -127,6 +131,9 @@ describe('catalogue-solutions order-item controller', () => {
           quantity: '1',
           price: '1',
           selectEstimationPeriod: 'perMonth',
+          'plannedDeliveryDate-day': '09',
+          'plannedDeliveryDate-month': '02',
+          'plannedDeliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
@@ -137,24 +144,29 @@ describe('catalogue-solutions order-item controller', () => {
 
     describe('when there are validation errors', () => {
       const quantityRequired = {
-        field: 'quantity',
-        id: 'quantityRequired',
+        field: 'Quantity',
+        id: 'QuantityRequired',
       };
       const numericalQuantity = {
-        field: 'quantity',
-        id: 'numericQuantityRequired',
+        field: 'Quantity',
+        id: 'NumericQuantityRequired',
       };
       const estimationPeriodRequired = {
-        field: 'selectEstimationPeriod',
-        id: 'estimationPeriodRequired',
+        field: 'SelectEstimationPeriod',
+        id: 'EstimationPeriodRequired',
       };
       const priceRequired = {
-        field: 'price',
-        id: 'priceRequired',
+        field: 'Price',
+        id: 'PriceRequired',
       };
       const numericalPrice = {
-        field: 'price',
-        id: 'numericPriceRequired',
+        field: 'Price',
+        id: 'NumericPriceRequired',
+      };
+      const plannedDeliveryDateRequired = {
+        field: 'PlannedDeliveryDate',
+        id: 'PlannedDeliveryDateRequired',
+        part: ['day', 'month', 'year'],
       };
 
       it('should return an array of one validation error and success as false if empty string for quantity is passed in', () => {
@@ -162,6 +174,9 @@ describe('catalogue-solutions order-item controller', () => {
           quantity: '',
           price: '1.5',
           selectEstimationPeriod: 'perMonth',
+          'plannedDeliveryDate-day': '09',
+          'plannedDeliveryDate-month': '02',
+          'plannedDeliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
@@ -175,6 +190,9 @@ describe('catalogue-solutions order-item controller', () => {
           quantity: 'not a number',
           price: '1.5',
           selectEstimationPeriod: 'perMonth',
+          'plannedDeliveryDate-day': '09',
+          'plannedDeliveryDate-month': '02',
+          'plannedDeliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
@@ -187,6 +205,9 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: '1',
           price: '1.5',
+          'plannedDeliveryDate-day': '09',
+          'plannedDeliveryDate-month': '02',
+          'plannedDeliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
@@ -200,6 +221,9 @@ describe('catalogue-solutions order-item controller', () => {
           quantity: '1',
           price: '',
           selectEstimationPeriod: 'perMonth',
+          'plannedDeliveryDate-day': '09',
+          'plannedDeliveryDate-month': '02',
+          'plannedDeliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
@@ -213,6 +237,9 @@ describe('catalogue-solutions order-item controller', () => {
           quantity: '1',
           price: 'not a number',
           selectEstimationPeriod: 'perMonth',
+          'plannedDeliveryDate-day': '09',
+          'plannedDeliveryDate-month': '02',
+          'plannedDeliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
@@ -221,13 +248,29 @@ describe('catalogue-solutions order-item controller', () => {
         expect(response.errors).toEqual([numericalPrice]);
       });
 
+      it('should return an array of one validation error and success as false if plannedDeliveryDate is not valid', () => {
+        const data = {
+          quantity: '1',
+          price: '1.5',
+          selectEstimationPeriod: 'perMonth',
+          'plannedDeliveryDate-day': '',
+          'plannedDeliveryDate-month': '',
+          'plannedDeliveryDate-year': '',
+        };
+
+        const response = validateOrderItemForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([plannedDeliveryDateRequired]);
+      });
+
       it('should return a validation error if all values are undefined', () => {
         const data = {};
 
         const response = validateOrderItemForm({ data });
 
         expect(response.errors).toEqual(
-          [quantityRequired, estimationPeriodRequired, priceRequired],
+          [quantityRequired, estimationPeriodRequired, priceRequired, plannedDeliveryDateRequired],
         );
       });
     });

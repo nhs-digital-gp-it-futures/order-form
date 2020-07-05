@@ -5,6 +5,7 @@ import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
 import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from './manifestProvider';
+import { getDateErrors } from '../../../../helpers/getDateErrors';
 
 export const getRecipientName = async ({ selectedRecipientId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipient', options: { selectedRecipientId } });
@@ -23,14 +24,18 @@ export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
 };
 
 const formatFormData = ({ formData }) => ({
-  plannedDeliveryDate: formData.plannedDeliveryDate
-    ? formData.plannedDeliveryDate.trim() : null,
+  'plannedDeliveryDate-day': formData['plannedDeliveryDate-day']
+    ? formData['plannedDeliveryDate-day'].trim() : undefined,
+  'plannedDeliveryDate-month': formData['plannedDeliveryDate-month']
+    ? formData['plannedDeliveryDate-month'].trim() : undefined,
+  'plannedDeliveryDate-year': formData['plannedDeliveryDate-year']
+    ? formData['plannedDeliveryDate-year'].trim() : undefined,
   quantity: formData.quantity
-    ? formData.quantity.trim() : null,
+    ? formData.quantity.trim() : undefined,
   price: formData.price && formData.price.length > 0
-    ? formData.price.trim() : null,
+    ? formData.price.trim() : undefined,
   selectEstimationPeriod: formData.selectEstimationPeriod
-    ? formData.selectEstimationPeriod.trim() : null,
+    ? formData.selectEstimationPeriod.trim() : undefined,
 });
 
 export const getOrderItemContext = async ({
@@ -85,33 +90,38 @@ export const validateOrderItemForm = ({ data }) => {
   const errors = [];
   if (!data.quantity || data.quantity.trim().length === 0) {
     errors.push({
-      field: 'quantity',
-      id: 'quantityRequired',
+      field: 'Quantity',
+      id: 'QuantityRequired',
     });
   } else if (isNaN(data.quantity)) {
     errors.push({
-      field: 'quantity',
-      id: 'numericQuantityRequired',
+      field: 'Quantity',
+      id: 'NumericQuantityRequired',
     });
   }
 
   if (!data.selectEstimationPeriod) {
     errors.push({
-      field: 'selectEstimationPeriod',
-      id: 'estimationPeriodRequired',
+      field: 'SelectEstimationPeriod',
+      id: 'EstimationPeriodRequired',
     });
   }
 
   if (!data.price || data.price.trim().length === 0) {
     errors.push({
-      field: 'price',
-      id: 'priceRequired',
+      field: 'Price',
+      id: 'PriceRequired',
     });
   } else if (isNaN(data.price)) {
     errors.push({
-      field: 'price',
-      id: 'numericPriceRequired',
+      field: 'Price',
+      id: 'NumericPriceRequired',
     });
+  }
+
+  const plannedDeliverDateError = getDateErrors('plannedDeliveryDate', data);
+  if (plannedDeliverDateError) {
+    errors.push(plannedDeliverDateError);
   }
 
   if (errors.length === 0) {

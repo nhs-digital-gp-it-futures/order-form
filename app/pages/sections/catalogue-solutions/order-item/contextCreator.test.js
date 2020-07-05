@@ -45,6 +45,33 @@ describe('catalogue-solutions order-item contextCreator', () => {
         expect(context.questions).toEqual(flatOndemandManifest.questions);
       });
 
+      it('should populate the planned delivery data with data provided', () => {
+        const expectedContext = {
+          questions: {
+            plannedDeliveryDate: {
+              ...flatOndemandManifest.questions.plannedDeliveryDate,
+              data: {
+                day: '09',
+                month: '02',
+                year: '2021',
+              },
+            },
+          },
+        };
+
+        const formData = {
+          'plannedDeliveryDate-day': '09',
+          'plannedDeliveryDate-month': '02',
+          'plannedDeliveryDate-year': '2021',
+        };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOndemandManifest, formData,
+        });
+        expect(context.questions.plannedDeliveryDate)
+          .toEqual(expectedContext.questions.plannedDeliveryDate);
+      });
+
       it('should populate the quantity with data provided', () => {
         const expectedContext = {
           questions: {
@@ -145,17 +172,18 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
   describe('getErrorContext', () => {
     describe('flat - ondemand', () => {
-      it('should return error for quantity', () => {
+      it('should return error for plannedDeliveryDate', () => {
         const expectedContext = {
           errors: [
-            { href: '#quantity', text: flatOndemandManifest.errorMessages.quantityRequired },
+            { href: '#plannedDeliveryDate', text: flatOndemandManifest.errorMessages.PlannedDeliveryDateRequired },
           ],
           questions: {
             ...flatOndemandManifest.questions,
-            quantity: {
-              ...flatOndemandManifest.questions.quantity,
+            plannedDeliveryDate: {
+              ...flatOndemandManifest.questions.plannedDeliveryDate,
               error: {
-                message: flatOndemandManifest.errorMessages.quantityRequired,
+                message: flatOndemandManifest.errorMessages.PlannedDeliveryDateRequired,
+                fields: ['day', 'month', 'year'],
               },
             },
           },
@@ -164,7 +192,37 @@ describe('catalogue-solutions order-item contextCreator', () => {
         const context = getErrorContext({
           commonManifest,
           selectedPriceManifest: flatOndemandManifest,
-          validationErrors: [{ field: 'quantity', id: 'quantityRequired' }],
+          validationErrors: [{
+            field: 'PlannedDeliveryDate',
+            id: 'PlannedDeliveryDateRequired',
+            part: ['day', 'month', 'year'],
+          }],
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.questions).toEqual(expectedContext.questions);
+      });
+
+      it('should return error for quantity', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#quantity', text: flatOndemandManifest.errorMessages.QuantityRequired },
+          ],
+          questions: {
+            ...flatOndemandManifest.questions,
+            quantity: {
+              ...flatOndemandManifest.questions.quantity,
+              error: {
+                message: flatOndemandManifest.errorMessages.QuantityRequired,
+              },
+            },
+          },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatOndemandManifest,
+          validationErrors: [{ field: 'Quantity', id: 'QuantityRequired' }],
         });
 
         expect(context.errors).toEqual(expectedContext.errors);
@@ -174,14 +232,14 @@ describe('catalogue-solutions order-item contextCreator', () => {
       it('should return error for estimation period', () => {
         const expectedContext = {
           errors: [
-            { href: '#selectEstimationPeriod', text: flatOndemandManifest.errorMessages.estimationPeriodRequired },
+            { href: '#selectEstimationPeriod', text: flatOndemandManifest.errorMessages.EstimationPeriodRequired },
           ],
           questions: {
             ...flatOndemandManifest.questions,
             selectEstimationPeriod: {
               ...flatOndemandManifest.questions.selectEstimationPeriod,
               error: {
-                message: flatOndemandManifest.errorMessages.estimationPeriodRequired,
+                message: flatOndemandManifest.errorMessages.EstimationPeriodRequired,
               },
             },
           },
@@ -190,7 +248,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
         const context = getErrorContext({
           commonManifest,
           selectedPriceManifest: flatOndemandManifest,
-          validationErrors: [{ field: 'selectEstimationPeriod', id: 'estimationPeriodRequired' }],
+          validationErrors: [{ field: 'SelectEstimationPeriod', id: 'EstimationPeriodRequired' }],
         });
 
         expect(context.errors).toEqual(expectedContext.errors);
@@ -200,7 +258,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
       it('should return error for price', () => {
         const expectedContext = {
           errors: [
-            { href: '#price', text: flatOndemandManifest.errorMessages.priceRequired },
+            { href: '#price', text: flatOndemandManifest.errorMessages.PriceRequired },
           ],
           addPriceTable: {
             ...flatOndemandManifest.addPriceTable,
@@ -211,7 +269,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
                   question: {
                     ...flatOndemandManifest.addPriceTable.cellInfo.price.question,
                     error: {
-                      message: flatOndemandManifest.errorMessages.priceRequired,
+                      message: flatOndemandManifest.errorMessages.PriceRequired,
                     },
                   },
                 },
@@ -231,7 +289,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
         const context = getErrorContext({
           commonManifest,
           selectedPriceManifest: flatOndemandManifest,
-          validationErrors: [{ field: 'price', id: 'priceRequired' }],
+          validationErrors: [{ field: 'Price', id: 'PriceRequired' }],
           selectedPrice,
         });
 

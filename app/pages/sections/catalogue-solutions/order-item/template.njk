@@ -45,14 +45,17 @@
               {{ viewExpandableSection(questions.quantity.expandableSection) }}
             </div>
 
-            <div class="nhsuk-u-margin-bottom-5">
-              {{
-                radiobuttonOptions({
-                  question: questions.selectEstimationPeriod
-                })
-              }}
-              {{ viewExpandableSection(questions.selectEstimationPeriod.expandableSection) }}
-            </div>
+            {% if (questions.selectEstimationPeriod) %}
+              <div class="nhsuk-u-margin-bottom-5">
+                {{
+                  radiobuttonOptions({
+                    question: questions.selectEstimationPeriod
+                  })
+                }}
+                {{ viewExpandableSection(questions.selectEstimationPeriod.expandableSection) }}
+              </div>
+            {% endif %}
+
           </div>
         </div>
 

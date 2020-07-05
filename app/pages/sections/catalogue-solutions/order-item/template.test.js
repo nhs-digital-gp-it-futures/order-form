@@ -136,6 +136,58 @@ describe('catalogue-solutions order-item page', () => {
         expect(inputs[2].attribs.type).toEqual('number');
       });
     }));
+
+    it('should render 3 input fields populated with data when the data is provided', componentTester(setup, (harness) => {
+      const contextWithData = {
+        questions: {
+          plannedDeliveryDate: {
+            ...context.questions.plannedDeliveryDate,
+            data: {
+              day: '09',
+              month: '02',
+              year: '2021',
+            },
+          },
+        },
+      };
+
+      harness.request(contextWithData, ($) => {
+        const inputs = $('#plannedDeliveryDate input:not([name=_csrf])');
+        expect(inputs.length).toEqual(3);
+        expect(inputs[0].attribs.value).toEqual('09');
+        expect(inputs[1].attribs.value).toEqual('02');
+        expect(inputs[2].attribs.value).toEqual('2021');
+      });
+    }));
+
+    it('should render error field if there are errors', componentTester(setup, (harness) => {
+      const contextWithErrors = {
+        questions: {
+          plannedDeliveryDate: {
+            ...context.questions.plannedDeliveryDate,
+            error: {
+              message: 'Some planned delivery date error',
+              fields: ['day', 'month', 'year'],
+            },
+          },
+        },
+      };
+
+      harness.request(contextWithErrors, ($) => {
+        const form = $('form');
+        const renderedQuestion = form.find('div[data-test-id="question-plannedDeliveryDate"]');
+        const fieldError = renderedQuestion.find('div[data-test-id="date-field-input-error"]');
+        const errorMessage = renderedQuestion.find('.nhsuk-error-message');
+        const errorInputs = renderedQuestion.find('.nhsuk-input--error');
+
+        expect(fieldError.length).toEqual(1);
+        expect(errorMessage.text().trim()).toEqual('Error: Some planned delivery date error');
+        expect(errorInputs.length).toEqual(3);
+        expect(errorInputs[0].attribs.id).toEqual('plannedDeliveryDate-day');
+        expect(errorInputs[1].attribs.id).toEqual('plannedDeliveryDate-month');
+        expect(errorInputs[2].attribs.id).toEqual('plannedDeliveryDate-year');
+      });
+    }));
   });
 
   describe('quantity', () => {
@@ -236,6 +288,20 @@ describe('catalogue-solutions order-item page', () => {
         const expandableSection = $('[data-test-id="view-section-estimation-period-id"]');
         expect(expandableSection.find('span').text().trim()).toEqual('What period should I enter?');
         expect(expandableSection.find('.nhsuk-details__text').text().trim()).toEqual('This should be based on how you estimated the quantity you want to order.');
+      });
+    }));
+
+    it('should not render the estimation period question or exandable section if not provided', componentTester(setup, (harness) => {
+      const contextWithoutEstimationPeriod = {
+        questions: {},
+      };
+
+      harness.request(contextWithoutEstimationPeriod, ($) => {
+        const selectSolutionRadioOptions = $('[data-test-id="question-selectEstimationPeriod"]');
+        const expandableSection = $('[data-test-id="view-section-estimation-period-id"]');
+
+        expect(selectSolutionRadioOptions.length).toEqual(0);
+        expect(expandableSection.length).toEqual(0);
       });
     }));
   });

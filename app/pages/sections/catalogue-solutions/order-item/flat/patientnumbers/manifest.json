@@ -1,0 +1,57 @@
+{
+  "questions": {
+    "plannedDeliveryDate": {
+      "id": "plannedDeliveryDate",
+      "mainAdvice": "Planned delivery date",
+      "additionalAdvice": "For example 14 01 2020"
+    },
+    "quantity": {
+      "id": "quantity",
+      "mainAdvice": "Practice list size",
+      "rows": 3,
+      "expandableSection": {
+        "dataTestId": "view-section-quantity-id",
+        "title": "What quantity should I enter?",
+        "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
+      }
+    }
+  },
+  "addPriceTable": {
+    "columnInfo": [
+      {
+        "data": "Price (£)",
+        "width": "50%",
+        "classes": "nhsuk-u-font-size-16"
+      },
+      {
+        "data": "Unit of order",
+        "width": "50%",
+        "classes": "nhsuk-u-font-size-16"
+      }
+    ],
+    "cellInfo": {
+      "price": {
+        "question": {
+          "type": "input",
+          "id": "price"
+        },
+        "classes": "nhsuk-input--width-10",
+        "expandableSection": {
+          "dataTestId": "view-section-input-id",
+          "title": "What price should I enter?",
+          "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
+        }
+      },
+      "unitOfOrder": {
+        "dataTestId": "unit-of-order"
+      }
+    }
+  },
+  "errorMessages": {
+    "quantityRequired": "Enter a quantity",
+    "numericQuantityRequired": "Quantity must be a number",
+    "estimationPeriodRequired": "Select an estimation period",
+    "priceRequired": "Enter a price",
+    "numericPriceRequired": "Price must be a number"
+  }
+}
