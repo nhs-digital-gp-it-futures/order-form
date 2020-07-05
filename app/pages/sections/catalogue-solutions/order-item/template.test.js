@@ -137,6 +137,29 @@ describe('catalogue-solutions order-item page', () => {
       });
     }));
 
+    it('should render 3 input fields populated with data when the data is provided', componentTester(setup, (harness) => {
+      const contextWithData = {
+        questions: {
+          plannedDeliveryDate: {
+            ...context.questions.plannedDeliveryDate,
+            data: {
+              day: '09',
+              month: '02',
+              year: '2021',
+            },
+          },
+        },
+      };
+
+      harness.request(contextWithData, ($) => {
+        const inputs = $('#plannedDeliveryDate input:not([name=_csrf])');
+        expect(inputs.length).toEqual(3);
+        expect(inputs[0].attribs.value).toEqual('09');
+        expect(inputs[1].attribs.value).toEqual('02');
+        expect(inputs[2].attribs.value).toEqual('2021');
+      });
+    }));
+
     it('should render error field if there are errors', componentTester(setup, (harness) => {
       const contextWithErrors = {
         questions: {
