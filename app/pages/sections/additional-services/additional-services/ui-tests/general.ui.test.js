@@ -154,6 +154,10 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/sections/additional-services')
+    .reply(200);
+
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -161,5 +165,5 @@ test('should redirect to /organisation/order-1 when clicking the Continue button
 
   await t
     .click(continueButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
 });
