@@ -5,6 +5,7 @@ import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
 import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from './manifestProvider';
+import { getDateErrors } from '../../../../helpers/getDateErrors';
 
 export const getRecipientName = async ({ selectedRecipientId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipient', options: { selectedRecipientId } });
@@ -85,33 +86,38 @@ export const validateOrderItemForm = ({ data }) => {
   const errors = [];
   if (!data.quantity || data.quantity.trim().length === 0) {
     errors.push({
-      field: 'quantity',
-      id: 'quantityRequired',
+      field: 'Quantity',
+      id: 'QuantityRequired',
     });
   } else if (isNaN(data.quantity)) {
     errors.push({
-      field: 'quantity',
-      id: 'numericQuantityRequired',
+      field: 'Quantity',
+      id: 'NumericQuantityRequired',
     });
   }
 
   if (!data.selectEstimationPeriod) {
     errors.push({
-      field: 'selectEstimationPeriod',
-      id: 'estimationPeriodRequired',
+      field: 'SelectEstimationPeriod',
+      id: 'EstimationPeriodRequired',
     });
   }
 
   if (!data.price || data.price.trim().length === 0) {
     errors.push({
-      field: 'price',
-      id: 'priceRequired',
+      field: 'Price',
+      id: 'PriceRequired',
     });
   } else if (isNaN(data.price)) {
     errors.push({
-      field: 'price',
-      id: 'numericPriceRequired',
+      field: 'Price',
+      id: 'NumericPriceRequired',
     });
+  }
+
+  const plannedDeliverDateError = getDateErrors('plannedDeliveryDate', data);
+  if (plannedDeliverDateError) {
+    errors.push(plannedDeliverDateError);
   }
 
   if (errors.length === 0) {
