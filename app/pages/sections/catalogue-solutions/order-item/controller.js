@@ -94,9 +94,9 @@ export const validateOrderItemForm = ({ data, selectedPrice }) => {
   });
 
   if (selectedPriceManifest.questions.deliveryDate) {
-    const deliverDateError = getDateErrors('deliveryDate', data);
-    if (deliverDateError) {
-      errors.push(deliverDateError);
+    const deliveryDateError = getDateErrors('deliveryDate', data);
+    if (deliveryDateError) {
+      errors.push(deliveryDateError);
     }
   }
 

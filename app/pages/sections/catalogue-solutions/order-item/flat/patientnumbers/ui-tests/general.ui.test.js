@@ -132,6 +132,16 @@ test('should render an expandable section for the quantity question', async (t) 
     .eql(content.questions.quantity.expandableSection.innerComponent);
 });
 
+test('should not render a selectEstimationPeriod question for flat patientnumbers', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const selectEstimationPeriodRadioOptions = Selector('[data-test-id="question-selectEstimationPeriod"]');
+
+  await t
+    .expect(selectEstimationPeriodRadioOptions.exists).notOk();
+});
+
 test('should render the price table headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
