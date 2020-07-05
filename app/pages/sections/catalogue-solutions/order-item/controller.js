@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-globals */
 import { getData } from 'buying-catalogue-library';
+import { postData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
@@ -67,7 +68,27 @@ export const validateOrderItemForm = ({ data }) => {
 export const getSolution = async ({ solutionId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSolution', options: { solutionId } });
   const solutionData = await getData({ endpoint, accessToken, logger });
-  logger.info(`Retrived solution data from BAPI for ${solutionId}`);
+  logger.info(`Retrieved solution data from BAPI for ${solutionId}`);
 
   return solutionData;
+};
+
+export const postSolution = async ({ orderId, accessToken, solution }) => {
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postCatalogueSolution', options: { orderId } });
+  const body = solution;
+  try {
+    const solutionData = await postData({ endpoint, body, accessToken, logger });
+  }
+  catch (err)
+  {
+    throw err;
+  }
+  return solutionData;
+};
+
+export const extractDeliveryDate = async (body) => {
+  const day = body['plannedDeliveryDate-day'];
+  const month = body['plannedDeliveryDate-month'];
+  const year = body['plannedDeliveryDate-year'];
+  return `${year}-${month.length === 1 ? '0' : ''}${month}-${day.length === 1 ? '0' : ''}${day}`;
 };

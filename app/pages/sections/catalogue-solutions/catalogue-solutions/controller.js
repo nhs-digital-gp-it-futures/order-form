@@ -12,7 +12,7 @@ export const getCatalogueSolutionsPageContext = async ({ orderId, accessToken })
   return getContext({
     orderId,
     orderDescription: addedSolutionsData.orderDescription,
-    orderItems: addedSolutionsData.orderItems,
+    orderItems: addedSolutionsData.catalogueSolutions,
   });
 };
 
