@@ -27,16 +27,23 @@ describe('catalogue-solutions controller', () => {
       getData.mockResolvedValueOnce({});
 
       await getCatalogueSolutionsPageContext({ orderId, accessToken });
-      expect(getData.mock.calls.length).toEqual(1);
+      expect(getData.mock.calls.length).toEqual(2);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/catalogue-solutions`,
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/order-items?catalogueItemType=Solution`,
+        accessToken,
+        logger,
+      });
+      expect(getData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
         accessToken,
         logger,
       });
     });
 
     it('should call getContext with the correct params', async () => {
-      getData.mockResolvedValueOnce({ orderDescription: 'some order', orderItems: [] });
+      getData
+        .mockResolvedValueOnce({ orderItems: [] })
+        .mockResolvedValueOnce({ description: 'some order' });
       contextCreator.getContext.mockResolvedValueOnce({});
 
       await getCatalogueSolutionsPageContext({ orderId, accessToken });
@@ -50,6 +57,10 @@ describe('catalogue-solutions controller', () => {
       putData.mockReset();
     });
 
+    const formattedPutData = {
+      status: 'complete',
+    };
+
     it('should call putData once with the correct params', async () => {
       putData.mockResolvedValueOnce({});
 
@@ -60,12 +71,13 @@ describe('catalogue-solutions controller', () => {
       expect(putData.mock.calls.length).toEqual(1);
       expect(putData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/catalogue-solutions`,
+        body: formattedPutData,
         accessToken,
         logger,
       });
     });
 
-    it('should return succes: true if put is successful', async () => {
+    it('should return success: true if put is successful', async () => {
       putData.mockResolvedValueOnce({});
 
       const response = await putCatalogueSolutions({
