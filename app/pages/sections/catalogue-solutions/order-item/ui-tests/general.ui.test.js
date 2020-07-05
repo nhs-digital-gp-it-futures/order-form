@@ -66,15 +66,14 @@ const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/solutions/solution-1')
     .reply(200, { id: 'solution-1', name: 'Solution One' });
-
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false, priceValidation = false) => {
+const pageSetup = async (withAuth = true, postRoute = false) => {
   if (withAuth) {
-    mocks(priceValidation);
+    mocks();
     await setCookies();
     await selectedRecipientIdState();
     await selectedRecipientNameState();
@@ -175,4 +174,370 @@ test('should render the save button', async (t) => {
   await t
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
+});
+
+test('should show the correct error summary and input error when no date is entered and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#plannedDeliveryDate-error span');
+  const dayInput = Selector('#plannedDeliveryDate-day');
+  const monthInput = Selector('#plannedDeliveryDate-month');
+  const yearInput = Selector('#plannedDeliveryDate-year');
+
+  await t
+    .expect(errorMessage.exists).notOk()
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(3)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Enter a planned delivery date')
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
+
+    .expect(dayInput.hasClass('nhsuk-input--error')).ok()
+    .expect(monthInput.hasClass('nhsuk-input--error')).ok()
+    .expect(yearInput.hasClass('nhsuk-input--error')).ok();
+});
+
+test('should show the correct error summary and input error when no day is entered and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#plannedDeliveryDate-error span');
+  const dayInput = Selector('#plannedDeliveryDate-day');
+  const monthInput = Selector('#plannedDeliveryDate-month');
+  const yearInput = Selector('#plannedDeliveryDate-year');
+
+  await t
+    .expect(errorMessage.exists).notOk()
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(monthInput, '02', { paste: true })
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(yearInput, '2020', { paste: true })
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(3)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must include a day')
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
+
+    .expect(dayInput.hasClass('nhsuk-input--error')).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk();
+});
+
+test('should show the correct error summary and input error when no month is entered and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#plannedDeliveryDate-error span');
+  const dayInput = Selector('#plannedDeliveryDate-day');
+  const monthInput = Selector('#plannedDeliveryDate-month');
+  const yearInput = Selector('#plannedDeliveryDate-year');
+
+  await t
+    .expect(errorMessage.exists).notOk()
+    .typeText(dayInput, '02', { paste: true })
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(yearInput, '2020', { paste: true })
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(3)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must include a month')
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
+
+    .expect(dayInput.getAttribute('value')).eql('02')
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(monthInput.hasClass('nhsuk-input--error')).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk();
+});
+
+test('should show the correct error summary and input error when no year is entered and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#plannedDeliveryDate-error span');
+  const dayInput = Selector('#plannedDeliveryDate-day');
+  const monthInput = Selector('#plannedDeliveryDate-month');
+  const yearInput = Selector('#plannedDeliveryDate-year');
+
+  await t
+    .expect(errorMessage.exists).notOk()
+    .typeText(dayInput, '02', { paste: true })
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(monthInput, '02', { paste: true })
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(3)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must include a year')
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
+
+    .expect(dayInput.getAttribute('value')).eql('02')
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(yearInput.hasClass('nhsuk-input--error')).ok();
+});
+
+test('should show the correct error summary and input error when a year > 4 chars is entered and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#plannedDeliveryDate-error span');
+  const dayInput = Selector('#plannedDeliveryDate-day');
+  const monthInput = Selector('#plannedDeliveryDate-month');
+  const yearInput = Selector('#plannedDeliveryDate-year');
+
+  await t
+    .expect(errorMessage.exists).notOk()
+    .typeText(dayInput, '02', { paste: true })
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(monthInput, '02', { paste: true })
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(yearInput, '202020', { paste: true })
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(3)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Year must be four numbers')
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
+
+    .expect(dayInput.getAttribute('value')).eql('02')
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(yearInput.getAttribute('value')).eql('202020')
+    .expect(yearInput.hasClass('nhsuk-input--error')).ok();
+});
+
+test('should show the correct error summary and input error when a year < 4 chars is entered and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#plannedDeliveryDate-error span');
+  const dayInput = Selector('#plannedDeliveryDate-day');
+  const monthInput = Selector('#plannedDeliveryDate-month');
+  const yearInput = Selector('#plannedDeliveryDate-year');
+
+  await t
+    .expect(errorMessage.exists).notOk()
+    .typeText(dayInput, '02', { paste: true })
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(monthInput, '02', { paste: true })
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(yearInput, '20', { paste: true })
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(3)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Year must be four numbers')
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
+
+    .expect(dayInput.getAttribute('value')).eql('02')
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(yearInput.getAttribute('value')).eql('20')
+    .expect(yearInput.hasClass('nhsuk-input--error')).ok();
+});
+
+test('should show the correct error summary and input error when a day > 31 is entered and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#plannedDeliveryDate-error span');
+  const dayInput = Selector('#plannedDeliveryDate-day');
+  const monthInput = Selector('#plannedDeliveryDate-month');
+  const yearInput = Selector('#plannedDeliveryDate-year');
+
+  await t
+    .expect(errorMessage.exists).notOk()
+    .typeText(dayInput, '32', { paste: true })
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(monthInput, '02', { paste: true })
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(yearInput, '2020', { paste: true })
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(3)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must be a real date')
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
+
+    .expect(dayInput.getAttribute('value')).eql('32')
+    .expect(dayInput.hasClass('nhsuk-input--error')).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk();
+});
+
+test('should show the correct error summary and input error when a month > 12 is entered and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#plannedDeliveryDate-error span');
+  const dayInput = Selector('#plannedDeliveryDate-day');
+  const monthInput = Selector('#plannedDeliveryDate-month');
+  const yearInput = Selector('#plannedDeliveryDate-year');
+
+  await t
+    .expect(errorMessage.exists).notOk()
+    .typeText(dayInput, '02', { paste: true })
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(monthInput, '13', { paste: true })
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(yearInput, '2020', { paste: true })
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(3)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must be a real date')
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
+
+    .expect(dayInput.getAttribute('value')).eql('02')
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(monthInput.getAttribute('value')).eql('13')
+    .expect(monthInput.hasClass('nhsuk-input--error')).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk();
+});
+
+test('should show the correct error summary and input error when a year < 1000 is entered and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#plannedDeliveryDate-error span');
+  const dayInput = Selector('#plannedDeliveryDate-day');
+  const monthInput = Selector('#plannedDeliveryDate-month');
+  const yearInput = Selector('#plannedDeliveryDate-year');
+
+  await t
+    .expect(errorMessage.exists).notOk()
+    .typeText(dayInput, '02', { paste: true })
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(monthInput, '02', { paste: true })
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(yearInput, '0999', { paste: true })
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(3)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must be a real date')
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
+
+    .expect(dayInput.getAttribute('value')).eql('02')
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+
+    .expect(yearInput.getAttribute('value')).eql('0999')
+    .expect(yearInput.hasClass('nhsuk-input--error')).ok();
+});
+
+test('should show the correct error summary and input error when incorrect day/month combo is entered and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#plannedDeliveryDate-error span');
+  const dayInput = Selector('#plannedDeliveryDate-day');
+  const monthInput = Selector('#plannedDeliveryDate-month');
+  const yearInput = Selector('#plannedDeliveryDate-year');
+
+  await t
+    .expect(errorMessage.exists).notOk()
+    .typeText(dayInput, '31', { paste: true })
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(monthInput, '02', { paste: true })
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .typeText(yearInput, '2020', { paste: true })
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(3)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must be a real date')
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
+
+    .expect(dayInput.getAttribute('value')).eql('31')
+    .expect(dayInput.hasClass('nhsuk-input--error')).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('02')
+    .expect(monthInput.hasClass('nhsuk-input--error')).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk();
 });
