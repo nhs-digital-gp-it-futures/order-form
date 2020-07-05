@@ -88,6 +88,11 @@ export const getOrderItemErrorPageContext = (params) => {
 
 export const validateOrderItemForm = ({ data }) => {
   const errors = [];
+  const plannedDeliverDateError = getDateErrors('plannedDeliveryDate', data);
+  if (plannedDeliverDateError) {
+    errors.push(plannedDeliverDateError);
+  }
+
   if (!data.quantity || data.quantity.trim().length === 0) {
     errors.push({
       field: 'Quantity',
@@ -117,11 +122,6 @@ export const validateOrderItemForm = ({ data }) => {
       field: 'Price',
       id: 'NumericPriceRequired',
     });
-  }
-
-  const plannedDeliverDateError = getDateErrors('plannedDeliveryDate', data);
-  if (plannedDeliverDateError) {
-    errors.push(plannedDeliverDateError);
   }
 
   if (errors.length === 0) {
