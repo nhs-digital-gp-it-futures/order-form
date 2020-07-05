@@ -34,8 +34,12 @@ const mockAddedOrderItems = [
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-1/sections/catalogue-solutions')
-    .reply(200, { orderDescription: 'Some order', orderItems: mockAddedOrderItems });
+    .get('/api/v1/orders/order-1/order-items?catalogueItemType=Solution')
+    .reply(200, { orderItems: mockAddedOrderItems });
+
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-1/sections/description')
+    .reply(200, { description: 'Some order' });
 };
 
 const pageSetup = async () => {

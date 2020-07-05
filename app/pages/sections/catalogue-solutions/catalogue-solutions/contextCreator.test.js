@@ -111,7 +111,7 @@ describe('catalogue-solutions contextCreator', () => {
       expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
     });
 
-    it('should return the addSolutionButtonText', () => {
+    it('should return the addOrderItemButtonText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.addOrderItemButtonText).toEqual(manifest.addOrderItemButtonText);
     });
