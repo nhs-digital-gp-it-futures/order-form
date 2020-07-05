@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import { getData } from 'buying-catalogue-library';
-import { postData } from 'buying-catalogue-library';
+import { getData, postData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
@@ -77,13 +76,12 @@ export const postSolution = async ({ orderId, accessToken, solution }) => {
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postCatalogueSolution', options: { orderId } });
   const body = solution;
   try {
-    const solutionData = await postData({ endpoint, body, accessToken, logger });
-  }
-  catch (err)
-  {
+    await postData({
+      endpoint, body, accessToken, logger,
+    });
+  } catch (err) {
     throw err;
   }
-  return solutionData;
 };
 
 export const extractDeliveryDate = async (body) => {

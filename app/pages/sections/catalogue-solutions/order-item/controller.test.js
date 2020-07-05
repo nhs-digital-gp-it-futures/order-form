@@ -177,5 +177,5 @@ describe('catalogue-solutions order-item controller', () => {
     });
   });
 
-  //TODO: New test for post
+  // TODO: New test for post
 });

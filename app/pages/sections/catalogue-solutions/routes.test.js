@@ -290,10 +290,7 @@ describe('catalogue-solutions section routes', () => {
         getPathCookies: [
           mockAuthorisedCookie,
         ],
-      });
-
-    //TODO: mock post call to be true
-    
+      }); // TODO: mock post call to be true
       return request(setUpFakeApp())
         .post(path)
         .type('form')
