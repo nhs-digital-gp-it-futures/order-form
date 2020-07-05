@@ -117,7 +117,7 @@ test('should render the orderDescription', async (t) => {
     .expect(orderDescriptionHeading.exists).ok()
     .expect(await extractInnerText(orderDescriptionHeading)).contains(content.orderDescriptionHeading)
     .expect(orderDescription.exists).ok()
-    .expect(await extractInnerText(orderDescription)).contains('');
+    .expect(await extractInnerText(orderDescription)).eql('Some order');
 });
 
 test('should render the Add Additional Services button', async (t) => {
