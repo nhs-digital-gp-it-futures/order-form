@@ -27,16 +27,23 @@ describe('catalogue-solutions controller', () => {
       getData.mockResolvedValueOnce({});
 
       await getCatalogueSolutionsPageContext({ orderId, accessToken });
-      expect(getData.mock.calls.length).toEqual(1);
+      expect(getData.mock.calls.length).toEqual(2);
       expect(getData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/catalogue-solutions`,
+        accessToken,
+        logger,
+      });
+      expect(getData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
         accessToken,
         logger,
       });
     });
 
     it('should call getContext with the correct params', async () => {
-      getData.mockResolvedValueOnce({ orderDescription: 'some order', orderItems: [] });
+      getData
+        .mockResolvedValueOnce({ orderItems: [] })
+        .mockResolvedValueOnce({ description: 'some order' });
       contextCreator.getContext.mockResolvedValueOnce({});
 
       await getCatalogueSolutionsPageContext({ orderId, accessToken });

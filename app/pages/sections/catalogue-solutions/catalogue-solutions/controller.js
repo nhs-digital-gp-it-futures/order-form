@@ -9,9 +9,14 @@ export const getCatalogueSolutionsPageContext = async ({ orderId, accessToken })
     endpoint: getAddedSolutionsDataEndpoint, accessToken, logger,
   });
 
+  const getOrderDescriptionDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getDescription', options: { orderId } });
+  const orderDescriptionData = await getData({
+    endpoint: getOrderDescriptionDataEndpoint, accessToken, logger,
+  });
+
   return getContext({
     orderId,
-    orderDescription: addedSolutionsData.orderDescription,
+    orderDescription: orderDescriptionData ? orderDescriptionData.description : '',
     orderItems: addedSolutionsData.orderItems,
   });
 };
