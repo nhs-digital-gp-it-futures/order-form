@@ -27,22 +27,29 @@ describe('additional-services controller', () => {
       getData.mockResolvedValueOnce({});
 
       await getAdditionalServicesPageContext({ orderId, accessToken });
-      expect(getData.mock.calls.length).toEqual(1);
+      expect(getData.mock.calls.length).toEqual(2);
       expect(getData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order-id/order-items?catalogueItemType=AdditionalServices`,
+        accessToken,
+        logger,
+      });
+      expect(getData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
         accessToken,
         logger,
       });
     });
 
     it('should call getContext with the correct params', async () => {
-      getData.mockResolvedValueOnce({ orderDescription: 'some order' });
+      getData
+        .mockResolvedValueOnce({ orderItems: [] })
+        .mockResolvedValueOnce({ description: 'some order' });
       contextCreator.getContext.mockResolvedValueOnce({});
 
       await getAdditionalServicesPageContext({ orderId, accessToken });
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith(
-        { orderId, orderDescription: 'some order' },
+        { orderId, orderDescription: 'some order', orderItems: [] },
       );
     });
   });

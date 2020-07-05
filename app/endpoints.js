@@ -31,7 +31,7 @@ const endpoints = {
     getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
     getSupplier: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/supplier`,
     getCommencementDate: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/commencement-date`,
-    getAddedCatalogueSolutions: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions`,
+    getAddedCatalogueSolutions: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items?catalogueItemType=Solution`,
     getAddedAdditionalServices: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items?catalogueItemType=AdditionalServices`,
     getSelectedServiceRecipients: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/service-recipients`,
     putDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,

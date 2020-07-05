@@ -18,6 +18,10 @@ const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1/order-items?catalogueItemType=AdditionalServices')
     .reply(200, { });
+
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-1/sections/description')
+    .reply(200, { description: 'Some order' });
 };
 
 const pageSetup = async () => {

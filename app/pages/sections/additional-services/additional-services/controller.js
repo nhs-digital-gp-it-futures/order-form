@@ -9,9 +9,14 @@ export const getAdditionalServicesPageContext = async ({ orderId, accessToken })
     endpoint: getAddedAdditionalServicesDataEndpoint, accessToken, logger,
   });
 
+  const getOrderDescriptionDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getDescription', options: { orderId } });
+  const orderDescriptionData = await getData({
+    endpoint: getOrderDescriptionDataEndpoint, accessToken, logger,
+  });
+
   return getContext({
     orderId,
-    orderDescription: addedAdditionalServicesData.orderDescription,
+    orderDescription: orderDescriptionData ? orderDescriptionData.description : '',
     orderItems: addedAdditionalServicesData.orderItems,
   });
 };
