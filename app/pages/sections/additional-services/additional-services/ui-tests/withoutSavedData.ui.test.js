@@ -36,7 +36,7 @@ fixture('Additional Servies page - without saved data')
     await t.expect(isDone).ok('Not all nock interceptors were used!');
   });
 
-test.only('should render the No additional services text when no order items are returned from ORDAPI', async (t) => {
+test('should render the No additional services text when no order items are returned from ORDAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
