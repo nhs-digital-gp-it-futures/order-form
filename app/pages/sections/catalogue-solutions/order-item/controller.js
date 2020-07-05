@@ -25,17 +25,17 @@ export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
 
 const formatFormData = ({ formData }) => ({
   'plannedDeliveryDate-day': formData['plannedDeliveryDate-day']
-    ? formData['plannedDeliveryDate-day'].trim() : null,
+    ? formData['plannedDeliveryDate-day'].trim() : undefined,
   'plannedDeliveryDate-month': formData['plannedDeliveryDate-month']
-    ? formData['plannedDeliveryDate-month'].trim() : null,
+    ? formData['plannedDeliveryDate-month'].trim() : undefined,
   'plannedDeliveryDate-year': formData['plannedDeliveryDate-year']
-    ? formData['plannedDeliveryDate-year'].trim() : null,
+    ? formData['plannedDeliveryDate-year'].trim() : undefined,
   quantity: formData.quantity
-    ? formData.quantity.trim() : null,
+    ? formData.quantity.trim() : undefined,
   price: formData.price && formData.price.length > 0
-    ? formData.price.trim() : null,
+    ? formData.price.trim() : undefined,
   selectEstimationPeriod: formData.selectEstimationPeriod
-    ? formData.selectEstimationPeriod.trim() : null,
+    ? formData.selectEstimationPeriod.trim() : undefined,
 });
 
 export const getOrderItemContext = async ({

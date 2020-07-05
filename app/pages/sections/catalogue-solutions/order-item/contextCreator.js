@@ -13,6 +13,20 @@ const populateEstimationPeriodQuestion = ({ questionManifest, timeUnitDescriptio
   };
 };
 
+const populatePlannedDeliveryDateQuestion = ({
+  questionManifest, day, month, year,
+}) => {
+  const plannedDeliveryDatePopulated = ({
+    ...questionManifest,
+    data: {
+      day,
+      month,
+      year,
+    },
+  });
+  return plannedDeliveryDatePopulated;
+};
+
 const generateAddPriceTable = ({
   addPriceTable, price, itemUnitDescription, errorMap,
 }) => {
@@ -41,16 +55,24 @@ const generateAddPriceTable = ({
   });
 };
 
-const populateQuestionWithData = ({ questionManifest, questionData }) => {
-  if (questionManifest.id === 'selectEstimationPeriod') {
+const populateQuestionWithData = ({ questionManifest, formData, questionId }) => {
+  if (questionId === 'selectEstimationPeriod') {
     return populateEstimationPeriodQuestion({
       questionManifest,
-      timeUnitDescription: questionData,
+      timeUnitDescription: formData && formData[questionId],
+    });
+  }
+  if (questionId === 'plannedDeliveryDate') {
+    return populatePlannedDeliveryDateQuestion({
+      questionManifest,
+      day: formData[`${questionId}-day`],
+      month: formData[`${questionId}-month`],
+      year: formData[`${questionId}-year`],
     });
   }
 
   return {
-    data: questionData,
+    data: formData && formData[questionId],
   };
 };
 
@@ -64,8 +86,8 @@ const generateQuestions = ({ questions, formData, errorMap }) => {
         }
         : undefined;
 
-      const questionData = formData && formData[questionId]
-        ? populateQuestionWithData({ questionManifest, questionData: formData[questionId] })
+      const questionData = formData
+        ? populateQuestionWithData({ questionManifest, formData, questionId })
         : undefined;
 
       return ({

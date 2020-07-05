@@ -45,6 +45,32 @@ describe('catalogue-solutions order-item contextCreator', () => {
         expect(context.questions).toEqual(flatOndemandManifest.questions);
       });
 
+      it('should populate the planned delivery data with data provided', () => {
+        const expectedContext = {
+          questions: {
+            plannedDeliveryDate: {
+              ...flatOndemandManifest.questions.plannedDeliveryDate,
+              data: {
+                day: '09',
+                month: '02',
+                year: '2021',
+              },
+            },
+          },
+        };
+
+        const formData = {
+          'plannedDeliveryDate-day': '09',
+          'plannedDeliveryDate-month': '02',
+          'plannedDeliveryDate-year': '2021',
+        };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOndemandManifest, formData,
+        });
+        expect(context.questions.plannedDeliveryDate).toEqual(expectedContext.questions.plannedDeliveryDate);
+      });
+
       it('should populate the quantity with data provided', () => {
         const expectedContext = {
           questions: {
