@@ -1,35 +1,42 @@
-const errorsMap = questionId => ({
-  required: {
-    field: questionId,
-    part: ['day', 'month', 'year'],
-    id: `${questionId}Required`,
-  },
-  dayRequired: {
-    field: questionId,
-    part: ['day'],
-    id: `${questionId}DayRequired`,
-  },
-  monthRequired: {
-    field: questionId,
-    part: ['month'],
-    id: `${questionId}MonthRequired`,
-  },
-  yearRequired: {
-    field: questionId,
-    part: ['year'],
-    id: `${questionId}YearRequired`,
-  },
-  notReal: {
-    field: questionId,
-    part: ['day', 'month'],
-    id: `${questionId}NotReal`,
-  },
-  yearLength: {
-    field: questionId,
-    part: ['year'],
-    id: `${questionId}YearLength`,
-  },
-});
+const transformQuestionId = (questionId) => {
+  return questionId.charAt(0).toUpperCase() + questionId.slice(1);
+};
+
+const errorsMap = (questionId) => {
+  const transformedQuestionId = transformQuestionId(questionId);
+  return ({
+    required: {
+      field: transformedQuestionId,
+      part: ['day', 'month', 'year'],
+      id: `${transformedQuestionId}Required`,
+    },
+    dayRequired: {
+      field: transformedQuestionId,
+      part: ['day'],
+      id: `${transformedQuestionId}DayRequired`,
+    },
+    monthRequired: {
+      field: transformedQuestionId,
+      part: ['month'],
+      id: `${transformedQuestionId}MonthRequired`,
+    },
+    yearRequired: {
+      field: transformedQuestionId,
+      part: ['year'],
+      id: `${transformedQuestionId}YearRequired`,
+    },
+    notReal: {
+      field: transformedQuestionId,
+      part: ['day', 'month'],
+      id: `${transformedQuestionId}NotReal`,
+    },
+    yearLength: {
+      field: transformedQuestionId,
+      part: ['year'],
+      id: `${transformedQuestionId}YearLength`,
+    },
+  });
+};
 
 export const getDateErrors = (questionId, data) => {
   const day = data[`${questionId}-day`];

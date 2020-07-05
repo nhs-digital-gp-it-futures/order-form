@@ -8,10 +8,10 @@ describe('generateErrorMap', () => {
       },
     };
 
-    const validationErrors = [{ field: 'question1', id: 'question1Required' }];
+    const validationErrors = [{ field: 'Question1', id: 'Question1Required' }];
 
     const errorMessagesFromManifest = {
-      question1Required: 'Question 1 required',
+      Question1Required: 'Question 1 required',
     };
 
     const errorMap = generateErrorMap({ validationErrors, errorMessagesFromManifest });
@@ -27,13 +27,13 @@ describe('generateErrorMap', () => {
     };
 
     const validationErrors = [
-      { field: 'question1', id: 'question1TooLong' },
-      { field: 'question1', id: 'question1InvalidType' },
+      { field: 'Question1', id: 'Question1TooLong' },
+      { field: 'Question1', id: 'Question1InvalidType' },
     ];
 
     const errorMessagesFromManifest = {
-      question1TooLong: 'Question 1 too long',
-      question1InvalidType: 'Question 1 invalid type',
+      Question1TooLong: 'Question 1 too long',
+      Question1InvalidType: 'Question 1 invalid type',
     };
 
     const errorMap = generateErrorMap({ validationErrors, errorMessagesFromManifest });
@@ -51,13 +51,13 @@ describe('generateErrorMap', () => {
       },
     };
     const validationErrors = [
-      { field: 'question1', id: 'question1Required' },
-      { field: 'question2', id: 'question2Required' },
+      { field: 'Question1', id: 'Question1Required' },
+      { field: 'Question2', id: 'Question2Required' },
     ];
 
     const errorMessagesFromManifest = {
-      question1Required: 'Question 1 required',
-      question2Required: 'Question 2 required',
+      Question1Required: 'Question 1 required',
+      Question2Required: 'Question 2 required',
     };
 
     const errorMap = generateErrorMap({ validationErrors, errorMessagesFromManifest });
@@ -76,17 +76,17 @@ describe('generateErrorMap', () => {
     };
 
     const validationErrors = [
-      { field: 'question1', id: 'question1TooLong' },
-      { field: 'question1', id: 'question1InvalidType' },
-      { field: 'question2', id: 'question2TooLong' },
-      { field: 'question2', id: 'question2InvalidType' },
+      { field: 'Question1', id: 'Question1TooLong' },
+      { field: 'Question1', id: 'Question1InvalidType' },
+      { field: 'Question2', id: 'Question2TooLong' },
+      { field: 'Question2', id: 'Question2InvalidType' },
     ];
 
     const errorMessagesFromManifest = {
-      question1TooLong: 'Question 1 too long',
-      question1InvalidType: 'Question 1 invalid type',
-      question2TooLong: 'Question 2 too long',
-      question2InvalidType: 'Question 2 invalid type',
+      Question1TooLong: 'Question 1 too long',
+      Question1InvalidType: 'Question 1 invalid type',
+      Question2TooLong: 'Question 2 too long',
+      Question2InvalidType: 'Question 2 invalid type',
     };
 
     const errorMap = generateErrorMap({ validationErrors, errorMessagesFromManifest });

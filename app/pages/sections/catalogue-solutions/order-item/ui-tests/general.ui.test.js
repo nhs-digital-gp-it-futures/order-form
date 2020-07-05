@@ -133,7 +133,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select/solut
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/recipient');
 });
 
-test.only('should render the title', async (t) => {
+test('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
