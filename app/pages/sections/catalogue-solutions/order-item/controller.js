@@ -24,8 +24,12 @@ export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
 };
 
 const formatFormData = ({ formData }) => ({
-  plannedDeliveryDate: formData.plannedDeliveryDate
-    ? formData.plannedDeliveryDate.trim() : null,
+  'plannedDeliveryDate-day': formData['plannedDeliveryDate-day']
+    ? formData['plannedDeliveryDate-day'].trim() : null,
+  'plannedDeliveryDate-month': formData['plannedDeliveryDate-month']
+    ? formData['plannedDeliveryDate-month'].trim() : null,
+  'plannedDeliveryDate-year': formData['plannedDeliveryDate-year']
+    ? formData['plannedDeliveryDate-year'].trim() : null,
   quantity: formData.quantity
     ? formData.quantity.trim() : null,
   price: formData.price && formData.price.length > 0

@@ -58,7 +58,10 @@ const generateQuestions = ({ questions, formData, errorMap }) => {
   const { questionsAcc: modifiedQuestions } = Object.entries(questions)
     .reduce(({ questionsAcc }, [questionId, questionManifest]) => {
       const questionError = errorMap && errorMap[questionId]
-        ? { message: errorMap[questionId].errorMessages.join(', ') }
+        ? {
+          message: errorMap[questionId].errorMessages.join(', '),
+          fields: errorMap[questionId].fields,
+        }
         : undefined;
 
       const questionData = formData && formData[questionId]

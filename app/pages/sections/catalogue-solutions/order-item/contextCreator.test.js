@@ -156,6 +156,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
               ...flatOndemandManifest.questions.plannedDeliveryDate,
               error: {
                 message: flatOndemandManifest.errorMessages.PlannedDeliveryDateRequired,
+                fields: ['day', 'month', 'year'],
               },
             },
           },

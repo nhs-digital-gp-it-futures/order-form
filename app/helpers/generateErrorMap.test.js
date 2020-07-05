@@ -93,4 +93,23 @@ describe('generateErrorMap', () => {
 
     expect(errorMap).toEqual(expectedErrorMap);
   });
+
+  it('should return error map with all the fields when question consists of multiple parts', () => {
+    const expectedErrorMap = {
+      question1: {
+        errorMessages: ['Question 1 required'],
+        fields: ['part1', 'part2'],
+      },
+    };
+
+    const validationErrors = [{ field: 'Question1', id: 'Question1Required', part: ['part1', 'part2'] }];
+
+    const errorMessagesFromManifest = {
+      Question1Required: 'Question 1 required',
+    };
+
+    const errorMap = generateErrorMap({ validationErrors, errorMessagesFromManifest });
+
+    expect(errorMap).toEqual(expectedErrorMap);
+  });
 });

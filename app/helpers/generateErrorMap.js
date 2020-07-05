@@ -13,6 +13,7 @@ export const generateErrorMap = ({ validationErrors, errorMessagesFromManifest }
         ...errorMapAcc,
         [fieldId]: {
           errorMessages: accumulatedMessages,
+          fields: validationError.part,
         },
       },
     });

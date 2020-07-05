@@ -136,6 +136,35 @@ describe('catalogue-solutions order-item page', () => {
         expect(inputs[2].attribs.type).toEqual('number');
       });
     }));
+
+    it('should render error field if there are errors', componentTester(setup, (harness) => {
+      const contextWithErrors = {
+        questions: {
+          plannedDeliveryDate: {
+            ...context.questions.plannedDeliveryDate,
+            error: {
+              message: 'Some planned delivery date error',
+              fields: ['day', 'month', 'year'],
+            },
+          },
+        },
+      };
+
+      harness.request(contextWithErrors, ($) => {
+        const form = $('form');
+        const renderedQuestion = form.find('div[data-test-id="question-plannedDeliveryDate"]');
+        const fieldError = renderedQuestion.find('div[data-test-id="date-field-input-error"]');
+        const errorMessage = renderedQuestion.find('.nhsuk-error-message');
+        const errorInputs = renderedQuestion.find('.nhsuk-input--error');
+
+        expect(fieldError.length).toEqual(1);
+        expect(errorMessage.text().trim()).toEqual('Error: Some planned delivery date error');
+        expect(errorInputs.length).toEqual(3);
+        expect(errorInputs[0].attribs.id).toEqual('plannedDeliveryDate-day');
+        expect(errorInputs[1].attribs.id).toEqual('plannedDeliveryDate-month');
+        expect(errorInputs[2].attribs.id).toEqual('plannedDeliveryDate-year');
+      });
+    }));
   });
 
   describe('quantity', () => {
