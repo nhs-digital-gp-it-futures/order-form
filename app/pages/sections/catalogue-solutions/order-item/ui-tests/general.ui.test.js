@@ -89,7 +89,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Catalogue-solutions - recipient page - general')
+fixture('Catalogue-solutions - common - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
