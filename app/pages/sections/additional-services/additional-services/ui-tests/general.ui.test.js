@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
+import { orderApiUrl } from '../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services';
 
@@ -14,6 +15,9 @@ const setCookies = ClientFunction(() => {
 });
 
 const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-1/order-items?catalogueItemType=AdditionalServices')
+    .reply(200, { orderDescription: 'Some order' });
 };
 
 const pageSetup = async (withAuth = true) => {
@@ -55,6 +59,18 @@ test('should render additional-services page', async (t) => {
 
   await t
     .expect(page.exists).ok();
+});
+
+test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+
+  await t
+    .expect(goBackLink.exists).ok()
+    .click(goBackLink)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
 });
 
 test('should render the title', async (t) => {
