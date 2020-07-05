@@ -73,9 +73,9 @@ const mocks = () => {
     .reply(200, selectedPrice);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false, priceValidation = false) => {
+const pageSetup = async (withAuth = true, postRoute = false) => {
   if (withAuth) {
-    mocks(priceValidation);
+    mocks();
     await setCookies();
     await selectedRecipientIdState();
     await selectedSolutionIdState();
