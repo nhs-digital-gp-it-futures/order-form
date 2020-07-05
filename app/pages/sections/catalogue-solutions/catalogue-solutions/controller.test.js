@@ -57,6 +57,10 @@ describe('catalogue-solutions controller', () => {
       putData.mockReset();
     });
 
+    const formattedPutData = {
+      status: 'complete',
+    };
+
     it('should call putData once with the correct params', async () => {
       putData.mockResolvedValueOnce({});
 
@@ -67,6 +71,7 @@ describe('catalogue-solutions controller', () => {
       expect(putData.mock.calls.length).toEqual(1);
       expect(putData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/catalogue-solutions`,
+        body: formattedPutData,
         accessToken,
         logger,
       });
