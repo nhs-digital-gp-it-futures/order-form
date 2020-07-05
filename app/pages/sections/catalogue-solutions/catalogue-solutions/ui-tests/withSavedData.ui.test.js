@@ -34,7 +34,7 @@ const mockAddedOrderItems = [
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-1/sections/catalogue-solutions')
+    .get('/api/v1/orders/order-1/order-items?catalogueItemType=Solution')
     .reply(200, { orderItems: mockAddedOrderItems });
 
   nock(orderApiUrl)

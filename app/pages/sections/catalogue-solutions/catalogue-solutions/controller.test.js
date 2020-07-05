@@ -29,7 +29,7 @@ describe('catalogue-solutions controller', () => {
       await getCatalogueSolutionsPageContext({ orderId, accessToken });
       expect(getData.mock.calls.length).toEqual(2);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/catalogue-solutions`,
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/order-items?catalogueItemType=Solution`,
         accessToken,
         logger,
       });
