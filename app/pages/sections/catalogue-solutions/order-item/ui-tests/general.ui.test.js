@@ -189,7 +189,6 @@ test('should show the correct error summary and input error when no date is ente
 
   await t
     .expect(errorMessage.exists).notOk()
-    .debug()
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
