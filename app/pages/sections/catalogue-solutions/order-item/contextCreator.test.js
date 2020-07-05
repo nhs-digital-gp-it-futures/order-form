@@ -68,7 +68,8 @@ describe('catalogue-solutions order-item contextCreator', () => {
         const context = getContext({
           commonManifest, selectedPriceManifest: flatOndemandManifest, formData,
         });
-        expect(context.questions.plannedDeliveryDate).toEqual(expectedContext.questions.plannedDeliveryDate);
+        expect(context.questions.plannedDeliveryDate)
+          .toEqual(expectedContext.questions.plannedDeliveryDate);
       });
 
       it('should populate the quantity with data provided', () => {
