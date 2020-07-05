@@ -5,6 +5,7 @@ import {
   testAuthorisedGetPathForUnauthorisedUser,
   fakeSessionManager,
 } from 'buying-catalogue-library';
+import * as additionalServicesController from './additional-services/controller';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 
@@ -52,15 +53,18 @@ describe('additional-services section routes', () => {
       })
     ));
 
-    it('should return the additional-services page if authorised', () => (
-      request(setUpFakeApp())
+    it('should return the additional-services page if authorised', () => {
+      additionalServicesController.getAdditionalServicesPageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="additional-services-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        })
-    ));
+        });
+    });
   });
 });

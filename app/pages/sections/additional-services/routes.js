@@ -1,6 +1,6 @@
 import express from 'express';
 import { logger } from '../../../logger';
-import { withCatch } from '../../../helpers/routerHelper';
+import { withCatch, extractAccessToken } from '../../../helpers/routerHelper';
 import { getAdditionalServicesPageContext } from './additional-services/controller';
 
 const router = express.Router({ mergeParams: true });
@@ -11,6 +11,7 @@ export const additionalServicesRoutes = (authProvider, addContext) => {
 
     const context = await getAdditionalServicesPageContext({
       orderId,
+      accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
     logger.info(`navigating to order ${orderId} additional-services page`);
