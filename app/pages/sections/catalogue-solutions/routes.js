@@ -83,7 +83,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     }
     const solutionName = sessionManager.getFromSession({ req, key: 'solutionName' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
-    const serviceRecipientName = sessionManager.getFromSession({ req, key: 'serviceRecipientName' });
+    const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
 
     const context = await getOrderItemErrorPageContext({
       orderId,
