@@ -48,8 +48,8 @@ describe('catalogue-solutions order-item contextCreator', () => {
       it('should populate the planned delivery data with data provided', () => {
         const expectedContext = {
           questions: {
-            plannedDeliveryDate: {
-              ...flatOndemandManifest.questions.plannedDeliveryDate,
+            deliveryDate: {
+              ...flatOndemandManifest.questions.deliveryDate,
               data: {
                 day: '09',
                 month: '02',
@@ -60,16 +60,16 @@ describe('catalogue-solutions order-item contextCreator', () => {
         };
 
         const formData = {
-          'plannedDeliveryDate-day': '09',
-          'plannedDeliveryDate-month': '02',
-          'plannedDeliveryDate-year': '2021',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
         const context = getContext({
           commonManifest, selectedPriceManifest: flatOndemandManifest, formData,
         });
-        expect(context.questions.plannedDeliveryDate)
-          .toEqual(expectedContext.questions.plannedDeliveryDate);
+        expect(context.questions.deliveryDate)
+          .toEqual(expectedContext.questions.deliveryDate);
       });
 
       it('should populate the quantity with data provided', () => {
@@ -172,17 +172,17 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
   describe('getErrorContext', () => {
     describe('flat - ondemand', () => {
-      it('should return error for plannedDeliveryDate', () => {
+      it('should return error for deliveryDate', () => {
         const expectedContext = {
           errors: [
-            { href: '#plannedDeliveryDate', text: flatOndemandManifest.errorMessages.PlannedDeliveryDateRequired },
+            { href: '#deliveryDate', text: flatOndemandManifest.errorMessages.DeliveryDateRequired },
           ],
           questions: {
             ...flatOndemandManifest.questions,
-            plannedDeliveryDate: {
-              ...flatOndemandManifest.questions.plannedDeliveryDate,
+            deliveryDate: {
+              ...flatOndemandManifest.questions.deliveryDate,
               error: {
-                message: flatOndemandManifest.errorMessages.PlannedDeliveryDateRequired,
+                message: flatOndemandManifest.errorMessages.DeliveryDateRequired,
                 fields: ['day', 'month', 'year'],
               },
             },
@@ -193,8 +193,8 @@ describe('catalogue-solutions order-item contextCreator', () => {
           commonManifest,
           selectedPriceManifest: flatOndemandManifest,
           validationErrors: [{
-            field: 'PlannedDeliveryDate',
-            id: 'PlannedDeliveryDateRequired',
+            field: 'DeliveryDate',
+            id: 'DeliveryDateRequired',
             part: ['day', 'month', 'year'],
           }],
         });

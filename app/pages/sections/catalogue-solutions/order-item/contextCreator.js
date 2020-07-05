@@ -13,7 +13,7 @@ const populateEstimationPeriodQuestion = ({ questionManifest, timeUnitDescriptio
   };
 };
 
-const populatePlannedDeliveryDateQuestion = ({
+const populateDeliveryDateQuestion = ({
   questionManifest, day, month, year,
 }) => {
   const plannedDeliveryDatePopulated = ({
@@ -62,8 +62,8 @@ const populateQuestionWithData = ({ questionManifest, formData, questionId }) =>
       timeUnitDescription: formData && formData[questionId],
     });
   }
-  if (questionId === 'plannedDeliveryDate') {
-    return populatePlannedDeliveryDateQuestion({
+  if (questionId === 'deliveryDate') {
+    return populateDeliveryDateQuestion({
       questionManifest,
       day: formData[`${questionId}-day`],
       month: formData[`${questionId}-month`],

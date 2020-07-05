@@ -24,12 +24,12 @@ export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
 };
 
 const formatFormData = ({ formData }) => ({
-  'plannedDeliveryDate-day': formData['plannedDeliveryDate-day']
-    ? formData['plannedDeliveryDate-day'].trim() : undefined,
-  'plannedDeliveryDate-month': formData['plannedDeliveryDate-month']
-    ? formData['plannedDeliveryDate-month'].trim() : undefined,
-  'plannedDeliveryDate-year': formData['plannedDeliveryDate-year']
-    ? formData['plannedDeliveryDate-year'].trim() : undefined,
+  'deliveryDate-day': formData['deliveryDate-day']
+    ? formData['deliveryDate-day'].trim() : undefined,
+  'deliveryDate-month': formData['deliveryDate-month']
+    ? formData['deliveryDate-month'].trim() : undefined,
+  'deliveryDate-year': formData['deliveryDate-year']
+    ? formData['deliveryDate-year'].trim() : undefined,
   quantity: formData.quantity
     ? formData.quantity.trim() : undefined,
   price: formData.price && formData.price.length > 0
@@ -88,9 +88,9 @@ export const getOrderItemErrorPageContext = (params) => {
 
 export const validateOrderItemForm = ({ data }) => {
   const errors = [];
-  const plannedDeliverDateError = getDateErrors('plannedDeliveryDate', data);
-  if (plannedDeliverDateError) {
-    errors.push(plannedDeliverDateError);
+  const deliverDateError = getDateErrors('deliveryDate', data);
+  if (deliverDateError) {
+    errors.push(deliverDateError);
   }
 
   if (!data.quantity || data.quantity.trim().length === 0) {
@@ -101,7 +101,7 @@ export const validateOrderItemForm = ({ data }) => {
   } else if (isNaN(data.quantity)) {
     errors.push({
       field: 'Quantity',
-      id: 'NumericQuantityRequired',
+      id: 'QuantityMustBeANumber',
     });
   }
 
@@ -120,7 +120,7 @@ export const validateOrderItemForm = ({ data }) => {
   } else if (isNaN(data.price)) {
     errors.push({
       field: 'Price',
-      id: 'NumericPriceRequired',
+      id: 'PriceMustBeANumber',
     });
   }
 

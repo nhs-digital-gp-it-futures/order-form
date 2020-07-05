@@ -13,10 +13,6 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-// jest.mock('../../../../helpers/getDateErrors', () => ({
-//   getDateErrors: jest.fn(),
-// }));
-
 jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
 
 jest.mock('./manifestProvider', () => ({
@@ -131,9 +127,9 @@ describe('catalogue-solutions order-item controller', () => {
           quantity: '1',
           price: '1',
           selectEstimationPeriod: 'perMonth',
-          'plannedDeliveryDate-day': '09',
-          'plannedDeliveryDate-month': '02',
-          'plannedDeliveryDate-year': '2021',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
@@ -147,9 +143,9 @@ describe('catalogue-solutions order-item controller', () => {
         field: 'Quantity',
         id: 'QuantityRequired',
       };
-      const numericalQuantity = {
+      const quantityMustBeANumber = {
         field: 'Quantity',
-        id: 'NumericQuantityRequired',
+        id: 'QuantityMustBeANumber',
       };
       const estimationPeriodRequired = {
         field: 'SelectEstimationPeriod',
@@ -159,13 +155,13 @@ describe('catalogue-solutions order-item controller', () => {
         field: 'Price',
         id: 'PriceRequired',
       };
-      const numericalPrice = {
+      const priceMustBeANumber = {
         field: 'Price',
-        id: 'NumericPriceRequired',
+        id: 'PriceMustBeANumber',
       };
-      const plannedDeliveryDateRequired = {
-        field: 'PlannedDeliveryDate',
-        id: 'PlannedDeliveryDateRequired',
+      const deliveryDateRequired = {
+        field: 'DeliveryDate',
+        id: 'DeliveryDateRequired',
         part: ['day', 'month', 'year'],
       };
 
@@ -174,9 +170,9 @@ describe('catalogue-solutions order-item controller', () => {
           quantity: '',
           price: '1.5',
           selectEstimationPeriod: 'perMonth',
-          'plannedDeliveryDate-day': '09',
-          'plannedDeliveryDate-month': '02',
-          'plannedDeliveryDate-year': '2021',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
@@ -190,24 +186,24 @@ describe('catalogue-solutions order-item controller', () => {
           quantity: 'not a number',
           price: '1.5',
           selectEstimationPeriod: 'perMonth',
-          'plannedDeliveryDate-day': '09',
-          'plannedDeliveryDate-month': '02',
-          'plannedDeliveryDate-year': '2021',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
 
         expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([numericalQuantity]);
+        expect(response.errors).toEqual([quantityMustBeANumber]);
       });
 
       it('should return an array of one validation error and success as false if an estimation period is not selected', () => {
         const data = {
           quantity: '1',
           price: '1.5',
-          'plannedDeliveryDate-day': '09',
-          'plannedDeliveryDate-month': '02',
-          'plannedDeliveryDate-year': '2021',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
@@ -221,9 +217,9 @@ describe('catalogue-solutions order-item controller', () => {
           quantity: '1',
           price: '',
           selectEstimationPeriod: 'perMonth',
-          'plannedDeliveryDate-day': '09',
-          'plannedDeliveryDate-month': '02',
-          'plannedDeliveryDate-year': '2021',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
@@ -237,31 +233,31 @@ describe('catalogue-solutions order-item controller', () => {
           quantity: '1',
           price: 'not a number',
           selectEstimationPeriod: 'perMonth',
-          'plannedDeliveryDate-day': '09',
-          'plannedDeliveryDate-month': '02',
-          'plannedDeliveryDate-year': '2021',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
         const response = validateOrderItemForm({ data });
 
         expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([numericalPrice]);
+        expect(response.errors).toEqual([priceMustBeANumber]);
       });
 
-      it('should return an array of one validation error and success as false if plannedDeliveryDate is not valid', () => {
+      it('should return an array of one validation error and success as false if deliveryDate is not valid', () => {
         const data = {
           quantity: '1',
           price: '1.5',
           selectEstimationPeriod: 'perMonth',
-          'plannedDeliveryDate-day': '',
-          'plannedDeliveryDate-month': '',
-          'plannedDeliveryDate-year': '',
+          'deliveryDate-day': '',
+          'deliveryDate-month': '',
+          'deliveryDate-year': '',
         };
 
         const response = validateOrderItemForm({ data });
 
         expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([plannedDeliveryDateRequired]);
+        expect(response.errors).toEqual([deliveryDateRequired]);
       });
 
       it('should return a validation error if all values are undefined', () => {
@@ -270,7 +266,7 @@ describe('catalogue-solutions order-item controller', () => {
         const response = validateOrderItemForm({ data });
 
         expect(response.errors).toEqual(
-          [quantityRequired, estimationPeriodRequired, priceRequired, plannedDeliveryDateRequired],
+          [deliveryDateRequired, quantityRequired, estimationPeriodRequired, priceRequired],
         );
       });
     });
