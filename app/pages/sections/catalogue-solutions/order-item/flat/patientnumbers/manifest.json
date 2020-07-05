@@ -7,12 +7,12 @@
     },
     "quantity": {
       "id": "quantity",
-      "mainAdvice": "Quantity",
+      "mainAdvice": "Practice List Size",
       "rows": 3,
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",
-        "title": "What quantity should I enter?",
-        "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
+        "title": "What list size should I enter?",
+        "innerComponent": "This figure is usually the number of patients registered with the Service Recipient. If you're unsure how this relates to your order you can contact the helpdesk using the link at the bottom of the page."
       }
     }
   },
@@ -39,7 +39,7 @@
         "expandableSection": {
           "dataTestId": "view-section-input-id",
           "title": "What price should I enter?",
-          "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
+          "innerComponent": "You can change the list price if you've agreed a different rate with the supplier."
         }
       },
       "unitOfOrder": {
@@ -48,11 +48,12 @@
     }
   },
   "errorMessages": {
-    "QuantityRequired": "Enter a quantity",
-    "QuantityMustBeANumber": "Quantity must be a number",
-    "QuantityInvalid": "Quantity must be a whole number",
-    "QuantityGreaterThanZero": "Quantity must be greater than zero",
-    "QuantityLessThanMax": "Quantity must be smaller",
+    "QuantityRequired": "Enter a practice list size",
+    "QuantityMustBeANumber": "Practice list size must be a number",
+    "QuantityInvalid": "Practice list size must be a whole number",
+    "QuantityGreaterThanZero": "Practice list size must be greater than zero",
+    "QuantityLessThanMax": "Practice list size must be smaller",
+    "EstimationPeriodRequired": "Select an estimation period",
     "PriceRequired": "Enter a price",
     "PriceMustBeANumber": "Price must be a number",
     "PriceMoreThan3dp": "Price must be to 3 decimal places or less",
