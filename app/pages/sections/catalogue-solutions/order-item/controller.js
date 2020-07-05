@@ -86,42 +86,55 @@ export const getOrderItemErrorPageContext = (params) => {
   return getErrorContext(updatedParams);
 };
 
-export const validateOrderItemForm = ({ data }) => {
+export const validateOrderItemForm = ({ data, selectedPrice }) => {
   const errors = [];
-  const deliverDateError = getDateErrors('deliveryDate', data);
-  if (deliverDateError) {
-    errors.push(deliverDateError);
+  const selectedPriceManifest = getSelectedPriceManifest({
+    provisioningType: selectedPrice.provisioningType,
+    type: selectedPrice.type,
+  });
+
+  if (selectedPriceManifest.questions.deliveryDate) {
+    const deliverDateError = getDateErrors('deliveryDate', data);
+    if (deliverDateError) {
+      errors.push(deliverDateError);
+    }
   }
 
-  if (!data.quantity || data.quantity.trim().length === 0) {
-    errors.push({
-      field: 'Quantity',
-      id: 'QuantityRequired',
-    });
-  } else if (isNaN(data.quantity)) {
-    errors.push({
-      field: 'Quantity',
-      id: 'QuantityMustBeANumber',
-    });
+  if (selectedPriceManifest.questions.quantity) {
+    if (!data.quantity || data.quantity.trim().length === 0) {
+      errors.push({
+        field: 'Quantity',
+        id: 'QuantityRequired',
+      });
+    } else if (isNaN(data.quantity)) {
+      errors.push({
+        field: 'Quantity',
+        id: 'QuantityMustBeANumber',
+      });
+    }
   }
 
-  if (!data.selectEstimationPeriod) {
-    errors.push({
-      field: 'SelectEstimationPeriod',
-      id: 'EstimationPeriodRequired',
-    });
+  if (selectedPriceManifest.questions.selectEstimationPeriod) {
+    if (!data.selectEstimationPeriod) {
+      errors.push({
+        field: 'SelectEstimationPeriod',
+        id: 'EstimationPeriodRequired',
+      });
+    }
   }
 
-  if (!data.price || data.price.trim().length === 0) {
-    errors.push({
-      field: 'Price',
-      id: 'PriceRequired',
-    });
-  } else if (isNaN(data.price)) {
-    errors.push({
-      field: 'Price',
-      id: 'PriceMustBeANumber',
-    });
+  if (selectedPriceManifest.addPriceTable.cellInfo.price.question) {
+    if (!data.price || data.price.trim().length === 0) {
+      errors.push({
+        field: 'Price',
+        id: 'PriceRequired',
+      });
+    } else if (isNaN(data.price)) {
+      errors.push({
+        field: 'Price',
+        id: 'PriceMustBeANumber',
+      });
+    }
   }
 
   if (errors.length === 0) {

@@ -1,5 +1,6 @@
 import commonManifest from './commonManifest.json';
 import flatOndemandManifest from './flat/ondemand/manifest.json';
+import flatPatientNumbersManifest from './flat/patientnumbers/manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
 
 describe('catalogue-solutions order-item contextCreator', () => {
@@ -147,7 +148,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
                 },
                 {
                   ...flatOndemandManifest.addPriceTable.cellInfo.unitOfOrder,
-                  data: 'per consultation',
+                  data: 'per consultation ',
                 },
               ],
             ],
@@ -163,6 +164,111 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
         const context = getContext({
           commonManifest, selectedPriceManifest: flatOndemandManifest, selectedPrice, formData,
+        });
+
+        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+      });
+    });
+
+    describe('flat - patientnumbers', () => {
+      it('should return the questions', () => {
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatPatientNumbersManifest,
+        });
+        expect(context.questions).toEqual(flatPatientNumbersManifest.questions);
+      });
+
+      it('should populate the planned delivery data with data provided', () => {
+        const expectedContext = {
+          questions: {
+            deliveryDate: {
+              ...flatPatientNumbersManifest.questions.deliveryDate,
+              data: {
+                day: '09',
+                month: '02',
+                year: '2021',
+              },
+            },
+          },
+        };
+
+        const formData = {
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
+        };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatPatientNumbersManifest, formData,
+        });
+        expect(context.questions.deliveryDate)
+          .toEqual(expectedContext.questions.deliveryDate);
+      });
+
+      it('should populate the quantity with data provided', () => {
+        const expectedContext = {
+          questions: {
+            quantity: {
+              ...flatPatientNumbersManifest.questions.quantity,
+              data: 'some quantity data',
+            },
+          },
+        };
+
+        const formData = {
+          quantity: 'some quantity data',
+        };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatPatientNumbersManifest, formData,
+        });
+        expect(context.questions.quantity).toEqual(expectedContext.questions.quantity);
+      });
+
+      it('should return the addPriceTable colummInfo', () => {
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatPatientNumbersManifest,
+        });
+
+        expect(context.addPriceTable.columnInfo)
+          .toEqual(flatPatientNumbersManifest.addPriceTable.columnInfo);
+      });
+
+      it('should return the addPriceTable with items and the price input and unit of order populated', () => {
+        const expectedContext = {
+          addPriceTable: {
+            ...flatPatientNumbersManifest.addPriceTable,
+            items: [
+              [
+                {
+                  ...flatPatientNumbersManifest.addPriceTable.cellInfo.price,
+                  question: {
+                    ...flatPatientNumbersManifest.addPriceTable.cellInfo.price.question,
+                    data: 0.1,
+                  },
+                },
+                {
+                  ...flatPatientNumbersManifest.addPriceTable.cellInfo.unitOfOrder,
+                  data: 'per patient per year',
+                },
+              ],
+            ],
+          },
+        };
+
+        const selectedPrice = {
+          price: 0.1,
+          itemUnit: { description: 'per patient' },
+          timeUnit: { description: 'per year' },
+        };
+
+        const formData = { price: 0.1 };
+
+        const context = getContext({
+          commonManifest,
+          selectedPriceManifest: flatPatientNumbersManifest,
+          selectedPrice,
+          formData,
         });
 
         expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
@@ -275,7 +381,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
                 },
                 {
                   ...flatOndemandManifest.addPriceTable.cellInfo.unitOfOrder,
-                  data: 'per consultation',
+                  data: 'per consultation ',
                 },
               ],
             ],

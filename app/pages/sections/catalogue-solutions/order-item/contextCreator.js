@@ -28,7 +28,7 @@ const populateDeliveryDateQuestion = ({
 };
 
 const generateAddPriceTable = ({
-  addPriceTable, price, itemUnitDescription, errorMap,
+  addPriceTable, price, itemUnitDescription, timeUnitDescription = '', errorMap,
 }) => {
   const columns = [];
 
@@ -45,7 +45,7 @@ const generateAddPriceTable = ({
 
   columns.push({
     ...addPriceTable.cellInfo.unitOfOrder,
-    data: itemUnitDescription,
+    data: `${itemUnitDescription} ${timeUnitDescription}`,
   });
 
   const items = [columns];
@@ -126,7 +126,12 @@ export const getContext = ({
   addPriceTable: selectedPriceManifest && generateAddPriceTable({
     addPriceTable: selectedPriceManifest.addPriceTable,
     price: formData && formData.price,
-    itemUnitDescription: selectedPrice && selectedPrice.itemUnit.description,
+    itemUnitDescription: selectedPrice
+      && selectedPrice.itemUnit
+      && selectedPrice.itemUnit.description,
+    timeUnitDescription: selectedPrice
+      && selectedPrice.timeUnit
+      && selectedPrice.timeUnit.description,
     errorMap,
   }),
   deleteButtonHref: '#',
