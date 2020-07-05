@@ -1,7 +1,8 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import content from '../commonManifest.json';
+import commonContent from '../commonManifest.json';
+import content from '../flat/ondemand/manifest.json';
 import { solutionsApiUrl } from '../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/order-item-id';
@@ -151,7 +152,71 @@ test('should render the description', async (t) => {
 
   await t
     .expect(description.exists).ok()
-    .expect(await extractInnerText(description)).eql(content.description);
+    .expect(await extractInnerText(description)).eql(commonContent.description);
+});
+
+test('should render legend with mainAdvice for delivery date question', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const mainAdvice = Selector('legend');
+
+  await t
+    .expect(mainAdvice.exists).ok()
+    .expect(await extractInnerText(mainAdvice)).eql(content.questions.deliveryDate.mainAdvice);
+});
+
+test('should render additionalAdvice for delivery date question', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const additionalAdvice = Selector('[data-test-id="date-field-input"] span.nhsuk-hint');
+
+  await t
+    .expect(additionalAdvice.exists).ok()
+    .expect(await extractInnerText(additionalAdvice)).eql(content.questions.deliveryDate.additionalAdvice);
+});
+
+test('should render labels for day, month and year inputs for delivery date question', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const labels = Selector('label');
+  const dayLabel = labels.nth(0);
+  const monthLabel = labels.nth(1);
+  const yearLabel = labels.nth(2);
+
+  await t
+    .expect(dayLabel.exists).ok()
+    .expect(await extractInnerText(dayLabel)).eql('Day')
+    .expect(monthLabel.exists).ok()
+    .expect(await extractInnerText(monthLabel)).eql('Month')
+    .expect(yearLabel.exists).ok()
+    .expect(await extractInnerText(yearLabel)).eql('Year');
+});
+
+test('should render input fields for day, month and year for delivery date question', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const inputFields = Selector('#deliveryDate input:not([name=_csrf])');
+  const dayInput = inputFields.nth(0);
+  const monthInput = inputFields.nth(1);
+  const yearInput = inputFields.nth(2);
+
+  await t
+    .expect(dayInput.exists).ok()
+    .expect(dayInput.getAttribute('id')).eql('deliveryDate-day')
+    .expect(dayInput.getAttribute('name')).eql('deliveryDate-day')
+    .expect(dayInput.getAttribute('type')).eql('number')
+    .expect(monthInput.exists).ok()
+    .expect(monthInput.getAttribute('id')).eql('deliveryDate-month')
+    .expect(monthInput.getAttribute('name')).eql('deliveryDate-month')
+    .expect(monthInput.getAttribute('type')).eql('number')
+    .expect(yearInput.exists).ok()
+    .expect(yearInput.getAttribute('id')).eql('deliveryDate-year')
+    .expect(yearInput.getAttribute('name')).eql('deliveryDate-year')
+    .expect(yearInput.getAttribute('type')).eql('number');
 });
 
 test('should render the delete button', async (t) => {
@@ -162,7 +227,7 @@ test('should render the delete button', async (t) => {
 
   await t
     .expect(button.exists).ok()
-    .expect(await extractInnerText(button)).eql(content.deleteButtonText);
+    .expect(await extractInnerText(button)).eql(commonContent.deleteButtonText);
 });
 
 test('should render the save button', async (t) => {
@@ -173,7 +238,7 @@ test('should render the save button', async (t) => {
 
   await t
     .expect(button.exists).ok()
-    .expect(await extractInnerText(button)).eql(content.saveButtonText);
+    .expect(await extractInnerText(button)).eql(commonContent.saveButtonText);
 });
 
 test('should show the correct error summary and input error when no date is entered and save is clicked', async (t) => {
