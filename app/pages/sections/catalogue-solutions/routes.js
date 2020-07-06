@@ -12,7 +12,7 @@ import {
   getOrderItemErrorPageContext,
   validateOrderItemForm,
   getSolution,
-  postSolution,
+  postSolutionOrderItem,
 } from './order-item/controller';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 
@@ -93,7 +93,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
         name: solutionName,
       };
       const detail = req.body;
-      await postSolution({
+      await postSolutionOrderItem({
         orderId,
         accessToken,
         serviceRecipient,
