@@ -84,20 +84,14 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
     if (response.success) {
       const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
-      const serviceRecipient = {
-        name: serviceRecipientName,
-        odsCode: selectedRecipientId,
-      };
-      const solution = {
-        id: selectedSolutionId,
-        name: solutionName,
-      };
       const detail = req.body;
       await postSolutionOrderItem({
         orderId,
         accessToken,
-        serviceRecipient,
-        solution,
+        selectedRecipientId,
+        serviceRecipientName,
+        selectedSolutionId,
+        solutionName,
         selectedPrice,
         detail,
       });

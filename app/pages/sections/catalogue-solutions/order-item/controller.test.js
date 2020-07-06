@@ -368,8 +368,10 @@ describe('catalogue-solutions order-item controller', () => {
       postSolutionOrderItem({
         orderId: 'order1',
         accessToken: 'access_token',
-        serviceRecipient,
-        solution,
+        selectedRecipientId: serviceRecipient.odsCode,
+        serviceRecipientName: serviceRecipient.name,
+        selectedSolutionId: solution.id,
+        solutionName: solution.name,
         selectedPrice,
         detail,
       });

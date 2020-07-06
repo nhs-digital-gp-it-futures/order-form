@@ -8,10 +8,20 @@ import { getSelectedPriceManifest } from './manifestProvider';
 import { getDateErrors } from '../../../../helpers/getDateErrors';
 import { extractDate } from '../../../../helpers/extractDate';
 
-const formatPostData = (serviceRecipient, solution, selectedPrice, detail) => ({
-  serviceRecipient,
-  catalogueSolutionId: solution.id,
-  catalogueSolutionName: solution.name,
+const formatPostData = ({
+  selectedRecipientId,
+  serviceRecipientName,
+  selectedSolutionId,
+  solutionName,
+  selectedPrice,
+  detail,
+}) => ({
+  serviceRecipient: {
+    name: serviceRecipientName,
+    odsCode: selectedRecipientId,
+  },
+  catalogueSolutionId: selectedSolutionId,
+  catalogueSolutionName: solutionName,
   deliveryDate: extractDate('plannedDeliveryDate', detail),
   quantity: parseInt(detail.quantity, 10),
   estimationPeriod: detail.selectEstimationPeriod,
@@ -179,13 +189,22 @@ export const getSolution = async ({ solutionId, accessToken }) => {
 export const postSolutionOrderItem = async ({
   orderId,
   accessToken,
-  serviceRecipient,
-  solution,
+  selectedRecipientId,
+  serviceRecipientName,
+  selectedSolutionId,
+  solutionName,
   selectedPrice,
   detail,
 }) => {
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postCatalogueSolution', options: { orderId } });
-  const body = formatPostData(serviceRecipient, solution, selectedPrice, detail);
+  const body = formatPostData({
+    selectedRecipientId,
+    serviceRecipientName,
+    selectedSolutionId,
+    solutionName,
+    selectedPrice,
+    detail,
+  });
   await postData({
     endpoint, body, accessToken, logger,
   });
