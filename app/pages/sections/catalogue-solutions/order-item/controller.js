@@ -6,19 +6,13 @@ import { getEndpoint } from '../../../../endpoints';
 import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from './manifestProvider';
 import { getDateErrors } from '../../../../helpers/getDateErrors';
-
-const extractDeliveryDate = (detail) => {
-  const day = detail['plannedDeliveryDate-day'];
-  const month = detail['plannedDeliveryDate-month'];
-  const year = detail['plannedDeliveryDate-year'];
-  return `${year}-${month.length === 1 ? '0' : ''}${month}-${day.length === 1 ? '0' : ''}${day}`;
-};
+import { extractDate } from '../../../../helpers/extractDate';
 
 const formatPostData = (serviceRecipient, solution, selectedPrice, detail) => ({
   serviceRecipient,
   catalogueSolutionId: solution.id,
   catalogueSolutionName: solution.name,
-  deliveryDate: extractDeliveryDate(detail),
+  deliveryDate: extractDate('plannedDeliveryDate', detail),
   quantity: parseInt(detail.quantity, 10),
   estimationPeriod: detail.selectEstimationPeriod,
   provisioningType: selectedPrice.provisioningType,
