@@ -8,7 +8,6 @@ import { getSelectedPriceManifest } from './manifestProvider';
 import { getDateErrors } from '../../../../helpers/getDateErrors';
 
 export const getOrderItem = async ({ orderId, orderItemId, accessToken }) => {
-  console.log(orderId, orderItemId)
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCatalogueOrderItem', options: { orderId, orderItemId } });
   const catalogueOrderItem = await getData({ endpoint, accessToken, logger });
   logger.info(`Catalogue order item returned for ${orderItemId}`);
