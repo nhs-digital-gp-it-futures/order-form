@@ -181,7 +181,7 @@ describe('catalogue-solutions section routes', () => {
         });
     });
 
-    it.only('should return the catalogue-solutions order item page if authorised and is not a new solution', () => {
+    it('should return the catalogue-solutions order item page if authorised and is not a new solution', () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItem = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
@@ -290,8 +290,9 @@ describe('catalogue-solutions section routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/catalogue-solutions/newsolution if a recipient is selected', async () => {
+    it('should redirect to /organisation/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
+      orderItemController.postSolutionOrderItem = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
       orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
@@ -308,7 +309,6 @@ describe('catalogue-solutions section routes', () => {
           mockAuthorisedCookie,
         ],
       });
-
       return request(setUpFakeApp())
         .post(path)
         .type('form')
