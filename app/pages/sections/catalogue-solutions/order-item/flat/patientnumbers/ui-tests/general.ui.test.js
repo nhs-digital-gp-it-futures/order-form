@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl } from '../../../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/order-item-id';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/newsolution';
 
 const getLocation = ClientFunction(() => document.location.href);
 
