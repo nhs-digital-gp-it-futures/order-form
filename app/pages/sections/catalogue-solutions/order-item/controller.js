@@ -32,6 +32,14 @@ const formatPostData = ({
   price: parseFloat(detail.price),
 });
 
+export const getOrderItem = async ({ orderId, orderItemId, accessToken }) => {
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCatalogueOrderItem', options: { orderId, orderItemId } });
+  const catalogueOrderItem = await getData({ endpoint, accessToken, logger });
+  logger.info(`Catalogue order item returned for ${orderItemId}`);
+
+  return catalogueOrderItem;
+};
+
 export const getRecipientName = async ({ selectedRecipientId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipient', options: { selectedRecipientId } });
   const serviceRecipientData = await getData({ endpoint, accessToken, logger });

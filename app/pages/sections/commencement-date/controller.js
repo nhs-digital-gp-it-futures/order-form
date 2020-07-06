@@ -22,18 +22,24 @@ export const getCommencementDateContext = async ({ orderId, accessToken }) => {
   });
 };
 
+export const validateCommencementDateForm = ({ data }) => {
+  const errors = [];
+  const dateErrors = getDateErrors('commencementDate', data);
+  if (dateErrors) {
+    errors.push(dateErrors);
+  }
+
+  return errors;
+};
+
 export const putCommencementDate = async ({
   orderId, data, accessToken,
 }) => {
-  const errors = [getDateErrors('commencementDate', data)];
-  if (errors[0]) return { success: false, errors };
-
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putCommencementDate', options: { orderId } });
   try {
-    const body = formatPutData(data);
     await putData({
       endpoint,
-      body,
+      body: formatPutData(data),
       accessToken,
       logger,
     });

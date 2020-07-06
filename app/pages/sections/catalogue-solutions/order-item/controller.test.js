@@ -2,6 +2,7 @@ import { getData, postData } from 'buying-catalogue-library';
 import { solutionsApiUrl, organisationApiUrl, orderApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
 import {
+  getOrderItem,
   getRecipientName,
   getSelectedPrice,
   getOrderItemContext,
@@ -82,6 +83,25 @@ describe('catalogue-solutions order-item controller', () => {
         solutionName: 'solution-name',
         selectedPrice,
         formData: { price: 0.1 },
+      });
+    });
+  });
+
+  describe('getCatalogueOrderItem', () => {
+    afterEach(() => {
+      getData.mockReset();
+    });
+
+    it('should call getData once with the correct params', async () => {
+      getData
+        .mockResolvedValueOnce({ data: {} });
+
+      await getOrderItem({ orderId: 'order-1', orderItemId: 'order-item-1', accessToken: 'access_token' });
+      expect(getData.mock.calls.length).toEqual(1);
+      expect(getData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order-1/sections/catalogue-solutions/order-item-1`,
+        accessToken: 'access_token',
+        logger,
       });
     });
   });

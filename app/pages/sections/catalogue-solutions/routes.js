@@ -7,6 +7,7 @@ import {
   putCatalogueSolutions,
 } from './catalogue-solutions/controller';
 import {
+  getOrderItem,
   getOrderItemContext,
   getSelectedPrice,
   getOrderItemErrorPageContext,
@@ -46,8 +47,12 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.use('/select', catalogueSolutionsSelectRoutes(authProvider, addContext, sessionManager));
 
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
+
+    if (orderItemId !== 'newsolution') {
+      await getOrderItem({ orderId, orderItemId, accessToken });
+    }
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
