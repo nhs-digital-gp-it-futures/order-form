@@ -76,13 +76,19 @@ const populateQuestionWithData = ({ questionManifest, formData, questionId }) =>
   };
 };
 
+const determineFields = (errorMap, questionId) => {
+  if (errorMap[questionId].fields) return errorMap[questionId].fields;
+  if (questionId === 'deliveryDate') return ['day', 'month', 'year'];
+  return undefined;
+};
+
 const generateQuestions = ({ questions, formData, errorMap }) => {
   const { questionsAcc: modifiedQuestions } = Object.entries(questions)
     .reduce(({ questionsAcc }, [questionId, questionManifest]) => {
       const questionError = errorMap && errorMap[questionId]
         ? {
           message: errorMap[questionId].errorMessages.join(', '),
-          fields: errorMap[questionId].fields,
+          fields: determineFields(errorMap, questionId),
         }
         : undefined;
 
@@ -150,6 +156,8 @@ export const getErrorContext = (params) => {
     validationErrors: params.validationErrors,
     errorMessagesFromManifest: params.selectedPriceManifest.errorMessages,
   });
+
+  console.log('errorMap', errorMap)
 
   const contextWithErrors = getContext({
     commonManifest: params.commonManifest,
