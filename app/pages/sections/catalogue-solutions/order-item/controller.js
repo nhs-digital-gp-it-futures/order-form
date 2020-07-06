@@ -103,11 +103,7 @@ export const postSolution = async ({
 }) => {
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postCatalogueSolution', options: { orderId } });
   const body = formatPostData(serviceRecipient, solution, selectedPrice, detail);
-  try {
-    await postData({
-      endpoint, body, accessToken, logger,
-    });
-  } catch (err) {
-    throw err;
-  }
+  await postData({
+    endpoint, body, accessToken, logger,
+  });
 };
