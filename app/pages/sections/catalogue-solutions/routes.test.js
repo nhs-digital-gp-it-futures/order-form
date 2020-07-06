@@ -275,7 +275,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should redirect to /organisation/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
-      orderItemController.postSolution = jest.fn().mockResolvedValue({});
+      orderItemController.postSolutionOrderItem = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
       orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
