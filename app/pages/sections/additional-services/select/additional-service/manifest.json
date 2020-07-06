@@ -1,0 +1,15 @@
+{
+  "backLinkText": "Go back",
+  "title": "Add Additional Service for",
+  "description": "These are the Additional Services for the Catalogue Solutions you've added to this order. Select the one you want to purchase from the list.",
+  "questions": [
+    {
+      "id": "selectAdditionalService",
+      "mainAdvice": "Select Additional Service"
+    }
+  ],
+  "errorMessages": {
+    "SelectSolutionRequired": "Select an Additional Service"
+  },
+  "continueButtonText": "Continue"
+}
