@@ -22,7 +22,7 @@ const formatPostData = ({
   },
   catalogueSolutionId: selectedSolutionId,
   catalogueSolutionName: solutionName,
-  deliveryDate: extractDate('plannedDeliveryDate', detail),
+  deliveryDate: extractDate('deliveryDate', detail),
   quantity: parseInt(detail.quantity, 10),
   estimationPeriod: detail.selectEstimationPeriod,
   provisioningType: selectedPrice.provisioningType,
@@ -196,7 +196,7 @@ export const postSolutionOrderItem = async ({
   selectedPrice,
   detail,
 }) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postCatalogueSolution', options: { orderId } });
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postSolutionOrderItem', options: { orderId } });
   const body = formatPostData({
     selectedRecipientId,
     serviceRecipientName,
