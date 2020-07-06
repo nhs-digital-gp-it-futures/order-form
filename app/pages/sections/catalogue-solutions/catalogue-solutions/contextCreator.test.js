@@ -116,7 +116,7 @@ describe('catalogue-solutions contextCreator', () => {
       expect(context.addOrderItemButtonText).toEqual(manifest.addOrderItemButtonText);
     });
 
-    it('should return the addSolutionButtonHref', () => {
+    it('should return the addOrderItemButtonHref', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.addOrderItemButtonHref).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select/solution`);
     });
