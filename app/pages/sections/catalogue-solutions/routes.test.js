@@ -167,6 +167,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should return the catalogue-solutions order item page if authorised', () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItem = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
       orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
@@ -193,6 +194,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should redirect to the login page if the user is not logged in', () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItem = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
       orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
@@ -214,6 +216,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItem = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
       orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
@@ -238,6 +241,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should show the recipient select page with errors if there are validation errors', async () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItem = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
       orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
@@ -275,6 +279,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should redirect to /organisation/some-order-id/catalogue-solutions/newsolution if a recipient is selected', async () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItem = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
       orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
