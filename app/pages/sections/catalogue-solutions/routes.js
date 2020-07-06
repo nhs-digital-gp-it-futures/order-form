@@ -13,6 +13,7 @@ import {
   getOrderItemErrorPageContext,
   validateOrderItemForm,
   getSolution,
+  postSolutionOrderItem,
 } from './order-item/controller';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 
@@ -90,16 +91,29 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const selectedPrice = sessionManager.getFromSession({ req, key: 'selectedPrice' });
-
-    const response = validateOrderItemForm({ data: req.body, selectedPrice });
-    if (response.success) {
-      logger.info('redirecting catalogue solutions main page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
-    }
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const solutionName = sessionManager.getFromSession({ req, key: 'solutionName' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
+    const selectedPrice = sessionManager.getFromSession({ req, key: 'selectedPrice' });
+    const response = validateOrderItemForm({ data: req.body, selectedPrice });
+
+    if (response.success) {
+      const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
+      const detail = req.body;
+      await postSolutionOrderItem({
+        orderId,
+        accessToken,
+        selectedRecipientId,
+        serviceRecipientName,
+        selectedSolutionId,
+        solutionName,
+        selectedPrice,
+        detail,
+      });
+      logger.info('redirecting catalogue solutions main page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
+    }
 
     const context = await getOrderItemErrorPageContext({
       orderId,
