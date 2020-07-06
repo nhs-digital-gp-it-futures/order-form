@@ -210,7 +210,17 @@ export const postSolutionOrderItem = async ({
     selectedPrice,
     formData,
   });
-  await postData({
-    endpoint, body, accessToken, logger,
-  });
+  try {
+    await postData({
+      endpoint, body, accessToken, logger,
+    });
+    logger.info(`Order item successfully created for order id: ${orderId}`);
+    return { success: true };
+  } catch (err) {
+    if (err.response.status === 400 && err.response.data && err.response.data.errors) {
+      return err.response.data;
+    }
+    logger.error(`Error creating order item for order id: ${orderId}`);
+    throw new Error();
+  }
 };
