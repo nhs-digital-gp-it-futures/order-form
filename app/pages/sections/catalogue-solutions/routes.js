@@ -49,7 +49,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    if (orderItemId) {
+    if (orderItemId !== 'newsolution') {
       await getOrderItem(orderId, orderItemId, accessToken);
     }
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
