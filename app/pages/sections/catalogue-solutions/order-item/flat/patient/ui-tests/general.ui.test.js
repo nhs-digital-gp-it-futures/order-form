@@ -48,7 +48,7 @@ const selectedPriceIdState = ClientFunction(() => {
 
 const selectedPrice = {
   priceId: 2,
-  provisioningType: 'patientnumbers',
+  provisioningType: 'patient',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
@@ -92,7 +92,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Catalogue-solutions - flat patientnumbers - general')
+fixture('Catalogue-solutions - flat patient - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -132,7 +132,7 @@ test('should render an expandable section for the quantity question', async (t) 
     .eql(content.questions.quantity.expandableSection.innerComponent);
 });
 
-test('should not render a selectEstimationPeriod question for flat patientnumbers', async (t) => {
+test('should not render a selectEstimationPeriod question for flat patient', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

@@ -1,6 +1,6 @@
 import commonManifest from './commonManifest.json';
 import flatOndemandManifest from './flat/ondemand/manifest.json';
-import flatPatientNumbersManifest from './flat/patient/manifest.json';
+import flatPatientManifest from './flat/patient/manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
 
 describe('catalogue-solutions order-item contextCreator', () => {
@@ -170,12 +170,12 @@ describe('catalogue-solutions order-item contextCreator', () => {
       });
     });
 
-    describe('flat - patientnumbers', () => {
+    describe('flat - patient', () => {
       it('should return the questions', () => {
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientNumbersManifest,
+          commonManifest, selectedPriceManifest: flatPatientManifest,
         });
-        expect(context.questions).toEqual(flatPatientNumbersManifest.questions);
+        expect(context.questions).toEqual(flatPatientManifest.questions);
         expect(context.questions.selectEstimationPeriod).toEqual(undefined);
       });
 
@@ -183,7 +183,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
         const expectedContext = {
           questions: {
             deliveryDate: {
-              ...flatPatientNumbersManifest.questions.deliveryDate,
+              ...flatPatientManifest.questions.deliveryDate,
               data: {
                 day: '09',
                 month: '02',
@@ -200,7 +200,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
         };
 
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientNumbersManifest, formData,
+          commonManifest, selectedPriceManifest: flatPatientManifest, formData,
         });
         expect(context.questions.deliveryDate)
           .toEqual(expectedContext.questions.deliveryDate);
@@ -210,7 +210,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
         const expectedContext = {
           questions: {
             quantity: {
-              ...flatPatientNumbersManifest.questions.quantity,
+              ...flatPatientManifest.questions.quantity,
               data: 'some quantity data',
             },
           },
@@ -221,35 +221,35 @@ describe('catalogue-solutions order-item contextCreator', () => {
         };
 
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientNumbersManifest, formData,
+          commonManifest, selectedPriceManifest: flatPatientManifest, formData,
         });
         expect(context.questions.quantity).toEqual(expectedContext.questions.quantity);
       });
 
       it('should return the addPriceTable colummInfo', () => {
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientNumbersManifest,
+          commonManifest, selectedPriceManifest: flatPatientManifest,
         });
 
         expect(context.addPriceTable.columnInfo)
-          .toEqual(flatPatientNumbersManifest.addPriceTable.columnInfo);
+          .toEqual(flatPatientManifest.addPriceTable.columnInfo);
       });
 
       it('should return the addPriceTable with items and the price input and unit of order populated', () => {
         const expectedContext = {
           addPriceTable: {
-            ...flatPatientNumbersManifest.addPriceTable,
+            ...flatPatientManifest.addPriceTable,
             items: [
               [
                 {
-                  ...flatPatientNumbersManifest.addPriceTable.cellInfo.price,
+                  ...flatPatientManifest.addPriceTable.cellInfo.price,
                   question: {
-                    ...flatPatientNumbersManifest.addPriceTable.cellInfo.price.question,
+                    ...flatPatientManifest.addPriceTable.cellInfo.price.question,
                     data: 0.1,
                   },
                 },
                 {
-                  ...flatPatientNumbersManifest.addPriceTable.cellInfo.unitOfOrder,
+                  ...flatPatientManifest.addPriceTable.cellInfo.unitOfOrder,
                   data: 'per patient per year',
                 },
               ],
@@ -267,7 +267,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
         const context = getContext({
           commonManifest,
-          selectedPriceManifest: flatPatientNumbersManifest,
+          selectedPriceManifest: flatPatientManifest,
           selectedPrice,
           formData,
         });
@@ -405,18 +405,18 @@ describe('catalogue-solutions order-item contextCreator', () => {
       });
     });
 
-    describe('flat - patientnumbers', () => {
+    describe('flat - patient', () => {
       it('should return error for deliveryDate', () => {
         const expectedContext = {
           errors: [
-            { href: '#deliveryDate', text: flatPatientNumbersManifest.errorMessages.DeliveryDateRequired },
+            { href: '#deliveryDate', text: flatPatientManifest.errorMessages.DeliveryDateRequired },
           ],
           questions: {
-            ...flatPatientNumbersManifest.questions,
+            ...flatPatientManifest.questions,
             deliveryDate: {
-              ...flatPatientNumbersManifest.questions.deliveryDate,
+              ...flatPatientManifest.questions.deliveryDate,
               error: {
-                message: flatPatientNumbersManifest.errorMessages.DeliveryDateRequired,
+                message: flatPatientManifest.errorMessages.DeliveryDateRequired,
                 fields: ['day', 'month', 'year'],
               },
             },
@@ -425,7 +425,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
         const context = getErrorContext({
           commonManifest,
-          selectedPriceManifest: flatPatientNumbersManifest,
+          selectedPriceManifest: flatPatientManifest,
           validationErrors: [{
             field: 'DeliveryDate',
             id: 'DeliveryDateRequired',
@@ -440,14 +440,14 @@ describe('catalogue-solutions order-item contextCreator', () => {
       it('should return error for quantity', () => {
         const expectedContext = {
           errors: [
-            { href: '#quantity', text: flatPatientNumbersManifest.errorMessages.QuantityRequired },
+            { href: '#quantity', text: flatPatientManifest.errorMessages.QuantityRequired },
           ],
           questions: {
-            ...flatPatientNumbersManifest.questions,
+            ...flatPatientManifest.questions,
             quantity: {
-              ...flatPatientNumbersManifest.questions.quantity,
+              ...flatPatientManifest.questions.quantity,
               error: {
-                message: flatPatientNumbersManifest.errorMessages.QuantityRequired,
+                message: flatPatientManifest.errorMessages.QuantityRequired,
               },
             },
           },
@@ -455,7 +455,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
         const context = getErrorContext({
           commonManifest,
-          selectedPriceManifest: flatPatientNumbersManifest,
+          selectedPriceManifest: flatPatientManifest,
           validationErrors: [{ field: 'Quantity', id: 'QuantityRequired' }],
         });
 
@@ -466,23 +466,23 @@ describe('catalogue-solutions order-item contextCreator', () => {
       it('should return error for price', () => {
         const expectedContext = {
           errors: [
-            { href: '#price', text: flatPatientNumbersManifest.errorMessages.PriceRequired },
+            { href: '#price', text: flatPatientManifest.errorMessages.PriceRequired },
           ],
           addPriceTable: {
-            ...flatPatientNumbersManifest.addPriceTable,
+            ...flatPatientManifest.addPriceTable,
             items: [
               [
                 {
-                  ...flatPatientNumbersManifest.addPriceTable.cellInfo.price,
+                  ...flatPatientManifest.addPriceTable.cellInfo.price,
                   question: {
-                    ...flatPatientNumbersManifest.addPriceTable.cellInfo.price.question,
+                    ...flatPatientManifest.addPriceTable.cellInfo.price.question,
                     error: {
-                      message: flatPatientNumbersManifest.errorMessages.PriceRequired,
+                      message: flatPatientManifest.errorMessages.PriceRequired,
                     },
                   },
                 },
                 {
-                  ...flatPatientNumbersManifest.addPriceTable.cellInfo.unitOfOrder,
+                  ...flatPatientManifest.addPriceTable.cellInfo.unitOfOrder,
                   data: 'per patient per year',
                 },
               ],
@@ -497,7 +497,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
         const context = getErrorContext({
           commonManifest,
-          selectedPriceManifest: flatPatientNumbersManifest,
+          selectedPriceManifest: flatPatientManifest,
           validationErrors: [{ field: 'Price', id: 'PriceRequired' }],
           selectedPrice,
         });
