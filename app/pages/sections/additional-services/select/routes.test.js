@@ -62,4 +62,33 @@ describe('additional-services select routes', () => {
         expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service`);
       }));
   });
+
+  describe('GET /organisation/:orderId/additional-services/select/additional-service', () => {
+    const path = '/organisation/some-order-id/additional-services/select/additional-service';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should return the additional-services select-additional-service page if authorised', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.text.includes('Additional service selection')).toBeTruthy();
+        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+      }));
+  });
 });
