@@ -5,6 +5,7 @@ import {
   testAuthorisedGetPathForUnauthorisedUser,
   fakeSessionManager,
 } from 'buying-catalogue-library';
+import * as selectAdditionalServiceController from './additional-service/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
@@ -53,14 +54,19 @@ describe('additional-services select routes', () => {
       })
     ));
 
-    it('should redirect to the additional-services/select/additional-service', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(302)
-      .then((res) => {
-        expect(res.redirect).toEqual(true);
-        expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service`);
-      }));
+    it('should redirect to the additional-services/select/additional-service', () => {
+      selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service`);
+        });
+    });
   });
 
   describe('GET /organisation/:orderId/additional-services/select/additional-service', () => {
@@ -82,13 +88,18 @@ describe('additional-services select routes', () => {
       })
     ));
 
-    it('should return the additional-services select-additional-service page if authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.text.includes('Additional service selection')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
+    it('should return the additional-services select-additional-service page if authorised', () => {
+      selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="additional-service-select-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
   });
 });
