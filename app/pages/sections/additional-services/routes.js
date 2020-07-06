@@ -6,6 +6,7 @@ import {
   getAdditionalServicesPageContext,
   putAdditionalServices,
 } from './additional-services/controller';
+import { additionalServicesSelectRoutes } from './select/routes';
 
 const router = express.Router({ mergeParams: true });
 
@@ -32,6 +33,8 @@ export const additionalServicesRoutes = (authProvider, addContext) => {
 
     return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
+
+  router.use('/select', additionalServicesSelectRoutes(authProvider, addContext));
 
   return router;
 };
