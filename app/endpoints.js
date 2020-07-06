@@ -30,6 +30,7 @@ const endpoints = {
     getDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
     getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
     getSupplier: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/supplier`,
+    getCatalogueOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions/${options.orderItemId}`,
     getCommencementDate: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/commencement-date`,
     getAddedCatalogueSolutions: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items?catalogueItemType=Solution`,
     getAddedAdditionalServices: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items?catalogueItemType=AdditionalServices`,

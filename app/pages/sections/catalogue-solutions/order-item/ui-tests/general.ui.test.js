@@ -5,7 +5,7 @@ import commonContent from '../commonManifest.json';
 import content from '../flat/ondemand/manifest.json';
 import { solutionsApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/order-item-id';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/newsolution';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
