@@ -1,11 +1,44 @@
 /* eslint-disable no-restricted-globals */
-import { getData } from 'buying-catalogue-library';
+import { getData, postData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
 import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from './manifestProvider';
 import { getDateErrors } from '../../../../helpers/getDateErrors';
+import { extractDate } from '../../../../helpers/extractDate';
+
+const formatPostData = ({
+  selectedRecipientId,
+  serviceRecipientName,
+  selectedSolutionId,
+  solutionName,
+  selectedPrice,
+  detail,
+}) => ({
+  serviceRecipient: {
+    name: serviceRecipientName,
+    odsCode: selectedRecipientId,
+  },
+  catalogueSolutionId: selectedSolutionId,
+  catalogueSolutionName: solutionName,
+  deliveryDate: extractDate('deliveryDate', detail),
+  quantity: parseInt(detail.quantity, 10),
+  estimationPeriod: detail.selectEstimationPeriod,
+  provisioningType: selectedPrice.provisioningType,
+  type: selectedPrice.type,
+  currencyCode: 'GBP',
+  itemUnitModel: selectedPrice.itemUnit,
+  price: parseFloat(detail.price),
+});
+
+export const getOrderItem = async ({ orderId, orderItemId, accessToken }) => {
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCatalogueOrderItem', options: { orderId, orderItemId } });
+  const catalogueOrderItem = await getData({ endpoint, accessToken, logger });
+  logger.info(`Catalogue order item returned for ${orderItemId}`);
+
+  return catalogueOrderItem;
+};
 
 export const getRecipientName = async ({ selectedRecipientId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipient', options: { selectedRecipientId } });
@@ -156,7 +189,31 @@ export const validateOrderItemForm = ({ data, selectedPrice }) => {
 export const getSolution = async ({ solutionId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSolution', options: { solutionId } });
   const solutionData = await getData({ endpoint, accessToken, logger });
-  logger.info(`Retrived solution data from BAPI for ${solutionId}`);
+  logger.info(`Retrieved solution data from BAPI for ${solutionId}`);
 
   return solutionData;
+};
+
+export const postSolutionOrderItem = async ({
+  orderId,
+  accessToken,
+  selectedRecipientId,
+  serviceRecipientName,
+  selectedSolutionId,
+  solutionName,
+  selectedPrice,
+  detail,
+}) => {
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postSolutionOrderItem', options: { orderId } });
+  const body = formatPostData({
+    selectedRecipientId,
+    serviceRecipientName,
+    selectedSolutionId,
+    solutionName,
+    selectedPrice,
+    detail,
+  });
+  await postData({
+    endpoint, body, accessToken, logger,
+  });
 };
