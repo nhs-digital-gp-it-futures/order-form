@@ -1,6 +1,6 @@
 import commonManifest from './commonManifest.json';
 import flatOndemandManifest from './flat/ondemand/manifest.json';
-import flatPatientNumbersManifest from './flat/patientnumbers/manifest.json';
+import flatPatientNumbersManifest from './flat/patient/manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
 
 describe('catalogue-solutions order-item contextCreator', () => {
