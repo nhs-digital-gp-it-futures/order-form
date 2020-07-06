@@ -372,9 +372,9 @@ describe('catalogue-solutions order-item controller', () => {
     };
     const detail = {
       _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-      'plannedDeliveryDate-day': '25',
-      'plannedDeliveryDate-month': '12',
-      'plannedDeliveryDate-year': '2020',
+      'deliveryDate-day': '25',
+      'deliveryDate-month': '12',
+      'deliveryDate-year': '2020',
       price: '500.49',
       quantity: '1',
       selectEstimationPeriod: 'perMonth',

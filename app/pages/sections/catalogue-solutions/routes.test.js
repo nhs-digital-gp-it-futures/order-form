@@ -181,7 +181,7 @@ describe('catalogue-solutions section routes', () => {
         });
     });
 
-    it.only('should return the catalogue-solutions order item page if authorised and is not a new solution', () => {
+    it('should return the catalogue-solutions order item page if authorised and is not a new solution', () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItem = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
