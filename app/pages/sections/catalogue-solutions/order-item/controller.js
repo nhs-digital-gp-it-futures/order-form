@@ -4,6 +4,27 @@ import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
 
+const extractDeliveryDate = (detail) => {
+  const day = detail['plannedDeliveryDate-day'];
+  const month = detail['plannedDeliveryDate-month'];
+  const year = detail['plannedDeliveryDate-year'];
+  return `${year}-${month.length === 1 ? '0' : ''}${month}-${day.length === 1 ? '0' : ''}${day}`;
+};
+
+const formatPostData = (serviceRecipient, solution, selectedPrice, detail) => ({
+  serviceRecipient,
+  catalogueSolutionId: solution.id,
+  catalogueSolutionName: solution.name,
+  deliveryDate: extractDeliveryDate(detail),
+  quantity: parseInt(detail.quantity, 10),
+  estimationPeriod: detail.selectEstimationPeriod,
+  provisioningType: selectedPrice.provisioningType,
+  type: selectedPrice.type,
+  currencyCode: 'GBP',
+  itemUnitModel: selectedPrice.itemUnit,
+  price: parseFloat(detail.price),
+});
+
 export const getRecipientName = async ({ selectedRecipientId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipient', options: { selectedRecipientId } });
   const serviceRecipientData = await getData({ endpoint, accessToken, logger });
@@ -72,9 +93,16 @@ export const getSolution = async ({ solutionId, accessToken }) => {
   return solutionData;
 };
 
-export const postSolution = async ({ orderId, accessToken, solution }) => {
+export const postSolution = async ({
+  orderId,
+  accessToken,
+  serviceRecipient,
+  solution,
+  selectedPrice,
+  detail,
+}) => {
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postCatalogueSolution', options: { orderId } });
-  const body = solution;
+  const body = formatPostData(serviceRecipient, solution, selectedPrice, detail);
   try {
     await postData({
       endpoint, body, accessToken, logger,
@@ -82,11 +110,4 @@ export const postSolution = async ({ orderId, accessToken, solution }) => {
   } catch (err) {
     throw err;
   }
-};
-
-export const extractDeliveryDate = async (body) => {
-  const day = body['plannedDeliveryDate-day'];
-  const month = body['plannedDeliveryDate-month'];
-  const year = body['plannedDeliveryDate-year'];
-  return `${year}-${month.length === 1 ? '0' : ''}${month}-${day.length === 1 ? '0' : ''}${day}`;
 };

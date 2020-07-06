@@ -81,27 +81,24 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
     const selectedPrice = sessionManager.getFromSession({ req, key: 'selectedPrice' });
     if (response.success) {
-      const day = req.body['plannedDeliveryDate-day'];
-      const month = req.body['plannedDeliveryDate-month'];
-      const year = req.body['plannedDeliveryDate-year'];
       const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
-      const solution = {
-        serviceRecipient: {
-          name: serviceRecipientName,
-          odsCode: selectedRecipientId,
-        },
-        catalogueSolutionId: selectedSolutionId,
-        catalogueSolutionName: solutionName,
-        deliveryDate: `${year}-${month.length === 1 ? '0' : ''}${month}-${day.length === 1 ? '0' : ''}${day}`,
-        quantity: parseInt(req.body.quantity, 10),
-        estimationPeriod: req.body.selectEstimationPeriod,
-        provisioningType: 'Patient', // selectedPrice.provisioningType,
-        type: 'Flat',
-        currencyCode: 'GBP',
-        itemUnitModel: selectedPrice.itemUnit,
-        price: parseFloat(req.body.price),
+      const serviceRecipient = {
+        name: serviceRecipientName,
+        odsCode: selectedRecipientId,
       };
-      postSolution({ orderId, accessToken, solution });
+      const solution = {
+        id: selectedSolutionId,
+        name: solutionName,
+      };
+      const detail = req.body;
+      await postSolution({
+        orderId,
+        accessToken,
+        serviceRecipient,
+        solution,
+        selectedPrice,
+        detail,
+      });
       logger.info('redirecting catalogue solutions main page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
     }
