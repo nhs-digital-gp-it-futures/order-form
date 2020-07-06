@@ -5,11 +5,9 @@ import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 import { extractDate } from '../../../helpers/extractDate';
 
-const formatPutData = (data) => {
-  return {
-    commencementDate: extractDate('commencementDate', data),
-  };
-};
+const formatPutData = data => ({
+  commencementDate: extractDate('commencementDate', data),
+});
 
 export const getCommencementDateContext = async ({ orderId, accessToken }) => {
   const commencementDateDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCommencementDate', options: { orderId } });
