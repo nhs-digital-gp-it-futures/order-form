@@ -17,7 +17,7 @@ export const getCatalogueSolutionsPageContext = async ({ orderId, accessToken })
   return getContext({
     orderId,
     orderDescription: orderDescriptionData ? orderDescriptionData.description : '',
-    orderItems: addedSolutionsData.orderItems,
+    orderItems: addedSolutionsData.catalogueSolutions,
   });
 };
 

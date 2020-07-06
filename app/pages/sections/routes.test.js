@@ -31,12 +31,6 @@ orderingPartyController.getCallOffOrderingPartyContext = jest.fn()
 orderingPartyController.putCallOffOrderingParty = jest.fn()
   .mockResolvedValue({});
 
-commencementDateController.putCommencementDate = jest.fn()
-  .mockResolvedValue({});
-
-commencementDateController.getCommencementDateContext = jest.fn()
-  .mockResolvedValue({});
-
 serviceRecipientsController.getServiceRecipientsContext = jest.fn()
   .mockResolvedValue({});
 
@@ -309,6 +303,9 @@ describe('section routes', () => {
   describe('GET /organisation/:orderId/commencement-date', () => {
     const path = '/organisation/some-order-id/commencement-date';
 
+    commencementDateController.getCommencementDateContext = jest.fn()
+      .mockResolvedValue({});
+
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
@@ -339,8 +336,19 @@ describe('section routes', () => {
   describe('POST /organisation/:orderId/commencement-date', () => {
     const path = '/organisation/order-id/commencement-date';
 
+    commencementDateController.validateCommencementDateForm = jest.fn()
+      .mockReturnValue([]);
+
+    commencementDateController.putCommencementDate = jest.fn()
+      .mockResolvedValue({});
+
+    commencementDateController.getCommencementDateErrorContext = jest.fn()
+      .mockResolvedValue({});
+
     afterEach(() => {
+      commencementDateController.validateCommencementDateForm.mockReset();
       commencementDateController.putCommencementDate.mockReset();
+      commencementDateController.getCommencementDateErrorContext.mockReset();
     });
 
     it('should return 403 forbidden if no csrf token is available', () => (
@@ -372,7 +380,10 @@ describe('section routes', () => {
       })
     ));
 
-    it('should return the correct status and text if response.success is true', async () => {
+    it('should return the correct status and text if there are no FE validation errors and the api response is successfull', async () => {
+      commencementDateController.validateCommencementDateForm = jest.fn()
+        .mockReturnValue([]);
+
       commencementDateController.putCommencementDate = jest.fn()
         .mockResolvedValue({ success: true });
 
@@ -395,9 +406,38 @@ describe('section routes', () => {
         });
     });
 
-    it('should return the correct status and text if response.success is not true', async () => {
+    it('should return the correct status and text if there are FE caught validation errors', async () => {
+      commencementDateController.validateCommencementDateForm = jest.fn().mockReturnValue([{}]);
+
+      commencementDateController.getCommencementDateErrorContext = jest.fn().mockResolvedValue({
+        errors: [{ text: 'error', field: ['year'], href: '#commencementDate' }],
+      });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="commencement-date-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should return the correct status and text if the api response is unsuccessfull', async () => {
+      commencementDateController.validateCommencementDateForm = jest.fn()
+        .mockReturnValue([]);
+
       commencementDateController.putCommencementDate = jest.fn()
-        .mockResolvedValue({});
+        .mockResolvedValue({ success: false, errors: [{}] });
 
       commencementDateController.getCommencementDateErrorContext = jest.fn()
         .mockResolvedValue({
@@ -420,7 +460,6 @@ describe('section routes', () => {
           expect(res.text.includes('data-test-id="commencement-date-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-          commencementDateController.getCommencementDateErrorContext.mockReset();
         });
     });
   });
