@@ -5,11 +5,18 @@ import {
   getRecipientName, getSelectedPrice, getOrderItemContext, validateOrderItemForm, postSolution,
 } from './controller';
 import * as contextCreator from './contextCreator';
+import * as getSelectedPriceManifest from './manifestProvider';
 
 jest.mock('buying-catalogue-library');
 
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
+}));
+
+jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
+
+jest.mock('./manifestProvider', () => ({
+  getSelectedPriceManifest: jest.fn(),
 }));
 
 const serviceRecipient = {
@@ -45,7 +52,32 @@ const detail = {
 
 describe('catalogue-solutions order-item controller', () => {
   describe('getOrderItemContext', () => {
+    afterEach(() => {
+      contextCreator.getContext.mockReset();
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReset();
+    });
+
+    it('should call getSelectedPriceManifest with the correct params', async () => {
+      await getOrderItemContext({
+        orderId: 'order-1',
+        solutionName: 'solution-name',
+        selectedRecipientId: 'fake-recipient-id',
+        serviceRecipientName: 'Some service recipient 1',
+        selectedPriceId: 'some-price-id',
+        selectedPrice,
+      });
+
+      expect(getSelectedPriceManifest.getSelectedPriceManifest.mock.calls.length).toEqual(1);
+      expect(getSelectedPriceManifest.getSelectedPriceManifest).toHaveBeenCalledWith({
+        provisioningType: selectedPrice.provisioningType,
+        type: selectedPrice.type,
+      });
+    });
+
     it('should call getContext with the correct params', async () => {
+      const selectedPriceManifest = { description: 'fake manifest' };
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+
       await getOrderItemContext({
         orderId: 'order-1',
         solutionName: 'solution-name',
@@ -57,11 +89,14 @@ describe('catalogue-solutions order-item controller', () => {
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({
+        commonManifest: { title: 'fake manifest' },
+        selectedPriceManifest,
         odsCode: 'fake-recipient-id',
         orderId: 'order-1',
         serviceRecipientName: 'Some service recipient 1',
         solutionName: 'solution-name',
         selectedPrice,
+        formData: { price: 0.1 },
       });
     });
   });
@@ -107,12 +142,18 @@ describe('catalogue-solutions order-item controller', () => {
   describe('validateOrderItemForm', () => {
     describe('when there are no validation errors', () => {
       it('should return success as true', () => {
+        const selectedPriceManifest = { questions: {}, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
           quantity: '1',
           price: '1',
+          selectEstimationPeriod: 'perMonth',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data });
+        const response = validateOrderItemForm({ data, selectedPrice });
 
         expect(response.success).toEqual(true);
       });
@@ -120,77 +161,196 @@ describe('catalogue-solutions order-item controller', () => {
 
     describe('when there are validation errors', () => {
       const quantityRequired = {
-        field: 'quantity',
-        id: 'quantityRequired',
+        field: 'Quantity',
+        id: 'QuantityRequired',
       };
-      const numericalQuantity = {
-        field: 'quantity',
-        id: 'numericQuantityRequired',
+      const quantityMustBeANumber = {
+        field: 'Quantity',
+        id: 'QuantityMustBeANumber',
+      };
+      const quantityInvalid = {
+        field: 'Quantity',
+        id: 'QuantityInvalid',
+      };
+      const estimationPeriodRequired = {
+        field: 'SelectEstimationPeriod',
+        id: 'EstimationPeriodRequired',
       };
       const priceRequired = {
-        field: 'price',
-        id: 'priceRequired',
+        field: 'Price',
+        id: 'PriceRequired',
       };
-      const numericalPrice = {
-        field: 'price',
-        id: 'numericPriceRequired',
+      const priceMustBeANumber = {
+        field: 'Price',
+        id: 'PriceMustBeANumber',
+      };
+      const priceMoreThan3dp = {
+        field: 'Price',
+        id: 'PriceMoreThan3dp',
+      };
+      const deliveryDateRequired = {
+        field: 'DeliveryDate',
+        id: 'DeliveryDateRequired',
+        part: ['day', 'month', 'year'],
       };
 
       it('should return an array of one validation error and success as false if empty string for quantity is passed in', () => {
+        const selectedPriceManifest = { questions: { quantity: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
           quantity: '',
           price: '1.5',
+          selectEstimationPeriod: 'perMonth',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data });
+        const response = validateOrderItemForm({ data, selectedPrice });
 
         expect(response.success).toEqual(false);
         expect(response.errors).toEqual([quantityRequired]);
       });
 
       it('should return an array of one validation error and success as false if quantity is not a number', () => {
+        const selectedPriceManifest = { questions: { quantity: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
           quantity: 'not a number',
           price: '1.5',
+          selectEstimationPeriod: 'perMonth',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data });
+        const response = validateOrderItemForm({ data, selectedPrice });
 
         expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([numericalQuantity]);
+        expect(response.errors).toEqual([quantityMustBeANumber]);
+      });
+
+      it('should return an array of one validation error and success as false if quantity is invalid', () => {
+        const selectedPriceManifest = { questions: { quantity: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+        const data = {
+          quantity: '1.1',
+          price: '1.5',
+          selectEstimationPeriod: 'perMonth',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
+        };
+
+        const response = validateOrderItemForm({ data, selectedPrice });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([quantityInvalid]);
+      });
+
+      it('should return an array of one validation error and success as false if an estimation period is not selected', () => {
+        const selectedPriceManifest = { questions: { selectEstimationPeriod: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+        const data = {
+          quantity: '1',
+          price: '1.5',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
+        };
+
+        const response = validateOrderItemForm({ data, selectedPrice });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([estimationPeriodRequired]);
       });
 
       it('should return an array of one validation error and success as false if empty string for price is passed in', () => {
+        const selectedPriceManifest = { questions: {}, addPriceTable: { cellInfo: { price: { question: 'test' } } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
           quantity: '1',
           price: '',
+          selectEstimationPeriod: 'perMonth',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data });
+        const response = validateOrderItemForm({ data, selectedPrice });
 
         expect(response.success).toEqual(false);
         expect(response.errors).toEqual([priceRequired]);
       });
 
-      it('should return an array of one validation error and success as false if empty string for price is passed in', () => {
+      it('should return an array of one validation error and success as false if price is not a number', () => {
+        const selectedPriceManifest = { questions: {}, addPriceTable: { cellInfo: { price: { question: 'test' } } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
           quantity: '1',
           price: 'not a number',
+          selectEstimationPeriod: 'perMonth',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data });
+        const response = validateOrderItemForm({ data, selectedPrice });
 
         expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([numericalPrice]);
+        expect(response.errors).toEqual([priceMustBeANumber]);
+      });
+
+      it('should return an array of one validation error and success as false if price has more than 3dp', () => {
+        const selectedPriceManifest = { questions: {}, addPriceTable: { cellInfo: { price: { question: 'test' } } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+        const data = {
+          quantity: '1',
+          price: '1.1234',
+          selectEstimationPeriod: 'perMonth',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
+        };
+
+        const response = validateOrderItemForm({ data, selectedPrice });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([priceMoreThan3dp]);
+      });
+
+      it('should return an array of one validation error and success as false if deliveryDate is not valid', () => {
+        const selectedPriceManifest = { questions: { deliveryDate: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+        const data = {
+          quantity: '1',
+          price: '1.5',
+          selectEstimationPeriod: 'perMonth',
+          'deliveryDate-day': '',
+          'deliveryDate-month': '',
+          'deliveryDate-year': '',
+        };
+
+        const response = validateOrderItemForm({ data, selectedPrice });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual([deliveryDateRequired]);
       });
 
       it('should return a validation error if all values are undefined', () => {
+        const selectedPriceManifest = {
+          questions: {
+            deliveryDate: 'test', quantity: 'test', selectEstimationPeriod: 'test',
+          },
+          addPriceTable: { cellInfo: { price: { question: 'test' } } },
+        };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {};
 
-        const response = validateOrderItemForm({ data });
+        const response = validateOrderItemForm({ data, selectedPrice });
 
         expect(response.errors).toEqual(
-          [quantityRequired, priceRequired],
+          [deliveryDateRequired, quantityRequired, estimationPeriodRequired, priceRequired],
         );
       });
     });

@@ -2,12 +2,12 @@ import { getData, putData } from 'buying-catalogue-library';
 import { getCommencementDateContext, putCommencementDate } from './controller';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
-import * as dateValidator from './getDateErrors';
+import * as dateValidator from '../../../helpers/getDateErrors';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
-jest.mock('./getDateErrors', () => ({
+jest.mock('../../../helpers/getDateErrors', () => ({
   getDateErrors: jest.fn(),
 }));
 jest.mock('./contextCreator', () => ({
@@ -21,9 +21,9 @@ const mockData = {
 };
 
 const mockDataError = {
-  field: 'CommencementDate',
+  field: 'commencementDate',
   part: ['day'],
-  id: 'CommencementDateDayRequired',
+  id: 'commencementDateDayRequired',
 };
 
 describe('commencement-date controller', () => {
@@ -83,7 +83,7 @@ describe('commencement-date controller', () => {
       });
 
       expect(dateValidator.getDateErrors.mock.calls.length).toEqual(1);
-      expect(dateValidator.getDateErrors).toHaveBeenCalledWith(mockData);
+      expect(dateValidator.getDateErrors).toHaveBeenCalledWith('commencementDate', mockData);
     });
 
     describe('with errors', () => {

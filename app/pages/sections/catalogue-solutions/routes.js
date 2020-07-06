@@ -66,6 +66,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       serviceRecipientName,
       selectedPriceId,
       selectedPrice,
+      formData: req.body,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
@@ -75,11 +76,12 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const response = validateOrderItemForm({ data: req.body });
     const solutionName = sessionManager.getFromSession({ req, key: 'solutionName' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
     const selectedPrice = sessionManager.getFromSession({ req, key: 'selectedPrice' });
+    const response = validateOrderItemForm({ data: req.body, selectedPrice });
+
     if (response.success) {
       const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
       const serviceRecipient = {
@@ -109,7 +111,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       selectedRecipientId,
       serviceRecipientName,
       selectedPrice,
-      data: req.body,
+      formData: req.body,
       validationErrors: response.errors,
     });
 

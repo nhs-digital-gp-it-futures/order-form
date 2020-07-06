@@ -1,6 +1,6 @@
 import { getData, putData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
-import { getDateErrors } from './getDateErrors';
+import { getDateErrors } from '../../../helpers/getDateErrors';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 
@@ -29,7 +29,7 @@ export const getCommencementDateContext = async ({ orderId, accessToken }) => {
 export const putCommencementDate = async ({
   orderId, data, accessToken,
 }) => {
-  const errors = [getDateErrors(data)];
+  const errors = [getDateErrors('commencementDate', data)];
   if (errors[0]) return { success: false, errors };
 
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putCommencementDate', options: { orderId } });
