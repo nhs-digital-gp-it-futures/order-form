@@ -1,5 +1,6 @@
 import manifest from './manifest.json';
 import { getContext } from './contextCreator';
+import { baseUrl } from '../../../../config';
 
 describe('additional-services contextCreator', () => {
   describe('getContext', () => {
@@ -36,6 +37,11 @@ describe('additional-services contextCreator', () => {
     it('should return the addOrderItemButtonText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.addOrderItemButtonText).toEqual(manifest.addOrderItemButtonText);
+    });
+
+    it('should return the addOrderItemButtonHref', () => {
+      const context = getContext({ orderId: 'order-1' });
+      expect(context.addOrderItemButtonHref).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service`);
     });
 
     it('should return the continueButtonText', () => {
