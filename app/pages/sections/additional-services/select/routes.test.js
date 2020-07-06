@@ -54,18 +54,17 @@ describe('additional-services select routes', () => {
       })
     ));
 
-    it('should redirect to the additional-services/select/additional-service', () => {
+    it('should redirect to the additional-services/select/additional-service', async () => {
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
 
-      return request(setUpFakeApp())
+      const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
-        .expect(302)
-        .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service`);
-        });
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service`);
     });
   });
 
@@ -88,18 +87,17 @@ describe('additional-services select routes', () => {
       })
     ));
 
-    it('should return the additional-services select-additional-service page if authorised', () => {
+    it('should return the additional-services select-additional-service page if authorised', async () => {
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
 
-      return request(setUpFakeApp())
+      const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('data-test-id="additional-service-select-page"')).toBeTruthy();
-          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="additional-service-select-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
 });
