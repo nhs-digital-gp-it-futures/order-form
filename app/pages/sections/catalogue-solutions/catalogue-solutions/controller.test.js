@@ -36,7 +36,7 @@ describe('catalogue-solutions controller', () => {
     });
 
     it('should call getContext with the correct params', async () => {
-      getData.mockResolvedValueOnce({ orderDescription: 'some order', orderItems: [] });
+      getData.mockResolvedValueOnce({ orderDescription: 'some order', catalogueSolutions: [] });
       contextCreator.getContext.mockResolvedValueOnce({});
 
       await getCatalogueSolutionsPageContext({ orderId, accessToken });

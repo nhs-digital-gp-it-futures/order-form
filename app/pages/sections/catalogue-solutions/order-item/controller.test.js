@@ -1,8 +1,8 @@
-import { getData } from 'buying-catalogue-library';
-import { solutionsApiUrl, organisationApiUrl } from '../../../../config';
+import { getData, postData } from 'buying-catalogue-library';
+import { solutionsApiUrl, organisationApiUrl, orderApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
 import {
-  getRecipientName, getSelectedPrice, getOrderItemContext, validateOrderItemForm,
+  getRecipientName, getSelectedPrice, getOrderItemContext, validateOrderItemForm, postSolution,
 } from './controller';
 import * as contextCreator from './contextCreator';
 
@@ -12,9 +12,18 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
+const serviceRecipient = {
+  name: 'Recipient 1',
+  odsCode: 'ods1',
+};
+const solution = {
+  id: 'solutionId1',
+  name: 'Solution 1',
+};
+
 const selectedPrice = {
   priceId: 1,
-  provisioningModel: 'OnDemand',
+  provisioningType: 'OnDemand',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
@@ -22,6 +31,16 @@ const selectedPrice = {
     description: 'per consultation',
   },
   price: 0.1,
+};
+
+const detail = {
+  _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
+  'plannedDeliveryDate-day': '25',
+  'plannedDeliveryDate-month': '12',
+  'plannedDeliveryDate-year': '2020',
+  price: '500.49',
+  quantity: '1',
+  selectEstimationPeriod: 'perMonth',
 };
 
 describe('catalogue-solutions order-item controller', () => {
@@ -177,5 +196,41 @@ describe('catalogue-solutions order-item controller', () => {
     });
   });
 
-  // TODO: New test for post
+  describe('postSolution', () => {
+    afterEach(() => {
+      postData.mockReset();
+    });
+    it('should post correctly formatted data', () => {
+      postData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
+
+      postSolution({
+        orderId: 'order1',
+        accessToken: 'access_token',
+        serviceRecipient,
+        solution,
+        selectedPrice,
+        detail,
+      });
+
+      expect(postData.mock.calls.length).toEqual(1);
+      expect(postData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order1/sections/catalogue-solutions`,
+        body: {
+          serviceRecipient,
+          catalogueSolutionId: 'solutionId1',
+          catalogueSolutionName: 'Solution 1',
+          deliveryDate: '2020-12-25',
+          quantity: 1,
+          estimationPeriod: 'perMonth',
+          provisioningType: 'OnDemand',
+          type: 'flat',
+          currencyCode: 'GBP',
+          itemUnitModel: selectedPrice.itemUnit,
+          price: 500.49,
+        },
+        accessToken: 'access_token',
+        logger,
+      });
+    });
+  });
 });
