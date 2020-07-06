@@ -180,10 +180,7 @@ export const validateOrderItemForm = ({ data, selectedPrice }) => {
     }
   }
 
-  if (errors.length === 0) {
-    return { success: true };
-  }
-  return { success: false, errors };
+  return errors;
 };
 
 export const getSolution = async ({ solutionId, accessToken }) => {

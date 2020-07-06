@@ -146,7 +146,7 @@ describe('catalogue-solutions order-item controller', () => {
 
   describe('validateOrderItemForm', () => {
     describe('when there are no validation errors', () => {
-      it('should return success as true', () => {
+      it('should return an empty array', () => {
         const selectedPriceManifest = { questions: {}, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
         getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
@@ -158,9 +158,9 @@ describe('catalogue-solutions order-item controller', () => {
           'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data, selectedPrice });
+        const errors = validateOrderItemForm({ data, selectedPrice });
 
-        expect(response.success).toEqual(true);
+        expect(errors).toEqual([]);
       });
     });
 
@@ -199,7 +199,7 @@ describe('catalogue-solutions order-item controller', () => {
         part: ['day', 'month', 'year'],
       };
 
-      it('should return an array of one validation error and success as false if empty string for quantity is passed in', () => {
+      it('should return an array of one validation error if an empty string for quantity is passed in', () => {
         const selectedPriceManifest = { questions: { quantity: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
         getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
@@ -211,13 +211,12 @@ describe('catalogue-solutions order-item controller', () => {
           'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data, selectedPrice });
+        const errors = validateOrderItemForm({ data, selectedPrice });
 
-        expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([quantityRequired]);
+        expect(errors).toEqual([quantityRequired]);
       });
 
-      it('should return an array of one validation error and success as false if quantity is not a number', () => {
+      it('should return an array of one validation error if quantity is not a number', () => {
         const selectedPriceManifest = { questions: { quantity: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
         getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
@@ -229,13 +228,12 @@ describe('catalogue-solutions order-item controller', () => {
           'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data, selectedPrice });
+        const errors = validateOrderItemForm({ data, selectedPrice });
 
-        expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([quantityMustBeANumber]);
+        expect(errors).toEqual([quantityMustBeANumber]);
       });
 
-      it('should return an array of one validation error and success as false if quantity is invalid', () => {
+      it('should return an array of one validation error if quantity is invalid', () => {
         const selectedPriceManifest = { questions: { quantity: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
         getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
@@ -247,13 +245,12 @@ describe('catalogue-solutions order-item controller', () => {
           'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data, selectedPrice });
+        const errors = validateOrderItemForm({ data, selectedPrice });
 
-        expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([quantityInvalid]);
+        expect(errors).toEqual([quantityInvalid]);
       });
 
-      it('should return an array of one validation error and success as false if an estimation period is not selected', () => {
+      it('should return an array of one validation error if an estimation period is not selected', () => {
         const selectedPriceManifest = { questions: { selectEstimationPeriod: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
         getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
@@ -264,13 +261,12 @@ describe('catalogue-solutions order-item controller', () => {
           'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data, selectedPrice });
+        const errors = validateOrderItemForm({ data, selectedPrice });
 
-        expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([estimationPeriodRequired]);
+        expect(errors).toEqual([estimationPeriodRequired]);
       });
 
-      it('should return an array of one validation error and success as false if empty string for price is passed in', () => {
+      it('should return an array of one validation error if empty string for price is passed in', () => {
         const selectedPriceManifest = { questions: {}, addPriceTable: { cellInfo: { price: { question: 'test' } } } };
         getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
@@ -282,13 +278,12 @@ describe('catalogue-solutions order-item controller', () => {
           'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data, selectedPrice });
+        const errors = validateOrderItemForm({ data, selectedPrice });
 
-        expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([priceRequired]);
+        expect(errors).toEqual([priceRequired]);
       });
 
-      it('should return an array of one validation error and success as false if price is not a number', () => {
+      it('should return an array of one validation error if price is not a number', () => {
         const selectedPriceManifest = { questions: {}, addPriceTable: { cellInfo: { price: { question: 'test' } } } };
         getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
@@ -300,13 +295,12 @@ describe('catalogue-solutions order-item controller', () => {
           'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data, selectedPrice });
+        const errors = validateOrderItemForm({ data, selectedPrice });
 
-        expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([priceMustBeANumber]);
+        expect(errors).toEqual([priceMustBeANumber]);
       });
 
-      it('should return an array of one validation error and success as false if price has more than 3dp', () => {
+      it('should return an array of one validation error if price has more than 3dp', () => {
         const selectedPriceManifest = { questions: {}, addPriceTable: { cellInfo: { price: { question: 'test' } } } };
         getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
@@ -318,13 +312,12 @@ describe('catalogue-solutions order-item controller', () => {
           'deliveryDate-year': '2021',
         };
 
-        const response = validateOrderItemForm({ data, selectedPrice });
+        const errors = validateOrderItemForm({ data, selectedPrice });
 
-        expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([priceMoreThan3dp]);
+        expect(errors).toEqual([priceMoreThan3dp]);
       });
 
-      it('should return an array of one validation error and success as false if deliveryDate is not valid', () => {
+      it('should return an array of one validation error  if deliveryDate is not valid', () => {
         const selectedPriceManifest = { questions: { deliveryDate: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
         getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {
@@ -336,10 +329,9 @@ describe('catalogue-solutions order-item controller', () => {
           'deliveryDate-year': '',
         };
 
-        const response = validateOrderItemForm({ data, selectedPrice });
+        const errors = validateOrderItemForm({ data, selectedPrice });
 
-        expect(response.success).toEqual(false);
-        expect(response.errors).toEqual([deliveryDateRequired]);
+        expect(errors).toEqual([deliveryDateRequired]);
       });
 
       it('should return a validation error if all values are undefined', () => {
@@ -352,9 +344,9 @@ describe('catalogue-solutions order-item controller', () => {
         getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
         const data = {};
 
-        const response = validateOrderItemForm({ data, selectedPrice });
+        const errors = validateOrderItemForm({ data, selectedPrice });
 
-        expect(response.errors).toEqual(
+        expect(errors).toEqual(
           [deliveryDateRequired, quantityRequired, estimationPeriodRequired, priceRequired],
         );
       });
