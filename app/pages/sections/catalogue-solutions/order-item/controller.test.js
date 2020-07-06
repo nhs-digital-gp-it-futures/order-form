@@ -2,7 +2,11 @@ import { getData, postData } from 'buying-catalogue-library';
 import { solutionsApiUrl, organisationApiUrl, orderApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
 import {
-  getRecipientName, getSelectedPrice, getOrderItemContext, validateOrderItemForm, postSolution,
+  getRecipientName,
+  getSelectedPrice,
+  getOrderItemContext,
+  validateOrderItemForm,
+  postSolutionOrderItem,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from './manifestProvider';
@@ -19,15 +23,6 @@ jest.mock('./manifestProvider', () => ({
   getSelectedPriceManifest: jest.fn(),
 }));
 
-const serviceRecipient = {
-  name: 'Recipient 1',
-  odsCode: 'ods1',
-};
-const solution = {
-  id: 'solutionId1',
-  name: 'Solution 1',
-};
-
 const selectedPrice = {
   priceId: 1,
   provisioningType: 'OnDemand',
@@ -38,16 +33,6 @@ const selectedPrice = {
     description: 'per consultation',
   },
   price: 0.1,
-};
-
-const detail = {
-  _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-  'plannedDeliveryDate-day': '25',
-  'plannedDeliveryDate-month': '12',
-  'plannedDeliveryDate-year': '2020',
-  price: '500.49',
-  quantity: '1',
-  selectEstimationPeriod: 'perMonth',
 };
 
 describe('catalogue-solutions order-item controller', () => {
@@ -356,14 +341,31 @@ describe('catalogue-solutions order-item controller', () => {
     });
   });
 
-  describe('postSolution', () => {
+  describe('postSolutionOrderItem', () => {
+    const serviceRecipient = {
+      name: 'Recipient 1',
+      odsCode: 'ods1',
+    };
+    const solution = {
+      id: 'solutionId1',
+      name: 'Solution 1',
+    };
+    const detail = {
+      _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
+      'plannedDeliveryDate-day': '25',
+      'plannedDeliveryDate-month': '12',
+      'plannedDeliveryDate-year': '2020',
+      price: '500.49',
+      quantity: '1',
+      selectEstimationPeriod: 'perMonth',
+    };
     afterEach(() => {
       postData.mockReset();
     });
     it('should post correctly formatted data', () => {
       postData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-      postSolution({
+      postSolutionOrderItem({
         orderId: 'order1',
         accessToken: 'access_token',
         serviceRecipient,
