@@ -48,19 +48,30 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-
-    if (orderItemId !== 'newsolution') {
-      await getOrderItem({ orderId, orderItemId, accessToken });
-    }
+    const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
+    const solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
+    let selectedPrice;
+    let formData;
 
-    const solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
+    if (orderItemId !== 'newsolution') {
+      selectedPrice = await getOrderItem({ orderId, orderItemId, accessToken });
+      const date = selectedPrice.deliveryDate.split('-');
+      formData = {
+        'deliveryDate-year': date[0],
+        'deliveryDate-month': date[1],
+        'deliveryDate-day': date[2],
+        quantity: selectedPrice.quantity,
+        selectEstimationPeriod: selectedPrice.estimationPeriod,
+        price: selectedPrice.price,
+      };
+    } else {
+      selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
+    }
+
     sessionManager.saveToSession({ req, key: 'solutionName', value: solutionName });
-
-    const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
-    const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     sessionManager.saveToSession({ req, key: 'selectedPrice', value: selectedPrice });
 
     const context = await getOrderItemContext({
@@ -70,7 +81,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       serviceRecipientName,
       selectedPriceId,
       selectedPrice,
-      formData: req.body,
+      formData,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);

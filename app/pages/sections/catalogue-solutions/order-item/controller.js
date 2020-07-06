@@ -52,15 +52,14 @@ export const getOrderItemContext = async ({
   selectedRecipientId,
   serviceRecipientName,
   selectedPrice,
+  formData,
 }) => {
   const selectedPriceManifest = getSelectedPriceManifest({
     provisioningType: selectedPrice.provisioningType,
     type: selectedPrice.type,
   });
 
-  const populatedData = {
-    price: selectedPrice.price,
-  };
+  const populatedData = formData !== undefined ? formData : { price: selectedPrice.price };
 
   return getContext({
     commonManifest,

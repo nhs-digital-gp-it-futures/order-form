@@ -80,6 +80,42 @@ describe('catalogue-solutions order-item controller', () => {
         formData: { price: 0.1 },
       });
     });
+
+    it('should call getContext with the correct params when formData passed in', async () => {
+      const selectedPriceManifest = { description: 'fake manifest' };
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+
+      const formData = {
+        'deliveryDate-year': '2020',
+        'deliveryDate-month': '04',
+        'deliveryDate-day': '27',
+        quantity: 3,
+        selectEstimationPeriod: 'month',
+        price: 0.1,
+      };
+
+      await getOrderItemContext({
+        orderId: 'order-1',
+        solutionName: 'solution-name',
+        selectedRecipientId: 'fake-recipient-id',
+        serviceRecipientName: 'Some service recipient 1',
+        selectedPriceId: 'some-price-id',
+        selectedPrice,
+        formData,
+      });
+
+      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getContext).toHaveBeenCalledWith({
+        commonManifest: { title: 'fake manifest' },
+        selectedPriceManifest,
+        odsCode: 'fake-recipient-id',
+        orderId: 'order-1',
+        serviceRecipientName: 'Some service recipient 1',
+        solutionName: 'solution-name',
+        selectedPrice,
+        formData,
+      });
+    });
   });
 
   describe('getCatalogueOrderItem', () => {
