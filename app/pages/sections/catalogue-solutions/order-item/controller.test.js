@@ -362,7 +362,7 @@ describe('catalogue-solutions order-item controller', () => {
       id: 'solutionId1',
       name: 'Solution 1',
     };
-    const detail = {
+    const formData = {
       _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
       'deliveryDate-day': '25',
       'deliveryDate-month': '12',
@@ -385,7 +385,7 @@ describe('catalogue-solutions order-item controller', () => {
         selectedSolutionId: solution.id,
         solutionName: solution.name,
         selectedPrice,
-        detail,
+        formData,
       });
 
       expect(postData.mock.calls.length).toEqual(1);

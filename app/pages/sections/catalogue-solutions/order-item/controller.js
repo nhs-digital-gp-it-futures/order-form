@@ -14,7 +14,7 @@ const formatPostData = ({
   selectedSolutionId,
   solutionName,
   selectedPrice,
-  detail,
+  formData,
 }) => ({
   serviceRecipient: {
     name: serviceRecipientName,
@@ -22,14 +22,14 @@ const formatPostData = ({
   },
   catalogueSolutionId: selectedSolutionId,
   catalogueSolutionName: solutionName,
-  deliveryDate: extractDate('deliveryDate', detail),
-  quantity: parseInt(detail.quantity, 10),
-  estimationPeriod: detail.selectEstimationPeriod,
+  deliveryDate: extractDate('deliveryDate', formData),
+  quantity: parseInt(formData.quantity, 10),
+  estimationPeriod: formData.selectEstimationPeriod,
   provisioningType: selectedPrice.provisioningType,
   type: selectedPrice.type,
   currencyCode: 'GBP',
   itemUnitModel: selectedPrice.itemUnit,
-  price: parseFloat(detail.price),
+  price: parseFloat(formData.price),
 });
 
 export const getOrderItem = async ({ orderId, orderItemId, accessToken }) => {
@@ -199,7 +199,7 @@ export const postSolutionOrderItem = async ({
   selectedSolutionId,
   solutionName,
   selectedPrice,
-  detail,
+  formData,
 }) => {
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postSolutionOrderItem', options: { orderId } });
   const body = formatPostData({
@@ -208,7 +208,7 @@ export const postSolutionOrderItem = async ({
     selectedSolutionId,
     solutionName,
     selectedPrice,
-    detail,
+    formData,
   });
   await postData({
     endpoint, body, accessToken, logger,
