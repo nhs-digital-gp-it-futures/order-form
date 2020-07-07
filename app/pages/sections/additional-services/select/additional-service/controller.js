@@ -16,7 +16,7 @@ export const findAdditionalServices = async ({ addedCatalogueSolutions, accessTo
 export const findAddedCatalogueSolutions = async ({ orderId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getAddedCatalogueSolutions', options: { orderId } });
   const { catalogueSolutions } = await getData({ endpoint, accessToken, logger });
-  logger.info(`Found ${catalogueSolutions.length} catalogue solution(s).`);
+  logger.info(`Found ${catalogueSolutions.length} catalogue solution(s) for Order with ID '${orderId}'.`);
 
   return catalogueSolutions.map(catalogueSolution => catalogueSolution.catalogueItemId);
 };
