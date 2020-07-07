@@ -5,10 +5,18 @@ import { getContext } from './contextCreator';
 
 export const getAdditionalServicePageContext = params => getContext(params);
 
-export const findAdditionalServices = async ({ accessToken }) => {
-  const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getAdditionalServices' });
+export const findAdditionalServices = async ({ addedCatalogueSolutions, accessToken }) => {
+  const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getAdditionalServices', options: { addedCatalogueSolutions } });
   const { additionalServices } = await getData({ endpoint, accessToken, logger });
   logger.info(`Found ${additionalServices.length} additional service(s).`);
 
   return additionalServices;
+};
+
+export const findAddedCatalogueSolutions = async ({ orderId, accessToken }) => {
+  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getAddedCatalogueSolutions', options: { orderId } });
+  const { catalogueSolutions } = await getData({ endpoint, accessToken, logger });
+  logger.info(`Found ${catalogueSolutions.length} catalogue solution(s).`);
+
+  return catalogueSolutions.map(catalogueSolution => catalogueSolution.catalogueItemId);
 };

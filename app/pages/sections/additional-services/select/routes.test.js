@@ -91,6 +91,13 @@ describe('additional-services select routes', () => {
     ));
 
     it('should return the additional-services select-additional-service page if authorised', async () => {
+      selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
+        .mockResolvedValue([
+          {
+            catalogueItemId: 'Some catalogue item id',
+          },
+        ]);
+
       selectAdditionalServiceController.findAdditionalServices = jest.fn()
         .mockResolvedValue({});
 

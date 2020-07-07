@@ -4,6 +4,7 @@ import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routerHelper';
 import {
   findAdditionalServices,
+  findAddedCatalogueSolutions,
   getAdditionalServicePageContext,
 } from './additional-service/controller';
 
@@ -21,7 +22,11 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     withCatch(logger, authProvider, async (req, res) => {
       const { orderId } = req.params;
       const accessToken = extractAccessToken({ req, tokenType: 'access' });
-      const additionalServices = await findAdditionalServices({ accessToken });
+      const addedCatalogueSolutions = await findAddedCatalogueSolutions({ orderId, accessToken });
+      const additionalServices = await findAdditionalServices({
+        addedCatalogueSolutions,
+        accessToken,
+      });
       sessionManager.saveToSession({ req, key: 'additionalServices', value: additionalServices });
 
       const context = getAdditionalServicePageContext({ orderId, additionalServices });
