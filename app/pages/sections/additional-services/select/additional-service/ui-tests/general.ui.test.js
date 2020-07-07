@@ -21,7 +21,7 @@ const mockAdditionalServices = [
   },
   {
     id: 'additional-service-2',
-    name: 'Additional Service 1',
+    name: 'Additional Service 2',
   },
 ];
 
