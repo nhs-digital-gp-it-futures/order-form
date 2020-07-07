@@ -168,7 +168,7 @@ describe('catalogue-solutions section routes', () => {
     it('should return the catalogue-solutions order item page if authorised', () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
+      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return request(setUpFakeApp())
@@ -181,15 +181,14 @@ describe('catalogue-solutions section routes', () => {
         });
     });
 
-    it('should return the catalogue-solutions order item page if authorised and is not a new solution', () => {
+    it('should return the catalogue-solutions order item page if authorised existing solution', () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
-      orderItemController.getOrderItem = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItem = jest.fn().mockResolvedValue({ deliveryDate: 'date', serviceRecipient: {} });
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return request(setUpFakeApp())
-        .get('/organisation/some-order-id/catalogue-solutions/some-order-item-id')
+        .get('/organisation/some-order-id/catalogue-solutions/solution-id')
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
@@ -200,7 +199,7 @@ describe('catalogue-solutions section routes', () => {
   });
 
   describe('POST /organisation/:orderId/catalogue-solutions/:orderItemId', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/some-order-item-id';
+    const path = '/organisation/some-order-id/catalogue-solutions/newsolution';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -211,7 +210,7 @@ describe('catalogue-solutions section routes', () => {
     it('should redirect to the login page if the user is not logged in', () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
+      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthenticatedUser({
@@ -232,7 +231,7 @@ describe('catalogue-solutions section routes', () => {
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
+      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -256,7 +255,7 @@ describe('catalogue-solutions section routes', () => {
     it('should show the catalogue-solutions order item page with errors if there are FE caught validation errors', async () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
+      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       orderItemController.getRecipients = jest.fn()
         .mockResolvedValue([]);
@@ -332,12 +331,12 @@ describe('catalogue-solutions section routes', () => {
 
     it('should redirect to /organisation/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
-      orderItemController.postSolutionOrderItem = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
+      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       orderItemController.getRecipients = jest.fn()
         .mockResolvedValue([]);
+      orderItemController.postSolutionOrderItem = jest.fn();
 
       orderItemController.validateOrderItemForm = jest.fn()
         .mockReturnValue([]);
