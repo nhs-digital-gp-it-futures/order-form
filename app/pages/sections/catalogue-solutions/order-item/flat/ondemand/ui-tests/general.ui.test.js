@@ -140,11 +140,11 @@ test('should render a selectEstimationPeriod question as radio button options', 
     .eql(content.questions.selectEstimationPeriod.mainAdvice)
     .expect(selectEstimationPeriodRadioOptions.find('input').count).eql(2)
 
-    .expect(selectEstimationPeriodRadioOptions.find('input').nth(0).getAttribute('value')).eql('perMonth')
+    .expect(selectEstimationPeriodRadioOptions.find('input').nth(0).getAttribute('value')).eql('month')
     .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('label').nth(0))).eql('Per month')
     .expect(selectEstimationPeriodRadioOptions.find('input').nth(0).hasAttribute('checked')).notOk()
 
-    .expect(selectEstimationPeriodRadioOptions.find('input').nth(1).getAttribute('value')).eql('perYear')
+    .expect(selectEstimationPeriodRadioOptions.find('input').nth(1).getAttribute('value')).eql('year')
     .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('label').nth(1))).eql('Per year')
     .expect(selectEstimationPeriodRadioOptions.find('input').nth(1).hasAttribute('checked')).notOk();
 });
