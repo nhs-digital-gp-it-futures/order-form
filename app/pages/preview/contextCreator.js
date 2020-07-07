@@ -61,10 +61,9 @@ const generateCallOffAndSupplierDetailsTable = ({
   const columns = [];
   columns.push(generateCallOffPartyDetails({ orderPartyData }));
   columns.push(generateSupplierDetails({ supplierData }));
-
   return ({
     ...callOffAndSupplierTable,
-    items: [columns],
+    items: [columns.filter(column => column !== undefined)],
   });
 };
 
