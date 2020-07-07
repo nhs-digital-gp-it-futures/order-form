@@ -371,7 +371,7 @@ describe('catalogue-solutions order-item controller', () => {
     };
 
     describe('with errors', () => {
-      it('should return error.respose.data if api request is unsuccessful with 400', async () => {
+      it('should return error.respose if api request is unsuccessful with 400', async () => {
         const responseData = { errors: [{}] };
         postData.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 

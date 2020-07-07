@@ -290,7 +290,7 @@ describe('catalogue-solutions section routes', () => {
         });
     });
 
-    it('should show the catalogue-solutions order item page with errors if the api response is unsuccessfull', async () => {
+    it('should show the catalogue-solutions order item page with errors if the api response is unsuccessful', async () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
       orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
