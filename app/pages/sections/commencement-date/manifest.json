@@ -2,11 +2,13 @@
   "backLinkText": "Go back",
   "title": "Commencement date for",
   "description": "Enter the date that this Call-off Agreement will begin.",
-  "questions": [{
-    "id": "commencementDate",
-    "mainAdvice": "Commencement date",
-    "additionalAdvice": "For example 14 01 2020"
-  }],
+  "questions": {
+    "commencementDate": {
+      "id": "commencementDate",
+      "mainAdvice": "Commencement date",
+      "additionalAdvice": "For example 14 01 2020"
+    }
+  },
   "errorMessages": {
     "CommencementDateRequired": "Enter a commencement date",
     "CommencementDateInvalid": "Enter a commencement date in a valid format",
