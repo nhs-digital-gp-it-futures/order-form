@@ -7,25 +7,6 @@ const setup = {
   },
 };
 
-// const context = {
-//   ...manifest,
-//   title: 'Commencement date for order-id',
-//   backLinkHref: '/organisation/order-1',
-//   csrfToken: 'mockCsrfToken',
-// };
-
-// const contextWithErrors = {
-//   ...context,
-//   questions: [{
-//     ...manifest.questions[0],
-//     error: {
-//       message: 'error message',
-//       fields: ['day', 'month'],
-//     },
-//   }],
-//   errors: [{ text: 'summary error message', href: '#commencementDate' }],
-// };
-
 describe('commencement-date page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
