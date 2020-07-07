@@ -152,7 +152,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: '1',
           price: '1',
-          selectEstimationPeriod: 'perMonth',
+          selectEstimationPeriod: 'month',
           'deliveryDate-day': '09',
           'deliveryDate-month': '02',
           'deliveryDate-year': '2021',
@@ -205,7 +205,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: '',
           price: '1.5',
-          selectEstimationPeriod: 'perMonth',
+          selectEstimationPeriod: 'month',
           'deliveryDate-day': '09',
           'deliveryDate-month': '02',
           'deliveryDate-year': '2021',
@@ -222,7 +222,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: 'not a number',
           price: '1.5',
-          selectEstimationPeriod: 'perMonth',
+          selectEstimationPeriod: 'month',
           'deliveryDate-day': '09',
           'deliveryDate-month': '02',
           'deliveryDate-year': '2021',
@@ -239,7 +239,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: '1.1',
           price: '1.5',
-          selectEstimationPeriod: 'perMonth',
+          selectEstimationPeriod: 'month',
           'deliveryDate-day': '09',
           'deliveryDate-month': '02',
           'deliveryDate-year': '2021',
@@ -272,7 +272,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: '1',
           price: '',
-          selectEstimationPeriod: 'perMonth',
+          selectEstimationPeriod: 'month',
           'deliveryDate-day': '09',
           'deliveryDate-month': '02',
           'deliveryDate-year': '2021',
@@ -289,7 +289,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: '1',
           price: 'not a number',
-          selectEstimationPeriod: 'perMonth',
+          selectEstimationPeriod: 'month',
           'deliveryDate-day': '09',
           'deliveryDate-month': '02',
           'deliveryDate-year': '2021',
@@ -306,7 +306,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: '1',
           price: '1.1234',
-          selectEstimationPeriod: 'perMonth',
+          selectEstimationPeriod: 'month',
           'deliveryDate-day': '09',
           'deliveryDate-month': '02',
           'deliveryDate-year': '2021',
@@ -323,7 +323,7 @@ describe('catalogue-solutions order-item controller', () => {
         const data = {
           quantity: '1',
           price: '1.5',
-          selectEstimationPeriod: 'perMonth',
+          selectEstimationPeriod: 'month',
           'deliveryDate-day': '',
           'deliveryDate-month': '',
           'deliveryDate-year': '',
@@ -367,7 +367,7 @@ describe('catalogue-solutions order-item controller', () => {
       'deliveryDate-year': '2020',
       price: '500.49',
       quantity: '1',
-      selectEstimationPeriod: 'perMonth',
+      selectEstimationPeriod: 'month',
     };
 
     describe('with errors', () => {
@@ -433,7 +433,7 @@ describe('catalogue-solutions order-item controller', () => {
             catalogueSolutionName: 'Solution 1',
             deliveryDate: '2020-12-25',
             quantity: 1,
-            estimationPeriod: 'perMonth',
+            estimationPeriod: 'month',
             provisioningType: 'OnDemand',
             type: 'flat',
             currencyCode: 'GBP',
