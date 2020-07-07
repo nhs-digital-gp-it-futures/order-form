@@ -162,7 +162,7 @@ test('should show text fields as errors with error message when there are BE val
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateOutsideDeliveryWindow)
 
     .expect(errorMessage.exists).ok()
-    .expect(await extractInnerText(errorMessage)).eql(`Error:\n${content.errorMessages.DeliveryDateOutsideDeliveryWindow}`)
+    .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.DeliveryDateOutsideDeliveryWindow)
 
     .expect(dayInput.getAttribute('value')).eql('01')
     .expect(dayInput.hasClass('nhsuk-input--error')).ok()
