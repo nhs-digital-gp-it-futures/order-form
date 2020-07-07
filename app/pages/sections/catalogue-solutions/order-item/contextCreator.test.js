@@ -100,12 +100,12 @@ describe('catalogue-solutions order-item contextCreator', () => {
               ...flatOndemandManifest.questions.selectEstimationPeriod,
               options: [
                 {
-                  value: 'perMonth',
+                  value: 'month',
                   text: 'Per month',
                   checked: true,
                 },
                 {
-                  value: 'perYear',
+                  value: 'year',
                   text: 'Per year',
                 },
               ],
@@ -114,7 +114,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
         };
 
         const formData = {
-          selectEstimationPeriod: 'perMonth',
+          selectEstimationPeriod: 'month',
         };
 
         const context = getContext({

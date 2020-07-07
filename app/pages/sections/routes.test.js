@@ -432,7 +432,7 @@ describe('section routes', () => {
         });
     });
 
-    it('should return the correct status and text if the api response is unsuccessfull', async () => {
+    it('should return the correct status and text if the api response is unsuccessful', async () => {
       commencementDateController.validateCommencementDateForm = jest.fn()
         .mockReturnValue([]);
 

@@ -80,17 +80,20 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const validationErrors = [];
+
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const solutionName = sessionManager.getFromSession({ req, key: 'solutionName' });
     const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
     const selectedPrice = sessionManager.getFromSession({ req, key: 'selectedPrice' });
-    const response = validateOrderItemForm({ data: req.body, selectedPrice });
+    const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
 
-    if (response.success) {
-      const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
-      const detail = req.body;
-      await postSolutionOrderItem({
+    const errors = validateOrderItemForm({ data: req.body, selectedPrice });
+    validationErrors.push(...errors);
+
+    if (validationErrors.length === 0) {
+      const apiResponse = await postSolutionOrderItem({
         orderId,
         accessToken,
         selectedRecipientId,
@@ -98,10 +101,14 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
         selectedSolutionId,
         solutionName,
         selectedPrice,
-        detail,
+        formData: req.body,
       });
-      logger.info('redirecting catalogue solutions main page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
+
+      if (apiResponse.success) {
+        logger.info('redirecting catalogue solutions main page');
+        return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
+      }
+      validationErrors.push(...apiResponse.errors);
     }
 
     const context = await getOrderItemErrorPageContext({
@@ -111,7 +118,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       serviceRecipientName,
       selectedPrice,
       formData: req.body,
-      validationErrors: response.errors,
+      validationErrors,
     });
 
     return res.render('pages/sections/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
