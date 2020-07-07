@@ -7,10 +7,10 @@ export const getSolutionsPageContext = params => getContext(params);
 
 export const findSolutions = async ({ supplierId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSolutionsForSupplier', options: { supplierId } });
-  const solutions = await getData({ endpoint, accessToken, logger });
-  logger.info(`Searching for solutions for Supplier "${supplierId}" returned ${solutions.length} solutions`);
+  const { solutions } = await getData({ endpoint, accessToken, logger });
+  logger.info(`Found ${solutions.length} solution(s) for supplier "${supplierId}".`);
 
-  return solutions.solutions;
+  return solutions;
 };
 
 export const getSupplierId = async ({ orderId, accessToken }) => {
