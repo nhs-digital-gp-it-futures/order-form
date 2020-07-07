@@ -14,7 +14,7 @@ const formatPostData = ({
   selectedSolutionId,
   solutionName,
   selectedPrice,
-  detail,
+  formData,
 }) => ({
   serviceRecipient: {
     name: serviceRecipientName,
@@ -22,14 +22,14 @@ const formatPostData = ({
   },
   catalogueSolutionId: selectedSolutionId,
   catalogueSolutionName: solutionName,
-  deliveryDate: extractDate('deliveryDate', detail),
-  quantity: parseInt(detail.quantity, 10),
-  estimationPeriod: detail.selectEstimationPeriod,
+  deliveryDate: extractDate('deliveryDate', formData),
+  quantity: parseInt(formData.quantity, 10),
+  estimationPeriod: formData.selectEstimationPeriod,
   provisioningType: selectedPrice.provisioningType,
   type: selectedPrice.type,
   currencyCode: 'GBP',
   itemUnitModel: selectedPrice.itemUnit,
-  price: parseFloat(detail.price),
+  price: parseFloat(formData.price),
 });
 
 export const getOrderItem = async ({ orderId, orderItemId, accessToken }) => {
@@ -180,10 +180,7 @@ export const validateOrderItemForm = ({ data, selectedPrice }) => {
     }
   }
 
-  if (errors.length === 0) {
-    return { success: true };
-  }
-  return { success: false, errors };
+  return errors;
 };
 
 export const getSolution = async ({ solutionId, accessToken }) => {
@@ -202,7 +199,7 @@ export const postSolutionOrderItem = async ({
   selectedSolutionId,
   solutionName,
   selectedPrice,
-  detail,
+  formData,
 }) => {
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postSolutionOrderItem', options: { orderId } });
   const body = formatPostData({
@@ -211,9 +208,19 @@ export const postSolutionOrderItem = async ({
     selectedSolutionId,
     solutionName,
     selectedPrice,
-    detail,
+    formData,
   });
-  await postData({
-    endpoint, body, accessToken, logger,
-  });
+  try {
+    await postData({
+      endpoint, body, accessToken, logger,
+    });
+    logger.info(`Order item successfully created for order id: ${orderId}`);
+    return { success: true };
+  } catch (err) {
+    if (err.response.status === 400 && err.response.data && err.response.data.errors) {
+      return err.response.data;
+    }
+    logger.error(`Error creating order item for order id: ${orderId}`);
+    throw new Error();
+  }
 };
