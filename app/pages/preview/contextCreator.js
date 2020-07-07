@@ -216,13 +216,13 @@ const generateRecurringCostDetailsTable = ({
 
     columns.push(({
       classes: manifest.recurringCostTable.cellInfo.priceUnit.classes,
-      data: `${formatPrice(item.price)} ${item.itemUnitDescription} ${item.timeUnitDescription}`,
+      data: `${formatPrice(item.price)} ${item.itemUnitDescription} ${item.timeUnitDescription ?? ''}`,
       dataTestId: 'price-unit',
     }));
 
     columns.push(({
       classes: manifest.recurringCostTable.cellInfo.quantity.classes,
-      data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription}`,
+      data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription ?? ''}`,
       dataTestId: 'quantity',
     }));
 
