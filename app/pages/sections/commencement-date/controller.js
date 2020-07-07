@@ -4,7 +4,7 @@ import { getDateErrors } from '../../../helpers/getDateErrors';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 import { extractDate } from '../../../helpers/extractDate';
-import { formatCommencementDate } from '../../../helpers/dateFormatter';
+import { destructureDate } from '../../../helpers/dateFormatter';
 
 const formatPutData = data => ({
   commencementDate: extractDate('commencementDate', data),
@@ -12,7 +12,7 @@ const formatPutData = data => ({
 
 const generateFormData = (commencementDateData) => {
   if (commencementDateData.commencementDate) {
-    const [day, month, year] = formatCommencementDate(commencementDateData.commencementDate);
+    const [day, month, year] = destructureDate(commencementDateData.commencementDate);
     return ({
       'commencementDate-day': day,
       'commencementDate-month': month,
