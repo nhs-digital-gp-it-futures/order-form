@@ -4,57 +4,66 @@ import { formatDate } from '../../helpers/dateFormatter';
 import { formatPrice } from '../../helpers/priceFormatter';
 import { logger } from '../../logger';
 
-const generateCallOffPartyDetails = ({ orderPartyData }) => ({
-  multiLine: {
-    data: [
-      `${orderPartyData.primaryContact.firstName} ${orderPartyData.primaryContact.lastName}`,
-      orderPartyData.name,
-      orderPartyData.odsCode,
-      '',
-      orderPartyData.address.line1,
-      orderPartyData.address.line2,
-      orderPartyData.address.line3,
-      orderPartyData.address.line4,
-      orderPartyData.address.line5,
-      orderPartyData.address.town,
-      orderPartyData.address.county,
-      orderPartyData.address.postcode,
-      orderPartyData.address.country,
-    ].filter(lineItem => lineItem !== undefined),
-    dataTestId: 'call-off-party',
-  },
-});
+const generateCallOffPartyDetails = ({ orderPartyData }) => {
+  if (orderPartyData && orderPartyData.primaryContact && orderPartyData.address) {
+    return {
+      multiLine: {
+        data: [
+          `${orderPartyData.primaryContact.firstName} ${orderPartyData.primaryContact.lastName}`,
+          orderPartyData.name,
+          orderPartyData.odsCode,
+          '',
+          orderPartyData.address.line1,
+          orderPartyData.address.line2,
+          orderPartyData.address.line3,
+          orderPartyData.address.line4,
+          orderPartyData.address.line5,
+          orderPartyData.address.town,
+          orderPartyData.address.county,
+          orderPartyData.address.postcode,
+          orderPartyData.address.country,
+        ].filter(lineItem => lineItem !== undefined),
+        dataTestId: 'call-off-party',
+      },
+    };
+  }
+  return undefined;
+};
 
-const generateSupplierDetails = ({ supplierData }) => ({
-  multiLine: {
-    data: [
-      `${supplierData.primaryContact.firstName} ${supplierData.primaryContact.lastName}`,
-      supplierData.name,
-      '',
-      supplierData.address.line1,
-      supplierData.address.line2,
-      supplierData.address.line3,
-      supplierData.address.line4,
-      supplierData.address.line5,
-      supplierData.address.town,
-      supplierData.address.county,
-      supplierData.address.postcode,
-      supplierData.address.country,
-    ].filter(lineItem => lineItem !== undefined),
-    dataTestId: 'supplier',
-  },
-});
+const generateSupplierDetails = ({ supplierData }) => {
+  if (supplierData && supplierData.primaryContact && supplierData.address) {
+    return {
+      multiLine: {
+        data: [
+          `${supplierData.primaryContact.firstName} ${supplierData.primaryContact.lastName}`,
+          supplierData.name,
+          '',
+          supplierData.address.line1,
+          supplierData.address.line2,
+          supplierData.address.line3,
+          supplierData.address.line4,
+          supplierData.address.line5,
+          supplierData.address.town,
+          supplierData.address.county,
+          supplierData.address.postcode,
+          supplierData.address.country,
+        ].filter(lineItem => lineItem !== undefined),
+        dataTestId: 'supplier',
+      },
+    };
+  }
+  return undefined;
+};
 
 const generateCallOffAndSupplierDetailsTable = ({
   callOffAndSupplierTable, orderPartyData, supplierData,
 }) => {
   const columns = [];
-  if (orderPartyData) columns.push(generateCallOffPartyDetails({ orderPartyData }));
-  if (supplierData) columns.push(generateSupplierDetails({ supplierData }));
-
+  columns.push(generateCallOffPartyDetails({ orderPartyData }));
+  columns.push(generateSupplierDetails({ supplierData }));
   return ({
     ...callOffAndSupplierTable,
-    items: [columns],
+    items: [columns.filter(column => column !== undefined)],
   });
 };
 
