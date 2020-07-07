@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
+import { solutionsApiUrl as bapiUrl, orderApiUrl } from '../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service';
 
@@ -13,7 +14,33 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
+const mockAdditionalServices = [
+  {
+    additionalServiceId: 'additional-service-1',
+    name: 'Additional Service 1',
+  },
+  {
+    id: 'additional-service-2',
+    name: 'Additional Service 1',
+  },
+];
+
 const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/catalogue-solutions')
+    .reply(200,
+      {
+        catalogueSolutions: [
+          {
+            catalogueItemId: '1',
+            catalogueItemName: 'some catalogue solution name',
+          },
+        ],
+      });
+
+  nock(bapiUrl)
+    .get('/api/v1/additional-services?solutionIds=1')
+    .reply(200, { additionalServices: mockAdditionalServices });
 };
 
 const pageSetup = async (

@@ -35,7 +35,7 @@ describe('catalogue-solutions select-solution controller', () => {
 
     it('should call getData once with the correct params', async () => {
       getData
-        .mockResolvedValueOnce({ data: {} });
+        .mockResolvedValueOnce({ solutions: [] });
 
       await findSolutions({ supplierId: 'supp-1', accessToken: 'access_token' });
       expect(getData.mock.calls.length).toEqual(1);
