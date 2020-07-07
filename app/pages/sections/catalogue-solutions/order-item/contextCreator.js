@@ -1,10 +1,10 @@
 import { baseUrl } from '../../../../config';
 import { generateErrorMap } from '../../../../helpers/generateErrorMap';
 
-const populateEstimationPeriodQuestion = ({ questionManifest, timeUnitDescription = '' }) => {
+const populateRadioQuestion = ({ questionManifest, selectedValue = '' }) => {
   const populatedOptions = questionManifest.options.map(option => ({
     ...option,
-    checked: option.value.toLowerCase() === timeUnitDescription.toLowerCase()
+    checked: option.value.toLowerCase() === selectedValue.toLowerCase()
       ? true : undefined,
   }));
 
@@ -13,10 +13,10 @@ const populateEstimationPeriodQuestion = ({ questionManifest, timeUnitDescriptio
   };
 };
 
-const populateDeliveryDateQuestion = ({
+const populateDateQuestion = ({
   questionManifest, day, month, year,
 }) => {
-  const plannedDeliveryDatePopulated = ({
+  const dateQuestionPopulated = ({
     ...questionManifest,
     data: {
       day,
@@ -24,7 +24,7 @@ const populateDeliveryDateQuestion = ({
       year,
     },
   });
-  return plannedDeliveryDatePopulated;
+  return dateQuestionPopulated;
 };
 
 const generateAddPriceTable = ({
@@ -56,14 +56,14 @@ const generateAddPriceTable = ({
 };
 
 const populateQuestionWithData = ({ questionManifest, formData, questionId }) => {
-  if (questionId === 'selectEstimationPeriod') {
-    return populateEstimationPeriodQuestion({
+  if (questionManifest.type === 'radio') {
+    return populateRadioQuestion({
       questionManifest,
-      timeUnitDescription: formData && formData[questionId],
+      selectedValue: formData && formData[questionId],
     });
   }
-  if (questionId === 'deliveryDate') {
-    return populateDeliveryDateQuestion({
+  if (questionManifest.type === 'date') {
+    return populateDateQuestion({
       questionManifest,
       day: formData[`${questionId}-day`],
       month: formData[`${questionId}-month`],
@@ -76,9 +76,9 @@ const populateQuestionWithData = ({ questionManifest, formData, questionId }) =>
   };
 };
 
-const determineFields = (errorMap, questionId) => {
+const determineFields = ({ errorMap, questionId, questionType }) => {
   if (errorMap[questionId].fields) return errorMap[questionId].fields;
-  if (questionId === 'deliveryDate') return ['day', 'month', 'year'];
+  if (questionType === 'date') return ['day', 'month', 'year'];
   return undefined;
 };
 
@@ -88,7 +88,7 @@ const generateQuestions = ({ questions, formData, errorMap }) => {
       const questionError = errorMap && errorMap[questionId]
         ? {
           message: errorMap[questionId].errorMessages.join(', '),
-          fields: determineFields(errorMap, questionId),
+          fields: determineFields({ errorMap, questionId, questionType: questionManifest.type }),
         }
         : undefined;
 
