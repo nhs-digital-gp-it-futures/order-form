@@ -67,10 +67,11 @@ describe('catalogue-solutions order-item controller', () => {
       await getOrderItemContext({
         orderId: 'order-1',
         solutionName: 'solution-name',
-        selectedRecipientId: 'fake-recipient-id',
+        odsCode: 'fake-recipient-id',
         serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
         selectedPrice,
+        formData: { price: 0.1 },
       });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
@@ -102,7 +103,7 @@ describe('catalogue-solutions order-item controller', () => {
       await getOrderItemContext({
         orderId: 'order-1',
         solutionName: 'solution-name',
-        selectedRecipientId: 'fake-recipient-id',
+        odsCode: 'fake-recipient-id',
         serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
         selectedPrice,

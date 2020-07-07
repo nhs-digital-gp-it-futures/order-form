@@ -7,9 +7,9 @@ import {
   putCatalogueSolutions,
 } from './catalogue-solutions/controller';
 import {
-  getOrderItem,
   getOrderItemContext,
   getSelectedPrice,
+  getOrderItem,
   getOrderItemErrorPageContext,
   validateOrderItemForm,
   getSolution,
@@ -49,16 +49,29 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
-    const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
-    const solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
-    const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
-    const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
+    let selectedSolutionId;
+    let selectedPriceId;
     let selectedPrice;
+    let solutionName;
+    let selectedRecipientId;
+    let serviceRecipientName;
     let formData;
 
-    if (orderItemId !== 'newsolution') {
+    if (orderItemId === 'newsolution') {
+      selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
+      solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
+      selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
+      serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
+      selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
+      selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
+      formData = { price: selectedPrice.price };
+    } else {
       selectedPrice = await getOrderItem({ orderId, orderItemId, accessToken });
+      solutionName = selectedPrice.catalogueItemName;
+      selectedRecipientId = selectedPrice.serviceRecipient.odsCode;
+      sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: selectedRecipientId });
+      serviceRecipientName = selectedPrice.serviceRecipient.name;
+      sessionManager.saveToSession({ req, key: 'serviceRecipientName', value: serviceRecipientName });
       const date = selectedPrice.deliveryDate.split('-');
       formData = {
         'deliveryDate-year': date[0],
@@ -68,8 +81,6 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
         selectEstimationPeriod: selectedPrice.estimationPeriod,
         price: selectedPrice.price,
       };
-    } else {
-      selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     }
 
     sessionManager.saveToSession({ req, key: 'solutionName', value: solutionName });
@@ -78,9 +89,8 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const context = await getOrderItemContext({
       orderId,
       solutionName,
-      selectedRecipientId,
+      odsCode: selectedRecipientId,
       serviceRecipientName,
-      selectedPriceId,
       selectedPrice,
       formData,
     });

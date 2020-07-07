@@ -74,7 +74,7 @@ const formatFormData = ({ formData }) => ({
 export const getOrderItemContext = async ({
   orderId,
   solutionName,
-  selectedRecipientId,
+  odsCode,
   serviceRecipientName,
   selectedPrice,
   formData,
@@ -84,17 +84,15 @@ export const getOrderItemContext = async ({
     type: selectedPrice.type,
   });
 
-  const populatedData = formData !== undefined ? formData : { price: selectedPrice.price };
-
   return getContext({
     commonManifest,
     selectedPriceManifest,
     orderId,
     solutionName,
     serviceRecipientName,
-    odsCode: selectedRecipientId,
+    odsCode,
     selectedPrice,
-    formData: populatedData,
+    formData,
   });
 };
 
