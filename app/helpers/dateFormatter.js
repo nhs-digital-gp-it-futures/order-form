@@ -7,7 +7,7 @@ export const formatDate = (date) => {
   return `${da} ${mo} ${ye}`;
 };
 
-export const formatCommencementDate = (date) => {
+export const destructureDate = (date) => {
   const d = new Date(date);
   if (Number.isNaN(d.getTime())) return '';
   const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
