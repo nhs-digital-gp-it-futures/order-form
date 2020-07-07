@@ -77,7 +77,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Catalogue-solutions - flat ondemand - general')
+fixture('Catalogue-solutions - flat ondemand - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -87,6 +87,17 @@ fixture('Catalogue-solutions - flat ondemand - general')
 
     await t.expect(isDone).ok('Not all nock interceptors were used!');
   });
+
+test('should render the title', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const title = Selector('h1[data-test-id="order-item-page-title"]');
+
+  await t
+    .expect(title.exists).ok()
+    .expect(await extractInnerText(title)).eql('Some catalogue name information for Some service recipient 2 (OX3)');
+});
 
 test('should populate input fields for day, month and year if data is returned from api', async (t) => {
   await pageSetup();
@@ -133,10 +144,13 @@ test('should render the price table content', async (t) => {
   await t.navigateTo(pageUrl);
 
   const priceInput = Selector('[data-test-id="question-price"] input');
+  const orderUnit = Selector('div[data-test-id="unit-of-order"]');
 
   await t
     .expect(priceInput.exists).ok()
-    .expect(priceInput.getAttribute('value')).eql('0.1');
+    .expect(priceInput.getAttribute('value')).eql('0.1')
+    .expect(orderUnit.exists).ok()
+    .expect(await extractInnerText(orderUnit)).eql(orderItem.itemUnit.description);
 });
 
 test('should show the correct error summary and input error when date is removed and save is clicked', async (t) => {
