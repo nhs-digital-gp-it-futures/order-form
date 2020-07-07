@@ -428,16 +428,13 @@ describe('catalogue-solutions order-item controller', () => {
         expect(postData).toHaveBeenCalledWith({
           endpoint: `${orderApiUrl}/api/v1/orders/order1/sections/catalogue-solutions`,
           body: {
+            ...selectedPrice,
             serviceRecipient,
             catalogueSolutionId: 'solutionId1',
             catalogueSolutionName: 'Solution 1',
             deliveryDate: '2020-12-25',
             quantity: 1,
             estimationPeriod: 'month',
-            provisioningType: 'OnDemand',
-            type: 'flat',
-            currencyCode: 'GBP',
-            itemUnitModel: selectedPrice.itemUnit,
             price: 500.49,
           },
           accessToken: 'access_token',

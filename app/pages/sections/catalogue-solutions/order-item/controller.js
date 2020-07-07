@@ -16,6 +16,7 @@ const formatPostData = ({
   selectedPrice,
   formData,
 }) => ({
+  ...selectedPrice,
   serviceRecipient: {
     name: serviceRecipientName,
     odsCode: selectedRecipientId,
@@ -25,10 +26,6 @@ const formatPostData = ({
   deliveryDate: extractDate('deliveryDate', formData),
   quantity: parseInt(formData.quantity, 10),
   estimationPeriod: formData.selectEstimationPeriod,
-  provisioningType: selectedPrice.provisioningType,
-  type: selectedPrice.type,
-  currencyCode: 'GBP',
-  itemUnitModel: selectedPrice.itemUnit,
   price: parseFloat(formData.price),
 });
 
