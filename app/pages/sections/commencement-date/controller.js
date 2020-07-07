@@ -4,10 +4,23 @@ import { getDateErrors } from '../../../helpers/getDateErrors';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 import { extractDate } from '../../../helpers/extractDate';
+import { formatCommencementDate } from '../../../helpers/dateFormatter';
 
 const formatPutData = data => ({
   commencementDate: extractDate('commencementDate', data),
 });
+
+const generateFormData = (commencementDateData) => {
+  if (commencementDateData.commencementDate) {
+    const [day, month, year] = formatCommencementDate(commencementDateData.commencementDate);
+    return ({
+      'commencementDate-day': day,
+      'commencementDate-month': month,
+      'commencementDate-year': year,
+    });
+  }
+  return undefined;
+};
 
 export const getCommencementDateContext = async ({ orderId, accessToken }) => {
   const commencementDateDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCommencementDate', options: { orderId } });
@@ -18,7 +31,7 @@ export const getCommencementDateContext = async ({ orderId, accessToken }) => {
   logger.info(`Commencement date ${commencementDateData ? '' : 'not '}found for ${orderId}`);
   return getContext({
     orderId,
-    data: commencementDateData.commencementDate ? commencementDateData.commencementDate : undefined,
+    data: generateFormData(commencementDateData),
   });
 };
 

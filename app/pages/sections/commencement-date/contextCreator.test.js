@@ -4,51 +4,11 @@ import { baseUrl } from '../../../config';
 
 const orderId = 'order-id';
 
-const validationErrors = [{
-  id: 'CommencementDateDayRequired',
-  part: ['day'],
-}];
-
-const data = {
-  'commencementDate-day': '13',
-  'commencementDate-month': '01',
-  'commencementDate-year': '2020',
-};
-
 describe('commencement-date contextCreator', () => {
   describe('getContext', () => {
-    describe('without data', () => {
-      it('should return the contents of manifest', () => {
-        const context = getContext({});
-        expect(context.backLinkText).toEqual(manifest.backLinkText);
-        expect(context.description).toEqual(manifest.description);
-        expect(context.saveButtonText).toEqual(manifest.saveButtonText);
-        expect(context.questions.length).toEqual(1);
-        expect(context.questions[0].id).toEqual('commencementDate');
-        expect(context.questions[0].mainAdvice).toEqual('Commencement date');
-        expect(context.questions[0].additionalAdvice).toEqual('For example 14 01 2020');
-      });
-    });
-
-    describe('with data', () => {
-      it('should return the contents of manifest', () => {
-        const context = getContext({ data: '2020-01-13' });
-        expect(context.backLinkText).toEqual(manifest.backLinkText);
-        expect(context.description).toEqual(manifest.description);
-        expect(context.saveButtonText).toEqual(manifest.saveButtonText);
-        expect(context.questions.length).toEqual(1);
-        expect(context.questions[0].id).toEqual('commencementDate');
-        expect(context.questions[0].mainAdvice).toEqual('Commencement date');
-        expect(context.questions[0].additionalAdvice).toEqual('For example 14 01 2020');
-      });
-
-      it('should add data to the question', () => {
-        const context = getContext({ data: '2020-01-13' });
-        expect(context.questions[0].data).toBeTruthy();
-        expect(context.questions[0].data.day).toEqual('13');
-        expect(context.questions[0].data.month).toEqual('01');
-        expect(context.questions[0].data.year).toEqual('2020');
-      });
+    it('should return the backLinkText', () => {
+      const context = getContext({});
+      expect(context.backLinkText).toEqual(manifest.backLinkText);
     });
 
     it('should construct the backLinkHref', () => {
@@ -56,64 +16,82 @@ describe('commencement-date contextCreator', () => {
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
 
-    it('should construct title with orderId', () => {
+    it('should return the title', () => {
       const context = getContext({ orderId });
-      expect(context.title).toEqual('Commencement date for order-id');
+
+      expect(context.title).toEqual(`${manifest.title} ${orderId}`);
+    });
+
+    it('should return the description', () => {
+      const context = getContext({});
+      expect(context.description).toEqual(manifest.description);
+    });
+
+    it('should return the questions', () => {
+      const context = getContext({});
+      expect(context.questions).toEqual(manifest.questions);
+    });
+
+    it('should populate the commencement data with data provided', () => {
+      const expectedContext = {
+        questions: {
+          commencementDate: {
+            ...manifest.questions.commencementDate,
+            data: {
+              day: '09',
+              month: '02',
+              year: '2021',
+            },
+          },
+        },
+      };
+
+      const formData = {
+        'commencementDate-day': '09',
+        'commencementDate-month': '02',
+        'commencementDate-year': '2021',
+      };
+
+      const context = getContext({ orderId: 'order-1', data: formData });
+      expect(context.questions.deliveryDate)
+        .toEqual(expectedContext.questions.deliveryDate);
+    });
+
+    it('should return the save button', () => {
+      const context = getContext({});
+      expect(context.saveButtonText).toEqual(manifest.saveButtonText);
     });
   });
 
   describe('getErrorContext', () => {
-    it('should return the contents of manifest', () => {
-      const context = getErrorContext({ validationErrors, orderId, data });
-      expect(context.backLinkText).toEqual(manifest.backLinkText);
-      expect(context.description).toEqual(manifest.description);
-      expect(context.saveButtonText).toEqual(manifest.saveButtonText);
-      expect(context.questions.length).toEqual(1);
-      expect(context.questions[0].id).toEqual('commencementDate');
-      expect(context.questions[0].mainAdvice).toEqual('Commencement date');
-      expect(context.questions[0].additionalAdvice).toEqual('For example 14 01 2020');
-    });
+    it('should return error for commencementDate', () => {
+      const expectedContext = {
+        errors: [
+          { href: '#commencementDate', text: manifest.errorMessages.CommencementDateRequired },
+        ],
+        questions: {
+          ...manifest.questions,
+          commencementDate: {
+            ...manifest.questions.commencementDate,
+            error: {
+              message: manifest.errorMessages.CommencementDateRequired,
+              fields: ['day', 'month', 'year'],
+            },
+          },
+        },
+      };
 
-    it('should add data to the question', () => {
-      const context = getErrorContext({ validationErrors, orderId, data });
-      expect(context.questions[0].data).toBeTruthy();
-      expect(context.questions[0].data.day).toEqual('13');
-      expect(context.questions[0].data.month).toEqual('01');
-      expect(context.questions[0].data.year).toEqual('2020');
-    });
+      const context = getErrorContext({
+        manifest,
+        validationErrors: [{
+          field: 'CommencementDate',
+          id: 'CommencementDateRequired',
+          part: ['day', 'month', 'year'],
+        }],
+      });
 
-    it('should add error to the question', () => {
-      const context = getErrorContext({ validationErrors, orderId, data });
-      expect(context.questions[0].error).toBeTruthy();
-      expect(context.questions[0].error.message).toEqual('Commencement date must include a day');
-      expect(context.questions[0].error.fields).toEqual(['day']);
-    });
-
-    it('should add day month and year to error part array to the question if not given', () => {
-      const validationErrorsNoPart = [{
-        id: 'CommencementDateDayRequired',
-      }];
-      const context = getErrorContext({ validationErrors: validationErrorsNoPart, orderId, data });
-      expect(context.questions[0].error).toBeTruthy();
-      expect(context.questions[0].error.message).toEqual('Commencement date must include a day');
-      expect(context.questions[0].error.fields).toEqual(['day', 'month', 'year']);
-    });
-
-    it('should add errors array to the context', () => {
-      const context = getErrorContext({ validationErrors, orderId, data });
-      expect(context.errors.length > 0).toBeTruthy();
-      expect(context.errors[0].text).toEqual('Commencement date must include a day');
-      expect(context.errors[0].href).toEqual('#commencementDate');
-    });
-
-    it('should construct the backLinkHref', () => {
-      const context = getErrorContext({ validationErrors, orderId, data });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
-    });
-
-    it('should construct title with orderId', () => {
-      const context = getErrorContext({ validationErrors, orderId, data });
-      expect(context.title).toEqual('Commencement date for order-id');
+      expect(context.errors).toEqual(expectedContext.errors);
+      expect(context.questions).toEqual(expectedContext.questions);
     });
   });
 });
