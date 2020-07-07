@@ -41,7 +41,7 @@ const orderItem = {
   catalogueItemId: '10000-001',
   deliveryDate: '2020-04-27',
   quantity: 3,
-  estimationPeriod: 'perMonth',
+  estimationPeriod: 'month',
   provisioningType: 'OnDemand',
   type: 'flat',
   currencyCode: 'GBP',
