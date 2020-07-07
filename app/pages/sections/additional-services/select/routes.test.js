@@ -55,6 +55,9 @@ describe('additional-services select routes', () => {
     ));
 
     it('should redirect to the additional-services/select/additional-service', async () => {
+      selectAdditionalServiceController.findAdditionalServices = jest.fn()
+        .mockResolvedValue({});
+
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
 
@@ -88,6 +91,9 @@ describe('additional-services select routes', () => {
     ));
 
     it('should return the additional-services select-additional-service page if authorised', async () => {
+      selectAdditionalServiceController.findAdditionalServices = jest.fn()
+        .mockResolvedValue({});
+
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
 
