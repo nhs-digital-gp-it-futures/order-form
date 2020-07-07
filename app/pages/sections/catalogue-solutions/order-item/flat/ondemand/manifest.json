@@ -20,11 +20,11 @@
       "mainAdvice": "Estimation period",
       "options": [
         {
-          "value": "perMonth",
+          "value": "month",
           "text": "Per month"
         },
         {
-          "value": "perYear",
+          "value": "year",
           "text": "Per year"
         }
       ],
