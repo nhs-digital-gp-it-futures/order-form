@@ -157,8 +157,6 @@ export const getErrorContext = (params) => {
     errorMessagesFromManifest: params.selectedPriceManifest.errorMessages,
   });
 
-  console.log('errorMap', errorMap)
-
   const contextWithErrors = getContext({
     commonManifest: params.commonManifest,
     selectedPriceManifest: params.selectedPriceManifest,
