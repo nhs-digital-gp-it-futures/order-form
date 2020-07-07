@@ -253,11 +253,11 @@ describe('catalogue-solutions order-item page', () => {
           mainAdvice: 'Estimation period',
           options: [
             {
-              value: 'perMonth',
+              value: 'month',
               text: 'Per month',
             },
             {
-              value: 'perYear',
+              value: 'year',
               text: 'Per year',
             },
           ],
@@ -276,9 +276,9 @@ describe('catalogue-solutions order-item page', () => {
         expect(selectSolutionRadioOptions.length).toEqual(1);
         expect(selectSolutionRadioOptions.find('legend').text().trim()).toEqual('Estimation period');
         expect(selectSolutionRadioOptions.find('input').length).toEqual(2);
-        expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('perMonth');
+        expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('month');
         expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Per month');
-        expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('perYear');
+        expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('year');
         expect(selectSolutionRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('Per year');
       });
     }));
