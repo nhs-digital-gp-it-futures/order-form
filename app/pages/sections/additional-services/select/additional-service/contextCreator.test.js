@@ -1,0 +1,108 @@
+import manifest from './manifest.json';
+import { getContext } from './contextCreator';
+import { baseUrl } from '../../../../../config';
+
+describe('additional-services additional-service contextCreator', () => {
+  describe('getContext', () => {
+    it('should return the backLinkText', () => {
+      const context = getContext({ orderId: 'order-1' });
+      expect(context.backLinkText).toEqual(manifest.backLinkText);
+    });
+
+    it('should construct the backLinkHref', () => {
+      const orderId = 'order-1';
+      const context = getContext({ orderId });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/additional-services`);
+    });
+
+    it('should return the title', () => {
+      const orderId = 'order-1';
+      const context = getContext({ orderId });
+      expect(context.title).toEqual(`${manifest.title} ${orderId}`);
+    });
+
+    it('should return the description', () => {
+      const context = getContext({});
+      expect(context.description).toEqual(manifest.description);
+    });
+
+    it('should return the select additional-service question', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectAdditionalService',
+            mainAdvice: 'Select Additional Service',
+            options: [
+              {
+                value: 'additional-service-1',
+                text: 'Additional Service 1',
+              },
+              {
+                value: 'additional-service-2',
+                text: 'Additional Service 2',
+              },
+            ],
+          },
+        ],
+      };
+
+      const additionalServices = [
+        {
+          id: 'additional-service-1',
+          name: 'Additional Service 1',
+        },
+        {
+          id: 'additional-service-2',
+          name: 'Additional Service 2',
+        },
+      ];
+
+      const context = getContext({ additionalServices });
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
+
+    it('should return select additional service question with the selectedAdditionalService checked', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectAdditionalService',
+            mainAdvice: 'Select Additional Service',
+            options: [
+              {
+                value: 'additional-service-1',
+                text: 'Additional Service 1',
+              },
+              {
+                value: 'additional-service-2',
+                text: 'Additional Service 2',
+                checked: true,
+              },
+            ],
+          },
+        ],
+      };
+
+      const additionalServices = [
+        {
+          id: 'additional-service-1',
+          name: 'Additional Service 1',
+        },
+        {
+          id: 'additional-service-2',
+          name: 'Additional Service 2',
+        },
+      ];
+
+      const selectedAdditionalServiceId = 'additional-service-2';
+
+      const context = getContext({ additionalServices, selectedAdditionalServiceId });
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
+
+
+    it('should return the continueButtonText', () => {
+      const context = getContext({});
+      expect(context.continueButtonText).toEqual(manifest.continueButtonText);
+    });
+  });
+});

@@ -34,7 +34,7 @@ export const additionalServicesRoutes = (authProvider, addContext) => {
     return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
 
-  router.use('/select', additionalServicesSelectRoutes(authProvider));
+  router.use('/select', additionalServicesSelectRoutes(authProvider, addContext));
 
   return router;
 };

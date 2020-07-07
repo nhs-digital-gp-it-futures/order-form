@@ -143,7 +143,7 @@ test('should navigate to /organisation/order-1/catalogue-solutions/select/soluti
 
   await t
     .click(addOrderItemButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services/select/solution');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services/select/additional-service');
 });
 
 test('should render the Continue button', async (t) => {
