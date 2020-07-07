@@ -252,7 +252,7 @@ describe('catalogue-solutions section routes', () => {
       });
     });
 
-    it('should show the recipient select page with errors if there are validation errors', async () => {
+    it('should show the catalogue-solutions order item page with errors if there are FE caught validation errors', async () => {
       orderItemController.getSolution = jest.fn().mockResolvedValue({});
       orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
       orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
@@ -261,7 +261,47 @@ describe('catalogue-solutions section routes', () => {
         .mockResolvedValue([]);
 
       orderItemController.validateOrderItemForm = jest.fn()
-        .mockReturnValue({ success: false });
+        .mockReturnValue([{}]);
+
+      orderItemController.getOrderItemErrorPageContext = jest.fn()
+        .mockResolvedValue({
+          errors: [{ text: 'Select a price', href: '#priceRequired' }],
+        });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie,
+        ],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="order-item-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should show the catalogue-solutions order item page with errors if the api response is unsuccessful', async () => {
+      orderItemController.getSolution = jest.fn().mockResolvedValue({});
+      orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
+      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      orderItemController.getRecipients = jest.fn()
+        .mockResolvedValue([]);
+
+      orderItemController.validateOrderItemForm = jest.fn()
+        .mockReturnValue([]);
+
+      orderItemController.postSolutionOrderItem = jest.fn()
+        .mockResolvedValue({ success: false, errors: [{}] });
 
       orderItemController.getOrderItemErrorPageContext = jest.fn()
         .mockResolvedValue({
@@ -299,7 +339,10 @@ describe('catalogue-solutions section routes', () => {
       orderItemController.postSolutionOrderItem = jest.fn();
 
       orderItemController.validateOrderItemForm = jest.fn()
-        .mockReturnValue({ success: true });
+        .mockReturnValue([]);
+
+      orderItemController.postSolutionOrderItem = jest.fn()
+        .mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),

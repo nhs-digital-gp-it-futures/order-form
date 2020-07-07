@@ -66,7 +66,7 @@ describe('catalogue-solutions solution contextCreator', () => {
       expect(context.questions).toEqual(expectedContext.questions);
     });
 
-    it('should return select supplier question with the selectedSupplier checked', () => {
+    it('should return selected solution question with the selectedSolution checked', () => {
       const expectedContext = {
         questions: [
           {
