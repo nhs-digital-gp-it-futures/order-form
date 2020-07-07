@@ -58,7 +58,14 @@ describe('commencement-date controller', () => {
       await getCommencementDateContext({ orderId: 'order-id', accessToken: 'access_token' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', data: commencementDate });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({
+        orderId: 'order-id',
+        data: {
+          'commencementDate-day': '01',
+          'commencementDate-month': '01',
+          'commencementDate-year': '2020',
+        },
+      });
     });
   });
 

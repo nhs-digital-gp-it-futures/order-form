@@ -117,7 +117,7 @@ test('should render legend with mainAdvice', async (t) => {
 
   await t
     .expect(mainAdvice.exists).ok()
-    .expect(await extractInnerText(mainAdvice)).eql(content.questions[0].mainAdvice);
+    .expect(await extractInnerText(mainAdvice)).eql(content.questions.commencementDate.mainAdvice);
 });
 
 test('should render additionalAdvice', async (t) => {
@@ -128,7 +128,7 @@ test('should render additionalAdvice', async (t) => {
 
   await t
     .expect(additionalAdvice.exists).ok()
-    .expect(await extractInnerText(additionalAdvice)).eql(content.questions[0].additionalAdvice);
+    .expect(await extractInnerText(additionalAdvice)).eql(content.questions.commencementDate.additionalAdvice);
 });
 
 test('should render labels for day, month and year inputs', async (t) => {
