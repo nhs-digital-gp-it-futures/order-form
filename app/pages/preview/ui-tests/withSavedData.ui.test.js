@@ -83,6 +83,7 @@ const mockOrder = {
       price: 207.916,
       itemUnitDescription: 'per practice',
       timeUnitDescription: 'per month',
+      quantityPeriodDescription: 'per year',
       quantity: 12,
       deliveryDate: '2020-09-25',
       costPerYear: 29940.00,
