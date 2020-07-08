@@ -12,6 +12,21 @@ describe('catalogue-solutions order-item contextCreator', () => {
       expect(context.backLinkText).toEqual(commonManifest.backLinkText);
     });
 
+    it('should return the backLinkHref to catalogue solutions when order item id is not newsolution', () => {
+      const context = getContext({
+        commonManifest,
+      });
+      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions');
+    });
+
+    it('should return the backLinkHref to recipient when order item id is newsolution', () => {
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'newsolution',
+      });
+      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/price/recipient');
+    });
+
     it('should return the title', () => {
       const solutionName = 'solution-name';
       const serviceRecipientName = 'service-recipient-name';

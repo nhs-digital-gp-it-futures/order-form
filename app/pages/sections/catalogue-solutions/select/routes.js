@@ -111,10 +111,13 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const recipients = await getRecipients({ orderId, accessToken });
     sessionManager.saveToSession({ req, key: 'recipients', value: recipients });
 
+    const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
+
     const context = await getRecipientPageContext({
       orderId,
       solutionName: solutionData.name,
       recipients,
+      selectedRecipientId,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select recipient page`);
