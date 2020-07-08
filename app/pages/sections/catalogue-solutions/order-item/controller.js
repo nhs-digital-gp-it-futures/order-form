@@ -70,6 +70,7 @@ const formatFormData = ({ formData }) => ({
 
 export const getOrderItemContext = async ({
   orderId,
+  orderItemId,
   solutionName,
   odsCode,
   serviceRecipientName,
@@ -85,6 +86,7 @@ export const getOrderItemContext = async ({
     commonManifest,
     selectedPriceManifest,
     orderId,
+    orderItemId,
     solutionName,
     serviceRecipientName,
     odsCode,

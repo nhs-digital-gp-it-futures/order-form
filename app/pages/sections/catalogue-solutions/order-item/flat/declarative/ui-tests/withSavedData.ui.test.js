@@ -5,8 +5,6 @@ import { orderApiUrl } from '../../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/existing-order-id';
 
-const getLocation = ClientFunction(() => document.location.href);
-
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
     id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
@@ -43,13 +41,16 @@ const orderItem = {
   catalogueItemId: '10000-001',
   deliveryDate: '2020-04-27',
   quantity: 3,
-  estimationPeriod: 'month',
-  provisioningType: 'OnDemand',
+  provisioningType: 'Declarative',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'consultation',
-    description: 'per consultation',
+    name: 'license',
+    description: 'per license',
+  },
+  timeUnit: {
+    name: 'month',
+    description: 'per month',
   },
   price: 0.1,
 };
@@ -79,7 +80,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Catalogue-solutions - flat ondemand - withSavedData')
+fixture('Catalogue-solutions - flat declarative - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -99,18 +100,6 @@ test('should render the title', async (t) => {
   await t
     .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql('Some catalogue name information for Some service recipient 2 (OX3)');
-});
-
-test('should navigate to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when click on backlink when not a new order item', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const goBackLink = Selector('[data-test-id="go-back-link"] a');
-
-  await t
-    .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions');
 });
 
 test('should populate input fields for day, month and year if data is returned from api', async (t) => {
@@ -142,17 +131,6 @@ test('should populate text field for the quantity question', async (t) => {
     .expect(quantity.getAttribute('value')).eql('3');
 });
 
-test('should populate the selectEstimationPeriod question radio button', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const selectEstimationPeriodRadioOptions = Selector('[data-test-id="question-selectEstimationPeriod"] input').nth(0);
-
-  await t
-    .expect(selectEstimationPeriodRadioOptions.exists).ok()
-    .expect(selectEstimationPeriodRadioOptions.hasAttribute('checked')).ok();
-});
-
 test('should render the price table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -164,7 +142,7 @@ test('should render the price table content', async (t) => {
     .expect(priceInput.exists).ok()
     .expect(priceInput.getAttribute('value')).eql('0.1')
     .expect(orderUnit.exists).ok()
-    .expect(await extractInnerText(orderUnit)).eql(orderItem.itemUnit.description);
+    .expect(await extractInnerText(orderUnit)).eql(`${orderItem.itemUnit.description} ${orderItem.timeUnit.description}`);
 });
 
 test('should show the correct error summary and input error when date is removed and save is clicked', async (t) => {
