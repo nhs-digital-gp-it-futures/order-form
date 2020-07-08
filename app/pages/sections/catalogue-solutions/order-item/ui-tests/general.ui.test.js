@@ -121,18 +121,6 @@ test('should render Catalogue-solutions order-item page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when click on backlink when not a new order item', async (t) => {
-  await pageSetup();
-  await t.navigateTo('http://localhost:1234/order/organisation/order-id/catalogue-solutions/existing-order-item');
-
-  const goBackLink = Selector('[data-test-id="go-back-link"] a');
-
-  await t
-    .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
-});
-
 test('should navigate to /organisation/order-id/catalogue-solutions/select/solution/recipient when click on backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
