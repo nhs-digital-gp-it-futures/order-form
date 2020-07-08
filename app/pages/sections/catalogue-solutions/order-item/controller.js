@@ -185,7 +185,7 @@ export const getSolution = async ({ solutionId, accessToken }) => {
   return solutionData;
 };
 
-export const postSolutionOrderItem = async ({
+export const saveSolutionOrderItem = async ({
   orderId,
   accessToken,
   selectedRecipientId,

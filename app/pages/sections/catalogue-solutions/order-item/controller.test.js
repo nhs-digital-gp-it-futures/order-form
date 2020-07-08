@@ -7,7 +7,7 @@ import {
   getSelectedPrice,
   getOrderItemContext,
   validateOrderItemForm,
-  postSolutionOrderItem,
+  saveSolutionOrderItem,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from './manifestProvider';
@@ -390,7 +390,7 @@ describe('catalogue-solutions order-item controller', () => {
     });
   });
 
-  describe('postSolutionOrderItem', () => {
+  describe('saveSolutionOrderItem', () => {
     afterEach(() => {
       postData.mockReset();
     });
@@ -412,7 +412,7 @@ describe('catalogue-solutions order-item controller', () => {
         const responseData = { errors: [{}] };
         postData.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 
-        const response = await postSolutionOrderItem({
+        const response = await saveSolutionOrderItem({
           orderId: 'order1',
           accessToken: 'access_token',
           selectedRecipientId: serviceRecipient.odsCode,
@@ -430,7 +430,7 @@ describe('catalogue-solutions order-item controller', () => {
         postData.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
 
         try {
-          await postSolutionOrderItem({
+          await saveSolutionOrderItem({
             orderId: 'order1',
             accessToken: 'access_token',
             selectedRecipientId: serviceRecipient.odsCode,
@@ -450,7 +450,7 @@ describe('catalogue-solutions order-item controller', () => {
       it('should post correctly formatted data', async () => {
         postData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-        await postSolutionOrderItem({
+        await saveSolutionOrderItem({
           orderId: 'order1',
           accessToken: 'access_token',
           selectedRecipientId: serviceRecipient.odsCode,
@@ -482,7 +482,7 @@ describe('catalogue-solutions order-item controller', () => {
       it('should return success as true if data is saved successfully', async () => {
         postData.mockResolvedValueOnce({ success: true });
 
-        const response = await postSolutionOrderItem({
+        const response = await saveSolutionOrderItem({
           orderId: 'order1',
           accessToken: 'access_token',
           selectedRecipientId: serviceRecipient.odsCode,

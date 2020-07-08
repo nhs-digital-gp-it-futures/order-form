@@ -10,7 +10,7 @@ import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
   validateOrderItemForm,
-  postSolutionOrderItem,
+  saveSolutionOrderItem,
 } from './order-item/controller';
 import { getPageData } from './order-item/routesHelper';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
@@ -81,7 +81,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
-      const apiResponse = await postSolutionOrderItem({
+      const apiResponse = await saveSolutionOrderItem({
         orderId,
         accessToken,
         selectedRecipientId: pageData.serviceRecipientId,

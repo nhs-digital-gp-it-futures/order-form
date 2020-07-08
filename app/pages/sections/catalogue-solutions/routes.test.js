@@ -269,7 +269,7 @@ describe('catalogue-solutions section routes', () => {
 
       orderItemController.validateOrderItemForm = jest.fn()
         .mockReturnValue([]);
-      orderItemController.postSolutionOrderItem = jest.fn()
+      orderItemController.saveSolutionOrderItem = jest.fn()
         .mockResolvedValue({ success: false, errors: [{}] });
 
       orderItemController.getOrderItemErrorPageContext = jest.fn()
@@ -303,7 +303,7 @@ describe('catalogue-solutions section routes', () => {
       orderItemController.validateOrderItemForm = jest.fn()
         .mockReturnValue([]);
 
-      orderItemController.postSolutionOrderItem = jest.fn()
+      orderItemController.saveSolutionOrderItem = jest.fn()
         .mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
