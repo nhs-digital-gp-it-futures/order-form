@@ -88,6 +88,18 @@ test('should render the title', async (t) => {
     .expect(await extractInnerText(title)).eql('Some catalogue name information for Some service recipient 2 (OX3)');
 });
 
+test('should navigate to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when click on backlink when not a new order item', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+
+  await t
+    .expect(goBackLink.exists).ok()
+    .click(goBackLink)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions');
+});
+
 test('should populate input fields for day, month and year if data is returned from api', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);

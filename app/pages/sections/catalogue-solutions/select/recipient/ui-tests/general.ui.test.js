@@ -46,10 +46,6 @@ const recipientsState = ClientFunction(() => {
   document.cookie = `recipients=${cookieValue}`;
 });
 
-const selectedRecipientIdState = ClientFunction(() => {
-  document.cookie = 'selectedRecipientId=recipient-1';
-});
-
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/solutions/solution-1')
@@ -67,7 +63,6 @@ const pageSetup = async (withAuth = true, withSessionState = false) => {
   }
   if (withSessionState) {
     await recipientsState();
-    await selectedRecipientIdState();
   }
 };
 
