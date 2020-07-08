@@ -166,7 +166,7 @@ export const validateOrderItemForm = ({ data, selectedPrice }) => {
         field: 'Price',
         id: 'PriceMustBeANumber',
       });
-    } else if (data.price.split('.')[1].length > 3) {
+    } else if (data.price.includes('.') && data.price.split('.')[1].length > 3) {
       errors.push({
         field: 'Price',
         id: 'PriceMoreThan3dp',
