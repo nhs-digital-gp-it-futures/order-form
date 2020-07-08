@@ -29,13 +29,13 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         addedCatalogueSolutions,
         accessToken,
       });
-      const additionalServiceId = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceId' });
+      const selectedAdditionalServiceId = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceId' });
       sessionManager.saveToSession({ req, key: 'additionalServices', value: additionalServices });
 
       const context = getAdditionalServicePageContext({
         orderId,
         additionalServices,
-        additionalServiceId,
+        selectedAdditionalServiceId,
       });
 
       logger.info(`navigating to order ${orderId} additional-services select additional-service page`);
