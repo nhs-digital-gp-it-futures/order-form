@@ -5,6 +5,8 @@ import { baseUrl } from '../../config';
 describe('order summary preview contextCreator', () => {
   describe('getContext', () => {
     const mockOrderData = { description: 'Some order description' };
+    const mockEmptyCallOffPartyRow = { multiLine: { data: [''] }, dataTestId: 'call-off-party' };
+    const mockEmptySupplierRow = { multiLine: { data: [''] }, dataTestId: 'supplier' };
 
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
@@ -56,7 +58,107 @@ describe('order summary preview contextCreator', () => {
 
     it('should return the callOffAndSupplierTable without items if orderData is empty', () => {
       const context = getContext({ orderId: 'order-1', orderData: {} });
-      expect(context.callOffAndSupplierTable.items).toEqual([[]]);
+      expect(context.callOffAndSupplierTable.items).toEqual(
+        [[mockEmptyCallOffPartyRow, mockEmptySupplierRow]],
+      );
+    });
+
+    it('should return the callOffAndSupplierTable with just call off items', () => {
+      const expectedContext = {
+        callOffAndSupplierTable: {
+          ...manifest.callOffAndSupplierTable,
+          items: [
+            [
+              {
+                multiLine: {
+                  data: [
+                    'CallOffFirstName CallOffLastName',
+                    'Call off org Name',
+                    'A01',
+                    '',
+                    'Calloff First Line',
+                    'Calloff Second Line',
+                    'Calloff Town',
+                    'CO12 1AA',
+                  ],
+                  dataTestId: 'call-off-party',
+                },
+              },
+              mockEmptySupplierRow,
+            ],
+          ],
+        },
+      };
+
+      const mockOrderDataWithCallOffAndSupplier = {
+        ...mockOrderData,
+        orderParty: {
+          name: 'Call off org Name',
+          odsCode: 'A01',
+          address: {
+            line1: 'Calloff First Line',
+            line2: 'Calloff Second Line',
+            town: 'Calloff Town',
+            postcode: 'CO12 1AA',
+          },
+          primaryContact: {
+            firstName: 'CallOffFirstName',
+            lastName: 'CallOffLastName',
+          },
+        },
+        supplier: {},
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderDataWithCallOffAndSupplier });
+      expect(context.callOffAndSupplierTable).toEqual(expectedContext.callOffAndSupplierTable);
+    });
+
+    it('should return the callOffAndSupplierTable with just supplier items when supplier items are provided', () => {
+      const expectedContext = {
+        callOffAndSupplierTable: {
+          ...manifest.callOffAndSupplierTable,
+          items: [
+            [
+              mockEmptyCallOffPartyRow,
+              {
+                multiLine: {
+                  data: [
+                    'SuppFirstName SuppLastName',
+                    'Supplier Name',
+                    '',
+                    'Supplier First Line',
+                    'Supplier Second Line',
+                    'Supplier Town',
+                    'SU12 1AA',
+                  ],
+                  dataTestId: 'supplier',
+                },
+              },
+            ],
+          ],
+        },
+      };
+
+      const mockOrderDataWithCallOffAndSupplier = {
+        ...mockOrderData,
+        orderParty: {},
+        supplier: {
+          name: 'Supplier Name',
+          address: {
+            line1: 'Supplier First Line',
+            line2: 'Supplier Second Line',
+            town: 'Supplier Town',
+            postcode: 'SU12 1AA',
+          },
+          primaryContact: {
+            firstName: 'SuppFirstName',
+            lastName: 'SuppLastName',
+          },
+        },
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderDataWithCallOffAndSupplier });
+      expect(context.callOffAndSupplierTable).toEqual(expectedContext.callOffAndSupplierTable);
     });
 
     it('should return the callOffAndSupplierTable with items when order items are provided', () => {
