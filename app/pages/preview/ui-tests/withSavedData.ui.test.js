@@ -221,7 +221,7 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCostRow2.find('div').nth(1))).eql('C000001-01-A10001-3')
     .expect(await extractInnerText(recurringCostRow2.find('div').nth(2))).eql('Remote Consultation')
     .expect(await extractInnerText(recurringCostRow2.find('div').nth(3))).eql('207.91 per practice per month')
-    .expect(await extractInnerText(recurringCostRow2.find('div').nth(4))).eql('12')
+    .expect(await extractInnerText(recurringCostRow2.find('div').nth(4))).eql('12 per year')
     .expect(await extractInnerText(recurringCostRow2.find('div').nth(5))).eql('25 September 2020')
     .expect(await extractInnerText(recurringCostRow2.find('div').nth(6))).eql('29,940.00');
 });
