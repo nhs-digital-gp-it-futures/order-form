@@ -27,7 +27,7 @@ const generateCallOffPartyDetails = ({ orderPartyData }) => {
       },
     };
   }
-  return undefined;
+  return { multiLine: { data: [''] }, dataTestId: 'call-off-party' };
 };
 
 const generateSupplierDetails = ({ supplierData }) => {
@@ -52,7 +52,7 @@ const generateSupplierDetails = ({ supplierData }) => {
       },
     };
   }
-  return undefined;
+  return { multiLine: { data: [''] }, dataTestId: 'supplier' };
 };
 
 const generateCallOffAndSupplierDetailsTable = ({
@@ -63,7 +63,7 @@ const generateCallOffAndSupplierDetailsTable = ({
   columns.push(generateSupplierDetails({ supplierData }));
   return ({
     ...callOffAndSupplierTable,
-    items: [columns.filter(column => column !== undefined)],
+    items: [columns],
   });
 };
 
