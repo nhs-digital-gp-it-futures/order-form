@@ -6,7 +6,7 @@ const generateRecipientOptions = ({ recipients, selectedRecipientId }) => {
   const recipientsMap = recipients.map(recipient => ({
     value: recipient.odsCode,
     text: `${recipient.name} (${recipient.odsCode})`,
-    checked: selectedRecipientId === recipient.odsCode,
+    checked: selectedRecipientId === recipient.odsCode ? true : undefined,
   }));
   return recipientsMap;
 };

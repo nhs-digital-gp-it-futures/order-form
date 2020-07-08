@@ -41,12 +41,10 @@ describe('catalogue-solutions select-recipient contextCreator', () => {
               {
                 value: 'recipient-1',
                 text: 'Recipient 1 (recipient-1)',
-                checked: false,
               },
               {
                 value: 'recipient-2',
                 text: 'Recipient 2 (recipient-2)',
-                checked: false,
               },
             ],
           },
@@ -78,7 +76,6 @@ describe('catalogue-solutions select-recipient contextCreator', () => {
               {
                 value: 'recipient-1',
                 text: 'Recipient 1 (recipient-1)',
-                checked: false,
               },
               {
                 value: 'recipient-2',
