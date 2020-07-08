@@ -41,10 +41,12 @@ describe('catalogue-solutions select-recipient contextCreator', () => {
               {
                 value: 'recipient-1',
                 text: 'Recipient 1 (recipient-1)',
+                checked: false,
               },
               {
                 value: 'recipient-2',
                 text: 'Recipient 2 (recipient-2)',
+                checked: false,
               },
             ],
           },
@@ -63,6 +65,43 @@ describe('catalogue-solutions select-recipient contextCreator', () => {
       ];
 
       const context = getContext({ recipients });
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
+
+    it('should return the select recipient question with a checked option if selectedRecipient"Id passed in', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectRecipient',
+            mainAdvice: 'Select Service Recipient (ODS code)',
+            options: [
+              {
+                value: 'recipient-1',
+                text: 'Recipient 1 (recipient-1)',
+                checked: false,
+              },
+              {
+                value: 'recipient-2',
+                text: 'Recipient 2 (recipient-2)',
+                checked: true,
+              },
+            ],
+          },
+        ],
+      };
+
+      const recipients = [
+        {
+          odsCode: 'recipient-1',
+          name: 'Recipient 1',
+        },
+        {
+          odsCode: 'recipient-2',
+          name: 'Recipient 2',
+        },
+      ];
+
+      const context = getContext({ recipients, selectedRecipientId: 'recipient-2' });
       expect(context.questions).toEqual(expectedContext.questions);
     });
 
