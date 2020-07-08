@@ -34,8 +34,6 @@ export const getOrderItem = async ({ orderId, orderItemId, accessToken }) => {
   const catalogueOrderItem = await getData({ endpoint, accessToken, logger });
   logger.info(`Catalogue order item returned for ${orderItemId}`);
 
-  console.log('catalogueOrderItem', catalogueOrderItem);
-
   return catalogueOrderItem;
 };
 

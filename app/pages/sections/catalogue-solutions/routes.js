@@ -8,16 +8,12 @@ import {
 } from './catalogue-solutions/controller';
 import {
   getOrderItemContext,
-  getSelectedPrice,
-  getOrderItem,
   getOrderItemErrorPageContext,
   validateOrderItemForm,
-  getSolution,
   postSolutionOrderItem,
 } from './order-item/controller';
 import { getPageData } from './order-item/routesHelper';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
-
 
 const router = express.Router({ mergeParams: true });
 

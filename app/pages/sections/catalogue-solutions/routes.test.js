@@ -11,6 +11,7 @@ import {
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
 import * as orderItemController from './order-item/controller';
+import * as orderItemRoutesHelper from './order-item/routesHelper';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';
@@ -166,29 +167,14 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should return the catalogue-solutions order item page if authorised', () => {
-      orderItemController.getSolution = jest.fn().mockResolvedValue({});
-      orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
+      orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({
+        solutionName: 'some solution name',
+        selectedPrice: {},
+      });
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('data-test-id="order-item-page"')).toBeTruthy();
-          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
-    });
-
-    it('should return the catalogue-solutions order item page if authorised existing solution', () => {
-      orderItemController.getSolution = jest.fn().mockResolvedValue({});
-      orderItemController.getOrderItem = jest.fn().mockResolvedValue({ deliveryDate: 'date', serviceRecipient: {} });
-      orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-
-      return request(setUpFakeApp())
-        .get('/organisation/some-order-id/catalogue-solutions/solution-id')
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
