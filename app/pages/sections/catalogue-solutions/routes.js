@@ -55,8 +55,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       orderItemId,
     });
 
-    sessionManager.saveToSession({ req, key: 'solutionName', value: pageData.solutionName });
-    sessionManager.saveToSession({ req, key: 'selectedPrice', value: pageData.selectedPrice });
+    sessionManager.saveToSession({ req, key: 'orderItemPageData', value: pageData });
 
     const context = await getOrderItemContext({
       orderId,
@@ -76,24 +75,20 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const validationErrors = [];
 
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const solutionName = sessionManager.getFromSession({ req, key: 'solutionName' });
-    const selectedRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
-    const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
-    const selectedPrice = sessionManager.getFromSession({ req, key: 'selectedPrice' });
-    const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
+    const pageData = sessionManager.getFromSession({ req, key: 'orderItemPageData' });
 
-    const errors = validateOrderItemForm({ data: req.body, selectedPrice });
+    const errors = validateOrderItemForm({ data: req.body, selectedPrice: pageData.selectedPrice });
     validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
       const apiResponse = await postSolutionOrderItem({
         orderId,
         accessToken,
-        selectedRecipientId,
-        serviceRecipientName,
-        selectedSolutionId,
-        solutionName,
-        selectedPrice,
+        selectedRecipientId: pageData.serviceRecipientId,
+        serviceRecipientName: pageData.serviceRecipientName,
+        selectedSolutionId: pageData.solutionId,
+        solutionName: pageData.solutionName,
+        selectedPrice: pageData.selectedPrice,
         formData: req.body,
       });
 
@@ -106,10 +101,10 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
     const context = await getOrderItemErrorPageContext({
       orderId,
-      solutionName,
-      selectedRecipientId,
-      serviceRecipientName,
-      selectedPrice,
+      solutionName: pageData.solutionName,
+      selectedRecipientId: pageData.serviceRecipientId,
+      serviceRecipientName: pageData.serviceRecipientName,
+      selectedPrice: pageData.selectedPrice,
       formData: req.body,
       validationErrors,
     });

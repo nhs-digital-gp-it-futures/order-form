@@ -37,6 +37,8 @@ const mockSelectedSolutionIdCookie = 'selectedSolutionId=solution-1';
 const mockSelectedRecipientIdCookie = 'selectedRecipientId=recipient-1';
 const mockSelectedPriceIdCookie = 'selectedPriceId=1';
 
+const mockGetPageDataCookie = `orderItemPageData=${JSON.stringify({})}`;
+
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
   const app = new App(authProvider).createApp();
@@ -167,10 +169,7 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should return the catalogue-solutions order item page if authorised', () => {
-      orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({
-        solutionName: 'some solution name',
-        selectedPrice: {},
-      });
+      orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return request(setUpFakeApp())
@@ -194,9 +193,7 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should redirect to the login page if the user is not logged in', () => {
-      orderItemController.getSolution = jest.fn().mockResolvedValue({});
-      orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
+      orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthenticatedUser({
@@ -215,9 +212,7 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      orderItemController.getSolution = jest.fn().mockResolvedValue({});
-      orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
+      orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -239,16 +234,9 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the catalogue-solutions order item page with errors if there are FE caught validation errors', async () => {
-      orderItemController.getSolution = jest.fn().mockResolvedValue({});
-      orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
+      orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      orderItemController.getRecipients = jest.fn()
-        .mockResolvedValue([]);
-
-      orderItemController.validateOrderItemForm = jest.fn()
-        .mockReturnValue([{}]);
-
+      orderItemController.validateOrderItemForm = jest.fn().mockReturnValue([{}]);
       orderItemController.getOrderItemErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
@@ -265,7 +253,7 @@ describe('catalogue-solutions section routes', () => {
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockGetPageDataCookie])
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
@@ -276,16 +264,11 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the catalogue-solutions order item page with errors if the api response is unsuccessful', async () => {
-      orderItemController.getSolution = jest.fn().mockResolvedValue({});
-      orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({});
+      orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      orderItemController.getRecipients = jest.fn()
-        .mockResolvedValue([]);
 
       orderItemController.validateOrderItemForm = jest.fn()
         .mockReturnValue([]);
-
       orderItemController.postSolutionOrderItem = jest.fn()
         .mockResolvedValue({ success: false, errors: [{}] });
 
@@ -297,15 +280,13 @@ describe('catalogue-solutions section routes', () => {
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
-        getPathCookies: [
-          mockAuthorisedCookie,
-        ],
+        getPathCookies: [mockAuthorisedCookie],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockGetPageDataCookie])
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
@@ -316,13 +297,8 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
-      orderItemController.getSolution = jest.fn().mockResolvedValue({});
-      orderItemController.getRecipientName = jest.fn().mockResolvedValue('Recipient One');
-      orderItemController.getSelectedPrice = jest.fn().mockResolvedValue({ price: 1 });
+      orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      orderItemController.getRecipients = jest.fn()
-        .mockResolvedValue([]);
-      orderItemController.postSolutionOrderItem = jest.fn();
 
       orderItemController.validateOrderItemForm = jest.fn()
         .mockReturnValue([]);
@@ -340,7 +316,7 @@ describe('catalogue-solutions section routes', () => {
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockGetPageDataCookie])
         .send({
           _csrf: csrfToken,
         })

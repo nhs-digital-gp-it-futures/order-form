@@ -6,6 +6,17 @@ const fakeSessionManager = {};
 
 describe('getPageData', () => {
   describe('when new order item', () => {
+    it('should get the selectedSolutionId from session and return this as solutionId', async () => {
+      fakeSessionManager.getFromSession = () => 'some-selected-solution-id';
+
+      controller.getSolution = jest.fn().mockResolvedValue({});
+      controller.getSelectedPrice = jest.fn().mockResolvedValue({});
+
+      const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'newsolution' });
+
+      expect(pageData.solutionId).toEqual('some-selected-solution-id');
+    });
+
     it('should get the selectedSolutionId from session, call getSolution and return the solutionName', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-solution-id';
 
@@ -64,6 +75,7 @@ describe('getPageData', () => {
 
   describe('when existing order item', () => {
     const mockOrderItemResponse = {
+      catalogueItemId: 'some-solution-id',
       catalogueItemName: 'some solution name',
       serviceRecipient: {
         odsCode: 'some-recipient-id',
@@ -80,6 +92,14 @@ describe('getPageData', () => {
       },
       price: 'some-price',
     };
+
+    it('should call getOrderItem and return the solutionId', async () => {
+      controller.getOrderItem = jest.fn().mockResolvedValue(mockOrderItemResponse);
+
+      const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
+
+      expect(pageData.solutionId).toEqual(mockOrderItemResponse.catalogueItemId);
+    });
 
     it('should call getOrderItem and return the solutionName', async () => {
       controller.getOrderItem = jest.fn().mockResolvedValue(mockOrderItemResponse);

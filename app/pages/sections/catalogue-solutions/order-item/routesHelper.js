@@ -9,19 +9,22 @@ export const getPageData = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
 }) => {
   if (orderItemId === 'newsolution') {
-    const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
-    const solutionName = (await getSolution({ solutionId: selectedSolutionId, accessToken })).name;
+    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const serviceRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
     const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
+
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
+    const solutionName = (await getSolution({ solutionId, accessToken })).name;
     const formData = { price: selectedPrice.price };
+
     return {
-      solutionName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
+      solutionId, solutionName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
     };
   }
 
   const orderItem = await getOrderItem({ orderId, orderItemId, accessToken });
+  const solutionId = orderItem.catalogueItemId;
   const solutionName = orderItem.catalogueItemName;
   const serviceRecipientId = orderItem.serviceRecipient.odsCode;
   const serviceRecipientName = orderItem.serviceRecipient.name;
@@ -43,6 +46,6 @@ export const getPageData = async ({
   };
 
   return {
-    solutionName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
+    solutionId, solutionName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
   };
 };

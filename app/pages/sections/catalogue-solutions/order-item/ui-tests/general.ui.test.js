@@ -7,44 +7,6 @@ import { solutionsApiUrl } from '../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/newsolution';
 
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
-
-const selectedSolutionIdState = ClientFunction(() => {
-  const cookieValue = 'solution-1';
-
-  document.cookie = `selectedSolutionId=${cookieValue}`;
-});
-
-const solutionNameState = ClientFunction(() => {
-  const cookieValue = 'solution-name';
-
-  document.cookie = `solutionName=${cookieValue}`;
-});
-
-const selectedRecipientIdState = ClientFunction(() => {
-  const cookieValue = 'recipient-1';
-
-  document.cookie = `selectedRecipientId=${cookieValue}`;
-});
-
-const selectedRecipientNameState = ClientFunction(() => {
-  const cookieValue = 'recipient-name';
-
-  document.cookie = `selectedRecipientName=${cookieValue}`;
-});
-
-const selectedPriceIdState = ClientFunction(() => {
-  const cookieValue = 'price-1';
-
-  document.cookie = `selectedPriceId=${cookieValue}`;
-});
-
 const selectedPrice = {
   priceId: 1,
   provisioningType: 'OnDemand',
@@ -57,10 +19,25 @@ const selectedPrice = {
   price: 0.1,
 };
 
-const selectedPriceState = ClientFunction((selectedPriceValue) => {
-  const cookieValue = JSON.stringify(selectedPriceValue);
+const authTokenInSession = JSON.stringify({
+  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
+});
+const solutionIdInSession = 'solution-1';
+const solutionNameInSession = 'solution-name';
+const selectedRecipientIdInSession = 'recipient-1';
+const selectedRecipientNameInSession = 'recipient-name';
+const selectedPriceIdInSession = 'price-1';
 
-  document.cookie = `selectedPrice=${cookieValue}`;
+const orderItemPageDataInSession = JSON.stringify({
+  solutionId: solutionIdInSession,
+  solutionName: solutionNameInSession,
+  serviceRecipientId: selectedRecipientIdInSession,
+  serviceRecipientName: selectedRecipientNameInSession,
+  selectedPrice,
+});
+
+const setState = ClientFunction((key, value) => {
+  document.cookie = `${key}=${value}`;
 });
 
 const mocks = () => {
@@ -75,14 +52,13 @@ const mocks = () => {
 const pageSetup = async (withAuth = true, postRoute = false) => {
   if (withAuth) {
     mocks();
-    await setCookies();
-    await selectedRecipientIdState();
-    await selectedRecipientNameState();
-    await selectedSolutionIdState();
-    await selectedPriceIdState();
+    await setState('fakeToken', authTokenInSession);
+    await setState('selectedRecipientId', selectedRecipientIdInSession);
+    await setState('selectedRecipientName', selectedRecipientNameInSession);
+    await setState('selectedSolutionId', solutionIdInSession);
+    await setState('selectedPriceId', selectedPriceIdInSession);
     if (postRoute) {
-      await solutionNameState();
-      await selectedPriceState(selectedPrice);
+      await setState('orderItemPageData', orderItemPageDataInSession);
     }
   }
 };
