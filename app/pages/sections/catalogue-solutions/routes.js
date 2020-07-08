@@ -71,7 +71,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   }));
 
   router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, orderItemId } = req.params;
     const validationErrors = [];
 
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
@@ -82,8 +82,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
     if (validationErrors.length === 0) {
       const apiResponse = await saveSolutionOrderItem({
-        orderId,
         accessToken,
+        orderId,
+        orderItemId,
         selectedRecipientId: pageData.serviceRecipientId,
         serviceRecipientName: pageData.serviceRecipientName,
         selectedSolutionId: pageData.solutionId,
