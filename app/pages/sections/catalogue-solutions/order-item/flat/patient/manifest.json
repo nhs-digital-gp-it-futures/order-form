@@ -2,12 +2,12 @@
   "questions": {
     "deliveryDate": {
       "id": "deliveryDate",
-      "mainAdvice": "Planned delivery date",
+      "mainAdvice": "What is the planned delivery date?",
       "additionalAdvice": "For example 14 01 2020"
     },
     "quantity": {
       "id": "quantity",
-      "mainAdvice": "Practice List Size",
+      "mainAdvice": "What is your practice list size?",
       "rows": 3,
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",
@@ -19,7 +19,7 @@
   "addPriceTable": {
     "columnInfo": [
       {
-        "data": "Price (£)",
+        "data": "What price have you agreed? (£)",
         "width": "50%",
         "classes": "nhsuk-u-font-size-16"
       },
@@ -52,20 +52,19 @@
     "QuantityMustBeANumber": "Practice list size must be a number",
     "QuantityInvalid": "Practice list size must be a whole number",
     "QuantityGreaterThanZero": "Practice list size must be greater than zero",
-    "QuantityLessThanMax": "Practice list size must be smaller",
-    "EstimationPeriodRequired": "Select an estimation period",
+    "QuantityLessThanMax": "Maximum practice list size exceeded, enter a lower number",
     "PriceRequired": "Enter a price",
     "PriceMustBeANumber": "Price must be a number",
-    "PriceMoreThan3dp": "Price must be to 3 decimal places or less",
+    "PriceMoreThan3dp": "Price must be to a maximum of 3 decimal places",
     "PriceGreaterThanOrEqualToZero": "Price cannot be negative",
-    "PriceLessThanMax": "Price must be smaller",
+    "PriceLessThanMax": "Maximum price exceeded, enter a lower price",
     "DeliveryDateRequired": "Enter a planned delivery date",
     "DeliveryDateInvalid": "Enter a planned delivery date in a valid format",
-    "DeliveryDateOutsideDeliveryWindow": "Planned delivery date must be less than 42 months from the commencement date for this Call-off Agreement",
+    "DeliveryDateOutsideDeliveryWindow": "Planned delivery date must be within 42 months from the commencement date for this Call-off Agreement",
     "DeliveryDateNotReal": "Planned delivery date must be a real date",
     "DeliveryDateDayRequired": "Planned delivery date must include a day",
     "DeliveryDateMonthRequired": "Planned delivery date must include a month",
     "DeliveryDateYearRequired": "Planned delivery date must include a year",
-    "DeliveryDateYearLength": "Year must be four numbers"
+    "DeliveryDateYearLength": "Year must be four numbers, for example 2020"
   }
 }
