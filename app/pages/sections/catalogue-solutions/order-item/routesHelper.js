@@ -31,6 +31,7 @@ export const getPageData = async ({
   const selectedPrice = {
     price: orderItem.price,
     itemUnit: orderItem.itemUnit,
+    timeUnit: orderItem.timeUnit,
     type: orderItem.type,
     provisioningType: orderItem.provisioningType,
   };
