@@ -4,7 +4,7 @@ import { getDateErrors } from '../../../helpers/controllers/getDateErrors';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 import { extractDate } from '../../../helpers/controllers/extractDate';
-import { destructureDate } from '../../../helpers/dateFormatter';
+import { destructureDate } from '../../../helpers/common/dateFormatter';
 
 const formatPutData = data => ({
   commencementDate: extractDate('commencementDate', data),

@@ -1,6 +1,6 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../config';
-import { formatDate } from '../../helpers/dateFormatter';
+import { formatDate } from '../../helpers/common/dateFormatter';
 
 export const getContext = ({ orgName, ordersData = [] }) => {
   const formattedOrders = ordersData.reduce((acc, order) => {

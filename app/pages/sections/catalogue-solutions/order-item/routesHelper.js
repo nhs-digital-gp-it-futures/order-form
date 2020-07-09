@@ -3,7 +3,7 @@ import {
   getSolution,
   getOrderItem,
 } from './controller';
-import { destructureDate } from '../../../../helpers/dateFormatter';
+import { destructureDate } from '../../../../helpers/common/dateFormatter';
 
 export const getPageData = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
