@@ -75,6 +75,8 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const { orderId, orderItemId } = req.params;
     const validationErrors = [];
 
+    console.log(orderItemId);
+
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = sessionManager.getFromSession({ req, key: 'orderItemPageData' });
 
@@ -103,6 +105,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
     const context = await getOrderItemErrorPageContext({
       orderId,
+      orderItemId,
       solutionName: pageData.solutionName,
       selectedRecipientId: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
