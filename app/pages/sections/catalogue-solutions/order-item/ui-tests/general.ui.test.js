@@ -238,7 +238,7 @@ test('should show the correct error summary and input error when no date is ente
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(3)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Enter a planned delivery date')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateRequired)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -270,7 +270,7 @@ test('should show the correct error summary and input error when no day is enter
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(3)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must include a day')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateDayRequired)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -306,7 +306,7 @@ test('should show the correct error summary and input error when no month is ent
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(3)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must include a month')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateMonthRequired)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -342,7 +342,7 @@ test('should show the correct error summary and input error when no year is ente
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(3)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must include a year')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateYearRequired)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -379,7 +379,7 @@ test('should show the correct error summary and input error when a year > 4 char
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(3)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Year must be four numbers')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateYearLength)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -417,7 +417,7 @@ test('should show the correct error summary and input error when a year < 4 char
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(3)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Year must be four numbers')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateYearLength)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -455,7 +455,7 @@ test('should show the correct error summary and input error when a day > 31 is e
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(3)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must be a real date')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateNotReal)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -493,7 +493,7 @@ test('should show the correct error summary and input error when a month > 12 is
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(3)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must be a real date')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateNotReal)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -531,7 +531,7 @@ test('should show the correct error summary and input error when a year < 1000 i
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(3)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must be a real date')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateNotReal)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -569,7 +569,7 @@ test('should show the correct error summary and input error when incorrect day/m
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(3)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must be a real date')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateNotReal)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
