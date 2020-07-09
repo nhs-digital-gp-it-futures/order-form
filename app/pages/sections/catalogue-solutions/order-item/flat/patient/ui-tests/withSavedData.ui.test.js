@@ -132,7 +132,6 @@ test('should populate text field for the quantity question', async (t) => {
     .expect(quantity.getAttribute('value')).eql('3');
 });
 
-
 test('should render the price table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
