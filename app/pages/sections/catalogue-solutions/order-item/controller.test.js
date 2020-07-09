@@ -214,6 +214,10 @@ describe('catalogue-solutions order-item controller', () => {
         field: 'Quantity',
         id: 'QuantityInvalid',
       };
+      const quantityLessThanMax = {
+        field: 'Quantity',
+        id: 'QuantityLessThanMax',
+      };
       const estimationPeriodRequired = {
         field: 'SelectEstimationPeriod',
         id: 'EstimationPeriodRequired',
@@ -229,6 +233,10 @@ describe('catalogue-solutions order-item controller', () => {
       const priceMoreThan3dp = {
         field: 'Price',
         id: 'PriceMoreThan3dp',
+      };
+      const priceLessThanMax = {
+        field: 'Price',
+        id: 'PriceLessThanMax',
       };
       const deliveryDateRequired = {
         field: 'DeliveryDate',
@@ -285,6 +293,23 @@ describe('catalogue-solutions order-item controller', () => {
         const errors = validateOrderItemForm({ data, selectedPrice });
 
         expect(errors).toEqual([quantityInvalid]);
+      });
+
+      it('should return an array of one validation error if quantity value is too large', () => {
+        const selectedPriceManifest = { questions: { quantity: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+        const data = {
+          quantity: '2147483647',
+          price: '1.5',
+          selectEstimationPeriod: 'month',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
+        };
+
+        const errors = validateOrderItemForm({ data, selectedPrice });
+
+        expect(errors).toEqual([quantityLessThanMax]);
       });
 
       it('should return an array of one validation error if an estimation period is not selected', () => {
@@ -352,6 +377,23 @@ describe('catalogue-solutions order-item controller', () => {
         const errors = validateOrderItemForm({ data, selectedPrice });
 
         expect(errors).toEqual([priceMoreThan3dp]);
+      });
+
+      it('should return an array of one validation error if price value is too big', () => {
+        const selectedPriceManifest = { questions: {}, addPriceTable: { cellInfo: { price: { question: 'test' } } } };
+        getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+        const data = {
+          quantity: '1',
+          price: '1000000000000001.000',
+          selectEstimationPeriod: 'month',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
+        };
+
+        const errors = validateOrderItemForm({ data, selectedPrice });
+
+        expect(errors).toEqual([priceLessThanMax]);
       });
 
       it('should return an array of one validation error  if deliveryDate is not valid', () => {
