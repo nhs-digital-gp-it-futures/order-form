@@ -165,10 +165,6 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-id/catalogue-solutions/newsolution when a recipient is selected', async (t) => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/solutions/solution-1')
-    .reply(200, { id: 'solution-1', name: 'Solution One' });
-
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 

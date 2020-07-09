@@ -2,22 +2,22 @@
   "questions": {
     "deliveryDate": {
       "id": "deliveryDate",
-      "mainAdvice": "Planned delivery date",
+      "mainAdvice": "What is the planned delivery date?",
       "additionalAdvice": "For example 14 01 2020"
     },
     "quantity": {
       "id": "quantity",
-      "mainAdvice": "Quantity",
+      "mainAdvice": "How many do you think you'll need?",
       "rows": 3,
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",
-        "title": "What quantity should I enter?",
+        "title": "What amount should I enter?",
         "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
       }
     }, 
     "selectEstimationPeriod": {
       "id": "selectEstimationPeriod",
-      "mainAdvice": "Estimation period",
+      "mainAdvice": "Over what period did you estimate the quantity?",
       "options": [
         {
           "value": "month",
@@ -38,7 +38,7 @@
   "addPriceTable": {
     "columnInfo": [
       {
-        "data": "Price (£)",
+        "data": "What price have you agreed? (£)",
         "width": "50%",
         "classes": "nhsuk-u-font-size-16"
       },
@@ -58,7 +58,7 @@
         "expandableSection": {
           "dataTestId": "view-section-input-id",
           "title": "What price should I enter?",
-          "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
+          "innerComponent": "You can change the list price if you've agreed a different rate with the supplier."
         }
       },
       "unitOfOrder": {
@@ -67,24 +67,24 @@
     }
   },
   "errorMessages": {
-    "QuantityRequired": "Enter a quantity",
-    "QuantityMustBeANumber": "Quantity must be a number",
-    "QuantityInvalid": "Quantity must be a whole number",
-    "QuantityGreaterThanZero": "Quantity must be greater than zero",
-    "QuantityLessThanMax": "Quantity must be smaller",
+    "QuantityRequired": "Enter an estimated quantity",
+    "QuantityMustBeANumber": "Estimated quantity must be a number",
+    "QuantityInvalid": "Estimated quantity must be a whole number",
+    "QuantityGreaterThanZero": "Estimated quantity must be greater than zero",
+    "QuantityLessThanMax": "Maximum quantity exceeded, enter a lower estimated quantity",
     "EstimationPeriodRequired": "Select an estimation period",
     "PriceRequired": "Enter a price",
     "PriceMustBeANumber": "Price must be a number",
-    "PriceMoreThan3dp": "Price must be to 3 decimal places or less",
-    "PriceGreaterThanOrEqualToZero": "Price cannot be negative",
-    "PriceLessThanMax": "Price must be smaller",
+    "PriceMoreThan3dp": "Price must be to a maximum of 3 decimal places",
+    "PriceGreaterThanOrEqualToZero": "Price must be greater than zero",
+    "PriceLessThanMax": "Maximum price exceeded, enter a lower price",
     "DeliveryDateRequired": "Enter a planned delivery date",
     "DeliveryDateInvalid": "Enter a planned delivery date in a valid format",
-    "DeliveryDateOutsideDeliveryWindow": "Planned delivery date must be less than 42 months from the commencement date for this Call-off Agreement",
+    "DeliveryDateOutsideDeliveryWindow": "Planned delivery date must be within 42 months from the commencement date for this Call-off Agreement",
     "DeliveryDateNotReal": "Planned delivery date must be a real date",
     "DeliveryDateDayRequired": "Planned delivery date must include a day",
     "DeliveryDateMonthRequired": "Planned delivery date must include a month",
     "DeliveryDateYearRequired": "Planned delivery date must include a year",
-    "DeliveryDateYearLength": "Year must be four numbers"
+    "DeliveryDateYearLength": "Year must be four numbers, for example 2020"
   }
 }

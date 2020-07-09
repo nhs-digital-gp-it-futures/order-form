@@ -1,11 +1,14 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../../config';
+import { getSectionErrorContext } from '../../../getSectionErrorContext';
 
 const generateAdditionalServiceOptions = ({ additionalServices, selectedAdditionalServiceId }) => (
   additionalServices.map(additionalService => ({
-    value: additionalService.id,
+    value: additionalService.additionalServiceId,
     text: additionalService.name,
-    checked: additionalService.id === selectedAdditionalServiceId ? true : undefined,
+    checked: additionalService.additionalServiceId === selectedAdditionalServiceId
+      ? true
+      : undefined,
   }))
 );
 
@@ -25,3 +28,14 @@ export const getContext = ({ orderId, additionalServices, selectedAdditionalServ
   }),
   backLinkHref: `${baseUrl}/organisation/${orderId}/additional-services`,
 });
+
+export const getErrorContext = (params) => {
+  const updatedManifest = getContext({
+    orderId: params.orderId,
+    additionalServices: params.additionalServices,
+  });
+
+  return {
+    ...getSectionErrorContext({ ...params, manifest: updatedManifest }),
+  };
+};

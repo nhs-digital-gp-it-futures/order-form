@@ -6,8 +6,10 @@ import {
 import { logger } from '../../../../../logger';
 import {
   getAdditionalServicePageContext,
+  getAdditionalServiceErrorPageContext,
   findAdditionalServices,
   findAddedCatalogueSolutions,
+  validateAdditionalServicesForm,
 } from './controller';
 import * as contextCreator from './contextCreator';
 
@@ -15,6 +17,7 @@ jest.mock('buying-catalogue-library');
 
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
+  getErrorContext: jest.fn(),
 }));
 
 describe('additional-services select-additional-service controller', () => {
@@ -27,6 +30,23 @@ describe('additional-services select-additional-service controller', () => {
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1' });
+    });
+  });
+
+  describe('getAdditionalServiceErrorPageContext', () => {
+    it('should call getErrorContext with the correct params', async () => {
+      contextCreator.getErrorContext
+        .mockResolvedValueOnce();
+
+      const params = {
+        orderId: 'order-1',
+        additionalServices: [{ additionalServiceId: 'additional-service-1' }],
+      };
+
+      getAdditionalServiceErrorPageContext(params);
+
+      expect(contextCreator.getErrorContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getErrorContext).toHaveBeenCalledWith(params);
     });
   });
 
@@ -83,6 +103,59 @@ describe('additional-services select-additional-service controller', () => {
 
       const catalogueItemIds = await findAddedCatalogueSolutions({ orderId, accessToken: 'access_token' });
       expect(catalogueItemIds).toEqual(['some catalogue item id']);
+    });
+  });
+
+  describe('validateAdditionalServicesForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return success as true', () => {
+        const data = {
+          selectAdditionalService: 'some-additional-service-id',
+        };
+
+        const response = validateAdditionalServicesForm({ data });
+
+        expect(response.success).toEqual(true);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const expectedValidationErrors = [
+        {
+          field: 'selectAdditionalService',
+          id: 'SelectAdditionalServiceRequired',
+        },
+      ];
+
+      it('should return an array of one validation error and success as false if empty string is passed in', () => {
+        const data = {
+          selectAdditionalService: '',
+        };
+
+        const response = validateAdditionalServicesForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return an array of one validation error and success as false if whitespace only is passed in', () => {
+        const data = {
+          selectAdditionalService: '   ',
+        };
+
+        const response = validateAdditionalServicesForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return a validation error if selectAdditionalService is undefined', () => {
+        const data = {};
+
+        const response = validateAdditionalServicesForm({ data });
+
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
     });
   });
 });
