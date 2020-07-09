@@ -2,8 +2,11 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../../../../config';
+import content from '../manifest.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/existing-order-id';
+
+const getLocation = ClientFunction(() => document.location.href);
 
 const orderItem = {
   serviceRecipient: {
@@ -169,7 +172,7 @@ test('should show the correct error summary and input error when date is removed
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Enter a planned delivery date')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateRequired)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -196,7 +199,7 @@ test('should show the correct error summary and input error when the quantity is
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Enter a quantity')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityRequired)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
@@ -221,9 +224,68 @@ test('should show the correct error summary and input error when the price is re
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Enter a price')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.PriceRequired)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(price.hasClass('nhsuk-input--error')).ok();
+});
+
+test('should navigate to catalogue solution dashboard page if save button is clicked and data is valid', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/catalogue-solutions/existing-order-id')
+    .reply(200, {});
+
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const quantityInput = Selector('[data-test-id="question-quantity"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .typeText(quantityInput, '10', { paste: true })
+    .click(saveButton)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions');
+});
+
+test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/catalogue-solutions/existing-order-id')
+    .reply(400, {
+      errors: [{
+        field: 'DeliveryDate',
+        id: 'DeliveryDateOutsideDeliveryWindow',
+      }],
+    });
+
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#deliveryDate-error');
+  const deliveryDateInputs = Selector('[data-test-id="question-deliveryDate"] input');
+  const dayInput = deliveryDateInputs.nth(0);
+  const monthInput = deliveryDateInputs.nth(1);
+  const yearInput = deliveryDateInputs.nth(2);
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateOutsideDeliveryWindow)
+
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.DeliveryDateOutsideDeliveryWindow)
+
+    .expect(dayInput.getAttribute('value')).eql('27')
+    .expect(dayInput.hasClass('nhsuk-input--error')).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('04')
+    .expect(monthInput.hasClass('nhsuk-input--error')).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
+    .expect(yearInput.hasClass('nhsuk-input--error')).ok();
 });
