@@ -141,7 +141,11 @@ export const getContext = ({
       && selectedPrice.timeUnit.description,
     errorMap,
   }),
-  deleteButtonHref: '#',
+  deleteButton: {
+    text: commonManifest.deleteButton.text,
+    href: commonManifest.deleteButton.href,
+    disabled: orderItemId === 'newsolution',
+  },
   backLinkHref: orderItemId === 'newsolution' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipient`
     : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
 });

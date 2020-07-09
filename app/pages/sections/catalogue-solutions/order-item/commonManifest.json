@@ -2,6 +2,8 @@
   "backLinkText": "Go back",
   "title": "information for",
   "description": "Provide the delivery date and price you've agreed with the supplier and the quantity you want to order.",
-  "deleteButtonText": "Delete",
+  "deleteButton": {
+    "text": "Delete"
+  },
   "saveButtonText": "Save"
 }
