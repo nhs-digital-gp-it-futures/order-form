@@ -1,5 +1,5 @@
 const { AuthProvider, ErrorContext } = require('buying-catalogue-library');
-const { logger } = require('../logger');
+const { logger } = require('../../logger');
 
 export const createAuthProvider = ({ config }) => {
   const unauthenticatedError = new ErrorContext({

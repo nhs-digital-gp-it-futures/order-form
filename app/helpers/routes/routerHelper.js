@@ -1,6 +1,6 @@
 import { ErrorContext } from 'buying-catalogue-library';
-import { appBaseUri } from '../config';
-import { getEndpoint } from '../endpoints';
+import { appBaseUri } from '../../config';
+import { getEndpoint } from '../../endpoints';
 
 export const withCatch = (logger, authProvider, route) => async (req, res, next) => {
   try {
