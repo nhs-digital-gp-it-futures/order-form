@@ -76,7 +76,7 @@
     "PriceRequired": "Enter a price",
     "PriceMustBeANumber": "Price must be a number",
     "PriceMoreThan3dp": "Price must be to a maximum of 3 decimal places",
-    "PriceGreaterThanOrEqualToZero": "Price must be greater than zero",
+    "PriceGreaterThanOrEqualToZero": "Price cannot be negative",
     "PriceLessThanMax": "Maximum price exceeded, enter a lower price",
     "DeliveryDateRequired": "Enter a planned delivery date",
     "DeliveryDateInvalid": "Enter a planned delivery date in a valid format",
