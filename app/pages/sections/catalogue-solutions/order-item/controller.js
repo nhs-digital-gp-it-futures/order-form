@@ -5,7 +5,7 @@ import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
 import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from './manifestProvider';
-import { getDateErrors } from '../../../../helpers/getDateErrors';
+import { getDateErrors } from '../../../../helpers/controllers/getDateErrors';
 import { extractDate } from '../../../../helpers/controllers/extractDate';
 
 export const getOrderItem = async ({ orderId, orderItemId, accessToken }) => {

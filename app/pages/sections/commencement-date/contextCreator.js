@@ -1,7 +1,7 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../config';
 import { generateErrorMap } from '../../../helpers/contextCreators/generateErrorMap';
-import { generateQuestions } from '../../../helpers/generateQuestions';
+import { generateQuestions } from '../../../helpers/contextCreators/generateQuestions';
 import { generateErrorSummary } from '../../../helpers/contextCreators/generateErrorSummary';
 
 export const getContext = ({ orderId, data, errorMap }) => ({
