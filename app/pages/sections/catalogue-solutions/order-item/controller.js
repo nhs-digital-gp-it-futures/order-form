@@ -210,7 +210,7 @@ const postSolutionOrderItem = async ({
   await postData({
     endpoint, body, accessToken, logger,
   });
-  logger.info(`Order item successfully created for order id: ${orderId}`);
+  logger.info(`Order item for ${solutionName} and ${serviceRecipientName} successfully created for order id: ${orderId}`);
   return { success: true };
 };
 
@@ -275,7 +275,7 @@ export const saveSolutionOrderItem = async ({
     if (err.response.status === 400 && err.response.data && err.response.data.errors) {
       return err.response.data;
     }
-    logger.error(`Error saving order item for order id: ${orderId}`);
+    logger.error(`Error saving order item for ${solutionName} and ${serviceRecipientName} for order id: ${orderId}`);
     throw new Error();
   }
 };

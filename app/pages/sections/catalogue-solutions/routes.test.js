@@ -37,7 +37,7 @@ const mockSelectedSolutionIdCookie = 'selectedSolutionId=solution-1';
 const mockSelectedRecipientIdCookie = 'selectedRecipientId=recipient-1';
 const mockSelectedPriceIdCookie = 'selectedPriceId=1';
 
-const mockGetPageDataCookie = `orderItemPageData=${JSON.stringify({})}`;
+const mockGetPageDataCookie = 'orderItemPageData={}';
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
