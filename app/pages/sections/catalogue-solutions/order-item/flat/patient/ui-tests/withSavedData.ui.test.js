@@ -18,13 +18,16 @@ const orderItem = {
   catalogueItemId: '10000-001',
   deliveryDate: '2020-04-27',
   quantity: 3,
-  estimationPeriod: 'month',
-  provisioningType: 'OnDemand',
+  provisioningType: 'Patient',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'consultation',
-    description: 'per consultation',
+    name: 'patient',
+    description: 'per patient',
+  },
+  timeUnit: {
+    name: 'year',
+    description: 'per year',
   },
   price: 0.1,
 };
@@ -66,7 +69,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Catalogue-solutions - flat ondemand - withSavedData')
+fixture('Catalogue-solutions - flat patient - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -129,16 +132,6 @@ test('should populate text field for the quantity question', async (t) => {
     .expect(quantity.getAttribute('value')).eql('3');
 });
 
-test('should populate the selectEstimationPeriod question radio button', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const selectEstimationPeriodRadioOptions = Selector('[data-test-id="question-selectEstimationPeriod"] input').nth(0);
-
-  await t
-    .expect(selectEstimationPeriodRadioOptions.exists).ok()
-    .expect(selectEstimationPeriodRadioOptions.hasAttribute('checked')).ok();
-});
 
 test('should render the price table content', async (t) => {
   await pageSetup();
@@ -151,7 +144,7 @@ test('should render the price table content', async (t) => {
     .expect(priceInput.exists).ok()
     .expect(priceInput.getAttribute('value')).eql('0.1')
     .expect(orderUnit.exists).ok()
-    .expect(await extractInnerText(orderUnit)).eql(orderItem.itemUnit.description);
+    .expect(await extractInnerText(orderUnit)).eql(`${orderItem.itemUnit.description} ${orderItem.timeUnit.description}`);
 });
 
 test('should show the correct error summary and input error when date is removed and save is clicked', async (t) => {
