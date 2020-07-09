@@ -9,9 +9,9 @@ import {
 import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
-  validateOrderItemForm,
   saveSolutionOrderItem,
 } from './order-item/controller';
+import { validateOrderItemForm } from '../../../helpers/controllers/validateOrderItemForm';
 import { getPageData } from './order-item/routesHelper';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 

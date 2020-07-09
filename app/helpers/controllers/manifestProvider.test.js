@@ -22,8 +22,8 @@ describe('getSelectedPriceManifest', () => {
 
   it.each`
     provisioningType | type      | expectedPath
-    ${'OnDemand'}    | ${'Flat'} | ${'/flat/ondemand/manifest.json'}
-    ${'Patient'}     | ${'Flat'} | ${'/flat/patient/manifest.json'}
+    ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/ondemand/manifest.json'}
+    ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/patient/manifest.json'}
   `('should call path.join with the path $expectedPath', ({ provisioningType, type, expectedPath }) => {
   JSON.parse = jest.fn();
   getSelectedPriceManifest({ provisioningType, type });

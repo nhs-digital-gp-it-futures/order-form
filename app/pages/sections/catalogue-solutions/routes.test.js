@@ -11,6 +11,7 @@ import {
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './catalogue-solutions/controller';
 import * as orderItemController from './order-item/controller';
+import * as validator from '../../../helpers/controllers/validateOrderItemForm';
 import * as orderItemRoutesHelper from './order-item/routesHelper';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
@@ -236,7 +237,7 @@ describe('catalogue-solutions section routes', () => {
     it('should show the catalogue-solutions order item page with errors if there are FE caught validation errors', async () => {
       orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      orderItemController.validateOrderItemForm = jest.fn().mockReturnValue([{}]);
+      validator.validateOrderItemForm = jest.fn().mockReturnValue([{}]);
       orderItemController.getOrderItemErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
@@ -267,7 +268,7 @@ describe('catalogue-solutions section routes', () => {
       orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
-      orderItemController.validateOrderItemForm = jest.fn()
+      validator.validateOrderItemForm = jest.fn()
         .mockReturnValue([]);
       orderItemController.saveSolutionOrderItem = jest.fn()
         .mockResolvedValue({ success: false, errors: [{}] });
@@ -300,7 +301,7 @@ describe('catalogue-solutions section routes', () => {
       orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
-      orderItemController.validateOrderItemForm = jest.fn()
+      validator.validateOrderItemForm = jest.fn()
         .mockReturnValue([]);
 
       orderItemController.saveSolutionOrderItem = jest.fn()
