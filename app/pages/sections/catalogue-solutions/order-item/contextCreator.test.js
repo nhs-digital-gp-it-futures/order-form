@@ -43,9 +43,16 @@ describe('catalogue-solutions order-item contextCreator', () => {
       expect(context.description).toEqual(commonManifest.description);
     });
 
-    it('should return the delete button', () => {
-      const context = getContext({ commonManifest });
-      expect(context.deleteButtonText).toEqual(commonManifest.deleteButtonText);
+    it('should return the delete button disabled when newsolution', () => {
+      const context = getContext({ commonManifest, orderItemId: 'newsolution' });
+      expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
+      expect(context.deleteButton.disabled).toEqual(true);
+    });
+
+    it('should return the delete button when not newsolution', () => {
+      const context = getContext({ commonManifest, orderItemId: 'notnewsolution' });
+      expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
+      expect(context.deleteButton.disabled).toEqual(false);
     });
 
     it('should return the save button', () => {

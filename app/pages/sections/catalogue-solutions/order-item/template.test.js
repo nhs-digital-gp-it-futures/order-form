@@ -403,13 +403,33 @@ describe('catalogue-solutions order-item page', () => {
 
   it('should render the "Delete" button', componentTester(setup, (harness) => {
     const deleteContext = {
-      deleteButtonText: 'Delete',
+      deleteButton: {
+        text: commonManifest.deleteButton.text,
+      },
     };
 
     harness.request(deleteContext, ($) => {
       const button = $('[data-test-id="delete-button"] button');
       expect(button.length).toEqual(1);
-      expect(button.text().trim()).toEqual(deleteContext.deleteButtonText);
+      expect(button.text().trim()).toEqual(commonManifest.deleteButton.text);
+    });
+  }));
+
+  it('should render the "Delete" button as a secondary and disabled button', componentTester(setup, (harness) => {
+    const context = {
+      deleteButton: {
+        text: commonManifest.deleteButton.text,
+        href: '#',
+        disabled: true,
+      },
+    };
+
+    harness.request(context, ($) => {
+      const deleteOrderButton = $('[data-test-id="delete-button"]');
+      expect(deleteOrderButton.length).toEqual(1);
+      expect(deleteOrderButton.text().trim()).toEqual(commonManifest.deleteButton.text);
+      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 
