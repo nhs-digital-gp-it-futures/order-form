@@ -43,6 +43,7 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice: {
     price: orderItem.price,
     itemUnit: orderItem.itemUnit,
+    timeUnit: orderItem.timeUnit,
     type: orderItem.type,
     provisioningType: orderItem.provisioningType,
   },
