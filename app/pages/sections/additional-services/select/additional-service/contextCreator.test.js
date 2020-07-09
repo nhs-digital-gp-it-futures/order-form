@@ -1,6 +1,11 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../../../config';
+import * as errorContext from '../../../getSectionErrorContext';
+
+jest.mock('../../../getSectionErrorContext', () => ({
+  getSectionErrorContext: jest.fn(),
+}));
 
 describe('additional-services additional-service contextCreator', () => {
   describe('getContext', () => {
@@ -48,11 +53,11 @@ describe('additional-services additional-service contextCreator', () => {
 
       const additionalServices = [
         {
-          id: 'additional-service-1',
+          additionalServiceId: 'additional-service-1',
           name: 'Additional Service 1',
         },
         {
-          id: 'additional-service-2',
+          additionalServiceId: 'additional-service-2',
           name: 'Additional Service 2',
         },
       ];
@@ -84,11 +89,11 @@ describe('additional-services additional-service contextCreator', () => {
 
       const additionalServices = [
         {
-          id: 'additional-service-1',
+          additionalServiceId: 'additional-service-1',
           name: 'Additional Service 1',
         },
         {
-          id: 'additional-service-2',
+          additionalServiceId: 'additional-service-2',
           name: 'Additional Service 2',
         },
       ];
@@ -99,10 +104,76 @@ describe('additional-services additional-service contextCreator', () => {
       expect(context.questions).toEqual(expectedContext.questions);
     });
 
+    it('should return no selected additional service question when selectedAdditionalService undefined', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectAdditionalService',
+            mainAdvice: 'Select Additional Service',
+            options: [
+              {
+                value: 'additional-service-1',
+                text: 'Additional Service 1',
+              },
+              {
+                value: 'additional-service-2',
+                text: 'Additional Service 2',
+              },
+            ],
+          },
+        ],
+      };
+
+      const additionalServices = [
+        {
+          additionalServiceId: 'additional-service-1',
+          name: 'Additional Service 1',
+        },
+        {
+          additionalServiceId: 'additional-service-2',
+          name: 'Additional Service 2',
+        },
+      ];
+
+      const selectedAdditionalServiceId = undefined;
+
+      const context = getContext({ additionalServices, selectedAdditionalServiceId });
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
 
     it('should return the continueButtonText', () => {
       const context = getContext({});
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
+    });
+  });
+
+  describe('getErrorContext', () => {
+    const mockValidationErrors = [{
+      field: 'selectAdditionalService',
+      id: 'SelectAdditionalServiceRequired',
+    }];
+
+    const additionalServices = [
+      { id: 'additional-service-1', name: 'Additional Service 1' },
+      { id: 'additional-service-2', name: 'Additional Service 2' },
+    ];
+
+    afterEach(() => {
+      errorContext.getSectionErrorContext.mockReset();
+    });
+
+    it('should call getSectionErrorContext with correct params', () => {
+      errorContext.getSectionErrorContext
+        .mockResolvedValueOnce();
+
+      const params = {
+        orderId: 'order-id',
+        validationErrors: mockValidationErrors,
+        additionalServices,
+      };
+
+      getErrorContext(params);
+      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
     });
   });
 });
