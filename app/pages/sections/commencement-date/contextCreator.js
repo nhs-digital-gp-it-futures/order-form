@@ -1,70 +1,7 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../config';
 import { generateErrorMap } from '../../../helpers/generateErrorMap';
-
-const populateCommencementDateQuestion = ({
-  questionManifest, day, month, year,
-}) => {
-  const commencementDatePopulated = ({
-    ...questionManifest,
-    data: {
-      day,
-      month,
-      year,
-    },
-  });
-  return commencementDatePopulated;
-};
-
-const populateQuestionWithData = ({ questionManifest, formData, questionId }) => {
-  if (questionId === 'commencementDate') {
-    return populateCommencementDateQuestion({
-      questionManifest,
-      day: formData[`${questionId}-day`],
-      month: formData[`${questionId}-month`],
-      year: formData[`${questionId}-year`],
-    });
-  }
-
-  return {
-    data: formData && formData[questionId],
-  };
-};
-
-const determineFields = (errorMap, questionId) => {
-  if (errorMap[questionId].fields) return errorMap[questionId].fields;
-  if (questionId === 'commencementDate') return ['day', 'month', 'year'];
-  return undefined;
-};
-
-const generateQuestions = ({ questions, formData, errorMap }) => {
-  const { questionsAcc: modifiedQuestions } = Object.entries(questions)
-    .reduce(({ questionsAcc }, [questionId, questionManifest]) => {
-      const questionError = errorMap && errorMap[questionId]
-        ? {
-          message: errorMap[questionId].errorMessages.join(', '),
-          fields: determineFields(errorMap, questionId),
-        }
-        : undefined;
-
-      const questionData = formData
-        ? populateQuestionWithData({ questionManifest, formData, questionId })
-        : undefined;
-
-      return ({
-        questionsAcc: {
-          ...questionsAcc,
-          [questionId]: {
-            ...questionManifest,
-            ...questionData,
-            error: questionError,
-          },
-        },
-      });
-    }, { questionsAcc: {} });
-
-  return modifiedQuestions;
-};
+import { generateQuestions } from '../../../helpers/generateQuestions';
 
 export const getContext = ({ orderId, data, errorMap }) => ({
   ...manifest,
