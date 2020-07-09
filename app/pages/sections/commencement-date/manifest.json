@@ -5,6 +5,7 @@
   "questions": {
     "commencementDate": {
       "id": "commencementDate",
+      "type": "date",
       "mainAdvice": "Commencement date",
       "additionalAdvice": "For example 14 01 2020"
     }

@@ -2,6 +2,7 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../../config';
 import { generateErrorMap } from '../../../helpers/generateErrorMap';
 import { generateQuestions } from '../../../helpers/generateQuestions';
+import { generateErrorSummary } from '../../../helpers/generateErrorSummary';
 
 export const getContext = ({ orderId, data, errorMap }) => ({
   ...manifest,
@@ -13,13 +14,6 @@ export const getContext = ({ orderId, data, errorMap }) => ({
     errorMap,
   }),
 });
-
-const generateErrorSummary = ({ errorMap }) => (
-  Object.entries(errorMap).map(([questionId, errors]) => ({
-    href: `#${questionId}`,
-    text: errors.errorMessages.join(', '),
-  }))
-);
 
 export const getErrorContext = ({ validationErrors, orderId, data }) => {
   const errorMap = generateErrorMap({

@@ -1,34 +1,8 @@
 import { baseUrl } from '../../../../config';
 import { generateErrorMap } from '../../../../helpers/generateErrorMap';
 import { generateQuestions } from '../../../../helpers/generateQuestions';
-
-const generateAddPriceTable = ({
-  addPriceTable, price, itemUnitDescription, timeUnitDescription = '', errorMap,
-}) => {
-  const columns = [];
-
-  columns.push({
-    ...addPriceTable.cellInfo.price,
-    question: {
-      ...addPriceTable.cellInfo.price.question,
-      data: price,
-      error: errorMap && errorMap.price
-        ? { message: errorMap.price.errorMessages.join(', ') }
-        : undefined,
-    },
-  });
-
-  columns.push({
-    ...addPriceTable.cellInfo.unitOfOrder,
-    data: `${itemUnitDescription} ${timeUnitDescription}`,
-  });
-
-  const items = [columns];
-  return ({
-    ...addPriceTable,
-    items,
-  });
-};
+import { generateErrorSummary } from '../../../../helpers/generateErrorSummary';
+import { generateAddPriceTable } from '../../../../helpers/generateAddPriceTable';
 
 export const getContext = ({
   commonManifest,
@@ -68,13 +42,6 @@ export const getContext = ({
   backLinkHref: orderItemId === 'newsolution' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipient`
     : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
 });
-
-const generateErrorSummary = ({ errorMap }) => (
-  Object.entries(errorMap).map(([questionId, errors]) => ({
-    href: `#${questionId}`,
-    text: errors.errorMessages.join(', '),
-  }))
-);
 
 export const getErrorContext = (params) => {
   const errorMap = generateErrorMap({

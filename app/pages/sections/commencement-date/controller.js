@@ -3,7 +3,7 @@ import { getContext, getErrorContext } from './contextCreator';
 import { getDateErrors } from '../../../helpers/getDateErrors';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
-import { extractDate } from '../../../helpers/extractDate';
+import { extractDate } from '../../../helpers/controllers/extractDate';
 import { destructureDate } from '../../../helpers/dateFormatter';
 
 const formatPutData = data => ({

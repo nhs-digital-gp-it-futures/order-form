@@ -6,7 +6,7 @@ import { getEndpoint } from '../../../../endpoints';
 import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from './manifestProvider';
 import { getDateErrors } from '../../../../helpers/getDateErrors';
-import { extractDate } from '../../../../helpers/extractDate';
+import { extractDate } from '../../../../helpers/controllers/extractDate';
 
 export const getOrderItem = async ({ orderId, orderItemId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCatalogueOrderItem', options: { orderId, orderItemId } });
