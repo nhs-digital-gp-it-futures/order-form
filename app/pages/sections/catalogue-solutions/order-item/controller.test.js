@@ -35,6 +35,8 @@ const selectedPrice = {
   price: 0.1,
 };
 
+const orderItemType = 'catalogue-solutions';
+
 describe('catalogue-solutions order-item controller', () => {
   describe('getOrderItemContext', () => {
     afterEach(() => {
@@ -45,6 +47,7 @@ describe('catalogue-solutions order-item controller', () => {
     it('should call getSelectedPriceManifest with the correct params', async () => {
       await getOrderItemContext({
         orderId: 'order-1',
+        orderItemType,
         solutionName: 'solution-name',
         selectedRecipientId: 'fake-recipient-id',
         serviceRecipientName: 'Some service recipient 1',
@@ -54,6 +57,7 @@ describe('catalogue-solutions order-item controller', () => {
 
       expect(getSelectedPriceManifest.getSelectedPriceManifest.mock.calls.length).toEqual(1);
       expect(getSelectedPriceManifest.getSelectedPriceManifest).toHaveBeenCalledWith({
+        orderItemType,
         provisioningType: selectedPrice.provisioningType,
         type: selectedPrice.type,
       });

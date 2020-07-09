@@ -2,9 +2,10 @@
 import { getDateErrors } from './getDateErrors';
 import { getSelectedPriceManifest } from './manifestProvider';
 
-export const validateOrderItemForm = ({ data, selectedPrice }) => {
+export const validateOrderItemForm = ({ data, selectedPrice, orderItemType }) => {
   const errors = [];
   const selectedPriceManifest = getSelectedPriceManifest({
+    orderItemType,
     provisioningType: selectedPrice.provisioningType,
     type: selectedPrice.type,
   });

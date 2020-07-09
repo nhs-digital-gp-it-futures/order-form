@@ -48,6 +48,7 @@ const formatFormData = ({ formData }) => ({
 export const getOrderItemContext = async ({
   orderId,
   orderItemId,
+  orderItemType,
   solutionName,
   odsCode,
   serviceRecipientName,
@@ -55,6 +56,7 @@ export const getOrderItemContext = async ({
   formData,
 }) => {
   const selectedPriceManifest = getSelectedPriceManifest({
+    orderItemType,
     provisioningType: selectedPrice.provisioningType,
     type: selectedPrice.type,
   });
@@ -78,6 +80,7 @@ export const getOrderItemErrorPageContext = (params) => {
   });
 
   const selectedPriceManifest = getSelectedPriceManifest({
+    orderItemType: params.orderItemType,
     provisioningType: params.selectedPrice.provisioningType,
     type: params.selectedPrice.type,
   });

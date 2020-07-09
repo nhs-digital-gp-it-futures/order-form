@@ -60,6 +60,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const context = await getOrderItemContext({
       orderId,
       orderItemId,
+      orderItemType: 'catalogue-solutions',
       solutionName: pageData.solutionName,
       odsCode: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
@@ -78,7 +79,11 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = sessionManager.getFromSession({ req, key: 'orderItemPageData' });
 
-    const errors = validateOrderItemForm({ data: req.body, selectedPrice: pageData.selectedPrice });
+    const errors = validateOrderItemForm({
+      orderItemType: 'catalogue-solutions',
+      data: req.body,
+      selectedPrice: pageData.selectedPrice,
+    });
     validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
@@ -103,6 +108,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
     const context = await getOrderItemErrorPageContext({
       orderId,
+      orderItemType: 'catalogue-solutions',
       solutionName: pageData.solutionName,
       selectedRecipientId: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,

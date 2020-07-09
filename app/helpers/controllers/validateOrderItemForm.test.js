@@ -17,6 +17,8 @@ const selectedPrice = {
   price: 0.1,
 };
 
+const orderItemType = 'some-order-item-type';
+
 describe('validateOrderItemForm', () => {
   describe('when there are no validation errors', () => {
     it('should return an empty array', () => {
@@ -31,7 +33,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '2021',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([]);
     });
@@ -92,7 +94,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '2021',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([quantityRequired]);
     });
@@ -109,7 +111,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '2021',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([quantityMustBeANumber]);
     });
@@ -126,7 +128,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '2021',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([quantityInvalid]);
     });
@@ -143,7 +145,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '2021',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([quantityLessThanMax]);
     });
@@ -159,7 +161,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '2021',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([estimationPeriodRequired]);
     });
@@ -176,7 +178,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '2021',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([priceRequired]);
     });
@@ -193,7 +195,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '2021',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([priceMustBeANumber]);
     });
@@ -210,7 +212,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '2021',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([priceMoreThan3dp]);
     });
@@ -227,7 +229,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '2021',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([priceLessThanMax]);
     });
@@ -244,7 +246,7 @@ describe('validateOrderItemForm', () => {
         'deliveryDate-year': '',
       };
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([deliveryDateRequired]);
     });
@@ -259,7 +261,7 @@ describe('validateOrderItemForm', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {};
 
-      const errors = validateOrderItemForm({ data, selectedPrice });
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual(
         [deliveryDateRequired, quantityRequired, estimationPeriodRequired, priceRequired],
