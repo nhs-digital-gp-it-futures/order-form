@@ -43,7 +43,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
       expect(context.description).toEqual(commonManifest.description);
     });
 
-    it('should return the delete button when newsolution', () => {
+    it('should return the delete button disabled when newsolution', () => {
       const context = getContext({ commonManifest, orderItemId: 'newsolution' });
       expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
       expect(context.deleteButton.disabled).toEqual(true);
