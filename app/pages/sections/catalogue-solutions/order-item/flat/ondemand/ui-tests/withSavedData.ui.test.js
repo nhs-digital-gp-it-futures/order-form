@@ -2,36 +2,11 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../../../../config';
+import content from '../manifest.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/existing-order-id';
 
 const getLocation = ClientFunction(() => document.location.href);
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
-
-const solutionNameState = ClientFunction(() => {
-  const cookieValue = 'solution-name';
-
-  document.cookie = `solutionName=${cookieValue}`;
-});
-
-const selectedRecipientIdState = ClientFunction(() => {
-  const cookieValue = 'recipient-1';
-
-  document.cookie = `selectedRecipientId=${cookieValue}`;
-});
-
-const serviceRecipientNameState = ClientFunction(() => {
-  const cookieValue = 'recipient-name';
-
-  document.cookie = `serviceRecipientName=${cookieValue}`;
-});
 
 const orderItem = {
   serviceRecipient: {
@@ -54,10 +29,24 @@ const orderItem = {
   price: 0.1,
 };
 
-const selectedPriceState = ClientFunction((orderItemState) => {
-  const cookieValue = JSON.stringify(orderItemState);
+const authTokenInSession = JSON.stringify({
+  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
+});
+const orderItemPageDataInSession = JSON.stringify({
+  solutionId: orderItem.catalogueItemId,
+  solutionName: orderItem.catalogueItemName,
+  serviceRecipientId: orderItem.serviceRecipient.odsCode,
+  serviceRecipientName: orderItem.serviceRecipient.name,
+  selectedPrice: {
+    price: orderItem.price,
+    itemUnit: orderItem.itemUnit,
+    type: orderItem.type,
+    provisioningType: orderItem.provisioningType,
+  },
+});
 
-  document.cookie = `selectedPrice=${cookieValue}`;
+const setState = ClientFunction((key, value) => {
+  document.cookie = `${key}=${value}`;
 });
 
 const mocks = () => {
@@ -69,12 +58,10 @@ const mocks = () => {
 const pageSetup = async (withAuth = true, postRoute = false) => {
   if (withAuth) {
     mocks();
-    await setCookies();
-    await selectedRecipientIdState();
+    await setState('fakeToken', authTokenInSession);
+    await setState('orderItemPageData', orderItemPageDataInSession);
     if (postRoute) {
-      await solutionNameState();
-      await serviceRecipientNameState();
-      await selectedPriceState(orderItem);
+      await setState('orderItemPageData', orderItemPageDataInSession);
     }
   }
 };
@@ -248,4 +235,63 @@ test('should show the correct error summary and input error when the price is re
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(price.hasClass('nhsuk-input--error')).ok();
+});
+
+test('should navigate to catalogue solution dashboard page if save button is clicked and data is valid', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/catalogue-solutions/existing-order-id')
+    .reply(200, {});
+
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const quantityInput = Selector('[data-test-id="question-quantity"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .typeText(quantityInput, '10', { paste: true })
+    .click(saveButton)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions');
+});
+
+test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/catalogue-solutions/existing-order-id')
+    .reply(400, {
+      errors: [{
+        field: 'DeliveryDate',
+        id: 'DeliveryDateOutsideDeliveryWindow',
+      }],
+    });
+
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#deliveryDate-error');
+  const deliveryDateInputs = Selector('[data-test-id="question-deliveryDate"] input');
+  const dayInput = deliveryDateInputs.nth(0);
+  const monthInput = deliveryDateInputs.nth(1);
+  const yearInput = deliveryDateInputs.nth(2);
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateOutsideDeliveryWindow)
+
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.DeliveryDateOutsideDeliveryWindow)
+
+    .expect(dayInput.getAttribute('value')).eql('27')
+    .expect(dayInput.hasClass('nhsuk-input--error')).ok()
+
+    .expect(monthInput.getAttribute('value')).eql('04')
+    .expect(monthInput.hasClass('nhsuk-input--error')).ok()
+
+    .expect(yearInput.getAttribute('value')).eql('2020')
+    .expect(yearInput.hasClass('nhsuk-input--error')).ok();
 });

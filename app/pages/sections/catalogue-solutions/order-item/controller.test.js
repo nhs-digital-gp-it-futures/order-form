@@ -1,4 +1,4 @@
-import { getData, postData } from 'buying-catalogue-library';
+import { getData, postData, putData } from 'buying-catalogue-library';
 import { solutionsApiUrl, organisationApiUrl, orderApiUrl } from '../../../../config';
 import { logger } from '../../../../logger';
 import {
@@ -7,7 +7,7 @@ import {
   getSelectedPrice,
   getOrderItemContext,
   validateOrderItemForm,
-  postSolutionOrderItem,
+  saveSolutionOrderItem,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from './manifestProvider';
@@ -390,48 +390,32 @@ describe('catalogue-solutions order-item controller', () => {
     });
   });
 
-  describe('postSolutionOrderItem', () => {
-    afterEach(() => {
-      postData.mockReset();
-    });
-
-    const serviceRecipient = { name: 'Recipient 1', odsCode: 'ods1' };
-    const solution = { id: 'solutionId1', name: 'Solution 1' };
-    const formData = {
-      _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-      'deliveryDate-day': '25',
-      'deliveryDate-month': '12',
-      'deliveryDate-year': '2020',
-      price: '500.49',
-      quantity: '1',
-      selectEstimationPeriod: 'month',
-    };
-
-    describe('with errors', () => {
-      it('should return error.respose if api request is unsuccessful with 400', async () => {
-        const responseData = { errors: [{}] };
-        postData.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
-
-        const response = await postSolutionOrderItem({
-          orderId: 'order1',
-          accessToken: 'access_token',
-          selectedRecipientId: serviceRecipient.odsCode,
-          serviceRecipientName: serviceRecipient.name,
-          selectedSolutionId: solution.id,
-          solutionName: solution.name,
-          selectedPrice,
-          formData,
-        });
-
-        expect(response).toEqual(responseData);
+  describe('saveSolutionOrderItem', () => {
+    describe('when order item is new', () => {
+      afterEach(() => {
+        postData.mockReset();
       });
 
-      it('should throw an error if api request is unsuccessful with non 400', async () => {
-        postData.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
+      const serviceRecipient = { name: 'Recipient 1', odsCode: 'ods1' };
+      const solution = { id: 'solutionId1', name: 'Solution 1' };
+      const formData = {
+        _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
+        'deliveryDate-day': '25',
+        'deliveryDate-month': '12',
+        'deliveryDate-year': '2020',
+        price: '500.49',
+        quantity: '1',
+        selectEstimationPeriod: 'month',
+      };
 
-        try {
-          await postSolutionOrderItem({
+      describe('with errors', () => {
+        it('should return error.response if api request is unsuccessful with 400', async () => {
+          const responseData = { errors: [{}] };
+          postData.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
+
+          const response = await saveSolutionOrderItem({
             orderId: 'order1',
+            orderItemId: 'newsolution',
             accessToken: 'access_token',
             selectedRecipientId: serviceRecipient.odsCode,
             serviceRecipientName: serviceRecipient.name,
@@ -440,61 +424,170 @@ describe('catalogue-solutions order-item controller', () => {
             selectedPrice,
             formData,
           });
-        } catch (err) {
-          expect(err).toEqual(new Error());
-        }
+
+          expect(response).toEqual(responseData);
+        });
+
+        it('should throw an error if api request is unsuccessful with non 400', async () => {
+          postData.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
+
+          try {
+            await saveSolutionOrderItem({
+              orderId: 'order1',
+              orderItemId: 'newsolution',
+              accessToken: 'access_token',
+              selectedRecipientId: serviceRecipient.odsCode,
+              serviceRecipientName: serviceRecipient.name,
+              selectedSolutionId: solution.id,
+              solutionName: solution.name,
+              selectedPrice,
+              formData,
+            });
+          } catch (err) {
+            expect(err).toEqual(new Error());
+          }
+        });
+      });
+
+      describe('with no errors', () => {
+        it('should post correctly formatted data', async () => {
+          postData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
+
+          await saveSolutionOrderItem({
+            orderId: 'order1',
+            orderItemId: 'newsolution',
+            accessToken: 'access_token',
+            selectedRecipientId: serviceRecipient.odsCode,
+            serviceRecipientName: serviceRecipient.name,
+            selectedSolutionId: solution.id,
+            solutionName: solution.name,
+            selectedPrice,
+            formData,
+          });
+
+          expect(postData.mock.calls.length).toEqual(1);
+          expect(postData).toHaveBeenCalledWith({
+            endpoint: `${orderApiUrl}/api/v1/orders/order1/sections/catalogue-solutions`,
+            body: {
+              ...selectedPrice,
+              serviceRecipient,
+              catalogueSolutionId: 'solutionId1',
+              catalogueSolutionName: 'Solution 1',
+              deliveryDate: '2020-12-25',
+              quantity: 1,
+              estimationPeriod: 'month',
+              price: 500.49,
+            },
+            accessToken: 'access_token',
+            logger,
+          });
+        });
+
+        it('should return success as true if data is saved successfully', async () => {
+          postData.mockResolvedValueOnce({ success: true });
+
+          const response = await saveSolutionOrderItem({
+            orderId: 'order1',
+            orderItemId: 'newsolution',
+            accessToken: 'access_token',
+            selectedRecipientId: serviceRecipient.odsCode,
+            serviceRecipientName: serviceRecipient.name,
+            selectedSolutionId: solution.id,
+            solutionName: solution.name,
+            selectedPrice,
+            formData,
+          });
+
+          expect(response.success).toEqual(true);
+          expect(response.errors).toEqual(undefined);
+        });
       });
     });
 
-    describe('with no errors', () => {
-      it('should post correctly formatted data', async () => {
-        postData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
+    describe('when order item is existing', () => {
+      afterEach(() => {
+        putData.mockReset();
+      });
 
-        await postSolutionOrderItem({
-          orderId: 'order1',
-          accessToken: 'access_token',
-          selectedRecipientId: serviceRecipient.odsCode,
-          serviceRecipientName: serviceRecipient.name,
-          selectedSolutionId: solution.id,
-          solutionName: solution.name,
-          selectedPrice,
-          formData,
+      const formData = {
+        _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
+        'deliveryDate-day': '25',
+        'deliveryDate-month': '12',
+        'deliveryDate-year': '2020',
+        price: '500.49',
+        quantity: '1',
+        selectEstimationPeriod: 'month',
+      };
+
+      describe('with errors', () => {
+        it('should return error.respose if api request is unsuccessful with 400', async () => {
+          const responseData = { errors: [{}] };
+          putData.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
+
+          const response = await saveSolutionOrderItem({
+            orderId: 'order1',
+            orderItemId: 'orderItemId-1',
+            accessToken: 'access_token',
+            formData,
+          });
+
+          expect(response).toEqual(responseData);
         });
 
-        expect(postData.mock.calls.length).toEqual(1);
-        expect(postData).toHaveBeenCalledWith({
-          endpoint: `${orderApiUrl}/api/v1/orders/order1/sections/catalogue-solutions`,
-          body: {
-            ...selectedPrice,
-            serviceRecipient,
-            catalogueSolutionId: 'solutionId1',
-            catalogueSolutionName: 'Solution 1',
-            deliveryDate: '2020-12-25',
-            quantity: 1,
-            estimationPeriod: 'month',
-            price: 500.49,
-          },
-          accessToken: 'access_token',
-          logger,
+        it('should throw an error if api request is unsuccessful with non 400', async () => {
+          putData.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
+
+          try {
+            await saveSolutionOrderItem({
+              orderId: 'order1',
+              orderItemId: 'orderItemId-1',
+              accessToken: 'access_token',
+              formData,
+            });
+          } catch (err) {
+            expect(err).toEqual(new Error());
+          }
         });
       });
 
-      it('should return success as true if data is saved successfully', async () => {
-        postData.mockResolvedValueOnce({ success: true });
+      describe('with no errors', () => {
+        it('should post correctly formatted data', async () => {
+          putData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-        const response = await postSolutionOrderItem({
-          orderId: 'order1',
-          accessToken: 'access_token',
-          selectedRecipientId: serviceRecipient.odsCode,
-          serviceRecipientName: serviceRecipient.name,
-          selectedSolutionId: solution.id,
-          solutionName: solution.name,
-          selectedPrice,
-          formData,
+          await saveSolutionOrderItem({
+            orderId: 'order1',
+            orderItemId: 'orderItemId-1',
+            accessToken: 'access_token',
+            formData,
+          });
+
+          expect(putData.mock.calls.length).toEqual(1);
+          expect(putData).toHaveBeenCalledWith({
+            endpoint: `${orderApiUrl}/api/v1/orders/order1/sections/catalogue-solutions/orderItemId-1`,
+            body: {
+              deliveryDate: '2020-12-25',
+              quantity: 1,
+              estimationPeriod: 'month',
+              price: 500.49,
+            },
+            accessToken: 'access_token',
+            logger,
+          });
         });
 
-        expect(response.success).toEqual(true);
-        expect(response.errors).toEqual(undefined);
+        it('should return success as true if data is saved successfully', async () => {
+          putData.mockResolvedValueOnce({ success: true });
+
+          const response = await saveSolutionOrderItem({
+            orderId: 'order1',
+            orderItemId: 'orderItemId-1',
+            accessToken: 'access_token',
+            formData,
+          });
+
+          expect(response.success).toEqual(true);
+          expect(response.errors).toEqual(undefined);
+        });
       });
     });
   });
