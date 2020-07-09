@@ -46,10 +46,6 @@ const recipientsState = ClientFunction(() => {
   document.cookie = `recipients=${cookieValue}`;
 });
 
-const selectedRecipientIdState = ClientFunction(() => {
-  document.cookie = 'selectedRecipientId=recipient-1';
-});
-
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/solutions/solution-1')
@@ -67,7 +63,6 @@ const pageSetup = async (withAuth = true, withSessionState = false) => {
   }
   if (withSessionState) {
     await recipientsState();
-    await selectedRecipientIdState();
   }
 };
 
@@ -170,10 +165,6 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-id/catalogue-solutions/newsolution when a recipient is selected', async (t) => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/solutions/solution-1')
-    .reply(200, { id: 'solution-1', name: 'Solution One' });
-
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 

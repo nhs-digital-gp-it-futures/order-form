@@ -115,6 +115,7 @@ export const getContext = ({
   commonManifest,
   selectedPriceManifest,
   orderId,
+  orderItemId,
   solutionName,
   serviceRecipientName,
   odsCode,
@@ -140,8 +141,13 @@ export const getContext = ({
       && selectedPrice.timeUnit.description,
     errorMap,
   }),
-  deleteButtonHref: '#',
-  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/recipient`,
+  deleteButton: {
+    text: commonManifest.deleteButton.text,
+    href: commonManifest.deleteButton.href,
+    disabled: orderItemId === 'newsolution',
+  },
+  backLinkHref: orderItemId === 'newsolution' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipient`
+    : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
 });
 
 const generateErrorSummary = ({ errorMap }) => (

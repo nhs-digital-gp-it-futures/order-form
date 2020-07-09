@@ -9,7 +9,7 @@
     }
   ],
   "errorMessages": {
-    "SelectSolutionRequired": "Select an Additional Service"
+    "SelectAdditionalServiceRequired": "Select an Additional Service"
   },
   "continueButtonText": "Continue"
 }

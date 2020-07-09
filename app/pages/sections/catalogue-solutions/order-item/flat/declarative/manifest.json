@@ -12,28 +12,8 @@
       "rows": 3,
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",
-        "title": "What amount should I enter?",
-        "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
-      }
-    }, 
-    "selectEstimationPeriod": {
-      "id": "selectEstimationPeriod",
-      "type": "radio",
-      "mainAdvice": "Over what period did you estimate the quantity?",
-      "options": [
-        {
-          "value": "month",
-          "text": "Per month"
-        },
-        {
-          "value": "year",
-          "text": "Per year"
-        }
-      ],
-      "expandableSection": {
-        "dataTestId": "view-section-estimation-period-id",
-        "title": "What period should I enter?",
-        "innerComponent": "This should be based on how you estimated the quantity you want to order."
+        "title": "What quantity should I enter?",
+        "innerComponent": "Enter the total quantity you'll need"
       }
     }
   },
@@ -70,11 +50,10 @@
   },
   "errorMessages": {
     "QuantityRequired": "Enter an estimated quantity",
-    "QuantityMustBeANumber": "Estimated quantity must be a number",
+    "QuantityMustBeANumber": "Quantity must be a number",
     "QuantityInvalid": "Estimated quantity must be a whole number",
     "QuantityGreaterThanZero": "Estimated quantity must be greater than zero",
     "QuantityLessThanMax": "Maximum quantity exceeded, enter a lower estimated quantity",
-    "EstimationPeriodRequired": "Select an estimation period",
     "PriceRequired": "Enter a price",
     "PriceMustBeANumber": "Price must be a number",
     "PriceMoreThan3dp": "Price must be to a maximum of 3 decimal places",

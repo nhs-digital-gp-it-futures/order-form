@@ -12,6 +12,21 @@ describe('catalogue-solutions order-item contextCreator', () => {
       expect(context.backLinkText).toEqual(commonManifest.backLinkText);
     });
 
+    it('should return the backLinkHref to catalogue solutions when order item id is not newsolution', () => {
+      const context = getContext({
+        commonManifest,
+      });
+      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions');
+    });
+
+    it('should return the backLinkHref to recipient when order item id is newsolution', () => {
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'newsolution',
+      });
+      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/price/recipient');
+    });
+
     it('should return the title', () => {
       const solutionName = 'solution-name';
       const serviceRecipientName = 'service-recipient-name';
@@ -28,9 +43,16 @@ describe('catalogue-solutions order-item contextCreator', () => {
       expect(context.description).toEqual(commonManifest.description);
     });
 
-    it('should return the delete button', () => {
-      const context = getContext({ commonManifest });
-      expect(context.deleteButtonText).toEqual(commonManifest.deleteButtonText);
+    it('should return the delete button disabled when newsolution', () => {
+      const context = getContext({ commonManifest, orderItemId: 'newsolution' });
+      expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
+      expect(context.deleteButton.disabled).toEqual(true);
+    });
+
+    it('should return the delete button when not newsolution', () => {
+      const context = getContext({ commonManifest, orderItemId: 'notnewsolution' });
+      expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
+      expect(context.deleteButton.disabled).toEqual(false);
     });
 
     it('should return the save button', () => {

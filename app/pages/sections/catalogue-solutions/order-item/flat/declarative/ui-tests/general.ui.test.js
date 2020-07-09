@@ -9,19 +9,19 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-sol
 const getLocation = ClientFunction(() => document.location.href);
 
 const selectedPrice = {
-  priceId: 2,
-  provisioningType: 'patient',
-  type: 'flat',
+  priceId: 1,
+  provisioningType: 'Declarative',
+  type: 'Flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'patient',
-    description: 'per patient',
+    name: 'license',
+    description: 'per license',
   },
   timeUnit: {
-    name: 'year',
-    description: 'per year',
+    name: 'month',
+    description: 'per month',
   },
-  price: 1.64,
+  price: 10.015,
 };
 
 const authTokenInSession = JSON.stringify({
@@ -68,7 +68,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Catalogue-solutions - flat patient - general')
+fixture('Catalogue-solutions - flat declarative - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -106,16 +106,6 @@ test('should render an expandable section for the quantity question', async (t) 
     .expect(expandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
     .eql(content.questions.quantity.expandableSection.innerComponent);
-});
-
-test('should not render a selectEstimationPeriod question for flat patient', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const selectEstimationPeriodRadioOptions = Selector('[data-test-id="question-selectEstimationPeriod"]');
-
-  await t
-    .expect(selectEstimationPeriodRadioOptions.exists).notOk();
 });
 
 test('should render the price table headings', async (t) => {

@@ -9,19 +9,19 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-sol
 const getLocation = ClientFunction(() => document.location.href);
 
 const selectedPrice = {
-  priceId: 2,
-  provisioningType: 'patient',
-  type: 'flat',
+  priceId: 1,
+  provisioningType: 'Declarative',
+  type: 'Flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'patient',
-    description: 'per patient',
+    name: 'license',
+    description: 'per license',
   },
   timeUnit: {
-    name: 'year',
-    description: 'per year',
+    name: 'month',
+    description: 'per month',
   },
-  price: 1.64,
+  price: 0.1,
 };
 
 const authTokenInSession = JSON.stringify({
@@ -68,7 +68,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Catalogue-solutions - flat patient - withoutSavedData')
+fixture('Catalogue-solutions - flat declarative - withoutSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
