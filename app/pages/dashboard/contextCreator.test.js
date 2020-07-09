@@ -27,7 +27,6 @@ describe('getContext', () => {
     expect(context.backLinkText).toEqual(manifest.backLinkText);
     expect(context.description).toEqual(manifest.description);
     expect(context.newOrderButtonText).toEqual(manifest.newOrderButtonText);
-    expect(context.proxyLinkText).toEqual(manifest.proxyLinkText);
     expect(context.unsubmittedOrdersTableTitle).toEqual(manifest.unsubmittedOrdersTableTitle);
     expect(context.submittedOrdersTableTitle).toEqual(manifest.submittedOrdersTableTitle);
     expect(context.columnInfo).toEqual(manifest.columnInfo);
@@ -42,11 +41,6 @@ describe('getContext', () => {
   it('should construct newOrderButtonHref', () => {
     const context = getContext({});
     expect(context.newOrderButtonHref).toEqual(`${baseUrl}/organisation/neworder`);
-  });
-
-  it('should construct proxyLinkHref', () => {
-    const context = getContext({ orgName: 'Org1' });
-    expect(context.proxyLinkHref).toEqual('#');
   });
 
   describe('ordersData', () => {
