@@ -154,7 +154,7 @@ test('should render the price table content', async (t) => {
     .expect(await extractInnerText(orderUnit)).eql(orderItem.itemUnit.description);
 });
 
-test('should render the delete button as not diasbled', async (t) => {
+test('should render the delete button as not disabled', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -191,7 +191,7 @@ test('should show the correct error summary and input error when date is removed
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Enter a planned delivery date')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateRequired)
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 

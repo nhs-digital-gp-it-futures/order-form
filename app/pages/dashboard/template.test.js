@@ -44,15 +44,6 @@ describe('dashboard page', () => {
     });
   }));
 
-  it('should render the proxy link', componentTester(setup, (harness) => {
-    harness.request(context, ($) => {
-      const link = $('div[data-test-id="proxy-link"] a');
-      expect(link.length).toEqual(1);
-      expect(link.text().trim()).toEqual(context.proxyLinkText);
-      expect(link.attr('href')).toEqual(context.proxyLinkHref);
-    });
-  }));
-
   describe('unsubmitted orders table', () => {
     it('should render the table title', componentTester(setup, (harness) => {
       harness.request(context, ($) => {

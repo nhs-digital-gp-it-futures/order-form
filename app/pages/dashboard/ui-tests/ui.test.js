@@ -123,31 +123,6 @@ test('should navigate to the new order page when add new order button is clicked
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/neworder');
 });
 
-test('should render the proxy link', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const link = Selector('div[data-test-id="proxy-link"] a');
-
-  await t
-    .expect(link.exists).ok()
-    .expect(await extractInnerText(link)).eql(content.proxyLinkText)
-    .expect(link.getAttribute('href')).eql('#');
-});
-
-// TODO: Change the expected location
-test('should navigate to ? page when proxy link is clicked', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const link = Selector('div[data-test-id="proxy-link"] a');
-
-  await t
-    .expect(link.exists).ok()
-    .click(link)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation#');
-});
-
 test('should render the unsubmitted orders table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);

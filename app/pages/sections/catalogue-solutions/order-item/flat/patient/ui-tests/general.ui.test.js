@@ -175,7 +175,7 @@ test('should render select quantity field as errors with error message when no q
 
   await t
     .expect(quantityField.find('[data-test-id="text-field-input-error"]').exists).ok()
-    .expect(await extractInnerText(quantityField.find('#quantity-error'))).contains('Enter a practice list size');
+    .expect(await extractInnerText(quantityField.find('#quantity-error'))).contains(content.errorMessages.QuantityRequired);
 });
 
 test('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
@@ -193,7 +193,7 @@ test('should render select price field as errors with error message when no pric
 
   await t
     .expect(priceField.find('[data-test-id="text-field-input-error"]').exists).ok()
-    .expect(await extractInnerText(priceField.find('#price-error'))).contains('Enter a price');
+    .expect(await extractInnerText(priceField.find('#price-error'))).contains(content.errorMessages.PriceRequired);
 });
 
 test('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
