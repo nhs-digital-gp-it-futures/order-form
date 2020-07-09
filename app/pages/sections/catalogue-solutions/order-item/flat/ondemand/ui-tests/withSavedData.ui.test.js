@@ -167,6 +167,19 @@ test('should render the price table content', async (t) => {
     .expect(await extractInnerText(orderUnit)).eql(orderItem.itemUnit.description);
 });
 
+test('should render the delete button as not diasbled', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="delete-button"] button');
+
+  await t
+    .expect(button.exists).ok()
+    .expect(await extractInnerText(button)).eql('Delete')
+    .expect(button.hasClass('nhsuk-button--secondary')).eql(true)
+    .expect(button.hasClass('nhsuk-button--disabled')).eql(false);
+});
+
 test('should show the correct error summary and input error when date is removed and save is clicked', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
