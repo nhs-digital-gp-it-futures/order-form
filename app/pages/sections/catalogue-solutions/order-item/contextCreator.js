@@ -1,5 +1,5 @@
 import { baseUrl } from '../../../../config';
-import { generateErrorMap } from '../../../../helpers/generateErrorMap';
+import { generateErrorMap } from '../../../../helpers/contextCreators/generateErrorMap';
 import { generateQuestions } from '../../../../helpers/generateQuestions';
 import { generateErrorSummary } from '../../../../helpers/generateErrorSummary';
 import { generateAddPriceTable } from '../../../../helpers/contextCreators/generateAddPriceTable';
