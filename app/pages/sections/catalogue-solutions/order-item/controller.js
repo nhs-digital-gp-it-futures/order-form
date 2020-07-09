@@ -124,6 +124,11 @@ export const validateOrderItemForm = ({ data, selectedPrice }) => {
         field: 'Quantity',
         id: 'QuantityInvalid',
       });
+    } else if (data.quantity > 2147483646) {
+      errors.push({
+        field: 'Quantity',
+        id: 'QuantityLessThanMax',
+      });
     }
   }
 
@@ -151,6 +156,11 @@ export const validateOrderItemForm = ({ data, selectedPrice }) => {
       errors.push({
         field: 'Price',
         id: 'PriceMoreThan3dp',
+      });
+    } else if (parseFloat(data.price) > 999999999999999.999) {
+      errors.push({
+        field: 'Price',
+        id: 'PriceLessThanMax',
       });
     }
   }
@@ -273,6 +283,7 @@ export const saveSolutionOrderItem = async ({
     return response;
   } catch (err) {
     if (err.response.status === 400 && err.response.data && err.response.data.errors) {
+      logger.info(`Follow validation errors returned from the API ${JSON.stringify(err.response.data.errors)}`);
       return err.response.data;
     }
     logger.error(`Error saving order item for ${solutionName} and ${serviceRecipientName} for order id: ${orderId}`);
