@@ -132,7 +132,7 @@ test('should render the price table content', async (t) => {
     .expect(await extractInnerText(orderUnit)).eql(`${orderItem.itemUnit.description} ${orderItem.timeUnit.description}`);
 });
 
-test('should render the delete button as not diasbled', async (t) => {
+test('should render the delete button as not disabled', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
