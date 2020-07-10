@@ -109,7 +109,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select/solut
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/select/solution/recipient when click on backlink after clicking save', async (t) => {
+test('should navigate to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when click on backlink after validation errors', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
@@ -222,7 +222,7 @@ test('should render the delete button', async (t) => {
     .expect(button.hasClass('nhsuk-button--disabled')).eql(true);
 });
 
-test('delete button should still be disabled after clicking save', async (t) => {
+test('delete button should still be disabled after validation errors', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
