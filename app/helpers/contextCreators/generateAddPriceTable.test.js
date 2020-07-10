@@ -15,7 +15,7 @@ describe('generateAddPriceTable', () => {
     },
   };
 
-  it('should return the generated price table with the price question', () => {
+  it('should return the generated price table', () => {
     const expectedGeneratedTable = {
       ...addPriceTable,
       items: [
@@ -34,6 +34,33 @@ describe('generateAddPriceTable', () => {
     };
 
     const generatedAddPriceTable = generateAddPriceTable({ addPriceTable });
+
+    expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);
+  });
+
+  it('should return the generated price table with the data populated', () => {
+    const expectedGeneratedTable = {
+      ...addPriceTable,
+      items: [
+        [
+          {
+            question: {
+              type: 'input',
+              id: 'price',
+              data: '1892.23',
+            },
+          },
+          {
+            dataTestId: 'unit-of-order',
+            data: 'per patient per year',
+          },
+        ],
+      ],
+    };
+
+    const generatedAddPriceTable = generateAddPriceTable({
+      addPriceTable, price: '1892.23', itemUnitDescription: 'per patient', timeUnitDescription: 'per year',
+    });
 
     expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);
   });
