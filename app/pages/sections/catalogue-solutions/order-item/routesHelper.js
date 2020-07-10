@@ -44,7 +44,7 @@ export const getPageData = async ({
     'deliveryDate-day': day,
     quantity: orderItem.quantity,
     selectEstimationPeriod: orderItem.estimationPeriod,
-    price: orderItem.price,
+    price: formatDecimal(orderItem.price),
   };
 
   return {
