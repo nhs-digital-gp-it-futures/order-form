@@ -11,9 +11,11 @@ import {
   ErrorContext,
 } from 'buying-catalogue-library';
 import * as selectAdditionalServiceController from './additional-service/controller';
+import * as additionalServicePriceController from './price/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
+import * as routerHelper from '../../../../helpers/routerHelper';
 
 jest.mock('../../../../logger');
 
@@ -258,6 +260,61 @@ describe('additional-services select routes', () => {
           expect(res.redirect).toEqual(true);
           expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service/price`);
         });
+    });
+  });
+
+  describe('GET /organisation/:orderId/additional-services/select/additional-service/price', () => {
+    const path = '/organisation/some-order-id/additional-services/select/additional-service/price';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should call findAdditionalServicePrices once with the correct params if authorised', async () => {
+      additionalServicePriceController.findAdditionalServicePrices = jest.fn()
+        .mockResolvedValue([]);
+
+      const accessToken = 'access_token';
+
+      routerHelper.extractAccessToken = jest.fn().mockReturnValue(accessToken);
+
+      const selectedAdditionalServiceId = 12;
+
+      await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie, `selectedAdditionalServiceId=${selectedAdditionalServiceId}`]);
+
+      expect(additionalServicePriceController.findAdditionalServicePrices.mock.calls.length)
+        .toEqual(1);
+
+      expect(additionalServicePriceController.findAdditionalServicePrices).toHaveBeenCalledWith({
+        additionalServiceId: selectedAdditionalServiceId,
+        accessToken,
+      });
+    });
+
+    it('should return the additional-services select price page if authorised', async () => {
+      additionalServicePriceController.findAdditionalServicePrices = jest.fn()
+        .mockResolvedValue([]);
+
+      const res = await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200);
+
+      expect(res.text).toEqual('Additional service prices');
     });
   });
 });
