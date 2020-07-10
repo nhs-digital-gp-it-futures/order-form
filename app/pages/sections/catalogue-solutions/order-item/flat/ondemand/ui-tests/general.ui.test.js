@@ -182,22 +182,6 @@ test('should render the price table content', async (t) => {
     .expect(await extractInnerText(orderUnit)).eql(selectedPrice.itemUnit.description);
 });
 
-test('should round the price data to 2dp', async (t) => {
-  await pageSetup(true, true);
-  await t.navigateTo(pageUrl);
-
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const priceInput = Selector('[data-test-id="question-price"] input');
-
-  await t
-    .expect(priceInput.exists).ok()
-    .selectText(priceInput)
-    .typeText(priceInput, '0.1', { paste: true })
-    .debug()
-    .click(saveButton)
-    .expect(priceInput.getAttribute('value')).eql('0.10');
-});
-
 test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);

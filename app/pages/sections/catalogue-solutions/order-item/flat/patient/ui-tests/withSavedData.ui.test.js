@@ -29,7 +29,7 @@ const orderItem = {
     name: 'year',
     description: 'per year',
   },
-  price: 0.11,
+  price: 0.1,
 };
 
 const authTokenInSession = JSON.stringify({
@@ -142,7 +142,7 @@ test('should render the price table content', async (t) => {
 
   await t
     .expect(priceInput.exists).ok()
-    .expect(priceInput.getAttribute('value')).eql('0.11')
+    .expect(priceInput.getAttribute('value')).eql('0.1')
     .expect(orderUnit.exists).ok()
     .expect(await extractInnerText(orderUnit)).eql(`${orderItem.itemUnit.description} ${orderItem.timeUnit.description}`);
 });
