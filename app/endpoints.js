@@ -17,6 +17,7 @@ const endpoints = {
       const queryString = `solutionIds=${options.addedCatalogueSolutions.join('&solutionIds=')}`;
       return `${solutionsApiUrl}/api/v1/additional-services?${queryString}`;
     },
+    getCatalogueItemPricing: options => `${solutionsApiUrl}/api/v1/prices?catalogueItemId=${options.catalogueItemId}`,
   },
   dapi: {
     getApiHealth: () => `${documentApiHost}/health/ready`,
