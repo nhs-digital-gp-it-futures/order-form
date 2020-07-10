@@ -293,87 +293,29 @@ describe('generateQuestions', () => {
       });
 
       it('should return the question without the error if the errorMap is for another question', () => {
-        const expectedGeneratedQuestions = { firstQuestion: {} };
-
-        const errorMap = {
-          anotherQuestion: {
-            errorMessages: ['another Error'],
-          },
-        };
-        const questions = { firstQuestion: {} };
-        const generatedQuestions = generateQuestions({ questions, errorMap });
-
-        expect(generatedQuestions).toEqual(expectedGeneratedQuestions);
-      });
-
-      it('should return the question with multiple errors', () => {
         const expectedGeneratedQuestions = {
-          firstQuestion: {
+          firstQuestion: {},
+          secondQuestion: {
             error: {
-              message: 'First Error, Second Error',
+              message: 'Second Error',
             },
           },
         };
 
         const errorMap = {
-          firstQuestion: {
-            errorMessages: ['First Error', 'Second Error'],
+          secondQuestion: {
+            errorMessages: ['Second Error'],
           },
         };
-        const questions = { firstQuestion: {} };
-        const generatedQuestions = generateQuestions({ questions, errorMap });
-
-        expect(generatedQuestions).toEqual(expectedGeneratedQuestions);
-      });
-
-      it('should return the question with the fields errored', () => {
-        const expectedGeneratedQuestions = {
-          firstQuestion: {
-            error: {
-              message: 'First Error',
-              fields: ['firstField', 'secondField'],
-            },
-          },
-        };
-
-        const errorMap = {
-          firstQuestion: {
-            errorMessages: ['First Error'],
-            fields: ['firstField', 'secondField'],
-          },
-        };
-        const questions = { firstQuestion: {} };
-        const generatedQuestions = generateQuestions({ questions, errorMap });
-
-        expect(generatedQuestions).toEqual(expectedGeneratedQuestions);
-      });
-
-      it('should return the question with the fields errored as ["day", "month", "year"] '
-        + 'when question is of type "date" and fields not provided from errorMap', () => {
-        const expectedGeneratedQuestions = {
-          firstQuestion: {
-            type: 'date',
-            error: {
-              message: 'First Error',
-              fields: ['day', 'month', 'year'],
-            },
-          },
-        };
-
-        const errorMap = {
-          firstQuestion: {
-            errorMessages: ['First Error'],
-          },
-        };
-        const questions = { firstQuestion: { type: 'date' } };
+        const questions = { firstQuestion: {}, secondQuestion: {} };
         const generatedQuestions = generateQuestions({ questions, errorMap });
 
         expect(generatedQuestions).toEqual(expectedGeneratedQuestions);
       });
     });
 
-    describe('populate question and add errors to question when formData and errorMap provided', () => {
-      it('should return the question with the data and errors', () => {
+    describe('populate questions and add errors to question when formData and errorMap provided', () => {
+      it('should return the questions with the data and errors', () => {
         const expectedGeneratedQuestions = {
           firstQuestion: {
             data: 'some data',
@@ -381,15 +323,27 @@ describe('generateQuestions', () => {
               message: 'First Error',
             },
           },
+          secondQuestion: {
+            data: 'some more data',
+            error: {
+              message: 'Second Error',
+            },
+          },
         };
 
-        const formData = { firstQuestion: 'some data' };
+        const formData = {
+          firstQuestion: 'some data',
+          secondQuestion: 'some more data',
+        };
         const errorMap = {
           firstQuestion: {
             errorMessages: ['First Error'],
           },
+          secondQuestion: {
+            errorMessages: ['Second Error'],
+          },
         };
-        const questions = { firstQuestion: {} };
+        const questions = { firstQuestion: {}, secondQuestion: {} };
         const generatedQuestions = generateQuestions({ questions, formData, errorMap });
 
         expect(generatedQuestions).toEqual(expectedGeneratedQuestions);
