@@ -109,6 +109,20 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select/solut
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
 });
 
+test('should navigate to /organisation/order-id/catalogue-solutions/select/solution/recipient when click on backlink after clicking save', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .click(saveButton)
+    .expect(goBackLink.exists).ok()
+    .click(goBackLink)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
+});
+
 test('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -206,6 +220,21 @@ test('should render the delete button', async (t) => {
     .expect(await extractInnerText(button)).eql(commonContent.deleteButton.text)
     .expect(button.hasClass('nhsuk-button--secondary')).eql(true)
     .expect(button.hasClass('nhsuk-button--disabled')).eql(true);
+});
+
+test('delete button should still be disabled after clicking save', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const deleteButton = Selector('[data-test-id="delete-button"] button');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .click(saveButton)
+    .expect(deleteButton.exists).ok()
+    .expect(await extractInnerText(deleteButton)).eql(commonContent.deleteButton.text)
+    .expect(deleteButton.hasClass('nhsuk-button--secondary')).eql(true)
+    .expect(deleteButton.hasClass('nhsuk-button--disabled')).eql(true);
 });
 
 test('should render the save button', async (t) => {
