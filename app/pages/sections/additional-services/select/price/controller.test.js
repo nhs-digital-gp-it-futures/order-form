@@ -8,7 +8,7 @@ import {
 jest.mock('buying-catalogue-library');
 
 const accessToken = 'access_token';
-const additionalServiceId = 'additional-service-1';
+const catalogueItemId = 'additional-service-1';
 
 describe('findAdditionalServicePrices', () => {
   afterEach(() => {
@@ -18,10 +18,10 @@ describe('findAdditionalServicePrices', () => {
   it('should call getData once with the correct params', async () => {
     getData.mockResolvedValueOnce({ data: {} });
 
-    await findAdditionalServicePrices({ accessToken, additionalServiceId });
+    await findAdditionalServicePrices({ accessToken, catalogueItemId });
     expect(getData.mock.calls.length).toEqual(1);
     expect(getData).toHaveBeenCalledWith({
-      endpoint: `${solutionsApiUrl}/api/v1/additional-services/${additionalServiceId}/prices`,
+      endpoint: `${solutionsApiUrl}/api/v1/prices?catalogueItemId=${catalogueItemId}`,
       accessToken: 'access_token',
       logger,
     });
