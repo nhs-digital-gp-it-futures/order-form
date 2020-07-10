@@ -40,12 +40,6 @@ const additionalServicesState = ClientFunction(() => {
   document.cookie = `additionalServices=${cookieValue}`;
 });
 
-const selectedAdditionalServiceIdState = ClientFunction(() => {
-  const cookieValue = 'additional-service-2';
-
-  document.cookie = `selectedAdditionalServiceId=${cookieValue}`;
-});
-
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/catalogue-solutions')
@@ -67,13 +61,15 @@ const mocks = () => {
 const pageSetup = async (
   withAuth = true,
   withAdditionalServicesFoundState = false,
-  withSelectedAdditionalServiceIdState = false) => {
-  if (withAuth) {
+  withMocks = true) => {
+  if (withMocks) {
     mocks();
+  }
+
+  if (withAuth) {
     await setCookies();
   }
   if (withAdditionalServicesFoundState) await additionalServicesState();
-  if (withSelectedAdditionalServiceIdState) await selectedAdditionalServiceIdState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -94,7 +90,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false);
+  await pageSetup(false, false, false);
   await t.navigateTo(pageUrl);
 
   await t
@@ -219,4 +215,30 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#selectAdditionalService`);
+});
+
+test('should render the error page if no additional services are found', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/catalogue-solutions')
+    .reply(200, { catalogueSolutions: [] });
+
+  nock(bapiUrl)
+    .get('/api/v1/additional-services?solutionIds=')
+    .reply(200, { additionalServices: [] });
+
+  await pageSetup(true, false, false);
+  await t.navigateTo(pageUrl);
+
+  const backLink = Selector('[data-test-id="error-back-link"]');
+  const errorTitle = Selector('[data-test-id="error-title"]');
+  const errorDescription = Selector('[data-test-id="error-description"]');
+
+  await t
+    .expect(backLink.exists).ok()
+    .expect(await extractInnerText(backLink)).eql('Go back')
+    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/order-id/additional-services')
+    .expect(errorTitle.exists).ok()
+    .expect(await extractInnerText(errorTitle)).eql('No Additional Services found')
+    .expect(errorDescription.exists).ok()
+    .expect(await extractInnerText(errorDescription)).eql('There are no Additional Services offered by this supplier. Go back to the Additional Services dashboard and select continue to complete the section.');
 });
