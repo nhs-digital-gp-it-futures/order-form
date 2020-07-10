@@ -31,17 +31,12 @@ const generateAddPriceTable = ({
   addPriceTable, price, itemUnitDescription, timeUnitDescription = '', errorMap,
 }) => {
   const columns = [];
-  let priceData = price;
-
-  if ((price || {}).toString().includes('.') && price.toString().split('.')[1].length < 2) {
-    priceData = parseFloat(price).toFixed(2);
-  }
 
   columns.push({
     ...addPriceTable.cellInfo.price,
     question: {
       ...addPriceTable.cellInfo.price.question,
-      data: priceData,
+      data: price,
       error: errorMap && errorMap.price
         ? { message: errorMap.price.errorMessages.join(', ') }
         : undefined,

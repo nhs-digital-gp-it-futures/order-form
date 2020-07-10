@@ -71,6 +71,39 @@ describe('getPageData', () => {
 
       expect(pageData.formData).toEqual({ price: 'some-price' });
     });
+
+    it('should return the formatted price if only 2dp', async () => {
+      fakeSessionManager.getFromSession = () => 'some-selected-price-id';
+
+      controller.getSolution = jest.fn().mockResolvedValue({});
+      controller.getSelectedPrice = jest.fn().mockResolvedValue({ price: '0.1' });
+
+      const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'newsolution' });
+
+      expect(pageData.formData).toEqual({ price: '0.10' });
+    });
+
+    it('should return the selectedPrice if more than 2dp', async () => {
+      fakeSessionManager.getFromSession = () => 'some-selected-price-id';
+
+      controller.getSolution = jest.fn().mockResolvedValue({});
+      controller.getSelectedPrice = jest.fn().mockResolvedValue({ price: '0.123' });
+
+      const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'newsolution' });
+
+      expect(pageData.formData).toEqual({ price: '0.123' });
+    });
+
+    it('should return the selectedPrice if a whole number', async () => {
+      fakeSessionManager.getFromSession = () => 'some-selected-price-id';
+
+      controller.getSolution = jest.fn().mockResolvedValue({});
+      controller.getSelectedPrice = jest.fn().mockResolvedValue({ price: '1' });
+
+      const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'newsolution' });
+
+      expect(pageData.formData).toEqual({ price: '1' });
+    });
   });
 
   describe('when existing order item', () => {
