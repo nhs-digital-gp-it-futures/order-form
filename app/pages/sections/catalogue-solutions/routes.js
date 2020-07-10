@@ -108,6 +108,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
     const context = await getOrderItemErrorPageContext({
       orderId,
+      orderItemId,
       orderItemType: 'catalogue-solutions',
       solutionName: pageData.solutionName,
       selectedRecipientId: pageData.serviceRecipientId,

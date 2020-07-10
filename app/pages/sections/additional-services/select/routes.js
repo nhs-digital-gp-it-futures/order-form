@@ -1,4 +1,5 @@
 import express from 'express';
+import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../logger';
 import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
@@ -9,6 +10,9 @@ import {
   getAdditionalServiceErrorPageContext,
   validateAdditionalServicesForm,
 } from './additional-service/controller';
+import {
+  findAdditionalServicePrices,
+} from './price/controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -29,6 +33,17 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         addedCatalogueSolutions,
         accessToken,
       });
+
+      if (additionalServices.length === 0) {
+        throw new ErrorContext({
+          status: 404,
+          title: 'No Additional Services found',
+          description: 'There are no Additional Services offered by this supplier. Go back to the Additional Services dashboard and select continue to complete the section.',
+          backLinkText: 'Go back',
+          backLinkHref: `${config.baseUrl}/organisation/${orderId}/additional-services`,
+        });
+      }
+
       const selectedAdditionalServiceId = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceId' });
       sessionManager.saveToSession({ req, key: 'additionalServices', value: additionalServices });
 
@@ -66,6 +81,20 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       'pages/sections/additional-services/select/additional-service/template.njk',
       addContext({ context, user: req.user, csrfToken: req.csrfToken() }),
     );
+  }));
+
+  router.get('/additional-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const additionalServiceId = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceId' });
+    const additionalServicePrices = await findAdditionalServicePrices({
+      additionalServiceId,
+      accessToken,
+    });
+    sessionManager.saveToSession({ req, key: 'additionalServicePrices', value: additionalServicePrices });
+
+    logger.info(`navigating to order ${orderId} additional-services select price page`);
+    return res.send('Additional service prices');
   }));
 
   return router;

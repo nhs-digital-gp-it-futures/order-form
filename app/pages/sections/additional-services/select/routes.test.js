@@ -8,11 +8,14 @@ import {
   testAuthorisedPostPathForUnauthorisedUsers,
   fakeSessionManager,
   getCsrfTokenFromGet,
+  ErrorContext,
 } from 'buying-catalogue-library';
 import * as selectAdditionalServiceController from './additional-service/controller';
+import * as additionalServicePriceController from './price/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
+import * as routerHelper from '../../../../helpers/routes/routerHelper';
 
 jest.mock('../../../../logger');
 
@@ -31,12 +34,6 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 
-const mockSessionAdditionalServicesState = JSON.stringify([
-  { id: 'additional-service-1', name: 'Additional Service 1' },
-  { id: 'additional-service-2', name: 'Additional Service 2' },
-]);
-const mockAdditionalServicesCookie = `additionalServices=${mockSessionAdditionalServicesState}`;
-
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
   const app = new App(authProvider).createApp();
@@ -45,6 +42,10 @@ const setUpFakeApp = () => {
 };
 
 describe('additional-services select routes', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('GET /organisation/:orderId/additional-services/select', () => {
     const path = '/organisation/order-1/additional-services/select';
 
@@ -65,12 +66,6 @@ describe('additional-services select routes', () => {
     ));
 
     it('should redirect to the additional-services/select/additional-service', async () => {
-      selectAdditionalServiceController.findAdditionalServices = jest.fn()
-        .mockResolvedValue({});
-
-      selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
-        .mockResolvedValue({});
-
       const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
@@ -122,6 +117,22 @@ describe('additional-services select routes', () => {
       expect(res.text.includes('data-test-id="additional-service-select-page"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
+
+    it('should throw error context when no additional services', async () => {
+      selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
+        .mockResolvedValue([]);
+
+      selectAdditionalServiceController.findAdditionalServices = jest.fn()
+        .mockResolvedValue([]);
+
+      try {
+        await request(setUpFakeApp())
+          .get(path)
+          .set('Cookie', [mockAuthorisedCookie]);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ErrorContext);
+      }
+    });
   });
 
   describe('POST /organisation/:orderId/additional-services/select/additional-service', () => {
@@ -129,23 +140,43 @@ describe('additional-services select routes', () => {
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
-        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+        app: request(setUpFakeApp()),
+        postPath: path,
+        postPathCookies: [mockAuthorisedCookie],
       })
     ));
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedPostPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', async () => {
+      selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
+        .mockResolvedValue([]);
+
+      selectAdditionalServiceController.findAdditionalServices = jest.fn()
+        .mockResolvedValue([{ id: '1' }]);
+
+      selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      await testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
         getPathCookies: [mockAuthorisedCookie],
-        postPathCookies: [mockAdditionalServicesCookie],
+        postPathCookies: [],
         expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedPostPathForUnauthorisedUsers({
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
+        .mockResolvedValue([]);
+
+      selectAdditionalServiceController.findAdditionalServices = jest.fn()
+        .mockResolvedValue([{ id: '1' }]);
+
+      selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
@@ -153,10 +184,23 @@ describe('additional-services select routes', () => {
         postPathCookies: [mockUnauthorisedCookie],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
+      });
+    });
 
     it('should show the additional services select page with errors if there are validation errors', async () => {
+      selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
+        .mockResolvedValue([
+          {
+            catalogueItemId: 'Some catalogue item id',
+          },
+        ]);
+
+      selectAdditionalServiceController.findAdditionalServices = jest.fn()
+        .mockResolvedValue({});
+
+      selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
       selectAdditionalServiceController.validateAdditionalServicesForm = jest.fn()
         .mockReturnValue({ success: false });
 
@@ -185,6 +229,15 @@ describe('additional-services select routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price if an additional service is selected', async () => {
+      selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
+        .mockResolvedValue([]);
+
+      selectAdditionalServiceController.findAdditionalServices = jest.fn()
+        .mockResolvedValue([{ id: '1' }]);
+
+      selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
       selectAdditionalServiceController.validateAdditionalServicesForm = jest.fn()
         .mockReturnValue({ success: true });
 
@@ -207,6 +260,61 @@ describe('additional-services select routes', () => {
           expect(res.redirect).toEqual(true);
           expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service/price`);
         });
+    });
+  });
+
+  describe('GET /organisation/:orderId/additional-services/select/additional-service/price', () => {
+    const path = '/organisation/some-order-id/additional-services/select/additional-service/price';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should call findAdditionalServicePrices once with the correct params if authorised', async () => {
+      additionalServicePriceController.findAdditionalServicePrices = jest.fn()
+        .mockResolvedValue([]);
+
+      const accessToken = 'access_token';
+
+      routerHelper.extractAccessToken = jest.fn().mockReturnValue(accessToken);
+
+      const selectedAdditionalServiceId = 12;
+
+      await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie, `selectedAdditionalServiceId=${selectedAdditionalServiceId}`]);
+
+      expect(additionalServicePriceController.findAdditionalServicePrices.mock.calls.length)
+        .toEqual(1);
+
+      expect(additionalServicePriceController.findAdditionalServicePrices).toHaveBeenCalledWith({
+        additionalServiceId: selectedAdditionalServiceId,
+        accessToken,
+      });
+    });
+
+    it('should return the additional-services select price page if authorised', async () => {
+      additionalServicePriceController.findAdditionalServicePrices = jest.fn()
+        .mockResolvedValue([]);
+
+      const res = await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200);
+
+      expect(res.text).toEqual('Additional service prices');
     });
   });
 });
