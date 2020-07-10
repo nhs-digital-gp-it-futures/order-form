@@ -142,7 +142,7 @@ test('should render the price table content', async (t) => {
 
   await t
     .expect(priceInput.exists).ok()
-    .expect(priceInput.getAttribute('value')).eql('0.1')
+    .expect(priceInput.getAttribute('value')).eql('0.10')
     .expect(orderUnit.exists).ok()
     .expect(await extractInnerText(orderUnit)).eql(`${orderItem.itemUnit.description} ${orderItem.timeUnit.description}`);
 });
