@@ -64,4 +64,38 @@ describe('generateAddPriceTable', () => {
 
     expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);
   });
+
+  it('should return the generated price table with the data and error on price', () => {
+    const expectedGeneratedTable = {
+      ...addPriceTable,
+      items: [
+        [
+          {
+            question: {
+              type: 'input',
+              id: 'price',
+              data: '1892.2323',
+              error: { message: 'Too many decimal places' },
+            },
+          },
+          {
+            dataTestId: 'unit-of-order',
+            data: 'per patient per year',
+          },
+        ],
+      ],
+    };
+
+    const errorMap = {
+      price: {
+        errorMessages: ['Too many decimal places'],
+      },
+    };
+
+    const generatedAddPriceTable = generateAddPriceTable({
+      addPriceTable, price: '1892.2323', itemUnitDescription: 'per patient', timeUnitDescription: 'per year', errorMap,
+    });
+
+    expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);
+  });
 });
