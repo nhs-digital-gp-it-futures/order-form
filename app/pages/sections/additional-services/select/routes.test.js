@@ -282,7 +282,7 @@ describe('additional-services select routes', () => {
       })
     ));
 
-    it('should call findAdditionalServices once with the correct params if authorised', async () => {
+    it('should call findAdditionalServicePrices once with the correct params if authorised', async () => {
       additionalServicePriceController.findAdditionalServicePrices = jest.fn()
         .mockResolvedValue([]);
 
