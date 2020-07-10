@@ -68,6 +68,31 @@ describe('additional-services select-additional-service controller', () => {
         logger,
       });
     });
+
+    it('should return empty list when getData returns undefined', async () => {
+      getData
+        .mockResolvedValueOnce({ additionalServices: undefined });
+
+      const addedCatalogueSolutions = ['1', '2', '3'];
+      const expected = await findAdditionalServices({ addedCatalogueSolutions, accessToken: 'access_token' });
+      expect(expected).toEqual([]);
+    });
+
+    it('should return expected list when addedCatalogueSolutions is an empty array', async () => {
+      const additionalServices = [
+        {
+          additionalServiceId: 'additional-service-1',
+          name: 'Additional Service 1',
+        },
+      ];
+
+      getData
+        .mockResolvedValueOnce({ additionalServices });
+
+      const addedCatalogueSolutions = [];
+      const expected = await findAdditionalServices({ addedCatalogueSolutions, accessToken: 'access_token' });
+      expect(expected).toEqual(additionalServices);
+    });
   });
 
   describe('findAddedCatalogueSolutions', () => {
@@ -103,6 +128,14 @@ describe('additional-services select-additional-service controller', () => {
 
       const catalogueItemIds = await findAddedCatalogueSolutions({ orderId, accessToken: 'access_token' });
       expect(catalogueItemIds).toEqual(['some catalogue item id']);
+    });
+
+    it('should return empty list when getData returns undefined', async () => {
+      getData
+        .mockResolvedValueOnce({ catalogueSolutions: undefined });
+
+      const catalogueItemIds = await findAddedCatalogueSolutions({ orderId, accessToken: 'access_token' });
+      expect(catalogueItemIds).toEqual([]);
     });
   });
 
