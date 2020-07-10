@@ -167,6 +167,7 @@ export const getErrorContext = (params) => {
     commonManifest: params.commonManifest,
     selectedPriceManifest: params.selectedPriceManifest,
     orderId: params.orderId,
+    orderItemId: params.orderItemId,
     solutionName: params.solutionName,
     serviceRecipientName: params.serviceRecipientName,
     odsCode: params.selectedRecipientId,
