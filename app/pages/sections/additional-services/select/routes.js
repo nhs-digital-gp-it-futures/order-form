@@ -1,4 +1,5 @@
 import express from 'express';
+import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../logger';
 import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routerHelper';
@@ -29,6 +30,17 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         addedCatalogueSolutions,
         accessToken,
       });
+
+      if (additionalServices.length === 0) {
+        throw new ErrorContext({
+          status: 404,
+          title: 'No Additional Services found',
+          description: 'There are no Additional Services offered by this supplier. Go back to the Additional Services dashboard and select continue to complete the section.',
+          backLinkText: 'Go back',
+          backLinkHref: `${config.baseUrl}/organisation/${orderId}/additional-services`,
+        });
+      }
+
       const selectedAdditionalServiceId = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceId' });
       sessionManager.saveToSession({ req, key: 'additionalServices', value: additionalServices });
 
