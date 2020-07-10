@@ -16,7 +16,7 @@ export const generateAddPriceTable = ({
 
   columns.push({
     ...addPriceTable.cellInfo.unitOfOrder,
-    data: `${itemUnitDescription} ${timeUnitDescription}`,
+    data: itemUnitDescription ? `${itemUnitDescription} ${timeUnitDescription}` : undefined,
   });
 
   const items = [columns];
