@@ -165,7 +165,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
                   ...flatOndemandManifest.addPriceTable.cellInfo.price,
                   question: {
                     ...flatOndemandManifest.addPriceTable.cellInfo.price.question,
-                    data: 0.1,
+                    data: 0.11,
                   },
                 },
                 {
@@ -182,13 +182,41 @@ describe('catalogue-solutions order-item contextCreator', () => {
           itemUnit: { description: 'per consultation' },
         };
 
-        const formData = { price: 0.1 };
+        const formData = { price: 0.11 };
 
         const context = getContext({
           commonManifest, selectedPriceManifest: flatOndemandManifest, selectedPrice, formData,
         });
 
         expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+      });
+
+      it('should round the price to 2dp if only 1dp present', () => {
+        const selectedPrice = {
+          price: 0.1,
+        };
+
+        const formData = { price: 0.1 };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOndemandManifest, selectedPrice, formData,
+        });
+
+        expect(context.addPriceTable.items[0][0].question.data).toEqual('0.10');
+      });
+
+      it('should leave the price as a whole number if no decimal places', () => {
+        const selectedPrice = {
+          price: 1,
+        };
+
+        const formData = { price: 1 };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOndemandManifest, selectedPrice, formData,
+        });
+
+        expect(context.addPriceTable.items[0][0].question.data).toEqual(1);
       });
     });
 
@@ -267,7 +295,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
                   ...flatPatientManifest.addPriceTable.cellInfo.price,
                   question: {
                     ...flatPatientManifest.addPriceTable.cellInfo.price.question,
-                    data: 0.1,
+                    data: 0.11,
                   },
                 },
                 {
@@ -280,12 +308,12 @@ describe('catalogue-solutions order-item contextCreator', () => {
         };
 
         const selectedPrice = {
-          price: 0.1,
+          price: 0.11,
           itemUnit: { description: 'per patient' },
           timeUnit: { description: 'per year' },
         };
 
-        const formData = { price: 0.1 };
+        const formData = { price: 0.11 };
 
         const context = getContext({
           commonManifest,

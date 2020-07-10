@@ -26,7 +26,7 @@ const orderItem = {
     name: 'consultation',
     description: 'per consultation',
   },
-  price: 0.1,
+  price: 0.11,
 };
 
 const authTokenInSession = JSON.stringify({
@@ -149,7 +149,7 @@ test('should render the price table content', async (t) => {
 
   await t
     .expect(priceInput.exists).ok()
-    .expect(priceInput.getAttribute('value')).eql('0.1')
+    .expect(priceInput.getAttribute('value')).eql('0.11')
     .expect(orderUnit.exists).ok()
     .expect(await extractInnerText(orderUnit)).eql(orderItem.itemUnit.description);
 });
