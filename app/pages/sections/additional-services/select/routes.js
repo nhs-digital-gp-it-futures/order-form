@@ -12,6 +12,7 @@ import {
 } from './additional-service/controller';
 import {
   findAdditionalServicePrices,
+  getAdditionalServicePricePageContext,
 } from './price/controller';
 
 const router = express.Router({ mergeParams: true });
@@ -86,15 +87,23 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
   router.get('/additional-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const additionalServiceId = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceId' });
+    const selectedPriceId = Number(sessionManager.getFromSession({ req, key: 'selectedAdditionalServicePriceId' }));
+    const catalogueItemId = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceId' });
+
     const additionalServicePrices = await findAdditionalServicePrices({
-      additionalServiceId,
+      catalogueItemId,
       accessToken,
     });
     sessionManager.saveToSession({ req, key: 'additionalServicePrices', value: additionalServicePrices });
 
+    const context = getAdditionalServicePricePageContext({
+      orderId,
+      additionalServicePrices,
+      selectedPriceId,
+    });
+
     logger.info(`navigating to order ${orderId} additional-services select price page`);
-    return res.send('Additional service prices');
+    return res.render('pages/sections/additional-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
