@@ -1,4 +1,4 @@
-import { formatPrice } from './priceFormatter';
+import { formatPrice, formatDecimal } from './priceFormatter';
 
 describe('formatPrice', () => {
   it.each`
@@ -10,5 +10,17 @@ describe('formatPrice', () => {
     ${12.011}    | ${'12.01'}
   `('formatPrice $priceValue should be formatted to $expected', ({ priceValue, expected }) => {
   expect(formatPrice(priceValue)).toEqual(expected);
+});
+});
+
+describe('formatDecimal', () => {
+  it.each`
+  priceValue   | expected
+  ${10}        | ${10}
+  ${10.1}      | ${'10.10'}
+  ${12.34}     | ${'12.34'}
+  ${999.999}   | ${999.999}
+`('formatDecimal $priceValue should be formatted to $expected', ({ priceValue, expected }) => {
+  expect(formatDecimal(priceValue)).toEqual(expected);
 });
 });

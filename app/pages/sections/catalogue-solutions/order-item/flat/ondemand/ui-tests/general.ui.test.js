@@ -17,7 +17,7 @@ const selectedPrice = {
     name: 'consultation',
     description: 'per consultation',
   },
-  price: 0.1,
+  price: 0.11,
 };
 
 const authTokenInSession = JSON.stringify({

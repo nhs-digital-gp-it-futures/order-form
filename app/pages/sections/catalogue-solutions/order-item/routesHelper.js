@@ -4,6 +4,7 @@ import {
   getOrderItem,
 } from './controller';
 import { destructureDate } from '../../../../helpers/dateFormatter';
+import { formatDecimal } from '../../../../helpers/priceFormatter';
 
 export const getPageData = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
@@ -16,7 +17,7 @@ export const getPageData = async ({
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     const solutionName = (await getSolution({ solutionId, accessToken })).name;
-    const formData = { price: selectedPrice.price };
+    const formData = { price: formatDecimal(selectedPrice.price) };
 
     return {
       solutionId, solutionName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
@@ -43,7 +44,7 @@ export const getPageData = async ({
     'deliveryDate-day': day,
     quantity: orderItem.quantity,
     selectEstimationPeriod: orderItem.estimationPeriod,
-    price: orderItem.price,
+    price: formatDecimal(orderItem.price),
   };
 
   return {
