@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../commonManifest.json';
 import { solutionsApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/neworderitem';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
 
 const selectedPrice = {
   priceId: 1,
@@ -96,7 +96,7 @@ test('should render additional-services order-item page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id/additional-services/select/additional-service/recipient when click on backlink', async (t) => {
+test('should navigate to /organisation/order-1/additional-services/select/additional-service/recipient when click on backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -105,10 +105,10 @@ test('should navigate to /organisation/order-id/additional-services/select/addit
   await t
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
 });
 
-test('should navigate to /organisation/order-id/additional-services/select/solution/price/recipient when click on backlink after validation errors', async (t) => {
+test('should navigate to /organisation/order-1/additional-services/select/solution/price/recipient when click on backlink after validation errors', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
@@ -119,7 +119,7 @@ test('should navigate to /organisation/order-id/additional-services/select/solut
     .click(saveButton)
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
 });
 
 test('should render the title', async (t) => {

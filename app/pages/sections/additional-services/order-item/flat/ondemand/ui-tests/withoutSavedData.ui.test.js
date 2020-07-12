@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/neworderitem';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -75,7 +75,7 @@ fixture('Additional-services - flat ondemand - withoutSavedData')
 
 test('should navigate to additional-services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/order-items')
+    .post('/api/v1/orders/order-1/order-items')
     .reply(200, {});
 
   await pageSetup(true, true);
@@ -89,12 +89,12 @@ test('should navigate to additional-services dashboard page if save button is cl
     .typeText(quantityInput, '10', { paste: true })
     .click(estimatiodPeriodInputs.nth(0))
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services');
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/order-items')
+    .post('/api/v1/orders/order-1/order-items')
     .reply(400, {
       errors: [{
         field: 'Quantity',
