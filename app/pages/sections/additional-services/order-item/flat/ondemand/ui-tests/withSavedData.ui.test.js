@@ -198,7 +198,7 @@ test('should show the correct error summary and input error when the price is re
     .expect(price.hasClass('nhsuk-input--error')).ok();
 });
 
-test('should navigate to catalogue solution dashboard page if save button is clicked and data is valid', async (t) => {
+test('should navigate to additional services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/order-items/item-1')
     .reply(200, {});
