@@ -71,14 +71,6 @@ export const getOrderItemErrorPageContext = (params) => {
   return getErrorContext(updatedParams);
 };
 
-export const getSolution = async ({ solutionId, accessToken }) => {
-  const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSolution', options: { solutionId } });
-  const solutionData = await getData({ endpoint, accessToken, logger });
-  logger.info(`Retrieved solution data from BAPI for ${solutionId}`);
-
-  return solutionData;
-};
-
 const formatPostData = ({
   selectedRecipientId,
   serviceRecipientName,
