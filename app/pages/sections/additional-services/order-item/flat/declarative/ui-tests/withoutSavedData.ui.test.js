@@ -62,7 +62,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Additional-services - flat ondemand - withoutSavedData')
+fixture('Additional-services - flat declarative - withoutSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();

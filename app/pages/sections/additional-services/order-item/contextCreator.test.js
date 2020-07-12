@@ -339,7 +339,7 @@ describe('additional-services order-item contextCreator', () => {
       });
     });
 
-    describe('flat - delarative', () => {
+    describe('flat - declarative', () => {
       it('should return error for quantity', () => {
         const expectedContext = {
           errors: [
