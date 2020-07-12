@@ -1,24 +1,20 @@
-import { postData, putData } from 'buying-catalogue-library';
-import { orderApiUrl } from '../../../../config';
-import { logger } from '../../../../logger';
 import {
   getOrderItemContext,
-  saveSolutionOrderItem,
+  saveOrderItem,
 } from './controller';
+import { postOrderItem } from '../../../../helpers/api/ordapi/postOrderItem';
+import { putOrderItem } from '../../../../helpers/api/ordapi/putOrderItem';
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from '../../../../helpers/controllers/manifestProvider';
 
 jest.mock('buying-catalogue-library');
-
-jest.mock('./contextCreator', () => ({
-  getContext: jest.fn(),
-}));
-
+jest.mock('./contextCreator', () => ({ getContext: jest.fn() }));
 jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
-
 jest.mock('../../../../helpers/controllers/manifestProvider', () => ({
   getSelectedPriceManifest: jest.fn(),
 }));
+jest.mock('../../../../helpers/api/ordapi/postOrderItem');
+jest.mock('../../../../helpers/api/ordapi/putOrderItem');
 
 const selectedPrice = {
   priceId: 1,
@@ -121,19 +117,16 @@ describe('additional-services order-item controller', () => {
     });
   });
 
-  describe('saveSolutionOrderItem', () => {
+  describe('saveOrderItem', () => {
     describe('when order item is new', () => {
       afterEach(() => {
-        postData.mockReset();
+        jest.resetAllMocks();
       });
 
       const serviceRecipient = { name: 'Recipient 1', odsCode: 'ods1' };
-      const solution = { id: 'solutionId1', name: 'Solution 1' };
+      const item = { id: 'item-1', name: 'Item One' };
       const formData = {
         _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-        'deliveryDate-day': '25',
-        'deliveryDate-month': '12',
-        'deliveryDate-year': '2020',
         price: '500.49',
         quantity: '1',
         selectEstimationPeriod: 'month',
@@ -142,16 +135,16 @@ describe('additional-services order-item controller', () => {
       describe('with errors', () => {
         it('should return error.response if api request is unsuccessful with 400', async () => {
           const responseData = { errors: [{}] };
-          postData.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
+          postOrderItem.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 
-          const response = await saveSolutionOrderItem({
+          const response = await saveOrderItem({
             orderId: 'order1',
             orderItemId: 'neworderitem',
             accessToken: 'access_token',
-            selectedRecipientId: serviceRecipient.odsCode,
+            serviceRecipientId: serviceRecipient.odsCode,
             serviceRecipientName: serviceRecipient.name,
-            selectedSolutionId: solution.id,
-            solutionName: solution.name,
+            itemId: item.id,
+            itemName: item.name,
             selectedPrice,
             formData,
           });
@@ -160,17 +153,17 @@ describe('additional-services order-item controller', () => {
         });
 
         it('should throw an error if api request is unsuccessful with non 400', async () => {
-          postData.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
+          postOrderItem.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
 
           try {
-            await saveSolutionOrderItem({
+            await saveOrderItem({
               orderId: 'order1',
               orderItemId: 'neworderitem',
               accessToken: 'access_token',
-              selectedRecipientId: serviceRecipient.odsCode,
+              serviceRecipientId: serviceRecipient.odsCode,
               serviceRecipientName: serviceRecipient.name,
-              selectedSolutionId: solution.id,
-              solutionName: solution.name,
+              itemId: item.id,
+              itemName: item.name,
               selectedPrice,
               formData,
             });
@@ -182,49 +175,44 @@ describe('additional-services order-item controller', () => {
 
       describe('with no errors', () => {
         it('should post correctly formatted data', async () => {
-          postData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
+          postOrderItem.mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-          await saveSolutionOrderItem({
+          await saveOrderItem({
             orderId: 'order1',
             orderItemId: 'neworderitem',
             accessToken: 'access_token',
-            selectedRecipientId: serviceRecipient.odsCode,
+            serviceRecipientId: serviceRecipient.odsCode,
             serviceRecipientName: serviceRecipient.name,
-            selectedSolutionId: solution.id,
-            solutionName: solution.name,
+            itemId: item.id,
+            itemName: item.name,
             selectedPrice,
             formData,
           });
 
-          expect(postData.mock.calls.length).toEqual(1);
-          expect(postData).toHaveBeenCalledWith({
-            endpoint: `${orderApiUrl}/api/v1/orders/order1/sections/catalogue-solutions`,
-            body: {
-              ...selectedPrice,
-              serviceRecipient,
-              catalogueSolutionId: 'solutionId1',
-              catalogueSolutionName: 'Solution 1',
-              deliveryDate: '2020-12-25',
-              quantity: 1,
-              estimationPeriod: 'month',
-              price: 500.49,
-            },
+          expect(postOrderItem.mock.calls.length).toEqual(1);
+          expect(postOrderItem).toHaveBeenCalledWith({
             accessToken: 'access_token',
-            logger,
+            orderId: 'order1',
+            serviceRecipientId: serviceRecipient.odsCode,
+            serviceRecipientName: serviceRecipient.name,
+            itemId: item.id,
+            itemName: item.name,
+            selectedPrice,
+            formData,
           });
         });
 
         it('should return success as true if data is saved successfully', async () => {
-          postData.mockResolvedValueOnce({ success: true });
+          postOrderItem.mockResolvedValueOnce({ success: true });
 
-          const response = await saveSolutionOrderItem({
+          const response = await saveOrderItem({
             orderId: 'order1',
             orderItemId: 'neworderitem',
             accessToken: 'access_token',
-            selectedRecipientId: serviceRecipient.odsCode,
+            serviceRecipientId: serviceRecipient.odsCode,
             serviceRecipientName: serviceRecipient.name,
-            selectedSolutionId: solution.id,
-            solutionName: solution.name,
+            itemId: item.id,
+            itemName: item.name,
             selectedPrice,
             formData,
           });
@@ -237,14 +225,11 @@ describe('additional-services order-item controller', () => {
 
     describe('when order item is existing', () => {
       afterEach(() => {
-        putData.mockReset();
+        jest.resetAllMocks();
       });
 
       const formData = {
         _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-        'deliveryDate-day': '25',
-        'deliveryDate-month': '12',
-        'deliveryDate-year': '2020',
         price: '500.49',
         quantity: '1',
         selectEstimationPeriod: 'month',
@@ -253,9 +238,9 @@ describe('additional-services order-item controller', () => {
       describe('with errors', () => {
         it('should return error.respose if api request is unsuccessful with 400', async () => {
           const responseData = { errors: [{}] };
-          putData.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
+          putOrderItem.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 
-          const response = await saveSolutionOrderItem({
+          const response = await saveOrderItem({
             orderId: 'order1',
             orderItemId: 'orderItemId-1',
             accessToken: 'access_token',
@@ -266,10 +251,10 @@ describe('additional-services order-item controller', () => {
         });
 
         it('should throw an error if api request is unsuccessful with non 400', async () => {
-          putData.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
+          putOrderItem.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
 
           try {
-            await saveSolutionOrderItem({
+            await saveOrderItem({
               orderId: 'order1',
               orderItemId: 'orderItemId-1',
               accessToken: 'access_token',
@@ -283,33 +268,28 @@ describe('additional-services order-item controller', () => {
 
       describe('with no errors', () => {
         it('should post correctly formatted data', async () => {
-          putData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
+          putOrderItem.mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-          await saveSolutionOrderItem({
+          await saveOrderItem({
             orderId: 'order1',
             orderItemId: 'orderItemId-1',
             accessToken: 'access_token',
             formData,
           });
 
-          expect(putData.mock.calls.length).toEqual(1);
-          expect(putData).toHaveBeenCalledWith({
-            endpoint: `${orderApiUrl}/api/v1/orders/order1/sections/catalogue-solutions/orderItemId-1`,
-            body: {
-              deliveryDate: '2020-12-25',
-              quantity: 1,
-              estimationPeriod: 'month',
-              price: 500.49,
-            },
+          expect(putOrderItem.mock.calls.length).toEqual(1);
+          expect(putOrderItem).toHaveBeenCalledWith({
             accessToken: 'access_token',
-            logger,
+            orderId: 'order1',
+            orderItemId: 'orderItemId-1',
+            formData,
           });
         });
 
         it('should return success as true if data is saved successfully', async () => {
-          putData.mockResolvedValueOnce({ success: true });
+          putOrderItem.mockResolvedValueOnce({ success: true });
 
-          const response = await saveSolutionOrderItem({
+          const response = await saveOrderItem({
             orderId: 'order1',
             orderItemId: 'orderItemId-1',
             accessToken: 'access_token',

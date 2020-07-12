@@ -1,6 +1,14 @@
 import { extractDate } from './extractDate';
 
 describe('extractDate', () => {
+  it('should return undefined in no data for date is provided', () => {
+    const data = {};
+
+    const extractedDate = extractDate('somefield', data);
+
+    expect(extractedDate).toEqual(undefined);
+  });
+
   it('should return the date provided as YYYY-MM-DD', () => {
     const data = {
       'somefield-day': '09',
