@@ -1,4 +1,4 @@
-import { getData, postData, putData } from 'buying-catalogue-library';
+import { postData, putData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getEndpoint } from '../../../../endpoints';
