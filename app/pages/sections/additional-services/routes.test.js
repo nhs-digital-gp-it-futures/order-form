@@ -47,6 +47,10 @@ const setUpFakeApp = () => {
 };
 
 describe('additional-services section routes', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('GET /organisation/:orderId/additional-services', () => {
     const path = '/organisation/some-order-id/additional-services';
 
@@ -83,9 +87,6 @@ describe('additional-services section routes', () => {
 
   describe('POST /organisation/:orderId/additional-services', () => {
     const path = '/organisation/order-id/additional-services';
-    afterEach(() => {
-      additionalServicesController.getAdditionalServicesPageContext.mockRestore();
-    });
 
     it('should return 403 forbidden if no csrf token is available', () => {
       additionalServicesController.putAdditionalServices = jest.fn()
