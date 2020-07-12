@@ -233,7 +233,7 @@ test('should anchor to the price field when clicking on the price required error
 
   await t
     .expect(errorSummary.exists).ok()
-    .click(errorSummary.find('li a').nth(2))
+    .click(errorSummary.find('li a').nth(1))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
 
@@ -253,6 +253,6 @@ test('should anchor to the price field when clicking on the numerical price erro
   await t
     .expect(errorSummary.exists).ok()
 
-    .click(errorSummary.find('li a').nth(2))
+    .click(errorSummary.find('li a').nth(1))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
