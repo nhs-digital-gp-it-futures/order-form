@@ -13,7 +13,6 @@ describe('getPageData', () => {
       mockGetSelectedPrice.getSelectedPrice.mockReset();
     });
 
-
     it('should get the selectedItemId from session and return this as itemId', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-item-id';
 
