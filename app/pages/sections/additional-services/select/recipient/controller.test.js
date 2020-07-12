@@ -1,6 +1,3 @@
-import { getData } from 'buying-catalogue-library';
-import { solutionsApiUrl } from '../../../../../config';
-import { logger } from '../../../../../logger';
 import {
   getAdditionalServiceRecipientPageContext,
 } from './controller';
