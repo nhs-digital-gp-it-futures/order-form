@@ -7,7 +7,7 @@ jest.mock('buying-catalogue-library');
 
 describe('getCatalogueItem', () => {
   afterEach(() => {
-    getData.mockReset();
+    jest.resetAllMocks();
   });
 
   it('should call getData once with the correct params', async () => {
