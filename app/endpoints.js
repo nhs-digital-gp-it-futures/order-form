@@ -11,6 +11,7 @@ const endpoints = {
     getSupplier: options => `${solutionsApiUrl}/api/v1/suppliers/${options.supplierId}`,
     getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
     getSolution: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}`,
+    getCatalogueItem: options => `${solutionsApiUrl}/api/v1/catalogue-items/${options.itemId}`,
     getSolutionPricing: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}/prices`,
     getSelectedPrice: options => `${solutionsApiUrl}/api/v1/prices/${options.selectedPriceId}`,
     getAdditionalServices: (options) => {
@@ -31,6 +32,7 @@ const endpoints = {
   ordapi: {
     getOrder: options => `${orderApiUrl}/api/v1/orders/${options.orderId}`,
     getOrders: options => `${orderApiUrl}/api/v1/organisations/${options.orgId}/orders`,
+    getOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items/${options.orderItemId}`,
     getOrderSummary: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/summary`,
     getDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
     getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,

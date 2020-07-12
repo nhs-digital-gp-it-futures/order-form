@@ -10,6 +10,8 @@ import {
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import * as additionalServicesController from './additional-services/controller';
+import * as orderItemController from './order-item/controller';
+import * as orderItemRoutesHelper from './order-item/routesHelper';
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';
@@ -160,15 +162,18 @@ describe('additional-services section routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions order item page if authorised', () => (
-      request(setUpFakeApp())
+    it('should return the additional-services order item page if authorised', () => {
+      orderItemRoutesHelper.getPageData = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+
+      return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('Additional Service order item page')).toBeTruthy();
+          expect(res.text.includes('data-test-id="order-item-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        })
-    ));
+        });
+    });
   });
 });
