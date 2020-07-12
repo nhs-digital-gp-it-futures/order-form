@@ -36,5 +36,12 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
 
   router.use('/select', additionalServicesSelectRoutes(authProvider, addContext, sessionManager));
 
+  router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    logger.info(`navigating to order ${orderId} additional-service order item page`);
+    return res.send('Additional Service order item page');
+  }));
+
   return router;
 };
