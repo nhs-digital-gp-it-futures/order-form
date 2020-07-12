@@ -80,7 +80,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const pageData = sessionManager.getFromSession({ req, key: 'orderItemPageData' });
 
     const errors = validateOrderItemForm({
-      orderItemType: 'catalogue-solutions',
+      orderItemType: 'additional-services',
       data: req.body,
       selectedPrice: pageData.selectedPrice,
     });
@@ -109,7 +109,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const context = await getOrderItemErrorPageContext({
       orderId,
       orderItemId,
-      orderItemType: 'catalogue-solutions',
+      orderItemType: 'additional-services',
       solutionName: pageData.solutionName,
       selectedRecipientId: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
@@ -118,7 +118,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       validationErrors,
     });
 
-    return res.render('pages/sections/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/additional-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
