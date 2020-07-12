@@ -106,5 +106,11 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     return res.render('pages/sections/additional-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.get('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    logger.info(`navigating to order ${orderId} additional-services select recipient page`);
+    return res.send('Select additional services recipient page');
+  }));
+
   return router;
 };
