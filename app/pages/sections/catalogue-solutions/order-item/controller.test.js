@@ -209,7 +209,7 @@ describe('catalogue-solutions order-item controller', () => {
 
           const response = await saveSolutionOrderItem({
             orderId: 'order1',
-            orderItemId: 'newsolution',
+            orderItemId: 'neworderitem',
             accessToken: 'access_token',
             selectedRecipientId: serviceRecipient.odsCode,
             serviceRecipientName: serviceRecipient.name,
@@ -228,7 +228,7 @@ describe('catalogue-solutions order-item controller', () => {
           try {
             await saveSolutionOrderItem({
               orderId: 'order1',
-              orderItemId: 'newsolution',
+              orderItemId: 'neworderitem',
               accessToken: 'access_token',
               selectedRecipientId: serviceRecipient.odsCode,
               serviceRecipientName: serviceRecipient.name,
@@ -249,7 +249,7 @@ describe('catalogue-solutions order-item controller', () => {
 
           await saveSolutionOrderItem({
             orderId: 'order1',
-            orderItemId: 'newsolution',
+            orderItemId: 'neworderitem',
             accessToken: 'access_token',
             selectedRecipientId: serviceRecipient.odsCode,
             serviceRecipientName: serviceRecipient.name,
@@ -282,7 +282,7 @@ describe('catalogue-solutions order-item controller', () => {
 
           const response = await saveSolutionOrderItem({
             orderId: 'order1',
-            orderItemId: 'newsolution',
+            orderItemId: 'neworderitem',
             accessToken: 'access_token',
             selectedRecipientId: serviceRecipient.odsCode,
             serviceRecipientName: serviceRecipient.name,

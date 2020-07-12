@@ -474,7 +474,7 @@ describe('catalogue-solutions select routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/catalogue-solutions/newsolution if a recipient is selected', async () => {
+    it('should redirect to /organisation/some-order-id/catalogue-solutions/neworderitem if a recipient is selected', async () => {
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({ name: 'Solution One ' });
 
@@ -506,7 +506,7 @@ describe('catalogue-solutions select routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/newsolution`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/neworderitem`);
         });
     });
   });

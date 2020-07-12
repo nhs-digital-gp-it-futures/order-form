@@ -151,7 +151,7 @@ describe('catalogue-solutions section routes', () => {
   });
 
   describe('GET /organisation/:orderId/catalogue-solutions/:orderItemId', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/newsolution';
+    const path = '/organisation/some-order-id/catalogue-solutions/neworderitem';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -185,7 +185,7 @@ describe('catalogue-solutions section routes', () => {
   });
 
   describe('POST /organisation/:orderId/catalogue-solutions/:orderItemId', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/newsolution';
+    const path = '/organisation/some-order-id/catalogue-solutions/neworderitem';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({

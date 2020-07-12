@@ -9,7 +9,7 @@ import { formatDecimal } from '../../../../helpers/common/priceFormatter';
 export const getPageData = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
 }) => {
-  if (orderItemId === 'newsolution') {
+  if (orderItemId === 'neworderitem') {
     const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const serviceRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });

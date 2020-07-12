@@ -190,7 +190,7 @@ export const saveSolutionOrderItem = async ({
   formData,
 }) => {
   try {
-    const response = orderItemId === 'newsolution'
+    const response = orderItemId === 'neworderitem'
       ? await postSolutionOrderItem({
         accessToken,
         orderId,
