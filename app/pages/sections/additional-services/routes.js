@@ -7,7 +7,12 @@ import {
   putAdditionalServices,
 } from './additional-services/controller';
 import { additionalServicesSelectRoutes } from './select/routes';
-import { getOrderItemContext } from './order-item/controller';
+import {
+  getOrderItemContext,
+  getOrderItemErrorPageContext,
+  saveOrderItem,
+} from './order-item/controller';
+import { validateOrderItemForm } from '../../../helpers/controllers/validateOrderItemForm';
 import { getPageData } from './order-item/routesHelper';
 
 const router = express.Router({ mergeParams: true });
@@ -64,6 +69,55 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     });
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);
+    return res.render('pages/sections/additional-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, orderItemId } = req.params;
+    const validationErrors = [];
+
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const pageData = sessionManager.getFromSession({ req, key: 'orderItemPageData' });
+
+    const errors = validateOrderItemForm({
+      orderItemType: 'additional-services',
+      data: req.body,
+      selectedPrice: pageData.selectedPrice,
+    });
+    validationErrors.push(...errors);
+
+    if (validationErrors.length === 0) {
+      const apiResponse = await saveOrderItem({
+        accessToken,
+        orderId,
+        orderItemId,
+        serviceRecipientId: pageData.serviceRecipientId,
+        serviceRecipientName: pageData.serviceRecipientName,
+        itemId: pageData.itemId,
+        itemName: pageData.itemName,
+        selectedPrice: pageData.selectedPrice,
+        formData: req.body,
+      });
+
+      if (apiResponse.success) {
+        logger.info('Redirecting to the additional-services main page');
+        return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services`);
+      }
+      validationErrors.push(...apiResponse.errors);
+    }
+
+    const context = await getOrderItemErrorPageContext({
+      orderId,
+      orderItemId,
+      orderItemType: 'additional-services',
+      itemName: pageData.itemName,
+      serviceRecipientId: pageData.serviceRecipientId,
+      serviceRecipientName: pageData.serviceRecipientName,
+      selectedPrice: pageData.selectedPrice,
+      formData: req.body,
+      validationErrors,
+    });
+
     return res.render('pages/sections/additional-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 

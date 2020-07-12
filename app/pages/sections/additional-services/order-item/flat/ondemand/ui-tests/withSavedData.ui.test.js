@@ -2,9 +2,9 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../../../../config';
-// import content from '../manifest.json';
+import content from '../manifest.json';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/existing-order-id';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/item-1';
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -50,7 +50,7 @@ const setState = ClientFunction((key, value) => {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/order-items/existing-order-id')
+    .get('/api/v1/orders/order-1/order-items/item-1')
     .reply(200, orderItem);
 };
 
@@ -87,7 +87,7 @@ test('should render the title', async (t) => {
     .expect(await extractInnerText(title)).eql('Some item name information for Some service recipient 2 (OX3)');
 });
 
-test('should navigate to /organisation/order-id/additional-services when clicking on backlink', async (t) => {
+test('should navigate to /organisation/order-1/additional-services when clicking on backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -96,7 +96,7 @@ test('should navigate to /organisation/order-id/additional-services when clickin
   await t
     .expect(goBackLink.exists).ok()
     .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services');
 });
 
 test('should populate text field for the quantity question', async (t) => {
@@ -148,106 +148,102 @@ test('should render the delete button as not disabled', async (t) => {
     .expect(button.hasClass('nhsuk-button--disabled')).eql(false);
 });
 
-// TODO - uncomment after post route is added
-// test('should show the correct error summary and input error when the quantity is removed and save is clicked', async (t) => {
-//   await pageSetup(true, true);
-//   await t.navigateTo(pageUrl);
+test('should show the correct error summary and input error when the quantity is removed and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
 
-//   const saveButton = Selector('[data-test-id="save-button"] button');
-//   const errorSummary = Selector('[data-test-id="error-summary"]');
-//   const errorMessage = Selector('#quantity-error span');
-//   const quantity = Selector('[data-test-id="question-quantity"] input');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#quantity-error span');
+  const quantity = Selector('[data-test-id="question-quantity"] input');
 
-//   await t
-//     .expect(errorMessage.exists).notOk()
-//     .expect(quantity.hasClass('nhsuk-input--error')).notOk()
-//     .selectText(quantity).pressKey('delete')
-//     .click(saveButton);
+  await t
+    .expect(errorMessage.exists).notOk()
+    .expect(quantity.hasClass('nhsuk-input--error')).notOk()
+    .selectText(quantity).pressKey('delete')
+    .click(saveButton);
 
-//   await t
-//     .expect(errorSummary.exists).ok()
-//     .expect(errorSummary.find('li a').count).eql(1)
-//     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityRequired)
-//     .expect(errorMessage.exists).ok()
-//     .expect(await extractInnerText(errorMessage)).eql('Error:')
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityRequired)
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
 
-//     .expect(quantity.hasClass('nhsuk-input--error')).ok();
-// });
+    .expect(quantity.hasClass('nhsuk-input--error')).ok();
+});
 
-// TODO - uncomment after post route is added
-// test('should show the correct error summary and input error when the price is removed and save is clicked', async (t) => {
-//   await pageSetup(true, true);
-//   await t.navigateTo(pageUrl);
+test('should show the correct error summary and input error when the price is removed and save is clicked', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
 
-//   const saveButton = Selector('[data-test-id="save-button"] button');
-//   const errorSummary = Selector('[data-test-id="error-summary"]');
-//   const errorMessage = Selector('#price-error span');
-//   const price = Selector('[data-test-id="question-price"] input');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#price-error span');
+  const price = Selector('[data-test-id="question-price"] input');
 
-//   await t
-//     .expect(errorMessage.exists).notOk()
-//     .expect(price.hasClass('nhsuk-input--error')).notOk()
-//     .selectText(price).pressKey('delete')
-//     .click(saveButton);
+  await t
+    .expect(errorMessage.exists).notOk()
+    .expect(price.hasClass('nhsuk-input--error')).notOk()
+    .selectText(price).pressKey('delete')
+    .click(saveButton);
 
-//   await t
-//     .expect(errorSummary.exists).ok()
-//     .expect(errorSummary.find('li a').count).eql(1)
-//     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.PriceRequired)
-//     .expect(errorMessage.exists).ok()
-//     .expect(await extractInnerText(errorMessage)).eql('Error:')
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.PriceRequired)
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).eql('Error:')
 
-//     .expect(price.hasClass('nhsuk-input--error')).ok();
-// });
+    .expect(price.hasClass('nhsuk-input--error')).ok();
+});
 
-// TODO - uncomment after post route is added
-// test('should navigate to catalogue solution dashboard page if save button is clicked and data is valid', async (t) => {
-//   nock(orderApiUrl)
-//     .put('/api/v1/orders/order-id/sections/additional-services/existing-order-id')
-//     .reply(200, {});
+test('should navigate to additional services dashboard page if save button is clicked and data is valid', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/order-items/item-1')
+    .reply(200, {});
 
-//   await pageSetup(true, true);
-//   await t.navigateTo(pageUrl);
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
 
-//   const quantityInput = Selector('[data-test-id="question-quantity"]');
-//   const saveButton = Selector('[data-test-id="save-button"] button');
+  const quantityInput = Selector('[data-test-id="question-quantity"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
 
-//   await t
-//     .typeText(quantityInput, '10', { paste: true })
-//     .click(saveButton)
-//     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services');
-// });
+  await t
+    .typeText(quantityInput, '10', { paste: true })
+    .click(saveButton)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services');
+});
 
-// TODO - uncomment after post route is added
-// test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-//   nock(orderApiUrl)
-//     .put('/api/v1/orders/order-id/sections/additional-services/existing-order-id')
-//     .reply(400, {
-//       errors: [{
-//         field: 'Quantity',
-//         id: 'QuantityGreaterThanZero',
-//       }],
-//     });
+test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/order-items/item-1')
+    .reply(400, {
+      errors: [{
+        field: 'Quantity',
+        id: 'QuantityGreaterThanZero',
+      }],
+    });
 
-//   await pageSetup(true, true);
-//   await t.navigateTo(pageUrl);
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
 
-//   const errorSummary = Selector('[data-test-id="error-summary"]');
-//   const errorMessage = Selector('#deliveryDate-error');
-//   const quantityInput = Selector('[data-test-id="question-quantity"]');
-//   const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('#quantity-error');
+  const quantityInput = Selector('[data-test-id="question-quantity"] input');
+  const saveButton = Selector('[data-test-id="save-button"] button');
 
-//   await t
-//     .click(saveButton);
+  await t
+    .click(saveButton);
 
-//   await t
-//     .expect(errorSummary.exists).ok()
-//     .expect(errorSummary.find('li a').count).eql(1)
-//     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
 
-//     .expect(errorMessage.exists).ok()
-//     .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
+    .expect(errorMessage.exists).ok()
+    .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
 
-//     .expect(quantityInput.getAttribute('value')).eql('3')
-//     .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
-// });
+    .expect(quantityInput.getAttribute('value')).eql('3')
+    .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
+});
