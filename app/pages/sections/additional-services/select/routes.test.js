@@ -12,6 +12,7 @@ import {
 } from 'buying-catalogue-library';
 import * as selectAdditionalServiceController from './additional-service/controller';
 import * as additionalServicePriceController from './price/controller';
+import * as additionalServiceRecipientController from './recipient/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
@@ -318,6 +319,29 @@ describe('additional-services select routes', () => {
         .expect(200);
 
       expect(res.text.includes('data-test-id="additional-service-price-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+    });
+  });
+
+  describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipient', () => {
+    const path = '/organisation/some-order-id/additional-services/select/additional-service/price/recipient';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should return the additional-services select recipient page if authorised', async () => {
+      additionalServiceRecipientController.getSolution = jest.fn()
+        .mockResolvedValue({});
+
+      const res = await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="additional-service-recipient-page"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });

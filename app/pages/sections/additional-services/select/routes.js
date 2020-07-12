@@ -14,6 +14,10 @@ import {
   findAdditionalServicePrices,
   getAdditionalServicePricePageContext,
 } from './price/controller';
+import {
+  getSolution,
+  getAdditionalServiceRecipientPageContext,
+} from './recipient/controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -108,8 +112,15 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
   router.get('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
+    const solutionData = await getSolution({ solutionId });
+
+    const context = await getAdditionalServiceRecipientPageContext({
+      orderId,
+      solutionName: solutionData.name,
+    });
     logger.info(`navigating to order ${orderId} additional-services select recipient page`);
-    return res.send('Select additional services recipient page');
+    return res.render('pages/sections/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
