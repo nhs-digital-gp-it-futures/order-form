@@ -20,9 +20,9 @@ describe('additional-services select-recipient contextCreator', () => {
     });
 
     it('should return the title', () => {
-      const solutionName = 'Solution One';
-      const context = getContext({ solutionName });
-      expect(context.title).toEqual(`${manifest.title} ${solutionName}`);
+      const itemName = 'Item One';
+      const context = getContext({ itemName });
+      expect(context.title).toEqual(`${manifest.title} ${itemName}`);
     });
 
     it('should return the description', () => {
