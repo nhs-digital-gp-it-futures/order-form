@@ -6,7 +6,7 @@ import { solutionsApiUrl } from '../../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/neworderitem';
 
-const getLocation = ClientFunction(() => document.location.href);
+// const getLocation = ClientFunction(() => document.location.href);
 
 const selectedPrice = {
   priceId: 1,
