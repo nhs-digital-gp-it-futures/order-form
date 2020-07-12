@@ -298,7 +298,7 @@ describe('additional-services section routes', () => {
 
       validator.validateOrderItemForm = jest.fn()
         .mockReturnValue([]);
-      orderItemController.saveSolutionOrderItem = jest.fn()
+      orderItemController.saveOrderItem = jest.fn()
         .mockResolvedValue({ success: false, errors: [{}] });
 
       orderItemController.getOrderItemErrorPageContext = jest.fn()
@@ -332,7 +332,7 @@ describe('additional-services section routes', () => {
       validator.validateOrderItemForm = jest.fn()
         .mockReturnValue([]);
 
-      orderItemController.saveSolutionOrderItem = jest.fn()
+      orderItemController.saveOrderItem = jest.fn()
         .mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({

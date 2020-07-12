@@ -10,7 +10,7 @@ import { additionalServicesSelectRoutes } from './select/routes';
 import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
-  saveSolutionOrderItem,
+  saveOrderItem,
 } from './order-item/controller';
 import { validateOrderItemForm } from '../../../helpers/controllers/validateOrderItemForm';
 import { getPageData } from './order-item/routesHelper';
@@ -87,14 +87,14 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
-      const apiResponse = await saveSolutionOrderItem({
+      const apiResponse = await saveOrderItem({
         accessToken,
         orderId,
         orderItemId,
-        selectedRecipientId: pageData.serviceRecipientId,
+        serviceRecipientId: pageData.serviceRecipientId,
         serviceRecipientName: pageData.serviceRecipientName,
-        selectedSolutionId: pageData.solutionId,
-        solutionName: pageData.solutionName,
+        itemId: pageData.itemId,
+        itemName: pageData.itemName,
         selectedPrice: pageData.selectedPrice,
         formData: req.body,
       });
