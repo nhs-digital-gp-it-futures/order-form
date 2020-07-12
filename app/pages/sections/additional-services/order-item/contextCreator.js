@@ -9,7 +9,7 @@ export const getContext = ({
   selectedPriceManifest,
   orderId,
   orderItemId,
-  solutionName,
+  itemName,
   serviceRecipientName,
   odsCode,
   selectedPrice,
@@ -17,7 +17,7 @@ export const getContext = ({
   errorMap,
 }) => ({
   ...commonManifest,
-  title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
+  title: `${itemName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
   questions: selectedPriceManifest && generateQuestions({
     questions: selectedPriceManifest.questions,
     formData,
@@ -39,8 +39,8 @@ export const getContext = ({
     href: commonManifest.deleteButton.href,
     disabled: orderItemId === 'neworderitem',
   },
-  backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipient`
-    : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
+  backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`
+    : `${baseUrl}/organisation/${orderId}/additional-services`,
 });
 
 export const getErrorContext = (params) => {
@@ -54,7 +54,7 @@ export const getErrorContext = (params) => {
     selectedPriceManifest: params.selectedPriceManifest,
     orderId: params.orderId,
     orderItemId: params.orderItemId,
-    solutionName: params.solutionName,
+    itemName: params.itemName,
     serviceRecipientName: params.serviceRecipientName,
     odsCode: params.selectedRecipientId,
     selectedPrice: params.selectedPrice,

@@ -32,9 +32,9 @@ const selectedPrice = {
   price: 0.1,
 };
 
-const orderItemType = 'catalogue-solutions';
+const orderItemType = 'additional-services';
 
-describe('catalogue-solutions order-item controller', () => {
+describe('additional-services order-item controller', () => {
   describe('getOrderItemContext', () => {
     afterEach(() => {
       contextCreator.getContext.mockReset();
@@ -45,7 +45,7 @@ describe('catalogue-solutions order-item controller', () => {
       await getOrderItemContext({
         orderId: 'order-1',
         orderItemType,
-        solutionName: 'solution-name',
+        itemName: 'item-name',
         selectedRecipientId: 'fake-recipient-id',
         serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
@@ -66,7 +66,7 @@ describe('catalogue-solutions order-item controller', () => {
 
       await getOrderItemContext({
         orderId: 'order-1',
-        solutionName: 'solution-name',
+        itemName: 'item-name',
         odsCode: 'fake-recipient-id',
         serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
@@ -81,7 +81,7 @@ describe('catalogue-solutions order-item controller', () => {
         odsCode: 'fake-recipient-id',
         orderId: 'order-1',
         serviceRecipientName: 'Some service recipient 1',
-        solutionName: 'solution-name',
+        itemName: 'item-name',
         selectedPrice,
         formData: { price: 0.1 },
       });
@@ -92,9 +92,6 @@ describe('catalogue-solutions order-item controller', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
 
       const formData = {
-        'deliveryDate-year': '2020',
-        'deliveryDate-month': '04',
-        'deliveryDate-day': '27',
         quantity: 3,
         selectEstimationPeriod: 'month',
         price: 0.1,
@@ -102,7 +99,7 @@ describe('catalogue-solutions order-item controller', () => {
 
       await getOrderItemContext({
         orderId: 'order-1',
-        solutionName: 'solution-name',
+        itemName: 'item-name',
         odsCode: 'fake-recipient-id',
         serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
@@ -117,7 +114,7 @@ describe('catalogue-solutions order-item controller', () => {
         odsCode: 'fake-recipient-id',
         orderId: 'order-1',
         serviceRecipientName: 'Some service recipient 1',
-        solutionName: 'solution-name',
+        itemName: 'item-name',
         selectedPrice,
         formData,
       });

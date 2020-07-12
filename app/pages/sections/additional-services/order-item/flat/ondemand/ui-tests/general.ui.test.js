@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl } from '../../../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/neworderitem';
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -23,15 +23,13 @@ const selectedPrice = {
 const authTokenInSession = JSON.stringify({
   id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
 });
-const solutionIdInSession = 'solution-1';
-const solutionNameInSession = 'solution-name';
+const itemIdInSession = 'item-1';
 const selectedRecipientIdInSession = 'recipient-1';
 const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
 
 const orderItemPageDataInSession = JSON.stringify({
-  solutionId: solutionIdInSession,
-  solutionName: solutionNameInSession,
+  itemId: itemIdInSession,
   serviceRecipientId: selectedRecipientIdInSession,
   serviceRecipientName: selectedRecipientNameInSession,
   selectedPrice,
@@ -43,8 +41,8 @@ const setState = ClientFunction((key, value) => {
 
 const mocks = () => {
   nock(solutionsApiUrl)
-    .get('/api/v1/solutions/solution-1')
-    .reply(200, { id: 'solution-1', name: 'Solution One' });
+    .get('/api/v1/catalogue-items/item-1')
+    .reply(200, { id: 'item-1', name: 'Item One' });
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
@@ -56,7 +54,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
     await setState('fakeToken', authTokenInSession);
     await setState('selectedRecipientId', selectedRecipientIdInSession);
     await setState('selectedRecipientName', selectedRecipientNameInSession);
-    await setState('selectedSolutionId', solutionIdInSession);
+    await setState('selectedItemId', itemIdInSession);
     await setState('selectedPriceId', selectedPriceIdInSession);
     if (postRoute) {
       await setState('orderItemPageData', orderItemPageDataInSession);
@@ -64,7 +62,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Catalogue-solutions - flat ondemand - general')
+fixture('Additional-services - flat ondemand - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -182,116 +180,122 @@ test('should render the price table content', async (t) => {
     .expect(await extractInnerText(orderUnit)).eql(selectedPrice.itemUnit.description);
 });
 
-test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
-  await pageSetup(true, true);
-  await t.navigateTo(pageUrl);
+// TODO - uncomment after post route is added
+// test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
+//   await pageSetup(true, true);
+//   await t.navigateTo(pageUrl);
 
-  const orderItemPage = Selector('[data-test-id="order-item-page"]');
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const quantityField = orderItemPage.find('[data-test-id="question-quantity"]');
-  const button = Selector('[data-test-id="save-button"] button');
+//   const orderItemPage = Selector('[data-test-id="order-item-page"]');
+//   const saveButton = Selector('[data-test-id="save-button"] button');
+//   const quantityField = orderItemPage.find('[data-test-id="question-quantity"]');
+//   const button = Selector('[data-test-id="save-button"] button');
 
-  await t
-    .expect(button.exists).ok()
-    .expect(quantityField.find('[data-test-id="text-field-input-error"]').exists).notOk()
-    .click(saveButton);
+//   await t
+//     .expect(button.exists).ok()
+//     .expect(quantityField.find('[data-test-id="text-field-input-error"]').exists).notOk()
+//     .click(saveButton);
 
-  await t
-    .expect(quantityField.find('[data-test-id="text-field-input-error"]').exists).ok()
-    .expect(await extractInnerText(quantityField.find('#quantity-error'))).contains(content.errorMessages.QuantityRequired);
-});
+//   await t
+//     .expect(quantityField.find('[data-test-id="text-field-input-error"]').exists).ok()
+//     .expect(await extractInnerText(quantityField.find('#quantity-error'))).contains(content.errorMessages.QuantityRequired);
+// });
 
-test('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
-  await pageSetup(true, true);
-  await t.navigateTo(pageUrl);
+// TODO - uncomment after post route is added
+// test('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
+//   await pageSetup(true, true);
+//   await t.navigateTo(pageUrl);
 
-  const orderItemPage = Selector('[data-test-id="order-item-page"]');
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const priceField = orderItemPage.find('[data-test-id="question-price"]');
+//   const orderItemPage = Selector('[data-test-id="order-item-page"]');
+//   const saveButton = Selector('[data-test-id="save-button"] button');
+//   const priceField = orderItemPage.find('[data-test-id="question-price"]');
 
-  await t
-    .expect(priceField.find('[data-test-id="text-field-input-error"]').exists).notOk()
-    .selectText(priceField.find('input')).pressKey('delete')
-    .click(saveButton);
+//   await t
+//     .expect(priceField.find('[data-test-id="text-field-input-error"]').exists).notOk()
+//     .selectText(priceField.find('input')).pressKey('delete')
+//     .click(saveButton);
 
-  await t
-    .expect(priceField.find('[data-test-id="text-field-input-error"]').exists).ok()
-    .expect(await extractInnerText(priceField.find('#price-error'))).contains(content.errorMessages.PriceRequired);
-});
+//   await t
+//     .expect(priceField.find('[data-test-id="text-field-input-error"]').exists).ok()
+//     .expect(await extractInnerText(priceField.find('#price-error'))).contains(content.errorMessages.PriceRequired);
+// });
 
-test('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
-  await t.navigateTo(pageUrl);
+// TODO - uncomment after post route is added
+// test('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
+//   await pageSetup(true, true);
+//   await t.navigateTo(pageUrl);
 
-  const continueButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
+//   const continueButton = Selector('[data-test-id="save-button"] button');
+//   const errorSummary = Selector('[data-test-id="error-summary"]');
 
-  await t
-    .expect(errorSummary.exists).notOk()
-    .click(continueButton);
+//   await t
+//     .expect(errorSummary.exists).notOk()
+//     .click(continueButton);
 
-  await t
-    .expect(errorSummary.exists).ok()
+//   await t
+//     .expect(errorSummary.exists).ok()
 
-    .click(errorSummary.find('li a').nth(1))
-    .expect(getLocation()).eql(`${pageUrl}#quantity`);
-});
+//     .click(errorSummary.find('li a').nth(1))
+//     .expect(getLocation()).eql(`${pageUrl}#quantity`);
+// });
 
-test('should anchor to the quantity field when clicking on the numerical quantity error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
-  await t.navigateTo(pageUrl);
+// TODO - uncomment after post route is added
+// test('should anchor to the quantity field when clicking on the numerical quantity error link in errorSummary ', async (t) => {
+//   await pageSetup(true, true);
+//   await t.navigateTo(pageUrl);
 
-  const continueButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const quantity = Selector('[data-test-id="question-quantity"]');
+//   const continueButton = Selector('[data-test-id="save-button"] button');
+//   const errorSummary = Selector('[data-test-id="error-summary"]');
+//   const quantity = Selector('[data-test-id="question-quantity"]');
 
-  await t
-    .expect(errorSummary.exists).notOk()
-    .typeText(quantity, 'blah', { paste: true })
-    .click(continueButton);
+//   await t
+//     .expect(errorSummary.exists).notOk()
+//     .typeText(quantity, 'blah', { paste: true })
+//     .click(continueButton);
 
-  await t
-    .expect(errorSummary.exists).ok()
+//   await t
+//     .expect(errorSummary.exists).ok()
 
-    .click(errorSummary.find('li a').nth(1))
-    .expect(getLocation()).eql(`${pageUrl}#quantity`);
-});
+//     .click(errorSummary.find('li a').nth(1))
+//     .expect(getLocation()).eql(`${pageUrl}#quantity`);
+// });
 
-test('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
-  await t.navigateTo(pageUrl);
+// TODO - uncomment after post route is added
+// test('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
+//   await pageSetup(true, true);
+//   await t.navigateTo(pageUrl);
 
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const priceInput = Selector('[data-test-id="question-price"] input');
+//   const saveButton = Selector('[data-test-id="save-button"] button');
+//   const errorSummary = Selector('[data-test-id="error-summary"]');
+//   const priceInput = Selector('[data-test-id="question-price"] input');
 
-  await t
-    .expect(errorSummary.exists).notOk()
-    .selectText(priceInput).pressKey('delete')
-    .click(saveButton);
+//   await t
+//     .expect(errorSummary.exists).notOk()
+//     .selectText(priceInput).pressKey('delete')
+//     .click(saveButton);
 
-  await t
-    .expect(errorSummary.exists).ok()
-    .click(errorSummary.find('li a').nth(3))
-    .expect(getLocation()).eql(`${pageUrl}#price`);
-});
+//   await t
+//     .expect(errorSummary.exists).ok()
+//     .click(errorSummary.find('li a').nth(3))
+//     .expect(getLocation()).eql(`${pageUrl}#price`);
+// });
 
-test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
-  await t.navigateTo(pageUrl);
+// TODO - uncomment after post route is added
+// test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
+//   await pageSetup(true, true);
+//   await t.navigateTo(pageUrl);
 
-  const continueButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const priceInput = Selector('[data-test-id="question-price"] input');
+//   const continueButton = Selector('[data-test-id="save-button"] button');
+//   const errorSummary = Selector('[data-test-id="error-summary"]');
+//   const priceInput = Selector('[data-test-id="question-price"] input');
 
-  await t
-    .expect(errorSummary.exists).notOk()
-    .typeText(priceInput, 'blah', { paste: true })
-    .click(continueButton);
+//   await t
+//     .expect(errorSummary.exists).notOk()
+//     .typeText(priceInput, 'blah', { paste: true })
+//     .click(continueButton);
 
-  await t
-    .expect(errorSummary.exists).ok()
+//   await t
+//     .expect(errorSummary.exists).ok()
 
-    .click(errorSummary.find('li a').nth(3))
-    .expect(getLocation()).eql(`${pageUrl}#price`);
-});
+//     .click(errorSummary.find('li a').nth(3))
+//     .expect(getLocation()).eql(`${pageUrl}#price`);
+// });

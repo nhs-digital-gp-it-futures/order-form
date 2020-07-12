@@ -2,7 +2,7 @@ import commonManifest from './commonManifest.json';
 import flatOndemandManifest from './flat/ondemand/manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
 
-describe('catalogue-solutions order-item contextCreator', () => {
+describe('additional-services order-item contextCreator', () => {
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({
@@ -11,30 +11,32 @@ describe('catalogue-solutions order-item contextCreator', () => {
       expect(context.backLinkText).toEqual(commonManifest.backLinkText);
     });
 
-    it('should return the backLinkHref to catalogue solutions when order item id is not neworderitem', () => {
+    it('should return the backLinkHref to additional-services when order item id is not neworderitem', () => {
       const context = getContext({
         commonManifest,
+        orderId: 'order-1',
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions');
+      expect(context.backLinkHref).toEqual('/order/organisation/order-1/additional-services');
     });
 
     it('should return the backLinkHref to recipient when order item id is neworderitem', () => {
       const context = getContext({
         commonManifest,
+        orderId: 'order-1',
         orderItemId: 'neworderitem',
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/price/recipient');
+      expect(context.backLinkHref).toEqual('/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
     });
 
     it('should return the title', () => {
-      const solutionName = 'solution-name';
+      const itemName = 'item-name';
       const serviceRecipientName = 'service-recipient-name';
       const odsCode = 'ods-code';
 
       const context = getContext({
-        commonManifest, solutionName, serviceRecipientName, odsCode,
+        commonManifest, itemName, serviceRecipientName, odsCode,
       });
-      expect(context.title).toEqual(`${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`);
+      expect(context.title).toEqual(`${itemName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`);
     });
 
     it('should return the description', () => {

@@ -55,15 +55,15 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const context = await getOrderItemContext({
       orderId,
       orderItemId,
-      orderItemType: 'catalogue-solutions',
-      solutionName: pageData.solutionName,
+      orderItemType: 'additional-services',
+      itemName: pageData.itemName,
       odsCode: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,
       formData: pageData.formData,
     });
 
-    logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
+    logger.info(`navigating to order ${orderId} additional-services order item page`);
     return res.render('pages/sections/additional-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
