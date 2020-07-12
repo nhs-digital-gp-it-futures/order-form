@@ -300,12 +300,15 @@ describe('additional-services select routes', () => {
         .toEqual(1);
 
       expect(additionalServicePriceController.findAdditionalServicePrices).toHaveBeenCalledWith({
-        additionalServiceId: selectedAdditionalServiceId,
+        catalogueItemId: selectedAdditionalServiceId,
         accessToken,
       });
     });
 
     it('should return the additional-services select price page if authorised', async () => {
+      additionalServicePriceController.getAdditionalServicePricePageContext = jest.fn()
+        .mockResolvedValue({});
+
       additionalServicePriceController.findAdditionalServicePrices = jest.fn()
         .mockResolvedValue([]);
 
@@ -314,7 +317,8 @@ describe('additional-services select routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200);
 
-      expect(res.text).toEqual('Additional service prices');
+      expect(res.text.includes('data-test-id="additional-service-price-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
 });
