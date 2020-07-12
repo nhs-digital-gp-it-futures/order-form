@@ -1,115 +1,8 @@
 import { baseUrl } from '../../../../config';
-import { generateErrorMap } from '../../../../helpers/generateErrorMap';
-
-const populateEstimationPeriodQuestion = ({ questionManifest, timeUnitDescription = '' }) => {
-  const populatedOptions = questionManifest.options.map(option => ({
-    ...option,
-    checked: option.value.toLowerCase() === timeUnitDescription.toLowerCase()
-      ? true : undefined,
-  }));
-
-  return {
-    options: populatedOptions,
-  };
-};
-
-const populateDeliveryDateQuestion = ({
-  questionManifest, day, month, year,
-}) => {
-  const plannedDeliveryDatePopulated = ({
-    ...questionManifest,
-    data: {
-      day,
-      month,
-      year,
-    },
-  });
-  return plannedDeliveryDatePopulated;
-};
-
-const generateAddPriceTable = ({
-  addPriceTable, price, itemUnitDescription, timeUnitDescription = '', errorMap,
-}) => {
-  const columns = [];
-
-  columns.push({
-    ...addPriceTable.cellInfo.price,
-    question: {
-      ...addPriceTable.cellInfo.price.question,
-      data: price,
-      error: errorMap && errorMap.price
-        ? { message: errorMap.price.errorMessages.join(', ') }
-        : undefined,
-    },
-  });
-
-  columns.push({
-    ...addPriceTable.cellInfo.unitOfOrder,
-    data: `${itemUnitDescription} ${timeUnitDescription}`,
-  });
-
-  const items = [columns];
-  return ({
-    ...addPriceTable,
-    items,
-  });
-};
-
-const populateQuestionWithData = ({ questionManifest, formData, questionId }) => {
-  if (questionId === 'selectEstimationPeriod') {
-    return populateEstimationPeriodQuestion({
-      questionManifest,
-      timeUnitDescription: formData && formData[questionId],
-    });
-  }
-  if (questionId === 'deliveryDate') {
-    return populateDeliveryDateQuestion({
-      questionManifest,
-      day: formData[`${questionId}-day`],
-      month: formData[`${questionId}-month`],
-      year: formData[`${questionId}-year`],
-    });
-  }
-
-  return {
-    data: formData && formData[questionId],
-  };
-};
-
-const determineFields = (errorMap, questionId) => {
-  if (errorMap[questionId].fields) return errorMap[questionId].fields;
-  if (questionId === 'deliveryDate') return ['day', 'month', 'year'];
-  return undefined;
-};
-
-const generateQuestions = ({ questions, formData, errorMap }) => {
-  const { questionsAcc: modifiedQuestions } = Object.entries(questions)
-    .reduce(({ questionsAcc }, [questionId, questionManifest]) => {
-      const questionError = errorMap && errorMap[questionId]
-        ? {
-          message: errorMap[questionId].errorMessages.join(', '),
-          fields: determineFields(errorMap, questionId),
-        }
-        : undefined;
-
-      const questionData = formData
-        ? populateQuestionWithData({ questionManifest, formData, questionId })
-        : undefined;
-
-      return ({
-        questionsAcc: {
-          ...questionsAcc,
-          [questionId]: {
-            ...questionManifest,
-            ...questionData,
-            error: questionError,
-          },
-        },
-      });
-    }, { questionsAcc: {} });
-
-  return modifiedQuestions;
-};
+import { generateErrorMap } from '../../../../helpers/contextCreators/generateErrorMap';
+import { generateQuestions } from '../../../../helpers/contextCreators/generateQuestions';
+import { generateErrorSummary } from '../../../../helpers/contextCreators/generateErrorSummary';
+import { generateAddPriceTable } from '../../../../helpers/contextCreators/generateAddPriceTable';
 
 export const getContext = ({
   commonManifest,
@@ -144,18 +37,11 @@ export const getContext = ({
   deleteButton: {
     text: commonManifest.deleteButton.text,
     href: commonManifest.deleteButton.href,
-    disabled: orderItemId === 'newsolution',
+    disabled: orderItemId === 'neworderitem',
   },
-  backLinkHref: orderItemId === 'newsolution' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipient`
+  backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipient`
     : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
 });
-
-const generateErrorSummary = ({ errorMap }) => (
-  Object.entries(errorMap).map(([questionId, errors]) => ({
-    href: `#${questionId}`,
-    text: errors.errorMessages.join(', '),
-  }))
-);
 
 export const getErrorContext = (params) => {
   const errorMap = generateErrorMap({

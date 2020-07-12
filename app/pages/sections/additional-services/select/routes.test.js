@@ -15,7 +15,7 @@ import * as additionalServicePriceController from './price/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
-import * as routerHelper from '../../../../helpers/routerHelper';
+import * as routerHelper from '../../../../helpers/routes/routerHelper';
 
 jest.mock('../../../../logger');
 

@@ -1,6 +1,6 @@
 const { isApiReady } = require('buying-catalogue-library');
-const { getEndpoint } = require('../endpoints');
-const { logger } = require('../logger');
+const { getEndpoint } = require('../../endpoints');
+const { logger } = require('../../logger');
 
 export const isIdentityReady = async () => {
   const identityHealthEndpoint = getEndpoint({ api: 'identity', endpointLocator: 'getApiHealth' });

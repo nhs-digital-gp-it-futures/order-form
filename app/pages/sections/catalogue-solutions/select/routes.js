@@ -1,7 +1,7 @@
 import express from 'express';
 import { logger } from '../../../../logger';
 import config from '../../../../config';
-import { withCatch, extractAccessToken } from '../../../../helpers/routerHelper';
+import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
 import {
   findSolutions,
   getSupplierId,
@@ -138,7 +138,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: selectedRecipientId });
       sessionManager.saveToSession({ req, key: 'selectedRecipientName', value: selectedRecipientName });
       logger.info('Redirect to new solution page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/newsolution`);
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
     }
 
     const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });

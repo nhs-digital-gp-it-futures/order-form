@@ -164,7 +164,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/newsolution when a recipient is selected', async (t) => {
+test('should redirect to /organisation/order-id/catalogue-solutions/neworderitem when a recipient is selected', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
@@ -175,7 +175,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/newsolution 
   await t
     .click(firstRecipient)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/newsolution');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem');
 });
 
 test('should show the error summary when no solution selected causing validation error', async (t) => {

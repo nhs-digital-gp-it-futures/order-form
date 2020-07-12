@@ -17,16 +17,19 @@ describe('getSelectedPriceManifest', () => {
     const manifest = { description };
 
     fs.readFileSync.mockReturnValue(manifestFileContent);
-    expect(getSelectedPriceManifest({ provisioningType: 'OnDemand', type: 'Flat' })).toEqual(manifest);
+    expect(getSelectedPriceManifest({ orderItemType: 'catalogue-solutions', provisioningType: 'OnDemand', type: 'Flat' })).toEqual(manifest);
   });
 
   it.each`
-    provisioningType | type      | expectedPath
-    ${'OnDemand'}    | ${'Flat'} | ${'/flat/ondemand/manifest.json'}
-    ${'Patient'}     | ${'Flat'} | ${'/flat/patient/manifest.json'}
-  `('should call path.join with the path $expectedPath', ({ provisioningType, type, expectedPath }) => {
+    orderItemType             | provisioningType | type      | expectedPath
+    ${'catalogue-solutions'}  | ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/ondemand/manifest.json'}
+    ${'catalogue-solutions'}  | ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/patient/manifest.json'}
+    ${'catalogue-solutions'}  | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/declarative/manifest.json'}
+  `('should call path.join with the path $expectedPath', ({
+  orderItemType, provisioningType, type, expectedPath,
+}) => {
   JSON.parse = jest.fn();
-  getSelectedPriceManifest({ provisioningType, type });
+  getSelectedPriceManifest({ orderItemType, provisioningType, type });
   expect(path.join.mock.calls.length).toEqual(1);
   expect(path.join).toHaveBeenCalledWith(__dirname, expectedPath);
 });
@@ -37,7 +40,7 @@ describe('getSelectedPriceManifest', () => {
     const expectedPath = 'expected/path';
     path.join.mockReturnValue(expectedPath);
 
-    getSelectedPriceManifest({ provisioningType: 'Patient', type: 'Flat' });
+    getSelectedPriceManifest({ orderItemType: 'catalogue-solutions', provisioningType: 'Patient', type: 'Flat' });
     expect(fs.readFileSync.mock.calls.length).toEqual(1);
     expect(fs.readFileSync).toHaveBeenCalledWith(expectedPath);
   });

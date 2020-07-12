@@ -3,13 +3,13 @@ import {
   getSolution,
   getOrderItem,
 } from './controller';
-import { destructureDate } from '../../../../helpers/dateFormatter';
-import { formatDecimal } from '../../../../helpers/priceFormatter';
+import { destructureDate } from '../../../../helpers/common/dateFormatter';
+import { formatDecimal } from '../../../../helpers/common/priceFormatter';
 
 export const getPageData = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
 }) => {
-  if (orderItemId === 'newsolution') {
+  if (orderItemId === 'neworderitem') {
     const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
     const serviceRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });

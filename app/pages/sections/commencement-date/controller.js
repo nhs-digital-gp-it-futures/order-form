@@ -1,10 +1,10 @@
 import { getData, putData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
-import { getDateErrors } from '../../../helpers/getDateErrors';
+import { getDateErrors } from '../../../helpers/controllers/getDateErrors';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
-import { extractDate } from '../../../helpers/extractDate';
-import { destructureDate } from '../../../helpers/dateFormatter';
+import { extractDate } from '../../../helpers/controllers/extractDate';
+import { destructureDate } from '../../../helpers/common/dateFormatter';
 
 const formatPutData = data => ({
   commencementDate: extractDate('commencementDate', data),

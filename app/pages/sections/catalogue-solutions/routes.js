@@ -1,7 +1,7 @@
 import express from 'express';
 import { logger } from '../../../logger';
 import config from '../../../config';
-import { withCatch, extractAccessToken } from '../../../helpers/routerHelper';
+import { withCatch, extractAccessToken } from '../../../helpers/routes/routerHelper';
 import {
   getCatalogueSolutionsPageContext,
   putCatalogueSolutions,
@@ -9,9 +9,9 @@ import {
 import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
-  validateOrderItemForm,
   saveSolutionOrderItem,
 } from './order-item/controller';
+import { validateOrderItemForm } from '../../../helpers/controllers/validateOrderItemForm';
 import { getPageData } from './order-item/routesHelper';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 
@@ -60,6 +60,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const context = await getOrderItemContext({
       orderId,
       orderItemId,
+      orderItemType: 'catalogue-solutions',
       solutionName: pageData.solutionName,
       odsCode: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
@@ -78,7 +79,11 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = sessionManager.getFromSession({ req, key: 'orderItemPageData' });
 
-    const errors = validateOrderItemForm({ data: req.body, selectedPrice: pageData.selectedPrice });
+    const errors = validateOrderItemForm({
+      orderItemType: 'catalogue-solutions',
+      data: req.body,
+      selectedPrice: pageData.selectedPrice,
+    });
     validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
@@ -104,6 +109,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const context = await getOrderItemErrorPageContext({
       orderId,
       orderItemId,
+      orderItemType: 'catalogue-solutions',
       solutionName: pageData.solutionName,
       selectedRecipientId: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,

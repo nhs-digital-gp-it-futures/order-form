@@ -1,7 +1,7 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../config';
-import { formatDate } from '../../helpers/dateFormatter';
-import { formatPrice } from '../../helpers/priceFormatter';
+import { formatDate } from '../../helpers/common/dateFormatter';
+import { formatPrice } from '../../helpers/common/priceFormatter';
 import { logger } from '../../logger';
 
 const generateCallOffPartyDetails = ({ orderPartyData }) => {
