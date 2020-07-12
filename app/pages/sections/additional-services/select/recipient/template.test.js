@@ -7,7 +7,7 @@ const setup = {
   },
 };
 
-describe('additional-servicesselect recipient page', () => {
+describe('additional-services select recipient page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
       orderId: 'order-1',

@@ -12,10 +12,10 @@ import {
 } from 'buying-catalogue-library';
 import * as selectAdditionalServiceController from './additional-service/controller';
 import * as additionalServicePriceController from './price/controller';
-import * as additionalServiceRecipientController from './recipient/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
+import * as getSolutionHelper from '../../../../helpers/api/bapi/getSolution';
 import * as routerHelper from '../../../../helpers/routes/routerHelper';
 
 jest.mock('../../../../logger');
@@ -332,8 +332,18 @@ describe('additional-services select routes', () => {
       })
     ));
 
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
     it('should return the additional-services select recipient page if authorised', async () => {
-      additionalServiceRecipientController.getSolution = jest.fn()
+      getSolutionHelper.getSolution = jest.fn()
         .mockResolvedValue({});
 
       const res = await request(setUpFakeApp())

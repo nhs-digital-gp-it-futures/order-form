@@ -3,6 +3,7 @@ import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../logger';
 import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
+import { getSolution } from '../../../../helpers/api/bapi/getSolution';
 import {
   findAdditionalServices,
   findAddedCatalogueSolutions,
@@ -15,7 +16,6 @@ import {
   getAdditionalServicePricePageContext,
 } from './price/controller';
 import {
-  getSolution,
   getAdditionalServiceRecipientPageContext,
 } from './recipient/controller';
 
@@ -117,7 +117,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
     const context = await getAdditionalServiceRecipientPageContext({
       orderId,
-      solutionName: solutionData.name,
+      itemName: solutionData.name,
     });
     logger.info(`navigating to order ${orderId} additional-services select recipient page`);
     return res.render('pages/sections/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
