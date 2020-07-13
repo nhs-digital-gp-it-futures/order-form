@@ -20,8 +20,6 @@ const selectedAdditionalServiceState = ClientFunction(() => {
 });
 
 const mockAdditionalServicePricing = {
-  id: 'additional-service-1',
-  name: 'Additional Service name',
   prices: [
     {
       priceId: 1,
@@ -78,8 +76,6 @@ const mockAdditionalServicePricing = {
 
 const additionalServicePricesState = ClientFunction(() => {
   const cookieValue = JSON.stringify({
-    id: 'additional-service-1',
-    name: 'Additional Service name',
     prices: [
       {
         priceId: 1,
@@ -137,7 +133,7 @@ const additionalServicePricesState = ClientFunction(() => {
 });
 
 const selectedAdditionalServicePriceIdState = ClientFunction(() => {
-  document.cookie = 'selectedAdditionalServicePriceId=2';
+  document.cookie = 'selectedPriceId=2';
 });
 
 const mocks = () => {
