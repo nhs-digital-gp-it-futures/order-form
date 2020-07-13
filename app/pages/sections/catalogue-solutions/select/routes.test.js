@@ -15,6 +15,7 @@ import * as selectRecipientController from './recipient/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
+import * as getRecipientsHelper from '../../../../helpers/api/ordapi/getRecipients';
 
 jest.mock('../../../../logger');
 
@@ -377,7 +378,7 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({});
 
-      selectRecipientController.getRecipients = jest.fn()
+      getRecipientsHelper.getRecipients = jest.fn()
         .mockResolvedValue([]);
 
       selectRecipientController.getRecipientPageContext = jest.fn()
@@ -420,7 +421,7 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({ name: 'Solution One ' });
 
-      selectRecipientController.getRecipients = jest.fn()
+      getRecipientsHelper.getRecipients = jest.fn()
         .mockResolvedValue([]);
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -439,7 +440,7 @@ describe('catalogue-solutions select routes', () => {
     });
 
     it('should show the recipient select page with errors if there are validation errors', async () => {
-      selectRecipientController.getRecipients = jest.fn()
+      getRecipientsHelper.getRecipients = jest.fn()
         .mockResolvedValue([]);
 
       selectRecipientController.validateRecipientForm = jest.fn()
@@ -478,7 +479,7 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({ name: 'Solution One ' });
 
-      selectRecipientController.getRecipients = jest.fn()
+      getRecipientsHelper.getRecipients = jest.fn()
         .mockResolvedValue([]);
 
       selectRecipientController.validateRecipientForm = jest.fn()
