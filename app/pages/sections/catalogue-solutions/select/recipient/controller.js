@@ -13,14 +13,6 @@ export const getSolution = async ({ solutionId, accessToken }) => {
   return solutionData;
 };
 
-export const getRecipients = async ({ orderId, accessToken }) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getSelectedServiceRecipients', options: { orderId } });
-  const serviceRecipientsData = await getData({ endpoint, accessToken, logger });
-  logger.info(`${serviceRecipientsData.length} service recipients returned for ${orderId}`);
-
-  return serviceRecipientsData.serviceRecipients;
-};
-
 export const getRecipientErrorPageContext = params => getErrorContext(params);
 
 export const validateRecipientForm = ({ data }) => {

@@ -15,8 +15,10 @@ import * as selectRecipientController from './recipient/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
+import { getRecipients } from '../../../../helpers/api/ordapi/getRecipients';
 
 jest.mock('../../../../logger');
+jest.mock('../../../../helpers/api/ordapi/getRecipients');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -377,8 +379,7 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({});
 
-      selectRecipientController.getRecipients = jest.fn()
-        .mockResolvedValue([]);
+      getRecipients.mockResolvedValue([]);
 
       selectRecipientController.getRecipientPageContext = jest.fn()
         .mockResolvedValue({});
@@ -420,8 +421,7 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({ name: 'Solution One ' });
 
-      selectRecipientController.getRecipients = jest.fn()
-        .mockResolvedValue([]);
+      getRecipients.mockResolvedValue([]);
 
       return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
@@ -439,8 +439,7 @@ describe('catalogue-solutions select routes', () => {
     });
 
     it('should show the recipient select page with errors if there are validation errors', async () => {
-      selectRecipientController.getRecipients = jest.fn()
-        .mockResolvedValue([]);
+      getRecipients.mockResolvedValue([]);
 
       selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: false });
@@ -478,8 +477,7 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({ name: 'Solution One ' });
 
-      selectRecipientController.getRecipients = jest.fn()
-        .mockResolvedValue([]);
+      getRecipients.mockResolvedValue([]);
 
       selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: true });

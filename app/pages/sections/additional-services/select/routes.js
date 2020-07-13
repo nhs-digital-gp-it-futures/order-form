@@ -3,6 +3,7 @@ import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../logger';
 import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
+import { getRecipients } from '../../../../helpers/api/ordapi/getRecipients';
 import {
   findAdditionalServices,
   findAddedCatalogueSolutions,
@@ -111,7 +112,10 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
   router.get('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const itemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
+
+    await getRecipients({ orderId, accessToken });
 
     const context = await getAdditionalServiceRecipientPageContext({
       orderId,
