@@ -3,7 +3,6 @@ import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../logger';
 import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
-import { getCatalogueItem } from '../../../../helpers/api/bapi/getCatalogueItem';
 import {
   findAdditionalServices,
   findAddedCatalogueSolutions,
