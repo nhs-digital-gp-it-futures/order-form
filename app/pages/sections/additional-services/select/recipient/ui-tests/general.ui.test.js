@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
+import { orderApiUrl } from '../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient';
 
@@ -19,8 +20,26 @@ const selectedItemNameState = ClientFunction(() => {
   document.cookie = `selectedItemName=${cookieValue}`;
 });
 
+const mockServiceRecipients = [
+  {
+    odsCode: 'recipient-1',
+    name: 'Recipient 1',
+  },
+  {
+    odsCode: 'recipient-2',
+    name: 'Recipient 2',
+  },
+];
+
+const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/service-recipients')
+    .reply(200, { serviceRecipients: mockServiceRecipients });
+};
+
 const pageSetup = async (withAuth = true) => {
   if (withAuth) {
+    mocks();
     await setCookies();
     await selectedItemNameState();
   }

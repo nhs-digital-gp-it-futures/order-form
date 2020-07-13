@@ -15,7 +15,7 @@ import * as additionalServicePriceController from './price/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
-import * as getSolutionHelper from '../../../../helpers/api/bapi/getSolution';
+import * as getRecipientsHelper from '../../../../helpers/api/ordapi/getRecipients';
 import * as routerHelper from '../../../../helpers/routes/routerHelper';
 
 jest.mock('../../../../logger');
@@ -343,7 +343,7 @@ describe('additional-services select routes', () => {
     ));
 
     it('should return the additional-services select recipient page if authorised', async () => {
-      getSolutionHelper.getSolution = jest.fn()
+      getRecipientsHelper.getRecipients = jest.fn()
         .mockResolvedValue({});
 
       const res = await request(setUpFakeApp())

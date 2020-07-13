@@ -2,6 +2,7 @@ import express from 'express';
 import { logger } from '../../../../logger';
 import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
+import { getRecipients } from '../../../../helpers/api/ordapi/getRecipients';
 import {
   findSolutions,
   getSupplierId,
@@ -17,7 +18,6 @@ import {
 } from './price/controller';
 import {
   getRecipientPageContext,
-  getRecipients,
   getSolution,
   validateRecipientForm,
   getRecipientErrorPageContext,
