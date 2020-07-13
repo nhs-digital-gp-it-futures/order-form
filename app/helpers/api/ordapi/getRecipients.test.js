@@ -3,11 +3,9 @@ import { getRecipients } from './getRecipients';
 import { orderApiUrl } from '../../../config';
 import { logger } from '../../../logger';
 
-describe('getRecipients', () => {
-  afterEach(() => {
-    getData.mockReset();
-  });
+jest.mock('buying-catalogue-library');
 
+describe('getRecipients', () => {
   it('should call getData once with the correct params', async () => {
     getData
       .mockResolvedValueOnce({ data: {} });
