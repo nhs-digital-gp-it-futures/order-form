@@ -15,10 +15,10 @@ describe('Additional-services select-recipient controller', () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
 
-      await getAdditionalServiceRecipientPageContext({ orderId: 'order-1', solutionName: 'Solution One' });
+      await getAdditionalServiceRecipientPageContext({ orderId: 'order-1', itemName: 'Item name' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', solutionName: 'Solution One' });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', itemName: 'Item name' });
     });
   });
 });

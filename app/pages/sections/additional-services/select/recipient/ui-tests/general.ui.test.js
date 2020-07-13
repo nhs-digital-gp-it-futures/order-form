@@ -28,7 +28,7 @@ const pageSetup = async (withAuth = true) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Aditional-service - recipient page - general')
+fixture('Additional-service - recipient page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -51,7 +51,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render Aditional-service select-recipient page', async (t) => {
+test('should render Additional-service select-recipient page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="additional-service-recipient-page"]');
