@@ -10,7 +10,7 @@ const getLocation = ClientFunction(() => document.location.href);
 
 const selectedPrice = {
   priceId: 1,
-  provisioningType: 'OnDemand',
+  provisioningType: 'Declarative',
   type: 'Flat',
   currencyCode: 'GBP',
   itemUnit: {
@@ -62,7 +62,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Additional-services - flat ondemand - withoutSavedData')
+fixture('Additional-services - flat declarative - withoutSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -82,12 +82,10 @@ test('should navigate to additional-services dashboard page if save button is cl
   await t.navigateTo(pageUrl);
 
   const quantityInput = Selector('[data-test-id="question-quantity"]');
-  const estimatiodPeriodInputs = Selector('[data-test-id="question-selectEstimationPeriod"] input');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
     .typeText(quantityInput, '10', { paste: true })
-    .click(estimatiodPeriodInputs.nth(0))
     .click(saveButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services');
 });
@@ -108,12 +106,10 @@ test('should show text fields as errors with error message when there are BE val
   const errorSummary = Selector('[data-test-id="error-summary"]');
   const errorMessage = Selector('#quantity-error');
   const quantityInput = Selector('[data-test-id="question-quantity"] input');
-  const estimatiodPeriodInputs = Selector('[data-test-id="question-selectEstimationPeriod"] input');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
     .typeText(quantityInput, '0', { paste: true })
-    .click(estimatiodPeriodInputs.nth(0))
     .click(saveButton);
 
   await t

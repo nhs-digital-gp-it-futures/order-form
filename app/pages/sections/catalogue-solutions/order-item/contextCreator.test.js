@@ -1,6 +1,7 @@
 import commonManifest from './commonManifest.json';
 import flatOndemandManifest from './flat/ondemand/manifest.json';
 import flatPatientManifest from './flat/patient/manifest.json';
+import flatDeclarativeManifest from './flat/declarative/manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
 
 describe('catalogue-solutions order-item contextCreator', () => {
@@ -297,6 +298,112 @@ describe('catalogue-solutions order-item contextCreator', () => {
         expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
       });
     });
+
+    describe('flat - declarative', () => {
+      it('should return the questions', () => {
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatDeclarativeManifest,
+        });
+        expect(context.questions).toEqual(flatDeclarativeManifest.questions);
+        expect(context.questions.selectEstimationPeriod).toEqual(undefined);
+      });
+
+      it('should populate the planned delivery data with data provided', () => {
+        const expectedContext = {
+          questions: {
+            deliveryDate: {
+              ...flatDeclarativeManifest.questions.deliveryDate,
+              data: {
+                day: '09',
+                month: '02',
+                year: '2021',
+              },
+            },
+          },
+        };
+
+        const formData = {
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
+        };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatDeclarativeManifest, formData,
+        });
+        expect(context.questions.deliveryDate)
+          .toEqual(expectedContext.questions.deliveryDate);
+      });
+
+      it('should populate the quantity with data provided', () => {
+        const expectedContext = {
+          questions: {
+            quantity: {
+              ...flatDeclarativeManifest.questions.quantity,
+              data: 'some quantity data',
+            },
+          },
+        };
+
+        const formData = {
+          quantity: 'some quantity data',
+        };
+
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatDeclarativeManifest, formData,
+        });
+        expect(context.questions.quantity).toEqual(expectedContext.questions.quantity);
+      });
+
+      it('should return the addPriceTable colummInfo', () => {
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatDeclarativeManifest,
+        });
+
+        expect(context.addPriceTable.columnInfo)
+          .toEqual(flatDeclarativeManifest.addPriceTable.columnInfo);
+      });
+
+      it('should return the addPriceTable with items and the price input and unit of order populated', () => {
+        const expectedContext = {
+          addPriceTable: {
+            ...flatDeclarativeManifest.addPriceTable,
+            items: [
+              [
+                {
+                  ...flatDeclarativeManifest.addPriceTable.cellInfo.price,
+                  question: {
+                    ...flatDeclarativeManifest.addPriceTable.cellInfo.price.question,
+                    data: 0.11,
+                  },
+                },
+                {
+                  ...flatDeclarativeManifest.addPriceTable.cellInfo.unitOfOrder,
+                  data: 'per patient per year',
+                },
+              ],
+            ],
+          },
+        };
+
+        const selectedPrice = {
+          price: 0.11,
+          itemUnit: { description: 'per patient' },
+          timeUnit: { description: 'per year' },
+        };
+
+        const formData = { price: 0.11 };
+
+        const context = getContext({
+          commonManifest,
+          selectedPriceManifest: flatDeclarativeManifest,
+          selectedPrice,
+          formData,
+        });
+
+        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+      });
+    });
   });
 
   describe('getErrorContext', () => {
@@ -520,6 +627,108 @@ describe('catalogue-solutions order-item contextCreator', () => {
         const context = getErrorContext({
           commonManifest,
           selectedPriceManifest: flatPatientManifest,
+          validationErrors: [{ field: 'Price', id: 'PriceRequired' }],
+          selectedPrice,
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+      });
+    });
+
+    describe('flat - declarative', () => {
+      it('should return error for deliveryDate', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#deliveryDate', text: flatDeclarativeManifest.errorMessages.DeliveryDateRequired },
+          ],
+          questions: {
+            ...flatDeclarativeManifest.questions,
+            deliveryDate: {
+              ...flatDeclarativeManifest.questions.deliveryDate,
+              error: {
+                message: flatDeclarativeManifest.errorMessages.DeliveryDateRequired,
+                fields: ['day', 'month', 'year'],
+              },
+            },
+          },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatDeclarativeManifest,
+          validationErrors: [{
+            field: 'DeliveryDate',
+            id: 'DeliveryDateRequired',
+            part: ['day', 'month', 'year'],
+          }],
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.questions).toEqual(expectedContext.questions);
+      });
+
+      it('should return error for quantity', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#quantity', text: flatDeclarativeManifest.errorMessages.QuantityRequired },
+          ],
+          questions: {
+            ...flatDeclarativeManifest.questions,
+            quantity: {
+              ...flatDeclarativeManifest.questions.quantity,
+              error: {
+                message: flatDeclarativeManifest.errorMessages.QuantityRequired,
+              },
+            },
+          },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatDeclarativeManifest,
+          validationErrors: [{ field: 'Quantity', id: 'QuantityRequired' }],
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.questions).toEqual(expectedContext.questions);
+      });
+
+      it('should return error for price', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#price', text: flatDeclarativeManifest.errorMessages.PriceRequired },
+          ],
+          addPriceTable: {
+            ...flatDeclarativeManifest.addPriceTable,
+            items: [
+              [
+                {
+                  ...flatDeclarativeManifest.addPriceTable.cellInfo.price,
+                  question: {
+                    ...flatDeclarativeManifest.addPriceTable.cellInfo.price.question,
+                    error: {
+                      message: flatDeclarativeManifest.errorMessages.PriceRequired,
+                    },
+                  },
+                },
+                {
+                  ...flatDeclarativeManifest.addPriceTable.cellInfo.unitOfOrder,
+                  data: 'per patient per year',
+                },
+              ],
+            ],
+          },
+        };
+
+        const selectedPrice = {
+          itemUnit: { description: 'per patient' },
+          timeUnit: { description: 'per year' },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatDeclarativeManifest,
           validationErrors: [{ field: 'Price', id: 'PriceRequired' }],
           selectedPrice,
         });

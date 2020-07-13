@@ -18,7 +18,7 @@ const orderItem = {
   catalogueItemId: '10000-001',
   quantity: 3,
   estimationPeriod: 'month',
-  provisioningType: 'OnDemand',
+  provisioningType: 'Declarative',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
@@ -65,7 +65,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Additional-services - flat ondemand - withSavedData')
+fixture('Additional-services - flat declarative - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -108,17 +108,6 @@ test('should populate text field for the quantity question', async (t) => {
   await t
     .expect(quantity.exists).ok()
     .expect(quantity.getAttribute('value')).eql('3');
-});
-
-test('should populate the selectEstimationPeriod question radio button', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const selectEstimationPeriodRadioOptions = Selector('[data-test-id="question-selectEstimationPeriod"] input').nth(0);
-
-  await t
-    .expect(selectEstimationPeriodRadioOptions.exists).ok()
-    .expect(selectEstimationPeriodRadioOptions.hasAttribute('checked')).ok();
 });
 
 test('should render the price table content', async (t) => {

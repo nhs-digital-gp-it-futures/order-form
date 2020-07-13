@@ -56,7 +56,7 @@ export const getErrorContext = (params) => {
     orderItemId: params.orderItemId,
     itemName: params.itemName,
     serviceRecipientName: params.serviceRecipientName,
-    odsCode: params.selectedRecipientId,
+    odsCode: params.serviceRecipientId,
     selectedPrice: params.selectedPrice,
     formData: params.formData,
     errorMap,
