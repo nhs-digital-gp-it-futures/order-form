@@ -10,7 +10,7 @@ const getLocation = ClientFunction(() => document.location.href);
 
 const selectedPrice = {
   priceId: 1,
-  provisioningType: 'OnDemand',
+  provisioningType: 'Patient',
   type: 'Flat',
   currencyCode: 'GBP',
   itemUnit: {
@@ -62,7 +62,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
   }
 };
 
-fixture('Additional-services - flat ondemand - general')
+fixture('Additional-services - flat patient - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -100,43 +100,6 @@ test('should render an expandable section for the quantity question', async (t) 
     .expect(expandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
     .eql(content.questions.quantity.expandableSection.innerComponent);
-});
-
-test('should render a selectEstimationPeriod question as radio button options', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const selectEstimationPeriodRadioOptions = Selector('[data-test-id="question-selectEstimationPeriod"]');
-
-  await t
-    .expect(selectEstimationPeriodRadioOptions.exists).ok()
-    .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('legend')))
-    .eql(content.questions.selectEstimationPeriod.mainAdvice)
-    .expect(selectEstimationPeriodRadioOptions.find('input').count).eql(2)
-
-    .expect(selectEstimationPeriodRadioOptions.find('input').nth(0).getAttribute('value')).eql('month')
-    .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('label').nth(0))).eql('Per month')
-    .expect(selectEstimationPeriodRadioOptions.find('input').nth(0).hasAttribute('checked')).notOk()
-
-    .expect(selectEstimationPeriodRadioOptions.find('input').nth(1).getAttribute('value')).eql('year')
-    .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('label').nth(1))).eql('Per year')
-    .expect(selectEstimationPeriodRadioOptions.find('input').nth(1).hasAttribute('checked')).notOk();
-});
-
-test('should render an expandable section for the select estimation period', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const expandableSection = Selector('[data-test-id="view-section-estimation-period-id"]');
-
-  await t
-    .expect(expandableSection.exists).ok()
-    .expect(await extractInnerText(expandableSection)).eql(content.questions.selectEstimationPeriod.expandableSection.title)
-    .expect(expandableSection.find('details[open]').exists).notOk()
-    .click(expandableSection.find('summary'))
-    .expect(expandableSection.find('details[open]').exists).ok()
-    .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
-    .eql(content.questions.selectEstimationPeriod.expandableSection.innerComponent);
 });
 
 test('should render the price table headings', async (t) => {
@@ -271,7 +234,7 @@ test('should anchor to the price field when clicking on the price required error
 
   await t
     .expect(errorSummary.exists).ok()
-    .click(errorSummary.find('li a').nth(2))
+    .click(errorSummary.find('li a').nth(1))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
 
@@ -291,6 +254,6 @@ test('should anchor to the price field when clicking on the numerical price erro
   await t
     .expect(errorSummary.exists).ok()
 
-    .click(errorSummary.find('li a').nth(2))
+    .click(errorSummary.find('li a').nth(1))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
