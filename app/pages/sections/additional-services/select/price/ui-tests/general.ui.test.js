@@ -14,8 +14,9 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const selectedAdditionalServiceIdState = ClientFunction(() => {
-  document.cookie = 'selectedAdditionalServiceId=additional-service-1';
+const selectedAdditionalServiceState = ClientFunction(() => {
+  document.cookie = 'selectedItemId=additional-service-1';
+  document.cookie = 'selectedItemName=Additional Service Name';
 });
 
 const mockAdditionalServicePricing = {
@@ -147,7 +148,7 @@ const mocks = () => {
 
 const pageSetup = async (
   withAuth = false,
-  withSelectedAdditionalServiceIdState = true,
+  withSelectedAdditionalServiceState = true,
   withAdditionalServicePricesState = false,
   withSelectedAdditionalServicePriceIdState = false,
 ) => {
@@ -155,7 +156,7 @@ const pageSetup = async (
     mocks();
     await setCookies();
   }
-  if (withSelectedAdditionalServiceIdState) await selectedAdditionalServiceIdState();
+  if (withSelectedAdditionalServiceState) await selectedAdditionalServiceState();
   if (withAdditionalServicePricesState) await additionalServicePricesState();
   if (withSelectedAdditionalServicePriceIdState) await selectedAdditionalServicePriceIdState();
 };
@@ -233,7 +234,7 @@ test('should render the title', async (t) => {
 
   await t
     .expect(title.exists).ok()
-    .expect(await extractInnerText(title)).eql(`${content.title} Additional Service name`);
+    .expect(await extractInnerText(title)).eql(`${content.title} Additional Service Name`);
 });
 
 test('should render the description', async (t) => {

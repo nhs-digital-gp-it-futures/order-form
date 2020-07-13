@@ -39,9 +39,14 @@ const generateQuestionsContext = (additionalServicePrices, selectedPriceId) => (
   }))
 );
 
-export const getContext = ({ orderId, additionalServicePrices, selectedPriceId }) => ({
+export const getContext = ({
+  orderId,
+  additionalServicePrices,
+  selectedPriceId,
+  selectedAdditionalServiceName,
+}) => ({
   ...manifest,
-  title: `${manifest.title} ${additionalServicePrices.name}`,
+  title: `${manifest.title} ${selectedAdditionalServiceName}`,
   backLinkHref: `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`,
   questions: additionalServicePrices
     && generateQuestionsContext(additionalServicePrices, selectedPriceId),
