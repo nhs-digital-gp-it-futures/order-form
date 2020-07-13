@@ -111,7 +111,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
   router.get('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const itemName = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceName' });
+    const itemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
 
     const context = await getAdditionalServiceRecipientPageContext({
       orderId,

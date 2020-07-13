@@ -13,16 +13,16 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const selectedAdditionalServiceNameState = ClientFunction(() => {
+const selectedItemNameState = ClientFunction(() => {
   const cookieValue = 'Additional Service';
 
-  document.cookie = `selectedAdditionalServiceName=${cookieValue}`;
+  document.cookie = `selectedItemName=${cookieValue}`;
 });
 
 const pageSetup = async (withAuth = true) => {
   if (withAuth) {
     await setCookies();
-    await selectedAdditionalServiceNameState();
+    await selectedItemNameState();
   }
 };
 
