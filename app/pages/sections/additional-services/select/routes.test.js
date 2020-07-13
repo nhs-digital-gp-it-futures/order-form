@@ -15,6 +15,7 @@ import * as additionalServicePriceController from './price/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
+import * as getSolutionHelper from '../../../../helpers/api/bapi/getSolution';
 import * as routerHelper from '../../../../helpers/routes/routerHelper';
 
 jest.mock('../../../../logger');
@@ -318,6 +319,39 @@ describe('additional-services select routes', () => {
         .expect(200);
 
       expect(res.text.includes('data-test-id="additional-service-price-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+    });
+  });
+
+  describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipient', () => {
+    const path = '/organisation/some-order-id/additional-services/select/additional-service/price/recipient';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should return the additional-services select recipient page if authorised', async () => {
+      getSolutionHelper.getSolution = jest.fn()
+        .mockResolvedValue({});
+
+      const res = await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="additional-service-recipient-page"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
