@@ -2,7 +2,6 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { solutionsApiUrl } from '../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient';
 
@@ -14,23 +13,16 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const selectedSolutionIdState = ClientFunction(() => {
-  const cookieValue = 'solution-1';
+const selectedAdditionalServiceNameState = ClientFunction(() => {
+  const cookieValue = 'Additional Service';
 
-  document.cookie = `selectedSolutionId=${cookieValue}`;
+  document.cookie = `selectedAdditionalServiceName=${cookieValue}`;
 });
-
-const mocks = () => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/solutions/solution-1')
-    .reply(200, { id: 'solution-1', name: 'Solution One' });
-};
 
 const pageSetup = async (withAuth = true) => {
   if (withAuth) {
-    mocks();
     await setCookies();
-    await selectedSolutionIdState();
+    await selectedAdditionalServiceNameState();
   }
 };
 
@@ -88,7 +80,7 @@ test('should render the title', async (t) => {
 
   await t
     .expect(title.exists).ok()
-    .expect(await extractInnerText(title)).eql(`${content.title} Solution One`);
+    .expect(await extractInnerText(title)).eql(`${content.title} Additional Service`);
 });
 
 test('should render the description', async (t) => {

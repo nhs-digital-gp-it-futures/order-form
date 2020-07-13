@@ -3,7 +3,7 @@ import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../logger';
 import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
-import { getSolution } from '../../../../helpers/api/bapi/getSolution';
+import { getCatalogueItem } from '../../../../helpers/api/bapi/getCatalogueItem';
 import {
   findAdditionalServices,
   findAddedCatalogueSolutions,
@@ -112,12 +112,11 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
   router.get('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
-    const solutionData = await getSolution({ solutionId });
+    const itemName = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceName' });
 
     const context = await getAdditionalServiceRecipientPageContext({
       orderId,
-      itemName: solutionData.name,
+      itemName,
     });
     logger.info(`navigating to order ${orderId} additional-services select recipient page`);
     return res.render('pages/sections/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
