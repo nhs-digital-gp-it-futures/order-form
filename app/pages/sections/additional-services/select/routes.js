@@ -122,12 +122,14 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const itemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
 
-    await getRecipients({ orderId, accessToken });
+    const recipients = await getRecipients({ orderId, accessToken });
 
     const context = await getAdditionalServiceRecipientPageContext({
       orderId,
       itemName,
+      recipients,
     });
+
     logger.info(`navigating to order ${orderId} additional-services select recipient page`);
     return res.render('pages/sections/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
