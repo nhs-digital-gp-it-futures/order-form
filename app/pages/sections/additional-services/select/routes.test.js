@@ -304,7 +304,7 @@ describe('additional-services select routes', () => {
 
       await request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie, `selectedAdditionalServiceId=${selectedAdditionalServiceId}`]);
+        .set('Cookie', [mockAuthorisedCookie, `selectedItemId=${selectedAdditionalServiceId}`]);
 
       expect(additionalServicePriceController.findAdditionalServicePrices.mock.calls.length)
         .toEqual(1);
