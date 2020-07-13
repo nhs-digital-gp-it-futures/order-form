@@ -1,11 +1,5 @@
 {
   "questions": {
-    "deliveryDate": {
-      "id": "deliveryDate",
-      "type": "date",
-      "mainAdvice": "What is the planned delivery date?",
-      "additionalAdvice": "For example 14 01 2020"
-    },
     "quantity": {
       "id": "quantity",
       "mainAdvice": "What is your practice list size?",
@@ -57,14 +51,6 @@
     "PriceMustBeANumber": "Price must be a number",
     "PriceMoreThan3dp": "Price must be to a maximum of 3 decimal places",
     "PriceGreaterThanOrEqualToZero": "Price cannot be negative",
-    "PriceLessThanMax": "Maximum price exceeded, enter a lower price",
-    "DeliveryDateRequired": "Enter a planned delivery date",
-    "DeliveryDateInvalid": "Enter a planned delivery date in a valid format",
-    "DeliveryDateOutsideDeliveryWindow": "Planned delivery date must be within 42 months from the commencement date for this Call-off Agreement",
-    "DeliveryDateNotReal": "Planned delivery date must be a real date",
-    "DeliveryDateDayRequired": "Planned delivery date must include a day",
-    "DeliveryDateMonthRequired": "Planned delivery date must include a month",
-    "DeliveryDateYearRequired": "Planned delivery date must include a year",
-    "DeliveryDateYearLength": "Year must be four numbers, for example 2020"
+    "PriceLessThanMax": "Maximum price exceeded, enter a lower price"
   }
 }
