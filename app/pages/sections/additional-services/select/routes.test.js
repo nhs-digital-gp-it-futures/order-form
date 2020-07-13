@@ -15,7 +15,7 @@ import * as additionalServicePriceController from './price/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
-import * as getRecipientsHelper from '../../../../helpers/api/ordapi/getRecipients';
+import { getRecipients } from '../../../../helpers/api/ordapi/getRecipients';
 import * as routerHelper from '../../../../helpers/routes/routerHelper';
 
 jest.mock('../../../../logger');
@@ -343,8 +343,7 @@ describe('additional-services select routes', () => {
     ));
 
     it('should return the additional-services select recipient page if authorised', async () => {
-      getRecipientsHelper.getRecipients = jest.fn()
-        .mockResolvedValue({});
+      getRecipients.mockResolvedValue([]);
 
       const res = await request(setUpFakeApp())
         .get(path)

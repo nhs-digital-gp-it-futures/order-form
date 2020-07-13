@@ -15,7 +15,7 @@ import * as selectRecipientController from './recipient/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
-import * as getRecipientsHelper from '../../../../helpers/api/ordapi/getRecipients';
+import { getRecipients } from '../../../../helpers/api/ordapi/getRecipients';
 
 jest.mock('../../../../logger');
 
@@ -378,8 +378,7 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({});
 
-      getRecipientsHelper.getRecipients = jest.fn()
-        .mockResolvedValue([]);
+      getRecipients.mockResolvedValue([]);
 
       selectRecipientController.getRecipientPageContext = jest.fn()
         .mockResolvedValue({});
@@ -421,8 +420,7 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({ name: 'Solution One ' });
 
-      getRecipientsHelper.getRecipients = jest.fn()
-        .mockResolvedValue([]);
+      getRecipients.mockResolvedValue([]);
 
       return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
@@ -440,8 +438,7 @@ describe('catalogue-solutions select routes', () => {
     });
 
     it('should show the recipient select page with errors if there are validation errors', async () => {
-      getRecipientsHelper.getRecipients = jest.fn()
-        .mockResolvedValue([]);
+      getRecipients.mockResolvedValue([]);
 
       selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: false });
@@ -479,8 +476,7 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.getSolution = jest.fn()
         .mockResolvedValue({ name: 'Solution One ' });
 
-      getRecipientsHelper.getRecipients = jest.fn()
-        .mockResolvedValue([]);
+      getRecipients.mockResolvedValue([]);
 
       selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: true });
