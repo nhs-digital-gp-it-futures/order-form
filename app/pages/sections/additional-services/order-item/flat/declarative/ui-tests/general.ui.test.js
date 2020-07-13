@@ -150,15 +150,16 @@ test('should render select quantity field as errors with error message when no q
   const orderItemPage = Selector('[data-test-id="order-item-page"]');
   const saveButton = Selector('[data-test-id="save-button"] button');
   const quantityField = orderItemPage.find('[data-test-id="question-quantity"]');
+  const quantityFieldWithError = quantityField.find('[data-test-id="text-field-input-error"]');
   const button = Selector('[data-test-id="save-button"] button');
 
   await t
     .expect(button.exists).ok()
-    .expect(quantityField.find('[data-test-id="text-field-input-error"]').exists).notOk()
+    .expect(quantityFieldWithError.exists).notOk()
     .click(saveButton);
 
   await t
-    .expect(quantityField.find('[data-test-id="text-field-input-error"]').exists).ok()
+    .expect(quantityFieldWithError.exists).ok()
     .expect(await extractInnerText(quantityField.find('#quantity-error'))).contains(content.errorMessages.QuantityRequired);
 });
 
@@ -169,14 +170,15 @@ test('should render select price field as errors with error message when no pric
   const orderItemPage = Selector('[data-test-id="order-item-page"]');
   const saveButton = Selector('[data-test-id="save-button"] button');
   const priceField = orderItemPage.find('[data-test-id="question-price"]');
+  const priceFieldWithError = priceField.find('[data-test-id="text-field-input-error"]');
 
   await t
-    .expect(priceField.find('[data-test-id="text-field-input-error"]').exists).notOk()
+    .expect(priceFieldWithError.exists).notOk()
     .selectText(priceField.find('input')).pressKey('delete')
     .click(saveButton);
 
   await t
-    .expect(priceField.find('[data-test-id="text-field-input-error"]').exists).ok()
+    .expect(priceFieldWithError.exists).ok()
     .expect(await extractInnerText(priceField.find('#price-error'))).contains(content.errorMessages.PriceRequired);
 });
 
@@ -184,12 +186,12 @@ test('should anchor to the quantity field when clicking on the quantity required
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
-  const continueButton = Selector('[data-test-id="save-button"] button');
+  const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
 
   await t
     .expect(errorSummary.exists).notOk()
-    .click(continueButton);
+    .click(saveButton);
 
   await t
     .expect(errorSummary.exists).ok()
@@ -202,14 +204,14 @@ test('should anchor to the quantity field when clicking on the numerical quantit
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
-  const continueButton = Selector('[data-test-id="save-button"] button');
+  const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
   const quantity = Selector('[data-test-id="question-quantity"]');
 
   await t
     .expect(errorSummary.exists).notOk()
     .typeText(quantity, 'blah', { paste: true })
-    .click(continueButton);
+    .click(saveButton);
 
   await t
     .expect(errorSummary.exists).ok()
@@ -241,14 +243,14 @@ test('should anchor to the price field when clicking on the numerical price erro
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
-  const continueButton = Selector('[data-test-id="save-button"] button');
+  const saveButton = Selector('[data-test-id="save-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
   const priceInput = Selector('[data-test-id="question-price"] input');
 
   await t
     .expect(errorSummary.exists).notOk()
     .typeText(priceInput, 'blah', { paste: true })
-    .click(continueButton);
+    .click(saveButton);
 
   await t
     .expect(errorSummary.exists).ok()
