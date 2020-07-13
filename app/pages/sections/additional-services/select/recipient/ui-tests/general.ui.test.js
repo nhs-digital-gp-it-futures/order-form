@@ -113,6 +113,24 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
+test('should render a selectRecipient question as radio button options', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const selectRecipientRadioOptions = Selector('[data-test-id="question-selectRecipient"]');
+
+  await t
+    .expect(selectRecipientRadioOptions.exists).ok()
+    .expect(await extractInnerText(selectRecipientRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
+    .expect(selectRecipientRadioOptions.find('input').count).eql(2)
+
+    .expect(selectRecipientRadioOptions.find('input').nth(0).getAttribute('value')).eql('recipient-1')
+    .expect(await extractInnerText(selectRecipientRadioOptions.find('label').nth(0))).eql('Recipient 1 (recipient-1)')
+
+    .expect(selectRecipientRadioOptions.find('input').nth(1).getAttribute('value')).eql('recipient-2')
+    .expect(await extractInnerText(selectRecipientRadioOptions.find('label').nth(1))).eql('Recipient 2 (recipient-2)');
+});
+
 test('should render the Continue button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
