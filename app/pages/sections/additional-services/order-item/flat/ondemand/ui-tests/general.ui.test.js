@@ -188,10 +188,9 @@ test('should render select quantity field as errors with error message when no q
   const saveButton = Selector('[data-test-id="save-button"] button');
   const quantityField = orderItemPage.find('[data-test-id="question-quantity"]');
   const quantityFieldWithError = quantityField.find('[data-test-id="text-field-input-error"]');
-  const button = Selector('[data-test-id="save-button"] button');
 
   await t
-    .expect(button.exists).ok()
+    .expect(saveButton.exists).ok()
     .expect(quantityFieldWithError.exists).notOk()
     .click(saveButton);
 
