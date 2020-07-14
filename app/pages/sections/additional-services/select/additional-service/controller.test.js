@@ -109,7 +109,7 @@ describe('additional-services select-additional-service controller', () => {
       await findAddedCatalogueSolutions({ orderId, accessToken: 'access_token' });
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/${orderId}/sections/catalogue-solutions`,
+        endpoint: `${orderApiUrl}/api/v1/orders/${orderId}/sections/solution`,
         accessToken: 'access_token',
         logger,
       });

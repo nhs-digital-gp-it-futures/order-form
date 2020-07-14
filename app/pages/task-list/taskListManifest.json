@@ -56,7 +56,7 @@
       "name": "Add Catalogue Solutions",
       "sections": [
         {
-          "id": "catalogue-solutions",
+          "id": "solution",
           "title": "Add Catalogue Solutions to your order",
           "dependencies": [
             {
@@ -75,8 +75,8 @@
           "title": "Add Additional Services to your order",
           "dependencies": [
             {
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","catalogue-solutions"],
-              "countDependencies": ["service-recipients","catalogue-solutions"]
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","solution"],
+              "countDependencies": ["service-recipients","solution"]
             }
           ]
         }

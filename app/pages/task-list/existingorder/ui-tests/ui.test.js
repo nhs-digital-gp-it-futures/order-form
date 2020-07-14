@@ -456,11 +456,11 @@ test('should only render task 5 item 1 as a link if all dependencies are met', a
   await t
     .expect(task5Item1.find('a').exists).ok()
     .click(task5Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/catalogue-solutions`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/solution`);
 });
 
 test('should not render the complete tag for task 5 item 1 when returned as incomplete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'catalogue-solutions', status: 'incomplete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'solution', status: 'incomplete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
 
@@ -471,7 +471,7 @@ test('should not render the complete tag for task 5 item 1 when returned as inco
 });
 
 test('should only render the complete tag for task 5 item 1 when returned as complete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'catalogue-solutions', status: 'complete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'solution', status: 'complete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
 
@@ -503,7 +503,7 @@ test('should render task 6 item 1 as text if all dependencies are not met', asyn
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
     { id: 'service-recipients', status: 'complete', count: 0 },
-    { id: 'catalogue-solutions', status: 'complete', count: 0 },
+    { id: 'solution', status: 'complete', count: 0 },
   ]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
@@ -520,7 +520,7 @@ test('should only render task 6 item 1 as a link if all dependencies are met', a
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
     { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 1 },
+    { id: 'solution', status: 'complete', count: 1 },
   ]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);

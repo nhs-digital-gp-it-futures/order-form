@@ -42,7 +42,7 @@ const additionalServicesState = ClientFunction(() => {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/catalogue-solutions')
+    .get('/api/v1/orders/order-id/sections/solution')
     .reply(200,
       {
         catalogueSolutions: [
@@ -219,7 +219,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
 test('should render the error page if no additional services are found', async (t) => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/catalogue-solutions')
+    .get('/api/v1/orders/order-id/sections/solution')
     .reply(200, { catalogueSolutions: [] });
 
   nock(bapiUrl)

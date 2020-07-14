@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/solution';
 
 const setCookies = ClientFunction(() => {
   const cookieValue = JSON.stringify({
@@ -16,7 +16,7 @@ const setCookies = ClientFunction(() => {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-1/order-items?catalogueItemType=AdditionalServices')
+    .get('/api/v1/orders/order-1/sections/solution')
     .reply(200, { });
 
   nock(orderApiUrl)
@@ -33,7 +33,7 @@ const pageSetup = async (withAuth = true) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Additional-services page - general')
+fixture('Solution - Dashboard page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -56,10 +56,10 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render additional-services page', async (t) => {
+test('should render solution page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
-  const page = Selector('[data-test-id="additional-services-page"]');
+  const page = Selector('[data-test-id="solution-page"]');
 
   await t
     .expect(page.exists).ok();
@@ -81,7 +81,7 @@ test('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const title = Selector('h1[data-test-id="additional-services-page-title"]');
+  const title = Selector('h1[data-test-id="solution-page-title"]');
 
   await t
     .expect(title.exists).ok()
@@ -92,7 +92,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="additional-services-page-description"]');
+  const description = Selector('h2[data-test-id="solution-page-description"]');
 
   await t
     .expect(description.exists).ok()
@@ -103,7 +103,7 @@ test('should render the inset advice', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const insetAdvice = Selector('[data-test-id="additional-services-page-insetAdvice"]');
+  const insetAdvice = Selector('[data-test-id="solution-page-insetAdvice"]');
 
   await t
     .expect(insetAdvice.exists).ok()
@@ -124,7 +124,7 @@ test('should render the orderDescription', async (t) => {
     .expect(await extractInnerText(orderDescription)).eql('Some order');
 });
 
-test('should render the Add Additional Services button', async (t) => {
+test('should render the Add Catalogue Solution button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -135,7 +135,7 @@ test('should render the Add Additional Services button', async (t) => {
     .expect(await extractInnerText(addOrderItemButton)).eql(content.addOrderItemButtonText);
 });
 
-test('should navigate to /organisation/order-1/solution/select/solution when Add Additional Services button is clicked', async (t) => {
+test('should navigate to /organisation/order-1/solution/select/solution when Add Catalogue Solution button is clicked', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -143,7 +143,7 @@ test('should navigate to /organisation/order-1/solution/select/solution when Add
 
   await t
     .click(addOrderItemButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services/select/additional-service');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/solution/select/solution');
 });
 
 test('should render the Continue button', async (t) => {
@@ -159,7 +159,7 @@ test('should render the Continue button', async (t) => {
 
 test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/sections/additional-services')
+    .put('/api/v1/orders/order-1/sections/solution')
     .reply(200);
 
   await pageSetup();

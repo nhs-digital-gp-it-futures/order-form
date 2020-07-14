@@ -14,7 +14,7 @@ import {
 } from './commencement-date/controller';
 import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
 import { supplierRoutes } from './supplier/routes';
-import { catalogueSolutionsRoutes } from './catalogue-solutions/routes';
+import { catalogueSolutionsRoutes } from './solution/routes';
 import { additionalServicesRoutes } from './additional-services/routes';
 
 const router = express.Router({ mergeParams: true });
@@ -74,7 +74,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.use('/supplier', supplierRoutes(authProvider, addContext, sessionManager));
 
-  router.use('/catalogue-solutions', catalogueSolutionsRoutes(authProvider, addContext, sessionManager));
+  router.use('/solution', catalogueSolutionsRoutes(authProvider, addContext, sessionManager));
 
   router.use('/additional-services', additionalServicesRoutes(authProvider, addContext, sessionManager));
 
