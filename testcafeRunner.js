@@ -16,6 +16,7 @@ const [,, browserFromArgs, folderFromArgs, fileFromArgs] = process.argv;
 const browserToRun = browserFromArgs || 'chrome:headless';
 const testsToRun = `**/${folderFromArgs || '**'}/ui-tests/${fileFromArgs ? `${fileFromArgs}.` : '*'}ui.test.js`;
 
+let concurrency = 4;
 let stopOnFirstFail = true;
 let quarantineMode = true;
 if (env === 'pipeline' || browserFromArgs) {
@@ -23,8 +24,15 @@ if (env === 'pipeline' || browserFromArgs) {
   quarantineMode = false;
 }
 
+if (browserFromArgs !== undefined) {
+  console.log('set concurrency to 1')
+  concurrency = 1;
+  process.env.NOCK_CHECK = true;
+}
+
 // eslint-disable-next-line no-console
 console.log(`Running tests\nstopOnFirstFail is ${stopOnFirstFail}\nquarantineMode is ${quarantineMode}`);
+
 
 createTestcafe('localhost')
   .then((tc) => {
@@ -33,6 +41,7 @@ createTestcafe('localhost')
     return testcafe.createRunner()
       .src(testsToRun)
       .browsers(browserToRun)
+      .concurrency(concurrency)
       .reporter(['spec', {
         name: 'nunit',
         output: 'integration-test-report.xml',
@@ -42,8 +51,8 @@ createTestcafe('localhost')
         assertionTimeout: 1000,
         pageLoadTimeout: 5000,
         speed: 1,
-        quarantineMode,
-        stopOnFirstFail,
+        quarantineMode: true,
+        stopOnFirstFail: true,
       });
   })
   .then(() => {

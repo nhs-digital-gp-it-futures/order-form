@@ -162,12 +162,16 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Catalogue-solutions - price page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
+    if (process.env.NOCK_CHECK) {
+      const isDone = nock.isDone();
+      if (!isDone) {
+        // eslint-disable-next-line no-console
+        console.log(`pending mocks: ${nock.pendingMocks()}`);
+        nock.cleanAll();
+      }
 
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+      await t.expect(isDone).ok('Not all nock interceptors were used!');
+    }
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
