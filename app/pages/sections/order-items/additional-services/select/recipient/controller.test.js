@@ -67,7 +67,7 @@ describe('Additional-services select-recipient controller', () => {
         expect(response.errors).toEqual(expectedValidationErrors);
       });
 
-      it('should return a validation error if supplierName is undefined', () => {
+      it('should return a validation error if recipient name is undefined', () => {
         const data = {};
 
         const response = validateAdditionalServiceRecipientForm({ data });

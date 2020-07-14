@@ -83,7 +83,7 @@ describe('additional-services select-recipient contextCreator', () => {
       { id: 'recipient-2', name: 'Recipient 2' },
     ];
 
-    const solutionName = 'Solution One';
+    const itemName = 'Item One';
 
     afterEach(() => {
       errorContext.getSectionErrorContext.mockReset();
@@ -96,7 +96,7 @@ describe('additional-services select-recipient contextCreator', () => {
       const params = {
         orderId: 'order-id',
         validationErrors: mockValidationErrors,
-        solutionName,
+        itemName,
         recipients,
       };
 
