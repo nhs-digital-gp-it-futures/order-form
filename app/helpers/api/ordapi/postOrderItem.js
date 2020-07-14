@@ -4,6 +4,7 @@ import { getEndpoint } from '../../../endpoints';
 import { extractDate } from '../../controllers/extractDate';
 
 const formatPostData = ({
+  orderItemType,
   serviceRecipientId,
   serviceRecipientName,
   itemId,
@@ -18,6 +19,7 @@ const formatPostData = ({
   },
   catalogueItemId: itemId,
   catalogueItemName: itemName,
+  catalogueItemType: orderItemType,
   deliveryDate: extractDate('deliveryDate', formData),
   quantity: parseInt(formData.quantity, 10),
   estimationPeriod: formData.selectEstimationPeriod,
@@ -27,6 +29,7 @@ const formatPostData = ({
 export const postOrderItem = async ({
   accessToken,
   orderId,
+  orderItemType,
   serviceRecipientId,
   serviceRecipientName,
   itemId,
@@ -36,6 +39,7 @@ export const postOrderItem = async ({
 }) => {
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postOrderItem', options: { orderId } });
   const body = formatPostData({
+    orderItemType,
     serviceRecipientId,
     serviceRecipientName,
     itemId,

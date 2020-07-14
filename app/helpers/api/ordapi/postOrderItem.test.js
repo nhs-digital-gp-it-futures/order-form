@@ -43,6 +43,7 @@ describe('postOrderItem', () => {
         await postOrderItem({
           orderId: 'order1',
           orderItemId: 'neworderitem',
+          orderItemType: 'SomeOrderItemType',
           accessToken: 'access_token',
           serviceRecipientId: serviceRecipient.odsCode,
           serviceRecipientName: serviceRecipient.name,
@@ -64,6 +65,7 @@ describe('postOrderItem', () => {
       await postOrderItem({
         orderId: 'order1',
         orderItemId: 'neworderitem',
+        orderItemType: 'SomeOrderItemType',
         accessToken: 'access_token',
         serviceRecipientId: serviceRecipient.odsCode,
         serviceRecipientName: serviceRecipient.name,
@@ -81,6 +83,7 @@ describe('postOrderItem', () => {
           serviceRecipient,
           catalogueItemId: item.id,
           catalogueItemName: item.name,
+          catalogueItemType: 'SomeOrderItemType',
           deliveryDate: '2020-12-25',
           quantity: 1,
           estimationPeriod: 'month',
@@ -97,6 +100,7 @@ describe('postOrderItem', () => {
       const response = await postOrderItem({
         orderId: 'order1',
         orderItemId: 'neworderitem',
+        orderItemType: 'SomeOrderItemType',
         accessToken: 'access_token',
         serviceRecipientId: serviceRecipient.odsCode,
         serviceRecipientName: serviceRecipient.name,
