@@ -30,7 +30,7 @@ export const getContext = ({
 export const getErrorContext = (params) => {
   const updatedManifest = getContext({
     orderId: params.orderId,
-    solutionName: params.solutionName,
+    solutionName: params.itemName,
     recipients: params.recipients,
   });
 
