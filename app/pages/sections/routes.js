@@ -15,7 +15,7 @@ import {
 import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './catalogue-solutions/routes';
-import { additionalServicesRoutes } from './additional-services/routes';
+import { additionalServicesRoutes } from './order-items/additional-services/routes';
 
 const router = express.Router({ mergeParams: true });
 
