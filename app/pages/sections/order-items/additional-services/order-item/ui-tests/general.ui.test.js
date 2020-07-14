@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../commonManifest.json';
-import { solutionsApiUrl } from '../../../../../config';
+import { solutionsApiUrl } from '../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
 

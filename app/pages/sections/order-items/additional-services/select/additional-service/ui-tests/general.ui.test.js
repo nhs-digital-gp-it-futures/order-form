@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { solutionsApiUrl as bapiUrl, orderApiUrl } from '../../../../../../config';
+import { solutionsApiUrl as bapiUrl, orderApiUrl } from '../../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service';
 
