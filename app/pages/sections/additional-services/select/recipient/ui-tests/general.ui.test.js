@@ -6,21 +6,15 @@ import { orderApiUrl } from '../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient';
 
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
 
-  document.cookie = `fakeToken=${cookieValue}`;
+const authTokenInSession = JSON.stringify({
+  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
 });
 
-const selectedItemNameState = ClientFunction(() => {
-  const cookieValue = 'Additional Service';
 
-  document.cookie = `selectedItemName=${cookieValue}`;
-});
+const selectedItemName = 'Additional Service';
 
-const mockServiceRecipients = [
+const serviceRecipients = [
   {
     odsCode: 'recipient-1',
     name: 'Recipient 1',
@@ -31,17 +25,24 @@ const mockServiceRecipients = [
   },
 ];
 
+const setState = ClientFunction((key, value) => {
+  document.cookie = `${key}=${value}`;
+});
+
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/service-recipients')
-    .reply(200, { serviceRecipients: mockServiceRecipients });
+    .reply(200, { serviceRecipients });
 };
 
-const pageSetup = async (withAuth = true) => {
+const pageSetup = async (withAuth = true, postRoute = true) => {
   if (withAuth) {
     mocks();
-    await setCookies();
-    await selectedItemNameState();
+    await setState('fakeToken', authTokenInSession);
+    await setState('selectedItemName', selectedItemName);
+    if (postRoute) {
+      await setState('recipients', JSON.stringify(serviceRecipients));
+    }
   }
 };
 
@@ -140,4 +141,70 @@ test('should render the Continue button', async (t) => {
   await t
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
+});
+
+test('should redirect to /organisation/order-id/additional-services/neworderitem when a recipient is selected', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const selectRecipientRadioOptions = Selector('[data-test-id="question-selectRecipient"]');
+  const firstRecipient = selectRecipientRadioOptions.find('input').nth(0);
+  const button = Selector('[data-test-id="continue-button"] button');
+
+  await t
+    .click(firstRecipient)
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/neworderitem');
+});
+
+test('should show the error summary when no additionalService selected causing validation error', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a Service Recipient');
+});
+
+test('should render select recipient field as errors with error message when no additionalService selected causing validation error', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const additionalServiceRecipientPage = Selector('[data-test-id="additional-service-recipient-page"]');
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const recipientSelectField = additionalServiceRecipientPage.find('[data-test-id="question-selectRecipient"]');
+
+  await t
+    .expect(recipientSelectField.find('[data-test-id="radiobutton-options-error"]').exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(recipientSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
+    .expect(await extractInnerText(recipientSelectField.find('#selectRecipient-error'))).contains('Select a Service Recipient');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#selectRecipient`);
 });

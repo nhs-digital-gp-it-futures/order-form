@@ -79,6 +79,26 @@ describe('additional-services select recipient page', () => {
     });
   }));
 
+  it('should render errors on selectRecipient field if there are errors', componentTester(setup, (harness) => {
+    const context = {
+      questions: [
+        {
+          id: 'selectRecipient',
+          error: [{ message: 'some select recipient error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some select recipient error message', href: '#selectRecipient' },
+      ],
+    };
+
+    harness.request(context, ($) => {
+      const selectRecipientQuestion = $('div[data-test-id="question-selectRecipient"]');
+      expect(selectRecipientQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
+      expect(selectRecipientQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
+    });
+  }));
+
   it('should render the "Continue" button', componentTester(setup, (harness) => {
     const context = {
       continueButtonText: 'Continue',
