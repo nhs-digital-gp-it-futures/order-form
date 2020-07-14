@@ -8,8 +8,6 @@ jest.mock('../../../../getSectionErrorContext', () => ({
 }));
 
 const additionalServicePrices = {
-  id: 'additional-service-1',
-  name: 'Additional Service name',
   prices: [
     {
       priceId: 1,
@@ -94,8 +92,9 @@ describe('additional-services select-price contextCreator', () => {
     });
 
     it('should return the title', () => {
-      const context = getContext({ orderId: 'order-1', additionalServicePrices });
-      expect(context.title).toEqual(`${manifest.title} Additional Service name`);
+      const selectedAdditionalServiceName = 'Additional Service name';
+      const context = getContext({ orderId: 'order-1', additionalServicePrices, selectedAdditionalServiceName });
+      expect(context.title).toEqual(`${manifest.title} ${selectedAdditionalServiceName}`);
     });
 
     it('should return the description', () => {

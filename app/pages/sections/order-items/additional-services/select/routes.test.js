@@ -217,25 +217,34 @@ describe('additional-services select routes', () => {
         getPathCookies: [mockAuthorisedCookie],
       });
 
-      return request(setUpFakeApp())
+      const res = await request(setUpFakeApp())
         .post(path)
         .type('form')
         .set('Cookie', [cookies, mockAuthorisedCookie])
         .send({ _csrf: csrfToken })
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('data-test-id="additional-service-select-page"')).toEqual(true);
-          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
-          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-        });
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="additional-service-select-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
 
     it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price if an additional service is selected', async () => {
       selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
         .mockResolvedValue([]);
 
+      const additionalServiceId = 'additional-service-1';
+      const additionalServices = [
+        {
+          additionalServiceId,
+          name: 'Additional Service 1',
+        }];
+
       selectAdditionalServiceController.findAdditionalServices = jest.fn()
-        .mockResolvedValue([{ id: '1' }]);
+        .mockResolvedValue(additionalServices);
+
+      selectAdditionalServiceController.findSelectedCatalogueItemInSession = jest.fn()
+        .mockResolvedValue({ name: 'Additional Service 1' });
 
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
@@ -249,19 +258,21 @@ describe('additional-services select routes', () => {
         getPathCookies: [mockAuthorisedCookie],
       });
 
-      return request(setUpFakeApp())
+      const mockSelectedItemCookie = `selectedItemId=${additionalServiceId}`;
+      const mockAdditionalServicesCookie = `additionalServices=${JSON.stringify(additionalServices)}`;
+
+      const res = await request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockAdditionalServicesCookie, mockSelectedItemCookie])
         .send({
-          selectSolution: 'solution-1',
+          selectAdditionalService: additionalServiceId,
           _csrf: csrfToken,
         })
-        .expect(302)
-        .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service/price`);
-        });
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service/price`);
     });
   });
 
@@ -296,7 +307,7 @@ describe('additional-services select routes', () => {
 
       await request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie, `selectedAdditionalServiceId=${selectedAdditionalServiceId}`]);
+        .set('Cookie', [mockAuthorisedCookie, `selectedItemId=${selectedAdditionalServiceId}`]);
 
       expect(additionalServicePriceController.findAdditionalServicePrices.mock.calls.length)
         .toEqual(1);
