@@ -155,10 +155,13 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     const recipients = await getRecipients({ orderId, accessToken });
     sessionManager.saveToSession({ req, key: 'recipients', value: recipients });
 
+    const selectedAdditionalRecipientId = sessionManager.getFromSession({ req, key: 'selectedAdditionalRecipientId' });
+
     const context = await getAdditionalServiceRecipientPageContext({
       orderId,
       itemName,
       recipients,
+      selectedAdditionalRecipientId,
     });
 
     logger.info(`navigating to order ${orderId} additional-services select recipient page`);
@@ -175,7 +178,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       const selectedRecipientName = getAdditionalServiceRecipientName(
         { serviceRecipientId: selectedRecipientId, recipients },
       );
-      sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: selectedRecipientId });
+      sessionManager.saveToSession({ req, key: 'selectedAdditionalRecipientId', value: selectedRecipientId });
       sessionManager.saveToSession({ req, key: 'selectedRecipientName', value: selectedRecipientName });
       logger.info('Redirect to new additional service order item page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/neworderitem`);

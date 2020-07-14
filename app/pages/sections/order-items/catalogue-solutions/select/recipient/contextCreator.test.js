@@ -66,7 +66,7 @@ describe('catalogue-solutions select-recipient contextCreator', () => {
       expect(context.questions).toEqual(expectedContext.questions);
     });
 
-    it('should return the select recipient question with a checked option if selectedRecipient"Id passed in', () => {
+    it('should return the select recipient question with a checked option if selectedRecipientId passed in', () => {
       const expectedContext = {
         questions: [
           {
