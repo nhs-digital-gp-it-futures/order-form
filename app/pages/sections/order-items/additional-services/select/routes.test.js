@@ -345,6 +345,114 @@ describe('additional-services select routes', () => {
     });
   });
 
+  describe('POST /organisation/:orderId/additional-services/select/additional-service/price', () => {
+    const path = '/organisation/order-1/additional-services/select/additional-service/price';
+    const prices = [
+      {
+        priceId: 1,
+        type: 'flat',
+        currencyCode: 'GBP',
+        itemUnit: {
+          name: 'patient',
+          description: 'per patient',
+        },
+        timeUnit: {
+          name: 'year',
+          description: 'per year',
+        },
+        price: 1.64,
+      }];
+
+    const pricesCookie = `additionalServicePrices=${JSON.stringify(prices)}`;
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [pricesCookie],
+        expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should show the additional service select price page with errors if there are validation errors', async () => {
+      additionalServicePriceController.validateAdditionalServicePriceForm = jest.fn()
+        .mockReturnValue({ success: false });
+
+      additionalServicePriceController.findAdditionalServicePrices = jest.fn()
+        .mockResolvedValue(prices);
+
+      additionalServicePriceController.getAdditionalServicePricePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      additionalServicePriceController.getAdditionalServicePriceErrorPageContext = jest.fn()
+        .mockResolvedValue({
+          errors: [{ text: 'Select a List price', href: '#selectAdditionalServicePrice' }],
+        });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, pricesCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="additional-service-price-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+    });
+
+    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipient if a price is selected', async () => {
+      additionalServicePriceController.validateAdditionalServicePriceForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, pricesCookie])
+        .send({
+          selectAdditionalServicePrice: '1',
+          _csrf: csrfToken,
+        })
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipient`);
+    });
+  });
+
   describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipient', () => {
     const path = '/organisation/some-order-id/additional-services/select/additional-service/price/recipient';
 
