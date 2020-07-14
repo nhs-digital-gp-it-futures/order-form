@@ -133,10 +133,12 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`);
     }
 
+    const selectedAdditionalServiceName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
     const additionalServicePrices = sessionManager.getFromSession({ req, key: 'additionalServicePrices' });
     const context = await getAdditionalServicePriceErrorPageContext({
       orderId,
       additionalServicePrices,
+      selectedAdditionalServiceName,
       validationErrors: response.errors,
     });
 

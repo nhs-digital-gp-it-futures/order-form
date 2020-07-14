@@ -14,9 +14,12 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
+const selectedItemNameState = ClientFunction(() => {
+  document.cookie = 'selectedItemName=Additional Service Name';
+});
+
 const selectedAdditionalServiceState = ClientFunction(() => {
   document.cookie = 'selectedItemId=additional-service-1';
-  document.cookie = 'selectedItemName=Additional Service Name';
 });
 
 const mockAdditionalServicePricing = {
@@ -152,7 +155,10 @@ const pageSetup = async (
     mocks();
     await setCookies();
   }
-  if (withSelectedAdditionalServiceState) await selectedAdditionalServiceState();
+  if (withSelectedAdditionalServiceState) {
+    await selectedItemNameState();
+    await selectedAdditionalServiceState();
+  }
   if (withAdditionalServicePricesState) await additionalServicePricesState();
   if (withSelectedAdditionalServicePriceIdState) await selectedAdditionalServicePriceIdState();
 };
@@ -302,6 +308,23 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
     .click(firstAdditionalService)
     .click(button)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient');
+});
+
+test('should render the title on validation error', async (t) => {
+  await selectedItemNameState();
+  await pageSetup(true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-button"] button');
+  const title = Selector('h1[data-test-id="additional-service-price-page-title"]');
+
+  await t
+    .expect(await extractInnerText(title)).eql(`${content.title} Additional Service Name`)
+    .click(button);
+
+  await t
+    .expect(title.exists).ok()
+    .expect(await extractInnerText(title)).eql(`${content.title} Additional Service Name`);
 });
 
 test('should show the error summary when no price selected causing validation error', async (t) => {
