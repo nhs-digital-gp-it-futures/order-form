@@ -60,7 +60,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const context = await getOrderItemContext({
       orderId,
       orderItemId,
-      orderItemType: 'additional-services',
+      orderItemType: 'AdditionalService',
       itemName: pageData.itemName,
       odsCode: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
@@ -80,7 +80,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const pageData = sessionManager.getFromSession({ req, key: 'orderItemPageData' });
 
     const errors = validateOrderItemForm({
-      orderItemType: 'additional-services',
+      orderItemType: 'AdditionalService',
       data: req.body,
       selectedPrice: pageData.selectedPrice,
     });
@@ -91,6 +91,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
         accessToken,
         orderId,
         orderItemId,
+        orderItemType: 'AdditionalService',
         serviceRecipientId: pageData.serviceRecipientId,
         serviceRecipientName: pageData.serviceRecipientName,
         itemId: pageData.itemId,
@@ -109,7 +110,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const context = await getOrderItemErrorPageContext({
       orderId,
       orderItemId,
-      orderItemType: 'additional-services',
+      orderItemType: 'AdditionalService',
       itemName: pageData.itemName,
       serviceRecipientId: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
