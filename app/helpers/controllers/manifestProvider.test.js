@@ -22,9 +22,9 @@ describe('getSelectedPriceManifest', () => {
 
   it.each`
     orderItemType             | provisioningType | type      | expectedPath
-    ${'catalogue-solutions'}  | ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/ondemand/manifest.json'}
-    ${'catalogue-solutions'}  | ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/patient/manifest.json'}
-    ${'catalogue-solutions'}  | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/declarative/manifest.json'}
+    ${'catalogue-solutions'}  | ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/order-item/flat/ondemand/manifest.json'}
+    ${'catalogue-solutions'}  | ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/order-item/flat/patient/manifest.json'}
+    ${'catalogue-solutions'}  | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/order-item/flat/declarative/manifest.json'}
   `('should call path.join with the path $expectedPath', ({
   orderItemType, provisioningType, type, expectedPath,
 }) => {
