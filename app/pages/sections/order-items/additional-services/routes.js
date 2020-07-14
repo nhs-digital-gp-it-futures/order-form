@@ -5,7 +5,7 @@ import { withCatch, extractAccessToken } from '../../../../helpers/routes/router
 import {
   getAdditionalServicesPageContext,
   putAdditionalServices,
-} from './additional-services/controller';
+} from './dashboard/controller';
 import { additionalServicesSelectRoutes } from './select/routes';
 import {
   getOrderItemContext,
@@ -26,8 +26,8 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    logger.info(`navigating to order ${orderId} additional-services page`);
-    return res.render('pages/sections/order-items/additional-services/additional-services/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    logger.info(`navigating to order ${orderId} additional-services dashboard page`);
+    return res.render('pages/sections/order-items/additional-services/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {

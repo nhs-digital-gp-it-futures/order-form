@@ -9,7 +9,7 @@ import {
   testAuthorisedPostPathForUnauthorisedUsers,
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
-import * as additionalServicesController from './additional-services/controller';
+import * as additionalServicesController from './dashboard/controller';
 import * as orderItemController from './order-item/controller';
 import * as validator from '../../../../helpers/controllers/validateOrderItemForm';
 import * as orderItemRoutesHelper from './order-item/routesHelper';
