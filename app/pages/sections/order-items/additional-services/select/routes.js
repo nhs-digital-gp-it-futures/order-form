@@ -15,6 +15,8 @@ import {
 import {
   findAdditionalServicePrices,
   getAdditionalServicePricePageContext,
+  getAdditionalServicePriceErrorPageContext,
+  validateAdditionalServicePriceForm,
 } from './price/controller';
 import {
   getAdditionalServiceRecipientPageContext,
@@ -121,6 +123,28 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     });
 
     logger.info(`navigating to order ${orderId} additional-services select price page`);
+    return res.render('pages/sections/order-items/additional-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/additional-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    const response = validateAdditionalServicePriceForm({ data: req.body });
+    if (response.success) {
+      sessionManager.saveToSession({ req, key: 'selectedPriceId', value: req.body.selectAdditionalServicePrice });
+      logger.info('redirecting to additional services select recipient page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`);
+    }
+
+    const selectedAdditionalServiceName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
+    const additionalServicePrices = sessionManager.getFromSession({ req, key: 'additionalServicePrices' });
+    const context = await getAdditionalServicePriceErrorPageContext({
+      orderId,
+      additionalServicePrices,
+      selectedAdditionalServiceName,
+      validationErrors: response.errors,
+    });
+
     return res.render('pages/sections/order-items/additional-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
