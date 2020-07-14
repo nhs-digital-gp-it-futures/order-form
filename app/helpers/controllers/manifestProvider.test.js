@@ -17,14 +17,17 @@ describe('getSelectedPriceManifest', () => {
     const manifest = { description };
 
     fs.readFileSync.mockReturnValue(manifestFileContent);
-    expect(getSelectedPriceManifest({ orderItemType: 'catalogue-solutions', provisioningType: 'OnDemand', type: 'Flat' })).toEqual(manifest);
+    expect(getSelectedPriceManifest({ orderItemType: 'Solution', provisioningType: 'OnDemand', type: 'Flat' })).toEqual(manifest);
   });
 
   it.each`
-    orderItemType             | provisioningType | type      | expectedPath
-    ${'catalogue-solutions'}  | ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/ondemand/manifest.json'}
-    ${'catalogue-solutions'}  | ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/patient/manifest.json'}
-    ${'catalogue-solutions'}  | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/catalogue-solutions/order-item/flat/declarative/manifest.json'}
+    orderItemType           | provisioningType | type      | expectedPath
+    ${'Solution'}           | ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/order-item/flat/ondemand/manifest.json'}
+    ${'Solution'}           | ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/order-item/flat/patient/manifest.json'}
+    ${'Solution'}           | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/order-item/flat/declarative/manifest.json'}
+    ${'AdditionalService'}  | ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/order-items/additional-services/order-item/flat/ondemand/manifest.json'}
+    ${'AdditionalService'}  | ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/order-items/additional-services/order-item/flat/patient/manifest.json'}
+    ${'AdditionalService'}  | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/order-items/additional-services/order-item/flat/declarative/manifest.json'}
   `('should call path.join with the path $expectedPath', ({
   orderItemType, provisioningType, type, expectedPath,
 }) => {
@@ -40,7 +43,7 @@ describe('getSelectedPriceManifest', () => {
     const expectedPath = 'expected/path';
     path.join.mockReturnValue(expectedPath);
 
-    getSelectedPriceManifest({ orderItemType: 'catalogue-solutions', provisioningType: 'Patient', type: 'Flat' });
+    getSelectedPriceManifest({ orderItemType: 'Solution', provisioningType: 'Patient', type: 'Flat' });
     expect(fs.readFileSync.mock.calls.length).toEqual(1);
     expect(fs.readFileSync).toHaveBeenCalledWith(expectedPath);
   });
