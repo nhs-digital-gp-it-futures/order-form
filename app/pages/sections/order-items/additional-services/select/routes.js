@@ -55,7 +55,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         });
       }
 
-      const selectedAdditionalServiceId = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceId' });
+      const selectedAdditionalServiceId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
       sessionManager.saveToSession({ req, key: 'additionalServices', value: additionalServices });
 
       const context = getAdditionalServicePageContext({
