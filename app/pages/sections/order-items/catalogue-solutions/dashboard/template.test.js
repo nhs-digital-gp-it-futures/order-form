@@ -3,11 +3,11 @@ import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/sections/order-items/catalogue-solutions/catalogue-solutions/template.njk',
+    path: 'pages/sections/order-items/catalogue-solutions/dashboard/template.njk',
   },
 };
 
-describe('catalogue-solutions page', () => {
+describe('catalogue-solutions - dashboard page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
       orderId: 'order-1',

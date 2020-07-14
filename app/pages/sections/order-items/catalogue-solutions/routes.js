@@ -5,7 +5,7 @@ import { withCatch, extractAccessToken } from '../../../../helpers/routes/router
 import {
   getCatalogueSolutionsPageContext,
   putCatalogueSolutions,
-} from './catalogue-solutions/controller';
+} from './dashboard/controller';
 import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
@@ -26,8 +26,8 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    logger.info(`navigating to order ${orderId} catalogue-solutions page`);
-    return res.render('pages/sections/order-items/catalogue-solutions/catalogue-solutions/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    logger.info(`navigating to order ${orderId} catalogue-solutions dashboard page`);
+    return res.render('pages/sections/order-items/catalogue-solutions/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
