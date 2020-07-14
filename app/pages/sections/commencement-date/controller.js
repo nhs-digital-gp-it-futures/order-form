@@ -1,16 +1,25 @@
 import { getData, putData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
-import { getDateErrors } from './getDateErrors';
+import { getDateErrors } from '../../../helpers/controllers/getDateErrors';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
+import { extractDate } from '../../../helpers/controllers/extractDate';
+import { destructureDate } from '../../../helpers/common/dateFormatter';
 
-const formatPutData = (data) => {
-  const day = data['commencementDate-day'];
-  const month = data['commencementDate-month'];
-  const year = data['commencementDate-year'];
-  return {
-    commencementDate: `${year}-${month.length === 1 ? '0' : ''}${month}-${day.length === 1 ? '0' : ''}${day}`,
-  };
+const formatPutData = data => ({
+  commencementDate: extractDate('commencementDate', data),
+});
+
+const generateFormData = (commencementDateData) => {
+  if (commencementDateData.commencementDate) {
+    const [day, month, year] = destructureDate(commencementDateData.commencementDate);
+    return ({
+      'commencementDate-day': day,
+      'commencementDate-month': month,
+      'commencementDate-year': year,
+    });
+  }
+  return undefined;
 };
 
 export const getCommencementDateContext = async ({ orderId, accessToken }) => {
@@ -22,22 +31,28 @@ export const getCommencementDateContext = async ({ orderId, accessToken }) => {
   logger.info(`Commencement date ${commencementDateData ? '' : 'not '}found for ${orderId}`);
   return getContext({
     orderId,
-    data: commencementDateData.commencementDate ? commencementDateData.commencementDate : undefined,
+    data: generateFormData(commencementDateData),
   });
+};
+
+export const validateCommencementDateForm = ({ data }) => {
+  const errors = [];
+  const dateErrors = getDateErrors('commencementDate', data);
+  if (dateErrors) {
+    errors.push(dateErrors);
+  }
+
+  return errors;
 };
 
 export const putCommencementDate = async ({
   orderId, data, accessToken,
 }) => {
-  const errors = [getDateErrors(data)];
-  if (errors[0]) return { success: false, errors };
-
   const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putCommencementDate', options: { orderId } });
   try {
-    const body = formatPutData(data);
     await putData({
       endpoint,
-      body,
+      body: formatPutData(data),
       accessToken,
       logger,
     });

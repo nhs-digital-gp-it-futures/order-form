@@ -1,0 +1,56 @@
+{
+  "questions": {
+    "quantity": {
+      "id": "quantity",
+      "mainAdvice": "What is your practice list size?",
+      "expandableSection": {
+        "dataTestId": "view-section-quantity-id",
+        "title": "What list size should I enter?",
+        "innerComponent": "This figure is usually the number of patients registered with the Service Recipient. If you're unsure how this relates to your order you can contact the helpdesk using the link at the bottom of the page."
+      }
+    }
+  },
+  "addPriceTable": {
+    "columnInfo": [
+      {
+        "data": "What price have you agreed? (£)",
+        "width": "50%",
+        "classes": "nhsuk-u-font-size-16"
+      },
+      {
+        "data": "Unit of order",
+        "width": "50%",
+        "classes": "nhsuk-u-font-size-16"
+      }
+    ],
+    "cellInfo": {
+      "price": {
+        "question": {
+          "type": "input",
+          "id": "price"
+        },
+        "classes": "nhsuk-input--width-10",
+        "expandableSection": {
+          "dataTestId": "view-section-input-id",
+          "title": "What price should I enter?",
+          "innerComponent": "You can change the list price if you've agreed a different rate with the supplier."
+        }
+      },
+      "unitOfOrder": {
+        "dataTestId": "unit-of-order"
+      }
+    }
+  },
+  "errorMessages": {
+    "QuantityRequired": "Enter a practice list size",
+    "QuantityMustBeANumber": "Practice list size must be a number",
+    "QuantityInvalid": "Practice list size must be a whole number",
+    "QuantityGreaterThanZero": "Practice list size must be greater than zero",
+    "QuantityLessThanMax": "Maximum practice list size exceeded, enter a lower number",
+    "PriceRequired": "Enter a price",
+    "PriceMustBeANumber": "Price must be a number",
+    "PriceMoreThan3dp": "Price must be to a maximum of 3 decimal places",
+    "PriceGreaterThanOrEqualToZero": "Price cannot be negative",
+    "PriceLessThanMax": "Maximum price exceeded, enter a lower price"
+  }
+}

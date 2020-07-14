@@ -1,15 +1,11 @@
 import { getData, putData } from 'buying-catalogue-library';
-import { getCommencementDateContext, putCommencementDate } from './controller';
+import { getCommencementDateContext, putCommencementDate, validateCommencementDateForm } from './controller';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
-import * as dateValidator from './getDateErrors';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
-jest.mock('./getDateErrors', () => ({
-  getDateErrors: jest.fn(),
-}));
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
@@ -18,12 +14,6 @@ const mockData = {
   'commencementDate-day': '21',
   'commencementDate-month': '12',
   'commencementDate-year': '2020',
-};
-
-const mockDataError = {
-  field: 'CommencementDate',
-  part: ['day'],
-  id: 'CommencementDateDayRequired',
 };
 
 describe('commencement-date controller', () => {
@@ -68,36 +58,55 @@ describe('commencement-date controller', () => {
       await getCommencementDateContext({ orderId: 'order-id', accessToken: 'access_token' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', data: commencementDate });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({
+        orderId: 'order-id',
+        data: {
+          'commencementDate-day': '01',
+          'commencementDate-month': '01',
+          'commencementDate-year': '2020',
+        },
+      });
+    });
+  });
+
+  describe('validateCommencementDateForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return an empty erray', () => {
+        const data = {
+          'commencementDate-day': '09',
+          'commencementDate-month': '02',
+          'commencementDate-year': '2021',
+        };
+
+        const errors = validateCommencementDateForm({ data });
+
+        expect(errors).toEqual([]);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const commencementDateRequired = {
+        field: 'CommencementDate',
+        id: 'CommencementDateRequired',
+        part: ['day', 'month', 'year'],
+      };
+
+      it('should return an array of one validation error if deliveryDate is not valid', () => {
+        const data = {
+          'commencementDate-day': '',
+          'commencementDate-month': '',
+          'commencementDate-year': '',
+        };
+
+        const errors = validateCommencementDateForm({ data });
+
+        expect(errors).toEqual([commencementDateRequired]);
+      });
     });
   });
 
   describe('putCommencementDate', () => {
-    afterEach(() => {
-      dateValidator.getDateErrors.mockReset();
-    });
-
-    it('should call getDateErrors with the correct params', () => {
-      putCommencementDate({
-        orderId: 'order-id', data: mockData, accessToken: 'access_token',
-      });
-
-      expect(dateValidator.getDateErrors.mock.calls.length).toEqual(1);
-      expect(dateValidator.getDateErrors).toHaveBeenCalledWith(mockData);
-    });
-
     describe('with errors', () => {
-      it('should return success as false if validation errors found', async () => {
-        dateValidator.getDateErrors
-          .mockReturnValueOnce(mockDataError);
-        const response = await putCommencementDate({
-          orderId: 'order-id', data: mockData, accessToken: 'access_token',
-        });
-        expect(response.success).toEqual(false);
-        expect(response.errors.length).toEqual(1);
-        expect(response.errors[0]).toEqual(mockDataError);
-      });
-
       it('should return error.respose.data if api request is unsuccessful with 400', async () => {
         const responseData = { errors: [{}] };
         putData
@@ -130,10 +139,7 @@ describe('commencement-date controller', () => {
       });
 
       it('should call putData once with the correct params', async () => {
-        dateValidator.getDateErrors
-          .mockReturnValueOnce(null);
-        putData
-          .mockResolvedValueOnce({});
+        putData.mockResolvedValueOnce({});
 
         await putCommencementDate({
           orderId: 'order-id', data: mockData, accessToken: 'access_token',
@@ -148,8 +154,6 @@ describe('commencement-date controller', () => {
       });
 
       it('should call putData once with the correct params when day and month are single digit', async () => {
-        dateValidator.getDateErrors
-          .mockReturnValueOnce(null);
         putData
           .mockResolvedValueOnce({});
 
@@ -172,8 +176,6 @@ describe('commencement-date controller', () => {
       });
 
       it('should return success as true if data is saved successfully', async () => {
-        dateValidator.getDateErrors
-          .mockReturnValueOnce(null);
         putData
           .mockResolvedValueOnce({});
         const response = await putCommencementDate({
