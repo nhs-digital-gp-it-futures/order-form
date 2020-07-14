@@ -91,6 +91,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
         accessToken,
         orderId,
         orderItemId,
+        orderItemType: 'AdditionalService',
         serviceRecipientId: pageData.serviceRecipientId,
         serviceRecipientName: pageData.serviceRecipientName,
         itemId: pageData.itemId,

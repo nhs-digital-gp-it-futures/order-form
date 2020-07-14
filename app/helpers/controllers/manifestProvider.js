@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-
 const orderItemTypeToFolderNameMap = {
   solution: 'catalogue-solutions',
   additionalservice: 'additional-services',

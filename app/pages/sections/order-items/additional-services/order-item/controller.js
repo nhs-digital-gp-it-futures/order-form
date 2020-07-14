@@ -67,6 +67,7 @@ export const getOrderItemErrorPageContext = (params) => {
 export const saveOrderItem = async ({
   orderId,
   orderItemId,
+  orderItemType,
   accessToken,
   serviceRecipientId,
   serviceRecipientName,
@@ -80,6 +81,7 @@ export const saveOrderItem = async ({
       ? await postOrderItem({
         accessToken,
         orderId,
+        orderItemType,
         serviceRecipientId,
         serviceRecipientName,
         itemId,
