@@ -243,6 +243,9 @@ describe('additional-services select routes', () => {
       selectAdditionalServiceController.findAdditionalServices = jest.fn()
         .mockResolvedValue(additionalServices);
 
+      selectAdditionalServiceController.findSelectedCatalogueItemInSession = jest.fn()
+        .mockResolvedValue({ name: 'Additional Service 1' });
+
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
 

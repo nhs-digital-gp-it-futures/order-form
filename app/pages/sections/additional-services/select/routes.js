@@ -7,6 +7,7 @@ import { getRecipients } from '../../../../helpers/api/ordapi/getRecipients';
 import {
   findAdditionalServices,
   findAddedCatalogueSolutions,
+  findSelectedCatalogueItemInSession,
   getAdditionalServicePageContext,
   getAdditionalServiceErrorPageContext,
   validateAdditionalServicesForm,
@@ -70,9 +71,12 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
     if (response.success) {
       const selectedItemId = req.body.selectAdditionalService;
-      const additionalServices = sessionManager.getFromSession({ req, key: 'additionalServices' });
-      const findCallback = a => a.additionalServiceId === selectedItemId;
-      const selectedItem = additionalServices.find(findCallback);
+      const selectedItem = findSelectedCatalogueItemInSession({
+        req,
+        selectedItemId,
+        sessionManager,
+      });
+
       sessionManager.saveToSession({ req, key: 'selectedItemId', value: selectedItemId });
       sessionManager.saveToSession({ req, key: 'selectedItemName', value: selectedItem.name });
 
