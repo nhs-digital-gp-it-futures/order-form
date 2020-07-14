@@ -1,15 +1,21 @@
 import express from 'express';
 import { logger } from '../../logger';
 import config from '../../config';
-import { withCatch, extractAccessToken } from '../../helpers/routerHelper';
+import { withCatch, extractAccessToken } from '../../helpers/routes/routerHelper';
 import {
   getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext, putCallOffOrderingParty,
 } from './ordering-party/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './description/controller';
-import { getCommencementDateContext, putCommencementDate, getCommencementDateErrorContext } from './commencement-date/controller';
+import {
+  getCommencementDateContext,
+  putCommencementDate,
+  getCommencementDateErrorContext,
+  validateCommencementDateForm,
+} from './commencement-date/controller';
 import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
 import { supplierRoutes } from './supplier/routes';
-import { catalogueSolutionsRoutes } from './catalogue-solutions/routes';
+import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/routes';
+import { additionalServicesRoutes } from './order-items/additional-services/routes';
 
 const router = express.Router({ mergeParams: true });
 
@@ -70,6 +76,8 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.use('/catalogue-solutions', catalogueSolutionsRoutes(authProvider, addContext, sessionManager));
 
+  router.use('/additional-services', additionalServicesRoutes(authProvider, addContext, sessionManager));
+
   router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const context = await getCommencementDateContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
@@ -79,17 +87,23 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.post('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const validationErrors = [];
 
-    const response = await putCommencementDate({
-      orderId,
-      data: req.body,
-      accessToken: extractAccessToken({ req, tokenType: 'access' }),
-    });
+    const errors = validateCommencementDateForm({ data: req.body });
+    validationErrors.push(...errors);
 
-    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    if (validationErrors.length === 0) {
+      const apiResponse = await putCommencementDate({
+        orderId,
+        data: req.body,
+        accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      });
+      if (apiResponse.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+      validationErrors.push(...apiResponse.errors);
+    }
 
     const context = await getCommencementDateErrorContext({
-      validationErrors: response.errors,
+      validationErrors,
       orderId,
       data: req.body,
     });

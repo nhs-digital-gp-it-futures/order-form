@@ -2,7 +2,6 @@
   "backLinkText": "Go back to homepage",
   "description": "Manage orders currently in progress and view orders that have been submitted.",
   "newOrderButtonText": "Create new order",
-  "proxyLinkText": "Nominate an organisation to buy on your behalf",
   "unsubmittedOrdersTableTitle": "Unsubmitted orders",
   "submittedOrdersTableTitle": "Submitted orders",
   "columnInfo": [

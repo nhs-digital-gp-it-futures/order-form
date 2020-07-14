@@ -4,8 +4,8 @@ const config = require('./config');
 const { App } = require('./app');
 const { routes } = require('./routes');
 const { logger } = require('./logger');
-const { isIdentityReady } = require('./helpers/isIdentityReady');
-const { createAuthProvider } = require('./helpers/createAuthProvider');
+const { isIdentityReady } = require('./helpers/app/isIdentityReady');
+const { createAuthProvider } = require('./helpers/app/createAuthProvider');
 
 Object.keys(config).map((configKey) => {
   if (config[configKey]) {

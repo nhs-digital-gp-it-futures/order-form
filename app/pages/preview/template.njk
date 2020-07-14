@@ -61,6 +61,13 @@
               data: oneOffCostTable.items
             }) }}
           </div>
+          <div data-test-id="one-off-cost-totals-table">
+            {{ bcTableFlexible({
+              columnInfo: oneOffCostTotalsTable.columnInfo,
+              classes: oneOffCostTotalsTable.classes,
+              data: oneOffCostTotalsTable.items
+            }) }}
+          </div>
         </div>
       </div>
     </div>
@@ -75,6 +82,13 @@
               columnInfo: recurringCostTable.columnInfo,
               classes: recurringCostTable.classes,
               data: recurringCostTable.items
+            }) }}
+          </div>
+          <div data-test-id="recurring-cost-totals-table">
+            {{ bcTableFlexible({
+              columnInfo: recurringCostTotalsTable.columnInfo,
+              classes: recurringCostTotalsTable.classes,
+              data: recurringCostTotalsTable.items
             }) }}
           </div>
         </div>
