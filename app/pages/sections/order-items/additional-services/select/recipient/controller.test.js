@@ -23,6 +23,7 @@ describe('Additional-services select-recipient controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1', itemName: 'Item name' });
     });
   });
+
   describe('validateRecipientForm', () => {
     describe('when there are no validation errors', () => {
       it('should return success as true', () => {

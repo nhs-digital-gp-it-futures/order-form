@@ -26,11 +26,10 @@ export const getContext = ({
   backLinkHref: `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`,
 });
 
-
 export const getErrorContext = (params) => {
   const updatedManifest = getContext({
     orderId: params.orderId,
-    solutionName: params.itemName,
+    itemName: params.itemName,
     recipients: params.recipients,
   });
 

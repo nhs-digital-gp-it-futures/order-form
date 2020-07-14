@@ -153,7 +153,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       );
       sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: selectedRecipientId });
       sessionManager.saveToSession({ req, key: 'selectedRecipientName', value: selectedRecipientName });
-      logger.info('Redirect to new solution page');
+      logger.info('Redirect to new additional service order item page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/neworderitem`);
     }
 
@@ -166,7 +166,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       validationErrors: response.errors,
     });
 
-    return res.render('pages/sections/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
   return router;
 };
