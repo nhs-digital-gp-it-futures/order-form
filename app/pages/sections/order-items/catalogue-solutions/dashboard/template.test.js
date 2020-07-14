@@ -7,7 +7,7 @@ const setup = {
   },
 };
 
-describe('catalogue-solutions - dashboard page', () => {
+describe('Catalogue-solutions - Dashboard page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
       orderId: 'order-1',

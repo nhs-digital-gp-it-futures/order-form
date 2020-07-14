@@ -7,7 +7,7 @@ const setup = {
   },
 };
 
-describe('additional-services - dashboard page', () => {
+describe('Additional-services - Dashboard page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
       orderId: 'order-1',
