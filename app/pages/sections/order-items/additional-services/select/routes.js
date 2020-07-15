@@ -15,9 +15,14 @@ import {
 import {
   findAdditionalServicePrices,
   getAdditionalServicePricePageContext,
+  getAdditionalServicePriceErrorPageContext,
+  validateAdditionalServicePriceForm,
 } from './price/controller';
 import {
   getAdditionalServiceRecipientPageContext,
+  getAdditionalServiceRecipientErrorPageContext,
+  validateAdditionalServiceRecipientForm,
+  getAdditionalServiceRecipientName,
 } from './recipient/controller';
 
 const router = express.Router({ mergeParams: true });
@@ -50,7 +55,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         });
       }
 
-      const selectedAdditionalServiceId = sessionManager.getFromSession({ req, key: 'selectedAdditionalServiceId' });
+      const selectedAdditionalServiceId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
       sessionManager.saveToSession({ req, key: 'additionalServices', value: additionalServices });
 
       const context = getAdditionalServicePageContext({
@@ -121,22 +126,74 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     return res.render('pages/sections/order-items/additional-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.post('/additional-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    const response = validateAdditionalServicePriceForm({ data: req.body });
+    if (response.success) {
+      sessionManager.saveToSession({ req, key: 'selectedPriceId', value: req.body.selectAdditionalServicePrice });
+      logger.info('redirecting to additional services select recipient page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`);
+    }
+
+    const selectedAdditionalServiceName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
+    const additionalServicePrices = sessionManager.getFromSession({ req, key: 'additionalServicePrices' });
+    const context = await getAdditionalServicePriceErrorPageContext({
+      orderId,
+      additionalServicePrices,
+      selectedAdditionalServiceName,
+      validationErrors: response.errors,
+    });
+
+    return res.render('pages/sections/order-items/additional-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
   router.get('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const itemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
-
     const recipients = await getRecipients({ orderId, accessToken });
+    sessionManager.saveToSession({ req, key: 'recipients', value: recipients });
+
+    const selectedAdditionalRecipientId = sessionManager.getFromSession({ req, key: 'selectedAdditionalRecipientId' });
 
     const context = await getAdditionalServiceRecipientPageContext({
       orderId,
       itemName,
       recipients,
+      selectedAdditionalRecipientId,
     });
 
     logger.info(`navigating to order ${orderId} additional-services select recipient page`);
     return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.post('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const recipients = sessionManager.getFromSession({ req, key: 'recipients' });
+
+    const response = validateAdditionalServiceRecipientForm({ data: req.body });
+    if (response.success) {
+      const selectedRecipientId = req.body.selectRecipient;
+      const selectedRecipientName = getAdditionalServiceRecipientName(
+        { serviceRecipientId: selectedRecipientId, recipients },
+      );
+      sessionManager.saveToSession({ req, key: 'selectedAdditionalRecipientId', value: selectedRecipientId });
+      sessionManager.saveToSession({ req, key: 'selectedRecipientName', value: selectedRecipientName });
+      logger.info('Redirect to new additional service order item page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/neworderitem`);
+    }
+
+    const itemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
+
+    const context = await getAdditionalServiceRecipientErrorPageContext({
+      orderId,
+      itemName,
+      recipients,
+      validationErrors: response.errors,
+    });
+
+    return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
   return router;
 };

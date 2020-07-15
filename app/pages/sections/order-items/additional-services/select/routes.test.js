@@ -12,6 +12,7 @@ import {
 } from 'buying-catalogue-library';
 import * as selectAdditionalServiceController from './additional-service/controller';
 import * as additionalServicePriceController from './price/controller';
+import * as selectAdditionalServiceRecipientController from './recipient/controller';
 import { App } from '../../../../../app';
 import { routes } from '../../../../../routes';
 import { baseUrl } from '../../../../../config';
@@ -35,6 +36,15 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
   id: '88421113', name: 'Cool Dude',
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
+
+const mockRecipientSessionState = JSON.stringify([
+  { id: 'recipient-1', name: 'Recipient 1' },
+  { id: 'recipient-2', name: 'Recipient 2' },
+]);
+const mockRecipientsCookie = `recipients=${mockRecipientSessionState}`;
+
+const mockSelectedItemNameState = 'Item name';
+const mockSelectedItemNameCookie = `selectedItemName=${mockSelectedItemNameState}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
@@ -335,6 +345,114 @@ describe('additional-services select routes', () => {
     });
   });
 
+  describe('POST /organisation/:orderId/additional-services/select/additional-service/price', () => {
+    const path = '/organisation/order-1/additional-services/select/additional-service/price';
+    const prices = [
+      {
+        priceId: 1,
+        type: 'flat',
+        currencyCode: 'GBP',
+        itemUnit: {
+          name: 'patient',
+          description: 'per patient',
+        },
+        timeUnit: {
+          name: 'year',
+          description: 'per year',
+        },
+        price: 1.64,
+      }];
+
+    const pricesCookie = `additionalServicePrices=${JSON.stringify(prices)}`;
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [pricesCookie],
+        expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should show the additional service select price page with errors if there are validation errors', async () => {
+      additionalServicePriceController.validateAdditionalServicePriceForm = jest.fn()
+        .mockReturnValue({ success: false });
+
+      additionalServicePriceController.findAdditionalServicePrices = jest.fn()
+        .mockResolvedValue(prices);
+
+      additionalServicePriceController.getAdditionalServicePricePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      additionalServicePriceController.getAdditionalServicePriceErrorPageContext = jest.fn()
+        .mockResolvedValue({
+          errors: [{ text: 'Select a List price', href: '#selectAdditionalServicePrice' }],
+        });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, pricesCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="additional-service-price-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+    });
+
+    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipient if a price is selected', async () => {
+      additionalServicePriceController.validateAdditionalServicePriceForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, pricesCookie])
+        .send({
+          selectAdditionalServicePrice: '1',
+          _csrf: csrfToken,
+        })
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipient`);
+    });
+  });
+
   describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipient', () => {
     const path = '/organisation/some-order-id/additional-services/select/additional-service/price/recipient';
 
@@ -364,6 +482,110 @@ describe('additional-services select routes', () => {
 
       expect(res.text.includes('data-test-id="additional-service-recipient-page"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+    });
+  });
+
+  describe('POST /organisation/:orderId/additional-services/select/additional-service/price/recipient', () => {
+    const path = '/organisation/order-1/additional-services/select/additional-service/price/recipient';
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', () => testAuthorisedPostPathForUnauthenticatedUser({
+      app: request(setUpFakeApp()),
+      getPath: path,
+      postPath: path,
+      getPathCookies: [
+        mockAuthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie,
+      ],
+      postPathCookies: [mockRecipientsCookie, mockSelectedItemNameCookie],
+      expectedRedirectPath: 'http://identity-server/login',
+    }));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      getRecipients.mockResolvedValue([]);
+
+      return testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie,
+        ],
+        postPathCookies: [
+          mockUnauthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie,
+        ],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      });
+    });
+
+    it('should show the recipient select page with errors if there are validation errors', async () => {
+      getRecipients.mockResolvedValue([]);
+
+      selectAdditionalServiceRecipientController.validateAdditionalServiceRecipientForm = jest.fn()
+        .mockReturnValue({ success: false });
+
+      selectAdditionalServiceRecipientController
+        .getAdditionalServiceRecipientErrorPageContext = jest.fn()
+          .mockResolvedValue({
+            errors: [{ text: 'Select a recipient', href: '#selectRecipient' }],
+          });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie,
+        ],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="additional-service-recipient-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should redirect to /organisation/some-order-id/catalogue-solutions/neworderitem if a recipient is selected', async () => {
+      getRecipients.mockResolvedValue([]);
+
+      selectAdditionalServiceRecipientController.validateAdditionalServiceRecipientForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      selectAdditionalServiceRecipientController.getAdditionalServiceRecipientName = jest.fn()
+        .mockReturnValue('service recipient one');
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie,
+        ],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie])
+        .send({
+          selectRecipient: 'recipient-1',
+          _csrf: csrfToken,
+        })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/neworderitem`);
+        });
     });
   });
 });

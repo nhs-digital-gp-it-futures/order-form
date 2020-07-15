@@ -56,6 +56,7 @@ export const getErrorContext = (params) => {
   const updatedManifest = getContext({
     orderId: params.orderId,
     additionalServicePrices: params.additionalServicePrices,
+    selectedAdditionalServiceName: params.selectedAdditionalServiceName,
   });
 
   return {

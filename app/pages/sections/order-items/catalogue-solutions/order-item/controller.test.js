@@ -265,8 +265,9 @@ describe('catalogue-solutions order-item controller', () => {
             body: {
               ...selectedPrice,
               serviceRecipient,
-              catalogueSolutionId: 'solutionId1',
-              catalogueSolutionName: 'Solution 1',
+              catalogueItemId: 'solutionId1',
+              catalogueItemName: 'Solution 1',
+              catalogueItemType: 'Solution',
               deliveryDate: '2020-12-25',
               quantity: 1,
               estimationPeriod: 'month',
