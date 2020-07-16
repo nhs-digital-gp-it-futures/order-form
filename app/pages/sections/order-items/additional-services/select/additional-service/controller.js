@@ -28,19 +28,6 @@ export const findAddedCatalogueSolutions = async ({ orderId, accessToken }) => {
   return catalogueSolutions.map(catalogueSolution => catalogueSolution.catalogueItemId);
 };
 
-export const findSelectedCatalogueItemInSession = ({ req, selectedItemId, sessionManager }) => {
-  const additionalServices = sessionManager.getFromSession({ req, key: 'additionalServices' });
-  const findCallback = a => a.additionalServiceId === selectedItemId;
-  const selectedItem = additionalServices.find(findCallback);
-
-  if (!selectedItem) {
-    logger.error(`Unable to find selected item ${selectedItemId} in session`);
-    throw new Error();
-  }
-
-  return selectedItem;
-};
-
 export const validateAdditionalServicesForm = ({ data }) => {
   if (data.selectAdditionalService && data.selectAdditionalService.trim().length > 0) {
     return { success: true };

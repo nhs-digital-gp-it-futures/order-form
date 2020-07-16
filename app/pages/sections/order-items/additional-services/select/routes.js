@@ -7,7 +7,6 @@ import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import {
   findAdditionalServices,
   findAddedCatalogueSolutions,
-  findSelectedCatalogueItemInSession,
   getAdditionalServicePageContext,
   getAdditionalServiceErrorPageContext,
   validateAdditionalServicesForm,
@@ -24,6 +23,9 @@ import {
   validateAdditionalServiceRecipientForm,
   getAdditionalServiceRecipientName,
 } from './recipient/controller';
+import {
+  findSelectedCatalogueItemInSession,
+} from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 
 const router = express.Router({ mergeParams: true });
 
@@ -80,6 +82,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         req,
         selectedItemId,
         sessionManager,
+        catalogueItemsKey: 'additionalServices',
       });
 
       sessionManager.saveToSession({ req, key: 'selectedItemId', value: selectedItemId });
