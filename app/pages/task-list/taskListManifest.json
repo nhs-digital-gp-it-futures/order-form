@@ -105,10 +105,11 @@
             },
             { 
               "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","catalogue-solutions","additional-services"],
-              "countDependencies": ["service-recipients","catalogue-solutions","additional-services"]
+              "countDependencies": ["service-recipients"]
             },
             { 
-              "statusDependencies": ["associated-services"]
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","associated-services"],
+              "countDependencies": ["service-recipients", "associated-services"]
             }
           ]
         }

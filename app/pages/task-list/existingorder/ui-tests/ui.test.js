@@ -720,6 +720,10 @@ test('should only render task 7 item 1 as a link if recipients 1, catalogue solu
 
 test('should only render task 7 item 1 as a link if associated-services completed', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+    { id: 'service-recipients', status: 'complete', count: 1 },
     { id: 'associated-services', status: 'complete', count: 1 },
   ]);
   await pageSetup(t, true, mockOrderSummary);
