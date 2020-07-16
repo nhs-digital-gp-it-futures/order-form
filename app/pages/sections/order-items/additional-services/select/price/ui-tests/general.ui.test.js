@@ -204,8 +204,8 @@ test('should navigate to /organisation/order-id/additional-services/select/addit
   const solutionId = '100001-001';
 
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/catalogue-solutions')
-    .reply(200, { catalogueSolutions: [{ catalogueItemId: solutionId }] });
+    .get('/api/v1/orders/order-id/order-items?catalogueItemType=Solution')
+    .reply(200, [{ catalogueItemId: solutionId }]);
 
   nock(solutionsApiUrl)
     .get(`/api/v1/additional-services?solutionIds=${solutionId}`)
