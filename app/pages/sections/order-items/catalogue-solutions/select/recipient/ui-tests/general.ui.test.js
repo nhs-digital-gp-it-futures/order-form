@@ -17,7 +17,7 @@ const setCookies = ClientFunction(() => {
 const selectedSolutionIdState = ClientFunction(() => {
   const cookieValue = 'solution-1';
 
-  document.cookie = `selectedSolutionId=${cookieValue}`;
+  document.cookie = `selectedItemId=${cookieValue}`;
 });
 
 const mockServiceRecipients = [
@@ -100,7 +100,7 @@ test('should render Catalogue-solutions select-recipient page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/select/solution/price when click on backlink', async (t) => {
+test('should link to /organisation/order-id/catalogue-solutions/select/solution/price for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -108,8 +108,29 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select/solut
 
   await t
     .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution/price');
+});
+
+test('should link to /organisation/order-id/catalogue-solutions/select/solution/price for backlink with validation errors', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/solutions/solution-1')
+    .reply(200, { id: 'solution-1', name: 'Solution One' });
+
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+  const button = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(goBackLink.exists).ok()
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution/price');
 });
 
 test('should render the title', async (t) => {
