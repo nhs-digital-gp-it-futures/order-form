@@ -4,8 +4,11 @@ import { logger } from '../../../../../logger';
 import { getContext } from './contextCreator';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 
-export const getAdditionalServicesPageContext = async ({ orderId, accessToken }) => {
-  const catalogueItemType = 'AdditionalService';
+export const getAdditionalServicesPageContext = async ({
+  orderId,
+  catalogueItemType,
+  accessToken,
+}) => {
   const additionalServiceOrderItemsData = await getOrderItems({
     orderId,
     catalogueItemType,
