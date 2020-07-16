@@ -24,12 +24,14 @@ const authTokenInSession = JSON.stringify({
   id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
 });
 const itemIdInSession = 'item-1';
+const itemNameInSession = 'Item One';
 const selectedRecipientIdInSession = 'recipient-1';
 const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
 
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
+  itemName: itemNameInSession,
   serviceRecipientId: selectedRecipientIdInSession,
   serviceRecipientName: selectedRecipientNameInSession,
   selectedPrice,
@@ -40,9 +42,6 @@ const setState = ClientFunction((key, value) => {
 });
 
 const mocks = () => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/catalogue-items/item-1')
-    .reply(200, { id: 'item-1', name: 'Item One' });
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
@@ -55,6 +54,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
     await setState('selectedRecipientId', selectedRecipientIdInSession);
     await setState('selectedRecipientName', selectedRecipientNameInSession);
     await setState('selectedItemId', itemIdInSession);
+    await setState('selectedItemName', itemNameInSession);
     await setState('selectedPriceId', selectedPriceIdInSession);
     if (postRoute) {
       await setState('orderItemPageData', orderItemPageDataInSession);

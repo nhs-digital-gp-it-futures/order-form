@@ -6,10 +6,9 @@ const fakeSessionManager = {};
 
 describe('getPageData', () => {
   describe('when new order item', () => {
-    it('should get the selectedSolutionId from session and return this as solutionId', async () => {
+    it('should get the selectedItemId from session and return this as itemId', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-item-id';
 
-      controller.getSolution = jest.fn().mockResolvedValue({});
       controller.getSelectedPrice = jest.fn().mockResolvedValue({});
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
@@ -17,21 +16,19 @@ describe('getPageData', () => {
       expect(pageData.itemId).toEqual('some-selected-item-id');
     });
 
-    it('should get the selectedItemId from session, call getSolution and return the solutionName', async () => {
-      fakeSessionManager.getFromSession = () => 'some-selected-item-id';
+    it('should get the selectedItemName from session and return this as itemName', async () => {
+      fakeSessionManager.getFromSession = () => 'some solution name';
 
-      controller.getSolution = jest.fn().mockResolvedValue({ name: 'some solution name' });
       controller.getSelectedPrice = jest.fn().mockResolvedValue({});
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
 
-      expect(pageData.solutionName).toEqual('some solution name');
+      expect(pageData.itemName).toEqual('some solution name');
     });
 
     it('should get the selectedRecipientId from session and return this as serviceRecipientId', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-recipient-id';
 
-      controller.getSolution = jest.fn().mockResolvedValue({});
       controller.getSelectedPrice = jest.fn().mockResolvedValue({});
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
@@ -42,7 +39,6 @@ describe('getPageData', () => {
     it('should get the selectedRecipientName from session and return this as serviceRecipientName', async () => {
       fakeSessionManager.getFromSession = () => 'some recipient name';
 
-      controller.getSolution = jest.fn().mockResolvedValue({});
       controller.getSelectedPrice = jest.fn().mockResolvedValue({});
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
@@ -53,7 +49,6 @@ describe('getPageData', () => {
     it('should get the selectedPriceId from session, call getSelectedPrice and return the selectedPrice', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-price-id';
 
-      controller.getSolution = jest.fn().mockResolvedValue({});
       controller.getSelectedPrice = jest.fn().mockResolvedValue({ price: 'some-price' });
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
@@ -64,7 +59,6 @@ describe('getPageData', () => {
     it('should return the formData with the price from getSelectedPrice', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-price-id';
 
-      controller.getSolution = jest.fn().mockResolvedValue({});
       controller.getSelectedPrice = jest.fn().mockResolvedValue({ price: 'some-price' });
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
@@ -106,7 +100,7 @@ describe('getPageData', () => {
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
-      expect(pageData.solutionName).toEqual(mockOrderItemResponse.catalogueItemName);
+      expect(pageData.itemName).toEqual(mockOrderItemResponse.catalogueItemName);
     });
 
     it('should call getOrderItem and return the serviceRecipientId', async () => {

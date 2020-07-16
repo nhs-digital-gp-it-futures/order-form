@@ -1,6 +1,5 @@
 import {
   getSelectedPrice,
-  getSolution,
   getOrderItem,
 } from './controller';
 import { destructureDate } from '../../../../../helpers/common/dateFormatter';
@@ -11,16 +10,16 @@ export const getPageData = async ({
 }) => {
   if (orderItemId === 'neworderitem') {
     const itemId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
+    const itemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
     const serviceRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
     const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
-    const solutionName = (await getSolution({ solutionId: itemId, accessToken })).name;
     const formData = { price: formatDecimal(selectedPrice.price) };
 
     return {
-      itemId, solutionName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
+      itemId, itemName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
     };
   }
 
@@ -49,7 +48,7 @@ export const getPageData = async ({
 
   return {
     itemId,
-    solutionName,
+    itemName: solutionName,
     serviceRecipientId,
     serviceRecipientName,
     selectedPrice,

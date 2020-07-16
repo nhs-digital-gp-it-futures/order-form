@@ -61,7 +61,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       orderId,
       orderItemId,
       orderItemType: 'Solution',
-      solutionName: pageData.solutionName,
+      solutionName: pageData.itemName,
       odsCode: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,
