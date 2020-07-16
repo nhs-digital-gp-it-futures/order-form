@@ -18,7 +18,6 @@ import {
 } from './price/controller';
 import {
   getRecipientPageContext,
-  getSolution,
   validateRecipientForm,
   getRecipientErrorPageContext,
   getServiceRecipientName,
@@ -116,9 +115,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   router.get('/solution/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-
-    const solutionId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
-    const solutionData = await getSolution({ solutionId });
+    const solutionName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
 
     const recipients = await getRecipients({ orderId, accessToken });
     sessionManager.saveToSession({ req, key: 'recipients', value: recipients });
@@ -127,7 +124,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
 
     const context = await getRecipientPageContext({
       orderId,
-      solutionName: solutionData.name,
+      solutionName,
       recipients,
       selectedRecipientId,
     });
@@ -153,12 +150,11 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
     }
 
-    const solutionId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
-    const solutionData = await getSolution({ solutionId });
+    const solutionName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
 
     const context = await getRecipientErrorPageContext({
       orderId,
-      solutionName: solutionData.name,
+      solutionName,
       recipients,
       validationErrors: response.errors,
     });

@@ -379,9 +379,6 @@ describe('catalogue-solutions select routes', () => {
     ));
 
     it('should return the catalogue-solutions select recipient page if authorised', () => {
-      selectRecipientController.getSolution = jest.fn()
-        .mockResolvedValue({});
-
       getRecipients.mockResolvedValue([]);
 
       selectRecipientController.getRecipientPageContext = jest.fn()
@@ -421,9 +418,6 @@ describe('catalogue-solutions select routes', () => {
     ));
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      selectRecipientController.getSolution = jest.fn()
-        .mockResolvedValue({ name: 'Solution One ' });
-
       getRecipients.mockResolvedValue([]);
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -446,9 +440,6 @@ describe('catalogue-solutions select routes', () => {
 
       selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: false });
-
-      selectRecipientController.getSolution = jest.fn()
-        .mockResolvedValue({ name: 'Solution One ' });
 
       selectRecipientController.getRecipientErrorPageContext = jest.fn()
         .mockResolvedValue({
@@ -477,9 +468,6 @@ describe('catalogue-solutions select routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/catalogue-solutions/neworderitem if a recipient is selected', async () => {
-      selectRecipientController.getSolution = jest.fn()
-        .mockResolvedValue({ name: 'Solution One ' });
-
       getRecipients.mockResolvedValue([]);
 
       selectRecipientController.validateRecipientForm = jest.fn()
