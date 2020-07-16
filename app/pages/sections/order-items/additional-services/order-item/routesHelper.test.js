@@ -1,12 +1,10 @@
 import { getPageData } from './routesHelper';
-import { getCatalogueItem } from '../../../../../helpers/api/bapi/getCatalogueItem';
 import { getSelectedPrice } from '../../../../../helpers/api/bapi/getSelectedPrice';
 import { getOrderItem } from '../../../../../helpers/api/ordapi/getOrderItem';
 
 const req = {};
 const fakeSessionManager = {};
 
-jest.mock('../../../../../helpers/api/bapi/getCatalogueItem');
 jest.mock('../../../../../helpers/api/bapi/getSelectedPrice');
 jest.mock('../../../../../helpers/api/ordapi/getOrderItem');
 
@@ -19,7 +17,6 @@ describe('getPageData', () => {
     it('should get the selectedItemId from session and return this as itemId', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-item-id';
 
-      getCatalogueItem.mockResolvedValue({});
       getSelectedPrice.mockResolvedValue({});
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
@@ -27,10 +24,9 @@ describe('getPageData', () => {
       expect(pageData.itemId).toEqual('some-selected-item-id');
     });
 
-    it('should get the selectedItemId from session, call getCatalogueItem and return the itemName', async () => {
-      fakeSessionManager.getFromSession = () => 'some-selected-item-id';
+    it('should get the selectedItemName from session and return this as itemName', async () => {
+      fakeSessionManager.getFromSession = () => 'some item name';
 
-      getCatalogueItem.mockResolvedValue({ name: 'some item name' });
       getSelectedPrice.mockResolvedValue({});
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
@@ -41,7 +37,6 @@ describe('getPageData', () => {
     it('should get the selectedRecipientId from session and return this as serviceRecipientId', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-recipient-id';
 
-      getCatalogueItem.mockResolvedValue({});
       getSelectedPrice.mockResolvedValue({});
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
@@ -52,7 +47,6 @@ describe('getPageData', () => {
     it('should get the selectedRecipientName from session and return this as serviceRecipientName', async () => {
       fakeSessionManager.getFromSession = () => 'some recipient name';
 
-      getCatalogueItem.mockResolvedValue({});
       getSelectedPrice.mockResolvedValue({});
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
@@ -63,7 +57,6 @@ describe('getPageData', () => {
     it('should get the selectedPriceId from session, call  getSelectedPrice and return the selectedPrice', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-price-id';
 
-      getCatalogueItem.mockResolvedValue({});
       getSelectedPrice.mockResolvedValue({ price: 'some-price' });
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
@@ -74,7 +67,6 @@ describe('getPageData', () => {
     it('should return the formData with the price from getSelectedPrice', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-price-id';
 
-      getCatalogueItem.mockResolvedValue({});
       getSelectedPrice.mockResolvedValue({ price: 'some-price' });
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });

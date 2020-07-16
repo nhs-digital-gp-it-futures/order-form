@@ -42,9 +42,6 @@ const setState = ClientFunction((key, value) => {
 
 const mocks = () => {
   nock(solutionsApiUrl)
-    .get('/api/v1/catalogue-items/item-1')
-    .reply(200, catalogueItem);
-  nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
 };

@@ -1,4 +1,3 @@
-import { getCatalogueItem } from '../../../../../helpers/api/bapi/getCatalogueItem';
 import { getSelectedPrice } from '../../../../../helpers/api/bapi/getSelectedPrice';
 import { getOrderItem } from '../../../../../helpers/api/ordapi/getOrderItem';
 import { formatDecimal } from '../../../../../helpers/common/priceFormatter';
@@ -8,12 +7,12 @@ export const getPageData = async ({
 }) => {
   if (orderItemId === 'neworderitem') {
     const itemId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
+    const itemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
     const serviceRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
     const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
-    const itemName = (await getCatalogueItem({ itemId, accessToken })).name;
     const formData = { price: formatDecimal(selectedPrice.price) };
 
     return {
