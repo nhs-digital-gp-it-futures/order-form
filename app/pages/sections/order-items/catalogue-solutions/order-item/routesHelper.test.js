@@ -7,18 +7,18 @@ const fakeSessionManager = {};
 describe('getPageData', () => {
   describe('when new order item', () => {
     it('should get the selectedSolutionId from session and return this as solutionId', async () => {
-      fakeSessionManager.getFromSession = () => 'some-selected-solution-id';
+      fakeSessionManager.getFromSession = () => 'some-selected-item-id';
 
       controller.getSolution = jest.fn().mockResolvedValue({});
       controller.getSelectedPrice = jest.fn().mockResolvedValue({});
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
 
-      expect(pageData.solutionId).toEqual('some-selected-solution-id');
+      expect(pageData.itemId).toEqual('some-selected-item-id');
     });
 
-    it('should get the selectedSolutionId from session, call getSolution and return the solutionName', async () => {
-      fakeSessionManager.getFromSession = () => 'some-selected-solution-id';
+    it('should get the selectedItemId from session, call getSolution and return the solutionName', async () => {
+      fakeSessionManager.getFromSession = () => 'some-selected-item-id';
 
       controller.getSolution = jest.fn().mockResolvedValue({ name: 'some solution name' });
       controller.getSelectedPrice = jest.fn().mockResolvedValue({});
@@ -75,7 +75,7 @@ describe('getPageData', () => {
 
   describe('when existing order item', () => {
     const mockOrderItemResponse = {
-      catalogueItemId: 'some-solution-id',
+      catalogueItemId: 'some-item-id',
       catalogueItemName: 'some solution name',
       serviceRecipient: {
         odsCode: 'some-recipient-id',
@@ -98,7 +98,7 @@ describe('getPageData', () => {
 
       const pageData = await getPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
-      expect(pageData.solutionId).toEqual(mockOrderItemResponse.catalogueItemId);
+      expect(pageData.itemId).toEqual(mockOrderItemResponse.catalogueItemId);
     });
 
     it('should call getOrderItem and return the solutionName', async () => {

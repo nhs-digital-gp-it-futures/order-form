@@ -10,22 +10,22 @@ export const getPageData = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
 }) => {
   if (orderItemId === 'neworderitem') {
-    const solutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
+    const itemId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
     const serviceRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
     const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
-    const solutionName = (await getSolution({ solutionId, accessToken })).name;
+    const solutionName = (await getSolution({ solutionId: itemId, accessToken })).name;
     const formData = { price: formatDecimal(selectedPrice.price) };
 
     return {
-      solutionId, solutionName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
+      itemId, solutionName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
     };
   }
 
   const orderItem = await getOrderItem({ orderId, orderItemId, accessToken });
-  const solutionId = orderItem.catalogueItemId;
+  const itemId = orderItem.catalogueItemId;
   const solutionName = orderItem.catalogueItemName;
   const serviceRecipientId = orderItem.serviceRecipient.odsCode;
   const serviceRecipientName = orderItem.serviceRecipient.name;
@@ -48,6 +48,11 @@ export const getPageData = async ({
   };
 
   return {
-    solutionId, solutionName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
+    itemId,
+    solutionName,
+    serviceRecipientId,
+    serviceRecipientName,
+    selectedPrice,
+    formData,
   };
 };
