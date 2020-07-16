@@ -4,6 +4,17 @@ import { baseUrl } from '../../../../../config';
 
 describe('additional-services contextCreator', () => {
   describe('getContext', () => {
+    it('should return the backLinkText', () => {
+      const context = getContext({ orderId: 'order-1' });
+      expect(context.backLinkText).toEqual(manifest.backLinkText);
+    });
+
+    it('should construct the backLinkHref', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+    });
+
     it('should return the title', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.title).toEqual(`${manifest.title} order-1`);
@@ -32,6 +43,72 @@ describe('additional-services contextCreator', () => {
     it('should return the noOrderItemsText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.noOrderItemsText).toEqual(manifest.noOrderItemsText);
+    });
+
+    it('should return the addedOrderItemsTable colummInfo and columnClass', () => {
+      const context = getContext({ orderId: 'order-1', orderItems: [] });
+      expect(context.addedOrderItemsTable.columnInfo)
+        .toEqual(manifest.addedOrderItemsTable.columnInfo);
+      expect(context.addedOrderItemsTable.columnClass)
+        .toEqual(manifest.addedOrderItemsTable.columnClass);
+    });
+
+    it('should return the addedOrderItemsTable without items if no order items are provided', () => {
+      const context = getContext({ orderId: 'order-1', orderItems: [] });
+      expect(context.addedOrderItemsTable.items).toEqual([]);
+    });
+
+    it('should return the addedOrderItemsTable with items when order items are provided', () => {
+      const expectedContext = {
+        addedOrderItemsTable: {
+          ...manifest.addedOrderItemsTable,
+          items: [
+            [
+              {
+                data: 'Additional Service One',
+                href: '/order/organisation/order-1/additional-services/orderItem1',
+                dataTestId: 'orderItem1-catalogueItemName',
+              },
+              {
+                data: 'Recipient One (recipient-1)',
+                dataTestId: 'orderItem1-serviceRecipient',
+              },
+            ],
+            [
+              {
+                data: 'Additional Service Two',
+                href: '/order/organisation/order-1/additional-services/orderItem2',
+                dataTestId: 'orderItem2-catalogueItemName',
+              },
+              {
+                data: 'Recipient Two (recipient-2)',
+                dataTestId: 'orderItem2-serviceRecipient',
+              },
+            ],
+          ],
+        },
+      };
+
+      const mockOrderItems = [
+        {
+          orderItemId: 'orderItem1',
+          catalogueItemName: 'Additional Service One',
+          serviceRecipient: {
+            name: 'Recipient One',
+            odsCode: 'recipient-1',
+          },
+        },
+        {
+          orderItemId: 'orderItem2',
+          catalogueItemName: 'Additional Service Two',
+          serviceRecipient: {
+            name: 'Recipient Two',
+            odsCode: 'recipient-2',
+          },
+        },
+      ];
+      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
+      expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
     });
 
     it('should return the addOrderItemButtonText', () => {
