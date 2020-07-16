@@ -29,11 +29,11 @@ describe('additional-services controller', () => {
       getOrderItems.mockResolvedValueOnce([]);
       getData.mockResolvedValueOnce({});
 
-      await getAdditionalServicesPageContext({ orderId, accessToken });
+      await getAdditionalServicesPageContext({ orderId, catalogueItemType: 'some-type', accessToken });
       expect(getOrderItems.mock.calls.length).toEqual(1);
       expect(getOrderItems).toHaveBeenCalledWith({
         orderId: 'order-id',
-        catalogueItemType: 'AdditionalService',
+        catalogueItemType: 'some-type',
         accessToken,
       });
     });
