@@ -27,10 +27,10 @@ describe('getOrderItems', () => {
     getData
       .mockResolvedValueOnce({ data: [] });
 
-    await getOrderItems({ orderId: 'order-1', catalogueItemType: 'Solution', accessToken: 'access_token' });
+    await getOrderItems({ orderId: 'order-1', catalogueItemType: 'some-type', accessToken: 'access_token' });
     expect(getData.mock.calls.length).toEqual(1);
     expect(getData).toHaveBeenCalledWith({
-      endpoint: `${orderApiUrl}/api/v1/orders/order-1/order-items?catalogueItemType=Solution`,
+      endpoint: `${orderApiUrl}/api/v1/orders/order-1/order-items?catalogueItemType=some-type`,
       accessToken: 'access_token',
       logger,
     });
