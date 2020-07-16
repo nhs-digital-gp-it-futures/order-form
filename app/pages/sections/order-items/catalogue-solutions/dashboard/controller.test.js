@@ -6,12 +6,14 @@ import {
   getCatalogueSolutionsPageContext,
   putCatalogueSolutions,
 } from './controller';
+import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
+jest.mock('../../../../../helpers/api/ordapi/getOrderItems');
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
@@ -19,20 +21,28 @@ const orderId = 'order-id';
 describe('catalogue-solutions controller', () => {
   describe('getCatalogueSolutionsPageContext', () => {
     afterEach(() => {
-      getData.mockReset();
-      contextCreator.getContext.mockReset();
+      jest.resetAllMocks();
     });
 
-    it('should call getData with the correct params', async () => {
+    it('should call getOrderItems with the correct params', async () => {
+      getOrderItems.mockResolvedValueOnce([]);
       getData.mockResolvedValueOnce({});
 
       await getCatalogueSolutionsPageContext({ orderId, accessToken });
-      expect(getData.mock.calls.length).toEqual(2);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/order-items`,
+      expect(getOrderItems.mock.calls.length).toEqual(1);
+      expect(getOrderItems).toHaveBeenCalledWith({
+        orderId: 'order-id',
+        catalogueItemType: 'Solution',
         accessToken,
-        logger,
       });
+    });
+
+    it('should call getData with the correct params', async () => {
+      getOrderItems.mockResolvedValueOnce([]);
+      getData.mockResolvedValueOnce({});
+
+      await getCatalogueSolutionsPageContext({ orderId, accessToken });
+      expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
         accessToken,
@@ -41,8 +51,8 @@ describe('catalogue-solutions controller', () => {
     });
 
     it('should call getContext with the correct params', async () => {
+      getOrderItems.mockResolvedValueOnce([]);
       getData
-        .mockResolvedValueOnce([])
         .mockResolvedValueOnce({ description: 'some order' });
       contextCreator.getContext.mockResolvedValueOnce({});
 

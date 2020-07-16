@@ -5,7 +5,8 @@ import { getContext } from './contextCreator';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 
 export const getCatalogueSolutionsPageContext = async ({ orderId, accessToken }) => {
-  const addedSolutionsData = await getOrderItems({ orderId, accessToken });
+  const catalogueItemType = 'Solution';
+  const solutionOrderItemsData = await getOrderItems({ orderId, catalogueItemType, accessToken });
 
   const getOrderDescriptionDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getDescription', options: { orderId } });
   const orderDescriptionData = await getData({
@@ -15,7 +16,7 @@ export const getCatalogueSolutionsPageContext = async ({ orderId, accessToken })
   return getContext({
     orderId,
     orderDescription: orderDescriptionData ? orderDescriptionData.description : '',
-    orderItems: addedSolutionsData,
+    orderItems: solutionOrderItemsData,
   });
 };
 

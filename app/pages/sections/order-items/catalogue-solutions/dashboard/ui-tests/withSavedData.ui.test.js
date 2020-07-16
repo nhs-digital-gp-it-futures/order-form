@@ -16,7 +16,7 @@ const setCookies = ClientFunction(() => {
 const mockAddedOrderItems = [
   {
     orderItemId: 'orderItem1',
-    solutionName: 'Solution One',
+    catalogueItemName: 'Solution One',
     serviceRecipient: {
       name: 'Recipient One',
       odsCode: 'recipient-1',
@@ -24,7 +24,7 @@ const mockAddedOrderItems = [
   },
   {
     orderItemId: 'orderItem2',
-    solutionName: 'Solution One',
+    catalogueItemName: 'Solution One',
     serviceRecipient: {
       name: 'Recipient Two',
       odsCode: 'recipient-2',
@@ -33,12 +33,9 @@ const mockAddedOrderItems = [
 ];
 
 const mocks = () => {
-  // nock(orderApiUrl)
-  //   .get('/api/v1/orders/order-1/order-items?catalogueItemType=Solution')
-  //   .reply(200, { orderItems: mockAddedOrderItems });
-  nock(orderApiUrl) // leaving old routes in until api is updated
-    .get('/api/v1/orders/order-1/sections/catalogue-solutions')
-    .reply(200, { catalogueSolutions: mockAddedOrderItems });
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-1/order-items?catalogueItemType=Solution')
+    .reply(200, mockAddedOrderItems);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1/sections/description')
     .reply(200, { description: 'Some order' });
@@ -83,10 +80,10 @@ test('should render the added catalogue solutions items in the table', async (t)
 
   const addedOrderItems = Selector('[data-test-id="added-orderItems"]');
   const row1 = addedOrderItems.find('[data-test-id="table-row-0"]');
-  const row1SolutionName = row1.find('a[data-test-id="orderItem1-solutionName"]');
+  const row1SolutionName = row1.find('a[data-test-id="orderItem1-catalogueItemName"]');
   const row1ServiceRecipient = row1.find('div[data-test-id="orderItem1-serviceRecipient"]');
   const row2 = addedOrderItems.find('[data-test-id="table-row-1"]');
-  const row2SolutionName = row2.find('a[data-test-id="orderItem2-solutionName"]');
+  const row2SolutionName = row2.find('a[data-test-id="orderItem2-catalogueItemName"]');
   const row2ServiceRecipient = row2.find('div[data-test-id="orderItem2-serviceRecipient"]');
 
   await t
