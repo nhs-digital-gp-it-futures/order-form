@@ -4,7 +4,7 @@ const req = {};
 const fakeSessionManager = {};
 
 describe('findSelectedCatalogueItemInSession', () => {
-  it('should return the single selected item when found in session', () => {
+  it('should return the single selected additional service item when found in session', () => {
     const expectedItem = { additionalServiceId: '1' };
     const otherItem = { additionalServiceId: '2' };
 
@@ -15,6 +15,22 @@ describe('findSelectedCatalogueItemInSession', () => {
       sessionManager: fakeSessionManager,
       selectedItemId: expectedItem.additionalServiceId,
       catalogueItemsKey: 'additionalServices',
+    });
+
+    expect(foundItem).toEqual(expectedItem);
+  });
+
+  it('should return the single selected catalogue solution item when found in session', () => {
+    const expectedItem = { id: '1' };
+    const otherItem = { id: '2' };
+
+    fakeSessionManager.getFromSession = () => [expectedItem, otherItem];
+
+    const foundItem = findSelectedCatalogueItemInSession({
+      req,
+      sessionManager: fakeSessionManager,
+      selectedItemId: expectedItem.id,
+      catalogueItemsKey: 'catalogueSolutions',
     });
 
     expect(foundItem).toEqual(expectedItem);

@@ -1,10 +1,15 @@
 import { logger } from '../../logger';
 
+const findByType = {
+  additionalServices: catalogueItem => catalogueItem.additionalServiceId,
+  catalogueSolutions: catalogueItem => catalogueItem.id,
+};
+
 export const findSelectedCatalogueItemInSession = ({
   req, selectedItemId, sessionManager, catalogueItemsKey,
 }) => {
   const additionalServices = sessionManager.getFromSession({ req, key: catalogueItemsKey });
-  const findCallback = a => a.additionalServiceId === selectedItemId;
+  const findCallback = a => findByType[catalogueItemsKey](a) === selectedItemId;
   const selectedItem = additionalServices.find(findCallback);
 
   if (!selectedItem) {
