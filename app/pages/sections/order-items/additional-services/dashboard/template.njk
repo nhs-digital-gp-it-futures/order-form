@@ -38,6 +38,11 @@
         <div data-test-id="show-added-orderItems">
           {% if addedOrderItemsTable.items | length %}
             <div data-test-id="added-orderItems">
+              {{ bcTable({
+                columnInfo: addedOrderItemsTable.columnInfo,
+                columnClass: addedOrderItemsTable.columnClass,
+                data: addedOrderItemsTable.items
+              }) }}
             </div>
           {% else %}
             <div data-test-id="no-added-orderItems">

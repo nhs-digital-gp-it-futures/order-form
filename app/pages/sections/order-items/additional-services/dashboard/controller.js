@@ -2,11 +2,14 @@ import { getData, putData } from 'buying-catalogue-library';
 import { getEndpoint } from '../../../../../endpoints';
 import { logger } from '../../../../../logger';
 import { getContext } from './contextCreator';
+import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 
 export const getAdditionalServicesPageContext = async ({ orderId, accessToken }) => {
-  const getAddedAdditionalServicesDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getAddedAdditionalServices', options: { orderId } });
-  const addedAdditionalServicesData = await getData({
-    endpoint: getAddedAdditionalServicesDataEndpoint, accessToken, logger,
+  const catalogueItemType = 'AdditionalService';
+  const additionalServiceOrderItemsData = await getOrderItems({
+    orderId,
+    catalogueItemType,
+    accessToken,
   });
 
   const getOrderDescriptionDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getDescription', options: { orderId } });
@@ -17,7 +20,7 @@ export const getAdditionalServicesPageContext = async ({ orderId, accessToken })
   return getContext({
     orderId,
     orderDescription: orderDescriptionData ? orderDescriptionData.description : '',
-    orderItems: addedAdditionalServicesData.orderItems,
+    orderItems: additionalServiceOrderItemsData,
   });
 };
 
