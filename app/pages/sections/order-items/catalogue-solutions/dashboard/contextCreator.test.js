@@ -67,7 +67,7 @@ describe('catalogue-solutions contextCreator', () => {
               {
                 data: 'Solution One',
                 href: '/order/organisation/order-1/catalogue-solutions/orderItem1',
-                dataTestId: 'orderItem1-solutionName',
+                dataTestId: 'orderItem1-catalogueItemName',
               },
               {
                 data: 'Recipient One (recipient-1)',
@@ -78,7 +78,7 @@ describe('catalogue-solutions contextCreator', () => {
               {
                 data: 'Solution One',
                 href: '/order/organisation/order-1/catalogue-solutions/orderItem2',
-                dataTestId: 'orderItem2-solutionName',
+                dataTestId: 'orderItem2-catalogueItemName',
               },
               {
                 data: 'Recipient Two (recipient-2)',
@@ -92,7 +92,7 @@ describe('catalogue-solutions contextCreator', () => {
       const mockOrderItems = [
         {
           orderItemId: 'orderItem1',
-          solutionName: 'Solution One',
+          catalogueItemName: 'Solution One',
           serviceRecipient: {
             name: 'Recipient One',
             odsCode: 'recipient-1',
@@ -100,7 +100,7 @@ describe('catalogue-solutions contextCreator', () => {
         },
         {
           orderItemId: 'orderItem2',
-          solutionName: 'Solution One',
+          catalogueItemName: 'Solution One',
           serviceRecipient: {
             name: 'Recipient Two',
             odsCode: 'recipient-2',
