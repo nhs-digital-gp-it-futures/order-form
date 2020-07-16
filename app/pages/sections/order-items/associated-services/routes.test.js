@@ -56,13 +56,13 @@ describe('associated-services section routes', () => {
       })
     ));
 
-    it('should return the text "Additional services page" if authorised', async () => {
+    it('should return the text "Associated services page" if authorised', async () => {
       const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200);
 
-      expect(res.text).toEqual('Additional services page');
+      expect(res.text).toEqual('Associated services page');
     });
   });
 });
