@@ -97,7 +97,7 @@ test('should render Catalogue-solutions order-item page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/select/solution/recipient when click on backlink', async (t) => {
+test('should link to /order/organisation/order-id/catalogue-solutions/select/solution/recipient for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -105,11 +105,10 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select/solut
 
   await t
     .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when click on backlink after validation errors', async (t) => {
+test('should link to /order/organisation/order-id/catalogue-solutions/select/solution/price/recipient for backlink after validation errors', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
@@ -119,8 +118,7 @@ test('should navigate to /organisation/order-id/catalogue-solutions/select/solut
   await t
     .click(saveButton)
     .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
 });
 
 test('should render the title', async (t) => {
