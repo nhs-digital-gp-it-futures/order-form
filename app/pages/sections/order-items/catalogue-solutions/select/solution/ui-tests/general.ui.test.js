@@ -40,10 +40,10 @@ const solutionsState = ClientFunction(() => {
   document.cookie = `solutions=${cookieValue}`;
 });
 
-const selectedSolutionIdState = ClientFunction(() => {
+const selectedItemIdState = ClientFunction(() => {
   const cookieValue = 'solution-2';
 
-  document.cookie = `selectedSolutionId=${cookieValue}`;
+  document.cookie = `selectedItemId=${cookieValue}`;
 });
 
 const mocks = () => {
@@ -56,13 +56,13 @@ const mocks = () => {
 };
 
 const pageSetup = async (
-  withAuth = true, withSolutionsFoundState = false, withSelectedSolutionIdState = false) => {
+  withAuth = true, withSolutionsFoundState = false, withSelectedItemIdState = false) => {
   if (withAuth) {
     mocks();
     await setCookies();
   }
   if (withSolutionsFoundState) await solutionsState();
-  if (withSelectedSolutionIdState) await selectedSolutionIdState();
+  if (withSelectedItemIdState) await selectedItemIdState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -151,7 +151,7 @@ test('should render a selectSolution question as radio button options', async (t
     .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(1))).eql('Solution 2');
 });
 
-test('should render the radioButton as checked for the selectedSolutionId', async (t) => {
+test('should render the radioButton as checked for the selectedItemId', async (t) => {
   await pageSetup(true, true, true);
   await t.navigateTo(pageUrl);
 

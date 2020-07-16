@@ -35,7 +35,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   router.get('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedSolutionId' });
+    const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
     const supplierId = await getSupplierId({ orderId, accessToken });
     const solutions = await findSolutions({ supplierId, accessToken });
     sessionManager.saveToSession({ req, key: 'solutions', value: solutions });
@@ -52,7 +52,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const response = validateSolutionForm({ data: req.body });
 
     if (response.success) {
-      sessionManager.saveToSession({ req, key: 'selectedSolutionId', value: req.body.selectSolution });
+      sessionManager.saveToSession({ req, key: 'selectedItemId', value: req.body.selectSolution });
       logger.info('redirecting catalogue solutions select price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`);
     }
