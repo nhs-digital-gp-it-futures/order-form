@@ -12,8 +12,7 @@ jest.mock('./contextCreator', () => ({
 describe('associated-services select-associated-service controller', () => {
   describe('getAssociatedServicePageContext', () => {
     it('should call getContext with the correct params', () => {
-      contextCreator.getContext
-        .mockResolvedValueOnce();
+      contextCreator.getContext.mockResolvedValueOnce();
 
       getAssociatedServicePageContext({ orderId: 'order-1' });
 
