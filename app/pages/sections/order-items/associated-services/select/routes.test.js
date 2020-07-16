@@ -10,7 +10,6 @@ import { routes } from '../../../../../routes';
 import { baseUrl } from '../../../../../config';
 
 jest.mock('../../../../../logger');
-jest.mock('../../../../../helpers/api/ordapi/getRecipients');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
