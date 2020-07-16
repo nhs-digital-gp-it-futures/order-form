@@ -34,6 +34,7 @@ const endpoints = {
     getOrders: options => `${orderApiUrl}/api/v1/organisations/${options.orgId}/orders`,
     getOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items/${options.orderItemId}`,
     postOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items`,
+    getOrderItems: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items`,
     putOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items/${options.orderItemId}`,
     getOrderSummary: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/summary`,
     getDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,

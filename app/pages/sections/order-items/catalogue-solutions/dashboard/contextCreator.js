@@ -5,9 +5,9 @@ const generateItems = ({ orderId, orderItems }) => {
   const items = orderItems.map((orderItem) => {
     const columns = [];
     columns.push(({
-      data: orderItem.solutionName,
+      data: orderItem.catalogueItemName,
       href: `${baseUrl}/organisation/${orderId}/catalogue-solutions/${orderItem.orderItemId}`,
-      dataTestId: `${orderItem.orderItemId}-solutionName`,
+      dataTestId: `${orderItem.orderItemId}-catalogueItemName`,
     }));
     columns.push(({
       data: `${orderItem.serviceRecipient.name} (${orderItem.serviceRecipient.odsCode})`,
