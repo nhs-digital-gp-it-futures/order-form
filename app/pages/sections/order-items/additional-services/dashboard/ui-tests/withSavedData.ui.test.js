@@ -83,19 +83,19 @@ test('should render the added additional service items in the table', async (t) 
 
   const addedOrderItems = Selector('[data-test-id="added-orderItems"]');
   const row1 = addedOrderItems.find('[data-test-id="table-row-0"]');
-  const row1SolutionName = row1.find('a[data-test-id="orderItem1-catalogueItemName"]');
+  const row1CatalogueItemName = row1.find('a[data-test-id="orderItem1-catalogueItemName"]');
   const row1ServiceRecipient = row1.find('div[data-test-id="orderItem1-serviceRecipient"]');
   const row2 = addedOrderItems.find('[data-test-id="table-row-1"]');
-  const row2SolutionName = row2.find('a[data-test-id="orderItem2-catalogueItemName"]');
+  const row2CatalogueItemName = row2.find('a[data-test-id="orderItem2-catalogueItemName"]');
   const row2ServiceRecipient = row2.find('div[data-test-id="orderItem2-serviceRecipient"]');
 
   await t
     .expect(row1.exists).ok()
-    .expect(row1SolutionName.exists).ok()
-    .expect(await extractInnerText(row1SolutionName))
+    .expect(row1CatalogueItemName.exists).ok()
+    .expect(await extractInnerText(row1CatalogueItemName))
     .eql('Additional Service One')
-    .expect(row1SolutionName.getAttribute('href'))
-    .eql(`${baseUrl}/organisation/order-1/additional-service/orderItem1`)
+    .expect(row1CatalogueItemName.getAttribute('href'))
+    .eql(`${baseUrl}/organisation/order-1/additional-services/orderItem1`)
     .expect(row1ServiceRecipient.exists)
     .ok()
     .expect(await extractInnerText(row1ServiceRecipient))
@@ -103,12 +103,12 @@ test('should render the added additional service items in the table', async (t) 
 
     .expect(row2.exists)
     .ok()
-    .expect(row2SolutionName.exists)
+    .expect(row2CatalogueItemName.exists)
     .ok()
-    .expect(await extractInnerText(row2SolutionName))
+    .expect(await extractInnerText(row2CatalogueItemName))
     .eql('Additional Service Two')
-    .expect(row2SolutionName.getAttribute('href'))
-    .eql(`${baseUrl}/organisation/order-1/additional-service/orderItem2`)
+    .expect(row2CatalogueItemName.getAttribute('href'))
+    .eql(`${baseUrl}/organisation/order-1/additional-services/orderItem2`)
     .expect(row2ServiceRecipient.exists)
     .ok()
     .expect(await extractInnerText(row2ServiceRecipient))
