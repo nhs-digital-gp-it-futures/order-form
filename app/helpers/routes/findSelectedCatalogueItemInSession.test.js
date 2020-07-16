@@ -30,7 +30,7 @@ describe('findSelectedCatalogueItemInSession', () => {
       req,
       sessionManager: fakeSessionManager,
       selectedItemId: expectedItem.id,
-      catalogueItemsKey: 'catalogueSolutions',
+      catalogueItemsKey: 'solutions',
     });
 
     expect(foundItem).toEqual(expectedItem);

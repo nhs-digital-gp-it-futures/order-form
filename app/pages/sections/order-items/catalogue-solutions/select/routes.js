@@ -23,6 +23,9 @@ import {
   getRecipientErrorPageContext,
   getServiceRecipientName,
 } from './recipient/controller';
+import {
+  findSelectedCatalogueItemInSession,
+} from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 
 const router = express.Router({ mergeParams: true });
 
@@ -52,7 +55,16 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const response = validateSolutionForm({ data: req.body });
 
     if (response.success) {
-      sessionManager.saveToSession({ req, key: 'selectedItemId', value: req.body.selectSolution });
+      const selectedItemId = req.body.selectSolution;
+      const selectedItem = findSelectedCatalogueItemInSession({
+        req,
+        selectedItemId,
+        sessionManager,
+        catalogueItemsKey: 'solutions',
+      });
+
+      sessionManager.saveToSession({ req, key: 'selectedItemId', value: selectedItemId });
+      sessionManager.saveToSession({ req, key: 'selectedItemName', value: selectedItem.name });
       logger.info('redirecting catalogue solutions select price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`);
     }

@@ -2,7 +2,7 @@ import { logger } from '../../logger';
 
 const findByType = {
   additionalServices: catalogueItem => catalogueItem.additionalServiceId,
-  catalogueSolutions: catalogueItem => catalogueItem.id,
+  solutions: catalogueItem => catalogueItem.id,
 };
 
 export const findSelectedCatalogueItemInSession = ({

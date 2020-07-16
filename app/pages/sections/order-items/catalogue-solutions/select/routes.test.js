@@ -16,9 +16,11 @@ import { App } from '../../../../../app';
 import { routes } from '../../../../../routes';
 import { baseUrl } from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
+import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
+jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -207,6 +209,7 @@ describe('catalogue-solutions select routes', () => {
     it('should redirect to /organisation/some-order-id/catalogue-solutions/select/solution/price if a solution is selected', async () => {
       selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: true });
+      findSelectedCatalogueItemInSession.mockResolvedValue({ name: 'Solution One' });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
