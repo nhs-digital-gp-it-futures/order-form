@@ -65,7 +65,7 @@ describe('additional-services controller', () => {
     });
   });
 
-  describe('putCatalogueSolutions', () => {
+  describe('putAdditionalServices', () => {
     afterEach(() => {
       putData.mockReset();
     });
