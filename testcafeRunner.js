@@ -28,7 +28,7 @@ const argsMap = {
   },
   c: {
     description: 'number of concurrent threads',
-    value: 1,
+    value: 2,
   },
 };
 
@@ -43,22 +43,22 @@ const browserToRun = argsMap.b.value;
 const concurrency = parseInt(argsMap.c.value, 10);
 const testsToRun = `**/${pageToTest || '**'}/ui-tests/${fileToTest ? `${fileToTest}.` : '*'}ui.test.js`;
 
-let stopOnFirstFail = false;
+let stopOnFirstFail = true;
 let quarantineMode = false;
 let selectorTimeout = 3000;
 let assertionTimeout = 1000;
 let pageLoadTimeout = 5000;
 let speed = 1;
-process.env.NOCK_CHECK = true;
+process.env.NOCK_CHECK = 'true';
 
 if (concurrency > 1) {
-  // selectorTimeout = 10000;
-  // assertionTimeout = 10000;
-  // pageLoadTimeout = 10000;
-  speed = 0.5;
+  selectorTimeout = 3000;
+  assertionTimeout = 1000;
+  pageLoadTimeout = 5000;
+  speed = 1;
   stopOnFirstFail = true;
   quarantineMode = true;
-  process.env.NOCK_CHECK = false;
+  process.env.NOCK_CHECK = 'false';
 }
 
 // eslint-disable-next-line no-console
@@ -67,7 +67,8 @@ console.log(`Running tests\n
   browserIs ${browserToRun}\n
   concurrency is ${concurrency}\n
   stopOnFirstFail is ${stopOnFirstFail}\n
-  quarantineMode is ${quarantineMode}\n`);
+  quarantineMode is ${quarantineMode}\n
+  nockCheck is ${process.env.NOCK_CHECK}`);
 
 createTestcafe('localhost')
   .then((tc) => {

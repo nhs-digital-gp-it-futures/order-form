@@ -3,6 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
+import { nockCheck } from '../../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier/search';
 
@@ -33,17 +34,8 @@ const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Supplier search page')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async (t) => {
-    if (process.env.NOCK_CHECK) {
-      const isDone = nock.isDone();
-      if (!isDone) {
-        // eslint-disable-next-line no-console
-        console.log(`pending mocks: ${nock.pendingMocks()}`);
-        nock.cleanAll();
-      }
-
-      await t.expect(isDone).ok('Not all nock interceptors were used!');
-    }
+  .afterEach(async () => {
+    await nockCheck(nock);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
