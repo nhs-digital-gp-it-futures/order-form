@@ -23,6 +23,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
 
     const context = await getAdditionalServicesPageContext({
       orderId,
+      catalogueItemType: 'AdditionalService',
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 

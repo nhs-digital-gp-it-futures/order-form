@@ -2,6 +2,7 @@
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/inset-text/macro.njk' import insetText %}
+{% from 'components/bc-table/macro.njk' import bcTable %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="additional-services-page">
@@ -38,6 +39,11 @@
         <div data-test-id="show-added-orderItems">
           {% if addedOrderItemsTable.items | length %}
             <div data-test-id="added-orderItems">
+              {{ bcTable({
+                columnInfo: addedOrderItemsTable.columnInfo,
+                columnClass: addedOrderItemsTable.columnClass,
+                data: addedOrderItemsTable.items
+              }) }}
             </div>
           {% else %}
             <div data-test-id="no-added-orderItems">

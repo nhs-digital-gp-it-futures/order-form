@@ -22,12 +22,22 @@ const areAllCountDepedenciesMet = (dataDict, countDependencies = []) => (
     : true
 );
 
+const areAllZeroCountDepedenciesMet = (dataDict, zeroCountDependencies = []) => (
+  zeroCountDependencies.length > 0
+    ? zeroCountDependencies
+      .map(zeroCountDependency => (
+        !!dataDict[zeroCountDependency] && dataDict[zeroCountDependency].count === 0))
+      .every(dependencyMet => dependencyMet === true)
+    : true
+);
+
 const isSectionEnabled = (dataDict = {}, dependencies = []) => (
   dependencies.length > 0
     ? dependencies
       .map(dependency => (
         areAllStatusDepedenciesMet(dataDict, dependency.statusDependencies)
-          && areAllCountDepedenciesMet(dataDict, dependency.countDependencies)))
+          && areAllCountDepedenciesMet(dataDict, dependency.countDependencies)
+          && areAllZeroCountDepedenciesMet(dataDict, dependency.zeroCountDependencies)))
       .includes(true)
     : true
 );
