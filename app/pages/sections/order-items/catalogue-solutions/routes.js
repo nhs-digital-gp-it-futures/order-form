@@ -12,7 +12,7 @@ import {
   saveSolutionOrderItem,
 } from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getPageData } from './order-item/routesHelper';
+import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 
 const router = express.Router({ mergeParams: true });
@@ -47,7 +47,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const pageData = await getPageData({
+    const pageData = await getOrderItemPageData({
       req,
       sessionManager,
       accessToken,

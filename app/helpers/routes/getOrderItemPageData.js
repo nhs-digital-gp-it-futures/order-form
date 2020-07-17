@@ -1,9 +1,9 @@
-import { getSelectedPrice } from '../../../../../helpers/api/bapi/getSelectedPrice';
-import { getOrderItem } from '../../../../../helpers/api/ordapi/getOrderItem';
-import { destructureDate } from '../../../../../helpers/common/dateFormatter';
-import { formatDecimal } from '../../../../../helpers/common/priceFormatter';
+import { getSelectedPrice } from '../api/bapi/getSelectedPrice';
+import { getOrderItem } from '../api/ordapi/getOrderItem';
+import { formatDecimal } from '../common/priceFormatter';
+import { destructureDate } from '../common/dateFormatter';
 
-export const getPageData = async ({
+export const getOrderItemPageData = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
 }) => {
   if (orderItemId === 'neworderitem') {
@@ -45,11 +45,6 @@ export const getPageData = async ({
   };
 
   return {
-    itemId,
-    itemName,
-    serviceRecipientId,
-    serviceRecipientName,
-    selectedPrice,
-    formData,
+    itemId, itemName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
   };
 };
