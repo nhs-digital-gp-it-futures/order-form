@@ -32,5 +32,8 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
     }),
   );
 
+  router.get('/associated-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => (
+    res.send('Get associated price page'))));
+
   return router;
 };

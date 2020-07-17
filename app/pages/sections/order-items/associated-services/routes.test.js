@@ -5,6 +5,7 @@ import {
   testAuthorisedGetPathForUnauthorisedUser,
   fakeSessionManager,
 } from 'buying-catalogue-library';
+import * as associatedServicesController from './dashboard/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 
@@ -56,13 +57,18 @@ describe('associated-services section routes', () => {
       })
     ));
 
-    it('should return the text "Associated services page" if authorised', async () => {
-      const res = await request(setUpFakeApp())
+    it('should return the associated-services page if authorised', () => {
+      associatedServicesController.getAssociatedServicesPageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
-        .expect(200);
-
-      expect(res.text).toEqual('Associated services page');
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="associated-services-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
     });
   });
 });
