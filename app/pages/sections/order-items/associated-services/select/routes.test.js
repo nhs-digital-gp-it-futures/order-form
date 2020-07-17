@@ -8,6 +8,7 @@ import {
 import { App } from '../../../../../app';
 import { routes } from '../../../../../routes';
 import { baseUrl } from '../../../../../config';
+import * as selectAssociatedServiceController from './associated-service/controller';
 
 jest.mock('../../../../../logger');
 
@@ -87,13 +88,17 @@ describe('associated-services select routes', () => {
       })
     ));
 
-    it('should return the text "Select associated services page" if authorised', async () => {
+    it('should return the associated-services select-associated-service page if authorised', async () => {
+      selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
       const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200);
 
-      expect(res.text).toEqual('Select associated services page');
+      expect(res.text.includes('data-test-id="associated-service-select-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
 });
