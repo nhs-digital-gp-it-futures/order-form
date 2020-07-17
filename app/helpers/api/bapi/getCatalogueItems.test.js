@@ -10,17 +10,30 @@ describe('getCatalogueItems', () => {
     jest.resetAllMocks();
   });
 
-  it('should call getData once with the correct params', async () => {
-    getData.mockResolvedValueOnce([{}]);
+  const catalogueItemsUrl = `${solutionsApiUrl}/api/v1/catalogue-items`;
 
-    await getCatalogueItems({ supplierId: 'supp-1', catalogueItemType: 'Solution', accessToken: 'access_token' });
-    expect(getData.mock.calls.length).toEqual(1);
-    expect(getData).toHaveBeenCalledWith({
-      endpoint: `${solutionsApiUrl}/api/v1/catalogue-items?supplierId=supp-1&catalogueItemType=Solution`,
-      accessToken: 'access_token',
-      logger,
-    });
+  it.each`
+      supplierId    | catalogueItemType | expectedEndpoint
+      ${undefined}  | ${undefined}      | ${catalogueItemsUrl}
+      ${''}         | ${''}             | ${catalogueItemsUrl}
+      ${'\t'}       | ${'\t'}           | ${catalogueItemsUrl}
+      ${'supplier'} | ${undefined}      | ${`${catalogueItemsUrl}?supplierId=supplier`}
+      ${'supplier'} | ${''}             | ${`${catalogueItemsUrl}?supplierId=supplier`}
+      ${'supplier'} | ${'\t'}           | ${`${catalogueItemsUrl}?supplierId=supplier`}
+      ${undefined}  | ${'solution'}     | ${`${catalogueItemsUrl}?catalogueItemType=solution`}
+      ${''}         | ${'solution'}     | ${`${catalogueItemsUrl}?catalogueItemType=solution`}
+      ${'\t'}       | ${'solution'}     | ${`${catalogueItemsUrl}?catalogueItemType=solution`}
+      ${'supplier'} | ${'solution'}     | ${`${catalogueItemsUrl}?supplierId=supplier&catalogueItemType=solution`}
+    `('getCatalogueItems calls getData with the correct params for supplier "$supplierId" and catalogue item type "$catalogueItemType"', async ({ supplierId, catalogueItemType, expectedEndpoint }) => {
+  getData.mockResolvedValueOnce({ data: {} });
+  await getCatalogueItems({ supplierId, catalogueItemType, accessToken: 'access_token' });
+
+  expect(getData.mock.calls.length).toEqual(1);
+  expect(getData).toHaveBeenCalledWith({
+    endpoint: expectedEndpoint,
+    logger,
   });
+});
 
   it('should return the catalogueItems', async () => {
     const expectedCatalogueItems = [{}, {}];

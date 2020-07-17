@@ -17,7 +17,6 @@ const endpoints = {
       const queryString = `solutionIds=${options.addedCatalogueSolutions.join('&solutionIds=')}`;
       return `${solutionsApiUrl}/api/v1/additional-services?${queryString}`;
     },
-    getCatalogueItemPricing: options => `${solutionsApiUrl}/api/v1/prices?catalogueItemId=${options.catalogueItemId}`,
   },
   dapi: {
     getApiHealth: () => `${documentApiHost}/health/ready`,
@@ -34,7 +33,6 @@ const endpoints = {
     postOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items`,
     putOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items/${options.orderItemId}`,
     getOrderSummary: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/summary`,
-    getDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
     getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
     getSupplier: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/supplier`,
     postSolutionOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions`,

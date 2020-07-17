@@ -19,10 +19,12 @@ import { baseUrl } from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import * as routerHelper from '../../../../../helpers/routes/routerHelper';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
+import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
 jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
+jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -306,9 +308,8 @@ describe('additional-services select routes', () => {
       })
     ));
 
-    it('should call findAdditionalServicePrices once with the correct params if authorised', async () => {
-      additionalServicePriceController.findAdditionalServicePrices = jest.fn()
-        .mockResolvedValue([]);
+    it('should call getCatalogueItemPricing once with the correct params if authorised', async () => {
+      getCatalogueItemPricing.mockResolvedValue([]);
 
       const accessToken = 'access_token';
 
@@ -320,12 +321,13 @@ describe('additional-services select routes', () => {
         .get(path)
         .set('Cookie', [mockAuthorisedCookie, `selectedItemId=${selectedAdditionalServiceId}`]);
 
-      expect(additionalServicePriceController.findAdditionalServicePrices.mock.calls.length)
+      expect(getCatalogueItemPricing.mock.calls.length)
         .toEqual(1);
 
-      expect(additionalServicePriceController.findAdditionalServicePrices).toHaveBeenCalledWith({
+      expect(getCatalogueItemPricing).toHaveBeenCalledWith({
         catalogueItemId: selectedAdditionalServiceId,
         accessToken,
+        loggerText: 'Additional service',
       });
     });
 
@@ -333,8 +335,7 @@ describe('additional-services select routes', () => {
       additionalServicePriceController.getAdditionalServicePricePageContext = jest.fn()
         .mockResolvedValue({});
 
-      additionalServicePriceController.findAdditionalServicePrices = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItemPricing.mockResolvedValue([]);
 
       const res = await request(setUpFakeApp())
         .get(path)
@@ -399,8 +400,7 @@ describe('additional-services select routes', () => {
       additionalServicePriceController.validateAdditionalServicePriceForm = jest.fn()
         .mockReturnValue({ success: false });
 
-      additionalServicePriceController.findAdditionalServicePrices = jest.fn()
-        .mockResolvedValue(prices);
+      getCatalogueItemPricing.mockResolvedValue(prices);
 
       additionalServicePriceController.getAdditionalServicePricePageContext = jest.fn()
         .mockResolvedValue({});

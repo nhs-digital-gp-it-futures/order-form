@@ -9,8 +9,11 @@ import { App } from '../../../../../app';
 import { routes } from '../../../../../routes';
 import { baseUrl } from '../../../../../config';
 import * as selectAssociatedServiceController from './associated-service/controller';
+import * as selectAssociatedServicePriceController from './price/controller';
+import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 
 jest.mock('../../../../../logger');
+jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -92,6 +95,9 @@ describe('associated-services select routes', () => {
       selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
         .mockResolvedValue({});
 
+      selectAssociatedServiceController.findAssociatedServices = jest.fn()
+        .mockResolvedValue({});
+
       const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
@@ -122,12 +128,18 @@ describe('associated-services select routes', () => {
     ));
 
     it('should return the associated-services select-associated-service page if authorised', async () => {
+      selectAssociatedServicePriceController.getAssociatedServicePricePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      getCatalogueItemPricing.mockResolvedValue([]);
+
       const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200);
 
-      expect(res.text.includes('Get associated price page')).toBeTruthy();
+      expect(res.text.includes('data-test-id="associated-service-price-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
 });

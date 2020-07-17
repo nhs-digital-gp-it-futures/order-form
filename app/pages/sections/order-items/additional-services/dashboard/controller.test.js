@@ -1,4 +1,4 @@
-import { getData, putData } from 'buying-catalogue-library';
+import { putData } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../../config';
 import { logger } from '../../../../../logger';
 import * as contextCreator from './contextCreator';
@@ -7,6 +7,7 @@ import {
   putAdditionalServices,
 } from './controller';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
+import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../../../logger');
@@ -14,6 +15,7 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 jest.mock('../../../../../helpers/api/ordapi/getOrderItems');
+jest.mock('../../../../../helpers/api/ordapi/getOrderDescription');
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
@@ -21,13 +23,12 @@ const orderId = 'order-id';
 describe('additional-services controller', () => {
   describe('getAdditionalServicesPageContext', () => {
     afterEach(() => {
-      getData.mockReset();
-      contextCreator.getContext.mockReset();
+      jest.resetAllMocks();
     });
 
     it('should call getOrderItems with the correct params', async () => {
       getOrderItems.mockResolvedValueOnce([]);
-      getData.mockResolvedValueOnce({});
+      getOrderDescription.mockResolvedValueOnce({});
 
       await getAdditionalServicesPageContext({ orderId, catalogueItemType: 'some-type', accessToken });
       expect(getOrderItems.mock.calls.length).toEqual(1);
@@ -38,22 +39,21 @@ describe('additional-services controller', () => {
       });
     });
 
-    it('should call getData with the correct params', async () => {
+    it('should call getOrderDescription with the correct params', async () => {
       getOrderItems.mockResolvedValueOnce([]);
-      getData.mockResolvedValueOnce({});
+      getOrderDescription.mockResolvedValueOnce({});
 
       await getAdditionalServicesPageContext({ orderId, accessToken });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
+      expect(getOrderDescription.mock.calls.length).toEqual(1);
+      expect(getOrderDescription).toHaveBeenCalledWith({
+        orderId,
         accessToken,
-        logger,
       });
     });
 
     it('should call getContext with the correct params', async () => {
       getOrderItems.mockResolvedValueOnce([]);
-      getData
+      getOrderDescription
         .mockResolvedValueOnce({ description: 'some order' });
       contextCreator.getContext.mockResolvedValueOnce({});
 
