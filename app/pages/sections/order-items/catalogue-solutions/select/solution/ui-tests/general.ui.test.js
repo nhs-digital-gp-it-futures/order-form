@@ -16,11 +16,11 @@ const setCookies = ClientFunction(() => {
 
 const mockSolutions = [
   {
-    id: 'solution-1',
+    catalogueItemId: 'solution-1',
     name: 'Solution 1',
   },
   {
-    id: 'solution-2',
+    catalogueItemId: 'solution-2',
     name: 'Solution 2',
   },
 ];
@@ -28,11 +28,11 @@ const mockSolutions = [
 const solutionsState = ClientFunction(() => {
   const cookieValue = JSON.stringify([
     {
-      id: 'solution-1',
+      catalogueItemId: 'solution-1',
       name: 'Solution 1',
     },
     {
-      id: 'solution-2',
+      catalogueItemId: 'solution-2',
       name: 'Solution 2',
     },
   ]);
@@ -51,8 +51,8 @@ const mocks = () => {
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, { supplierId: 'supp-1' });
   nock(solutionsApiUrl)
-    .get('/api/v1/solutions?supplierId=supp-1')
-    .reply(200, { solutions: mockSolutions });
+    .get('/api/v1/catalogue-items?supplierId=supp-1&catalogueItemType=Solution')
+    .reply(200, mockSolutions);
 };
 
 const pageSetup = async (

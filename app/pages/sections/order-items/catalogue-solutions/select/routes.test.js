@@ -17,10 +17,12 @@ import { routes } from '../../../../../routes';
 import { baseUrl } from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
+import { getCatalogueItems } from '../../../../../helpers/api/bapi/getCatalogueItems';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
 jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
+jest.mock('../../../../../helpers/api/bapi/getCatalogueItems');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -38,8 +40,8 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 
 const mockSessionSolutionsState = JSON.stringify([
-  { id: 'solution-1', name: 'Solution 1' },
-  { id: 'solution-2', name: 'Solution 2' },
+  { catalogueItemId: 'solution-1', name: 'Solution 1' },
+  { catalogueItemId: 'solution-2', name: 'Solution 2' },
 ]);
 const mockSolutionsCookie = `suppliersFound=${mockSessionSolutionsState}`;
 
@@ -92,8 +94,7 @@ describe('catalogue-solutions select routes', () => {
       selectSolutionController.getSupplierId = jest.fn()
         .mockResolvedValue('supp-1');
 
-      selectSolutionController.findSolutions = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItems.mockResolvedValue([]);
 
       return request(setUpFakeApp())
         .get(path)
@@ -132,8 +133,7 @@ describe('catalogue-solutions select routes', () => {
       selectSolutionController.getSupplierId = jest.fn()
         .mockResolvedValue('supp-1');
 
-      selectSolutionController.findSolutions = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItems.mockResolvedValue([]);
 
       return request(setUpFakeApp())
         .get(path)
@@ -209,6 +209,7 @@ describe('catalogue-solutions select routes', () => {
     it('should redirect to /organisation/some-order-id/catalogue-solutions/select/solution/price if a solution is selected', async () => {
       selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: true });
+
       findSelectedCatalogueItemInSession.mockResolvedValue({ name: 'Solution One' });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({

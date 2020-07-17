@@ -21,15 +21,15 @@ describe('findSelectedCatalogueItemInSession', () => {
   });
 
   it('should return the single selected catalogue solution item when found in session', () => {
-    const expectedItem = { id: '1' };
-    const otherItem = { id: '2' };
+    const expectedItem = { catalogueItemId: '1' };
+    const otherItem = { catalogueItemId: '2' };
 
     fakeSessionManager.getFromSession = () => [expectedItem, otherItem];
 
     const foundItem = findSelectedCatalogueItemInSession({
       req,
       sessionManager: fakeSessionManager,
-      selectedItemId: expectedItem.id,
+      selectedItemId: expectedItem.catalogueItemId,
       catalogueItemsKey: 'solutions',
     });
 

@@ -53,11 +53,11 @@ describe('catalogue-solutions solution contextCreator', () => {
 
       const solutions = [
         {
-          id: 'solution-1',
+          catalogueItemId: 'solution-1',
           name: 'Solution 1',
         },
         {
-          id: 'solution-2',
+          catalogueItemId: 'solution-2',
           name: 'Solution 2',
         },
       ];
@@ -89,11 +89,11 @@ describe('catalogue-solutions solution contextCreator', () => {
 
       const solutions = [
         {
-          id: 'solution-1',
+          catalogueItemId: 'solution-1',
           name: 'Solution 1',
         },
         {
-          id: 'solution-2',
+          catalogueItemId: 'solution-2',
           name: 'Solution 2',
         },
       ];

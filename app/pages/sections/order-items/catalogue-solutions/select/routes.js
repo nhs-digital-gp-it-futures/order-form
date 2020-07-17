@@ -4,7 +4,6 @@ import config from '../../../../../config';
 import { withCatch, extractAccessToken } from '../../../../../helpers/routes/routerHelper';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import {
-  findSolutions,
   getSupplierId,
   getSolutionsErrorPageContext,
   getSolutionsPageContext,
@@ -25,6 +24,9 @@ import {
 import {
   findSelectedCatalogueItemInSession,
 } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
+import {
+  getCatalogueItems,
+} from '../../../../../helpers/api/bapi/getCatalogueItems';
 
 const router = express.Router({ mergeParams: true });
 
@@ -39,7 +41,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
     const supplierId = await getSupplierId({ orderId, accessToken });
-    const solutions = await findSolutions({ supplierId, accessToken });
+    const solutions = await getCatalogueItems({ supplierId, catalogueItemType: 'Solution', accessToken });
     sessionManager.saveToSession({ req, key: 'solutions', value: solutions });
 
     const context = await getSolutionsPageContext({ orderId, solutions, selectedSolutionId });
@@ -50,6 +52,8 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
 
   router.post('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+
+    console.log('req.body', req.body)
 
     const response = validateSolutionForm({ data: req.body });
 
