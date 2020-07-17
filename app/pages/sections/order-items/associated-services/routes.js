@@ -5,10 +5,10 @@ import { associatedServicesSelectRoutes } from './select/routes';
 
 const router = express.Router({ mergeParams: true });
 
-export const associatedServicesRoutes = (authProvider, addContext) => {
+export const associatedServicesRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => res.send('Associated services page')));
 
-  router.use('/select', associatedServicesSelectRoutes(authProvider, addContext));
+  router.use('/select', associatedServicesSelectRoutes(authProvider, addContext, sessionManager));
 
   return router;
 };
