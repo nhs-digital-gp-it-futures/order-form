@@ -1,42 +1,42 @@
-import { getData, postData, putData } from 'buying-catalogue-library';
+import { postData, putData } from 'buying-catalogue-library';
 import { postOrPutDescription, getDescriptionContext } from './controller';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
+import { getOrderDescription } from '../../../helpers/api/ordapi/getOrderDescription';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
+jest.mock('../../../helpers/api/ordapi/getOrderDescription');
 
 describe('description controller', () => {
   describe('getDescriptionContext', () => {
     afterEach(() => {
-      getData.mockReset();
-      contextCreator.getContext.mockReset();
+      jest.resetAllMocks();
     });
 
-    it('should call getData once with the correct params for an order with an id', async () => {
-      getData
-        .mockResolvedValueOnce({ data: { description: 'a lovely description' } });
+    it('should call getOrderDescription once with the correct params for an order with an id', async () => {
+      getOrderDescription
+        .mockResolvedValueOnce({ description: 'a lovely description' });
 
       await getDescriptionContext({ orderId: 'order-id', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
+      expect(getOrderDescription.mock.calls.length).toEqual(1);
+      expect(getOrderDescription).toHaveBeenCalledWith({
+        orderId: 'order-id',
         accessToken: 'access_token',
-        logger,
       });
     });
 
-    it('should not call getData for a new order', async () => {
+    it('should not call getOrderDescription for a new order', async () => {
       await getDescriptionContext({ orderId: 'neworder', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(0);
+      expect(getOrderDescription.mock.calls.length).toEqual(0);
     });
 
-    it('should call getContext with the correct params for an order with an id and data returned from getData', async () => {
-      getData
+    it('should call getContext with the correct params for an order with an id and data returned from getOrderDescription', async () => {
+      getOrderDescription
         .mockResolvedValueOnce({ description: 'a lovely description' });
       contextCreator.getContext
         .mockResolvedValueOnce();
