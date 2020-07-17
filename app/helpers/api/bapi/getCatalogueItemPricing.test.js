@@ -8,7 +8,9 @@ import {
 const accessToken = 'access_token';
 const catalogueItemId = 'associated-service-1';
 
-describe('findAssociatedServicePrices', () => {
+jest.mock('buying-catalogue-library');
+
+describe('getCatalogueItemPricing', () => {
   afterEach(() => {
     getData.mockReset();
   });

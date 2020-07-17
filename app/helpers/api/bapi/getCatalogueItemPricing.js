@@ -1,9 +1,13 @@
 import { getData } from 'buying-catalogue-library';
-import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
+import { solutionsApiUrl } from '../../../config';
+
+export const getCatalogueItemPricingEndpoint = ({ catalogueItemId }) => (
+  `${solutionsApiUrl}/api/v1/prices?catalogueItemId=${catalogueItemId}`
+);
 
 export const getCatalogueItemPricing = async ({ accessToken, catalogueItemId, loggerText = 'Catalogue item' }) => {
-  const cataloguePricingEndpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getCatalogueItemPricing', options: { catalogueItemId } });
+  const cataloguePricingEndpoint = getCatalogueItemPricingEndpoint({ catalogueItemId });
   const catalogueServicePricingData = await getData({
     endpoint: cataloguePricingEndpoint,
     accessToken,

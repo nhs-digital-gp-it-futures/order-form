@@ -307,7 +307,7 @@ describe('additional-services select routes', () => {
       })
     ));
 
-    it('should call findAdditionalServicePrices once with the correct params if authorised', async () => {
+    it('should call getCatalogueItemPricing once with the correct params if authorised', async () => {
       getCatalogueItemPricing.mockResolvedValue([]);
 
       const accessToken = 'access_token';
