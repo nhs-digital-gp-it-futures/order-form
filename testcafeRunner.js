@@ -2,7 +2,7 @@ import createTestcafe from 'testcafe';
 import { FakeAuthProvider, fakeSessionManager } from 'buying-catalogue-library';
 import { App } from './app/app';
 import { routes } from './app/routes';
-import { env, baseUrl } from './app/config';
+import { baseUrl } from './app/config';
 
 let testcafe;
 
@@ -11,28 +11,63 @@ const app = new App(authProvider).createApp();
 app.use(baseUrl, routes(authProvider, fakeSessionManager()));
 const server = app.listen('1234');
 
-const [,, browserFromArgs, folderFromArgs, fileFromArgs] = process.argv;
+const argv = process.argv.slice(2);
 
-const browserToRun = browserFromArgs || 'chrome:headless';
-const testsToRun = `**/${folderFromArgs || '**'}/ui-tests/${fileFromArgs ? `${fileFromArgs}.` : '*'}ui.test.js`;
+const argsMap = {
+  b: {
+    description: 'browser to run ui tests',
+    value: 'chrome:headless',
+  },
+  p: {
+    description: 'path of page to test',
+    value: '',
+  },
+  f: {
+    description: 'particular ui test file to test',
+    value: '',
+  },
+  c: {
+    description: 'number of concurrent threads',
+    value: 1,
+  },
+};
 
-let concurrency = 4;
-let stopOnFirstFail = true;
-let quarantineMode = true;
-if (env === 'pipeline' || browserFromArgs) {
-  stopOnFirstFail = false;
-  quarantineMode = false;
-}
+argv.map((arg) => {
+  const [key, value] = arg.split('=');
+  argsMap[key].value = value;
+});
 
-if (browserFromArgs !== undefined) {
-  console.log('set concurrency to 1')
-  concurrency = 1;
-  process.env.NOCK_CHECK = true;
+const pageToTest = argsMap.p.value;
+const fileToTest = argsMap.f.value;
+const browserToRun = argsMap.b.value;
+const concurrency = parseInt(argsMap.c.value, 10);
+const testsToRun = `**/${pageToTest || '**'}/ui-tests/${fileToTest ? `${fileToTest}.` : '*'}ui.test.js`;
+
+let stopOnFirstFail = false;
+let quarantineMode = false;
+let selectorTimeout = 3000;
+let assertionTimeout = 1000;
+let pageLoadTimeout = 5000;
+let speed = 1;
+process.env.NOCK_CHECK = true;
+
+if (concurrency > 1) {
+  // selectorTimeout = 10000;
+  // assertionTimeout = 10000;
+  // pageLoadTimeout = 10000;
+  speed = 0.5;
+  stopOnFirstFail = true;
+  quarantineMode = true;
+  process.env.NOCK_CHECK = false;
 }
 
 // eslint-disable-next-line no-console
-console.log(`Running tests\nstopOnFirstFail is ${stopOnFirstFail}\nquarantineMode is ${quarantineMode}`);
-
+console.log(`Running tests\n
+  tests Running is ${testsToRun}\n
+  browserIs ${browserToRun}\n
+  concurrency is ${concurrency}\n
+  stopOnFirstFail is ${stopOnFirstFail}\n
+  quarantineMode is ${quarantineMode}\n`);
 
 createTestcafe('localhost')
   .then((tc) => {
@@ -47,12 +82,12 @@ createTestcafe('localhost')
         output: 'integration-test-report.xml',
       }])
       .run({
-        selectorTimeout: 3000,
-        assertionTimeout: 1000,
-        pageLoadTimeout: 5000,
-        speed: 1,
-        quarantineMode: true,
-        stopOnFirstFail: true,
+        selectorTimeout,
+        assertionTimeout,
+        pageLoadTimeout,
+        speed,
+        quarantineMode,
+        stopOnFirstFail,
       });
   })
   .then(() => {

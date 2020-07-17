@@ -44,7 +44,8 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Commencement-date page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    if (process.env.NOCK_CHECK) {
+    console.log('process.env.NOCK_CHECK', process.env.NOCK_CHECK)
+    if (process.env.NOCK_CHECK !== false) {
       const isDone = nock.isDone();
       if (!isDone) {
         // eslint-disable-next-line no-console
@@ -77,7 +78,7 @@ test('should render commencement-date page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id when click on backLink', async (t) => {
+test('should link to /order/organisation/order-id for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -85,8 +86,7 @@ test('should navigate to /organisation/order-id when click on backLink', async (
 
   await t
     .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
 test('should render the title', async (t) => {
