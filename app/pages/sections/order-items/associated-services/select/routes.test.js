@@ -101,4 +101,34 @@ describe('associated-services select routes', () => {
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
+
+  describe('GET /organisation/:orderId/associated-services/select/associated-service/price', () => {
+    const path = '/organisation/some-order-id/associated-services/select/associated-service/price';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should return the associated-services select-associated-service page if authorised', async () => {
+      const res = await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200);
+        console.log(res.text);
+
+      expect(res.text.includes('Get associated price page')).toBeTruthy();
+    });
+  });
 });
