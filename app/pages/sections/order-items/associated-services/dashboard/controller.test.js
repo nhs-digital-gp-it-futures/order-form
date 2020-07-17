@@ -1,4 +1,6 @@
-/* eslint-disable no-undef */
+import { putData } from 'buying-catalogue-library';
+import { orderApiUrl } from '../../../../../config';
+import { logger } from '../../../../../logger';
 import * as contextCreator from './contextCreator';
 import {
   getAssociatedServicesPageContext,
@@ -43,11 +45,11 @@ describe('associated-services controller', () => {
         { orderId, orderDescription: 'some description' },
       );
     });
+  });
 
-    describe('putAssociatedServices', () => {
-      afterEach(() => {
-        jest.resetAllMocks();
-      });
+  describe('putAssociatedServices', () => {
+    afterEach(() => {
+      jest.resetAllMocks();
     });
 
     const formattedPutData = {
