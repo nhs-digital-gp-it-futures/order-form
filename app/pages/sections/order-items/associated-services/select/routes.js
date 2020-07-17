@@ -3,7 +3,7 @@ import { logger } from '../../../../../logger';
 import config from '../../../../../config';
 import { withCatch, extractAccessToken } from '../../../../../helpers/routes/routerHelper';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
-import { getAssociatedServicePageContext } from './associated-service/controller';
+import { getAssociatedServicePageContext, findAssociatedServices } from './associated-service/controller';
 import {
   getAssociatedServicePricePageContext,
   getAssociatedServicePriceErrorPageContext,
@@ -23,6 +23,10 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
     authProvider.authorise({ claim: 'ordering' }),
     withCatch(logger, authProvider, async (req, res) => {
       const { orderId } = req.params;
+      const associatedServices = await findAssociatedServices({ req, sessionManager });
+
+      // Temporary inclusion until associated services displayed on page
+      logger.info(`Found the following associated services: ${JSON.stringify(associatedServices)}`);
 
       const context = getAssociatedServicePageContext({
         orderId,

@@ -99,6 +99,9 @@ describe('associated-services select routes', () => {
       selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
         .mockResolvedValue({});
 
+      selectAssociatedServiceController.findAssociatedServices = jest.fn()
+        .mockResolvedValue({});
+
       const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
