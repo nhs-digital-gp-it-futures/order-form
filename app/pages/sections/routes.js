@@ -16,6 +16,7 @@ import { getServiceRecipientsContext, putServiceRecipients } from './service-rec
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/routes';
 import { additionalServicesRoutes } from './order-items/additional-services/routes';
+import { associatedServicesRoutes } from './order-items/associated-services/routes';
 
 const router = express.Router({ mergeParams: true });
 
@@ -77,6 +78,8 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.use('/catalogue-solutions', catalogueSolutionsRoutes(authProvider, addContext, sessionManager));
 
   router.use('/additional-services', additionalServicesRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/associated-services', associatedServicesRoutes(authProvider, addContext, sessionManager));
 
   router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;

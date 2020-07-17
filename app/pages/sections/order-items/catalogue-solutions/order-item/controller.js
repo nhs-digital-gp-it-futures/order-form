@@ -6,28 +6,12 @@ import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from '../../../../../helpers/controllers/manifestProvider';
 import { extractDate } from '../../../../../helpers/controllers/extractDate';
 
-export const getOrderItem = async ({ orderId, orderItemId, accessToken }) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCatalogueOrderItem', options: { orderId, orderItemId } });
-  const catalogueOrderItem = await getData({ endpoint, accessToken, logger });
-  logger.info(`Catalogue order item returned for ${orderItemId}`);
-
-  return catalogueOrderItem;
-};
-
 export const getRecipientName = async ({ selectedRecipientId, accessToken }) => {
   const endpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipient', options: { selectedRecipientId } });
   const serviceRecipientData = await getData({ endpoint, accessToken, logger });
   logger.info(`service recipient returned for ${selectedRecipientId}`);
 
   return serviceRecipientData.name;
-};
-
-export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
-  const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSelectedPrice', options: { selectedPriceId } });
-  const selectedPriceData = await getData({ endpoint, accessToken, logger });
-  logger.info(`Price details returned for ${selectedPriceId}`);
-
-  return selectedPriceData;
 };
 
 const formatFormData = ({ formData }) => ({
@@ -116,8 +100,9 @@ const formatPostData = ({
     name: serviceRecipientName,
     odsCode: selectedRecipientId,
   },
-  catalogueSolutionId: selectedSolutionId,
-  catalogueSolutionName: solutionName,
+  catalogueItemId: selectedSolutionId,
+  catalogueItemName: solutionName,
+  catalogueItemType: 'Solution',
   deliveryDate: extractDate('deliveryDate', formData),
   quantity: parseInt(formData.quantity, 10),
   estimationPeriod: formData.selectEstimationPeriod,

@@ -17,11 +17,11 @@ const setCookies = ClientFunction(() => {
 
 const mockSolutions = [
   {
-    id: 'solution-1',
+    catalogueItemId: 'solution-1',
     name: 'Solution 1',
   },
   {
-    id: 'solution-2',
+    catalogueItemId: 'solution-2',
     name: 'Solution 2',
   },
 ];
@@ -29,11 +29,11 @@ const mockSolutions = [
 const solutionsState = ClientFunction(() => {
   const cookieValue = JSON.stringify([
     {
-      id: 'solution-1',
+      catalogueItemId: 'solution-1',
       name: 'Solution 1',
     },
     {
-      id: 'solution-2',
+      catalogueItemId: 'solution-2',
       name: 'Solution 2',
     },
   ]);
@@ -41,10 +41,10 @@ const solutionsState = ClientFunction(() => {
   document.cookie = `solutions=${cookieValue}`;
 });
 
-const selectedSolutionIdState = ClientFunction(() => {
+const selectedItemIdState = ClientFunction(() => {
   const cookieValue = 'solution-2';
 
-  document.cookie = `selectedSolutionId=${cookieValue}`;
+  document.cookie = `selectedItemId=${cookieValue}`;
 });
 
 const mocks = () => {
@@ -52,18 +52,18 @@ const mocks = () => {
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, { supplierId: 'supp-1' });
   nock(solutionsApiUrl)
-    .get('/api/v1/solutions?supplierId=supp-1')
-    .reply(200, { solutions: mockSolutions });
+    .get('/api/v1/catalogue-items?supplierId=supp-1&catalogueItemType=Solution')
+    .reply(200, mockSolutions);
 };
 
 const pageSetup = async (
-  withAuth = true, withSolutionsFoundState = false, withSelectedSolutionIdState = false) => {
+  withAuth = true, withSolutionsFoundState = false, withSelectedItemIdState = false) => {
   if (withAuth) {
     mocks();
     await setCookies();
   }
   if (withSolutionsFoundState) await solutionsState();
-  if (withSelectedSolutionIdState) await selectedSolutionIdState();
+  if (withSelectedItemIdState) await selectedItemIdState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -147,7 +147,7 @@ test('should render a selectSolution question as radio button options', async (t
     .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(1))).eql('Solution 2');
 });
 
-test('should render the radioButton as checked for the selectedSolutionId', async (t) => {
+test('should render the radioButton as checked for the selectedItemId', async (t) => {
   await pageSetup(true, true, true);
   await t.navigateTo(pageUrl);
 

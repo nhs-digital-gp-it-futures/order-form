@@ -11,14 +11,12 @@ const endpoints = {
     getSupplier: options => `${solutionsApiUrl}/api/v1/suppliers/${options.supplierId}`,
     getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
     getSolution: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}`,
-    getCatalogueItem: options => `${solutionsApiUrl}/api/v1/catalogue-items/${options.itemId}`,
     getSolutionPricing: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}/prices`,
     getSelectedPrice: options => `${solutionsApiUrl}/api/v1/prices/${options.selectedPriceId}`,
     getAdditionalServices: (options) => {
       const queryString = `solutionIds=${options.addedCatalogueSolutions.join('&solutionIds=')}`;
       return `${solutionsApiUrl}/api/v1/additional-services?${queryString}`;
     },
-    getCatalogueItemPricing: options => `${solutionsApiUrl}/api/v1/prices?catalogueItemId=${options.catalogueItemId}`,
   },
   dapi: {
     getApiHealth: () => `${documentApiHost}/health/ready`,
@@ -32,19 +30,14 @@ const endpoints = {
   ordapi: {
     getOrder: options => `${orderApiUrl}/api/v1/orders/${options.orderId}`,
     getOrders: options => `${orderApiUrl}/api/v1/organisations/${options.orgId}/orders`,
-    getOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items/${options.orderItemId}`,
     postOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items`,
     putOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items/${options.orderItemId}`,
     getOrderSummary: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/summary`,
-    getDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
     getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
     getSupplier: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/supplier`,
-    getCatalogueOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions/${options.orderItemId}`,
     postSolutionOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions`,
     putCatalogueOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions/${options.orderItemId}`,
     getCommencementDate: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/commencement-date`,
-    getAddedCatalogueSolutions: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions`,
-    getAddedAdditionalServices: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items?catalogueItemType=AdditionalServices`,
     getSelectedServiceRecipients: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/service-recipients`,
     putDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
     putOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,

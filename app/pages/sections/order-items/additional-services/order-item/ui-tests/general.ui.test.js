@@ -24,6 +24,7 @@ const authTokenInSession = JSON.stringify({
   id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
 });
 const itemIdInSession = 'item-1';
+const itemNameInSession = 'Item One';
 const selectedRecipientIdInSession = 'recipient-1';
 const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
@@ -42,9 +43,6 @@ const setState = ClientFunction((key, value) => {
 
 const mocks = () => {
   nock(solutionsApiUrl)
-    .get('/api/v1/catalogue-items/item-1')
-    .reply(200, catalogueItem);
-  nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
 };
@@ -56,6 +54,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
     await setState('selectedRecipientId', selectedRecipientIdInSession);
     await setState('selectedRecipientName', selectedRecipientNameInSession);
     await setState('selectedItemId', itemIdInSession);
+    await setState('selectedItemName', itemNameInSession);
     await setState('selectedPriceId', selectedPriceIdInSession);
     if (postRoute) {
       await setState('orderItemPageData', orderItemPageDataInSession);
@@ -92,7 +91,7 @@ test('should render additional-services order-item page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1/additional-services/select/additional-service/recipient when click on backlink', async (t) => {
+test('should link to /order/organisation/order-1/additional-services/select/additional-service/recipient for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -100,11 +99,10 @@ test('should navigate to /organisation/order-1/additional-services/select/additi
 
   await t
     .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
 });
 
-test('should navigate to /organisation/order-1/additional-services/select/solution/price/recipient when click on backlink after validation errors', async (t) => {
+test('should link to /order/organisation/order-1/additional-services/select/solution/price/recipient for backlink after validation errors', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
@@ -114,8 +112,7 @@ test('should navigate to /organisation/order-1/additional-services/select/soluti
   await t
     .click(saveButton)
     .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
 });
 
 test('should render the title', async (t) => {

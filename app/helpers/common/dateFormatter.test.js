@@ -24,14 +24,14 @@ describe('formatDate', () => {
       expect(destructureDate('2025-12-31T11:29:52.4965647Z')).toEqual(['31', '12', '2025']);
     });
 
-    it('returns empty string when invalid string is passed in', () => {
-      expect(destructureDate('2020-05-06T11:29:52.4965647Znnnn')).toEqual('');
-      expect(destructureDate('2020-05-32T11:29:52.4965647Z')).toEqual('');
-      expect(destructureDate('abc')).toEqual('');
+    it('returns undefined when invalid string is passed in', () => {
+      expect(destructureDate('2020-05-06T11:29:52.4965647Znnnn')).toEqual([undefined, undefined, undefined]);
+      expect(destructureDate('2020-05-32T11:29:52.4965647Z')).toEqual([undefined, undefined, undefined]);
+      expect(destructureDate('abc')).toEqual([undefined, undefined, undefined]);
     });
 
-    it('returns empty string when nothing is passed in', () => {
-      expect(destructureDate()).toEqual('');
+    it('returns undefined when nothing is passed in', () => {
+      expect(destructureDate()).toEqual([undefined, undefined, undefined]);
     });
   });
 });

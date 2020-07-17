@@ -15,9 +15,12 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
+const selectedItemNameState = ClientFunction(() => {
+  document.cookie = 'selectedItemName=Additional Service Name';
+});
+
 const selectedAdditionalServiceState = ClientFunction(() => {
   document.cookie = 'selectedItemId=additional-service-1';
-  document.cookie = 'selectedItemName=Additional Service Name';
 });
 
 const mockAdditionalServicePricing = {
@@ -153,7 +156,10 @@ const pageSetup = async (
     mocks();
     await setCookies();
   }
-  if (withSelectedAdditionalServiceState) await selectedAdditionalServiceState();
+  if (withSelectedAdditionalServiceState) {
+    await selectedItemNameState();
+    await selectedAdditionalServiceState();
+  }
   if (withAdditionalServicePricesState) await additionalServicePricesState();
   if (withSelectedAdditionalServicePriceIdState) await selectedAdditionalServicePriceIdState();
 };
@@ -194,8 +200,8 @@ test('should navigate to /organisation/order-id/additional-services/select/addit
   const solutionId = '100001-001';
 
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/catalogue-solutions')
-    .reply(200, { catalogueSolutions: [{ catalogueItemId: solutionId }] });
+    .get('/api/v1/orders/order-id/order-items?catalogueItemType=Solution')
+    .reply(200, [{ catalogueItemId: solutionId }]);
 
   nock(solutionsApiUrl)
     .get(`/api/v1/additional-services?solutionIds=${solutionId}`)
@@ -284,4 +290,87 @@ test('should render the Continue button', async (t) => {
   await t
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
+});
+
+test('should redirect to /organisation/order-id/additional-services/select/additional-service/price/recipient when a price is selected', async (t) => {
+  await pageSetup(true);
+  await t.navigateTo(pageUrl);
+
+  const selectAdditionalServiceRadioOptions = Selector('[data-test-id="question-selectAdditionalServicePrice"]');
+  const firstAdditionalService = selectAdditionalServiceRadioOptions.find('input').nth(0);
+  const button = Selector('[data-test-id="continue-button"] button');
+
+  await t
+    .click(firstAdditionalService)
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient');
+});
+
+test('should render the title on validation error', async (t) => {
+  await selectedItemNameState();
+  await pageSetup(true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-button"] button');
+  const title = Selector('h1[data-test-id="additional-service-price-page-title"]');
+
+  await t
+    .expect(await extractInnerText(title)).eql(`${content.title} Additional Service Name`)
+    .click(button);
+
+  await t
+    .expect(title.exists).ok()
+    .expect(await extractInnerText(title)).eql(`${content.title} Additional Service Name`);
+});
+
+test('should show the error summary when no price selected causing validation error', async (t) => {
+  await pageSetup(true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a list price');
+});
+
+test('should render select additional service field as errors with error message when no price selected causing validation error', async (t) => {
+  await pageSetup(true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const additionalServiceSelectPage = Selector('[data-test-id="additional-service-price-page"]');
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const additionalServiceSelectField = additionalServiceSelectPage.find('[data-test-id="question-selectAdditionalServicePrice"]');
+
+  await t
+    .expect(additionalServiceSelectField.find('[data-test-id="radiobutton-options-error"]').exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(additionalServiceSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
+    .expect(await extractInnerText(additionalServiceSelectField.find('#selectAdditionalServicePrice-error'))).contains('Select a list price');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  await pageSetup(true, true, true);
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#selectAdditionalServicePrice`);
 });

@@ -8,5 +8,8 @@
       "mainAdvice": "Select Service Recipient (ODS code)"
     }
   ],
+  "errorMessages": {
+    "SelectRecipientRequired": "Select a Service Recipient"
+  },
   "continueButtonText": "Continue"
 }

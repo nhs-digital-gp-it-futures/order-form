@@ -28,15 +28,15 @@ const selectedPrice = {
 const authTokenInSession = JSON.stringify({
   id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
 });
-const solutionIdInSession = 'solution-1';
-const solutionNameInSession = 'solution-name';
+const itemIdInSession = 'solution-1';
+const itemNameInSession = 'solution-name';
 const selectedRecipientIdInSession = 'recipient-1';
 const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
 
 const orderItemPageDataInSession = JSON.stringify({
-  solutionId: solutionIdInSession,
-  solutionName: solutionNameInSession,
+  itemId: itemIdInSession,
+  itemName: itemNameInSession,
   serviceRecipientId: selectedRecipientIdInSession,
   serviceRecipientName: selectedRecipientNameInSession,
   selectedPrice,
@@ -48,9 +48,6 @@ const setState = ClientFunction((key, value) => {
 
 const mocks = () => {
   nock(solutionsApiUrl)
-    .get('/api/v1/solutions/solution-1')
-    .reply(200, { id: 'solution-1', name: 'Solution One' });
-  nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
 };
@@ -61,7 +58,8 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
     await setState('fakeToken', authTokenInSession);
     await setState('selectedRecipientId', selectedRecipientIdInSession);
     await setState('selectedRecipientName', selectedRecipientNameInSession);
-    await setState('selectedSolutionId', solutionIdInSession);
+    await setState('selectedItemId', itemIdInSession);
+    await setState('selectedItemName', itemNameInSession);
     await setState('selectedPriceId', selectedPriceIdInSession);
     if (postRoute) {
       await setState('orderItemPageData', orderItemPageDataInSession);

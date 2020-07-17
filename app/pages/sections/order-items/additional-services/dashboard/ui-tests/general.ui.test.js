@@ -17,8 +17,8 @@ const setCookies = ClientFunction(() => {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-1/order-items?catalogueItemType=AdditionalServices')
-    .reply(200, { });
+    .get('/api/v1/orders/order-1/order-items?catalogueItemType=AdditionalService')
+    .reply(200, []);
 
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1/sections/description')
@@ -131,7 +131,7 @@ test('should render the Add Additional Services button', async (t) => {
     .expect(await extractInnerText(addOrderItemButton)).eql(content.addOrderItemButtonText);
 });
 
-test('should navigate to /organisation/order-1/catalogue-solutions/select/solution when Add Additional Services button is clicked', async (t) => {
+test('should navigate to /organisation/order-1/additional-services/select/additional-service when Add Additional Services button is clicked', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
