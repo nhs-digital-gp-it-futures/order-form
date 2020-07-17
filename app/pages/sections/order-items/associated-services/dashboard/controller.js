@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { getContext } from './contextCreator';
 import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
 

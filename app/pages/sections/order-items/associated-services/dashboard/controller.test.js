@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import * as contextCreator from './contextCreator';
 import {
   getAssociatedServicesPageContext,
