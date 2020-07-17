@@ -1,48 +1,28 @@
-import { getData, putData } from 'buying-catalogue-library';
-import { getEndpoint } from '../../../../../endpoints';
-import { logger } from '../../../../../logger';
-import { getContext } from './contextCreator';
-import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
+import * as contextCreator from './contextCreator';
+import {
+  getAssociatedServicesPageContext,
+} from './controller';
 
-export const getAdditionalServicesPageContext = async ({
-  orderId,
-  catalogueItemType,
-  accessToken,
-}) => {
-  const additionalServiceOrderItemsData = await getOrderItems({
-    orderId,
-    catalogueItemType,
-    accessToken,
-  });
+jest.mock('buying-catalogue-library');
+jest.mock('../../../../../logger');
+jest.mock('./contextCreator', () => ({
+  getContext: jest.fn(),
+}));
 
-  const getOrderDescriptionDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getDescription', options: { orderId } });
-  const orderDescriptionData = await getData({
-    endpoint: getOrderDescriptionDataEndpoint, accessToken, logger,
-  });
+const orderId = 'order-id';
 
-  return getContext({
-    orderId,
-    orderDescription: orderDescriptionData ? orderDescriptionData.description : '',
-    orderItems: additionalServiceOrderItemsData,
-  });
-};
-
-export const putAdditionalServices = async ({ orderId, accessToken }) => {
-  const putAdditionalServicesEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putAdditionalServices', options: { orderId } });
-  try {
-    const body = {
-      status: 'complete',
-    };
-
-    await putData({
-      endpoint: putAdditionalServicesEndpoint,
-      body,
-      accessToken,
-      logger,
+describe('associated-services controller', () => {
+  describe('getAssociatedServicesPageContext', () => {
+    afterEach(() => {
+      jest.resetAllMocks();
     });
-    return { success: true };
-  } catch (err) {
-    logger.error(`Error updating additional-services for ${orderId}`);
-    throw new Error();
-  }
-};
+
+    it('should call getContext with the correct params', async () => {
+      await getAssociatedServicesPageContext({ orderId });
+      expect(contextCreator.getContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getContext).toHaveBeenCalledWith(
+        { orderId },
+      );
+    });
+  });
+});

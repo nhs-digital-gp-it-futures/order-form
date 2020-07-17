@@ -15,13 +15,13 @@ const setCookies = ClientFunction(() => {
 });
 
 const mocks = () => {
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-1/order-items?catalogueItemType=AssociatedService')
-    .reply(200, []);
+  // nock(orderApiUrl)
+  //   .get('/api/v1/orders/order-1/order-items?catalogueItemType=AssociatedService')
+  //   .reply(200, []);
 
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-1/sections/description')
-    .reply(200, { description: 'Some order' });
+  // nock(orderApiUrl)
+  //   .get('/api/v1/orders/order-1/sections/description')
+  //   .reply(200, { description: 'Some order' });
 };
 
 const pageSetup = async (withAuth = true) => {
@@ -33,7 +33,7 @@ const pageSetup = async (withAuth = true) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture.only('Associated-services - Dashboard page - general')
+fixture('Associated-services - Dashboard page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
@@ -65,17 +65,18 @@ test('should render associated-services page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
+// TODO Add when nocks are added
+// test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
+//   await pageSetup();
+//   await t.navigateTo(pageUrl);
 
-  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+//   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
-  await t
-    .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
-});
+//   await t
+//     .expect(goBackLink.exists).ok()
+//     .click(goBackLink)
+//     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+// });
 
 test('should render the title', async (t) => {
   await pageSetup();
@@ -121,7 +122,7 @@ test('should render the orderDescription', async (t) => {
     .expect(orderDescriptionHeading.exists).ok()
     .expect(await extractInnerText(orderDescriptionHeading)).contains(content.orderDescriptionHeading)
     .expect(orderDescription.exists).ok()
-    .expect(await extractInnerText(orderDescription)).eql('Some order');
+    .expect(await extractInnerText(orderDescription)).eql('');
 });
 
 test('should render the Add Associated Services button', async (t) => {
@@ -158,10 +159,6 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/sections/associated-services')
-    .reply(200);
-
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -169,5 +166,5 @@ test('should redirect to /organisation/order-1 when clicking the Continue button
 
   await t
     .click(continueButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/associated-services');
 });
