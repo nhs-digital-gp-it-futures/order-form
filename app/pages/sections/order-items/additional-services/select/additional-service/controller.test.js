@@ -1,4 +1,4 @@
-import { getData, fakeSessionManager } from 'buying-catalogue-library';
+import { getData } from 'buying-catalogue-library';
 import {
   solutionsApiUrl as bapiUrl,
 } from '../../../../../../config';
@@ -8,7 +8,6 @@ import {
   getAdditionalServiceErrorPageContext,
   findAdditionalServices,
   findAddedCatalogueSolutions,
-  findSelectedCatalogueItemInSession,
   validateAdditionalServicesForm,
 } from './controller';
 import * as contextCreator from './contextCreator';
@@ -134,13 +133,6 @@ describe('additional-services select-additional-service controller', () => {
 
       const catalogueItemIds = await findAddedCatalogueSolutions({ orderId, accessToken });
       expect(catalogueItemIds).toEqual([]);
-    });
-  });
-
-  describe('findSelectedCatalogueItemInSession', () => {
-    it('should throw an error when an additional service cannot be found in session', () => {
-      expect(() => findSelectedCatalogueItemInSession({ sessionManager: fakeSessionManager }))
-        .toThrow(Error);
     });
   });
 

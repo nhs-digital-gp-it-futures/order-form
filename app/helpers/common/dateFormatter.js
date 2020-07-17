@@ -9,9 +9,13 @@ export const formatDate = (date) => {
 
 export const destructureDate = (date) => {
   const d = new Date(date);
-  if (Number.isNaN(d.getTime())) return '';
+  if (Number.isNaN(d.getTime())) return [undefined, undefined, undefined];
   const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
   const mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
   const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-  return [da, mo, ye];
+  return [
+    da || undefined,
+    mo || undefined,
+    ye || undefined,
+  ];
 };
