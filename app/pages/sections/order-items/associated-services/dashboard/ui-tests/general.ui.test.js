@@ -61,7 +61,7 @@ test('should render associated-services page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
+test('should render go back link with href /organisation/order-1', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -152,18 +152,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(continueButton)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const continueButton = Selector('[data-test-id="continue-button"] button');
-
-  await t
-    .click(continueButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/associated-services');
-});
-
-test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
+test.only('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/sections/associated-services')
     .reply(200);
