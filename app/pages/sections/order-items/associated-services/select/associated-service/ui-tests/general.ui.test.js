@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
+import { solutionsApiUrl as bapiUrl } from '../../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service';
 
@@ -10,7 +11,10 @@ const setCookies = ClientFunction(() => {
     id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
   });
 
+  const supplierId = 'sup-1';
+
   document.cookie = `fakeToken=${cookieValue}`;
+  document.cookie = `selectedSupplier=${supplierId}`;
 });
 
 const associatedServicesState = ClientFunction(() => {
@@ -28,8 +32,21 @@ const associatedServicesState = ClientFunction(() => {
   document.cookie = `associatedServices=${cookieValue}`;
 });
 
+const mockAssociatedServices = [
+  {
+    associatedServiceId: 'associated-service-1',
+    name: 'Associated Service 1',
+  },
+  {
+    associatedServiceId: 'associated-service-2',
+    name: 'Associated Service 2',
+  },
+];
+
 const mocks = () => {
-  // Placeholder
+  nock(bapiUrl)
+    .get('/api/v1/catalogue-items?supplierId=sup-1&catalogueItemType=AssociatedService')
+    .reply(200, { associatedServices: mockAssociatedServices });
 };
 
 const pageSetup = async (
