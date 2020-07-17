@@ -23,7 +23,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
   }));
 
   router.use('/select', associatedServicesSelectRoutes(authProvider, addContext, sessionManager));
-  
+
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
