@@ -53,8 +53,6 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   router.post('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    console.log('req.body', req.body)
-
     const response = validateSolutionForm({ data: req.body });
 
     if (response.success) {
