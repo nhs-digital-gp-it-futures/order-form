@@ -10,7 +10,7 @@ import {
 
 const router = express.Router({ mergeParams: true });
 
-export const associatedServicesRoutes = (authProvider, addContext) => {
+export const associatedServicesRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const context = await getAssociatedServicesPageContext({
@@ -22,6 +22,8 @@ export const associatedServicesRoutes = (authProvider, addContext) => {
     return res.render('pages/sections/order-items/associated-services/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.use('/select', associatedServicesSelectRoutes(authProvider, addContext, sessionManager));
+  
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
