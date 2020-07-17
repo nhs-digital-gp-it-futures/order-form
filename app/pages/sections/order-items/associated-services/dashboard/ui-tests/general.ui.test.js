@@ -64,18 +64,16 @@ test('should render associated-services page', async (t) => {
     .expect(page.exists).ok();
 });
 
-// TODO Add when nocks are added
-// test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
-//   await pageSetup();
-//   await t.navigateTo(pageUrl);
+test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
 
-//   const goBackLink = Selector('[data-test-id="go-back-link"] a');
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
-//   await t
-//     .expect(goBackLink.exists).ok()
-//     .click(goBackLink)
-//     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
-// });
+  await t
+    .expect(goBackLink.exists).ok()
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1');
+});
 
 test('should render the title', async (t) => {
   await pageSetup();
