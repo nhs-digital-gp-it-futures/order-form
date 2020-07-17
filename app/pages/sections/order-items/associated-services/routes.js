@@ -1,6 +1,6 @@
 import express from 'express';
 import { logger } from '../../../../logger';
-import { withCatch } from '../../../../helpers/routes/routerHelper';
+import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
 import { associatedServicesSelectRoutes } from './select/routes';
 import { getAssociatedServicesPageContext } from './dashboard/controller';
 
@@ -11,6 +11,7 @@ export const associatedServicesRoutes = (authProvider, addContext) => {
     const { orderId } = req.params;
     const context = await getAssociatedServicesPageContext({
       orderId,
+      accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
     logger.info(`navigating to order ${orderId} associated-services dashboard page`);
