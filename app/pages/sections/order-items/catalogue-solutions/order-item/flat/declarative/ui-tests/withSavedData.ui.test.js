@@ -55,7 +55,7 @@ const setState = ClientFunction((key, value) => {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/catalogue-solutions/existing-order-id')
+    .get('/api/v1/orders/order-id/order-items/existing-order-id')
     .reply(200, orderItem);
 };
 

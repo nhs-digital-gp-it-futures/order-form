@@ -1,7 +1,5 @@
-import {
-  getSelectedPrice,
-  getOrderItem,
-} from './controller';
+import { getSelectedPrice } from '../../../../../helpers/api/bapi/getSelectedPrice';
+import { getOrderItem } from '../../../../../helpers/api/ordapi/getOrderItem';
 import { destructureDate } from '../../../../../helpers/common/dateFormatter';
 import { formatDecimal } from '../../../../../helpers/common/priceFormatter';
 
@@ -25,7 +23,7 @@ export const getPageData = async ({
 
   const orderItem = await getOrderItem({ orderId, orderItemId, accessToken });
   const itemId = orderItem.catalogueItemId;
-  const solutionName = orderItem.catalogueItemName;
+  const itemName = orderItem.catalogueItemName;
   const serviceRecipientId = orderItem.serviceRecipient.odsCode;
   const serviceRecipientName = orderItem.serviceRecipient.name;
   const selectedPrice = {
@@ -48,7 +46,7 @@ export const getPageData = async ({
 
   return {
     itemId,
-    itemName: solutionName,
+    itemName,
     serviceRecipientId,
     serviceRecipientName,
     selectedPrice,
