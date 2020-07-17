@@ -135,7 +135,7 @@ test('should render the Add Additional Services button', async (t) => {
     .expect(await extractInnerText(addOrderItemButton)).eql(content.addOrderItemButtonText);
 });
 
-test('should navigate to /organisation/order-1/catalogue-solutions/select/solution when Add Additional Services button is clicked', async (t) => {
+test('should navigate to /organisation/order-1/additional-services/select/additional-service when Add Additional Services button is clicked', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
