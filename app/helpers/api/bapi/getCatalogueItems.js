@@ -9,7 +9,12 @@ const getCatalogueItemsEndpoint = (supplierId, catalogueItemType) => (
 export const getCatalogueItems = async ({ supplierId, catalogueItemType, accessToken }) => {
   const endpoint = getCatalogueItemsEndpoint(supplierId, catalogueItemType);
   const catalogueItems = await getData({ endpoint, accessToken, logger });
-  logger.info(`Found ${catalogueItems.length} item(s) for supplier "${supplierId}".`);
 
-  return catalogueItems;
+  if (catalogueItems && catalogueItems.length > 0) {
+    logger.info(`Found ${catalogueItems.length} item(s) for supplier "${supplierId}".`);
+    return catalogueItems;
+  }
+
+  logger.error(`No catalogueItems returned for supplier ${supplierId} and catalogueItemType ${catalogueItemType}`);
+  throw new Error();
 };
