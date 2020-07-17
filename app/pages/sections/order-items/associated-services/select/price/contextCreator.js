@@ -1,5 +1,6 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../../../config';
+import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
 const generateFlatPriceItem = (mappedPrice, timeUnitdescription, selectedPriceId) => ({
   value: mappedPrice.priceId,
@@ -50,3 +51,15 @@ export const getContext = ({
   questions: associatedServicePrices
     && generateQuestionsContext(associatedServicePrices, selectedPriceId),
 });
+
+export const getErrorContext = (params) => {
+  const updatedManifest = getContext({
+    orderId: params.orderId,
+    associatedServicePrices: params.associatedServicePrices,
+    selectedAssociatedServiceName: params.selectedAssociatedServiceName,
+  });
+
+  return {
+    ...getSectionErrorContext({ ...params, manifest: updatedManifest }),
+  };
+};

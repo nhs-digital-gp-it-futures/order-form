@@ -3,6 +3,10 @@ import {
   FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
+  testPostPathWithoutCsrf,
+  testAuthorisedPostPathForUnauthenticatedUser,
+  testAuthorisedPostPathForUnauthorisedUsers,
+  getCsrfTokenFromGet,
   fakeSessionManager,
 } from 'buying-catalogue-library';
 import { App } from '../../../../../app';
@@ -137,6 +141,114 @@ describe('associated-services select routes', () => {
 
       expect(res.text.includes('data-test-id="associated-service-price-page"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+    });
+  });
+
+  describe('POST /organisation/:orderId/associated-services/select/associated-service/price', () => {
+    const path = '/organisation/order-1/associated-services/select/associated-service/price';
+    const prices = [
+      {
+        priceId: 1,
+        type: 'flat',
+        currencyCode: 'GBP',
+        itemUnit: {
+          name: 'patient',
+          description: 'per patient',
+        },
+        timeUnit: {
+          name: 'year',
+          description: 'per year',
+        },
+        price: 1.64,
+      }];
+
+    const pricesCookie = `associatedServicePrices=${JSON.stringify(prices)}`;
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [pricesCookie],
+        expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should show the associated service select price page with errors if there are validation errors', async () => {
+      selectAssociatedServicePriceController.validateAssociatedServicePriceForm = jest.fn()
+        .mockReturnValue({ success: false });
+
+      getCatalogueItemPricing.mockResolvedValue(prices);
+
+      selectAssociatedServicePriceController.getAssociatedServicePricePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      selectAssociatedServicePriceController
+        .getAssociatedServicePriceErrorPageContext = jest.fn()
+          .mockResolvedValue({
+            errors: [{ text: 'Select a List price', href: '#selectAssociatedServicePrice' }],
+          });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, pricesCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="associated-service-price-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+    });
+
+    it('should redirect to /organisation/some-order-id/associated-services/select/associated-service/price/recipient if a price is selected', async () => {
+      selectAssociatedServicePriceController.validateAssociatedServicePriceForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, pricesCookie])
+        .send({
+          selectAssociatedServicePrice: '1',
+          _csrf: csrfToken,
+        })
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/associated-services/select/associated-service/price/recipient`);
     });
   });
 });
