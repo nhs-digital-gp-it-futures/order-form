@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
+import { orderApiUrl } from '../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services';
 
@@ -14,13 +15,9 @@ const setCookies = ClientFunction(() => {
 });
 
 const mocks = () => {
-  // nock(orderApiUrl)
-  //   .get('/api/v1/orders/order-1/order-items?catalogueItemType=AssociatedService')
-  //   .reply(200, []);
-
-  // nock(orderApiUrl)
-  //   .get('/api/v1/orders/order-1/sections/description')
-  //   .reply(200, { description: 'Some order' });
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-1/sections/description')
+    .reply(200, { description: 'Some order' });
 };
 
 const pageSetup = async (withAuth = true) => {
@@ -119,7 +116,7 @@ test('should render the orderDescription', async (t) => {
     .expect(orderDescriptionHeading.exists).ok()
     .expect(await extractInnerText(orderDescriptionHeading)).contains(content.orderDescriptionHeading)
     .expect(orderDescription.exists).ok()
-    .expect(await extractInnerText(orderDescription)).eql('');
+    .expect(await extractInnerText(orderDescription)).eql('Some order');
 });
 
 test('should render the Add Associated Services button', async (t) => {

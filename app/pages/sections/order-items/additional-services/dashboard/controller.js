@@ -1,8 +1,9 @@
-import { getData, putData } from 'buying-catalogue-library';
+import { putData } from 'buying-catalogue-library';
 import { getEndpoint } from '../../../../../endpoints';
 import { logger } from '../../../../../logger';
 import { getContext } from './contextCreator';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
+import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
 
 export const getAdditionalServicesPageContext = async ({
   orderId,
@@ -15,10 +16,7 @@ export const getAdditionalServicesPageContext = async ({
     accessToken,
   });
 
-  const getOrderDescriptionDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getDescription', options: { orderId } });
-  const orderDescriptionData = await getData({
-    endpoint: getOrderDescriptionDataEndpoint, accessToken, logger,
-  });
+  const orderDescriptionData = await getOrderDescription({ orderId, accessToken });
 
   return getContext({
     orderId,
