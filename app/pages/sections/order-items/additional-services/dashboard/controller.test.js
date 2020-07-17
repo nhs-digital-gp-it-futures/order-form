@@ -1,4 +1,4 @@
-import { getData, putData } from 'buying-catalogue-library';
+import { putData } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../../config';
 import { logger } from '../../../../../logger';
 import * as contextCreator from './contextCreator';
