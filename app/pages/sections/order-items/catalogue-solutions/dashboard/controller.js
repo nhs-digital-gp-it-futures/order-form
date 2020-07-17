@@ -7,7 +7,7 @@ import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderD
 
 export const getCatalogueSolutionsPageContext = async ({ orderId, accessToken }) => {
   const catalogueItemType = 'Solution';
-  const solutionOrderItemsData = await getOrderItems({ orderId, catalogueItemType, accessToken });  
+  const solutionOrderItemsData = await getOrderItems({ orderId, catalogueItemType, accessToken });
   const orderDescriptionData = await getOrderDescription({ orderId, accessToken });
 
   return getContext({
