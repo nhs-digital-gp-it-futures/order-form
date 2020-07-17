@@ -13,7 +13,6 @@ import {
   validateAdditionalServicesForm,
 } from './additional-service/controller';
 import {
-  findAdditionalServicePrices,
   getAdditionalServicePricePageContext,
   getAdditionalServicePriceErrorPageContext,
   validateAdditionalServicePriceForm,
@@ -24,6 +23,7 @@ import {
   validateAdditionalServiceRecipientForm,
   getAdditionalServiceRecipientName,
 } from './recipient/controller';
+import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 
 const router = express.Router({ mergeParams: true });
 
@@ -109,9 +109,10 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     const catalogueItemId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
     const selectedAdditionalServiceName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
 
-    const additionalServicePrices = await findAdditionalServicePrices({
+    const additionalServicePrices = await getCatalogueItemPricing({
       catalogueItemId,
       accessToken,
+      loggerText: 'Additional service',
     });
     sessionManager.saveToSession({ req, key: 'additionalServicePrices', value: additionalServicePrices });
 
