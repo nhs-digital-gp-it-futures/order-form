@@ -126,7 +126,6 @@ describe('associated-services select routes', () => {
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200);
-        console.log(res.text);
 
       expect(res.text.includes('Get associated price page')).toBeTruthy();
     });
