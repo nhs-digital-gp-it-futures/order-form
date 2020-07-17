@@ -92,7 +92,7 @@ describe('Associated-services - Dashboard page', () => {
     });
   }));
 
-  it('should render no solutions text when the items provided is an empty array', componentTester(setup, (harness) => {
+  it('should render no associated services text when the items provided is an empty array', componentTester(setup, (harness) => {
     const context = {
       addedOrderItemsTable: {
         items: [],
