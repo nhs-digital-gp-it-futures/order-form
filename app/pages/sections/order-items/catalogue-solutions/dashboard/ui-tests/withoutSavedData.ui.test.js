@@ -31,8 +31,8 @@ const pageSetup = async () => {
 
 fixture('Catalogue-solutions - Dashboard page - without saved data')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async () => {
-    await nockCheck(nock);
+  .afterEach(async (t) => {
+    await nockCheck(nock, t);
   });
 
 test('should render the No solutions text when no order items are returned from ORDAPI', async (t) => {

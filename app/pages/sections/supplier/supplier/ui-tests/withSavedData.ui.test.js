@@ -66,8 +66,8 @@ const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Supplier page - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async () => {
-    await nockCheck(nock);
+  .afterEach(async (t) => {
+    await nockCheck(nock, t);
   });
 
 test('should navigate to /organisation/order-id when click on backlink if data comes from ORDAPI', async (t) => {

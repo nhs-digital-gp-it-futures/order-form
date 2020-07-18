@@ -117,8 +117,8 @@ const pageSetup = async (withAuth = true) => {
 
 fixture('Order Summary Preview - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async () => {
-    await nockCheck(nock);
+  .afterEach(async (t) => {
+    await nockCheck(nock, t);
   });
 
 test('should render the Call-off ordering party and supplier details in the table', async (t) => {

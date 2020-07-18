@@ -49,8 +49,8 @@ const pageSetup = async () => {
 
 fixture('Additional-services - Dashboard page - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async () => {
-    await nockCheck(nock);
+  .afterEach(async (t) => {
+    await nockCheck(nock, t);
   });
 
 test('should render the added additional service table with the column headings', async (t) => {

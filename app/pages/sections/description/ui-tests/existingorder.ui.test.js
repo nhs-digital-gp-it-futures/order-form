@@ -45,8 +45,8 @@ const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Description page - existing order')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async () => {
-    await nockCheck(nock);
+  .afterEach(async (t) => {
+    await nockCheck(nock, t);
   });
 
 test('should navigate to /organisation/order-id when click on backLink', async (t) => {

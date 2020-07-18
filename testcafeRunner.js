@@ -30,6 +30,10 @@ const argsMap = {
     description: 'number of concurrent threads',
     value: 2,
   },
+  fp: {
+    description: 'full path of test file',
+    value: '',
+  },
 };
 
 argv.map((arg) => {
@@ -41,7 +45,9 @@ const pageToTest = argsMap.p.value;
 const fileToTest = argsMap.f.value;
 const browserToRun = argsMap.b.value;
 const concurrency = parseInt(argsMap.c.value, 10);
-const testsToRun = `**/${pageToTest || '**'}/ui-tests/${fileToTest ? `${fileToTest}.` : '*'}ui.test.js`;
+const testsToRun = argsMap.fp.value
+  ? argsMap.fp.value
+  : `**/${pageToTest || '**'}/ui-tests/${fileToTest ? `${fileToTest}.` : '*'}ui.test.js`;
 
 let stopOnFirstFail = true;
 let quarantineMode = false;

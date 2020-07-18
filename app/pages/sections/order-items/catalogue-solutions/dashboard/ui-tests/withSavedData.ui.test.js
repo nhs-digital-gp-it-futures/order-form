@@ -49,8 +49,8 @@ const pageSetup = async () => {
 
 fixture('Catalogue-solutions - Dashboard page - without saved data')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async () => {
-    await nockCheck(nock);
+  .afterEach(async (t) => {
+    await nockCheck(nock, t);
   });
 
 test('should render the added catalogue solutions table with the column headings', async (t) => {

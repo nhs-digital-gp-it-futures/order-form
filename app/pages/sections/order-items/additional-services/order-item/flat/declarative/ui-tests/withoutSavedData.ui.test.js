@@ -65,8 +65,8 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
 
 fixture('Additional-services - flat declarative - withoutSavedData')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async () => {
-    await nockCheck(nock);
+  .afterEach(async (t) => {
+    await nockCheck(nock, t);
   });
 
 test('should navigate to additional-services dashboard page if save button is clicked and data is valid', async (t) => {

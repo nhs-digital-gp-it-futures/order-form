@@ -65,8 +65,8 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
 
 fixture('Catalogue-solutions - flat ondemand - general')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async () => {
-    await nockCheck(nock);
+  .afterEach(async (t) => {
+    await nockCheck(nock, t);
   });
 
 test('should render a text field for the quantity question', async (t) => {

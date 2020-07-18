@@ -51,8 +51,8 @@ const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Additional-service - recipient page - general')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async () => {
-    await nockCheck(nock);
+  .afterEach(async (t) => {
+    await nockCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {

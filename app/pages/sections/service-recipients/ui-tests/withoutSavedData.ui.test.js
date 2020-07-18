@@ -42,8 +42,8 @@ const pageSetup = async (timesToCallMocks = 1) => {
 
 fixture('Service-recipients page - without saved data')
   .page('http://localhost:1234/order/some-fake-page')
-  .afterEach(async () => {
-    await nockCheck(nock);
+  .afterEach(async (t) => {
+    await nockCheck(nock, t);
   });
 
 test('should render unchecked checkbox for each service recipient', async (t) => {
