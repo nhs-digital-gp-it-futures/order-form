@@ -3,6 +3,7 @@ import { getContext, getErrorContext } from './contextCreator';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 import { getOrderDescription } from '../../../helpers/api/ordapi/getOrderDescription';
+import { cookieSecret } from '../../../config';
 
 export const getDescriptionContext = async ({ orderId, accessToken }) => {
   let descriptionData = '';

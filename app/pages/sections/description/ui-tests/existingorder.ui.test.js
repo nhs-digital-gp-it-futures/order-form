@@ -2,16 +2,12 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../config';
-import { nockCheck } from '../../../../test-utils/nockChecker';
+import { nockCheck, setState } from '../../../../test-utils/nockChecker';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/description';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/description';
 
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
+const authTokenInSession = JSON.stringify({
+  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
 });
 
 const postDescriptionErrorResponse = {
@@ -23,21 +19,16 @@ const postDescriptionErrorResponse = {
   ],
 };
 
-const mocks = (putErrorNock) => {
+const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/description')
+    .get('/api/v1/orders/order-1/sections/description')
     .reply(200, { description: 'a lovely description' });
-  if (putErrorNock) {
-    nock(orderApiUrl)
-      .put('/api/v1/orders/order-id/sections/description')
-      .reply(400, postDescriptionErrorResponse);
-  }
 };
 
-const pageSetup = async (withAuth = true, putErrorNock = false) => {
+const pageSetup = async (withAuth = true) => {
   if (withAuth) {
-    mocks(putErrorNock);
-    await setCookies();
+    mocks();
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
 };
 
@@ -49,16 +40,14 @@ fixture('Description page - existing order')
     await nockCheck(nock, t);
   });
 
-test('should navigate to /organisation/order-id when click on backLink', async (t) => {
+test('should link to /order/organisation/order-1 for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1');
 });
 
 test('should populate the text area with existing decription data', async (t) => {
@@ -68,13 +57,12 @@ test('should populate the text area with existing decription data', async (t) =>
   const description = Selector('[data-test-id="question-description"] textarea');
 
   await t
-    .expect(description.exists).ok()
     .expect(description.value).eql('a lovely description');
 });
 
 test('should navigate to task list page when valid description is added and save is clicked', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/description')
+    .put('/api/v1/orders/order-1/sections/description', { description: 'a lovely description' })
     .reply(200, {});
 
   await pageSetup();
@@ -83,13 +71,16 @@ test('should navigate to task list page when valid description is added and save
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .expect(saveButton.exists).ok()
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/sections/description', { description: 'a lovely description' })
+    .reply(400, postDescriptionErrorResponse);
+
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -100,14 +91,13 @@ test('should show the error summary when there are validation errors', async (t)
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Description must be 100 characters or fewer');
 });
 
 test('should show text fields as errors with error message when there are validation errors', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/description')
+    .put('/api/v1/orders/order-1/sections/description', { description: 'a lovely description' })
     .reply(400, postDescriptionErrorResponse);
 
   await pageSetup();
@@ -127,7 +117,11 @@ test('should show text fields as errors with error message when there are valida
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/sections/description', { description: 'a lovely description' })
+    .reply(400, postDescriptionErrorResponse);
+
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -138,8 +132,6 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#description`);
 });
