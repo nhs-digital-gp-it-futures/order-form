@@ -3,17 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../../config';
-import { nockCheck } from '../../../../../../test-utils/nockChecker';
+import { nockCheck, setState, authTokenInSession } from '../../../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -27,7 +19,7 @@ const mocks = () => {
 
 const pageSetup = async () => {
   mocks();
-  await setCookies();
+  await setState(ClientFunction)('fakeToken', authTokenInSession);
 };
 
 fixture('Additional Servies - Dashbaord page - without saved data')
@@ -43,6 +35,5 @@ test('should render the No additional services text when no order items are retu
   const noAddedOrderItems = Selector('[data-test-id="no-added-orderItems"]');
 
   await t
-    .expect(noAddedOrderItems.exists).ok()
     .expect(await extractInnerText(noAddedOrderItems)).eql(content.noOrderItemsText);
 });

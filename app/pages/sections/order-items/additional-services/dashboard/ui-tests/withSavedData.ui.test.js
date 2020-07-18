@@ -2,17 +2,9 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { baseUrl, orderApiUrl } from '../../../../../../config';
-import { nockCheck } from '../../../../../../test-utils/nockChecker';
+import { nockCheck, setState, authTokenInSession } from '../../../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mockAddedOrderItems = [
   {
@@ -44,7 +36,7 @@ const mocks = () => {
 
 const pageSetup = async () => {
   mocks();
-  await setCookies();
+  await setState(ClientFunction)('fakeToken', authTokenInSession);
 };
 
 fixture('Additional-services - Dashboard page - with saved data')
@@ -62,13 +54,9 @@ test('should render the added additional service table with the column headings'
   const addedOrderItemsColumnHeading2 = addedOrderItems.find('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(addedOrderItems.exists).ok()
-    .expect(addedOrderItemsColumnHeading1.exists).ok()
     .expect(await extractInnerText(addedOrderItemsColumnHeading1))
     .eql('Additional Service')
 
-    .expect(addedOrderItemsColumnHeading2.exists)
-    .ok()
     .expect(await extractInnerText(addedOrderItemsColumnHeading2))
     .eql('Service Recipient (ODS code)');
 });
@@ -86,27 +74,11 @@ test('should render the added additional service items in the table', async (t) 
   const row2ServiceRecipient = row2.find('div[data-test-id="orderItem2-serviceRecipient"]');
 
   await t
-    .expect(row1.exists).ok()
-    .expect(row1CatalogueItemName.exists).ok()
-    .expect(await extractInnerText(row1CatalogueItemName))
-    .eql('Additional Service One')
-    .expect(row1CatalogueItemName.getAttribute('href'))
-    .eql(`${baseUrl}/organisation/order-1/additional-services/orderItem1`)
-    .expect(row1ServiceRecipient.exists)
-    .ok()
-    .expect(await extractInnerText(row1ServiceRecipient))
-    .eql('Recipient One (recipient-1)')
+    .expect(await extractInnerText(row1CatalogueItemName)).eql('Additional Service One')
+    .expect(row1CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/additional-services/orderItem1`)
+    .expect(await extractInnerText(row1ServiceRecipient)).eql('Recipient One (recipient-1)')
 
-    .expect(row2.exists)
-    .ok()
-    .expect(row2CatalogueItemName.exists)
-    .ok()
-    .expect(await extractInnerText(row2CatalogueItemName))
-    .eql('Additional Service Two')
-    .expect(row2CatalogueItemName.getAttribute('href'))
-    .eql(`${baseUrl}/organisation/order-1/additional-services/orderItem2`)
-    .expect(row2ServiceRecipient.exists)
-    .ok()
-    .expect(await extractInnerText(row2ServiceRecipient))
-    .eql('Recipient Two (recipient-2)');
+    .expect(await extractInnerText(row2CatalogueItemName)).eql('Additional Service Two')
+    .expect(row2CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/additional-services/orderItem2`)
+    .expect(await extractInnerText(row2ServiceRecipient)).eql('Recipient Two (recipient-2)');
 });

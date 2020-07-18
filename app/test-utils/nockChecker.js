@@ -27,3 +27,7 @@ export const nockCheck = async (nock, t) => {
 export const setState = ClientFunction => ClientFunction((key, value) => {
   document.cookie = `${key}=${value}`;
 });
+
+export const authTokenInSession = JSON.stringify({
+  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
+});
