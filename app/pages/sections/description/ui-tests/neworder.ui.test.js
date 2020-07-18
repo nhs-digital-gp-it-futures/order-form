@@ -25,7 +25,7 @@ const postDescriptionErrorResponse = {
 
 const mocks = () => {
   nock(orderApiUrl)
-    .post('/api/v1/orders')
+    .post('/api/v1/orders', { description: '', organisationId: 'org-id' })
     .reply(400, postDescriptionErrorResponse);
 };
 
@@ -68,15 +68,17 @@ test('should not populate the text area with existing decription data', async (t
 
 test('should navigate to task list page when valid description is added and save is clicked', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders')
+    .post('/api/v1/orders', { description: 'some description', organisationId: 'org-id' })
     .reply(200, { orderId: 'order1' });
 
   await pageSetup();
   await t.navigateTo(pageUrl);
 
+  const description = Selector('[data-test-id="question-description"] textarea');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
+    .typeText(description, 'some description', { paste: true })
     .expect(saveButton.exists).ok()
     .click(saveButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order1');

@@ -23,3 +23,7 @@ export const nockCheck = async (nock, t) => {
     throwErrorRerunMessage(`Error in test: "${t.testRun.test.name}"`, t.testRun.test.testFile.filename);
   }
 };
+
+export const setState = ClientFunction => ClientFunction((key, value) => {
+  document.cookie = `${key}=${value}`;
+});
