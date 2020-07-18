@@ -152,7 +152,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(continueButton)).eql(content.continueButtonText);
 });
 
-test.only('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
+test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/sections/associated-services')
     .reply(200);
