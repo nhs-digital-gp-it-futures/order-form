@@ -18,10 +18,12 @@ import { routes } from '../../../../../routes';
 import { baseUrl } from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import * as routerHelper from '../../../../../helpers/routes/routerHelper';
+import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
+jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
@@ -255,8 +257,7 @@ describe('additional-services select routes', () => {
       selectAdditionalServiceController.findAdditionalServices = jest.fn()
         .mockResolvedValue(additionalServices);
 
-      selectAdditionalServiceController.findSelectedCatalogueItemInSession = jest.fn()
-        .mockResolvedValue({ name: 'Additional Service 1' });
+      findSelectedCatalogueItemInSession.mockResolvedValue({ name: 'Additional Service 1' });
 
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});

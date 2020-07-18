@@ -1,9 +1,8 @@
 import { getData } from 'buying-catalogue-library';
-import { solutionsApiUrl, orderApiUrl } from '../../../../../../config';
+import { orderApiUrl } from '../../../../../../config';
 import { logger } from '../../../../../../logger';
 import {
   getSolutionsPageContext,
-  findSolutions,
   getSupplierId,
   validateSolutionForm,
 } from './controller';
@@ -25,25 +24,6 @@ describe('catalogue-solutions select-solution controller', () => {
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1' });
-    });
-  });
-
-  describe('findSolutions', () => {
-    afterEach(() => {
-      getData.mockReset();
-    });
-
-    it('should call getData once with the correct params', async () => {
-      getData
-        .mockResolvedValueOnce({ solutions: [] });
-
-      await findSolutions({ supplierId: 'supp-1', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${solutionsApiUrl}/api/v1/solutions?supplierId=supp-1`,
-        accessToken: 'access_token',
-        logger,
-      });
     });
   });
 

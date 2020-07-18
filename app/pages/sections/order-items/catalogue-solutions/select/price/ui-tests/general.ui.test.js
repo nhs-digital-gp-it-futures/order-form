@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
+import { solutionsApiUrl } from '../../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price';
 
@@ -14,8 +14,8 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
-const selectedSolutionIdState = ClientFunction(() => {
-  document.cookie = 'selectedSolutionId=solution-1';
+const selectedItemIdState = ClientFunction(() => {
+  document.cookie = 'selectedItemId=solution-1';
 });
 
 const mockSolutionPricing = {
@@ -146,13 +146,13 @@ const mocks = () => {
 };
 
 const pageSetup = async (
-  withAuth = false, withSelectedSolutionIdState = true, withSolutionPricesState = false, withSelectedPriceIdState = false,
+  withAuth = false, withSelectedItemIdState = true, withSolutionPricesState = false, withSelectedPriceIdState = false,
 ) => {
   if (withAuth) {
     mocks();
     await setCookies();
   }
-  if (withSelectedSolutionIdState) await selectedSolutionIdState();
+  if (withSelectedItemIdState) await selectedItemIdState();
   if (withSolutionPricesState) await solutionPricesState();
   if (withSelectedPriceIdState) await selectedPriceIdState();
 };
@@ -192,19 +192,35 @@ test('should render Catalogue-solutions price page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions/select/solution when click on backlink', async (t) => {
+test('should link to /organisation/order-id/catalogue-solutions/select/solution for backlink', async (t) => {
   await pageSetup(true);
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/supplier')
-    .reply(200, { supplierId: 'supp-1' });
+
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
     .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution');
+});
+
+test('should link to /organisation/order-id/catalogue-solutions/select/solution for backlink with validation errors', async (t) => {
+  await pageSetup(true, true, true);
+
+  await t.navigateTo(pageUrl);
+
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+  const button = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(goBackLink.exists).ok()
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution');
 });
 
 test('should render the title', async (t) => {

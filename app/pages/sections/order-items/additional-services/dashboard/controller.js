@@ -1,9 +1,7 @@
-import { putData } from 'buying-catalogue-library';
-import { getEndpoint } from '../../../../../endpoints';
-import { logger } from '../../../../../logger';
 import { getContext } from './contextCreator';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
+import { putOrderSection } from '../../../../../helpers/api/ordapi/putOrderSection';
 
 export const getAdditionalServicesPageContext = async ({
   orderId,
@@ -26,21 +24,11 @@ export const getAdditionalServicesPageContext = async ({
 };
 
 export const putAdditionalServices = async ({ orderId, accessToken }) => {
-  const putAdditionalServicesEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putAdditionalServices', options: { orderId } });
-  try {
-    const body = {
-      status: 'complete',
-    };
+  const result = await putOrderSection({
+    orderId,
+    sectionId: 'additional-services',
+    accessToken,
+  });
 
-    await putData({
-      endpoint: putAdditionalServicesEndpoint,
-      body,
-      accessToken,
-      logger,
-    });
-    return { success: true };
-  } catch (err) {
-    logger.error(`Error updating additional-services for ${orderId}`);
-    throw new Error();
-  }
+  return result;
 };

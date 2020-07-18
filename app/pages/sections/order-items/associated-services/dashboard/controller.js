@@ -1,6 +1,6 @@
-/* eslint-disable no-undef */
 import { getContext } from './contextCreator';
 import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
+import { putOrderSection } from '../../../../../helpers/api/ordapi/putOrderSection';
 
 export const getAssociatedServicesPageContext = async ({ orderId, accessToken }) => {
   const orderDescriptionData = await getOrderDescription({ orderId, accessToken });
@@ -12,21 +12,11 @@ export const getAssociatedServicesPageContext = async ({ orderId, accessToken })
 };
 
 export const putAssociatedServices = async ({ orderId, accessToken }) => {
-  const putAssociatedServicesEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putAssociatedServices', options: { orderId } });
-  try {
-    const body = {
-      status: 'complete',
-    };
+  const result = await putOrderSection({
+    orderId,
+    sectionId: 'associated-services',
+    accessToken,
+  });
 
-    await putData({
-      endpoint: putAssociatedServicesEndpoint,
-      body,
-      accessToken,
-      logger,
-    });
-    return { success: true };
-  } catch (err) {
-    logger.error(`Error updating associated-services for ${orderId}`);
-    throw new Error();
-  }
+  return result;
 };

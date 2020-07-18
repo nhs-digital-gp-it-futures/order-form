@@ -4,9 +4,9 @@ import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
 const generateSolutionOptions = ({ solutions, selectedSolutionId }) => (
   solutions.map(solution => ({
-    value: solution.id,
+    value: solution.catalogueItemId,
     text: solution.name,
-    checked: solution.id === selectedSolutionId ? true : undefined,
+    checked: solution.catalogueItemId === selectedSolutionId ? true : undefined,
   }))
 );
 
