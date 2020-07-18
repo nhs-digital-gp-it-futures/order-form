@@ -29,5 +29,9 @@ export const setState = ClientFunction => ClientFunction((key, value) => {
 });
 
 export const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
+  id: '88421113',
+  name: 'Cool Dude',
+  ordering: 'manage',
+  primaryOrganisationId: 'org-id',
+  primaryOrganisationName: 'org-name',
 });

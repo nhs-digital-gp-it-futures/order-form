@@ -2,13 +2,9 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../config';
-import { nockCheck, setState } from '../../../../test-utils/nockChecker';
+import { nockCheck, setState, authTokenInSession } from '../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/description';
-
-const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-});
 
 const postDescriptionErrorResponse = {
   errors: [

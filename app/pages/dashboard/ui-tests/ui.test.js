@@ -4,13 +4,9 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { baseUrl, orderApiUrl } from '../../../config';
 import mockOrdersData from '../../../test-utils/mockData/mockOrders.json';
-import { nockCheck, setState } from '../../../test-utils/nockChecker';
+import { nockCheck, setState, authTokenInSession } from '../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation';
-
-const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id', primaryOrganisationName: 'org-name',
-});
 
 const mocks = () => {
   nock(orderApiUrl)
