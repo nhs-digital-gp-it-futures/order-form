@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../../../../config';
-import { nockCheck } from '../../../../../../../../test-utils/nockChecker';
+import { nockCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
 
@@ -21,9 +21,6 @@ const selectedPrice = {
   price: 0.1,
 };
 
-const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-});
 const itemIdInSession = 'item-1';
 const itemNameInSession = 'Item One';
 const selectedRecipientIdInSession = 'recipient-1';
@@ -38,9 +35,21 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const setState = ClientFunction((key, value) => {
-  document.cookie = `${key}=${value}`;
-});
+const requestPostBody = {
+  priceId: 1,
+  provisioningType: 'OnDemand',
+  type: 'Flat',
+  currencyCode: 'GBP',
+  itemUnit: { name: 'consultation', description: 'per consultation' },
+  price: 0.1,
+  serviceRecipient: { name: 'recipient-name', odsCode: 'recipient-1' },
+  catalogueItemId: 'item-1',
+  catalogueItemName: 'Item One',
+  catalogueItemType: 'AdditionalService',
+  quantity: 10,
+  estimationPeriod: 'month',
+};
+
 
 const mocks = () => {
   nock(solutionsApiUrl)
@@ -51,14 +60,14 @@ const mocks = () => {
 const pageSetup = async (withAuth = true, postRoute = false) => {
   if (withAuth) {
     mocks();
-    await setState('fakeToken', authTokenInSession);
-    await setState('selectedRecipientId', selectedRecipientIdInSession);
-    await setState('selectedRecipientName', selectedRecipientNameInSession);
-    await setState('selectedItemId', itemIdInSession);
-    await setState('selectedItemName', itemNameInSession);
-    await setState('selectedPriceId', selectedPriceIdInSession);
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+    await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
+    await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
+    await setState(ClientFunction)('selectedItemId', itemIdInSession);
+    await setState(ClientFunction)('selectedItemName', itemNameInSession);
+    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
     if (postRoute) {
-      await setState('orderItemPageData', orderItemPageDataInSession);
+      await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
     }
   }
 };
@@ -71,7 +80,7 @@ fixture('Additional-services - flat ondemand - withoutSavedData')
 
 test('should navigate to additional-services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-1/order-items')
+    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 10 })
     .reply(200, {});
 
   await pageSetup(true, true);
@@ -90,7 +99,7 @@ test('should navigate to additional-services dashboard page if save button is cl
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-1/order-items')
+    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 0 })
     .reply(400, {
       errors: [{
         field: 'Quantity',
@@ -113,11 +122,9 @@ test('should show text fields as errors with error message when there are BE val
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
 
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
 
     .expect(quantityInput.getAttribute('value')).eql('0')

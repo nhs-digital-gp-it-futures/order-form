@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl } from '../../../../../../../../config';
-import { nockCheck } from '../../../../../../../../test-utils/nockChecker';
+import { nockCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
 
@@ -21,9 +21,6 @@ const selectedPrice = {
   price: 0.11,
 };
 
-const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-});
 const itemIdInSession = 'item-1';
 const itemNameInSession = 'Item One';
 const selectedRecipientIdInSession = 'recipient-1';
@@ -38,10 +35,6 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const setState = ClientFunction((key, value) => {
-  document.cookie = `${key}=${value}`;
-});
-
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
@@ -51,14 +44,14 @@ const mocks = () => {
 const pageSetup = async (withAuth = true, postRoute = false) => {
   if (withAuth) {
     mocks();
-    await setState('fakeToken', authTokenInSession);
-    await setState('selectedRecipientId', selectedRecipientIdInSession);
-    await setState('selectedRecipientName', selectedRecipientNameInSession);
-    await setState('selectedItemId', itemIdInSession);
-    await setState('selectedItemName', itemNameInSession);
-    await setState('selectedPriceId', selectedPriceIdInSession);
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+    await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
+    await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
+    await setState(ClientFunction)('selectedItemId', itemIdInSession);
+    await setState(ClientFunction)('selectedItemName', itemNameInSession);
+    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
     if (postRoute) {
-      await setState('orderItemPageData', orderItemPageDataInSession);
+      await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
     }
   }
 };
@@ -77,7 +70,6 @@ test('should render a text field for the quantity question', async (t) => {
   const quantityLabel = quantity.find('label.nhsuk-label');
 
   await t
-    .expect(quantity.exists).ok()
     .expect(await extractInnerText(quantityLabel)).eql(content.questions.quantity.mainAdvice)
     .expect(quantity.find('input').count).eql(1);
 });
@@ -89,7 +81,6 @@ test('should render an expandable section for the quantity question', async (t) 
   const expandableSection = Selector('[data-test-id="view-section-quantity-id"]');
 
   await t
-    .expect(expandableSection.exists).ok()
     .expect(await extractInnerText(expandableSection)).eql(content.questions.quantity.expandableSection.title)
     .expect(expandableSection.find('details[open]').exists).notOk()
     .click(expandableSection.find('summary'))
@@ -105,7 +96,6 @@ test('should render a selectEstimationPeriod question as radio button options', 
   const selectEstimationPeriodRadioOptions = Selector('[data-test-id="question-selectEstimationPeriod"]');
 
   await t
-    .expect(selectEstimationPeriodRadioOptions.exists).ok()
     .expect(await extractInnerText(selectEstimationPeriodRadioOptions.find('legend')))
     .eql(content.questions.selectEstimationPeriod.mainAdvice)
     .expect(selectEstimationPeriodRadioOptions.find('input').count).eql(2)
@@ -126,7 +116,6 @@ test('should render an expandable section for the select estimation period', asy
   const expandableSection = Selector('[data-test-id="view-section-estimation-period-id"]');
 
   await t
-    .expect(expandableSection.exists).ok()
     .expect(await extractInnerText(expandableSection)).eql(content.questions.selectEstimationPeriod.expandableSection.title)
     .expect(expandableSection.find('details[open]').exists).notOk()
     .click(expandableSection.find('summary'))
@@ -144,10 +133,7 @@ test('should render the price table headings', async (t) => {
   const unitColumnHeading = priceTable.find('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(priceTable.exists).ok()
-    .expect(priceColumnHeading.exists).ok()
     .expect(await extractInnerText(priceColumnHeading)).eql(content.addPriceTable.columnInfo[0].data)
-    .expect(unitColumnHeading.exists).ok()
     .expect(await extractInnerText(unitColumnHeading)).eql(content.addPriceTable.columnInfo[1].data);
 });
 
@@ -162,17 +148,15 @@ test('should render the price table content', async (t) => {
   const orderUnit = row.find('div[data-test-id="unit-of-order"]');
 
   await t
-    .expect(row.exists).ok()
-    .expect(priceInput.exists).ok()
     .expect(priceInput.getAttribute('value')).eql(selectedPrice.price.toString())
-    .expect(expandableSection.exists).ok()
+
     .expect(await extractInnerText(expandableSection)).eql(content.addPriceTable.cellInfo.price.expandableSection.title)
     .expect(expandableSection.find('details[open]').exists).notOk()
     .click(expandableSection.find('summary'))
     .expect(expandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
     .eql(content.addPriceTable.cellInfo.price.expandableSection.innerComponent)
-    .expect(orderUnit.exists).ok()
+
     .expect(await extractInnerText(orderUnit)).eql(selectedPrice.itemUnit.description);
 });
 
@@ -186,7 +170,6 @@ test('should render select quantity field as errors with error message when no q
   const quantityFieldWithError = quantityField.find('[data-test-id="text-field-input-error"]');
 
   await t
-    .expect(saveButton.exists).ok()
     .expect(quantityFieldWithError.exists).notOk()
     .click(saveButton);
 
@@ -226,8 +209,6 @@ test('should anchor to the quantity field when clicking on the quantity required
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#quantity`);
 });
@@ -246,8 +227,6 @@ test('should anchor to the quantity field when clicking on the numerical quantit
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#quantity`);
 });
@@ -266,7 +245,6 @@ test('should anchor to the price field when clicking on the price required error
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .click(errorSummary.find('li a').nth(2))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
@@ -285,8 +263,6 @@ test('should anchor to the price field when clicking on the numerical price erro
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(2))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });

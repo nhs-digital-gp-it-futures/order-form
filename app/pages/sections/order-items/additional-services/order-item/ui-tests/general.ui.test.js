@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../commonManifest.json';
 import { solutionsApiUrl } from '../../../../../../config';
-import { nockCheck } from '../../../../../../test-utils/nockChecker';
+import { nockCheck, setState, authTokenInSession } from '../../../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
 
@@ -20,9 +20,6 @@ const selectedPrice = {
 };
 const catalogueItem = { id: 'item-1', name: 'Item One' };
 
-const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-});
 const itemIdInSession = 'item-1';
 const itemNameInSession = 'Item One';
 const selectedRecipientIdInSession = 'recipient-1';
@@ -37,10 +34,6 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const setState = ClientFunction((key, value) => {
-  document.cookie = `${key}=${value}`;
-});
-
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
@@ -50,14 +43,14 @@ const mocks = () => {
 const pageSetup = async (withAuth = true, postRoute = false) => {
   if (withAuth) {
     mocks();
-    await setState('fakeToken', authTokenInSession);
-    await setState('selectedRecipientId', selectedRecipientIdInSession);
-    await setState('selectedRecipientName', selectedRecipientNameInSession);
-    await setState('selectedItemId', itemIdInSession);
-    await setState('selectedItemName', itemNameInSession);
-    await setState('selectedPriceId', selectedPriceIdInSession);
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+    await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
+    await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
+    await setState(ClientFunction)('selectedItemId', itemIdInSession);
+    await setState(ClientFunction)('selectedItemName', itemNameInSession);
+    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
     if (postRoute) {
-      await setState('orderItemPageData', orderItemPageDataInSession);
+      await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
     }
   }
 };
@@ -98,7 +91,6 @@ test('should link to /order/organisation/order-1/additional-services/select/addi
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
     .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
 });
 
@@ -111,7 +103,6 @@ test('should link to /order/organisation/order-1/additional-services/select/solu
 
   await t
     .click(saveButton)
-    .expect(goBackLink.exists).ok()
     .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
 });
 
@@ -122,7 +113,6 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="order-item-page-title"]');
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql('Item One information for recipient-name (recipient-1)');
 });
 
@@ -133,7 +123,6 @@ test('should render the description', async (t) => {
   const description = Selector('h2[data-test-id="order-item-page-description"]');
 
   await t
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(commonContent.description);
 });
 
@@ -144,7 +133,6 @@ test('should render the delete button', async (t) => {
   const button = Selector('[data-test-id="delete-button"] button');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(commonContent.deleteButton.text)
     .expect(button.hasClass('nhsuk-button--secondary')).eql(true)
     .expect(button.hasClass('nhsuk-button--disabled')).eql(true);
@@ -172,6 +160,5 @@ test('should render the save button', async (t) => {
   const button = Selector('[data-test-id="save-button"] button');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(commonContent.saveButtonText);
 });
