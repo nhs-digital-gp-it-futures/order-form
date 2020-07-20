@@ -35,8 +35,7 @@ export const getContext = ({
     errorMap,
   }),
   deleteButton: {
-    text: commonManifest.deleteButton.text,
-    href: commonManifest.deleteButton.href,
+    ...commonManifest.deleteButton,
     disabled: orderItemId === 'neworderitem',
   },
   backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`
