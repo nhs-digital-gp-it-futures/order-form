@@ -71,7 +71,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
     if (response.success) {
       sessionManager.saveToSession({ req, key: 'selectedPriceId', value: req.body.selectAssociatedServicePrice });
       logger.info('redirecting to associated services select recipient page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price/recipient`);
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/neworderitem`);
     }
 
     const selectedAssociatedServiceName = sessionManager.getFromSession({ req, key: 'selectedItemName' });

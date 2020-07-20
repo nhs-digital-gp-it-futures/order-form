@@ -251,7 +251,7 @@ describe('associated-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/associated-services/select/associated-service/price/recipient`);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/associated-services/neworderitem`);
     });
   });
 });
