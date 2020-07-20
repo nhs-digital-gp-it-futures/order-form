@@ -6,6 +6,10 @@ import { associatedServicesSelectRoutes } from './select/routes';
 import {
   getAssociatedServicesPageContext,
 } from './dashboard/controller';
+import {
+  getOrderItemContext,
+} from './order-item/controller';
+import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 const router = express.Router({ mergeParams: true });
@@ -37,6 +41,35 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
   }));
 
   router.use('/select', associatedServicesSelectRoutes(authProvider, addContext));
+
+  router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, orderItemId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+
+    const pageData = await getOrderItemPageData({
+      req,
+      sessionManager,
+      accessToken,
+      orderId,
+      orderItemId,
+    });
+
+    sessionManager.saveToSession({ req, key: 'orderItemPageData', value: pageData });
+
+    const context = await getOrderItemContext({
+      orderId,
+      orderItemId,
+      orderItemType: 'AssociatedService',
+      itemName: pageData.itemName,
+      odsCode: pageData.serviceRecipientId,
+      serviceRecipientName: pageData.serviceRecipientName,
+      selectedPrice: pageData.selectedPrice,
+      formData: pageData.formData,
+    });
+
+    logger.info(`navigating to order ${orderId} associated-services order item page`);
+    return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
 
   return router;
 };
