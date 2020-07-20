@@ -81,7 +81,7 @@ Right click on the test file and copy the path.
 `npm run test:integration fp=/Users/fawad.ali/projects/buying-catalogue/order-form/app/pages/sections/order-items/catalogue-solutions/dashboard/ui-tests/general.ui.test.js c=1`
 
 ### To change the number of concurrent threads `c`
-npm run test:integration c=4 -> Run all the ui tests in 4 threads. Default is 2
+`npm run test:integration c=4` -> Run all the ui tests in 4 threads. Default is 2
 
 These flags can be used together. So if you want to run a single ui.test file in chrome in a single thread then it will be something like this;
 `npm run test:integration b=chrome p=catalogue=solutions/dashboard f=general c=1`
