@@ -23,16 +23,12 @@ const getCatalogueItemsEndpoint = ({ supplierId, catalogueItemType }) => {
   return `${solutionsApiUrl}/api/v1/catalogue-items${queryString}`;
 };
 
-export const getCatalogueItems = async ({ supplierId, catalogueItemType, accessToken }) => {
+export const getCatalogueItems = async ({ supplierId, catalogueItemType }) => {
   const endpoint = getCatalogueItemsEndpoint({ supplierId, catalogueItemType });
+
   logger.info(`Retrieving ${catalogueItemType} catalogue items from BAPI for supplier ${supplierId}`);
-  const catalogueItems = await getData({ endpoint, accessToken, logger });
+  const catalogueItems = await getData({ endpoint, logger });
 
-  if (catalogueItems && catalogueItems.length > 0) {
-    logger.info(`Found ${catalogueItems.length} item(s) for supplier "${supplierId}".`);
-    return catalogueItems;
-  }
-
-  logger.error(`No catalogueItems returned for supplier ${supplierId} and catalogueItemType ${catalogueItemType}`);
-  throw new Error();
+  logger.info(`Found ${catalogueItems.length} item(s) for supplier "${supplierId}".`);
+  return catalogueItems;
 };

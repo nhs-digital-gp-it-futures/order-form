@@ -26,14 +26,10 @@ describe('getCatalogueItems', () => {
       ${'supplier'} | ${'solution'}     | ${`${catalogueItemsUrl}?supplierId=supplier&catalogueItemType=solution`}
     `('getCatalogueItems calls getData with the correct params for supplier "$supplierId" and catalogue item type "$catalogueItemType"', async ({ supplierId, catalogueItemType, expectedEndpoint }) => {
   getData.mockResolvedValueOnce([{}]);
-  await getCatalogueItems({ supplierId, catalogueItemType, accessToken: 'access_token' });
+  await getCatalogueItems({ supplierId, catalogueItemType });
 
   expect(getData.mock.calls.length).toEqual(1);
-  expect(getData).toHaveBeenCalledWith({
-    endpoint: expectedEndpoint,
-    accessToken: 'access_token',
-    logger,
-  });
+  expect(getData).toHaveBeenCalledWith({ endpoint: expectedEndpoint, logger });
 });
 
   it('should return the catalogueItems', async () => {
@@ -44,37 +40,8 @@ describe('getCatalogueItems', () => {
     const response = await getCatalogueItems({
       supplierId: 'supp-1',
       catalogueItemType: 'Solution',
-      accessToken: 'access_token',
     });
 
     expect(response).toEqual(expectedCatalogueItems);
-  });
-
-  it('should throw an Error if no catalogueItems are returned', async () => {
-    getData.mockResolvedValueOnce(undefined);
-
-    try {
-      await getCatalogueItems({
-        supplierId: 'supp-1',
-        catalogueItemType: 'Solution',
-        accessToken: 'access_token',
-      });
-    } catch (err) {
-      expect(err).toEqual(new Error());
-    }
-  });
-
-  it('should throw an Error if catalogueItems returned is an empty list', async () => {
-    getData.mockResolvedValueOnce([]);
-
-    try {
-      await getCatalogueItems({
-        supplierId: 'supp-1',
-        catalogueItemType: 'Solution',
-        accessToken: 'access_token',
-      });
-    } catch (err) {
-      expect(err).toEqual(new Error());
-    }
   });
 });
