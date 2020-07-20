@@ -61,3 +61,35 @@ Application should now be running on <a href="http://localhost:3006/order/">http
 ## Dependencies
 [Identity Server](https://github.com/nhs-digital-gp-it-futures/BuyingCatalogueIdentity).
 [Order Form API](https://github.com/nhs-digital-gp-it-futures/BuyingCatalogueOrdering#running-the-application).
+
+## Integration tests helpers
+Run the integration tests with `npm run test:integration` by default this will run the integration tests in 2 threads.
+
+The command args are now named which should made it easier to run particular tests
+
+### To run a particular browser `b`
+`npm run test:integration b=chrome` -> changes the browser to run as chrome. Default set to chrome:headless
+
+### To run ui tests for a particular page `p`
+`npm run test:integration p=catalogue=solutions/dashboard` -> Will run the 3 ui.test files within this page directory
+
+### To run a particular ui test file for a page `f`
+`npm run test:integration p=catalogue=solutions/dashboard f=general` -> Will run the general.ui.test within this page directory
+
+### Use the full path `fp`
+Right click on the test file and copy the path.
+`npm run test:integration fp=/Users/fawad.ali/projects/buying-catalogue/order-form/app/pages/sections/order-items/catalogue-solutions/dashboard/ui-tests/general.ui.test.js c=1`
+
+### To change the number of concurrent threads `c`
+npm run test:integration c=4 -> Run all the ui tests in 4 threads. Default is 2
+
+These flags can be used together. So if you want to run a single ui.test file in chrome in a single thread then it will be something like this;
+`npm run test:integration b=chrome p=catalogue=solutions/dashboard f=general c=1`
+
+The order of these flags do not matter like they used to.
+
+## NOTE: running in concurrent threads will make the test little unstable. TestCafe has a quarantineMode which is set to true when in concurrent mode. This will re-run the test maximum 3 times, if it fails but passes on subsequent attempts you will see the unstable tag next to the test.
+
+## ALSO NOTE: The nock checks are disabled when in concurrent mode. If you are getting some nock issues. Then run the test in a single thread. This will re-enable the nock checks.
+
+## ANOTHER NOTE: The ui tests will stopOnFirstFail now and will not continue to run through the tests.
