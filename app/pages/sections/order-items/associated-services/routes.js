@@ -5,8 +5,8 @@ import { withCatch, extractAccessToken } from '../../../../helpers/routes/router
 import { associatedServicesSelectRoutes } from './select/routes';
 import {
   getAssociatedServicesPageContext,
-  putAssociatedServices,
 } from './dashboard/controller';
+import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 const router = express.Router({ mergeParams: true });
 
@@ -27,8 +27,9 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    await putAssociatedServices({
+    await putOrderSection({
       orderId,
+      sectionId: 'associated-services',
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 

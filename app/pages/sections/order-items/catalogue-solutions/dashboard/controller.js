@@ -1,7 +1,6 @@
 import { getContext } from './contextCreator';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
-import { putOrderSection } from '../../../../../helpers/api/ordapi/putOrderSection';
 
 export const getCatalogueSolutionsPageContext = async ({ orderId, accessToken }) => {
   const catalogueItemType = 'Solution';
@@ -13,14 +12,4 @@ export const getCatalogueSolutionsPageContext = async ({ orderId, accessToken })
     orderDescription: orderDescriptionData ? orderDescriptionData.description : '',
     orderItems: solutionOrderItemsData,
   });
-};
-
-export const putCatalogueSolutions = async ({ orderId, accessToken }) => {
-  const result = await putOrderSection({
-    orderId,
-    sectionId: 'catalogue-solutions',
-    accessToken,
-  });
-
-  return result;
 };
