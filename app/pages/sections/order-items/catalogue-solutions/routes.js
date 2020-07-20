@@ -12,7 +12,7 @@ import {
   saveSolutionOrderItem,
 } from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getPageData } from './order-item/routesHelper';
+import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 
 const router = express.Router({ mergeParams: true });
@@ -47,7 +47,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const pageData = await getPageData({
+    const pageData = await getOrderItemPageData({
       req,
       sessionManager,
       accessToken,
@@ -61,7 +61,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       orderId,
       orderItemId,
       orderItemType: 'Solution',
-      solutionName: pageData.solutionName,
+      solutionName: pageData.itemName,
       odsCode: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,
@@ -93,8 +93,8 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
         orderItemId,
         selectedRecipientId: pageData.serviceRecipientId,
         serviceRecipientName: pageData.serviceRecipientName,
-        selectedSolutionId: pageData.solutionId,
-        solutionName: pageData.solutionName,
+        selectedSolutionId: pageData.itemId,
+        solutionName: pageData.itemName,
         selectedPrice: pageData.selectedPrice,
         formData: req.body,
       });
@@ -110,7 +110,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       orderId,
       orderItemId,
       orderItemType: 'Solution',
-      solutionName: pageData.solutionName,
+      solutionName: pageData.itemName,
       selectedRecipientId: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,

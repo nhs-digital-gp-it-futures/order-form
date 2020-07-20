@@ -13,7 +13,7 @@ import {
   saveOrderItem,
 } from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getPageData } from './order-item/routesHelper';
+import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
 
 const router = express.Router({ mergeParams: true });
 
@@ -48,7 +48,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const pageData = await getPageData({
+    const pageData = await getOrderItemPageData({
       req,
       sessionManager,
       accessToken,

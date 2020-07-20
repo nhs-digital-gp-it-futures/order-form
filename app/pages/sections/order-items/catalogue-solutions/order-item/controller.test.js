@@ -1,10 +1,8 @@
 import { getData, postData, putData } from 'buying-catalogue-library';
-import { solutionsApiUrl, organisationApiUrl, orderApiUrl } from '../../../../../config';
+import { organisationApiUrl, orderApiUrl } from '../../../../../config';
 import { logger } from '../../../../../logger';
 import {
-  getOrderItem,
   getRecipientName,
-  getSelectedPrice,
   getOrderItemContext,
   saveSolutionOrderItem,
 } from './controller';
@@ -127,25 +125,6 @@ describe('catalogue-solutions order-item controller', () => {
     });
   });
 
-  describe('getCatalogueOrderItem', () => {
-    afterEach(() => {
-      getData.mockReset();
-    });
-
-    it('should call getData once with the correct params', async () => {
-      getData
-        .mockResolvedValueOnce({ data: {} });
-
-      await getOrderItem({ orderId: 'order-1', orderItemId: 'order-item-1', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-1/sections/catalogue-solutions/order-item-1`,
-        accessToken: 'access_token',
-        logger,
-      });
-    });
-  });
-
   describe('getRecipient', () => {
     afterEach(() => {
       getData.mockReset();
@@ -159,25 +138,6 @@ describe('catalogue-solutions order-item controller', () => {
       expect(getData.mock.calls.length).toEqual(1);
       expect(getData).toHaveBeenCalledWith({
         endpoint: `${organisationApiUrl}/api/v1/ods/org-1`,
-        accessToken: 'access_token',
-        logger,
-      });
-    });
-  });
-
-  describe('getPrice', () => {
-    afterEach(() => {
-      getData.mockReset();
-    });
-
-    it('should call getData once with the correct params', async () => {
-      getData
-        .mockResolvedValueOnce({ data: {} });
-
-      await getSelectedPrice({ selectedPriceId: 'price-1', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${solutionsApiUrl}/api/v1/prices/price-1`,
         accessToken: 'access_token',
         logger,
       });
