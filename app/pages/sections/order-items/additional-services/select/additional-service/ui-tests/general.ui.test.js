@@ -39,13 +39,13 @@ const mocks = () => {
 
 const pageSetup = async (
   withAuth = true,
-  withMocks = true,
+  getRoute = true,
   postRoute = false,
 ) => {
   if (withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (withMocks) {
+  if (getRoute) {
     mocks();
   }
   if (postRoute) {

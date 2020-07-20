@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { solutionsApiUrl } from '../../../../../../../config';
+import { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price';
@@ -76,18 +76,19 @@ const mocks = () => {
 
 const pageSetup = async (
   withAuth = true,
+  getRoute = true,
   postRoute = false,
 ) => {
   if (withAuth) {
-    mocks();
     await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (getRoute) {
+    mocks();
     await setState(ClientFunction)('selectedItemName', selectedItemNameInSession);
     await setState(ClientFunction)('selectedItemId', selectedItemIdInSession);
   }
   if (postRoute) {
-    await setState(ClientFunction)('fakeToken', authTokenInSession);
     await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
-    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
   }
 };
 
@@ -100,7 +101,7 @@ fixture('Additional-services - price page - general')
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
-  await pageSetup(false);
+  await pageSetup(false, false);
   nock('http://identity-server')
     .get('/login')
     .reply(200);
@@ -112,7 +113,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 });
 
 test('should render Additional-services price page', async (t) => {
-  await pageSetup(true);
+  await pageSetup();
 
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="additional-service-price-page"]');
@@ -122,7 +123,7 @@ test('should render Additional-services price page', async (t) => {
 });
 
 test('should link to /order/organisation/order-id/additional-services/select/additional-service for backLink', async (t) => {
-  await pageSetup(true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -132,7 +133,7 @@ test('should link to /order/organisation/order-id/additional-services/select/add
 });
 
 test('should render the title', async (t) => {
-  await pageSetup(true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const title = Selector('h1[data-test-id="additional-service-price-page-title"]');
@@ -142,7 +143,7 @@ test('should render the title', async (t) => {
 });
 
 test('should render the description', async (t) => {
-  await pageSetup(true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const description = Selector('h2[data-test-id="additional-service-price-page-description"]');
@@ -152,7 +153,9 @@ test('should render the description', async (t) => {
 });
 
 test('should render a selectAdditionalServicePrice question as radio button options', async (t) => {
-  await pageSetup(true);
+  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const selectAdditionalServicePriceRadioOptions = Selector('[data-test-id="question-selectAdditionalServicePrice"]');
@@ -173,10 +176,9 @@ test('should render a selectAdditionalServicePrice question as radio button opti
 });
 
 test('should render the radioButton as checked for the selectedPriceId', async (t) => {
-  await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
   await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
 
-  await pageSetup(true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const selectAdditionalServicePriceRadioOptions = Selector('[data-test-id="question-selectAdditionalServicePrice"]');
@@ -199,7 +201,11 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test.only('should redirect to /organisation/order-id/additional-services/select/additional-service/price/recipient when a price is selected', async (t) => {
+test('should redirect to /organisation/order-id/additional-services/select/additional-service/price/recipient when a price is selected', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/service-recipients')
+    .reply(200, {});
+
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
@@ -208,17 +214,14 @@ test.only('should redirect to /organisation/order-id/additional-services/select/
   const button = Selector('[data-test-id="continue-button"] button');
 
   await t
-    .debug()
+
     .click(firstAdditionalService)
     .click(button)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient');
 });
 
 test('should render the title on validation error', async (t) => {
-  await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
-  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
-
-  await pageSetup(true);
+  await pageSetup(true, true, true);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -233,10 +236,7 @@ test('should render the title on validation error', async (t) => {
 });
 
 test('should show the error summary when no price selected causing validation error', async (t) => {
-  await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
-  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
-
-  await pageSetup(true);
+  await pageSetup(true, true, true);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -247,16 +247,12 @@ test('should show the error summary when no price selected causing validation er
     .click(button);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a list price');
 });
 
 test('should render select additional service field as errors with error message when no price selected causing validation error', async (t) => {
-  await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
-  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
-
-  await pageSetup(true);
+  await pageSetup(true, true, true);
   await t.navigateTo(pageUrl);
 
   const additionalServiceSelectPage = Selector('[data-test-id="additional-service-price-page"]');
@@ -273,10 +269,7 @@ test('should render select additional service field as errors with error message
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
-  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
-
-  await pageSetup(true);
+  await pageSetup(true, true, true);
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');
