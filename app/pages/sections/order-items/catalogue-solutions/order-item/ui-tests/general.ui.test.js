@@ -4,6 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../commonManifest.json';
 import content from '../flat/ondemand/manifest.json';
 import { solutionsApiUrl } from '../../../../../../config';
+import { nockCheck } from '../../../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
@@ -66,12 +67,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Catalogue-solutions - common - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
-
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+    await nockCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
