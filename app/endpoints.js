@@ -30,8 +30,6 @@ const endpoints = {
   ordapi: {
     getOrder: options => `${orderApiUrl}/api/v1/orders/${options.orderId}`,
     getOrders: options => `${orderApiUrl}/api/v1/organisations/${options.orgId}/orders`,
-    postOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items`,
-    putOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/order-items/${options.orderItemId}`,
     getOrderSummary: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/summary`,
     getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
     getSupplier: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/supplier`,

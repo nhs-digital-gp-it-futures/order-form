@@ -11,14 +11,17 @@ import {
 } from 'buying-catalogue-library';
 import * as catalogueSolutionsController from './dashboard/controller';
 import * as orderItemController from './order-item/controller';
-import * as validator from '../../../../helpers/controllers/validateOrderItemForm';
+import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
 
 jest.mock('../../../../logger');
 jest.mock('../../../../helpers/routes/getOrderItemPageData');
+jest.mock('../../../../helpers/controllers/validateOrderItemForm');
+jest.mock('../../../../helpers/controllers/saveOrderItem');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -238,7 +241,7 @@ describe('catalogue-solutions section routes', () => {
     it('should show the catalogue-solutions order item page with errors if there are FE caught validation errors', async () => {
       getOrderItemPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      validator.validateOrderItemForm = jest.fn().mockReturnValue([{}]);
+      validateOrderItemForm.mockReturnValue([{}]);
       orderItemController.getOrderItemErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
@@ -268,12 +271,8 @@ describe('catalogue-solutions section routes', () => {
     it('should show the catalogue-solutions order item page with errors if the api response is unsuccessful', async () => {
       getOrderItemPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-
-      validator.validateOrderItemForm = jest.fn()
-        .mockReturnValue([]);
-      orderItemController.saveSolutionOrderItem = jest.fn()
-        .mockResolvedValue({ success: false, errors: [{}] });
-
+      validateOrderItemForm.mockReturnValue([]);
+      saveOrderItem.mockResolvedValue({ success: false, errors: [{}] });
       orderItemController.getOrderItemErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
@@ -301,12 +300,8 @@ describe('catalogue-solutions section routes', () => {
     it('should redirect to /organisation/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
       getOrderItemPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-
-      validator.validateOrderItemForm = jest.fn()
-        .mockReturnValue([]);
-
-      orderItemController.saveSolutionOrderItem = jest.fn()
-        .mockResolvedValue({ success: true });
+      validateOrderItemForm.mockReturnValue([]);
+      saveOrderItem.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
