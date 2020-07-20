@@ -75,7 +75,7 @@ fixture('Catalogue-solutions - flat patient - withoutSavedData')
 
 test('should navigate to catalogue solution dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/sections/catalogue-solutions')
+    .post('/api/v1/orders/order-id/order-items')
     .reply(200, {});
 
   await pageSetup(true, true);
@@ -99,7 +99,7 @@ test('should navigate to catalogue solution dashboard page if save button is cli
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/sections/catalogue-solutions')
+    .post('/api/v1/orders/order-id/order-items')
     .reply(400, {
       errors: [{
         field: 'DeliveryDate',

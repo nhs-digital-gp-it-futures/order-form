@@ -23,6 +23,7 @@ const selectedPrice = {
 
 const itemIdInSession = 'item-1';
 const itemNameInSession = 'Item One';
+const catalogueSolutionIdInSession = 'solution-1';
 const selectedRecipientIdInSession = 'recipient-1';
 const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
@@ -30,6 +31,7 @@ const selectedPriceIdInSession = 'price-1';
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
   itemName: itemNameInSession,
+  catalogueSolutionId: catalogueSolutionIdInSession,
   serviceRecipientId: selectedRecipientIdInSession,
   serviceRecipientName: selectedRecipientNameInSession,
   selectedPrice,
@@ -49,6 +51,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
     await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
     await setState(ClientFunction)('selectedItemId', itemIdInSession);
     await setState(ClientFunction)('selectedItemName', itemNameInSession);
+    await setState(ClientFunction)('selectedCatalogueSolutionId', catalogueSolutionIdInSession);
     await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
     if (postRoute) {
       await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);

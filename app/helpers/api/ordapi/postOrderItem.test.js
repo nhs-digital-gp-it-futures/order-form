@@ -71,6 +71,7 @@ describe('postOrderItem', () => {
         serviceRecipientName: serviceRecipient.name,
         itemId: item.id,
         itemName: item.name,
+        catalogueSolutionId: 'some-solution-id',
         selectedPrice,
         formData,
       });
@@ -84,6 +85,7 @@ describe('postOrderItem', () => {
           catalogueItemId: item.id,
           catalogueItemName: item.name,
           catalogueItemType: 'SomeOrderItemType',
+          catalogueSolutionId: 'some-solution-id',
           deliveryDate: '2020-12-25',
           quantity: 1,
           estimationPeriod: 'month',

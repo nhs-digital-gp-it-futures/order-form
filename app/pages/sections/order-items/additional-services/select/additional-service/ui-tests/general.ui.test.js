@@ -9,12 +9,18 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-se
 
 const mockAdditionalServices = [
   {
-    additionalServiceId: 'additional-service-1',
+    catalogueItemId: 'additional-service-1',
     name: 'Additional Service 1',
+    solution: {
+      solutionId: 'solution-1',
+    },
   },
   {
-    additionalServiceId: 'additional-service-2',
+    catalogueItemId: 'additional-service-2',
     name: 'Additional Service 2',
+    solution: {
+      solutionId: 'solution-1',
+    },
   },
 ];
 
