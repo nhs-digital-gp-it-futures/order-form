@@ -4,9 +4,9 @@ import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
 const generateAdditionalServiceOptions = ({ additionalServices, selectedAdditionalServiceId }) => (
   additionalServices.map(additionalService => ({
-    value: additionalService.additionalServiceId,
+    value: additionalService.catalogueItemId,
     text: additionalService.name,
-    checked: additionalService.additionalServiceId === selectedAdditionalServiceId
+    checked: additionalService.catalogueItemId === selectedAdditionalServiceId
       ? true
       : undefined,
   }))

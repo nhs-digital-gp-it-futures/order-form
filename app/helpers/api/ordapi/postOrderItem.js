@@ -1,7 +1,7 @@
 import { postData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
-import { getEndpoint } from '../../../endpoints';
 import { extractDate } from '../../controllers/extractDate';
+import { orderApiUrl } from '../../../config';
 
 const formatPostData = ({
   orderItemType,
@@ -26,6 +26,8 @@ const formatPostData = ({
   price: parseFloat(formData.price),
 });
 
+const getPostOrderItemEndpoint = orderId => `${orderApiUrl}/api/v1/orders/${orderId}/order-items`;
+
 export const postOrderItem = async ({
   accessToken,
   orderId,
@@ -37,7 +39,7 @@ export const postOrderItem = async ({
   selectedPrice,
   formData,
 }) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'postOrderItem', options: { orderId } });
+  const endpoint = getPostOrderItemEndpoint(orderId);
   const body = formatPostData({
     orderItemType,
     serviceRecipientId,
