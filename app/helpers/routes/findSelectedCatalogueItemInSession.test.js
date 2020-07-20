@@ -5,15 +5,15 @@ const fakeSessionManager = {};
 
 describe('findSelectedCatalogueItemInSession', () => {
   it('should return the single selected additional service item when found in session', () => {
-    const expectedItem = { additionalServiceId: '1' };
-    const otherItem = { additionalServiceId: '2' };
+    const expectedItem = { catalogueItemId: '1' };
+    const otherItem = { catalogueItemId: '2' };
 
     fakeSessionManager.getFromSession = () => [expectedItem, otherItem];
 
     const foundItem = findSelectedCatalogueItemInSession({
       req,
       sessionManager: fakeSessionManager,
-      selectedItemId: expectedItem.additionalServiceId,
+      selectedItemId: expectedItem.catalogueItemId,
       catalogueItemsKey: 'additionalServices',
     });
 
@@ -37,15 +37,15 @@ describe('findSelectedCatalogueItemInSession', () => {
   });
 
   it('should throw an error when selected id not found in session', () => {
-    const expectedItem = { additionalServiceId: '1' };
-    const otherItem = { additionalServiceId: '2' };
+    const expectedItem = { catalogueItemId: '1' };
+    const otherItem = { catalogueItemId: '2' };
 
     fakeSessionManager.getFromSession = () => [otherItem];
 
     expect(() => findSelectedCatalogueItemInSession({
       req,
       sessionManager: fakeSessionManager,
-      selectedItemId: expectedItem.additionalServiceId,
+      selectedItemId: expectedItem.catalogueItemId,
       catalogueItemsKey: 'additionalServices',
     })).toThrow(Error);
   });
