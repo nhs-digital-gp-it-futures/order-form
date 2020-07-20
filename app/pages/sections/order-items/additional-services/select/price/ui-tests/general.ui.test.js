@@ -2,27 +2,13 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
-import { nockAndErrorCheck } from '../../../../../../../test-utils/uiTestHelper';
+import { solutionsApiUrl } from '../../../../../../../config';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price';
 
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
-
-const selectedItemNameState = ClientFunction(() => {
-  document.cookie = 'selectedItemName=Additional Service Name';
-});
-
-const selectedAdditionalServiceState = ClientFunction(() => {
-  document.cookie = 'selectedItemId=additional-service-1';
-});
-
+const selectedItemNameInSession = 'Additional Service Name';
+const selectedItemIdInSession = 'additional-service-1';
 const mockAdditionalServicePricing = {
   prices: [
     {
@@ -77,68 +63,10 @@ const mockAdditionalServicePricing = {
     },
   ],
 };
-
-const additionalServicePricesState = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    prices: [
-      {
-        priceId: 1,
-        type: 'flat',
-        currencyCode: 'GBP',
-        itemUnit: {
-          name: 'patient',
-          description: 'per patient',
-        },
-        timeUnit: {
-          name: 'year',
-          description: 'per month',
-        },
-        price: 199.64,
-      },
-      {
-        priceId: 2,
-        type: 'flat',
-        currencyCode: 'GBP',
-        itemUnit: {
-          name: 'licence',
-          description: 'per licence',
-        },
-        price: 525.052,
-      },
-      {
-        priceId: 3,
-        type: 'tiered',
-        currencyCode: 'GBP',
-        itemUnit: {
-          name: 'bed',
-          description: 'per bed',
-          tierName: 'beds',
-        },
-        timeUnit: {
-          name: 'year',
-          description: 'per year',
-        },
-        tieringPeriod: 3,
-        tiers: [
-          {
-            start: 1,
-            end: 999,
-            price: 123.450,
-          },
-          {
-            start: 1000,
-            price: 49.99,
-          },
-        ],
-      },
-    ],
-  });
-  document.cookie = `additionalServicePrices=${cookieValue}`;
-});
-
-const selectedAdditionalServicePriceIdState = ClientFunction(() => {
-  document.cookie = 'selectedPriceId=2';
-});
+const additionalServicePricesInSession = JSON.stringify(
+  mockAdditionalServicePricing,
+);
+const selectedPriceIdInSession = '2';
 
 const mocks = () => {
   nock(solutionsApiUrl)
@@ -147,21 +75,20 @@ const mocks = () => {
 };
 
 const pageSetup = async (
-  withAuth = false,
-  withSelectedAdditionalServiceState = true,
-  withAdditionalServicePricesState = false,
-  withSelectedAdditionalServicePriceIdState = false,
+  withAuth = true,
+  postRoute = false,
 ) => {
   if (withAuth) {
     mocks();
-    await setCookies();
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+    await setState(ClientFunction)('selectedItemName', selectedItemNameInSession);
+    await setState(ClientFunction)('selectedItemId', selectedItemIdInSession);
   }
-  if (withSelectedAdditionalServiceState) {
-    await selectedItemNameState();
-    await selectedAdditionalServiceState();
+  if (postRoute) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+    await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
+    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
   }
-  if (withAdditionalServicePricesState) await additionalServicePricesState();
-  if (withSelectedAdditionalServicePriceIdState) await selectedAdditionalServicePriceIdState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -173,7 +100,7 @@ fixture('Additional-services - price page - general')
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
-  await pageSetup(false, false);
+  await pageSetup(false);
   nock('http://identity-server')
     .get('/login')
     .reply(200);
@@ -194,34 +121,14 @@ test('should render Additional-services price page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id/additional-services/select/additional-service when click on backlink', async (t) => {
+test('should link to /order/organisation/order-id/additional-services/select/additional-service for backLink', async (t) => {
   await pageSetup(true);
-
-  const solutionId = '100001-001';
-
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/order-items?catalogueItemType=Solution')
-    .reply(200, [{ catalogueItemId: solutionId }]);
-
-  nock(solutionsApiUrl)
-    .get(`/api/v1/additional-services?solutionIds=${solutionId}`)
-    .reply(200, {
-      additionalServices: [
-        {
-          additionalServiceId: '100000-001A001',
-          name: 'Write on Time Additional Service 1',
-        },
-      ],
-    });
-
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/additional-services/select/additional-service');
 });
 
 test('should render the title', async (t) => {
@@ -231,7 +138,6 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="additional-service-price-page-title"]');
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql(`${content.title} Additional Service Name`);
 });
 
@@ -242,7 +148,6 @@ test('should render the description', async (t) => {
   const description = Selector('h2[data-test-id="additional-service-price-page-description"]');
 
   await t
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
@@ -267,8 +172,11 @@ test('should render a selectAdditionalServicePrice question as radio button opti
     .expect(await extractInnerText(selectAdditionalServicePriceRadioOptions.find('label').nth(2))).eql('1 - 999 beds £123.45 per bed per year\n1000+ beds £49.99 per bed per year');
 });
 
-test('should render the radioButton as checked for the selectedAdditionalServicePriceId', async (t) => {
-  await pageSetup(true, true, true, true);
+test('should render the radioButton as checked for the selectedPriceId', async (t) => {
+  await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
+  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const selectAdditionalServicePriceRadioOptions = Selector('[data-test-id="question-selectAdditionalServicePrice"]');
@@ -288,12 +196,11 @@ test('should render the Continue button', async (t) => {
   const button = Selector('[data-test-id="continue-button"] button');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/additional-services/select/additional-service/price/recipient when a price is selected', async (t) => {
-  await pageSetup(true);
+test.only('should redirect to /organisation/order-id/additional-services/select/additional-service/price/recipient when a price is selected', async (t) => {
+  await pageSetup(true, true);
   await t.navigateTo(pageUrl);
 
   const selectAdditionalServiceRadioOptions = Selector('[data-test-id="question-selectAdditionalServicePrice"]');
@@ -301,14 +208,17 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
   const button = Selector('[data-test-id="continue-button"] button');
 
   await t
+    .debug()
     .click(firstAdditionalService)
     .click(button)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient');
 });
 
 test('should render the title on validation error', async (t) => {
-  await selectedItemNameState();
-  await pageSetup(true, true, true);
+  await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
+  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -319,12 +229,14 @@ test('should render the title on validation error', async (t) => {
     .click(button);
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql(`${content.title} Additional Service Name`);
 });
 
 test('should show the error summary when no price selected causing validation error', async (t) => {
-  await pageSetup(true, true, true);
+  await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
+  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -341,7 +253,10 @@ test('should show the error summary when no price selected causing validation er
 });
 
 test('should render select additional service field as errors with error message when no price selected causing validation error', async (t) => {
-  await pageSetup(true, true, true);
+  await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
+  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const additionalServiceSelectPage = Selector('[data-test-id="additional-service-price-page"]');
@@ -358,7 +273,10 @@ test('should render select additional service field as errors with error message
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true, true);
+  await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
+  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+
+  await pageSetup(true);
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');
@@ -369,8 +287,6 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .click(continueButton);
 
   await t
-    .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#selectAdditionalServicePrice`);
 });
