@@ -18,6 +18,7 @@ import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 jest.mock('../../../../logger');
+jest.mock('../../../../helpers/routes/getOrderItemPageData');
 jest.mock('../../../../helpers/api/ordapi/putOrderSection');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
