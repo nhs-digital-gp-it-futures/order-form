@@ -87,7 +87,22 @@ const mockOrder = {
       quantityPeriodDescription: 'per year',
       quantity: 12,
       deliveryDate: '2020-09-25',
-      costPerYear: 29940.00,
+      costPerYear: 29939.90,
+    },
+    {
+      itemId: 'C000001-01-A10001-5',
+      serviceRecipientsOdsCode: 'A10001',
+      cataloguePriceType: 'Flat',
+      catalogueItemType: 'AdditionalService',
+      catalogueItemName: 'Patient Consultation',
+      provisioningType: 'Patient',
+      price: 106.025,
+      itemUnitDescription: 'per patient',
+      timeUnitDescription: 'per month',
+      quantityPeriodDescription: 'per year',
+      quantity: 12,
+      deliveryDate: '2020-09-25',
+      costPerYear: 15267.60,
     },
   ],
   serviceRecipients: [
@@ -185,7 +200,7 @@ test('should render the one off cost totals table with one off cost total price'
     .expect(await extractInnerText(totalCostValueCell)).eql('101.11');
 });
 
-test('should render the recurring cost item details in the table', async (t) => {
+test.only('should render the recurring cost item details in the table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -193,7 +208,10 @@ test('should render the recurring cost item details in the table', async (t) => 
   const recurringCostRow0 = recurringCostTable.find('[data-test-id="table-row-0"]');
   const recurringCostRow1 = recurringCostTable.find('[data-test-id="table-row-1"]');
   const recurringCostRow2 = recurringCostTable.find('[data-test-id="table-row-2"]');
+  const recurringCostRow4 = recurringCostTable.find('[data-test-id="table-row-3"]');
+
   await t
+    .debug()
     .expect(recurringCostRow0.exists).ok()
     .expect(recurringCostRow1.exists).ok()
 
@@ -219,7 +237,15 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCostRow2.find('div').nth(3))).eql('207.91 per practice per month')
     .expect(await extractInnerText(recurringCostRow2.find('div').nth(4))).eql('12 per year')
     .expect(await extractInnerText(recurringCostRow2.find('div').nth(5))).eql('25 September 2020')
-    .expect(await extractInnerText(recurringCostRow2.find('div').nth(6))).eql('29,940.00');
+    .expect(await extractInnerText(recurringCostRow2.find('div').nth(6))).eql('29,939.90')
+
+    .expect(await extractInnerText(recurringCostRow4.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCostRow4.find('div').nth(1))).eql('C000001-01-A10001-5')
+    .expect(await extractInnerText(recurringCostRow4.find('div').nth(2))).eql('Patient Consultation')
+    .expect(await extractInnerText(recurringCostRow4.find('div').nth(3))).eql('207.91 per patient per month')
+    .expect(await extractInnerText(recurringCostRow4.find('div').nth(4))).eql('12 per year')
+    .expect(await extractInnerText(recurringCostRow4.find('div').nth(5))).eql('25 September 2020')
+    .expect(await extractInnerText(recurringCostRow4.find('div').nth(6))).eql('29,939.90');
 });
 
 test('should render the recurring cost totals table with the totals provided', async (t) => {
