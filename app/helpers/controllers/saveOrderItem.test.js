@@ -49,7 +49,7 @@ describe('saveOrderItem', () => {
           formData,
         });
 
-        expect(response).toEqual(responseData);
+        expect(response).toEqual({ success: false, errors: responseData.errors });
       });
 
       it('should throw an error if api request is unsuccessful with non 400', async () => {
@@ -147,7 +147,7 @@ describe('saveOrderItem', () => {
           formData,
         });
 
-        expect(response).toEqual(responseData);
+        expect(response).toEqual({ success: false, errors: responseData.errors });
       });
 
       it('should throw an error if api request is unsuccessful with non 400', async () => {

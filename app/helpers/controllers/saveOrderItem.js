@@ -37,7 +37,7 @@ export const saveOrderItem = async ({
   } catch (err) {
     if (err.response.status === 400 && err.response.data && err.response.data.errors) {
       logger.info(`Validation errors returned from the API ${JSON.stringify(err.response.data.errors)}`);
-      return err.response.data;
+      return { success: false, errors: err.response.data.errors };
     }
     logger.error(`Error saving order item for ${itemName} and ${serviceRecipientName} for order id: ${orderId}`);
     throw new Error();
