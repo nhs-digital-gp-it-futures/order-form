@@ -11,6 +11,7 @@ export const saveOrderItem = async ({
   serviceRecipientName,
   itemId,
   itemName,
+  catalogueSolutionId,
   selectedPrice,
   formData,
 }) => {
@@ -24,6 +25,7 @@ export const saveOrderItem = async ({
         serviceRecipientName,
         itemId,
         itemName,
+        catalogueSolutionId,
         selectedPrice,
         formData,
       })

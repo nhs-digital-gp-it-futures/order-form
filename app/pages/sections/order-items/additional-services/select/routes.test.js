@@ -246,24 +246,20 @@ describe('additional-services select routes', () => {
     it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price if an additional service is selected', async () => {
       selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
         .mockResolvedValue([]);
-
       const additionalServiceId = 'additional-service-1';
       const additionalServices = [
         {
           additionalServiceId,
           name: 'Additional Service 1',
         }];
-
       selectAdditionalServiceController.findAdditionalServices = jest.fn()
         .mockResolvedValue(additionalServices);
 
-      findSelectedCatalogueItemInSession.mockResolvedValue({ name: 'Additional Service 1' });
-
-      selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
-        .mockResolvedValue({});
-
       selectAdditionalServiceController.validateAdditionalServicesForm = jest.fn()
         .mockReturnValue({ success: true });
+      findSelectedCatalogueItemInSession.mockResolvedValue({ name: 'Additional Service 1', solution: { solutionId: 'solution-1' } });
+      selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
+        .mockResolvedValue({});
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),

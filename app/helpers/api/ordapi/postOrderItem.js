@@ -36,6 +36,7 @@ export const postOrderItem = async ({
   serviceRecipientName,
   itemId,
   itemName,
+  catalogueSolutionId,
   selectedPrice,
   formData,
 }) => {
@@ -46,6 +47,7 @@ export const postOrderItem = async ({
     serviceRecipientName,
     itemId,
     itemName,
+    catalogueSolutionId,
     selectedPrice,
     formData,
   });

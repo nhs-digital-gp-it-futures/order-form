@@ -98,6 +98,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
         serviceRecipientName: pageData.serviceRecipientName,
         itemId: pageData.itemId,
         itemName: pageData.itemName,
+        catalogueSolutionId: pageData.catalogueSolutionId,
         selectedPrice: pageData.selectedPrice,
         formData: req.body,
       });

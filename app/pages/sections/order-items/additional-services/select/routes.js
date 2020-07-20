@@ -87,6 +87,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
       sessionManager.saveToSession({ req, key: 'selectedItemId', value: selectedItemId });
       sessionManager.saveToSession({ req, key: 'selectedItemName', value: selectedItem.name });
+      sessionManager.saveToSession({ req, key: 'selectedCatalogueSolutionId', value: selectedItem.solution.solutionId });
 
       logger.info('redirecting additional services select price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);
