@@ -19,7 +19,7 @@ describe('associated-services order-item contextCreator', () => {
       expect(context.backLinkHref).toEqual('/order/organisation/order-1/associated-services');
     });
 
-    it('should return the backLinkHref to recipient when order item id is neworderitem', () => {
+    it('should return the backLinkHref to the select a price page', () => {
       const context = getContext({
         commonManifest,
         orderId: 'order-1',
