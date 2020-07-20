@@ -1,10 +1,6 @@
-import { putData } from 'buying-catalogue-library';
-import { orderApiUrl } from '../../../../../config';
-import { logger } from '../../../../../logger';
 import * as contextCreator from './contextCreator';
 import {
   getAdditionalServicesPageContext,
-  putAdditionalServices,
 } from './controller';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
@@ -63,52 +59,5 @@ describe('additional-services controller', () => {
         { orderId, orderDescription: 'some order', orderItems: [] },
       );
     });
-  });
-
-  describe('putCatalogueSolutions', () => {
-    afterEach(() => {
-      putData.mockReset();
-    });
-  });
-
-  const formattedPutData = {
-    status: 'complete',
-  };
-
-  it('should call putData once with the correct params', async () => {
-    putData.mockResolvedValueOnce({});
-
-    await putAdditionalServices({
-      orderId, accessToken,
-    });
-
-    expect(putData.mock.calls.length).toEqual(1);
-    expect(putData).toHaveBeenCalledWith({
-      endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/additional-services`,
-      body: formattedPutData,
-      accessToken,
-      logger,
-    });
-  });
-
-  it('should return success: true if put is successful', async () => {
-    putData.mockResolvedValueOnce({});
-
-    const response = await putAdditionalServices({
-      orderId, accessToken,
-    });
-    expect(response).toEqual({ success: true });
-  });
-
-  it('should throw an error if api request is unsuccessful with non 400', async () => {
-    putData.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
-
-    try {
-      await putAdditionalServices({
-        orderId: 'order-id', accessToken: 'access_token',
-      });
-    } catch (err) {
-      expect(err).toEqual(new Error());
-    }
   });
 });
