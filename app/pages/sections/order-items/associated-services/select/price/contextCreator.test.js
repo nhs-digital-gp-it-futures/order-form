@@ -1,6 +1,7 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../../../../config';
+import * as errorContext from '../../../../getSectionErrorContext';
 
 jest.mock('../../../../getSectionErrorContext', () => ({
   getSectionErrorContext: jest.fn(),
@@ -109,6 +110,31 @@ describe('associated-services select-price contextCreator', () => {
     it('should return the formatted list of questions', () => {
       const context = getContext({ orderId: 'order-1', associatedServicePrices, selectedPriceId: 2 });
       expect(context.questions).toEqual(returnedPriceArray);
+    });
+  });
+
+  describe('getErrorContext', () => {
+    const mockValidationErrors = [{
+      field: 'selectAdditionalServicePrice',
+      id: 'SelectAdditionalServicePriceRequired',
+    }];
+
+    afterEach(() => {
+      errorContext.getSectionErrorContext.mockReset();
+    });
+
+    it('should call getSectionErrorContext with correct params', () => {
+      errorContext.getSectionErrorContext
+        .mockResolvedValueOnce();
+
+      const params = {
+        orderId: 'order-id',
+        validationErrors: mockValidationErrors,
+        associatedServicePrices,
+      };
+
+      getErrorContext(params);
+      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
     });
   });
 });
