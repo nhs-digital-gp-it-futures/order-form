@@ -29,11 +29,11 @@ const mockAdditionalServices = [
 const additionalServicesState = ClientFunction(() => {
   const cookieValue = JSON.stringify([
     {
-      additionalServiceId: 'additional-service-1',
+      catalogueItemId: 'additional-service-1',
       name: 'Additional Service 1',
     },
     {
-      additionalServiceId: 'additional-service-2',
+      catalogueItemId: 'additional-service-2',
       name: 'Additional Service 2',
     },
   ]);
