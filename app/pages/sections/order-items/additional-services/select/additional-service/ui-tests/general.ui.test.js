@@ -3,17 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl as bapiUrl, orderApiUrl } from '../../../../../../../config';
-import { nockAndErrorCheck } from '../../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mockAdditionalServices = [
   {
@@ -26,20 +18,9 @@ const mockAdditionalServices = [
   },
 ];
 
-const additionalServicesState = ClientFunction(() => {
-  const cookieValue = JSON.stringify([
-    {
-      additionalServiceId: 'additional-service-1',
-      name: 'Additional Service 1',
-    },
-    {
-      additionalServiceId: 'additional-service-2',
-      name: 'Additional Service 2',
-    },
-  ]);
-
-  document.cookie = `additionalServices=${cookieValue}`;
-});
+const additionalServicesInSession = JSON.stringify(
+  mockAdditionalServices,
+);
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -64,11 +45,12 @@ const pageSetup = async (
   if (withMocks) {
     mocks();
   }
-
   if (withAuth) {
-    await setCookies();
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (withAdditionalServicesFoundState) await additionalServicesState();
+  if (withAdditionalServicesFoundState) {
+    await setState(ClientFunction)('additionalServices', additionalServicesInSession);
+  }
 };
 
 const getLocation = ClientFunction(() => document.location.href);
