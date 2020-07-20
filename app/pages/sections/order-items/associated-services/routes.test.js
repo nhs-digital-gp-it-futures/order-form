@@ -4,12 +4,19 @@ import {
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
   fakeSessionManager,
+  testPostPathWithoutCsrf,
+  testAuthorisedPostPathForUnauthenticatedUser,
+  testAuthorisedPostPathForUnauthorisedUsers,
+  getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
 import * as associatedServicesController from './dashboard/controller';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
+import { baseUrl } from '../../../../config';
+import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 jest.mock('../../../../logger');
+jest.mock('../../../../helpers/api/ordapi/putOrderSection');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -68,6 +75,67 @@ describe('associated-services section routes', () => {
         .then((res) => {
           expect(res.text.includes('data-test-id="associated-services-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
+  });
+
+  describe('POST /organisation/:orderId/associated-services', () => {
+    const path = '/organisation/order-id/associated-services';
+
+    it('should return 403 forbidden if no csrf token is available', () => {
+      putOrderSection.mockResolvedValue({});
+
+      return testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+      });
+    });
+
+    it('should redirect to the login page if the user is not logged in', () => {
+      putOrderSection.mockResolvedValue({});
+
+      return testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+        expectedRedirectPath: 'http://identity-server/login',
+      });
+    });
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      putOrderSection.mockResolvedValue({});
+
+      return testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      });
+    });
+
+    it('should return the correct status and text if no error is thrown', async () => {
+      putOrderSection.mockResolvedValue({});
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
   });

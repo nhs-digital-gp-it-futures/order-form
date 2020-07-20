@@ -17,11 +17,13 @@ import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
+import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 jest.mock('../../../../logger');
 jest.mock('../../../../helpers/routes/getOrderItemPageData');
 jest.mock('../../../../helpers/controllers/validateOrderItemForm');
 jest.mock('../../../../helpers/controllers/saveOrderItem');
+jest.mock('../../../../helpers/api/ordapi/putOrderSection');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -93,8 +95,7 @@ describe('additional-services section routes', () => {
     const path = '/organisation/order-id/additional-services';
 
     it('should return 403 forbidden if no csrf token is available', () => {
-      additionalServicesController.putAdditionalServices = jest.fn()
-        .mockResolvedValue({});
+      putOrderSection.mockResolvedValue({});
 
       return testPostPathWithoutCsrf({
         app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
@@ -102,8 +103,7 @@ describe('additional-services section routes', () => {
     });
 
     it('should redirect to the login page if the user is not logged in', () => {
-      additionalServicesController.putAdditionalServices = jest.fn()
-        .mockResolvedValue({});
+      putOrderSection.mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
@@ -116,8 +116,7 @@ describe('additional-services section routes', () => {
     });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      additionalServicesController.putAdditionalServices = jest.fn()
-        .mockResolvedValue({});
+      putOrderSection.mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
@@ -130,9 +129,8 @@ describe('additional-services section routes', () => {
       });
     });
 
-    it('should return the correct status and text if response.success is true', async () => {
-      additionalServicesController.putAdditionalServices = jest.fn()
-        .mockResolvedValue({ success: true });
+    it('should return the correct status and text if no error is thrown', async () => {
+      putOrderSection.mockResolvedValue({});
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
