@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl as bapiUrl } from '../../../../../../../config';
-import { nockCheck } from '../../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck } from '../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service';
 
@@ -69,7 +69,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('associated-services - select - associated-service page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {

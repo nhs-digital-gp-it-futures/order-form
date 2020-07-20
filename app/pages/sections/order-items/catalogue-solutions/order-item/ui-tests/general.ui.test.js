@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../commonManifest.json';
 import content from '../flat/ondemand/manifest.json';
 import { solutionsApiUrl } from '../../../../../../config';
-import { nockCheck } from '../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck } from '../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
@@ -67,7 +67,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Catalogue-solutions - common - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {

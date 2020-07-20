@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../../config';
-import { nockCheck } from '../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck } from '../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services';
 
@@ -29,7 +29,7 @@ const pageSetup = async () => {
 fixture('Associated Servies - Dashbaord page - without saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render the No associated services text when no order items are returned from ORDAPI', async (t) => {

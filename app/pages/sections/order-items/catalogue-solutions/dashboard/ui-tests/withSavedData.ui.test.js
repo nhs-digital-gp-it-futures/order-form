@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { baseUrl, orderApiUrl } from '../../../../../../config';
-import { nockCheck } from '../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck } from '../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solutions';
 
@@ -50,7 +50,7 @@ const pageSetup = async () => {
 fixture('Catalogue-solutions - Dashboard page - without saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render the added catalogue solutions table with the column headings', async (t) => {

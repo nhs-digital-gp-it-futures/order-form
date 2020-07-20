@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl } from '../../../../../../../../config';
-import { nockCheck } from '../../../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck } from '../../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
@@ -66,7 +66,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
 fixture('Catalogue-solutions - flat ondemand - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render a text field for the quantity question', async (t) => {

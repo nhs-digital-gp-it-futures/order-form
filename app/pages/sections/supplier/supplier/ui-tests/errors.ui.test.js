@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
-import { nockCheck } from '../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck } from '../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
 
@@ -86,7 +86,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Supplier page - errors')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should navigate to task list page if save button is clicked and data is valid', async (t) => {

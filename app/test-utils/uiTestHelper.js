@@ -11,7 +11,7 @@ const throwErrorRerunMessage = (message, filename) => {
   throw new Error(errorMessage);
 };
 
-export const nockCheck = async (nock, t) => {
+export const nockAndErrorCheck = async (nock, t) => {
   if (process.env.NOCK_CHECK === 'true') {
     const isDone = nock.isDone();
     if (!isDone) {

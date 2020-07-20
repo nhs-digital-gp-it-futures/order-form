@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../../commonManifest.json';
 import existingorderPageContent from '../manifest.json';
 import { baseUrl, orderApiUrl } from '../../../../config';
-import { nockCheck } from '../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck } from '../../../../test-utils/uiTestHelper';
 
 const mockExistingOrderSummary = {
   orderId: 'order-id',
@@ -58,7 +58,7 @@ const generateMockOrderSummary = sectionData => (
 fixture('Task-list page - existing order')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {

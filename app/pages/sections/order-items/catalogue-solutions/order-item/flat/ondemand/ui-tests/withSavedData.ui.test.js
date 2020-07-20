@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../../../../../config';
 import content from '../manifest.json';
-import { nockCheck } from '../../../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck } from '../../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/existing-order-id';
 
@@ -70,7 +70,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
 fixture('Catalogue-solutions - flat ondemand - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render the title', async (t) => {

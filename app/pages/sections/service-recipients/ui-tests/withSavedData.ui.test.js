@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl, organisationApiUrl } from '../../../../config';
-import { nockCheck } from '../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck } from '../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/service-recipients';
 
@@ -53,7 +53,7 @@ const pageSetup = async (timesToCallMocks = 1) => {
 fixture('Service-recipients page - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render checked checkbox for each service recipient', async (t) => {

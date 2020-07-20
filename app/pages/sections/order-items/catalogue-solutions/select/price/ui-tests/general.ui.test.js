@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { nockCheck } from '../../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck } from '../../../../../../../test-utils/uiTestHelper';
 import { solutionsApiUrl } from '../../../../../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price';
@@ -163,7 +163,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Catalogue-solutions - price page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
