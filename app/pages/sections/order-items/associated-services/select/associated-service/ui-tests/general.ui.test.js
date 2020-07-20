@@ -46,7 +46,7 @@ const mockAssociatedServices = [
 const mocks = () => {
   nock(bapiUrl)
     .get('/api/v1/catalogue-items?supplierId=sup-1&catalogueItemType=AssociatedService')
-    .reply(200, { associatedServices: mockAssociatedServices });
+    .reply(200, mockAssociatedServices);
 };
 
 const pageSetup = async (
@@ -65,7 +65,7 @@ const pageSetup = async (
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('associated-services - associated-service page - general')
+fixture('associated-services - select - associated-service page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     const isDone = nock.isDone();
