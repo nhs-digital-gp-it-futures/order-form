@@ -12,12 +12,19 @@ export const getOrderItemPageData = async ({
     const serviceRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
     const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
     const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
+    const catalogueSolutionId = sessionManager.getFromSession({ req, key: 'selectedCatalogueSolutionId' });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     const formData = { price: formatDecimal(selectedPrice.price) };
 
     return {
-      itemId, itemName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
+      itemId,
+      itemName,
+      catalogueSolutionId,
+      serviceRecipientId,
+      serviceRecipientName,
+      selectedPrice,
+      formData,
     };
   }
 

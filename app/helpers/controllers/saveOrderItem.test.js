@@ -85,6 +85,7 @@ describe('saveOrderItem', () => {
           serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
+          catalogueSolutionId: 'some-solution-id',
           selectedPrice,
           formData,
         });
@@ -97,6 +98,7 @@ describe('saveOrderItem', () => {
           serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
+          catalogueSolutionId: 'some-solution-id',
           selectedPrice,
           formData,
         });
