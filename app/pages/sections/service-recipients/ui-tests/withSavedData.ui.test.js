@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl, organisationApiUrl } from '../../../../config';
-import { nockCheck } from '../../../../test-utils/nockChecker';
+import { nockCheck } from '../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/service-recipients';
 

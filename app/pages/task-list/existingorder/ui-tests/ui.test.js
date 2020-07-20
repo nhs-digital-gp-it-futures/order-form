@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../../commonManifest.json';
 import existingorderPageContent from '../manifest.json';
 import { baseUrl, orderApiUrl } from '../../../../config';
-import { nockCheck } from '../../../../test-utils/nockChecker';
+import { nockCheck } from '../../../../test-utils/uiTestHelper';
 
 const mockExistingOrderSummary = {
   orderId: 'order-id',

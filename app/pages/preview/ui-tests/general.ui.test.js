@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../config';
 import { formatDate } from '../../../helpers/common/dateFormatter';
-import { nockCheck, setState, authTokenInSession } from '../../../test-utils/nockChecker';
+import { nockCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/preview';
 

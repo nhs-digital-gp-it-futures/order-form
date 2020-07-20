@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../../commonManifest.json';
 import neworderPageContent from '../manifest.json';
 import { baseUrl } from '../../../../config';
-import { nockCheck } from '../../../../test-utils/nockChecker';
+import { nockCheck } from '../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/neworder';
 
