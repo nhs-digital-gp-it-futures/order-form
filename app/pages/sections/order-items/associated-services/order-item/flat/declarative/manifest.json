@@ -14,7 +14,7 @@
   "addPriceTable": {
     "columnInfo": [
       {
-        "data": "What price have you agreed? (£)/Unit of order",
+        "data": "What price have you agreed? (£)",
         "width": "50%",
         "classes": "nhsuk-u-font-size-16"
       },

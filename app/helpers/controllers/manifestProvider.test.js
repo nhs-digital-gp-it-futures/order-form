@@ -28,6 +28,7 @@ describe('getSelectedPriceManifest', () => {
     ${'AdditionalService'}  | ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/order-items/additional-services/order-item/flat/ondemand/manifest.json'}
     ${'AdditionalService'}  | ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/order-items/additional-services/order-item/flat/patient/manifest.json'}
     ${'AdditionalService'}  | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/order-items/additional-services/order-item/flat/declarative/manifest.json'}
+    ${'AssociatedService'}  | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/order-items/associated-services/order-item/flat/declarative/manifest.json'}
   `('should call path.join with the path $expectedPath', ({
   orderItemType, provisioningType, type, expectedPath,
 }) => {
