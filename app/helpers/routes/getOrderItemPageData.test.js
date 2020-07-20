@@ -64,6 +64,16 @@ describe('getOrderItemPageData', () => {
       expect(pageData.selectedPrice).toEqual({ price: 'some-price' });
     });
 
+    it('should get the selectedCatalogueSolutionId from session and return this as catalogueSolutionId', async () => {
+      fakeSessionManager.getFromSession = () => 'some-catalogue-solution-id';
+
+      getSelectedPrice.mockResolvedValue({});
+
+      const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
+
+      expect(pageData.catalogueSolutionId).toEqual('some-catalogue-solution-id');
+    });
+
     it('should return the formData with the price from getSelectedPrice', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-price-id';
 
