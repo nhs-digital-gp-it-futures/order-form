@@ -257,7 +257,7 @@ describe('additional-services select routes', () => {
 
       selectAdditionalServiceController.validateAdditionalServicesForm = jest.fn()
         .mockReturnValue({ success: true });
-      findSelectedCatalogueItemInSession.mockResolvedValue({ name: 'Additional Service 1', solution: { solutionId: 'solution-1' } });
+      findSelectedCatalogueItemInSession.mockReturnValue({ name: 'Additional Service 1', solution: { solutionId: 'solution-1' } });
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
 

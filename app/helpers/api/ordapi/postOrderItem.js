@@ -9,6 +9,7 @@ const formatPostData = ({
   serviceRecipientName,
   itemId,
   itemName,
+  catalogueSolutionId,
   selectedPrice,
   formData,
 }) => ({
@@ -20,6 +21,7 @@ const formatPostData = ({
   catalogueItemId: itemId,
   catalogueItemName: itemName,
   catalogueItemType: orderItemType,
+  catalogueSolutionId,
   deliveryDate: extractDate('deliveryDate', formData),
   quantity: parseInt(formData.quantity, 10),
   estimationPeriod: formData.selectEstimationPeriod,
