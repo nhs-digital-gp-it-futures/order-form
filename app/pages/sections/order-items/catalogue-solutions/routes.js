@@ -5,14 +5,14 @@ import { withCatch, extractAccessToken } from '../../../../helpers/routes/router
 import {
   getCatalogueSolutionsPageContext,
 } from './dashboard/controller';
+import { catalogueSolutionsSelectRoutes } from './select/routes';
 import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
-  saveSolutionOrderItem,
 } from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
-import { catalogueSolutionsSelectRoutes } from './select/routes';
+import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 const router = express.Router({ mergeParams: true });
@@ -88,14 +88,15 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
-      const apiResponse = await saveSolutionOrderItem({
+      const apiResponse = await saveOrderItem({
         accessToken,
         orderId,
         orderItemId,
-        selectedRecipientId: pageData.serviceRecipientId,
+        orderItemType: 'Solution',
+        serviceRecipientId: pageData.serviceRecipientId,
         serviceRecipientName: pageData.serviceRecipientName,
-        selectedSolutionId: pageData.itemId,
-        solutionName: pageData.itemName,
+        itemId: pageData.itemId,
+        itemName: pageData.itemName,
         selectedPrice: pageData.selectedPrice,
         formData: req.body,
       });
