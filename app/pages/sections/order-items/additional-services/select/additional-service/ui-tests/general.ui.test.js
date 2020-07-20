@@ -19,10 +19,16 @@ const mockAdditionalServices = [
   {
     catalogueItemId: 'additional-service-1',
     name: 'Additional Service 1',
+    solution: {
+      solutionId: 'solution-1',
+    },
   },
   {
     catalogueItemId: 'additional-service-2',
     name: 'Additional Service 2',
+    solution: {
+      solutionId: 'solution-1',
+    },
   },
 ];
 
@@ -31,10 +37,16 @@ const additionalServicesState = ClientFunction(() => {
     {
       catalogueItemId: 'additional-service-1',
       name: 'Additional Service 1',
+      solution: {
+        solutionId: 'solution-1',
+      },
     },
     {
       catalogueItemId: 'additional-service-2',
       name: 'Additional Service 2',
+      solution: {
+        solutionId: 'solution-1',
+      },
     },
   ]);
 
