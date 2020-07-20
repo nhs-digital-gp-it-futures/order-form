@@ -59,7 +59,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     const context = await getOrderItemContext({
       orderId,
       orderItemId,
-      orderItemType: 'associated-services',
+      orderItemType: 'AssociatedService',
       itemName: pageData.itemName,
       selectedPrice: pageData.selectedPrice,
       formData: pageData.formData,
