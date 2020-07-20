@@ -8,5 +8,8 @@
       "mainAdvice": "Select list price"
     }
   ],
+  "errorMessages": {
+    "SelectAssociatedServicePriceRequired": "Select a list price"
+  },
   "continueButtonText": "Continue"
 }

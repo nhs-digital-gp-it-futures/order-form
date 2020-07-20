@@ -64,8 +64,6 @@ describe('putOrderItem', () => {
     });
 
     it('should return success as true if data is saved successfully', async () => {
-      putData.mockResolvedValueOnce({ success: true });
-
       const response = await putOrderItem({
         orderId: 'order1',
         orderItemId: 'orderItemId-1',

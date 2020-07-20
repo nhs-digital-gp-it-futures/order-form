@@ -61,7 +61,7 @@ test('should render catalogue-solutions page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
+test('should render go back link with href /organisation/order-1', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -69,8 +69,7 @@ test('should navigate to /organisation/order-1 when click on backLink', async (t
 
   await t
     .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1');
 });
 
 test('should render the title', async (t) => {

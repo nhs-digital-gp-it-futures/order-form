@@ -53,7 +53,7 @@ test('should render additional-services page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-1 for backlink', async (t) => {
+test('should render go back link with href /organisation/order-1', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
