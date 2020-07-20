@@ -3,6 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../../config';
+import { nockCheck } from '../../../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solutions';
 
@@ -36,12 +37,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Catalogue-solutions - Dashboard page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
-
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+    await nockCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
@@ -65,7 +61,7 @@ test('should render catalogue-solutions page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
+test('should render go back link with href /organisation/order-1', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -73,8 +69,7 @@ test('should navigate to /organisation/order-1 when click on backLink', async (t
 
   await t
     .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1');
 });
 
 test('should render the title', async (t) => {

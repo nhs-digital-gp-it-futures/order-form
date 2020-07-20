@@ -3,6 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../../config';
+import { nockCheck } from '../../../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services';
 
@@ -32,12 +33,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Associated-services - Dashboard page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
-
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+    await nockCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
@@ -61,7 +57,7 @@ test('should render associated-services page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-1 when click on backLink', async (t) => {
+test('should render go back link with href /organisation/order-1', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -153,6 +149,10 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-1/sections/associated-services')
+    .reply(200);
+
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -160,5 +160,5 @@ test('should redirect to /organisation/order-1 when clicking the Continue button
 
   await t
     .click(continueButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/associated-services');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
 });
