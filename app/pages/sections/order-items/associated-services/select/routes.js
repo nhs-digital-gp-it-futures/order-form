@@ -25,12 +25,9 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
       const { orderId } = req.params;
       const associatedServices = await findAssociatedServices({ req, sessionManager });
 
-      // Temporary inclusion until associated services displayed on page
-      logger.info(`Found the following associated services: ${JSON.stringify(associatedServices)}`);
-
       const context = getAssociatedServicePageContext({
         orderId,
-        accessToken: extractAccessToken({ req, tokenType: 'access' }),
+        associatedServices,
       });
 
       logger.info(`navigating to order ${orderId} associated-services select associated-service page`);
