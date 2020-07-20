@@ -65,8 +65,6 @@ Application should now be running on <a href="http://localhost:3006/order/">http
 ## Integration tests helpers
 Run the integration tests with `npm run test:integration` by default this will run the integration tests in 2 threads.
 
-The command args are now named which should made it easier to run particular tests
-
 ### To run a particular browser `b`
 `npm run test:integration b=chrome` -> changes the browser to run as chrome. Default set to chrome:headless
 
@@ -78,7 +76,7 @@ The command args are now named which should made it easier to run particular tes
 
 ### Use the full path `fp`
 Right click on the test file and copy the path.
-`npm run test:integration fp=/Users/fawad.ali/projects/buying-catalogue/order-form/app/pages/sections/order-items/catalogue-solutions/dashboard/ui-tests/general.ui.test.js c=1`
+`npm run test:integration fp={{path-to-app}}/order-form/app/pages/sections/order-items/catalogue-solutions/dashboard/ui-tests/general.ui.test.js c=1`
 
 ### To change the number of concurrent threads `c`
 `npm run test:integration c=4` -> Run all the ui tests in 4 threads. Default is 2
