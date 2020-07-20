@@ -3,6 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../../../../config';
+import { nockCheck } from '../../../../../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
@@ -69,12 +70,7 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
 fixture('Catalogue-solutions - flat patient - withoutSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
-
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+    await nockCheck(nock, t);
   });
 
 test('should navigate to catalogue solution dashboard page if save button is clicked and data is valid', async (t) => {
