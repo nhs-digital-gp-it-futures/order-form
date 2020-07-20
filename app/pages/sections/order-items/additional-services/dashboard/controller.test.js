@@ -1,11 +1,9 @@
 import * as contextCreator from './contextCreator';
 import {
   getAdditionalServicesPageContext,
-  putAdditionalServices,
 } from './controller';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
-import { putOrderSection } from '../../../../../helpers/api/ordapi/putOrderSection';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../../../logger');
@@ -14,7 +12,6 @@ jest.mock('./contextCreator', () => ({
 }));
 jest.mock('../../../../../helpers/api/ordapi/getOrderItems');
 jest.mock('../../../../../helpers/api/ordapi/getOrderDescription');
-jest.mock('../../../../../helpers/api/ordapi/putOrderSection');
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
@@ -62,35 +59,5 @@ describe('additional-services controller', () => {
         { orderId, orderDescription: 'some order', orderItems: [] },
       );
     });
-  });
-
-  describe('putAdditionalServices', () => {
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-  });
-
-  it('should call putOrderSection once with the correct params', async () => {
-    putOrderSection.mockResolvedValueOnce({});
-
-    await putAdditionalServices({
-      orderId, accessToken,
-    });
-
-    expect(putOrderSection.mock.calls.length).toEqual(1);
-    expect(putOrderSection).toHaveBeenCalledWith({
-      orderId,
-      sectionId: 'additional-services',
-      accessToken,
-    });
-  });
-
-  it('should return success: true if put is successful', async () => {
-    putOrderSection.mockResolvedValueOnce({ success: true });
-
-    const response = await putAdditionalServices({
-      orderId, accessToken,
-    });
-    expect(response).toEqual({ success: true });
   });
 });

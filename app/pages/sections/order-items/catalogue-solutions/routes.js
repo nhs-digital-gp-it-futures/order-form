@@ -4,7 +4,6 @@ import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
 import {
   getCatalogueSolutionsPageContext,
-  putCatalogueSolutions,
 } from './dashboard/controller';
 import {
   getOrderItemContext,
@@ -14,6 +13,7 @@ import {
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
 import { catalogueSolutionsSelectRoutes } from './select/routes';
+import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 const router = express.Router({ mergeParams: true });
 
@@ -33,8 +33,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    await putCatalogueSolutions({
+    await putOrderSection({
       orderId,
+      sectionId: 'catalogue-solutions',
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 

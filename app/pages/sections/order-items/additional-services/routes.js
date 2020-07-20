@@ -4,7 +4,6 @@ import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
 import {
   getAdditionalServicesPageContext,
-  putAdditionalServices,
 } from './dashboard/controller';
 import { additionalServicesSelectRoutes } from './select/routes';
 import {
@@ -14,6 +13,7 @@ import {
 } from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 const router = express.Router({ mergeParams: true });
 
@@ -34,8 +34,9 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    await putAdditionalServices({
+    await putOrderSection({
       orderId,
+      sectionId: 'additional-services',
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
