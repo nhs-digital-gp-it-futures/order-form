@@ -10,10 +10,10 @@ import { additionalServicesSelectRoutes } from './select/routes';
 import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
-  saveOrderItem,
 } from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 
 const router = express.Router({ mergeParams: true });
 
