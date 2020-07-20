@@ -37,8 +37,6 @@ describe('associated-services order-item controller', () => {
         orderId: 'order-1',
         orderItemType,
         itemName: 'item-name',
-        selectedRecipientId: 'fake-recipient-id',
-        serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
         selectedPrice,
       });
@@ -58,8 +56,6 @@ describe('associated-services order-item controller', () => {
       await getOrderItemContext({
         orderId: 'order-1',
         itemName: 'item-name',
-        odsCode: 'fake-recipient-id',
-        serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
         selectedPrice,
         formData: { price: 0.1 },
@@ -69,9 +65,7 @@ describe('associated-services order-item controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({
         commonManifest: { title: 'fake manifest' },
         selectedPriceManifest,
-        odsCode: 'fake-recipient-id',
         orderId: 'order-1',
-        serviceRecipientName: 'Some service recipient 1',
         itemName: 'item-name',
         selectedPrice,
         formData: { price: 0.1 },
@@ -91,8 +85,6 @@ describe('associated-services order-item controller', () => {
       await getOrderItemContext({
         orderId: 'order-1',
         itemName: 'item-name',
-        odsCode: 'fake-recipient-id',
-        serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
         selectedPrice,
         formData,
@@ -102,9 +94,7 @@ describe('associated-services order-item controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({
         commonManifest: { title: 'fake manifest' },
         selectedPriceManifest,
-        odsCode: 'fake-recipient-id',
         orderId: 'order-1',
-        serviceRecipientName: 'Some service recipient 1',
         itemName: 'item-name',
         selectedPrice,
         formData,

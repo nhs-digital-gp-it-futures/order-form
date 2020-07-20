@@ -7,8 +7,6 @@ export const getOrderItemContext = async ({
   orderItemId,
   orderItemType,
   itemName,
-  odsCode,
-  serviceRecipientName,
   selectedPrice,
   formData,
 }) => {
@@ -24,8 +22,6 @@ export const getOrderItemContext = async ({
     orderId,
     orderItemId,
     itemName,
-    serviceRecipientName,
-    odsCode,
     selectedPrice,
     formData,
   });

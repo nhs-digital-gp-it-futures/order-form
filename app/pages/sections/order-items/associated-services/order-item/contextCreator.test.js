@@ -30,13 +30,12 @@ describe('associated-services order-item contextCreator', () => {
 
     it('should return the title', () => {
       const itemName = 'item-name';
-      const serviceRecipientName = 'service-recipient-name';
-      const odsCode = 'ods-code';
+      const orderId = 'order-1';
 
       const context = getContext({
-        commonManifest, itemName, serviceRecipientName, odsCode,
+        commonManifest, orderId, itemName,
       });
-      expect(context.title).toEqual(`${itemName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`);
+      expect(context.title).toEqual(`${itemName} ${commonManifest.title} ${orderId}`);
     });
 
     it('should return the description', () => {

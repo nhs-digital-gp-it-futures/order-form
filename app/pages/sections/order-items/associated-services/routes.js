@@ -61,8 +61,6 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       orderItemId,
       orderItemType: 'AssociatedService',
       itemName: pageData.itemName,
-      odsCode: pageData.serviceRecipientId,
-      serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,
       formData: pageData.formData,
     });
