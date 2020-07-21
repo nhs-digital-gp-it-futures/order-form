@@ -23,7 +23,13 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
     authProvider.authorise({ claim: 'ordering' }),
     withCatch(logger, authProvider, async (req, res) => {
       const { orderId } = req.params;
-      const associatedServices = await findAssociatedServices({ req, sessionManager });
+      const accessToken = extractAccessToken({ req, tokenType: 'access' });
+      const associatedServices = await findAssociatedServices({
+        req,
+        accessToken,
+        sessionManager,
+        logger,
+      });
 
       const context = getAssociatedServicePageContext({
         orderId,

@@ -29,6 +29,6 @@ export const getCatalogueItems = async ({ supplierId, catalogueItemType }) => {
   logger.info(`Retrieving ${catalogueItemType} catalogue items from BAPI for supplier ${supplierId}`);
   const catalogueItems = await getData({ endpoint, logger });
 
-  logger.info(`Found ${catalogueItems.length} item(s) for supplier "${supplierId}".`);
+  logger.info(`Found ${catalogueItems.length} ${catalogueItemType}(s) for supplier "${supplierId}".`);
   return catalogueItems;
 };
