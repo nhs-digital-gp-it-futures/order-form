@@ -43,18 +43,15 @@ const mocks = () => {
     .reply(200, { additionalServices: mockAdditionalServices });
 };
 
-const pageSetup = async (
-  withAuth = true,
-  getRoute = true,
-  postRoute = false,
-) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
+  if (setup.getRoute) {
     mocks();
   }
-  if (postRoute) {
+  if (setup.postRoute) {
     await setState(ClientFunction)('additionalServices', additionalServicesInSession);
   }
 };
@@ -72,7 +69,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false, false);
+  await pageSetup({ ...defaultPageSetup, withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -130,7 +127,7 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-id/additional-services/select/additional-service/price when an additional service is selected', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const selectAdditionalServiceRadioOptions = Selector('[data-test-id="question-selectAdditionalService"]');
@@ -144,7 +141,7 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
 });
 
 test('should show the error summary when no additional service is selected causing validation error', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -160,7 +157,7 @@ test('should show the error summary when no additional service is selected causi
 });
 
 test('should render select additional service field as errors with error message when no additional service is selected causing validation error', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const additionalServiceSelectPage = Selector('[data-test-id="additional-service-select-page"]');
@@ -177,7 +174,7 @@ test('should render select additional service field as errors with error message
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');
@@ -201,7 +198,7 @@ test('should render the error page if no additional services are found', async (
     .get('/api/v1/additional-services?solutionIds=')
     .reply(200, { additionalServices: [] });
 
-  await pageSetup(true, false);
+  await pageSetup({ ...defaultPageSetup, getRoute: false });
   await t.navigateTo(pageUrl);
 
   const backLink = Selector('[data-test-id="error-back-link"]');

@@ -74,20 +74,18 @@ const mocks = () => {
     .reply(200, mockAdditionalServicePricing);
 };
 
-const pageSetup = async (
-  withAuth = true,
-  getRoute = true,
-  postRoute = false,
-) => {
-  if (withAuth) {
+
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
+  if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)('selectedItemName', selectedItemNameInSession);
     await setState(ClientFunction)('selectedItemId', selectedItemIdInSession);
   }
-  if (postRoute) {
+  if (setup.postRoute) {
     await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
   }
 };
@@ -101,11 +99,11 @@ fixture('Additional-services - price page - general')
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
-  await pageSetup(false, false);
   nock('http://identity-server')
     .get('/login')
     .reply(200);
 
+  await pageSetup({ ...defaultPageSetup, withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -114,8 +112,8 @@ test('when user is not authenticated - should navigate to the identity server lo
 
 test('should render Additional-services price page', async (t) => {
   await pageSetup();
-
   await t.navigateTo(pageUrl);
+
   const page = Selector('[data-test-id="additional-service-price-page"]');
 
   await t
@@ -153,8 +151,6 @@ test('should render the description', async (t) => {
 });
 
 test('should render a selectAdditionalServicePrice question as radio button options', async (t) => {
-  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
-
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -177,14 +173,12 @@ test('should render a selectAdditionalServicePrice question as radio button opti
 
 test('should render the radioButton as checked for the selectedPriceId', async (t) => {
   await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
-
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const selectAdditionalServicePriceRadioOptions = Selector('[data-test-id="question-selectAdditionalServicePrice"]');
 
   await t
-    .expect(selectAdditionalServicePriceRadioOptions.exists).ok()
     .expect(selectAdditionalServicePriceRadioOptions.find('.nhsuk-radios__item').count).eql(3)
     .expect(selectAdditionalServicePriceRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input:checked').exists).notOk()
     .expect(selectAdditionalServicePriceRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input:checked').exists).ok()
@@ -192,7 +186,7 @@ test('should render the radioButton as checked for the selectedPriceId', async (
 });
 
 test('should render the Continue button', async (t) => {
-  await pageSetup(true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -206,7 +200,7 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
     .get('/api/v1/orders/order-id/sections/service-recipients')
     .reply(200, {});
 
-  await pageSetup(true, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const selectAdditionalServiceRadioOptions = Selector('[data-test-id="question-selectAdditionalServicePrice"]');
@@ -221,7 +215,7 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
 });
 
 test('should render the title on validation error', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -236,7 +230,7 @@ test('should render the title on validation error', async (t) => {
 });
 
 test('should show the error summary when no price selected causing validation error', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -252,7 +246,7 @@ test('should show the error summary when no price selected causing validation er
 });
 
 test('should render select additional service field as errors with error message when no price selected causing validation error', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const additionalServiceSelectPage = Selector('[data-test-id="additional-service-price-page"]');
@@ -269,7 +263,7 @@ test('should render select additional service field as errors with error message
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');

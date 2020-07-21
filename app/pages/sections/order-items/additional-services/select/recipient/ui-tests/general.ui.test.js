@@ -26,15 +26,16 @@ const mocks = () => {
     .reply(200, { serviceRecipients });
 };
 
-const pageSetup = async (withAuth = true, getRoute = true, postRoute = false) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
+  if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)('selectedItemName', selectedItemName);
   }
-  if (postRoute) {
+  if (setup.postRoute) {
     await setState(ClientFunction)('recipients', JSON.stringify(serviceRecipients));
   }
 };
@@ -52,7 +53,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false, false);
+  await pageSetup({ ...defaultPageSetup, withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -127,7 +128,7 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-id/additional-services/neworderitem when a recipient is selected', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const selectRecipientRadioOptions = Selector('[data-test-id="question-selectRecipient"]');
@@ -141,7 +142,7 @@ test('should redirect to /organisation/order-id/additional-services/neworderitem
 });
 
 test('should show the error summary when no additionalService selected causing validation error', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -157,7 +158,7 @@ test('should show the error summary when no additionalService selected causing v
 });
 
 test('should render select recipient field as errors with error message when no additionalService selected causing validation error', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const additionalServiceRecipientPage = Selector('[data-test-id="additional-service-recipient-page"]');
@@ -174,7 +175,7 @@ test('should render select recipient field as errors with error message when no 
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');
