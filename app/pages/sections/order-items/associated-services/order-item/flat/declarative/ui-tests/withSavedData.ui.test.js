@@ -14,7 +14,7 @@ const orderItem = {
     odsCode: 'OX3',
     name: 'Some service recipient 2',
   },
-  catalogueItemType: 'Associated Service',
+  catalogueItemType: 'AssociatedService',
   catalogueItemName: 'Some item name',
   catalogueItemId: '10000-001',
   quantity: 3,

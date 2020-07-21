@@ -149,7 +149,6 @@ describe('additional-services order-item controller', () => {
         formData: {
           quantity: '100  ',
           price: '  0.1',
-          selectEstimationPeriod: undefined,
         },
       });
 
@@ -164,7 +163,6 @@ describe('additional-services order-item controller', () => {
         formData: {
           quantity: '100',
           price: '0.1',
-          selectEstimationPeriod: undefined,
         },
       });
     });
