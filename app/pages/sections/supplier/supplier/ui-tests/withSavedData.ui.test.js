@@ -63,8 +63,6 @@ const pageSetup = async (withAuth = true, getRoute = true) => {
   }
 };
 
-const getLocation = ClientFunction(() => document.location.href);
-
 fixture('Supplier page - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
