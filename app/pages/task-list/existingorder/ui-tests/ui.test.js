@@ -887,26 +887,26 @@ test('should only render task 8 item 1 as a link if recipients saved and count 1
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
 });
 
-test('should not render the complete tag for task 7 item 1 when returned as incomplete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'associated-services', status: 'incomplete' }]);
+test('should not render the complete tag for task 8 item 1 when returned as incomplete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-sources', status: 'incomplete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
 
-  const task7Item1CompleteTag = Selector('[data-test-id="task-6-item-0-complete-tag"]');
+  const task8Item1CompleteTag = Selector('[data-test-id="task-7-item-0-complete-tag"]');
 
   await t
-    .expect(task7Item1CompleteTag.exists).notOk();
+    .expect(task8Item1CompleteTag.exists).notOk();
 });
 
-test('should only render the complete tag for task 7 item 1 when returned as complete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'associated-services', status: 'complete' }]);
+test('should only render the complete tag for task 8 item 1 when returned as complete from the API', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-sources', status: 'complete' }]);
   await pageSetup(t, true, mockOrderSummary);
   await t.navigateTo(pageUrl);
 
-  const task7Item1CompleteTag = Selector('[data-test-id="task-6-item-0-complete-tag"]');
+  const task8Item1CompleteTag = Selector('[data-test-id="task-7-item-0-complete-tag"]');
 
   await t
-    .expect(task7Item1CompleteTag.exists).ok();
+    .expect(task8Item1CompleteTag.exists).ok();
 });
 
 // Buttons tests
