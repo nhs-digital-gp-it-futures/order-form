@@ -9,10 +9,10 @@ import { additionalServicesSelectRoutes } from './select/routes';
 import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
-  saveOrderItem,
 } from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 const router = express.Router({ mergeParams: true });
@@ -98,6 +98,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
         serviceRecipientName: pageData.serviceRecipientName,
         itemId: pageData.itemId,
         itemName: pageData.itemName,
+        catalogueSolutionId: pageData.catalogueSolutionId,
         selectedPrice: pageData.selectedPrice,
         formData: req.body,
       });
