@@ -146,7 +146,6 @@ test('should render the price with a value of 0 when returned from the API', asy
     .expect(priceInput.getAttribute('value')).eql(mockSelectedPrice.price.toString());
 });
 
-
 test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
