@@ -45,8 +45,12 @@ const mocks = () => {
     .reply(200, selectedPrice);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)('fakeToken', authTokenInSession);
     await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
@@ -54,9 +58,9 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
     await setState(ClientFunction)('selectedItemId', itemIdInSession);
     await setState(ClientFunction)('selectedItemName', itemNameInSession);
     await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
-    if (postRoute) {
-      await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
-    }
+  }
+  if (setup.postRoute) {
+    await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
   }
 };
 
@@ -130,7 +134,7 @@ test('should render the price table content', async (t) => {
 });
 
 test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const orderItemPage = Selector('[data-test-id="order-item-page"]');
@@ -147,7 +151,7 @@ test('should render select quantity field as errors with error message when no q
 });
 
 test('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const orderItemPage = Selector('[data-test-id="order-item-page"]');
@@ -166,7 +170,7 @@ test('should render select price field as errors with error message when no pric
 });
 
 test('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="save-button"] button');
@@ -182,7 +186,7 @@ test('should anchor to the quantity field when clicking on the quantity required
 });
 
 test('should anchor to the quantity field when clicking on the numerical quantity error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="save-button"] button');
@@ -200,7 +204,7 @@ test('should anchor to the quantity field when clicking on the numerical quantit
 });
 
 test('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -218,7 +222,7 @@ test('should anchor to the price field when clicking on the price required error
 });
 
 test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="save-button"] button');

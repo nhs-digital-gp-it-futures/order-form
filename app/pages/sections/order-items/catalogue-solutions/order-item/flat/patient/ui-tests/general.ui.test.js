@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl } from '../../../../../../../../config';
-import { nockAndErrorCheck } from '../../../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
@@ -25,9 +25,6 @@ const selectedPrice = {
   price: 1.64,
 };
 
-const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-});
 const itemIdInSession = 'solution-1';
 const itemNameInSession = 'solution-name';
 const selectedRecipientIdInSession = 'recipient-1';
@@ -42,28 +39,28 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const setState = ClientFunction((key, value) => {
-  document.cookie = `${key}=${value}`;
-});
-
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
     mocks();
-    await setState('fakeToken', authTokenInSession);
-    await setState('selectedRecipientId', selectedRecipientIdInSession);
-    await setState('selectedRecipientName', selectedRecipientNameInSession);
-    await setState('selectedItemId', itemIdInSession);
-    await setState('selectedItemName', itemNameInSession);
-    await setState('selectedPriceId', selectedPriceIdInSession);
-    if (postRoute) {
-      await setState('orderItemPageData', orderItemPageDataInSession);
-    }
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+    await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
+    await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
+    await setState(ClientFunction)('selectedItemId', itemIdInSession);
+    await setState(ClientFunction)('selectedItemName', itemNameInSession);
+    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+  }
+  if (setup.postRoute) {
+    await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
   }
 };
 
@@ -154,7 +151,7 @@ test('should render the price table content', async (t) => {
 });
 
 test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const orderItemPage = Selector('[data-test-id="order-item-page"]');
@@ -172,7 +169,7 @@ test('should render select quantity field as errors with error message when no q
 });
 
 test('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const orderItemPage = Selector('[data-test-id="order-item-page"]');
@@ -190,7 +187,7 @@ test('should render select price field as errors with error message when no pric
 });
 
 test('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="save-button"] button');
@@ -208,7 +205,7 @@ test('should anchor to the quantity field when clicking on the quantity required
 });
 
 test('should anchor to the quantity field when clicking on the numerical quantity error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="save-button"] button');
@@ -228,7 +225,7 @@ test('should anchor to the quantity field when clicking on the numerical quantit
 });
 
 test('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -247,7 +244,7 @@ test('should anchor to the price field when clicking on the price required error
 });
 
 test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="save-button"] button');

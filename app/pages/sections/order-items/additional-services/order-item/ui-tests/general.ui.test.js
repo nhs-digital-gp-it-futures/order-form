@@ -40,8 +40,12 @@ const mocks = () => {
     .reply(200, selectedPrice);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)('fakeToken', authTokenInSession);
     await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
@@ -49,9 +53,9 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
     await setState(ClientFunction)('selectedItemId', itemIdInSession);
     await setState(ClientFunction)('selectedItemName', itemNameInSession);
     await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
-    if (postRoute) {
-      await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
-    }
+  }
+  if (setup.postRoute) {
+    await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
   }
 };
 
@@ -68,7 +72,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false);
+  await pageSetup({ ...defaultPageSetup, withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -95,7 +99,7 @@ test('should link to /order/organisation/order-1/additional-services/select/addi
 });
 
 test('should link to /order/organisation/order-1/additional-services/select/solution/price/recipient for backlink after validation errors', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -139,7 +143,7 @@ test('should render the delete button', async (t) => {
 });
 
 test('delete button should still be disabled after validation errors', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const deleteButton = Selector('[data-test-id="delete-button"] button');

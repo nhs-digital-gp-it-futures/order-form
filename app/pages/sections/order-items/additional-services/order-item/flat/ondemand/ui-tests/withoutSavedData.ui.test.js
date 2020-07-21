@@ -60,8 +60,12 @@ const mocks = () => {
     .reply(200, selectedPrice);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: true };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)('fakeToken', authTokenInSession);
     await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
@@ -70,9 +74,9 @@ const pageSetup = async (withAuth = true, postRoute = false) => {
     await setState(ClientFunction)('selectedItemName', itemNameInSession);
     await setState(ClientFunction)('selectedCatalogueSolutionId', catalogueSolutionIdInSession);
     await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
-    if (postRoute) {
-      await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
-    }
+  }
+  if (setup.postRoute) {
+    await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
   }
 };
 
@@ -87,7 +91,7 @@ test('should navigate to additional-services dashboard page if save button is cl
     .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 10 })
     .reply(200, {});
 
-  await pageSetup(true, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const quantityInput = Selector('[data-test-id="question-quantity"]');
@@ -111,7 +115,7 @@ test('should show text fields as errors with error message when there are BE val
       }],
     });
 
-  await pageSetup(true, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const errorSummary = Selector('[data-test-id="error-summary"]');

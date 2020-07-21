@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../../../../config';
-import { nockAndErrorCheck } from '../../../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
@@ -21,9 +21,6 @@ const selectedPrice = {
   price: 0.1,
 };
 
-const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-});
 const itemIdInSession = 'solution-1';
 const itemNameInSession = 'solution-name';
 const selectedRecipientIdInSession = 'recipient-1';
@@ -38,28 +35,28 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const setState = ClientFunction((key, value) => {
-  document.cookie = `${key}=${value}`;
-});
-
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: true };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
     mocks();
-    await setState('fakeToken', authTokenInSession);
-    await setState('selectedRecipientId', selectedRecipientIdInSession);
-    await setState('selectedRecipientName', selectedRecipientNameInSession);
-    await setState('selectedItemId', itemIdInSession);
-    await setState('selectedItemName', itemNameInSession);
-    await setState('selectedPriceId', selectedPriceIdInSession);
-    if (postRoute) {
-      await setState('orderItemPageData', orderItemPageDataInSession);
-    }
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+    await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
+    await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
+    await setState(ClientFunction)('selectedItemId', itemIdInSession);
+    await setState(ClientFunction)('selectedItemName', itemNameInSession);
+    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+  }
+  if (setup.postRoute) {
+    await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
   }
 };
 
@@ -74,7 +71,7 @@ test('should navigate to catalogue solution dashboard page if save button is cli
     .post('/api/v1/orders/order-id/order-items')
     .reply(200, {});
 
-  await pageSetup(true, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const deliveryDateInputs = Selector('[data-test-id="question-deliveryDate"] input');
@@ -105,7 +102,7 @@ test('should show text fields as errors with error message when there are BE val
       }],
     });
 
-  await pageSetup(true, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const errorSummary = Selector('[data-test-id="error-summary"]');

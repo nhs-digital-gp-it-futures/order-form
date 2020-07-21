@@ -48,14 +48,16 @@ const mocks = () => {
     .reply(200, orderItem);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false) => {
-  if (withAuth) {
-    mocks();
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
+  }
+  if (setup.postRoute) {
     await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
-    if (postRoute) {
-      await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
-    }
   }
 };
 
@@ -130,7 +132,7 @@ test('should render the delete button as not disabled', async (t) => {
 });
 
 test('should show the correct error summary and input error when the quantity is removed and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -152,7 +154,7 @@ test('should show the correct error summary and input error when the quantity is
 });
 
 test('should show the correct error summary and input error when the price is removed and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -178,7 +180,7 @@ test('should navigate to additional services dashboard page if save button is cl
     .put('/api/v1/orders/order-1/order-items/item-1', { quantity: 310, estimationPeriod: 'month', price: 0.1 })
     .reply(200, {});
 
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const quantityInput = Selector('[data-test-id="question-quantity"]');
@@ -200,7 +202,7 @@ test('should show text fields as errors with error message when there are BE val
       }],
     });
 
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const errorSummary = Selector('[data-test-id="error-summary"]');
