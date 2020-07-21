@@ -7,7 +7,7 @@ import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
 
-const supplierDataFromOrdapi = {
+const mockSupplierData = {
   name: 'SupplierOne',
   address: {
     line1: 'line 1',
@@ -28,6 +28,24 @@ const supplierDataFromOrdapi = {
   },
 };
 
+const supplierDataFromOrdapi = mockSupplierData;
+
+const requestPutBody = {
+  name: mockSupplierData.name,
+  address: {
+    line1: mockSupplierData.address.line1,
+    line2: mockSupplierData.address.line2,
+    line3: mockSupplierData.address.line3,
+    line5: mockSupplierData.address.line5,
+    town: mockSupplierData.address.town,
+    county: mockSupplierData.address.county,
+    postcode: mockSupplierData.address.postcode,
+    country: mockSupplierData.address.country,
+  },
+  primaryContact: mockSupplierData.primaryContact,
+};
+
+
 const mocks = (times = 2) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
@@ -35,17 +53,14 @@ const mocks = (times = 2) => {
     .reply(200, supplierDataFromOrdapi);
 };
 
-const errorMocks = () => {
-  mocks(1);
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/supplier')
-    .reply(400, { errors: [] });
-};
-
-const pageSetup = async () => {
-  await setState(ClientFunction)('fakeToken', authTokenInSession);
-  await setState(ClientFunction)('selectedSupplier', 'supplier-1');
-  mocks();
+const pageSetup = async (withAuth = true, getRoute = true) => {
+  if (withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (getRoute) {
+    mocks();
+    await setState(ClientFunction)('selectedSupplier', 'supplier-1');
+  }
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -56,15 +71,14 @@ fixture('Supplier page - with saved data')
     await nockAndErrorCheck(nock, t);
   });
 
-test('should navigate to /organisation/order-id when click on backlink if data comes from ORDAPI', async (t) => {
+test('should link to /order/organisation/order-id for backLink when data comes from ORDAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
 test('should render supplier name with data from ORDAPI', async (t) => {
@@ -124,7 +138,14 @@ test('should render the primary contact details form with populated data from OR
 });
 
 test('should not show the search again link when there are validation errors and details are provided from ORDAPI', async (t) => {
-  errorMocks();
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier', requestPutBody)
+    .reply(400, { errors: [] });
+
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, supplierDataFromOrdapi);
+
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -139,8 +160,15 @@ test('should not show the search again link when there are validation errors and
     .expect(searchAgainLink.exists).notOk();
 });
 
-test('should redirect back to the /organisation/order-id when clicking the backlink validation errors and details are provided from ORDAPI', async (t) => {
-  errorMocks();
+test('should link back to the /order/organisation/order-id when clicking the backlink validation errors and details are provided from ORDAPI', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier', requestPutBody)
+    .reply(400, { errors: [] });
+
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, supplierDataFromOrdapi);
+
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -151,6 +179,5 @@ test('should redirect back to the /organisation/order-id when clicking the backl
     .click(saveButton);
 
   await t
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
 });

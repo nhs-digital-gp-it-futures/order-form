@@ -35,11 +35,13 @@ const mocks = () => {
     .reply(200, mockData);
 };
 
-const pageSetup = async (withAuth = true) => {
-  await setState(ClientFunction)('selectedSupplier', 'supplier-1');
+const pageSetup = async (withAuth = true, getRoute = true) => {
   if (withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (getRoute) {
     mocks();
+    await setState(ClientFunction)('selectedSupplier', 'supplier-1');
   }
 };
 
@@ -56,7 +58,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false);
+  await pageSetup(false, false);
   await t.navigateTo(pageUrl);
 
   await t

@@ -3,17 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
-import { nockAndErrorCheck } from '../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier/search';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mocks = (data) => {
   nock(orderApiUrl)
@@ -21,10 +13,12 @@ const mocks = (data) => {
     .reply(200, data);
 };
 
-const pageSetup = async (withAuth = true, data = {}) => {
+const pageSetup = async (withAuth = true, getRoute = true, data = {}) => {
   if (withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (getRoute) {
     mocks(data);
-    await setCookies();
   }
 };
 
@@ -43,7 +37,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false);
+  await pageSetup(false, false);
   await t.navigateTo(pageUrl);
 
   await t
@@ -59,16 +53,14 @@ test('should render Supplier search page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id when click on backLink', async (t) => {
+test('should link to /order/organisation/order-id for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -78,7 +70,6 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="supplier-search-page-title"]');
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
 });
 
@@ -89,7 +80,6 @@ test('should render the description', async (t) => {
   const description = Selector('h2[data-test-id="supplier-search-page-description"]');
 
   await t
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
@@ -100,7 +90,6 @@ test('should render a supplierName question as a textfield', async (t) => {
   const supplierNameInput = Selector('[data-test-id="question-supplierName"]');
 
   await t
-    .expect(supplierNameInput.exists).ok()
     .expect(supplierNameInput.find('input').count).eql(1);
 });
 
@@ -111,7 +100,6 @@ test('should render the Search button', async (t) => {
   const searchButton = Selector('[data-test-id="search-button"] button');
 
   await t
-    .expect(searchButton.exists).ok()
     .expect(await extractInnerText(searchButton)).eql(content.searchButtonText);
 });
 
@@ -151,12 +139,9 @@ test('should render the error page if no suppliers are found', async (t) => {
     .click(searchButton);
 
   await t
-    .expect(backLink.exists).ok()
     .expect(await extractInnerText(backLink)).eql('Go back to search')
     .expect(backLink.find('a').getAttribute('href')).ok('/order/organisation/order-id/supplier/search')
-    .expect(errorTitle.exists).ok()
     .expect(await extractInnerText(errorTitle)).eql('No supplier found')
-    .expect(errorDescription.exists).ok()
     .expect(await extractInnerText(errorDescription)).eql("There are no suppliers that match the search terms you've provided. Try searching again.");
 });
 
@@ -207,13 +192,12 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
   await t
     .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#supplierName`);
 });
 
 test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
-  await pageSetup(true, orderData);
+  await pageSetup(true, true, orderData);
   await t.navigateTo(pageUrl);
 
   await t

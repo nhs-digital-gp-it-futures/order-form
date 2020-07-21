@@ -32,20 +32,21 @@ const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, {});
-};
 
-const bapiMocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
 };
 
-const pageSetup = async (withSessionState = true) => {
-  await setState(ClientFunction)('fakeToken', authTokenInSession);
-  mocks();
-  if (withSessionState) {
+const pageSetup = async (withAuth = true, getRoute = true, withSelectedSupplier = true) => {
+  if (withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (getRoute) {
+    mocks();
+  }
+  if (withSelectedSupplier) {
     await setState(ClientFunction)('selectedSupplier', 'supplier-1');
-    bapiMocks();
   }
 };
 
@@ -57,15 +58,14 @@ fixture('Supplier page - without saved data')
     await nockAndErrorCheck(nock, t);
   });
 
-test('should navigate to /organisation/order-id/supplier/search/select when click on backlink if data comes from BAPI', async (t) => {
+test('should link to /order/organisation/order-id/supplier/search/select for backLink when data comes from BAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search/select');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/supplier/search/select');
 });
 
 test('should render supplier name with data from BAPI when no data from ORDAPI and supplierId provided', async (t) => {
@@ -125,7 +125,11 @@ test('should render the primary contact details form with populated data from BA
 });
 
 test('should redirect to search if there is no data in ORDAPI and supplierSelected is not in session', async (t) => {
-  await pageSetup(false);
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
+  await pageSetup(true, false, false);
   await t.navigateTo(pageUrl);
 
   await t
