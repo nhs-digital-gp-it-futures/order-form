@@ -1,6 +1,6 @@
 import commonManifest from './commonManifest.json';
 import flatDeclarativeManifest from './flat/declarative/manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 
 describe('associated-services order-item contextCreator', () => {
   describe('getContext', () => {
@@ -130,6 +130,78 @@ describe('associated-services order-item contextCreator', () => {
           commonManifest, selectedPriceManifest: flatDeclarativeManifest, selectedPrice, formData,
         });
 
+        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+      });
+    });
+  });
+
+  describe('getErrorContext', () => {
+    describe('flat - declarative', () => {
+      it('should return error for quantity', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#quantity', text: flatDeclarativeManifest.errorMessages.QuantityRequired },
+          ],
+          questions: {
+            ...flatDeclarativeManifest.questions,
+            quantity: {
+              ...flatDeclarativeManifest.questions.quantity,
+              error: {
+                message: flatDeclarativeManifest.errorMessages.QuantityRequired,
+              },
+            },
+          },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatDeclarativeManifest,
+          validationErrors: [{ field: 'Quantity', id: 'QuantityRequired' }],
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
+        expect(context.questions).toEqual(expectedContext.questions);
+      });
+
+      it('should return error for price', () => {
+        const expectedContext = {
+          errors: [
+            { href: '#price', text: flatDeclarativeManifest.errorMessages.PriceRequired },
+          ],
+          addPriceTable: {
+            ...flatDeclarativeManifest.addPriceTable,
+            items: [
+              [
+                {
+                  ...flatDeclarativeManifest.addPriceTable.cellInfo.price,
+                  question: {
+                    ...flatDeclarativeManifest.addPriceTable.cellInfo.price.question,
+                    error: {
+                      message: flatDeclarativeManifest.errorMessages.PriceRequired,
+                    },
+                  },
+                },
+                {
+                  ...flatDeclarativeManifest.addPriceTable.cellInfo.unitOfOrder,
+                  data: 'per consultation ',
+                },
+              ],
+            ],
+          },
+        };
+
+        const selectedPrice = {
+          itemUnit: { description: 'per consultation' },
+        };
+
+        const context = getErrorContext({
+          commonManifest,
+          selectedPriceManifest: flatDeclarativeManifest,
+          validationErrors: [{ field: 'Price', id: 'PriceRequired' }],
+          selectedPrice,
+        });
+
+        expect(context.errors).toEqual(expectedContext.errors);
         expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
       });
     });
