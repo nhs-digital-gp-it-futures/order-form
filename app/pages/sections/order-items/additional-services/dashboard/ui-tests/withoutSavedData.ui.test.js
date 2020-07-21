@@ -17,9 +17,13 @@ const mocks = () => {
     .reply(200, { description: 'Some order' });
 };
 
-const pageSetup = async () => {
-  mocks();
-  await setState(ClientFunction)('fakeToken', authTokenInSession);
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
+  }
 };
 
 fixture('Additional Servies - Dashbaord page - without saved data')

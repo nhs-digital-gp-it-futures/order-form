@@ -17,10 +17,12 @@ const mocks = () => {
     .reply(200, { description: 'Some order' });
 };
 
-const pageSetup = async (withAuth = true) => {
-  if (withAuth) {
-    mocks();
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
   }
 };
 
@@ -37,7 +39,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false);
+  await pageSetup({ withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t

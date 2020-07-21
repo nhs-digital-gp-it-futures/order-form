@@ -34,9 +34,13 @@ const mocks = () => {
     .reply(200, { description: 'Some order' });
 };
 
-const pageSetup = async () => {
-  mocks();
-  await setState(ClientFunction)('fakeToken', authTokenInSession);
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
+  }
 };
 
 fixture('Additional-services - Dashboard page - with saved data')
@@ -54,11 +58,9 @@ test('should render the added additional service table with the column headings'
   const addedOrderItemsColumnHeading2 = addedOrderItems.find('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(await extractInnerText(addedOrderItemsColumnHeading1))
-    .eql('Additional Service')
+    .expect(await extractInnerText(addedOrderItemsColumnHeading1)).eql('Additional Service')
 
-    .expect(await extractInnerText(addedOrderItemsColumnHeading2))
-    .eql('Service Recipient (ODS code)');
+    .expect(await extractInnerText(addedOrderItemsColumnHeading2)).eql('Service Recipient (ODS code)');
 });
 
 test('should render the added additional service items in the table', async (t) => {

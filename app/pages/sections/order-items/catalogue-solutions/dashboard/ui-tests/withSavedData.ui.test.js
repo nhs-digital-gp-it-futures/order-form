@@ -2,17 +2,9 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { baseUrl, orderApiUrl } from '../../../../../../config';
-import { nockAndErrorCheck } from '../../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solutions';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mockAddedOrderItems = [
   {
@@ -42,9 +34,13 @@ const mocks = () => {
     .reply(200, { description: 'Some order' });
 };
 
-const pageSetup = async () => {
-  mocks();
-  await setCookies();
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
+  }
 };
 
 fixture('Catalogue-solutions - Dashboard page - without saved data')
@@ -62,11 +58,7 @@ test('should render the added catalogue solutions table with the column headings
   const addedOrderItemsColumnHeading2 = addedOrderItems.find('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(addedOrderItems.exists).ok()
-    .expect(addedOrderItemsColumnHeading1.exists).ok()
     .expect(await extractInnerText(addedOrderItemsColumnHeading1)).eql('Catalogue Solution')
-
-    .expect(addedOrderItemsColumnHeading2.exists).ok()
     .expect(await extractInnerText(addedOrderItemsColumnHeading2)).eql('Service Recipient (ODS code)');
 });
 
@@ -83,17 +75,11 @@ test('should render the added catalogue solutions items in the table', async (t)
   const row2ServiceRecipient = row2.find('div[data-test-id="orderItem2-serviceRecipient"]');
 
   await t
-    .expect(row1.exists).ok()
-    .expect(row1SolutionName.exists).ok()
     .expect(await extractInnerText(row1SolutionName)).eql('Solution One')
     .expect(row1SolutionName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/catalogue-solutions/orderItem1`)
-    .expect(row1ServiceRecipient.exists).ok()
     .expect(await extractInnerText(row1ServiceRecipient)).eql('Recipient One (recipient-1)')
 
-    .expect(row2.exists).ok()
-    .expect(row2SolutionName.exists).ok()
     .expect(await extractInnerText(row2SolutionName)).eql('Solution One')
     .expect(row2SolutionName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/catalogue-solutions/orderItem2`)
-    .expect(row2ServiceRecipient.exists).ok()
     .expect(await extractInnerText(row2ServiceRecipient)).eql('Recipient Two (recipient-2)');
 });
