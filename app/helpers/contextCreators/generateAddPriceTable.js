@@ -7,7 +7,7 @@ export const generateAddPriceTable = ({
     ...addPriceTable.cellInfo.price,
     question: {
       ...addPriceTable.cellInfo.price.question,
-      data: price,
+      data: price && price.toString(),
       error: errorMap && errorMap.price
         ? { message: errorMap.price.errorMessages.join(', ') }
         : undefined,

@@ -59,7 +59,7 @@ describe('generateAddPriceTable', () => {
     };
 
     const generatedAddPriceTable = generateAddPriceTable({
-      addPriceTable, price: '1892.23', itemUnitDescription: 'per patient', timeUnitDescription: 'per year',
+      addPriceTable, price: 1892.23, itemUnitDescription: 'per patient', timeUnitDescription: 'per year',
     });
 
     expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);
@@ -93,7 +93,7 @@ describe('generateAddPriceTable', () => {
     };
 
     const generatedAddPriceTable = generateAddPriceTable({
-      addPriceTable, price: '1892.2323', itemUnitDescription: 'per patient', timeUnitDescription: 'per year', errorMap,
+      addPriceTable, price: 1892.2323, itemUnitDescription: 'per patient', timeUnitDescription: 'per year', errorMap,
     });
 
     expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);
