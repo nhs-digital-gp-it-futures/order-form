@@ -134,5 +134,11 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
 
+  router.get('/funding-sources', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    logger.info(`navigating to order ${orderId} service-recipients page`);
+    res.send('Funding sources page');
+  }));
+
   return router;
 };
