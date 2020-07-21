@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
-import { nockAndErrorCheck, setState, authTokenInSession  } from '../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
 
