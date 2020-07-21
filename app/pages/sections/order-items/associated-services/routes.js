@@ -2,14 +2,17 @@ import express from 'express';
 import { logger } from '../../../../logger';
 import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
-import { associatedServicesSelectRoutes } from './select/routes';
 import {
   getAssociatedServicesPageContext,
 } from './dashboard/controller';
+import { associatedServicesSelectRoutes } from './select/routes';
 import {
   getOrderItemContext,
+  getOrderItemErrorPageContext,
 } from './order-item/controller';
+import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 const router = express.Router({ mergeParams: true });
@@ -66,6 +69,52 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     });
 
     logger.info(`navigating to order ${orderId} associated-services order item page`);
+    return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, orderItemId } = req.params;
+    const validationErrors = [];
+
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const pageData = sessionManager.getFromSession({ req, key: 'orderItemPageData' });
+
+    const errors = validateOrderItemForm({
+      orderItemType: 'AssociatedService',
+      data: req.body,
+      selectedPrice: pageData.selectedPrice,
+    });
+    validationErrors.push(...errors);
+
+    if (validationErrors.length === 0) {
+      const apiResponse = await saveOrderItem({
+        accessToken,
+        orderId,
+        orderItemId,
+        orderItemType: 'AssociatedService',
+        itemId: pageData.itemId,
+        itemName: pageData.itemName,
+        selectedPrice: pageData.selectedPrice,
+        formData: req.body,
+      });
+
+      if (apiResponse.success) {
+        logger.info('Redirecting to the associated-services main page');
+        return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services`);
+      }
+      validationErrors.push(...apiResponse.errors);
+    }
+
+    const context = await getOrderItemErrorPageContext({
+      orderId,
+      orderItemId,
+      orderItemType: 'AssociatedService',
+      itemName: pageData.itemName,
+      selectedPrice: pageData.selectedPrice,
+      formData: req.body,
+      validationErrors,
+    });
+
     return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
