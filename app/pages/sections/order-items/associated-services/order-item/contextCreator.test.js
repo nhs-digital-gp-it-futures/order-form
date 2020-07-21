@@ -108,7 +108,7 @@ describe('associated-services order-item contextCreator', () => {
                   ...flatDeclarativeManifest.addPriceTable.cellInfo.price,
                   question: {
                     ...flatDeclarativeManifest.addPriceTable.cellInfo.price.question,
-                    data: 0.11,
+                    data: '0.11',
                   },
                 },
                 {
@@ -214,7 +214,7 @@ describe('associated-services order-item contextCreator', () => {
                 ...flatOndemandManifest.addPriceTable.cellInfo.price,
                 question: {
                   ...flatOndemandManifest.addPriceTable.cellInfo.price.question,
-                  data: 0.11,
+                  data: '0.11',
                 },
               },
               {
