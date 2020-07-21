@@ -60,11 +60,11 @@ const mocks = () => {
     .reply(200, mockOrgData);
 };
 
-const pageSetup = async (withAuth = true, getRoute = true) => {
-  if (withAuth) {
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
+  if (setup.getRoute) {
     mocks();
   }
 };
@@ -82,7 +82,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false, false);
+  await pageSetup({ withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -92,6 +92,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 test('should render ordering-party page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+
   const page = Selector('[data-test-id="ordering-party-page"]');
 
   await t
@@ -311,7 +312,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .put('/api/v1/orders/order-id/sections/ordering-party', requestPutBody)
     .reply(400, putOrderingPartyErrorResponse);
 
-  await pageSetup(true, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');

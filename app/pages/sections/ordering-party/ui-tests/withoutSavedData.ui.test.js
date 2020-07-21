@@ -38,11 +38,11 @@ const mocks = () => {
     .reply(200, mockDataFromOapi);
 };
 
-const pageSetup = async (withAuth = true, getRoute = true) => {
-  if (withAuth) {
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
+  if (setup.getRoute) {
     mocks();
   }
 };

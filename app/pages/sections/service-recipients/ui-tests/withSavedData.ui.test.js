@@ -37,12 +37,13 @@ const mocks = (timesToCallMocks) => {
     .reply(200, mockOrdapiData);
 };
 
-const pageSetup = async (withAuth = true, getRoute = true, timesToCallMocks = 1) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, timesToCallMocks: 1 };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
-    mocks(timesToCallMocks);
+  if (setup.getRoute) {
+    mocks(setup.timesToCallMocks);
   }
 };
 
@@ -55,6 +56,7 @@ fixture('Service-recipients page - with saved data')
 test('should render checked checkbox for each service recipient', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+
   const checkbox1Input = Selector('[data-test-id="organisation-name-checkbox-ods1"] input');
   const checkbox1Label = Selector('[data-test-id="organisation-name-checkbox-ods1"] label');
   const checkbox2Input = Selector('[data-test-id="organisation-name-checkbox-ods2"] input');
@@ -79,6 +81,7 @@ test('should render checked checkbox for each service recipient', async (t) => {
 test('should render ods code for each service recipient', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+
   const odsCode1 = Selector('[data-test-id="ods-code-ods1"]');
   const odsCode2 = Selector('[data-test-id="ods-code-ods2"]');
 
@@ -103,7 +106,7 @@ test('should navigate to task list page if continue button is clicked', async (t
 });
 
 test('should check all checkboxes and change button text when "Select all button" is clicked', async (t) => {
-  await pageSetup(true, true, 2);
+  await pageSetup({ ...defaultPageSetup, timesToCallMocks: 2 });
   await t.navigateTo(`${pageUrl}?selectStatus=deselect`);
 
   const button = Selector('[data-test-id="select-deselect-button"] button');
@@ -123,7 +126,7 @@ test('should check all checkboxes and change button text when "Select all button
 });
 
 test('should uncheck all checkboxes and change button text when all are selected and "Deselect all button" is clicked', async (t) => {
-  await pageSetup(true, true, 2);
+  await pageSetup({ ...defaultPageSetup, timesToCallMocks: 2 });
   await t.navigateTo(`${pageUrl}?selectStatus=select`);
 
   const button = Selector('[data-test-id="select-deselect-button"] button');

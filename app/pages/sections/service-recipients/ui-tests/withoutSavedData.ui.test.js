@@ -27,12 +27,13 @@ const mocks = (timesToCallMocks) => {
     .reply(200, { serviceRecipients: [] });
 };
 
-const pageSetup = async (withAuth = true, getRoute = true, timesToCallMocks = 1) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, timesToCallMocks: 1 };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
-    mocks(timesToCallMocks);
+  if (setup.getRoute) {
+    mocks(setup.timesToCallMocks);
   }
 };
 
@@ -45,10 +46,12 @@ fixture('Service-recipients page - without saved data')
 test('should render unchecked checkbox for each service recipient', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+
   const checkbox1Input = Selector('[data-test-id="organisation-name-checkbox-ods1"] input');
   const checkbox1Label = Selector('[data-test-id="organisation-name-checkbox-ods1"] label');
   const checkbox2Input = Selector('[data-test-id="organisation-name-checkbox-ods2"] input');
   const checkbox2Label = Selector('[data-test-id="organisation-name-checkbox-ods2"] label');
+
   await t
     .expect(checkbox1Input.getAttribute('name')).eql('ods1')
     .expect(checkbox1Input.getAttribute('id')).eql('ods1')
@@ -92,7 +95,7 @@ test('should navigate to task list page if continue button is clicked', async (t
 });
 
 test('should check all checkboxes and change button text when "Select all button" is clicked', async (t) => {
-  await pageSetup(true, true, 2);
+  await pageSetup({ ...defaultPageSetup, timesToCallMocks: 2 });
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="select-deselect-button"] button');
@@ -112,7 +115,7 @@ test('should check all checkboxes and change button text when "Select all button
 });
 
 test('should uncheck all checkboxes and change button text when all are selected and "Deselect all button" is clicked', async (t) => {
-  await pageSetup(true, true, 2);
+  await pageSetup({ ...defaultPageSetup, timesToCallMocks: 2 });
   await t.navigateTo(`${pageUrl}?selectStatus=select`);
 
   const button = Selector('[data-test-id="select-deselect-button"] button');
