@@ -1,5 +1,7 @@
 import { baseUrl } from '../../../../../config';
+import { generateErrorMap } from '../../../../../helpers/contextCreators/generateErrorMap';
 import { generateQuestions } from '../../../../../helpers/contextCreators/generateQuestions';
+import { generateErrorSummary } from '../../../../../helpers/contextCreators/generateErrorSummary';
 import { generateAddPriceTable } from '../../../../../helpers/contextCreators/generateAddPriceTable';
 
 export const getContext = ({
@@ -38,3 +40,28 @@ export const getContext = ({
   backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`
     : `${baseUrl}/organisation/${orderId}/associated-services`,
 });
+
+export const getErrorContext = (params) => {
+  const errorMap = generateErrorMap({
+    validationErrors: params.validationErrors,
+    errorMessagesFromManifest: params.selectedPriceManifest.errorMessages,
+  });
+
+  const contextWithErrors = getContext({
+    commonManifest: params.commonManifest,
+    selectedPriceManifest: params.selectedPriceManifest,
+    orderId: params.orderId,
+    orderItemId: params.orderItemId,
+    itemName: params.itemName,
+    selectedPrice: params.selectedPrice,
+    formData: params.formData,
+    errorMap,
+  });
+
+  const errorSummary = generateErrorSummary({ errorMap });
+
+  return ({
+    errors: errorSummary,
+    ...contextWithErrors,
+  });
+};
