@@ -3,23 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
-import { nockAndErrorCheck } from '../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
-
-const setSessionState = ClientFunction(() => {
-  const cookieValue = 'supplier-1';
-
-  document.cookie = `selectedSupplier=${cookieValue}`;
-});
 
 const mockData = {
   name: 'SupplierOne',
@@ -50,9 +36,9 @@ const mocks = () => {
 };
 
 const pageSetup = async (withAuth = true) => {
-  await setSessionState();
+  await setState(ClientFunction)('selectedSupplier', 'supplier-1');
   if (withAuth) {
-    await setCookies();
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
     mocks();
   }
 };
@@ -93,7 +79,6 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="supplier-page-title"]');
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
 });
 
@@ -104,7 +89,6 @@ test('should render the description', async (t) => {
   const description = Selector('h2[data-test-id="supplier-page-description"]');
 
   await t
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
@@ -115,7 +99,6 @@ test('should render the inset advice', async (t) => {
   const insetAdvice = Selector('[data-test-id="supplier-page-insetAdvice"]');
 
   await t
-    .expect(insetAdvice.exists).ok()
     .expect(await extractInnerText(insetAdvice)).contains(content.insetAdvice);
 });
 
@@ -133,7 +116,6 @@ test('should navigate to /organisation/order-id/supplier/search when click on se
   const searchAgainLink = Selector('[data-test-id="search-again-link"] a');
 
   await t
-    .expect(searchAgainLink.exists).ok()
     .expect(await extractInnerText(searchAgainLink)).eql(content.searchAgainLinkText)
     .click(searchAgainLink)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search');
@@ -161,25 +143,20 @@ test('should render the primary contact details form', async (t) => {
   const phoneNumberFooterText = phoneNumber.find('span');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.primaryContactHeading)
 
-    .expect(firstName.exists).ok()
     .expect(await extractInnerText(firstNameLabel)).eql(content.questions[0].mainAdvice)
     .expect(firstName.find('input').count).eql(1)
     .expect(await extractInnerText(firstNameFooterText)).eql(content.questions[0].footerAdvice)
 
-    .expect(lastName.exists).ok()
     .expect(await extractInnerText(lastNameLabel)).eql(content.questions[1].mainAdvice)
     .expect(lastName.find('input').count).eql(1)
     .expect(await extractInnerText(lastNameFooterText)).eql(content.questions[1].footerAdvice)
 
-    .expect(emailAddress.exists).ok()
     .expect(await extractInnerText(emailAddressLabel)).eql(content.questions[2].mainAdvice)
     .expect(emailAddress.find('input').count).eql(1)
     .expect(await extractInnerText(emailAddressFooterText)).eql(content.questions[2].footerAdvice)
 
-    .expect(phoneNumber.exists).ok()
     .expect(await extractInnerText(phoneNumberLabel)).eql(content.questions[3].mainAdvice)
     .expect(phoneNumber.find('input').count).eql(1)
     .expect(await extractInnerText(phoneNumberFooterText)).eql(content.questions[3].footerAdvice);
@@ -192,6 +169,5 @@ test('should render the "Save and return" button', async (t) => {
   const button = Selector('[data-test-id="save-button"] button');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });

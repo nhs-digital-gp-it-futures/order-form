@@ -3,23 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../config';
-import { nockAndErrorCheck } from '../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
-
-const setSessionState = ClientFunction(() => {
-  const cookieValue = 'supplier-1';
-
-  document.cookie = `selectedSupplier=${cookieValue}`;
-});
 
 const supplierDataFromOrdapi = {
   name: 'SupplierOne',
@@ -57,8 +43,8 @@ const errorMocks = () => {
 };
 
 const pageSetup = async () => {
-  await setCookies();
-  await setSessionState();
+  await setState(ClientFunction)('fakeToken', authTokenInSession);
+  await setState(ClientFunction)('selectedSupplier', 'supplier-1');
   mocks();
 };
 
@@ -77,7 +63,6 @@ test('should navigate to /organisation/order-id when click on backlink if data c
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
     .click(goBackLink)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
@@ -90,9 +75,7 @@ test('should render supplier name with data from ORDAPI', async (t) => {
   const text = Selector('div[data-test-id="supplier-name"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.supplierNameHeading)
-    .expect(text.exists).ok()
     .expect(await extractInnerText(text)).eql(supplierDataFromOrdapi.name);
 });
 
@@ -112,25 +95,15 @@ test('should render supplier address name with data from ORDAPI', async (t) => {
   const addressTextCountry = Selector('[data-test-id="supplier-address-country"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.supplierAddressHeading)
-    .expect(addressTextLine1.exists).ok()
     .expect(await extractInnerText(addressTextLine1)).eql(supplierDataFromOrdapi.address.line1)
-    .expect(addressTextLine2.exists).ok()
     .expect(await extractInnerText(addressTextLine2)).eql(supplierDataFromOrdapi.address.line2)
-    .expect(addressTextLine3.exists).ok()
     .expect(await extractInnerText(addressTextLine3)).eql(supplierDataFromOrdapi.address.line3)
-    .expect(addressTextLine4.exists).ok()
     .expect(await extractInnerText(addressTextLine4)).eql('')
-    .expect(addressTextLine5.exists).ok()
     .expect(await extractInnerText(addressTextLine5)).eql(supplierDataFromOrdapi.address.line5)
-    .expect(addressTextTown.exists).ok()
     .expect(await extractInnerText(addressTextTown)).eql(supplierDataFromOrdapi.address.town)
-    .expect(addressTextCounty.exists).ok()
     .expect(await extractInnerText(addressTextCounty)).eql(supplierDataFromOrdapi.address.county)
-    .expect(addressTextPostcode.exists).ok()
     .expect(await extractInnerText(addressTextPostcode)).eql(supplierDataFromOrdapi.address.postcode)
-    .expect(addressTextCountry.exists).ok()
     .expect(await extractInnerText(addressTextCountry)).eql(supplierDataFromOrdapi.address.country);
 });
 

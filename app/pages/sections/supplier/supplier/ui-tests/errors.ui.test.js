@@ -2,21 +2,9 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
-import { nockAndErrorCheck } from '../../../../../test-utils/uiTestHelper';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-  document.cookie = `fakeToken=${cookieValue}`;
-});
-
-const setSessionState = ClientFunction(() => {
-  const cookieValue = 'supplier-1';
-  document.cookie = `selectedSupplier=${cookieValue}`;
-});
 
 const supplierDataFromBapi = {
   name: 'SupplierTwo',
@@ -76,8 +64,8 @@ const mocks = (withPutErrorResponse) => {
 };
 
 const pageSetup = async (withSessionState = false, withPutErrorResponse = false) => {
-  await setCookies();
-  if (withSessionState) await setSessionState();
+  await setState(ClientFunction)('fakeToken', authTokenInSession);
+  if (withSessionState) await setState(ClientFunction)('selectedSupplier', 'supplier-1');
   mocks(withPutErrorResponse);
 };
 
@@ -96,7 +84,6 @@ test('should navigate to task list page if save button is clicked and data is va
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .expect(saveButton.exists).ok()
     .click(saveButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
