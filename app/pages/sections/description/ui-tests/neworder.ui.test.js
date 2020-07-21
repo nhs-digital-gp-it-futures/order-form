@@ -15,8 +15,10 @@ const postDescriptionErrorResponse = {
   ],
 };
 
-const pageSetup = async (withAuth = true) => {
-  if (withAuth) await setState(ClientFunction)('fakeToken', authTokenInSession);
+const pageSetup = async (setup = { withAuth: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -69,7 +71,7 @@ test('should show the error summary when there are validation errors', async (t)
     .post('/api/v1/orders', { description: '', organisationId: 'org-id' })
     .reply(400, postDescriptionErrorResponse);
 
-  await pageSetup(true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -89,7 +91,7 @@ test('should show text fields as errors with error message when there are valida
     .post('/api/v1/orders', { description: '', organisationId: 'org-id' })
     .reply(400, postDescriptionErrorResponse);
 
-  await pageSetup(true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const descriptionPage = Selector('[data-test-id="description-page"]');
@@ -110,7 +112,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .post('/api/v1/orders', { description: '', organisationId: 'org-id' })
     .reply(400, postDescriptionErrorResponse);
 
-  await pageSetup(true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');

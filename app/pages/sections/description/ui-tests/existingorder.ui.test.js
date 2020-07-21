@@ -21,10 +21,12 @@ const mocks = () => {
     .reply(200, { description: 'a lovely description' });
 };
 
-const pageSetup = async (withAuth = true) => {
-  if (withAuth) {
-    mocks();
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
   }
 };
 
@@ -76,7 +78,7 @@ test('should show the error summary when there are validation errors', async (t)
     .put('/api/v1/orders/order-1/sections/description', { description: 'a lovely description' })
     .reply(400, postDescriptionErrorResponse);
 
-  await pageSetup(true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -117,7 +119,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .put('/api/v1/orders/order-1/sections/description', { description: 'a lovely description' })
     .reply(400, postDescriptionErrorResponse);
 
-  await pageSetup(true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');

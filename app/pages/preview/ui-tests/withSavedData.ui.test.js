@@ -144,10 +144,12 @@ const mocks = () => {
     .reply(200, mockOrder);
 };
 
-const pageSetup = async (withAuth = true) => {
-  if (withAuth) {
-    mocks();
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
   }
 };
 
