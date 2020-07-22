@@ -20,8 +20,10 @@ const router = express.Router({ mergeParams: true });
 export const associatedServicesRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+
     const context = await getAssociatedServicesPageContext({
       orderId,
+      catalogueItemType: 'AssociatedService',
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
