@@ -1,4 +1,5 @@
 import express from 'express';
+import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../../logger';
 import config from '../../../../../config';
 import { withCatch, extractAccessToken } from '../../../../../helpers/routes/routerHelper';
@@ -36,6 +37,16 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         sessionManager,
         logger,
       });
+
+      if (associatedServices.length === 0) {
+        throw new ErrorContext({
+          status: 404,
+          title: 'No Associated Services found',
+          description: 'There are no Associated Services offered by this supplier. Go back to the Associated Services dashboard and select continue to complete the section.',
+          backLinkText: 'Go back',
+          backLinkHref: `${config.baseUrl}/organisation/${orderId}/associated-services`,
+        });
+      }
 
       const selectedAssociatedServiceId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
       sessionManager.saveToSession({ req, key: 'associatedServices', value: associatedServices });

@@ -8,6 +8,7 @@ import {
   testAuthorisedPostPathForUnauthorisedUsers,
   getCsrfTokenFromGet,
   fakeSessionManager,
+  ErrorContext,
 } from 'buying-catalogue-library';
 import { App } from '../../../../../app';
 import { routes } from '../../../../../routes';
@@ -96,6 +97,22 @@ describe('associated-services select routes', () => {
         expectedPageMessage: 'You are not authorised to view this page',
       })
     ));
+
+    it('should throw error context when no associated services', async () => {
+      selectAssociatedServiceController.findAddedCatalogueSolutions = jest.fn()
+        .mockResolvedValue([]);
+
+      selectAssociatedServiceController.findAssociatedServices = jest.fn()
+        .mockResolvedValue([]);
+
+      try {
+        await request(setUpFakeApp())
+          .get(path)
+          .set('Cookie', [mockAuthorisedCookie]);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ErrorContext);
+      }
+    });
 
     it('should return the associated-services select-associated-service page if authorised', async () => {
       selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
