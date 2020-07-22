@@ -1,3 +1,5 @@
 import { getContext } from './contextCreator';
 
-export const getFundingSourcesContext = async ({ orderId }) => getContext({ orderId });
+export const getFundingSourcesContext = async ({ orderId, fundingSource }) => getContext(
+  { orderId, fundingSource },
+);

@@ -2,12 +2,20 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
+import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/funding-sources';
 
+const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/funding-source')
+    .reply(200, {});
+};
+
 const pageSetup = async (setup = { withAuth: true }) => {
   if (setup.withAuth) {
+    mocks();
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
 };
@@ -60,6 +68,23 @@ test('should render the description', async (t) => {
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
+});
+
+test('should render a selectFundingSource question as radio button options', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const selectFundingSourceRadioOptions = Selector('[data-test-id="question-selectFundingSource"]');
+
+  await t
+    .expect(await extractInnerText(selectFundingSourceRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
+    .expect(selectFundingSourceRadioOptions.find('input').count).eql(2)
+
+    .expect(selectFundingSourceRadioOptions.find('input').nth(0).getAttribute('value')).eql('true')
+    .expect(await extractInnerText(selectFundingSourceRadioOptions.find('label').nth(0))).eql('Yes')
+
+    .expect(selectFundingSourceRadioOptions.find('input').nth(1).getAttribute('value')).eql('false')
+    .expect(await extractInnerText(selectFundingSourceRadioOptions.find('label').nth(1))).eql('No');
 });
 
 test('should render save button', async (t) => {

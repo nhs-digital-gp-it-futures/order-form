@@ -16,8 +16,10 @@ import * as descriptionController from './description/controller';
 import * as orderingPartyController from './ordering-party/controller';
 import * as commencementDateController from './commencement-date/controller';
 import * as serviceRecipientsController from './service-recipients/controller';
+import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 
 jest.mock('../../logger');
+jest.mock('../../helpers/api/ordapi/getFundingSource');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -583,14 +585,17 @@ describe('section routes', () => {
       })
     ));
 
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        expect(res.text.includes('data-test-id="funding-sources-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
+    it('should return the correct status and text when the user is authorised', () => {
+      getFundingSource.mockResolvedValue({});
+      request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.text.includes('data-test-id="funding-sources-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
   });
 });
