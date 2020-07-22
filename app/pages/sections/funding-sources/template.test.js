@@ -13,7 +13,7 @@ const context = {
   backLinkHref: '/organisation/order-1',
   questions: [
     {
-      id: 'selectFundingSourcePrice',
+      id: 'selectFundingSource',
       mainAdvice: 'Is General Medical Services (GMS) your only source of funding for this order?',
       options: [{
         value: true,

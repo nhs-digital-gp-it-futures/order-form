@@ -14,7 +14,7 @@ describe('getFundingSource', () => {
   const orderId = 'order-id';
 
   it('should call getData with the correct params', async () => {
-    getData.mockResolvedValueOnce({ supplierId: 'supp-1' });
+    getData.mockResolvedValueOnce({ onlyGMS: true });
 
     await getFundingSource({ orderId, accessToken });
     expect(getData.mock.calls.length).toEqual(1);
@@ -26,10 +26,10 @@ describe('getFundingSource', () => {
   });
 
   it('should return the expected result', async () => {
-    const expectedFundingSource = { supplierId: 'supp-1' };
-    getData.mockResolvedValueOnce(expectedFundingSource);
+    const expectedFundingSource = true;
+    getData.mockResolvedValueOnce({ onlyGMS: true });
 
-    const supplier = await getFundingSource({ orderId, accessToken });
-    expect(supplier).toEqual(expectedFundingSource);
+    const fundingSource = await getFundingSource({ orderId, accessToken });
+    expect(fundingSource).toEqual(expectedFundingSource);
   });
 });

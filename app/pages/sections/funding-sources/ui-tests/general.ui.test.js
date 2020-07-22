@@ -2,6 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
+import { orderApiUrl } from '../../../../config';
 import { nockCheck } from '../../../../test-utils/nockChecker';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/funding-sources';
@@ -14,8 +15,15 @@ const setCookies = ClientFunction(() => {
   document.cookie = `fakeToken=${cookieValue}`;
 });
 
+const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/funding-source')
+    .reply(200, {});
+};
+
 const pageSetup = async (withAuth = true) => {
   if (withAuth) {
+    mocks();
     await setCookies();
   }
 };
@@ -78,7 +86,6 @@ test('should render a selectFundingSource question as radio button options', asy
   const selectFundingSourceRadioOptions = Selector('[data-test-id="question-selectFundingSource"]');
 
   await t
-    .expect(selectFundingSourceRadioOptions.exists).ok()
     .expect(await extractInnerText(selectFundingSourceRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
     .expect(selectFundingSourceRadioOptions.find('input').count).eql(2)
 

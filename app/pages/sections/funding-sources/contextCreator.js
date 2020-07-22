@@ -1,8 +1,8 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../config';
 
-const generateFundingSourceOptions = ({ fundingSource }) => {
-  const fundingMap = manifest.questions[0].options.map(option => ({
+const generateFundingSourceOptions = ({ question, fundingSource }) => {
+  const fundingMap = question.options.map(option => ({
     ...option,
     checked: option.value === fundingSource ? true : undefined,
   }));
@@ -12,7 +12,7 @@ const generateFundingSourceOptions = ({ fundingSource }) => {
 const generateQuestionsContext = ({ fundingSource }) => (
   manifest.questions.map(question => ({
     ...question,
-    options: generateFundingSourceOptions({ fundingSource }),
+    options: generateFundingSourceOptions({ question, fundingSource }),
   }))
 );
 
