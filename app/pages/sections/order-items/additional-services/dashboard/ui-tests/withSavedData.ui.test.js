@@ -59,7 +59,6 @@ test('should render the added additional service table with the column headings'
 
   await t
     .expect(await extractInnerText(addedOrderItemsColumnHeading1)).eql('Additional Service')
-
     .expect(await extractInnerText(addedOrderItemsColumnHeading2)).eql('Service Recipient (ODS code)');
 });
 
