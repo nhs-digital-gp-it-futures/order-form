@@ -1,11 +1,40 @@
 import { getContext } from './contextCreator';
 import { getCatalogueItems } from '../../../../../../helpers/api/bapi/getCatalogueItems';
+import { getSupplier } from '../../../../../../helpers/api/ordapi/getSupplier';
 
 export const getAssociatedServicePageContext = params => getContext(params);
 
-export const findAssociatedServices = async ({ req, sessionManager }) => {
+const getSupplierId = async ({
+  req,
+  sessionManager,
+  accessToken,
+  logger,
+}) => {
   const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
-  const { associatedServices } = await getCatalogueItems({ supplierId: selectedSupplier, catalogueItemType: 'AssociatedService' });
+  if (selectedSupplier) {
+    return selectedSupplier;
+  }
 
-  return associatedServices;
+  const { orderId } = req.params;
+  const { supplierId } = await getSupplier({ orderId, accessToken, logger });
+
+  sessionManager.saveToSession({ req, key: 'selectedSupplier', value: supplierId });
+
+  return supplierId;
+};
+
+export const findAssociatedServices = async ({
+  req,
+  sessionManager,
+  accessToken,
+  logger,
+}) => {
+  const selectedSupplier = await getSupplierId({
+    req,
+    sessionManager,
+    accessToken,
+    logger,
+  });
+
+  return getCatalogueItems({ supplierId: selectedSupplier, catalogueItemType: 'AssociatedService' });
 };

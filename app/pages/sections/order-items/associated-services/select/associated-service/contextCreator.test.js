@@ -26,6 +26,41 @@ describe('associated-services associated-service contextCreator', () => {
       expect(context.description).toEqual(manifest.description);
     });
 
+    it('should return the select associated-service question', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectAssociatedService',
+            mainAdvice: 'Select Associated Service',
+            options: [
+              {
+                value: 'associated-service-1',
+                text: 'Associated Service 1',
+              },
+              {
+                value: 'associated-service-2',
+                text: 'Associated Service 2',
+              },
+            ],
+          },
+        ],
+      };
+
+      const associatedServices = [
+        {
+          catalogueItemId: 'associated-service-1',
+          name: 'Associated Service 1',
+        },
+        {
+          catalogueItemId: 'associated-service-2',
+          name: 'Associated Service 2',
+        },
+      ];
+
+      const context = getContext({ associatedServices });
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
+
     it('should return the continueButtonText', () => {
       const context = getContext({});
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);

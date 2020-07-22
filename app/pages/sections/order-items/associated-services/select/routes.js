@@ -23,14 +23,17 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
     authProvider.authorise({ claim: 'ordering' }),
     withCatch(logger, authProvider, async (req, res) => {
       const { orderId } = req.params;
-      const associatedServices = await findAssociatedServices({ req, sessionManager });
-
-      // Temporary inclusion until associated services displayed on page
-      logger.info(`Found the following associated services: ${JSON.stringify(associatedServices)}`);
+      const accessToken = extractAccessToken({ req, tokenType: 'access' });
+      const associatedServices = await findAssociatedServices({
+        req,
+        accessToken,
+        sessionManager,
+        logger,
+      });
 
       const context = getAssociatedServicePageContext({
         orderId,
-        accessToken: extractAccessToken({ req, tokenType: 'access' }),
+        associatedServices,
       });
 
       logger.info(`navigating to order ${orderId} associated-services select associated-service page`);

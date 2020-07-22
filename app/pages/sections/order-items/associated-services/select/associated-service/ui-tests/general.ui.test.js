@@ -21,11 +21,11 @@ const setCookies = ClientFunction(() => {
 const associatedServicesState = ClientFunction(() => {
   const cookieValue = JSON.stringify([
     {
-      associatedServiceId: 'associated-service-1',
+      catalogueItemId: 'associated-service-1',
       name: 'Associated Service 1',
     },
     {
-      associatedServiceId: 'associated-service-2',
+      catalogueItemId: 'associated-service-2',
       name: 'Associated Service 2',
     },
   ]);
@@ -35,11 +35,11 @@ const associatedServicesState = ClientFunction(() => {
 
 const mockAssociatedServices = [
   {
-    associatedServiceId: 'associated-service-1',
+    catalogueItemId: 'associated-service-1',
     name: 'Associated Service 1',
   },
   {
-    associatedServiceId: 'associated-service-2',
+    catalogueItemId: 'associated-service-2',
     name: 'Associated Service 2',
   },
 ];
@@ -125,6 +125,24 @@ test('should render the description', async (t) => {
   await t
     .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
+});
+
+test('should render a selectAssociatedService question as radio button options', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const selectAssociatedServiceRadioOptions = Selector('[data-test-id="question-selectAssociatedService"]');
+
+  await t
+    .expect(selectAssociatedServiceRadioOptions.exists).ok()
+    .expect(await extractInnerText(selectAssociatedServiceRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
+    .expect(selectAssociatedServiceRadioOptions.find('input').count).eql(2)
+
+    .expect(selectAssociatedServiceRadioOptions.find('input').nth(0).getAttribute('value')).eql('associated-service-1')
+    .expect(await extractInnerText(selectAssociatedServiceRadioOptions.find('label').nth(0))).eql('Associated Service 1')
+
+    .expect(selectAssociatedServiceRadioOptions.find('input').nth(1).getAttribute('value')).eql('associated-service-2')
+    .expect(await extractInnerText(selectAssociatedServiceRadioOptions.find('label').nth(1))).eql('Associated Service 2');
 });
 
 test('should render the Continue button', async (t) => {
