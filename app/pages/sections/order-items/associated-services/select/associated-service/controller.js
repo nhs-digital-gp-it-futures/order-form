@@ -1,8 +1,9 @@
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { getCatalogueItems } from '../../../../../../helpers/api/bapi/getCatalogueItems';
 import { getSupplier } from '../../../../../../helpers/api/ordapi/getSupplier';
 
 export const getAssociatedServicePageContext = params => getContext(params);
+export const getAssociatedServiceErrorPageContext = params => getErrorContext(params);
 
 const getSupplierId = async ({
   req,
@@ -37,4 +38,19 @@ export const findAssociatedServices = async ({
   });
 
   return getCatalogueItems({ supplierId: selectedSupplier, catalogueItemType: 'AssociatedService' });
+};
+
+export const validateAssociatedServicesForm = ({ data }) => {
+  if (data.selectAssociatedService && data.selectAssociatedService.trim().length > 0) {
+    return { success: true };
+  }
+
+  const errors = [
+    {
+      field: 'selectAssociatedService',
+      id: 'SelectAssociatedServiceRequired',
+    },
+  ];
+
+  return { success: false, errors };
 };
