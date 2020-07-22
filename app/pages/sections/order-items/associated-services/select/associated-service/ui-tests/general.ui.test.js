@@ -156,6 +156,58 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
+test('should show the error summary when no associated service is selected causing validation error', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select an Associated Service');
+});
+
+test('should render select associated service field as errors with error message when no associated service is selected causing validation error', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const associatedServiceSelectPage = Selector('[data-test-id="associated-service-select-page"]');
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const associatedServiceSelectField = associatedServiceSelectPage.find('[data-test-id="question-selectAssociatedService"]');
+
+  await t
+    .expect(associatedServiceSelectField.find('[data-test-id="radiobutton-options-error"]').exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(associatedServiceSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
+    .expect(await extractInnerText(associatedServiceSelectField.find('#selectAssociatedService-error'))).contains('Select an Associated Service');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#selectAssociatedService`);
+});
+
 test('should redirect to /organisation/order-id/associated-services/select/associated-service/price when an associated service is selected', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);

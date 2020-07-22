@@ -1,6 +1,11 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../../../../config';
+import * as errorContext from '../../../../getSectionErrorContext';
+
+jest.mock('../../../../getSectionErrorContext', () => ({
+  getSectionErrorContext: jest.fn(),
+}));
 
 describe('associated-services associated-service contextCreator', () => {
   describe('getContext', () => {
@@ -64,6 +69,36 @@ describe('associated-services associated-service contextCreator', () => {
     it('should return the continueButtonText', () => {
       const context = getContext({});
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
+    });
+  });
+
+  describe('getErrorContext', () => {
+    const mockValidationErrors = [{
+      field: 'selectAssociatedService',
+      id: 'SelectAssociatedServiceRequired',
+    }];
+
+    const associatedServices = [
+      { id: 'associated-service-1', name: 'Associated Service 1' },
+      { id: 'associated-service-2', name: 'Associated Service 2' },
+    ];
+
+    afterEach(() => {
+      errorContext.getSectionErrorContext.mockReset();
+    });
+
+    it('should call getSectionErrorContext with correct params', () => {
+      errorContext.getSectionErrorContext
+        .mockResolvedValueOnce();
+
+      const params = {
+        orderId: 'order-id',
+        validationErrors: mockValidationErrors,
+        associatedServices,
+      };
+
+      getErrorContext(params);
+      expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
     });
   });
 });

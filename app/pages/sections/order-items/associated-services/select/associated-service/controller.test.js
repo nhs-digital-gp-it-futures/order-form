@@ -1,5 +1,10 @@
 import { fakeSessionManager } from 'buying-catalogue-library';
-import { getAssociatedServicePageContext, findAssociatedServices } from './controller';
+import {
+  getAssociatedServicePageContext,
+  getAssociatedServiceErrorPageContext,
+  findAssociatedServices,
+  validateAssociatedServicesForm,
+} from './controller';
 import { logger } from '../../../../../../logger';
 import * as contextCreator from './contextCreator';
 import * as getCatalogueItems from '../../../../../../helpers/api/bapi/getCatalogueItems';
@@ -10,6 +15,7 @@ jest.mock('../../../../../../logger');
 
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
+  getErrorContext: jest.fn(),
 }));
 
 jest.mock('./../../../../../../helpers/api/bapi/getCatalogueItems', () => ({
@@ -33,6 +39,23 @@ describe('associated-services select-associated-service controller', () => {
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-1' });
+    });
+  });
+
+  describe('getAssociatedServiceErrorPageContext', () => {
+    it('should call getErrorContext with the correct params', async () => {
+      contextCreator.getErrorContext
+        .mockResolvedValueOnce();
+
+      const params = {
+        orderId: 'order-1',
+        associatedServices: [{ associatedServiceId: 'associated-service-1' }],
+      };
+
+      getAssociatedServiceErrorPageContext(params);
+
+      expect(contextCreator.getErrorContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getErrorContext).toHaveBeenCalledWith(params);
     });
   });
 
@@ -117,6 +140,59 @@ describe('associated-services select-associated-service controller', () => {
       });
 
       expect(actualResult).toEqual(expectedResult);
+    });
+  });
+
+  describe('validateAssociatedServicesForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return success as true', () => {
+        const data = {
+          selectAssociatedService: 'some-associated-service-id',
+        };
+
+        const response = validateAssociatedServicesForm({ data });
+
+        expect(response.success).toEqual(true);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const expectedValidationErrors = [
+        {
+          field: 'selectAssociatedService',
+          id: 'SelectAssociatedServiceRequired',
+        },
+      ];
+
+      it('should return an array of one validation error and success as false if empty string is passed in', () => {
+        const data = {
+          selectAssociatedService: '',
+        };
+
+        const response = validateAssociatedServicesForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return an array of one validation error and success as false if whitespace only is passed in', () => {
+        const data = {
+          selectAssociatedService: '   ',
+        };
+
+        const response = validateAssociatedServicesForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
+
+      it('should return a validation error if selectAssociatedService is undefined', () => {
+        const data = {};
+
+        const response = validateAssociatedServicesForm({ data });
+
+        expect(response.errors).toEqual(expectedValidationErrors);
+      });
     });
   });
 });
