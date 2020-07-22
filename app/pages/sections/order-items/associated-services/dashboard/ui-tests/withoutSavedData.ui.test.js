@@ -3,17 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../../config';
-import { nockCheck } from '../../../../../../test-utils/nockChecker';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -25,15 +17,19 @@ const mocks = () => {
     .reply(200, { description: 'Some order' });
 };
 
-const pageSetup = async () => {
-  mocks();
-  await setCookies();
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
+  }
 };
 
 fixture('Associated Servies - Dashbaord page - without saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render the No associated services text when no order items are returned from ORDAPI', async (t) => {
@@ -43,6 +39,5 @@ test('should render the No associated services text when no order items are retu
   const noAddedOrderItems = Selector('[data-test-id="no-added-orderItems"]');
 
   await t
-    .expect(noAddedOrderItems.exists).ok()
     .expect(await extractInnerText(noAddedOrderItems)).eql(content.noOrderItemsText);
 });

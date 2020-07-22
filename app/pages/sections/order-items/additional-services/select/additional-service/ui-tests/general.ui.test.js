@@ -3,17 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl as bapiUrl, orderApiUrl } from '../../../../../../../config';
-import { nockCheck } from '../../../../../../../test-utils/nockChecker';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mockAdditionalServices = [
   {
@@ -32,26 +24,9 @@ const mockAdditionalServices = [
   },
 ];
 
-const additionalServicesState = ClientFunction(() => {
-  const cookieValue = JSON.stringify([
-    {
-      catalogueItemId: 'additional-service-1',
-      name: 'Additional Service 1',
-      solution: {
-        solutionId: 'solution-1',
-      },
-    },
-    {
-      catalogueItemId: 'additional-service-2',
-      name: 'Additional Service 2',
-      solution: {
-        solutionId: 'solution-1',
-      },
-    },
-  ]);
-
-  document.cookie = `additionalServices=${cookieValue}`;
-});
+const additionalServicesInSession = JSON.stringify(
+  mockAdditionalServices,
+);
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -63,24 +38,22 @@ const mocks = () => {
           catalogueItemName: 'some catalogue solution name',
         },
       ]);
-
   nock(bapiUrl)
     .get('/api/v1/additional-services?solutionIds=1')
     .reply(200, { additionalServices: mockAdditionalServices });
 };
 
-const pageSetup = async (
-  withAuth = true,
-  withAdditionalServicesFoundState = false,
-  withMocks = true) => {
-  if (withMocks) {
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
     mocks();
   }
-
-  if (withAuth) {
-    await setCookies();
+  if (setup.postRoute) {
+    await setState(ClientFunction)('additionalServices', additionalServicesInSession);
   }
-  if (withAdditionalServicesFoundState) await additionalServicesState();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -88,7 +61,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('additional-services - additional-service page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
@@ -96,7 +69,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false, false, false);
+  await pageSetup({ ...defaultPageSetup, withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -113,15 +86,14 @@ test('should render additional-services select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should render back link', async (t) => {
+test('should link to /order/organisation/order-id/additional-services/additional-service for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
-    .expect(await extractInnerText(goBackLink)).eql(content.backLinkText);
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/additional-services');
 });
 
 test('should render the title', async (t) => {
@@ -131,7 +103,6 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="additional-service-select-page-title"]');
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
 });
 
@@ -142,7 +113,6 @@ test('should render the description', async (t) => {
   const description = Selector('h2[data-test-id="additional-service-select-page-description"]');
 
   await t
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
@@ -153,12 +123,11 @@ test('should render the Continue button', async (t) => {
   const button = Selector('[data-test-id="continue-button"] button');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
 test('should redirect to /organisation/order-id/additional-services/select/additional-service/price when an additional service is selected', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const selectAdditionalServiceRadioOptions = Selector('[data-test-id="question-selectAdditionalService"]');
@@ -172,7 +141,7 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
 });
 
 test('should show the error summary when no additional service is selected causing validation error', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -183,13 +152,12 @@ test('should show the error summary when no additional service is selected causi
     .click(button);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select an Additional Service');
 });
 
 test('should render select additional service field as errors with error message when no additional service is selected causing validation error', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const additionalServiceSelectPage = Selector('[data-test-id="additional-service-select-page"]');
@@ -206,7 +174,7 @@ test('should render select additional service field as errors with error message
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');
@@ -217,8 +185,6 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .click(continueButton);
 
   await t
-    .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#selectAdditionalService`);
 });
@@ -232,7 +198,7 @@ test('should render the error page if no additional services are found', async (
     .get('/api/v1/additional-services?solutionIds=')
     .reply(200, { additionalServices: [] });
 
-  await pageSetup(true, false, false);
+  await pageSetup({ ...defaultPageSetup, getRoute: false });
   await t.navigateTo(pageUrl);
 
   const backLink = Selector('[data-test-id="error-back-link"]');
@@ -240,11 +206,9 @@ test('should render the error page if no additional services are found', async (
   const errorDescription = Selector('[data-test-id="error-description"]');
 
   await t
-    .expect(backLink.exists).ok()
     .expect(await extractInnerText(backLink)).eql('Go back')
     .expect(backLink.find('a').getAttribute('href')).ok('/organisation/order-id/additional-services')
-    .expect(errorTitle.exists).ok()
+
     .expect(await extractInnerText(errorTitle)).eql('No Additional Services found')
-    .expect(errorDescription.exists).ok()
     .expect(await extractInnerText(errorDescription)).eql('There are no Additional Services offered by this supplier. Go back to the Additional Services dashboard and select continue to complete the section.');
 });

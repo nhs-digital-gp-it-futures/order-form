@@ -2,17 +2,9 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { baseUrl, orderApiUrl } from '../../../../../../config';
-import { nockCheck } from '../../../../../../test-utils/nockChecker';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mockAddedOrderItems = [
   {
@@ -34,15 +26,19 @@ const mocks = () => {
     .reply(200, { description: 'Some order' });
 };
 
-const pageSetup = async () => {
-  mocks();
-  await setCookies();
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
+  }
 };
 
 fixture('Associated-services - Dashboard page - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render the added associated service table with the column headings', async (t) => {
@@ -53,10 +49,7 @@ test('should render the added associated service table with the column headings'
   const addedOrderItemsColumnHeading1 = addedOrderItems.find('[data-test-id="column-heading-0"]');
 
   await t
-    .expect(addedOrderItems.exists).ok()
-    .expect(addedOrderItemsColumnHeading1.exists).ok()
-    .expect(await extractInnerText(addedOrderItemsColumnHeading1))
-    .eql('Associated Services for this order');
+    .expect(await extractInnerText(addedOrderItemsColumnHeading1)).eql('Associated Services for this order');
 });
 
 test('should render the added associated service items in the table', async (t) => {
@@ -70,19 +63,9 @@ test('should render the added associated service items in the table', async (t) 
   const row2CatalogueItemName = row2.find('a[data-test-id="orderItem2-catalogueItemName"]');
 
   await t
-    .expect(row1.exists).ok()
-    .expect(row1CatalogueItemName.exists).ok()
-    .expect(await extractInnerText(row1CatalogueItemName))
-    .eql('Associated Service One')
-    .expect(row1CatalogueItemName.getAttribute('href'))
-    .eql(`${baseUrl}/organisation/order-1/associated-services/orderItem1`)
+    .expect(await extractInnerText(row1CatalogueItemName)).eql('Associated Service One')
+    .expect(row1CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/associated-services/orderItem1`)
 
-    .expect(row2.exists)
-    .ok()
-    .expect(row2CatalogueItemName.exists)
-    .ok()
-    .expect(await extractInnerText(row2CatalogueItemName))
-    .eql('Associated Service Two')
-    .expect(row2CatalogueItemName.getAttribute('href'))
-    .eql(`${baseUrl}/organisation/order-1/associated-services/orderItem2`);
+    .expect(await extractInnerText(row2CatalogueItemName)).eql('Associated Service Two')
+    .expect(row2CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/associated-services/orderItem2`);
 });

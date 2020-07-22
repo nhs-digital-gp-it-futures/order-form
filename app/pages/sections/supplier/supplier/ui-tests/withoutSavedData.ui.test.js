@@ -3,23 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
-import { nockCheck } from '../../../../../test-utils/nockChecker';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
-
-const setSessionState = ClientFunction(() => {
-  const cookieValue = 'supplier-1';
-
-  document.cookie = `selectedSupplier=${cookieValue}`;
-});
 
 const supplierDataFromBapi = {
   name: 'SupplierTwo',
@@ -46,20 +32,22 @@ const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, {});
-};
 
-const bapiMocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
 };
 
-const pageSetup = async (withSessionState = true) => {
-  await setCookies();
-  mocks();
-  if (withSessionState) {
-    await setSessionState();
-    bapiMocks();
+const defaultPageSetup = { withAuth: true, getRoute: true, withSelectedSupplier: true };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks(setup.mockData);
+  }
+  if (setup.withSelectedSupplier) {
+    await setState(ClientFunction)('selectedSupplier', 'supplier-1');
   }
 };
 
@@ -68,19 +56,17 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Supplier page - without saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
-test('should navigate to /organisation/order-id/supplier/search/select when click on backlink if data comes from BAPI', async (t) => {
+test('should link to /order/organisation/order-id/supplier/search/select for backLink when data comes from BAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search/select');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/supplier/search/select');
 });
 
 test('should render supplier name with data from BAPI when no data from ORDAPI and supplierId provided', async (t) => {
@@ -91,9 +77,7 @@ test('should render supplier name with data from BAPI when no data from ORDAPI a
   const text = Selector('div[data-test-id="supplier-name"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.supplierNameHeading)
-    .expect(text.exists).ok()
     .expect(await extractInnerText(text)).eql(supplierDataFromBapi.name);
 });
 
@@ -113,25 +97,15 @@ test('should render supplier address name with data from BAPI when no data from 
   const addressTextCountry = Selector('[data-test-id="supplier-address-country"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.supplierAddressHeading)
-    .expect(addressTextLine1.exists).ok()
     .expect(await extractInnerText(addressTextLine1)).eql(supplierDataFromBapi.address.line1)
-    .expect(addressTextLine2.exists).ok()
     .expect(await extractInnerText(addressTextLine2)).eql(supplierDataFromBapi.address.line2)
-    .expect(addressTextLine3.exists).ok()
     .expect(await extractInnerText(addressTextLine3)).eql('')
-    .expect(addressTextLine4.exists).ok()
     .expect(await extractInnerText(addressTextLine4)).eql(supplierDataFromBapi.address.line4)
-    .expect(addressTextLine5.exists).ok()
     .expect(await extractInnerText(addressTextLine5)).eql(supplierDataFromBapi.address.line5)
-    .expect(addressTextTown.exists).ok()
     .expect(await extractInnerText(addressTextTown)).eql(supplierDataFromBapi.address.town)
-    .expect(addressTextCounty.exists).ok()
     .expect(await extractInnerText(addressTextCounty)).eql(supplierDataFromBapi.address.county)
-    .expect(addressTextPostcode.exists).ok()
     .expect(await extractInnerText(addressTextPostcode)).eql(supplierDataFromBapi.address.postcode)
-    .expect(addressTextCountry.exists).ok()
     .expect(await extractInnerText(addressTextCountry)).eql(supplierDataFromBapi.address.country);
 });
 
@@ -152,7 +126,11 @@ test('should render the primary contact details form with populated data from BA
 });
 
 test('should redirect to search if there is no data in ORDAPI and supplierSelected is not in session', async (t) => {
-  await pageSetup(false);
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
+  await pageSetup({ ...defaultPageSetup, getRoute: false, withSelectedSupplier: false });
   await t.navigateTo(pageUrl);
 
   await t

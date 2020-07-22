@@ -11,7 +11,7 @@ const throwErrorRerunMessage = (message, filename) => {
   throw new Error(errorMessage);
 };
 
-export const nockCheck = async (nock, t) => {
+export const nockAndErrorCheck = async (nock, t) => {
   if (process.env.NOCK_CHECK === 'true') {
     const isDone = nock.isDone();
     if (!isDone) {
@@ -23,3 +23,15 @@ export const nockCheck = async (nock, t) => {
     throwErrorRerunMessage(`Error in test: "${t.testRun.test.name}"`, t.testRun.test.testFile.filename);
   }
 };
+
+export const setState = ClientFunction => ClientFunction((key, value) => {
+  document.cookie = `${key}=${value}`;
+});
+
+export const authTokenInSession = JSON.stringify({
+  id: '88421113',
+  name: 'Cool Dude',
+  ordering: 'manage',
+  primaryOrganisationId: 'org-id',
+  primaryOrganisationName: 'org-name',
+});

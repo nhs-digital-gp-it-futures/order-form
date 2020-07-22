@@ -3,17 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
-import { nockCheck } from '../../../../test-utils/nockChecker';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/commencement-date';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const putCommencementDateErrorResponse = {
   errors: [{
@@ -22,31 +14,27 @@ const putCommencementDateErrorResponse = {
   }],
 };
 
-const mocks = (putErrorNock) => {
+const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/commencement-date')
     .reply(200, {});
-  if (putErrorNock) {
-    nock(orderApiUrl)
-      .put('/api/v1/orders/order-id/sections/commencement-date')
-      .reply(400, putCommencementDateErrorResponse);
-  }
 };
 
-const pageSetup = async (withAuth = true, putErrorNock = false) => {
-  if (withAuth) {
-    mocks(putErrorNock);
-    await setCookies();
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
   }
 };
 
 const getLocation = ClientFunction(() => document.location.href);
 
-
 fixture('Commencement-date page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
@@ -54,7 +42,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false);
+  await pageSetup({ withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -77,7 +65,6 @@ test('should link to /order/organisation/order-id for backLink', async (t) => {
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
     .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
@@ -88,7 +75,6 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="commencement-date-page-title"]');
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql('Commencement date for order-id');
 });
 
@@ -99,7 +85,6 @@ test('should render the description', async (t) => {
   const description = Selector('h2[data-test-id="commencement-date-page-description"]');
 
   await t
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
@@ -110,7 +95,6 @@ test('should render legend with mainAdvice', async (t) => {
   const mainAdvice = Selector('legend');
 
   await t
-    .expect(mainAdvice.exists).ok()
     .expect(await extractInnerText(mainAdvice)).eql(content.questions.commencementDate.mainAdvice);
 });
 
@@ -121,7 +105,6 @@ test('should render additionalAdvice', async (t) => {
   const additionalAdvice = Selector('[data-test-id="date-field-input"] span.nhsuk-hint');
 
   await t
-    .expect(additionalAdvice.exists).ok()
     .expect(await extractInnerText(additionalAdvice)).eql(content.questions.commencementDate.additionalAdvice);
 });
 
@@ -135,11 +118,8 @@ test('should render labels for day, month and year inputs', async (t) => {
   const yearLabel = labels.nth(2);
 
   await t
-    .expect(dayLabel.exists).ok()
     .expect(await extractInnerText(dayLabel)).eql('Day')
-    .expect(monthLabel.exists).ok()
     .expect(await extractInnerText(monthLabel)).eql('Month')
-    .expect(yearLabel.exists).ok()
     .expect(await extractInnerText(yearLabel)).eql('Year');
 });
 
@@ -153,15 +133,14 @@ test('should render input fields for day, month and year', async (t) => {
   const yearInput = inputFields.nth(2);
 
   await t
-    .expect(dayInput.exists).ok()
     .expect(dayInput.getAttribute('id')).eql('commencementDate-day')
     .expect(dayInput.getAttribute('name')).eql('commencementDate-day')
     .expect(dayInput.getAttribute('type')).eql('number')
-    .expect(monthInput.exists).ok()
+
     .expect(monthInput.getAttribute('id')).eql('commencementDate-month')
     .expect(monthInput.getAttribute('name')).eql('commencementDate-month')
     .expect(monthInput.getAttribute('type')).eql('number')
-    .expect(yearInput.exists).ok()
+
     .expect(yearInput.getAttribute('id')).eql('commencementDate-year')
     .expect(yearInput.getAttribute('name')).eql('commencementDate-year')
     .expect(yearInput.getAttribute('type')).eql('number');
@@ -174,13 +153,12 @@ test('should render save button', async (t) => {
   const button = Selector('[data-test-id="save-button"] button');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });
 
 test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/commencement-date')
+    .put('/api/v1/orders/order-id/sections/commencement-date', { commencementDate: '2020-01-01' })
     .reply(200, {});
 
   await pageSetup();
@@ -220,10 +198,8 @@ test('should show the correct error summary and input error when no date is ente
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Enter a commencement date')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.hasClass('nhsuk-input--error')).ok()
@@ -252,10 +228,8 @@ test('should show the correct error summary and input error when no day is enter
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must include a day')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.hasClass('nhsuk-input--error')).ok()
@@ -288,10 +262,8 @@ test('should show the correct error summary and input error when no month is ent
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must include a month')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.getAttribute('value')).eql('02')
@@ -324,10 +296,8 @@ test('should show the correct error summary and input error when no year is ente
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must include a year')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.getAttribute('value')).eql('02')
@@ -361,10 +331,8 @@ test('should show the correct error summary and input error when a year > 4 char
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Year must be four numbers')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.getAttribute('value')).eql('02')
@@ -399,10 +367,8 @@ test('should show the correct error summary and input error when a year < 4 char
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Year must be four numbers')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.getAttribute('value')).eql('02')
@@ -437,10 +403,8 @@ test('should show the correct error summary and input error when a day > 31 is e
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must be a real date')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.getAttribute('value')).eql('32')
@@ -475,10 +439,8 @@ test('should show the correct error summary and input error when a month > 12 is
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must be a real date')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.getAttribute('value')).eql('02')
@@ -513,10 +475,8 @@ test('should show the correct error summary and input error when a year < 1000 i
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must be a real date')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.getAttribute('value')).eql('02')
@@ -551,10 +511,8 @@ test('should show the correct error summary and input error when incorrect day/m
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must be a real date')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.getAttribute('value')).eql('31')
@@ -569,7 +527,11 @@ test('should show the correct error summary and input error when incorrect day/m
 
 // BE Validation tests
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/commencement-date', { commencementDate: '2000-01-01' })
+    .reply(400, putCommencementDateErrorResponse);
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -590,10 +552,8 @@ test('should show text fields as errors with error message when there are BE val
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Commencement date must be in the future or within the last 60 days')
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.getAttribute('value')).eql('01')
@@ -607,7 +567,11 @@ test('should show text fields as errors with error message when there are BE val
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/commencement-date', { commencementDate: '2000-01-01' })
+    .reply(400, putCommencementDateErrorResponse);
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -625,7 +589,6 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#commencementDate`);
 });

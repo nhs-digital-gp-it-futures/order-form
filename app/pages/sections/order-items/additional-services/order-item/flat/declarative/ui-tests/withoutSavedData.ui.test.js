@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../../../../config';
-import { nockCheck } from '../../../../../../../../test-utils/nockChecker';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
 
@@ -21,9 +21,6 @@ const selectedPrice = {
   price: 0.1,
 };
 
-const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-});
 const itemIdInSession = 'item-1';
 const itemNameInSession = 'Item One';
 const catalogueSolutionIdInSession = 'solution-1';
@@ -40,9 +37,14 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const setState = ClientFunction((key, value) => {
-  document.cookie = `${key}=${value}`;
-});
+const requestPostBody = {
+  ...selectedPrice,
+  serviceRecipient: { name: 'recipient-name', odsCode: 'recipient-1' },
+  catalogueItemId: 'item-1',
+  catalogueItemName: 'Item One',
+  catalogueItemType: 'AdditionalService',
+  catalogueSolutionId: 'solution-1',
+};
 
 const mocks = () => {
   nock(solutionsApiUrl)
@@ -50,34 +52,38 @@ const mocks = () => {
     .reply(200, selectedPrice);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: true };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
     mocks();
-    await setState('fakeToken', authTokenInSession);
-    await setState('selectedRecipientId', selectedRecipientIdInSession);
-    await setState('selectedRecipientName', selectedRecipientNameInSession);
-    await setState('selectedItemId', itemIdInSession);
-    await setState('selectedItemName', itemNameInSession);
-    await setState('selectedCatalogueSolutionId', catalogueSolutionIdInSession);
-    await setState('selectedPriceId', selectedPriceIdInSession);
-    if (postRoute) {
-      await setState('orderItemPageData', orderItemPageDataInSession);
-    }
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+    await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
+    await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
+    await setState(ClientFunction)('selectedItemId', itemIdInSession);
+    await setState(ClientFunction)('selectedItemName', itemNameInSession);
+    await setState(ClientFunction)('selectedCatalogueSolutionId', catalogueSolutionIdInSession);
+    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+  }
+  if (setup.postRoute) {
+    await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
   }
 };
 
 fixture('Additional-services - flat declarative - withoutSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should navigate to additional-services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-1/order-items')
+    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 10 })
     .reply(200, {});
 
-  await pageSetup(true, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const quantityInput = Selector('[data-test-id="question-quantity"]');
@@ -91,7 +97,7 @@ test('should navigate to additional-services dashboard page if save button is cl
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-1/order-items')
+    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 0 })
     .reply(400, {
       errors: [{
         field: 'Quantity',
@@ -99,7 +105,7 @@ test('should show text fields as errors with error message when there are BE val
       }],
     });
 
-  await pageSetup(true, true);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const errorSummary = Selector('[data-test-id="error-summary"]');
