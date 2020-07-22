@@ -142,7 +142,7 @@ test('should render the Continue button', async (t) => {
 
 test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/sections/catalogue-solutions')
+    .put('/api/v1/orders/order-1/sections/catalogue-solutions', { status: 'complete' })
     .reply(200);
 
   await pageSetup();

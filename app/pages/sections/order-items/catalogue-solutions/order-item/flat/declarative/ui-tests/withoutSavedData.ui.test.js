@@ -39,6 +39,14 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
+const requestPostBody = {
+  ...selectedPrice,
+  serviceRecipient: { name: 'recipient-name', odsCode: 'recipient-1' },
+  catalogueItemId: 'solution-1',
+  catalogueItemName: 'solution-name',
+  catalogueItemType: 'Solution',
+};
+
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
@@ -72,7 +80,7 @@ fixture('Catalogue-solutions - flat declarative - withoutSavedData')
 
 test('should navigate to catalogue solution dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/order-items')
+    .post('/api/v1/orders/order-id/order-items', { ...requestPostBody, deliveryDate: '2020-01-01', quantity: 10 })
     .reply(200, {});
 
   await pageSetup();
@@ -96,7 +104,7 @@ test('should navigate to catalogue solution dashboard page if save button is cli
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/order-items')
+    .post('/api/v1/orders/order-id/order-items', { ...requestPostBody, deliveryDate: '2020-01-01', quantity: 10 })
     .reply(400, {
       errors: [{
         field: 'DeliveryDate',

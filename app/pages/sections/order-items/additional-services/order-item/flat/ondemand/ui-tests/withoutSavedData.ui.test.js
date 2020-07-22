@@ -38,21 +38,13 @@ const orderItemPageDataInSession = JSON.stringify({
 });
 
 const requestPostBody = {
-  priceId: 1,
-  provisioningType: 'OnDemand',
-  type: 'Flat',
-  currencyCode: 'GBP',
-  itemUnit: { name: 'consultation', description: 'per consultation' },
-  price: 0.1,
+  ...selectedPrice,
   serviceRecipient: { name: 'recipient-name', odsCode: 'recipient-1' },
   catalogueItemId: 'item-1',
   catalogueItemName: 'Item One',
   catalogueItemType: 'AdditionalService',
   catalogueSolutionId: 'solution-1',
-  quantity: 10,
-  estimationPeriod: 'month',
 };
-
 
 const mocks = () => {
   nock(solutionsApiUrl)
@@ -88,7 +80,7 @@ fixture('Additional-services - flat ondemand - withoutSavedData')
 
 test('should navigate to additional-services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 10 })
+    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 10, estimationPeriod: 'month' })
     .reply(200, {});
 
   await pageSetup();
@@ -107,7 +99,7 @@ test('should navigate to additional-services dashboard page if save button is cl
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 0 })
+    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 0, estimationPeriod: 'month' })
     .reply(400, {
       errors: [{
         field: 'Quantity',

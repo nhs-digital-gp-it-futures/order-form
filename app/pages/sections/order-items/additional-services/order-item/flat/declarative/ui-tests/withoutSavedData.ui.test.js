@@ -38,12 +38,7 @@ const orderItemPageDataInSession = JSON.stringify({
 });
 
 const requestPostBody = {
-  priceId: 1,
-  provisioningType: 'Declarative',
-  type: 'Flat',
-  currencyCode: 'GBP',
-  itemUnit: { name: 'consultation', description: 'per consultation' },
-  price: 0.1,
+  ...selectedPrice,
   serviceRecipient: { name: 'recipient-name', odsCode: 'recipient-1' },
   catalogueItemId: 'item-1',
   catalogueItemName: 'Item One',
