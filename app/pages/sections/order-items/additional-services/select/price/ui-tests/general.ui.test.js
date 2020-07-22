@@ -74,7 +74,6 @@ const mocks = () => {
     .reply(200, mockAdditionalServicePricing);
 };
 
-
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
