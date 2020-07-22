@@ -14,9 +14,11 @@ import { routes } from '../../../../../routes';
 import { baseUrl } from '../../../../../config';
 import * as selectAssociatedServiceController from './associated-service/controller';
 import * as selectAssociatedServicePriceController from './price/controller';
+import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 
 jest.mock('../../../../../logger');
+jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
@@ -109,6 +111,91 @@ describe('associated-services select routes', () => {
 
       expect(res.text.includes('data-test-id="associated-service-select-page"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+    });
+  });
+
+  describe('POST /organisation/:orderId/associated-services/select/associated-service', () => {
+    const path = '/organisation/order-1/associated-services/select/associated-service';
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()),
+        postPath: path,
+        postPathCookies: [mockAuthorisedCookie],
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', async () => {
+      selectAssociatedServiceController.findAssociatedServices = jest.fn()
+        .mockResolvedValue([{ id: '1' }]);
+
+      selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      await testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+        expectedRedirectPath: 'http://identity-server/login',
+      });
+    });
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      selectAssociatedServiceController.findAssociatedServices = jest.fn()
+        .mockResolvedValue([{ id: '1' }]);
+
+      selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      return testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      });
+    });
+
+    it('should redirect to /organisation/some-order-id/associated-services/select/associated-service/price if an associated service is selected', async () => {
+      const associatedServiceId = 'associated-service-1';
+      const associatedServices = [
+        {
+          associatedServiceId,
+          name: 'Associated Service 1',
+        }];
+
+      selectAssociatedServiceController.findAssociatedServices = jest.fn()
+        .mockResolvedValue(associatedServices);
+
+      findSelectedCatalogueItemInSession.mockReturnValue({ name: 'Associated Service 1', solution: { solutionId: 'solution-1' } });
+      selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      const mockSelectedItemCookie = `selectedItemId=${associatedServiceId}`;
+      const mockAssociatedServicesCookie = `associatedServices=${JSON.stringify(associatedServices)}`;
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockAssociatedServicesCookie, mockSelectedItemCookie])
+        .send({
+          selectAssociatedService: associatedServiceId,
+          _csrf: csrfToken,
+        })
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/associated-services/select/associated-service/price`);
     });
   });
 
