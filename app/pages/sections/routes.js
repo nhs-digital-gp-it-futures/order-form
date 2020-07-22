@@ -18,6 +18,7 @@ import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/routes';
 import { additionalServicesRoutes } from './order-items/additional-services/routes';
 import { associatedServicesRoutes } from './order-items/associated-services/routes';
+import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 
 const router = express.Router({ mergeParams: true });
 
@@ -137,6 +138,8 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.get('/funding-sources', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    await getFundingSource({ orderId, accessToken });
     const context = await getFundingSourcesContext({ orderId });
     logger.info(`navigating to order ${orderId} funding-sources page`);
     res.render('pages/sections/funding-sources/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
