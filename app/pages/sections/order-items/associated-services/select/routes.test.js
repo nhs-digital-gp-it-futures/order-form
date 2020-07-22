@@ -8,6 +8,7 @@ import {
   testAuthorisedPostPathForUnauthorisedUsers,
   getCsrfTokenFromGet,
   fakeSessionManager,
+  ErrorContext,
 } from 'buying-catalogue-library';
 import { App } from '../../../../../app';
 import { routes } from '../../../../../routes';
@@ -97,6 +98,22 @@ describe('associated-services select routes', () => {
       })
     ));
 
+    it('should throw error context when no associated services', async () => {
+      selectAssociatedServiceController.findAddedCatalogueSolutions = jest.fn()
+        .mockResolvedValue([]);
+
+      selectAssociatedServiceController.findAssociatedServices = jest.fn()
+        .mockResolvedValue([]);
+
+      try {
+        await request(setUpFakeApp())
+          .get(path)
+          .set('Cookie', [mockAuthorisedCookie]);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ErrorContext);
+      }
+    });
+
     it('should return the associated-services select-associated-service page if authorised', async () => {
       selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
         .mockResolvedValue({});
@@ -160,6 +177,46 @@ describe('associated-services select routes', () => {
       });
     });
 
+    it('should show the associated services select page with errors if there are validation errors', async () => {
+      selectAssociatedServiceController.findAddedCatalogueSolutions = jest.fn()
+        .mockResolvedValue([
+          {
+            catalogueItemId: 'Some catalogue item id',
+          },
+        ]);
+
+      selectAssociatedServiceController.findAssociatedServices = jest.fn()
+        .mockResolvedValue({});
+
+      selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      selectAssociatedServiceController.validateAssociatedServicesForm = jest.fn()
+        .mockReturnValue({ success: false });
+
+      selectAssociatedServiceController.getAssociatedServiceErrorPageContext = jest.fn()
+        .mockResolvedValue({
+          errors: [{ text: 'Select an associated service', href: '#selectAssociatedService' }],
+        });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="associated-service-select-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+    });
+
     it('should redirect to /organisation/some-order-id/associated-services/select/associated-service/price if an associated service is selected', async () => {
       const associatedServiceId = 'associated-service-1';
       const associatedServices = [
@@ -174,6 +231,9 @@ describe('associated-services select routes', () => {
       findSelectedCatalogueItemInSession.mockReturnValue({ name: 'Associated Service 1', solution: { solutionId: 'solution-1' } });
       selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
         .mockResolvedValue({});
+
+      selectAssociatedServiceController.validateAssociatedServicesForm = jest.fn()
+        .mockReturnValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),

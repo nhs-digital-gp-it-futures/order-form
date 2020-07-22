@@ -1,5 +1,6 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../../../config';
+import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
 const generateAssociatedServiceOptions = ({ associatedServices, selectedAssociatedServiceId }) => (
   associatedServices.map(associatedService => ({
@@ -27,3 +28,14 @@ export const getContext = ({ orderId, associatedServices, selectedAssociatedServ
   }),
   backLinkHref: `${baseUrl}/organisation/${orderId}/associated-services`,
 });
+
+export const getErrorContext = (params) => {
+  const updatedManifest = getContext({
+    orderId: params.orderId,
+    associatedServices: params.associatedServices,
+  });
+
+  return {
+    ...getSectionErrorContext({ ...params, manifest: updatedManifest }),
+  };
+};

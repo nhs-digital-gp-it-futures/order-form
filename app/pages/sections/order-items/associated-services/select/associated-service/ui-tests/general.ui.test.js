@@ -156,6 +156,80 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
+test('should render the error page if no associated services are found', async (t) => {
+  nock(bapiUrl)
+    .get('/api/v1/catalogue-items?supplierId=sup-1&catalogueItemType=AssociatedService')
+    .reply(200, []);
+
+  await pageSetup(true, false, false);
+  await t.navigateTo(pageUrl);
+
+  const backLink = Selector('[data-test-id="error-back-link"]');
+  const errorTitle = Selector('[data-test-id="error-title"]');
+  const errorDescription = Selector('[data-test-id="error-description"]');
+
+  await t
+    .expect(backLink.exists).ok()
+    .expect(await extractInnerText(backLink)).eql('Go back')
+    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/order-id/associated-services')
+    .expect(errorTitle.exists).ok()
+    .expect(await extractInnerText(errorTitle)).eql('No Associated Services found')
+    .expect(errorDescription.exists).ok()
+    .expect(await extractInnerText(errorDescription)).eql('There are no Associated Services offered by this supplier. Go back to the Associated Services dashboard and select continue to complete the section.');
+});
+
+test('should show the error summary when no associated service is selected causing validation error', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select an Associated Service');
+});
+
+test('should render select associated service field as errors with error message when no associated service is selected causing validation error', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const associatedServiceSelectPage = Selector('[data-test-id="associated-service-select-page"]');
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const associatedServiceSelectField = associatedServiceSelectPage.find('[data-test-id="question-selectAssociatedService"]');
+
+  await t
+    .expect(associatedServiceSelectField.find('[data-test-id="radiobutton-options-error"]').exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(associatedServiceSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
+    .expect(await extractInnerText(associatedServiceSelectField.find('#selectAssociatedService-error'))).contains('Select an Associated Service');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#selectAssociatedService`);
+});
+
 test('should redirect to /organisation/order-id/associated-services/select/associated-service/price when an associated service is selected', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);

@@ -9,6 +9,10 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-ser
 
 const mocks = () => {
   nock(orderApiUrl)
+    .get('/api/v1/orders/order-1/order-items?catalogueItemType=AssociatedService')
+    .reply(200, []);
+
+  nock(orderApiUrl)
     .get('/api/v1/orders/order-1/sections/description')
     .reply(200, { description: 'Some order' });
 };
