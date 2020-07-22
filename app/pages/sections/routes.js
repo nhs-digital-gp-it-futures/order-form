@@ -139,8 +139,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/funding-sources', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    // const fundingSource = await getFundingSource({ orderId, accessToken });
-    const fundingSource = true;
+    const fundingSource = await getFundingSource({ orderId, accessToken });
 
     const context = await getFundingSourcesContext({ orderId, fundingSource });
     logger.info(`navigating to order ${orderId} funding-sources page`);
