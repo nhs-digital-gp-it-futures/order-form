@@ -589,7 +589,7 @@ describe('section routes', () => {
       .expect(200)
       .then((res) => {
         expect(res.status).toBe(200);
-        expect(res.text.includes('Funding sources')).toBeTruthy();
+        expect(res.text.includes('data-test-id="funding-sources-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       }));
   });

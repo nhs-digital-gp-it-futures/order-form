@@ -22,7 +22,7 @@ const pageSetup = async (withAuth = true) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Description page - general')
+fixture('Funding sources page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockCheck(nock, t);
@@ -40,7 +40,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render description page', async (t) => {
+test('should render funding sources page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="funding-sources-page"]');
