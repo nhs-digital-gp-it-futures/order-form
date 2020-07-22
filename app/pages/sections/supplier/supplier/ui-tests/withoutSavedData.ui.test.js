@@ -38,14 +38,15 @@ const mocks = () => {
     .reply(200, supplierDataFromBapi);
 };
 
-const pageSetup = async (withAuth = true, getRoute = true, withSelectedSupplier = true) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, withSelectedSupplier: true };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
-    mocks();
+  if (setup.getRoute) {
+    mocks(setup.mockData);
   }
-  if (withSelectedSupplier) {
+  if (setup.withSelectedSupplier) {
     await setState(ClientFunction)('selectedSupplier', 'supplier-1');
   }
 };
@@ -129,7 +130,7 @@ test('should redirect to search if there is no data in ORDAPI and supplierSelect
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, {});
 
-  await pageSetup(true, false, false);
+  await pageSetup({ ...defaultPageSetup, getRoute: false, withSelectedSupplier: false });
   await t.navigateTo(pageUrl);
 
   await t

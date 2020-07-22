@@ -35,12 +35,13 @@ const mocks = () => {
     .reply(200, mockData);
 };
 
-const pageSetup = async (withAuth = true, getRoute = true) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, mockData: {} };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
-    mocks();
+  if (setup.getRoute) {
+    mocks(setup.mockData);
     await setState(ClientFunction)('selectedSupplier', 'supplier-1');
   }
 };
@@ -58,7 +59,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false, false);
+  await pageSetup({ ...defaultPageSetup, withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -68,6 +69,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 test('should render Supplier page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+
   const page = Selector('[data-test-id="supplier-page"]');
 
   await t

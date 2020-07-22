@@ -75,12 +75,13 @@ const mocks = () => {
     .reply(200, supplierDataFromBapi);
 };
 
-const pageSetup = async (withAuth = true, getRoute = true) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, mockData: {} };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
-    mocks();
+  if (setup.getRoute) {
+    mocks(setup.mockData);
     await setState(ClientFunction)('selectedSupplier', 'supplier-1');
   }
 };

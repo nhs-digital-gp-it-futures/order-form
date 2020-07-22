@@ -45,7 +45,6 @@ const requestPutBody = {
   primaryContact: mockSupplierData.primaryContact,
 };
 
-
 const mocks = (times = 2) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
@@ -53,11 +52,12 @@ const mocks = (times = 2) => {
     .reply(200, supplierDataFromOrdapi);
 };
 
-const pageSetup = async (withAuth = true, getRoute = true) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
+  if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)('selectedSupplier', 'supplier-1');
   }

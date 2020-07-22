@@ -13,12 +13,13 @@ const mocks = (data) => {
     .reply(200, data);
 };
 
-const pageSetup = async (withAuth = true, getRoute = true, data = {}) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, mockData: {} };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (getRoute) {
-    mocks(data);
+  if (setup.getRoute) {
+    mocks(setup.mockData);
   }
 };
 
@@ -37,7 +38,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false, false);
+  await pageSetup({ ...defaultPageSetup, withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -47,6 +48,7 @@ test('when user is not authenticated - should navigate to the identity server lo
 test('should render Supplier search page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+
   const page = Selector('[data-test-id="supplier-search-page"]');
 
   await t
@@ -197,7 +199,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
 });
 
 test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
-  await pageSetup(true, true, orderData);
+  await pageSetup({ ...defaultPageSetup, mockData: orderData });
   await t.navigateTo(pageUrl);
 
   await t
