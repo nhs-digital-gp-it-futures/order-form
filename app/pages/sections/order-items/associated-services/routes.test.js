@@ -11,7 +11,9 @@ import {
 } from 'buying-catalogue-library';
 import * as associatedServicesController from './dashboard/controller';
 import * as orderItemController from './order-item/controller';
+import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
@@ -19,6 +21,8 @@ import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection'
 
 jest.mock('../../../../logger');
 jest.mock('../../../../helpers/routes/getOrderItemPageData');
+jest.mock('../../../../helpers/controllers/validateOrderItemForm');
+jest.mock('../../../../helpers/controllers/saveOrderItem');
 jest.mock('../../../../helpers/api/ordapi/putOrderSection');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
@@ -35,6 +39,10 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
   id: '88421113', name: 'Cool Dude',
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
+
+const mockSelectedItemIdCookie = 'selectedItemId=item-1';
+const mockSelectedPriceIdCookie = 'selectedPriceId=1';
+const mockGetPageDataCookie = 'orderItemPageData={}';
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
@@ -173,6 +181,141 @@ describe('associated-services section routes', () => {
         .then((res) => {
           expect(res.text.includes('data-test-id="order-item-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
+  });
+
+  describe('POST /organisation/:orderId/associated-services/:orderItemId', () => {
+    const path = '/organisation/some-order-id/associated-services/neworderitem';
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrderItemPageData.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+
+      return testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie,
+          mockSelectedItemIdCookie,
+          mockSelectedPriceIdCookie,
+        ],
+        postPathCookies: [],
+        expectedRedirectPath: 'http://identity-server/login',
+      });
+    });
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      getOrderItemPageData.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+
+      return testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie,
+          mockSelectedItemIdCookie,
+          mockSelectedPriceIdCookie,
+        ],
+        postPathCookies: [
+          mockUnauthorisedCookie,
+        ],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      });
+    });
+
+    it('should show the associated-services order item page with errors if there are FE caught validation errors', async () => {
+      getOrderItemPageData.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      validateOrderItemForm.mockReturnValue([{}]);
+      orderItemController.getOrderItemErrorPageContext = jest.fn()
+        .mockResolvedValue({
+          errors: [{ text: 'Select a price', href: '#priceRequired' }],
+        });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie,
+        ],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockGetPageDataCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="order-item-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should show the associated-services order item page with errors if the api response is unsuccessful', async () => {
+      getOrderItemPageData.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      validateOrderItemForm.mockReturnValue([]);
+      saveOrderItem.mockResolvedValue({ success: false, errors: [{}] });
+      orderItemController.getOrderItemErrorPageContext = jest.fn()
+        .mockResolvedValue({
+          errors: [{ text: 'Select a price', href: '#priceRequired' }],
+        });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockGetPageDataCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="order-item-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should redirect to /organisation/some-order-id/associated-services if there are no validation errors and post is successful', async () => {
+      getOrderItemPageData.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      validateOrderItemForm.mockReturnValue([]);
+      saveOrderItem.mockResolvedValue({ success: true });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie,
+        ],
+      });
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockGetPageDataCookie])
+        .send({
+          _csrf: csrfToken,
+        })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/associated-services`);
         });
     });
   });
