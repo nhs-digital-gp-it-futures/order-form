@@ -29,7 +29,7 @@ describe('funding sources contextCreator', () => {
       const expectedContext = {
         questions: [
           {
-            id: 'selectFundingSourcePrice',
+            id: 'selectFundingSource',
             mainAdvice: 'Is General Medical Services (GMS) your only source of funding for this order?',
             options: [{
               value: true,
@@ -51,7 +51,7 @@ describe('funding sources contextCreator', () => {
       const expectedContext = {
         questions: [
           {
-            id: 'selectFundingSourcePrice',
+            id: 'selectFundingSource',
             mainAdvice: 'Is General Medical Services (GMS) your only source of funding for this order?',
             options: [{
               value: true,
