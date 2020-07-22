@@ -11,6 +11,20 @@ const context = {
   ...manifest,
   title: 'org1 orders',
   backLinkHref: '/organisation/order-1',
+  questions: [
+    {
+      id: 'selectFundingSourcePrice',
+      mainAdvice: 'Is General Medical Services (GMS) your only source of funding for this order?',
+      options: [{
+        value: true,
+        text: 'Yes',
+      },
+      {
+        value: false,
+        text: 'No',
+      }],
+    },
+  ],
   csrfToken: 'mockCsrfToken',
 };
 
@@ -37,6 +51,19 @@ describe('funding sources page', () => {
       const description = $('h2[data-test-id="funding-sources-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
+    });
+  }));
+
+  it('should render the "Select funding source" radio button options component', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const selectRecipientRadioOptions = $('[data-test-id="question-selectFundingSource"]');
+      expect(selectRecipientRadioOptions.length).toEqual(1);
+      expect(selectRecipientRadioOptions.find('legend').text().trim()).toEqual(context.questions[0].mainAdvice);
+      expect(selectRecipientRadioOptions.find('input').length).toEqual(2);
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(1)').find('input').attr('value')).toEqual('true');
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Yes');
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('false');
+      expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('No');
     });
   }));
 

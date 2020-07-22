@@ -8,8 +8,8 @@ const getFundingSourceEndpoint = orderId => (
 
 export const getFundingSource = async ({ orderId, accessToken }) => {
   const endpoint = getFundingSourceEndpoint(orderId);
-  const supplier = await getData({ endpoint, accessToken, logger });
+  const fundingSource = await getData({ endpoint, accessToken, logger });
   logger.info(`Funding source returned for ${orderId}`);
 
-  return supplier;
+  return fundingSource.onlyGMS;
 };

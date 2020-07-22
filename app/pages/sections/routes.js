@@ -139,8 +139,10 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/funding-sources', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    await getFundingSource({ orderId, accessToken });
-    const context = await getFundingSourcesContext({ orderId });
+    // const fundingSource = await getFundingSource({ orderId, accessToken });
+    const fundingSource = true;
+
+    const context = await getFundingSourcesContext({ orderId, fundingSource });
     logger.info(`navigating to order ${orderId} funding-sources page`);
     res.render('pages/sections/funding-sources/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

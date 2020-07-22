@@ -25,6 +25,51 @@ describe('funding sources contextCreator', () => {
       expect(context.description).toEqual(manifest.description);
     });
 
+    it('should return the select recipient question', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectFundingSourcePrice',
+            mainAdvice: 'Is General Medical Services (GMS) your only source of funding for this order?',
+            options: [{
+              value: true,
+              text: 'Yes',
+            },
+            {
+              value: false,
+              text: 'No',
+            }],
+          },
+        ],
+      };
+
+      const context = getContext({});
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
+
+    it('should return the select funding source question with a checked option if selectedAdditionalRecipientId passed in', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectFundingSourcePrice',
+            mainAdvice: 'Is General Medical Services (GMS) your only source of funding for this order?',
+            options: [{
+              value: true,
+              text: 'Yes',
+              checked: true,
+            },
+            {
+              value: false,
+              text: 'No',
+            }],
+          },
+        ],
+      };
+
+      const context = getContext({ fundingSource: true });
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
+
     it('should return the saveButtonText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.saveButtonText).toEqual(manifest.saveButtonText);

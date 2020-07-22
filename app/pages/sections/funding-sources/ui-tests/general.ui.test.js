@@ -71,6 +71,24 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
+test('should render a selectFundingSource question as radio button options', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const selectFundingSourceRadioOptions = Selector('[data-test-id="question-selectFundingSource"]');
+
+  await t
+    .expect(selectFundingSourceRadioOptions.exists).ok()
+    .expect(await extractInnerText(selectFundingSourceRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
+    .expect(selectFundingSourceRadioOptions.find('input').count).eql(2)
+
+    .expect(selectFundingSourceRadioOptions.find('input').nth(0).getAttribute('value')).eql('true')
+    .expect(await extractInnerText(selectFundingSourceRadioOptions.find('label').nth(0))).eql('Yes')
+
+    .expect(selectFundingSourceRadioOptions.find('input').nth(1).getAttribute('value')).eql('false')
+    .expect(await extractInnerText(selectFundingSourceRadioOptions.find('label').nth(1))).eql('No');
+});
+
 test('should render save button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
