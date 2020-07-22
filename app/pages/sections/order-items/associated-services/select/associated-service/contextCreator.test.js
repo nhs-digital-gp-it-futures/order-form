@@ -66,6 +66,81 @@ describe('associated-services associated-service contextCreator', () => {
       expect(context.questions).toEqual(expectedContext.questions);
     });
 
+    it('should return select associated service question with the selectedAssociatedService checked', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectAssociatedService',
+            mainAdvice: 'Select Associated Service',
+            options: [
+              {
+                value: 'associated-service-1',
+                text: 'Associated Service 1',
+              },
+              {
+                value: 'associated-service-2',
+                text: 'Associated Service 2',
+                checked: true,
+              },
+            ],
+          },
+        ],
+      };
+
+      const associatedServices = [
+        {
+          catalogueItemId: 'associated-service-1',
+          name: 'Associated Service 1',
+        },
+        {
+          catalogueItemId: 'associated-service-2',
+          name: 'Associated Service 2',
+        },
+      ];
+
+      const selectedAssociatedServiceId = 'associated-service-2';
+
+      const context = getContext({ associatedServices, selectedAssociatedServiceId });
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
+
+    it('should return no selected associated service question when selectedAssociatedService undefined', () => {
+      const expectedContext = {
+        questions: [
+          {
+            id: 'selectAssociatedService',
+            mainAdvice: 'Select Associated Service',
+            options: [
+              {
+                value: 'associated-service-1',
+                text: 'Associated Service 1',
+              },
+              {
+                value: 'associated-service-2',
+                text: 'Associated Service 2',
+              },
+            ],
+          },
+        ],
+      };
+
+      const associatedServices = [
+        {
+          catalogueItemId: 'associated-service-1',
+          name: 'Associated Service 1',
+        },
+        {
+          catalogueItemId: 'associated-service-2',
+          name: 'Associated Service 2',
+        },
+      ];
+
+      const selectedAssociatedServiceId = undefined;
+
+      const context = getContext({ associatedServices, selectedAssociatedServiceId });
+      expect(context.questions).toEqual(expectedContext.questions);
+    });
+
     it('should return the continueButtonText', () => {
       const context = getContext({});
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
