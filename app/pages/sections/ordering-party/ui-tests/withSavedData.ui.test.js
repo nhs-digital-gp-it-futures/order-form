@@ -3,17 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
-import { nockCheck } from '../../../../test-utils/nockChecker';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/ordering-party';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mockDataFromOrdapi = {
   name: 'Org name',
@@ -43,15 +35,19 @@ const mocks = () => {
     .reply(200, mockDataFromOrdapi);
 };
 
-const pageSetup = async () => {
-  mocks();
-  await setCookies();
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
+  }
 };
 
 fixture('Ordering-party page - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render organisation name with data from ORDAPI', async (t) => {
@@ -62,9 +58,7 @@ test('should render organisation name with data from ORDAPI', async (t) => {
   const text = Selector('div[data-test-id="organisation-name"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.orgNameHeading)
-    .expect(text.exists).ok()
     .expect(await extractInnerText(text)).eql(mockDataFromOrdapi.name);
 });
 
@@ -76,9 +70,7 @@ test('should render organisation ods code with data from ORDAPI', async (t) => {
   const text = Selector('div[data-test-id="organisation-ods-code"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.odsCodeHeading)
-    .expect(text.exists).ok()
     .expect(await extractInnerText(text)).eql(mockDataFromOrdapi.odsCode);
 });
 
@@ -98,25 +90,15 @@ test('should render organisation address with data from ORDAPI', async (t) => {
   const addressTextCountry = Selector('[data-test-id="organisation-address-country"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.orgAddressHeading)
-    .expect(addressTextLine1.exists).ok()
     .expect(await extractInnerText(addressTextLine1)).eql(mockDataFromOrdapi.address.line1)
-    .expect(addressTextLine2.exists).ok()
     .expect(await extractInnerText(addressTextLine2)).eql(mockDataFromOrdapi.address.line2)
-    .expect(addressTextLine3.exists).ok()
     .expect(await extractInnerText(addressTextLine3)).eql(mockDataFromOrdapi.address.line3)
-    .expect(addressTextLine4.exists).ok()
     .expect(await extractInnerText(addressTextLine4)).eql('')
-    .expect(addressTextLine5.exists).ok()
     .expect(await extractInnerText(addressTextLine5)).eql(mockDataFromOrdapi.address.line5)
-    .expect(addressTextTown.exists).ok()
     .expect(await extractInnerText(addressTextTown)).eql(mockDataFromOrdapi.address.town)
-    .expect(addressTextCounty.exists).ok()
     .expect(await extractInnerText(addressTextCounty)).eql(mockDataFromOrdapi.address.county)
-    .expect(addressTextPostcode.exists).ok()
     .expect(await extractInnerText(addressTextPostcode)).eql(mockDataFromOrdapi.address.postcode)
-    .expect(addressTextCountry.exists).ok()
     .expect(await extractInnerText(addressTextCountry)).eql(mockDataFromOrdapi.address.country);
 });
 

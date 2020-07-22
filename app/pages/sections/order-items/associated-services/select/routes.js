@@ -1,9 +1,15 @@
 import express from 'express';
+import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../../logger';
 import config from '../../../../../config';
 import { withCatch, extractAccessToken } from '../../../../../helpers/routes/routerHelper';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
-import { getAssociatedServicePageContext, findAssociatedServices } from './associated-service/controller';
+import {
+  getAssociatedServicePageContext,
+  getAssociatedServiceErrorPageContext,
+  findAssociatedServices,
+  validateAssociatedServicesForm,
+} from './associated-service/controller';
 import {
   getAssociatedServicePricePageContext,
   getAssociatedServicePriceErrorPageContext,
@@ -32,6 +38,16 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         logger,
       });
 
+      if (associatedServices.length === 0) {
+        throw new ErrorContext({
+          status: 404,
+          title: 'No Associated Services found',
+          description: 'There are no Associated Services offered by this supplier. Go back to the Associated Services dashboard and select continue to complete the section.',
+          backLinkText: 'Go back',
+          backLinkHref: `${config.baseUrl}/organisation/${orderId}/associated-services`,
+        });
+      }
+
       const selectedAssociatedServiceId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
       sessionManager.saveToSession({ req, key: 'associatedServices', value: associatedServices });
 
@@ -48,20 +64,35 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
 
   router.post('/associated-service', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const response = validateAssociatedServicesForm({ data: req.body });
 
-    const selectedItemId = req.body.selectAssociatedService;
-    const selectedItem = findSelectedCatalogueItemInSession({
-      req,
-      selectedItemId,
-      sessionManager,
-      catalogueItemsKey: 'associatedServices',
+    if (response.success) {
+      const selectedItemId = req.body.selectAssociatedService;
+      const selectedItem = findSelectedCatalogueItemInSession({
+        req,
+        selectedItemId,
+        sessionManager,
+        catalogueItemsKey: 'associatedServices',
+      });
+
+      sessionManager.saveToSession({ req, key: 'selectedItemId', value: selectedItemId });
+      sessionManager.saveToSession({ req, key: 'selectedItemName', value: selectedItem.name });
+
+      logger.info('redirecting to associated services select price page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`);
+    }
+
+    const associatedServices = sessionManager.getFromSession({ req, key: 'associatedServices' });
+    const context = await getAssociatedServiceErrorPageContext({
+      orderId,
+      associatedServices,
+      validationErrors: response.errors,
     });
 
-    sessionManager.saveToSession({ req, key: 'selectedItemId', value: selectedItemId });
-    sessionManager.saveToSession({ req, key: 'selectedItemName', value: selectedItem.name });
-
-    logger.info('redirecting to associated services select price page');
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`);
+    return res.render(
+      'pages/sections/order-items/associated-services/select/associated-service/template.njk',
+      addContext({ context, user: req.user, csrfToken: req.csrfToken() }),
+    );
   }));
 
   router.get('/associated-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {

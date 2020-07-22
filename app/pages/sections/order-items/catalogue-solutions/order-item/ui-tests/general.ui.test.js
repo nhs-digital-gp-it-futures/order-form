@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../commonManifest.json';
 import content from '../flat/ondemand/manifest.json';
 import { solutionsApiUrl } from '../../../../../../config';
-import { nockCheck } from '../../../../../../test-utils/nockChecker';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
@@ -20,9 +20,6 @@ const selectedPrice = {
   price: 0.1,
 };
 
-const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-});
 const itemIdInSession = 'solution-1';
 const itemNameInSession = 'Solution One';
 const selectedRecipientIdInSession = 'recipient-1';
@@ -37,28 +34,28 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const setState = ClientFunction((key, value) => {
-  document.cookie = `${key}=${value}`;
-});
-
 const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false) => {
-  if (withAuth) {
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
     mocks();
-    await setState('fakeToken', authTokenInSession);
-    await setState('selectedRecipientId', selectedRecipientIdInSession);
-    await setState('selectedRecipientName', selectedRecipientNameInSession);
-    await setState('selectedItemId', itemIdInSession);
-    await setState('selectedItemName', itemNameInSession);
-    await setState('selectedPriceId', selectedPriceIdInSession);
-    if (postRoute) {
-      await setState('orderItemPageData', orderItemPageDataInSession);
-    }
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+    await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
+    await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
+    await setState(ClientFunction)('selectedItemId', itemIdInSession);
+    await setState(ClientFunction)('selectedItemName', itemNameInSession);
+    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+  }
+  if (setup.postRoute) {
+    await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
   }
 };
 
@@ -67,7 +64,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Catalogue-solutions - common - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
@@ -75,7 +72,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false);
+  await pageSetup({ ...defaultPageSetup, withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -98,12 +95,11 @@ test('should link to /order/organisation/order-id/catalogue-solutions/select/sol
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
     .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
 });
 
 test('should link to /order/organisation/order-id/catalogue-solutions/select/solution/price/recipient for backlink after validation errors', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
@@ -111,7 +107,6 @@ test('should link to /order/organisation/order-id/catalogue-solutions/select/sol
 
   await t
     .click(saveButton)
-    .expect(goBackLink.exists).ok()
     .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
 });
 
@@ -122,7 +117,6 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="order-item-page-title"]');
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql('Solution One information for recipient-name (recipient-1)');
 });
 
@@ -133,7 +127,6 @@ test('should render the description', async (t) => {
   const description = Selector('h2[data-test-id="order-item-page-description"]');
 
   await t
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(commonContent.description);
 });
 
@@ -144,7 +137,6 @@ test('should render legend with mainAdvice for delivery date question', async (t
   const mainAdvice = Selector('legend');
 
   await t
-    .expect(mainAdvice.exists).ok()
     .expect(await extractInnerText(mainAdvice)).eql(content.questions.deliveryDate.mainAdvice);
 });
 
@@ -155,7 +147,6 @@ test('should render additionalAdvice for delivery date question', async (t) => {
   const additionalAdvice = Selector('[data-test-id="date-field-input"] span.nhsuk-hint');
 
   await t
-    .expect(additionalAdvice.exists).ok()
     .expect(await extractInnerText(additionalAdvice)).eql(content.questions.deliveryDate.additionalAdvice);
 });
 
@@ -169,11 +160,8 @@ test('should render labels for day, month and year inputs for delivery date ques
   const yearLabel = labels.nth(2);
 
   await t
-    .expect(dayLabel.exists).ok()
     .expect(await extractInnerText(dayLabel)).eql('Day')
-    .expect(monthLabel.exists).ok()
     .expect(await extractInnerText(monthLabel)).eql('Month')
-    .expect(yearLabel.exists).ok()
     .expect(await extractInnerText(yearLabel)).eql('Year');
 });
 
@@ -187,15 +175,14 @@ test('should render input fields for day, month and year for delivery date quest
   const yearInput = inputFields.nth(2);
 
   await t
-    .expect(dayInput.exists).ok()
     .expect(dayInput.getAttribute('id')).eql('deliveryDate-day')
     .expect(dayInput.getAttribute('name')).eql('deliveryDate-day')
     .expect(dayInput.getAttribute('type')).eql('number')
-    .expect(monthInput.exists).ok()
+
     .expect(monthInput.getAttribute('id')).eql('deliveryDate-month')
     .expect(monthInput.getAttribute('name')).eql('deliveryDate-month')
     .expect(monthInput.getAttribute('type')).eql('number')
-    .expect(yearInput.exists).ok()
+
     .expect(yearInput.getAttribute('id')).eql('deliveryDate-year')
     .expect(yearInput.getAttribute('name')).eql('deliveryDate-year')
     .expect(yearInput.getAttribute('type')).eql('number');
@@ -208,14 +195,13 @@ test('should render the delete button', async (t) => {
   const button = Selector('[data-test-id="delete-button"] button');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(commonContent.deleteButton.text)
     .expect(button.hasClass('nhsuk-button--secondary')).eql(true)
     .expect(button.hasClass('nhsuk-button--disabled')).eql(true);
 });
 
 test('delete button should still be disabled after validation errors', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const deleteButton = Selector('[data-test-id="delete-button"] button');
@@ -236,12 +222,11 @@ test('should render the save button', async (t) => {
   const button = Selector('[data-test-id="save-button"] button');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(commonContent.saveButtonText);
 });
 
 test('should show the correct error summary and input error when no date is entered and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -271,7 +256,7 @@ test('should show the correct error summary and input error when no date is ente
 });
 
 test('should show the correct error summary and input error when no day is entered and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -307,7 +292,7 @@ test('should show the correct error summary and input error when no day is enter
 });
 
 test('should show the correct error summary and input error when no month is entered and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -343,7 +328,7 @@ test('should show the correct error summary and input error when no month is ent
 });
 
 test('should show the correct error summary and input error when no year is entered and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -379,7 +364,7 @@ test('should show the correct error summary and input error when no year is ente
 });
 
 test('should show the correct error summary and input error when a year > 4 chars is entered and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -417,7 +402,7 @@ test('should show the correct error summary and input error when a year > 4 char
 });
 
 test('should show the correct error summary and input error when a year < 4 chars is entered and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -455,7 +440,7 @@ test('should show the correct error summary and input error when a year < 4 char
 });
 
 test('should show the correct error summary and input error when a day > 31 is entered and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -493,7 +478,7 @@ test('should show the correct error summary and input error when a day > 31 is e
 });
 
 test('should show the correct error summary and input error when a month > 12 is entered and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -531,7 +516,7 @@ test('should show the correct error summary and input error when a month > 12 is
 });
 
 test('should show the correct error summary and input error when a year < 1000 is entered and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -569,7 +554,7 @@ test('should show the correct error summary and input error when a year < 1000 i
 });
 
 test('should show the correct error summary and input error when incorrect day/month combo is entered and save is clicked', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
