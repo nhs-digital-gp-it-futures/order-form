@@ -44,8 +44,7 @@ describe('associated-services select-associated-service controller', () => {
 
   describe('getAssociatedServiceErrorPageContext', () => {
     it('should call getErrorContext with the correct params', async () => {
-      contextCreator.getErrorContext
-        .mockResolvedValueOnce();
+      contextCreator.getErrorContext.mockResolvedValueOnce();
 
       const params = {
         orderId: 'order-1',
