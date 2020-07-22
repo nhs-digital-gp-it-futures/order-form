@@ -5,7 +5,7 @@ import commonContent from '../commonManifest.json';
 import { solutionsApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services/neworderitem';
 
 const selectedPrice = {
   priceId: 1,
@@ -16,21 +16,16 @@ const selectedPrice = {
     name: 'consultation',
     description: 'per consultation',
   },
-  price: 0.1,
+  price: 0.11,
 };
-const catalogueItem = { id: 'item-1', name: 'Item One' };
 
 const itemIdInSession = 'item-1';
 const itemNameInSession = 'Item One';
-const selectedRecipientIdInSession = 'recipient-1';
-const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
 
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
-  itemName: catalogueItem.name,
-  serviceRecipientId: selectedRecipientIdInSession,
-  serviceRecipientName: selectedRecipientNameInSession,
+  itemName: itemNameInSession,
   selectedPrice,
 });
 
@@ -48,8 +43,6 @@ const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)('fakeToken', authTokenInSession);
-    await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
-    await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
     await setState(ClientFunction)('selectedItemId', itemIdInSession);
     await setState(ClientFunction)('selectedItemName', itemNameInSession);
     await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
@@ -61,7 +54,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Additional-services order items - common - general')
+fixture('Associated-services order items - common - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -79,7 +72,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render additional-services order-item page', async (t) => {
+test('should render associated-services order-item page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
   const page = Selector('[data-test-id="order-item-page"]');
@@ -88,17 +81,17 @@ test('should render additional-services order-item page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-1/additional-services/select/additional-service/recipient for backlink', async (t) => {
+test('should link to /order/organisation/order-1/associated-services/select/associated-service/price for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/associated-services/select/associated-service/price');
 });
 
-test('should link to /order/organisation/order-1/additional-services/select/solution/price/recipient for backlink after validation errors', async (t) => {
+test('should link to /order/organisation/order-1/associated-services/select/associated-service/price for backlink after validation errors', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -107,7 +100,7 @@ test('should link to /order/organisation/order-1/additional-services/select/solu
 
   await t
     .click(saveButton)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/associated-services/select/associated-service/price');
 });
 
 test('should render the title', async (t) => {
@@ -117,7 +110,7 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="order-item-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql('Item One information for recipient-name (recipient-1)');
+    .expect(await extractInnerText(title)).eql('Item One information for order-1');
 });
 
 test('should render the description', async (t) => {

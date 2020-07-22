@@ -3,17 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../config';
-import { nockCheck } from '../../../test-utils/nockChecker';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/preview';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mockOrder = {
   description: 'some order description',
@@ -152,17 +144,19 @@ const mocks = () => {
     .reply(200, mockOrder);
 };
 
-const pageSetup = async (withAuth = true) => {
-  if (withAuth) {
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
     mocks();
-    await setCookies();
   }
 };
 
 fixture('Order Summary Preview - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render the Call-off ordering party and supplier details in the table', async (t) => {
@@ -175,9 +169,6 @@ test('should render the Call-off ordering party and supplier details in the tabl
   const supplierDetails = calloffAndSupplierDetails.find('div[data-test-id="supplier"]');
 
   await t
-    .expect(calloffAndSupplierDetails.exists).ok()
-
-    .expect(calloffPartyDetails.exists).ok()
     .expect(calloffPartyDetails.find('div').count).eql(8)
     .expect(await extractInnerText(calloffPartyDetails.find('div').nth(0))).eql('CallOffFirstName CallOffLastName')
     .expect(await extractInnerText(calloffPartyDetails.find('div').nth(1))).eql('Call off org Name')
@@ -188,7 +179,6 @@ test('should render the Call-off ordering party and supplier details in the tabl
     .expect(await extractInnerText(calloffPartyDetails.find('div').nth(6))).eql('Calloff Town')
     .expect(await extractInnerText(calloffPartyDetails.find('div').nth(7))).eql('CO12 1AA')
 
-    .expect(supplierDetails.exists).ok()
     .expect(supplierDetails.find('div').count).eql(7)
     .expect(await extractInnerText(supplierDetails.find('div').nth(0))).eql('SuppFirstName SuppLastName')
     .expect(await extractInnerText(supplierDetails.find('div').nth(1))).eql('Supplier Name')
@@ -206,7 +196,6 @@ test('should render the commencement date label and date when data is provided',
   const commencementDate = Selector('[data-test-id="commencement-date"]');
 
   await t
-    .expect(commencementDate.exists).ok()
     .expect(await extractInnerText(commencementDate)).eql(`${content.commencementDateLabel} 1 February 2020`);
 });
 
@@ -220,12 +209,7 @@ test('should render the one off cost totals table with one off cost total price'
   const totalCostValueCell = row1.find('div[data-test-id="total-cost-value"]');
 
   await t
-    .expect(oneOffCostTotalsTable.exists).ok()
-
-    .expect(totalCostLabelCell.exists).ok()
     .expect(await extractInnerText(totalCostLabelCell)).eql(content.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data)
-
-    .expect(totalCostValueCell.exists).ok()
     .expect(await extractInnerText(totalCostValueCell)).eql('101.11');
 });
 
@@ -242,9 +226,6 @@ test('should render the recurring cost item details in the table', async (t) => 
   const recurringCostRow5 = recurringCostTable.find('[data-test-id="table-row-5"]');
 
   await t
-    .expect(recurringCostRow0.exists).ok()
-    .expect(recurringCostRow1.exists).ok()
-
     .expect(await extractInnerText(recurringCostRow0.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
     .expect(await extractInnerText(recurringCostRow0.find('div').nth(1))).eql('C000001-01-A10001-1')
     .expect(await extractInnerText(recurringCostRow0.find('div').nth(2))).eql('Some catalogue name')
@@ -316,23 +297,14 @@ test('should render the recurring cost totals table with the totals provided', a
   const totalOwnershipTermsLabelCell = row4.find('div[data-test-id="total-ownership-terms"]');
 
   await t
-    .expect(recurringCostTotalsTable.exists).ok()
-
-    .expect(totalYearCostLabelCell.exists).ok()
     .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data)
-    .expect(totalYearCostValueCell.exists).ok()
     .expect(await extractInnerText(totalYearCostValueCell)).eql('1,981.02')
 
-    .expect(totalMonthlyCostLabelCell.exists).ok()
     .expect(await extractInnerText(totalMonthlyCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data)
-    .expect(totalMonthlyCostValueCell.exists).ok()
     .expect(await extractInnerText(totalMonthlyCostValueCell)).eql('191.69')
 
-    .expect(totalOwnershipCostLabelCell.exists).ok()
     .expect(await extractInnerText(totalOwnershipCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data)
-    .expect(totalOwnershipCostValueCell.exists).ok()
     .expect(await extractInnerText(totalOwnershipCostValueCell)).eql('2,345.43')
 
-    .expect(totalOwnershipTermsLabelCell.exists).ok()
     .expect(await extractInnerText(totalOwnershipTermsLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data);
 });

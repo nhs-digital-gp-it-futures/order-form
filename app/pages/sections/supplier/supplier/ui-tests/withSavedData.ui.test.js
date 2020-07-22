@@ -3,25 +3,11 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../config';
-import { nockCheck } from '../../../../../test-utils/nockChecker';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
 
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
-
-const setSessionState = ClientFunction(() => {
-  const cookieValue = 'supplier-1';
-
-  document.cookie = `selectedSupplier=${cookieValue}`;
-});
-
-const supplierDataFromOrdapi = {
+const mockSupplierData = {
   name: 'SupplierOne',
   address: {
     line1: 'line 1',
@@ -42,6 +28,23 @@ const supplierDataFromOrdapi = {
   },
 };
 
+const supplierDataFromOrdapi = mockSupplierData;
+
+const requestPutBody = {
+  name: mockSupplierData.name,
+  address: {
+    line1: mockSupplierData.address.line1,
+    line2: mockSupplierData.address.line2,
+    line3: mockSupplierData.address.line3,
+    line5: mockSupplierData.address.line5,
+    town: mockSupplierData.address.town,
+    county: mockSupplierData.address.county,
+    postcode: mockSupplierData.address.postcode,
+    country: mockSupplierData.address.country,
+  },
+  primaryContact: mockSupplierData.primaryContact,
+};
+
 const mocks = (times = 2) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
@@ -49,37 +52,31 @@ const mocks = (times = 2) => {
     .reply(200, supplierDataFromOrdapi);
 };
 
-const errorMocks = () => {
-  mocks(1);
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/supplier')
-    .reply(400, { errors: [] });
+const defaultPageSetup = { withAuth: true, getRoute: true };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
+    await setState(ClientFunction)('selectedSupplier', 'supplier-1');
+  }
 };
-
-const pageSetup = async () => {
-  await setCookies();
-  await setSessionState();
-  mocks();
-};
-
-const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Supplier page - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    await nockCheck(nock, t);
+    await nockAndErrorCheck(nock, t);
   });
 
-test('should navigate to /organisation/order-id when click on backlink if data comes from ORDAPI', async (t) => {
+test('should link to /order/organisation/order-id for backLink when data comes from ORDAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
 test('should render supplier name with data from ORDAPI', async (t) => {
@@ -90,9 +87,7 @@ test('should render supplier name with data from ORDAPI', async (t) => {
   const text = Selector('div[data-test-id="supplier-name"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.supplierNameHeading)
-    .expect(text.exists).ok()
     .expect(await extractInnerText(text)).eql(supplierDataFromOrdapi.name);
 });
 
@@ -112,25 +107,15 @@ test('should render supplier address name with data from ORDAPI', async (t) => {
   const addressTextCountry = Selector('[data-test-id="supplier-address-country"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.supplierAddressHeading)
-    .expect(addressTextLine1.exists).ok()
     .expect(await extractInnerText(addressTextLine1)).eql(supplierDataFromOrdapi.address.line1)
-    .expect(addressTextLine2.exists).ok()
     .expect(await extractInnerText(addressTextLine2)).eql(supplierDataFromOrdapi.address.line2)
-    .expect(addressTextLine3.exists).ok()
     .expect(await extractInnerText(addressTextLine3)).eql(supplierDataFromOrdapi.address.line3)
-    .expect(addressTextLine4.exists).ok()
     .expect(await extractInnerText(addressTextLine4)).eql('')
-    .expect(addressTextLine5.exists).ok()
     .expect(await extractInnerText(addressTextLine5)).eql(supplierDataFromOrdapi.address.line5)
-    .expect(addressTextTown.exists).ok()
     .expect(await extractInnerText(addressTextTown)).eql(supplierDataFromOrdapi.address.town)
-    .expect(addressTextCounty.exists).ok()
     .expect(await extractInnerText(addressTextCounty)).eql(supplierDataFromOrdapi.address.county)
-    .expect(addressTextPostcode.exists).ok()
     .expect(await extractInnerText(addressTextPostcode)).eql(supplierDataFromOrdapi.address.postcode)
-    .expect(addressTextCountry.exists).ok()
     .expect(await extractInnerText(addressTextCountry)).eql(supplierDataFromOrdapi.address.country);
 });
 
@@ -151,7 +136,14 @@ test('should render the primary contact details form with populated data from OR
 });
 
 test('should not show the search again link when there are validation errors and details are provided from ORDAPI', async (t) => {
-  errorMocks();
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier', requestPutBody)
+    .reply(400, { errors: [] });
+
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, supplierDataFromOrdapi);
+
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -166,8 +158,15 @@ test('should not show the search again link when there are validation errors and
     .expect(searchAgainLink.exists).notOk();
 });
 
-test('should redirect back to the /organisation/order-id when clicking the backlink validation errors and details are provided from ORDAPI', async (t) => {
-  errorMocks();
+test('should link back to the /order/organisation/order-id when clicking the backlink validation errors and details are provided from ORDAPI', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier', requestPutBody)
+    .reply(400, { errors: [] });
+
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, supplierDataFromOrdapi);
+
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -178,6 +177,5 @@ test('should redirect back to the /organisation/order-id when clicking the backl
     .click(saveButton);
 
   await t
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
 });
