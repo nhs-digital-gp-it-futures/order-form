@@ -227,7 +227,7 @@ test('should show the correct error summary and input error when the price is re
 
 test('should navigate to catalogue solution dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/order-items/existing-order-id')
+    .put('/api/v1/orders/order-1/order-items/existing-order-id', { deliveryDate: '2020-04-27', quantity: 310, price: 0.1 })
     .reply(200, {});
 
   await pageSetup({ ...defaultPageSetup, postRoute: true });
@@ -244,7 +244,7 @@ test('should navigate to catalogue solution dashboard page if save button is cli
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/order-items/existing-order-id')
+    .put('/api/v1/orders/order-1/order-items/existing-order-id', { deliveryDate: '2020-04-27', quantity: 3, price: 0.1 })
     .reply(400, {
       errors: [{
         field: 'DeliveryDate',
