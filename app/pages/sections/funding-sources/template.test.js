@@ -14,7 +14,7 @@ const context = {
   csrfToken: 'mockCsrfToken',
 };
 
-describe('description page', () => {
+describe('funding sources page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
@@ -24,7 +24,7 @@ describe('description page', () => {
     });
   }));
 
-  it('should render the description page title', componentTester(setup, (harness) => {
+  it('should render the funding sources page title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const title = $('h1[data-test-id="funding-sources-page-title"]');
       expect(title.length).toEqual(1);
@@ -32,7 +32,7 @@ describe('description page', () => {
     });
   }));
 
-  it('should render the description page description', componentTester(setup, (harness) => {
+  it('should render the funding sources page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const description = $('h2[data-test-id="funding-sources-page-description"]');
       expect(description.length).toEqual(1);
