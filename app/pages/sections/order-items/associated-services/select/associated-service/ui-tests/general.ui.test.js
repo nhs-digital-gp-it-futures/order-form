@@ -156,6 +156,28 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
+test('should render the error page if no associated services are found', async (t) => {
+  nock(bapiUrl)
+    .get('/api/v1/catalogue-items?supplierId=sup-1&catalogueItemType=AssociatedService')
+    .reply(200, []);
+
+  await pageSetup(true, false, false);
+  await t.navigateTo(pageUrl);
+
+  const backLink = Selector('[data-test-id="error-back-link"]');
+  const errorTitle = Selector('[data-test-id="error-title"]');
+  const errorDescription = Selector('[data-test-id="error-description"]');
+
+  await t
+    .expect(backLink.exists).ok()
+    .expect(await extractInnerText(backLink)).eql('Go back')
+    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/order-id/associated-services')
+    .expect(errorTitle.exists).ok()
+    .expect(await extractInnerText(errorTitle)).eql('No Associated Services found')
+    .expect(errorDescription.exists).ok()
+    .expect(await extractInnerText(errorDescription)).eql('There are no Associated Services offered by this supplier. Go back to the Associated Services dashboard and select continue to complete the section.');
+});
+
 test('should show the error summary when no associated service is selected causing validation error', async (t) => {
   await pageSetup(true, true);
   await t.navigateTo(pageUrl);
