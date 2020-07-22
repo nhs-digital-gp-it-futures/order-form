@@ -1,11 +1,12 @@
 import {
   getOrderItemContext,
+  getOrderItemErrorPageContext,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from '../../../../../helpers/controllers/manifestProvider';
 
 jest.mock('buying-catalogue-library');
-jest.mock('./contextCreator', () => ({ getContext: jest.fn() }));
+jest.mock('./contextCreator', () => ({ getContext: jest.fn(), getErrorContext: jest.fn() }));
 jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
 jest.mock('../../../../../helpers/controllers/manifestProvider', () => ({
   getSelectedPriceManifest: jest.fn(),
@@ -98,6 +99,61 @@ describe('associated-services order-item controller', () => {
         itemName: 'item-name',
         selectedPrice,
         formData,
+      });
+    });
+  });
+
+  describe('getOrderItemErrorPageContext', () => {
+    afterEach(() => {
+      jest.resetAllMocks();
+    });
+
+    it('should call getSelectedPriceManifest with the correct params', async () => {
+      await getOrderItemErrorPageContext({
+        orderId: 'order-1',
+        orderItemType,
+        itemName: 'item-name',
+        selectedPriceId: 'some-price-id',
+        selectedPrice,
+        formData: { quantity: '100' },
+        validationErrors: {},
+      });
+
+      expect(getSelectedPriceManifest.getSelectedPriceManifest.mock.calls.length).toEqual(1);
+      expect(getSelectedPriceManifest.getSelectedPriceManifest).toHaveBeenCalledWith({
+        orderItemType,
+        provisioningType: selectedPrice.provisioningType,
+        type: selectedPrice.type,
+      });
+    });
+
+    it('should call getOrderItemErrorPageContext with the correct params', async () => {
+      const selectedPriceManifest = { description: 'fake manifest' };
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+
+      await getOrderItemErrorPageContext({
+        orderId: 'order-1',
+        itemName: 'item-name',
+        selectedPriceId: 'some-price-id',
+        selectedPrice,
+        formData: {
+          quantity: '100  ',
+          price: '  0.1',
+        },
+      });
+
+      expect(contextCreator.getErrorContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getErrorContext).toHaveBeenCalledWith({
+        commonManifest: { title: 'fake manifest' },
+        selectedPriceManifest,
+        orderId: 'order-1',
+        itemName: 'item-name',
+        selectedPriceId: 'some-price-id',
+        selectedPrice,
+        formData: {
+          quantity: '100',
+          price: '0.1',
+        },
       });
     });
   });

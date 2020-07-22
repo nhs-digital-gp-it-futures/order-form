@@ -41,7 +41,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedSolutionId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
     const supplierId = await getSupplierId({ orderId, accessToken });
-    const solutions = await getCatalogueItems({ supplierId, catalogueItemType: 'Solution', accessToken });
+    const solutions = await getCatalogueItems({ supplierId, catalogueItemType: 'Solution' });
     sessionManager.saveToSession({ req, key: 'solutions', value: solutions });
 
     const context = await getSolutionsPageContext({ orderId, solutions, selectedSolutionId });

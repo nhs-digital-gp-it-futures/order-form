@@ -37,19 +37,21 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const mocks = () => {
+const mocks = (mockSelectedPrice) => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
-    .reply(200, selectedPrice);
+    .reply(200, mockSelectedPrice);
 };
 
-const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const defaultPageSetup = {
+  withAuth: true, getRoute: true, postRoute: false, mockData: selectedPrice,
+};
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
   if (setup.getRoute) {
-    mocks();
+    mocks(setup.mockData);
     await setState(ClientFunction)('fakeToken', authTokenInSession);
     await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
     await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
@@ -165,6 +167,19 @@ test('should render the price table content', async (t) => {
     .eql(content.addPriceTable.cellInfo.price.expandableSection.innerComponent)
 
     .expect(await extractInnerText(orderUnit)).eql(selectedPrice.itemUnit.description);
+});
+
+test('should render the price with a value of 0 when returned from the API', async (t) => {
+  const mockSelectedPrice = { ...selectedPrice, price: 0 };
+  await pageSetup({ ...defaultPageSetup, postRoute: true, mockData: mockSelectedPrice });
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="price-table"]');
+  const row = table.find('[data-test-id="table-row-0"]');
+  const priceInput = row.find('[data-test-id="question-price"] input');
+
+  await t
+    .expect(priceInput.getAttribute('value')).eql(mockSelectedPrice.price.toString());
 });
 
 test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
