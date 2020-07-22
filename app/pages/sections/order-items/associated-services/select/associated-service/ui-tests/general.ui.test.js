@@ -155,3 +155,17 @@ test('should render the Continue button', async (t) => {
     .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
+
+test('should redirect to /organisation/order-id/associated-services/select/associated-service/price when an associated service is selected', async (t) => {
+  await pageSetup(true, true);
+  await t.navigateTo(pageUrl);
+
+  const selectAssociatedServiceRadioOptions = Selector('[data-test-id="question-selectAssociatedService"]');
+  const firstAssociatedService = selectAssociatedServiceRadioOptions.find('input').nth(0);
+  const button = Selector('[data-test-id="continue-button"] button');
+
+  await t
+    .click(firstAssociatedService)
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service/price');
+});

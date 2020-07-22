@@ -9,6 +9,7 @@ import {
   getAssociatedServicePriceErrorPageContext,
   validateAssociatedServicePriceForm,
 } from './price/controller';
+import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 
 const router = express.Router({ mergeParams: true });
 
@@ -31,15 +32,37 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         logger,
       });
 
+      const selectedAssociatedServiceId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
+      sessionManager.saveToSession({ req, key: 'associatedServices', value: associatedServices });
+
       const context = getAssociatedServicePageContext({
         orderId,
         associatedServices,
+        selectedAssociatedServiceId,
       });
 
       logger.info(`navigating to order ${orderId} associated-services select associated-service page`);
       return res.render('pages/sections/order-items/associated-services/select/associated-service/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     }),
   );
+
+  router.post('/associated-service', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    const selectedItemId = req.body.selectAssociatedService;
+    const selectedItem = findSelectedCatalogueItemInSession({
+      req,
+      selectedItemId,
+      sessionManager,
+      catalogueItemsKey: 'associatedServices',
+    });
+
+    sessionManager.saveToSession({ req, key: 'selectedItemId', value: selectedItemId });
+    sessionManager.saveToSession({ req, key: 'selectedItemName', value: selectedItem.name });
+
+    logger.info('redirecting to associated services select price page');
+    return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`);
+  }));
 
   router.get('/associated-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
