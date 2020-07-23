@@ -44,7 +44,7 @@ describe('getOrder', () => {
       catalogueItemType: 'Solution', provisioningType: 'OnDemand', itemId: 'recurring-1',
     };
     const recurringCostItem2 = {
-      catalogueItemType: 'Solution', provisioningType: 'OnDemand', itemId: 'recurring-2',
+      catalogueItemType: 'AssociatedService', provisioningType: 'OnDemand', itemId: 'recurring-2',
     };
 
     it('should return a single oneOffCostItems when orderItems of AssociatedService and Declarative are returned from the API', async () => {
@@ -56,7 +56,7 @@ describe('getOrder', () => {
       expect(recurringCostItems).toEqual([]);
     });
 
-    it('should return a single recurringCostItems when orderItems of not AssociatedService and Declarative are returned from the API', async () => {
+    it('should return a single recurringCostItems when orderItems is not an AssociatedService and Declarative', async () => {
       getData.mockResolvedValueOnce({ orderItems: [recurringCostItem1] });
 
       const { oneOffCostItems, recurringCostItems } = await getOrder({ orderId, accessToken });
@@ -76,7 +76,6 @@ describe('getOrder', () => {
       expect(oneOffCostItems).toEqual([oneOffCostItem2, oneOffCostItem1]);
     });
   });
-
 
   describe('should return the serviceRecipients returned from the API as a dict', () => {
     const plovdivSoftware = {
