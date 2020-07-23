@@ -69,9 +69,13 @@ export const routes = (authProvider, sessionManager) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
 
-    const orderData = await getOrder({ orderId, accessToken });
+    const {
+      orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
+    } = await getOrder({ orderId, accessToken });
 
-    const context = await getPreviewPageContext({ orderId, orderData });
+    const context = await getPreviewPageContext({
+      orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
+    });
 
     res.render('pages/preview/template.njk', addContext({ context, user: req.user }));
   }));
