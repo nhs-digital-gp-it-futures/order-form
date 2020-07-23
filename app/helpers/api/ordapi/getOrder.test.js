@@ -1,5 +1,5 @@
 import { getData } from 'buying-catalogue-library';
-import { getOrder } from './getOrder';
+import { getOrder, sortServiceRecipients } from './getOrder';
 import { orderApiUrl } from '../../../config';
 import { logger } from '../../../logger';
 
@@ -135,5 +135,45 @@ describe('getOrder', () => {
 
       expect(serviceRecipients).toEqual(expectServiceRecipients);
     });
+  });
+});
+
+describe('sort service recipients by name', () => {
+  const firstRecipient = {
+    odsCode: 'A00001',
+    name: 'A Recipient',
+  };
+
+  const secondRecipient = {
+    odsCode: 'A00002',
+    name: 'B Recipient',
+  };
+
+  it('should return a list of 1 service recipients sorted by name', () => {
+    const serviceRecipients = [firstRecipient];
+
+    const sortedServiceRecipients = sortServiceRecipients(serviceRecipients);
+
+    expect(sortedServiceRecipients).toEqual(serviceRecipients);
+  });
+
+  it('should return a list of 2 service recipients sorted by name', () => {
+    const expectedServiceRecipients = [firstRecipient, secondRecipient];
+
+    const serviceRecipients = [secondRecipient, firstRecipient];
+
+    const sortedServiceRecipients = sortServiceRecipients(serviceRecipients);
+
+    expect(sortedServiceRecipients).toEqual(expectedServiceRecipients);
+  });
+
+  it('should return a list of 2 service recipients sorted by name', () => {
+    const expectedServiceRecipients = [firstRecipient, secondRecipient];
+
+    const serviceRecipients = [secondRecipient, firstRecipient];
+
+    const sortedServiceRecipients = sortServiceRecipients(serviceRecipients);
+
+    expect(sortedServiceRecipients).toEqual(expectedServiceRecipients);
   });
 });

@@ -24,6 +24,18 @@ const transformOrderItems = (orderItems = []) => {
   return { oneOffCostItems, recurringCostItems };
 };
 
+export const sortServiceRecipients = (serviceRecipients) => {
+  const sortedServiceRecipients = serviceRecipients.sort((a, b) => {
+    const nameA = a.name.toLowerCase();
+    const nameB = b.name.toLowerCase();
+
+    if (nameA < nameB) return -1;
+    if (nameA > nameB) return 1;
+    return 0;
+  });
+  return sortedServiceRecipients;
+};
+
 export const getOrder = async ({ orderId, accessToken }) => {
   const endpoint = getOrderEndpoint(orderId);
   const orderData = await getData({
