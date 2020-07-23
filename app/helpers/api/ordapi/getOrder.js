@@ -14,8 +14,8 @@ const createServiceRecipientsDict = (serviceRecipients = []) => {
   return serviceRecipients.reduce(reducer, {});
 };
 
-const isOneOff = orderItem => orderItem.catalogueItemType === 'AssociatedService'
-    && orderItem.provisioningType === 'Declarative';
+const isOneOff = orderItem => orderItem.catalogueItemType.toLowerCase() === 'AssociatedService'.toLowerCase()
+    && orderItem.provisioningType.toLowerCase() === 'Declarative'.toLowerCase();
 
 const transformOrderItems = (orderItems = []) => {
   const oneOffCostItems = orderItems.filter(o => isOneOff(o));
