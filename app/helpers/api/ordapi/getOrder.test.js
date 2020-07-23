@@ -1,5 +1,5 @@
 import { getData } from 'buying-catalogue-library';
-import { getOrder, sortServiceRecipients } from './getOrder';
+import { getOrder, sortServiceRecipients, sortOrderItems } from './getOrder';
 import { orderApiUrl } from '../../../config';
 import { logger } from '../../../logger';
 
@@ -175,5 +175,63 @@ describe('sort service recipients by name', () => {
     const sortedServiceRecipients = sortServiceRecipients(serviceRecipients);
 
     expect(sortedServiceRecipients).toEqual(expectedServiceRecipients);
+  });
+});
+
+describe('sort orderItems by sortedServiceRecipients', () => {
+  it('return a single order item', () => {
+    const serviceRecipients = {
+      A10001: {
+        name: 'A Recipient',
+      },
+    };
+
+    const orderItems = [
+      {
+        id: 'order-item-1',
+        serviceRecipientsOdsCode: 'A10001',
+      },
+    ];
+
+    const sortedOrderItems = sortOrderItems(serviceRecipients, orderItems);
+
+    expect(sortedOrderItems).toEqual(orderItems);
+  });
+
+  it('return a multiple order items for different recipients', () => {
+    const expectedOrderItems = [
+      {
+        id: 'order-item-2',
+        serviceRecipientsOdsCode: 'A10001',
+      },
+      {
+        id: 'order-item-1',
+        serviceRecipientsOdsCode: 'A10002',
+      },
+    ];
+
+    const serviceRecipients = {
+      A10001: {
+        name: 'A Recipient',
+      },
+      A10002: {
+        name: 'B Recipient',
+      },
+    };
+
+    const orderItems = [
+      {
+        id: 'order-item-1',
+        serviceRecipientsOdsCode: 'A10002',
+      },
+      {
+        id: 'order-item-2',
+        serviceRecipientsOdsCode: 'A10001',
+      },
+    ];
+
+    const sortedOrderItems = sortOrderItems(serviceRecipients, orderItems);
+
+    expect(sortedOrderItems).toEqual(expectedOrderItems);
   });
 });

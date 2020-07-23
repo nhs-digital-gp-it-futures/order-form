@@ -36,6 +36,14 @@ export const sortServiceRecipients = (serviceRecipients) => {
   return sortedServiceRecipients;
 };
 
+export const sortOrderItems = (serviceRecipients, orderItems) => {
+  const a = Object.keys(serviceRecipients).reduce((items, serviceRecipientOdsCode) => {
+    return items.concat(orderItems.filter(orderItem => orderItem.serviceRecipientsOdsCode === serviceRecipientOdsCode));
+  }, []);
+
+  return a;
+};
+
 export const getOrder = async ({ orderId, accessToken }) => {
   const endpoint = getOrderEndpoint(orderId);
   const orderData = await getData({
