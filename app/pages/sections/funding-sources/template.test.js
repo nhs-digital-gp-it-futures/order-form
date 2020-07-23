@@ -55,10 +55,6 @@ describe('funding sources page', () => {
   }));
 
   it('should render hidden input with csrf token', componentTester(setup, (harness) => {
-    const context = {
-      csrfToken: 'mockCsrfToken',
-    };
-
     harness.request(context, ($) => {
       const formElement = $('input[name=_csrf]');
       expect(formElement.length).toEqual(1);
@@ -81,7 +77,7 @@ describe('funding sources page', () => {
   }));
 
   it('should render errors on selectFundingSource field if there are errors', componentTester(setup, (harness) => {
-    const context = {
+    const errorContext = {
       questions: [
         {
           id: 'selectFundingSource',
@@ -93,7 +89,7 @@ describe('funding sources page', () => {
       ],
     };
 
-    harness.request(context, ($) => {
+    harness.request(errorContext, ($) => {
       const supplierNameQuestion = $('div[data-test-id="question-selectFundingSource"]');
       expect(supplierNameQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
       expect(supplierNameQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
