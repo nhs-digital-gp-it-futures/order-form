@@ -69,9 +69,9 @@ describe('getOrder', () => {
       getData.mockResolvedValueOnce({
         orderItems: [oneOffCostItem2, recurringCostItem1, recurringCostItem2, oneOffCostItem1],
       });
-  
+
       const { oneOffCostItems, recurringCostItems } = await getOrder({ orderId, accessToken });
-  
+
       expect(recurringCostItems).toEqual([recurringCostItem1, recurringCostItem2]);
       expect(oneOffCostItems).toEqual([oneOffCostItem2, oneOffCostItem1]);
     });
