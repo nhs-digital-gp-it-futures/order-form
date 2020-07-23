@@ -16,5 +16,8 @@
       }]
     }
   ],
+  "errorMessages": {
+    "SelectFundingSourceRequired": "Select yes if GMS is your only source of funding for this order"
+  },
   "saveButtonText": "Save and return"
 }
