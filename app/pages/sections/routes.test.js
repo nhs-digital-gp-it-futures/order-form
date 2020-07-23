@@ -17,11 +17,10 @@ import * as orderingPartyController from './ordering-party/controller';
 import * as commencementDateController from './commencement-date/controller';
 import * as serviceRecipientsController from './service-recipients/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
-import { validateFundingSourcesForm } from './funding-sources/controller';
+import * as fundingSourcesController from './funding-sources/controller';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
-jest.mock('./funding-sources/controller');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -633,8 +632,38 @@ describe('section routes', () => {
       })
     ));
 
+    it('should show the associated service select price page with errors if there are validation errors', async () => {
+      fundingSourcesController.validateFundingSourcesForm = jest.fn()
+        .mockReturnValue({ success: false });
+
+      fundingSourcesController
+        .getFundingSourcesErrorPageContext = jest.fn()
+          .mockResolvedValue({
+            errors: [{ text: 'Select a funding source', href: '#selectFundingSource' }],
+          });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="funding-sources-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+    });
+
     it('should return the correct status and text if response.success is true', async () => {
-      validateFundingSourcesForm.mockReturnValue({ success: true });
+      fundingSourcesController.validateFundingSourcesForm = jest.fn()
+        .mockReturnValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
