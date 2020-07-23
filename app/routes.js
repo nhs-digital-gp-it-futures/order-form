@@ -8,7 +8,8 @@ import { withCatch, getHealthCheckDependencies, extractAccessToken } from './hel
 import { getDocumentByFileName } from './documentController';
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getTaskListPageContext } from './pages/task-list/controller';
-import { getOrder, getPreviewPageContext } from './pages/preview/controller';
+import { getOrder } from './helpers/api/ordapi/getOrder';
+import { getPreviewPageContext } from './pages/preview/controller';
 import { sectionRoutes } from './pages/sections/routes';
 import includesContext from './includes/manifest.json';
 
