@@ -138,6 +138,20 @@ const mockOrder = {
       costPerYear: 40850.00,
       serviceRecipientsOdsCode: 'A10001',
     },
+    {
+      itemId: 'C000001-01-A10001-24',
+      cataloguePriceType: 'Flat',
+      catalogueItemType: 'AssociatedService',
+      catalogueItemName: 'OnDemand associated service',
+      catalogueItemId: '10000-S-002',
+      provisioningType: 'OnDemand',
+      price: 0.7,
+      itemUnitDescription: 'per fragment',
+      quantity: 600,
+      quantityPeriodDescription: 'per month',
+      costPerYear: 5040.00,
+      serviceRecipientsOdsCode: 'A10001',
+    },
   ],
   serviceRecipients: [
     {
@@ -220,12 +234,12 @@ test('should render the oneOff cost item details in the table', async (t) => {
   const oneOffCostRow0 = oneOffCostTable.find('[data-test-id="table-row-0"]');
 
   await t
-    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
-    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(1))).eql('C000001-01-A10001-23')
-    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(2))).eql('Core Training')
-    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(3))).eql('585.00 per Day')
-    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(4))).eql('70')
-    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(5))).eql('40,850.00');
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(1))).eql('C000001-01-A10001-23')
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(2))).eql('Core Training')
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(3))).eql('585.00 per Day')
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(4))).eql('70')
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(5))).eql('40,850.00');
 });
 
 test('should render the one off cost totals table with one off cost total price', async (t) => {
@@ -253,55 +267,64 @@ test('should render the recurring cost item details in the table', async (t) => 
   const recurringCostRow3 = recurringCostTable.find('[data-test-id="table-row-3"]');
   const recurringCostRow4 = recurringCostTable.find('[data-test-id="table-row-4"]');
   const recurringCostRow5 = recurringCostTable.find('[data-test-id="table-row-5"]');
+  const recurringCostRow6 = recurringCostTable.find('[data-test-id="table-row-6"]');
 
   await t
-    .expect(await extractInnerText(recurringCostRow0.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
-    .expect(await extractInnerText(recurringCostRow0.find('div').nth(1))).eql('C000001-01-A10001-1')
-    .expect(await extractInnerText(recurringCostRow0.find('div').nth(2))).eql('Some catalogue name')
-    .expect(await extractInnerText(recurringCostRow0.find('div').nth(3))).eql('1.26 per patient per year')
-    .expect(await extractInnerText(recurringCostRow0.find('div').nth(4))).eql('3,415 per month')
-    .expect(await extractInnerText(recurringCostRow0.find('div').nth(5))).eql('6 July 2020')
-    .expect(await extractInnerText(recurringCostRow0.find('div').nth(6))).eql('4,302.90')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(1))).eql('C000001-01-A10001-1')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(2))).eql('Some catalogue name')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(3))).eql('1.26 per patient per year')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(4))).eql('3,415 per month')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(5))).eql('6 July 2020')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(6))).eql('4,302.90')
 
-    .expect(await extractInnerText(recurringCostRow1.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
-    .expect(await extractInnerText(recurringCostRow1.find('div').nth(1))).eql('C000001-01-A10001-2')
-    .expect(await extractInnerText(recurringCostRow1.find('div').nth(2))).eql('Some catalogue name')
-    .expect(await extractInnerText(recurringCostRow1.find('div').nth(3))).eql('500.26 per license')
-    .expect(await extractInnerText(recurringCostRow1.find('div').nth(4))).eql('12')
-    .expect(await extractInnerText(recurringCostRow1.find('div').nth(5))).eql('6 August 2020')
-    .expect(await extractInnerText(recurringCostRow1.find('div').nth(6))).eql('6,003.13')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(1))).eql('C000001-01-A10001-2')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(2))).eql('Some catalogue name')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(3))).eql('500.26 per license')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(4))).eql('12')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(5))).eql('6 August 2020')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(6))).eql('6,003.13')
 
-    .expect(await extractInnerText(recurringCostRow2.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
-    .expect(await extractInnerText(recurringCostRow2.find('div').nth(1))).eql('C000001-01-A10001-3')
-    .expect(await extractInnerText(recurringCostRow2.find('div').nth(2))).eql('Remote Consultation')
-    .expect(await extractInnerText(recurringCostRow2.find('div').nth(3))).eql('207.91 per practice per month')
-    .expect(await extractInnerText(recurringCostRow2.find('div').nth(4))).eql('12 per year')
-    .expect(await extractInnerText(recurringCostRow2.find('div').nth(5))).eql('25 September 2020')
-    .expect(await extractInnerText(recurringCostRow2.find('div').nth(6))).eql('29,939.90')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(1))).eql('C000001-01-A10001-3')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(2))).eql('Remote Consultation')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(3))).eql('207.91 per practice per month')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(4))).eql('12 per year')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(5))).eql('25 September 2020')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(6))).eql('29,939.90')
 
-    .expect(await extractInnerText(recurringCostRow3.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
-    .expect(await extractInnerText(recurringCostRow3.find('div').nth(1))).eql('C000001-01-A10001-4')
-    .expect(await extractInnerText(recurringCostRow3.find('div').nth(2))).eql('Remote Consultation')
-    .expect(await extractInnerText(recurringCostRow3.find('div').nth(3))).eql('207.91 per practice per month')
-    .expect(await extractInnerText(recurringCostRow3.find('div').nth(4))).eql('12 per year')
-    .expect(await extractInnerText(recurringCostRow3.find('div').nth(5))).eql('25 September 2020')
-    .expect(await extractInnerText(recurringCostRow3.find('div').nth(6))).eql('29,939.90')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(1))).eql('C000001-01-A10001-4')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(2))).eql('Remote Consultation')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(3))).eql('207.91 per practice per month')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(4))).eql('12 per year')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(5))).eql('25 September 2020')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(6))).eql('29,939.90')
 
-    .expect(await extractInnerText(recurringCostRow4.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
-    .expect(await extractInnerText(recurringCostRow4.find('div').nth(1))).eql('C000001-01-A10001-5')
-    .expect(await extractInnerText(recurringCostRow4.find('div').nth(2))).eql('Patient Consultation')
-    .expect(await extractInnerText(recurringCostRow4.find('div').nth(3))).eql('106.02 per patient per month')
-    .expect(await extractInnerText(recurringCostRow4.find('div').nth(4))).eql('12 per year')
-    .expect(await extractInnerText(recurringCostRow4.find('div').nth(5))).eql('25 September 2020')
-    .expect(await extractInnerText(recurringCostRow4.find('div').nth(6))).eql('15,267.60')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(1))).eql('C000001-01-A10001-5')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(2))).eql('Patient Consultation')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(3))).eql('106.02 per patient per month')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(4))).eql('12 per year')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(5))).eql('25 September 2020')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(6))).eql('15,267.60')
 
-    .expect(await extractInnerText(recurringCostRow5.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
-    .expect(await extractInnerText(recurringCostRow5.find('div').nth(1))).eql('C000001-01-A10001-6')
-    .expect(await extractInnerText(recurringCostRow5.find('div').nth(2))).eql('OnDemand Consultation')
-    .expect(await extractInnerText(recurringCostRow5.find('div').nth(3))).eql('1.33 per consultation')
-    .expect(await extractInnerText(recurringCostRow5.find('div').nth(4))).eql('4 per year')
-    .expect(await extractInnerText(recurringCostRow5.find('div').nth(5))).eql('25 September 2020')
-    .expect(await extractInnerText(recurringCostRow5.find('div').nth(6))).eql('63.84');
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(1))).eql('C000001-01-A10001-6')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(2))).eql('OnDemand Consultation')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(3))).eql('1.33 per consultation')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(4))).eql('4 per year')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(5))).eql('25 September 2020')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(6))).eql('63.84')
+
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(1))).eql('C000001-01-A10001-24')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(2))).eql('OnDemand associated service')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(3))).eql('0.70 per fragment')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(4))).eql('600 per month')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(5))).eql('')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(6))).eql('5,040.00');
 });
 
 test('should render the recurring cost totals table with the totals provided', async (t) => {
