@@ -203,6 +203,16 @@ describe('preview page', () => {
           { data: 'Quantity' },
           { data: 'Item cost (£)' },
         ],
+        items: [
+          [
+            { data: 'Some Recipient Name', dataTestId: 'recipient-name' },
+            { data: 'item-1', dataTestId: 'item-id' },
+            { data: 'Some item name', dataTestId: 'item-name' },
+            { data: '585.00 per Day', dataTestId: 'price-unit' },
+            { data: '70', dataTestId: 'quantity' },
+            { data: '40,850.00', dataTestId: 'item-cost' },
+          ],
+        ],
       },
     };
 
@@ -216,6 +226,39 @@ describe('preview page', () => {
         expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual('Price unit of order (£)');
         expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual('Quantity');
         expect(table.find('[data-test-id="column-heading-5"]').text().trim()).toEqual('Item cost (£)');
+      });
+    }));
+
+    it('should render the one off cost details', componentTester(setup, (harness) => {
+      harness.request(context, ($) => {
+        const table = $('div[data-test-id="one-off-cost-table"]');
+        const oneOffCost1Row = table.find('[data-test-id="table-row-0"]');
+        const recipientNameDetails = oneOffCost1Row.find('div[data-test-id="recipient-name"]');
+        const itemId = oneOffCost1Row.find('div[data-test-id="item-id"]');
+        const itemName = oneOffCost1Row.find('div[data-test-id="item-name"]');
+        const priceUnit = oneOffCost1Row.find('div[data-test-id="price-unit"]');
+        const quantity = oneOffCost1Row.find('div[data-test-id="quantity"]');
+        const itemCost = oneOffCost1Row.find('div[data-test-id="item-cost"]');
+
+        expect(oneOffCost1Row.length).toEqual(1);
+
+        expect(recipientNameDetails.length).toEqual(1);
+        expect(recipientNameDetails.text().trim()).toEqual('Some Recipient Name');
+
+        expect(itemId.length).toEqual(1);
+        expect(itemId.text().trim()).toEqual('item-1');
+
+        expect(itemName.length).toEqual(1);
+        expect(itemName.text().trim()).toEqual('Some item name');
+
+        expect(priceUnit.length).toEqual(1);
+        expect(priceUnit.text().trim()).toEqual('585.00 per Day');
+
+        expect(quantity.length).toEqual(1);
+        expect(quantity.text().trim()).toEqual('70');
+
+        expect(itemCost.length).toEqual(1);
+        expect(itemCost.text().trim()).toEqual('40,850.00');
       });
     }));
   });
