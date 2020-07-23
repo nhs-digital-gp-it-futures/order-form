@@ -96,3 +96,69 @@ test('should render save button', async (t) => {
   await t
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });
+
+test('should render the title on validation error', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="save-button"] button');
+  const title = Selector('h1[data-test-id="funding-sources-page-title"]');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(await extractInnerText(title)).eql(`${content.title} order-id`)
+    .click(button);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
+});
+
+test('should show the error summary when no funding source selected causing validation error', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select yes if GMS is your only source of funding for this order');
+});
+
+test('should render select funding source field as errors with error message when no funding source selected causing validation error', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const fundingSourceSelectPage = Selector('[data-test-id="funding-sources-page"]');
+  const continueButton = Selector('[data-test-id="save-button"] button');
+  const fundingSourceSelectField = fundingSourceSelectPage.find('[data-test-id="question-selectFundingSource"]');
+
+  await t
+    .expect(fundingSourceSelectField.find('[data-test-id="radiobutton-options-error"]').exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(fundingSourceSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
+    .expect(await extractInnerText(fundingSourceSelectField.find('#selectFundingSource-error'))).contains('Select yes if GMS is your only source of funding for this order');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#selectFundingSource`);
+});

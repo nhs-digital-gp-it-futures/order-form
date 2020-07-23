@@ -54,6 +54,15 @@ describe('funding sources page', () => {
     });
   }));
 
+  it('should render hidden input with csrf token', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const formElement = $('input[name=_csrf]');
+      expect(formElement.length).toEqual(1);
+      expect(formElement.attr('type')).toEqual('hidden');
+      expect(formElement.attr('value')).toEqual(context.csrfToken);
+    });
+  }));
+
   it('should render the "Select funding source" radio button options component', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const selectRecipientRadioOptions = $('[data-test-id="question-selectFundingSource"]');
@@ -64,6 +73,26 @@ describe('funding sources page', () => {
       expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(1)').text().trim()).toEqual('Yes');
       expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(2)').find('input').attr('value')).toEqual('false');
       expect(selectRecipientRadioOptions.find('.nhsuk-radios__item:nth-child(2)').text().trim()).toEqual('No');
+    });
+  }));
+
+  it('should render errors on selectFundingSource field if there are errors', componentTester(setup, (harness) => {
+    const errorContext = {
+      questions: [
+        {
+          id: 'selectFundingSource',
+          error: [{ message: 'some select funding source error message' }],
+        },
+      ],
+      errors: [
+        { text: 'some select funding source error message', href: '#selectFundingSource' },
+      ],
+    };
+
+    harness.request(errorContext, ($) => {
+      const supplierNameQuestion = $('div[data-test-id="question-selectFundingSource"]');
+      expect(supplierNameQuestion.find('div[data-test-id="radiobutton-options-error"]').length).toEqual(1);
+      expect(supplierNameQuestion.find('.nhsuk-error-message').text().trim()).toEqual('Error:');
     });
   }));
 
