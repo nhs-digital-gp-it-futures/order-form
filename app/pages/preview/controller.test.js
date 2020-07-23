@@ -26,8 +26,7 @@ jest.mock('./helpers/transformOrderItems', () => ({
 describe('order summary preview controller', () => {
   describe('getOrder', () => {
     afterEach(() => {
-      getData.mockReset();
-      contextCreator.getContext.mockReset();
+      jest.resetAllMocks();
     });
 
     const accessToken = 'access_token';
@@ -78,11 +77,12 @@ describe('order summary preview controller', () => {
     });
 
     it('should call getContext with the correct params', () => {
-      const fakeItem = { catalogueItemType: 'Associated Service', provisioningType: 'Declarative' };
+      const fakeOneOffCostItem = { catalogueItemType: 'AssociatedService', provisioningType: 'Declarative' };
+      const fakeRecurringCostItem = { catalogueItemType: 'AdditionalService', provisioningType: 'Declarative' };
       const orderId = 'order-1';
-      const orderData = { description: 'fake order' };
-      const recurringCostItems = [fakeItem];
+      const orderItems = [fakeRecurringCostItem, fakeOneOffCostItem];
       const serviceRecipients = { fakeRecipient: { odsCode: 'fakeRecipient' } };
+      const orderData = { description: 'fake order', orderItems, serviceRecipients };
 
       contextCreator.getContext.mockResolvedValueOnce();
       createServiceRecipientsDict
@@ -91,19 +91,22 @@ describe('order summary preview controller', () => {
 
       transformOrderItems
         .transformOrderItems
-        .mockReturnValueOnce({ oneOffCostItems: {}, recurringCostItems });
+        .mockReturnValueOnce({
+          oneOffCostItems: [fakeOneOffCostItem], recurringCostItems: [fakeRecurringCostItem],
+        });
 
-      const contextData = {
+      const expectedParams = {
         orderId,
         orderData,
-        recurringCostItems,
+        oneOffCostItems: [fakeOneOffCostItem],
+        recurringCostItems: [fakeRecurringCostItem],
         serviceRecipients,
       };
 
-      getPreviewPageContext(contextData);
+      getPreviewPageContext({ orderId, orderData });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith(contextData);
+      expect(contextCreator.getContext).toHaveBeenCalledWith(expectedParams);
     });
   });
 });

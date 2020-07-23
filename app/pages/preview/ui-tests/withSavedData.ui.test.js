@@ -125,6 +125,19 @@ const mockOrder = {
       deliveryDate: '2020-09-25',
       costPerYear: 63.84,
     },
+    {
+      itemId: 'C000001-01-A10001-23',
+      cataloguePriceType: 'Flat',
+      catalogueItemType: 'AssociatedService',
+      catalogueItemName: 'Core Training',
+      catalogueItemId: '10000-S-001',
+      provisioningType: 'Declarative',
+      price: 585.00,
+      itemUnitDescription: 'per Day',
+      quantity: 70,
+      costPerYear: 40850.00,
+      serviceRecipientsOdsCode: 'A10001',
+    },
   ],
   serviceRecipients: [
     {
@@ -159,7 +172,7 @@ fixture('Order Summary Preview - with saved data')
     await nockAndErrorCheck(nock, t);
   });
 
-test('should render the Call-off ordering party and supplier details in the table', async (t) => {
+test.only('should render the Call-off ordering party and supplier details in the table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -169,6 +182,7 @@ test('should render the Call-off ordering party and supplier details in the tabl
   const supplierDetails = calloffAndSupplierDetails.find('div[data-test-id="supplier"]');
 
   await t
+    .debug()
     .expect(calloffPartyDetails.find('div').count).eql(8)
     .expect(await extractInnerText(calloffPartyDetails.find('div').nth(0))).eql('CallOffFirstName CallOffLastName')
     .expect(await extractInnerText(calloffPartyDetails.find('div').nth(1))).eql('Call off org Name')

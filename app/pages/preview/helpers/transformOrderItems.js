@@ -1,4 +1,4 @@
-const isOneOff = orderItem => orderItem.catalogueItemType === 'Associated Service'
+const isOneOff = orderItem => orderItem.catalogueItemType === 'AssociatedService'
     && orderItem.provisioningType === 'Declarative';
 
 export const transformOrderItems = (orderItems = []) => {

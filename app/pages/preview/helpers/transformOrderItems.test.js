@@ -1,37 +1,37 @@
 import { transformOrderItems } from './transformOrderItems';
 
 const additionalService1 = {
-  catalogueItemType: 'Additional Service',
+  catalogueItemType: 'AdditionalService',
   itemId: 'C000001-01-A10001-1',
   provisioningType: 'Declarative',
 };
 
 const additionalService2 = {
-  catalogueItemType: 'Additional Service',
+  catalogueItemType: 'AdditionalService',
   itemId: 'C000001-01-A10001-2',
   provisioningType: 'Declarative',
 };
 
 const associatedService1 = {
-  catalogueItemType: 'Associated Service',
+  catalogueItemType: 'AssociatedService',
   itemId: 'C000001-01-08E-1',
   provisioningType: 'Declarative',
 };
 
 const associatedService2 = {
-  catalogueItemType: 'Associated Service',
+  catalogueItemType: 'AssociatedService',
   itemId: 'C000001-01-08E-2',
   provisioningType: 'Declarative',
 };
 
 const associatedServiceOnDemand = {
-  catalogueItemType: 'Associated Service',
+  catalogueItemType: 'AssociatedService',
   itemId: 'C000001-01-08E-3',
   provisioningType: 'On Demand',
 };
 
 const associatedServicePatient = {
-  catalogueItemType: 'Associated Service',
+  catalogueItemType: 'AssociatedService',
   itemId: 'C000001-01-08E-4',
   provisioningType: 'Patient',
 };

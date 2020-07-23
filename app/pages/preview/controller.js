@@ -17,9 +17,9 @@ export const getOrder = async ({ orderId, accessToken }) => {
 
 export const getPreviewPageContext = ({ orderId, orderData }) => {
   const serviceRecipients = createServiceRecipientsDict(orderData.serviceRecipients);
-  const { recurringCostItems } = transformOrderItems(orderData.orderItems);
+  const { recurringCostItems, oneOffCostItems } = transformOrderItems(orderData.orderItems);
 
   return getContext({
-    orderId, orderData, recurringCostItems, serviceRecipients,
+    orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
   });
 };
