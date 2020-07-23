@@ -13,7 +13,7 @@ import {
   validateCommencementDateForm,
 } from './commencement-date/controller';
 import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
-import { getFundingSourcesContext } from './funding-sources/controller';
+import { getFundingSourcesContext, getFundingSourcesErrorPageContext, validateFundingSourcesForm } from './funding-sources/controller';
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/routes';
 import { additionalServicesRoutes } from './order-items/additional-services/routes';
@@ -144,6 +144,23 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const context = await getFundingSourcesContext({ orderId, fundingSource });
     logger.info(`navigating to order ${orderId} funding-sources page`);
     res.render('pages/sections/funding-sources/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/funding-sources', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    const response = validateFundingSourcesForm({ data: req.body });
+    if (response.success) {
+      logger.info('redirecting to associated services select recipient page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    }
+
+    const context = await getFundingSourcesErrorPageContext({
+      orderId,
+      validationErrors: response.errors,
+    });
+
+    return res.render('pages/sections/funding-sources/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;

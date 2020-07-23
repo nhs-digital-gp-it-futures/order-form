@@ -1,5 +1,6 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../config';
+import { getSectionErrorContext } from '../getSectionErrorContext';
 
 const generateFundingSourceOptions = ({ question, fundingSource }) => {
   const fundingMap = question.options.map(option => ({
@@ -24,4 +25,14 @@ export const getContext = ({ orderId, fundingSource }) => {
     questions: generateQuestionsContext({ fundingSource }),
   });
   return context;
+};
+
+export const getErrorContext = (params) => {
+  const updatedManifest = getContext({
+    orderId: params.orderId,
+  });
+
+  return {
+    ...getSectionErrorContext({ ...params, manifest: updatedManifest }),
+  };
 };
