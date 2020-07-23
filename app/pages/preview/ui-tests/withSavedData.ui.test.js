@@ -172,7 +172,7 @@ fixture('Order Summary Preview - with saved data')
     await nockAndErrorCheck(nock, t);
   });
 
-test.only('should render the Call-off ordering party and supplier details in the table', async (t) => {
+test('should render the Call-off ordering party and supplier details in the table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -182,7 +182,6 @@ test.only('should render the Call-off ordering party and supplier details in the
   const supplierDetails = calloffAndSupplierDetails.find('div[data-test-id="supplier"]');
 
   await t
-    .debug()
     .expect(calloffPartyDetails.find('div').count).eql(8)
     .expect(await extractInnerText(calloffPartyDetails.find('div').nth(0))).eql('CallOffFirstName CallOffLastName')
     .expect(await extractInnerText(calloffPartyDetails.find('div').nth(1))).eql('Call off org Name')
@@ -211,6 +210,22 @@ test('should render the commencement date label and date when data is provided',
 
   await t
     .expect(await extractInnerText(commencementDate)).eql(`${content.commencementDateLabel} 1 February 2020`);
+});
+
+test('should render the oneOff cost item details in the table', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const oneOffCostTable = Selector('[data-test-id="one-off-cost-table"]');
+  const oneOffCostRow0 = oneOffCostTable.find('[data-test-id="table-row-0"]');
+
+  await t
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(1))).eql('C000001-01-A10001-23')
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(2))).eql('Core Training')
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(3))).eql('585.00 per Day')
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(4))).eql('70')
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(5))).eql('40,850.00');
 });
 
 test('should render the one off cost totals table with one off cost total price', async (t) => {
