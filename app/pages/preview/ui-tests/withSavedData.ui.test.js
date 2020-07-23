@@ -125,6 +125,19 @@ const mockOrder = {
       deliveryDate: '2020-09-25',
       costPerYear: 63.84,
     },
+    {
+      itemId: 'C000001-01-A10001-23',
+      cataloguePriceType: 'Flat',
+      catalogueItemType: 'AssociatedService',
+      catalogueItemName: 'Core Training',
+      catalogueItemId: '10000-S-001',
+      provisioningType: 'Declarative',
+      price: 585.00,
+      itemUnitDescription: 'per Day',
+      quantity: 70,
+      costPerYear: 40850.00,
+      serviceRecipientsOdsCode: 'A10001',
+    },
   ],
   serviceRecipients: [
     {
@@ -197,6 +210,22 @@ test('should render the commencement date label and date when data is provided',
 
   await t
     .expect(await extractInnerText(commencementDate)).eql(`${content.commencementDateLabel} 1 February 2020`);
+});
+
+test('should render the oneOff cost item details in the table', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const oneOffCostTable = Selector('[data-test-id="one-off-cost-table"]');
+  const oneOffCostRow0 = oneOffCostTable.find('[data-test-id="table-row-0"]');
+
+  await t
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(1))).eql('C000001-01-A10001-23')
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(2))).eql('Core Training')
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(3))).eql('585.00 per Day')
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(4))).eql('70')
+    .expect(await extractInnerText(oneOffCostRow0.find('div').nth(5))).eql('40,850.00');
 });
 
 test('should render the one off cost totals table with one off cost total price', async (t) => {

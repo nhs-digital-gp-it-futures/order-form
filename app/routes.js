@@ -8,7 +8,8 @@ import { withCatch, getHealthCheckDependencies, extractAccessToken } from './hel
 import { getDocumentByFileName } from './documentController';
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getTaskListPageContext } from './pages/task-list/controller';
-import { getOrder, getPreviewPageContext } from './pages/preview/controller';
+import { getOrder } from './helpers/api/ordapi/getOrder';
+import { getPreviewPageContext } from './pages/preview/controller';
 import { sectionRoutes } from './pages/sections/routes';
 import includesContext from './includes/manifest.json';
 
@@ -68,9 +69,13 @@ export const routes = (authProvider, sessionManager) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
 
-    const orderData = await getOrder({ orderId, accessToken });
+    const {
+      orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
+    } = await getOrder({ orderId, accessToken });
 
-    const context = await getPreviewPageContext({ orderId, orderData });
+    const context = await getPreviewPageContext({
+      orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
+    });
 
     res.render('pages/preview/template.njk', addContext({ context, user: req.user }));
   }));
