@@ -7,7 +7,7 @@
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",
         "title": "What amount should I enter?",
-        "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
+        "innerComponent": "Enter the total quantity you'll need."
       }
     }
   },
