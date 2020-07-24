@@ -6,7 +6,7 @@
       "rows": 3,
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",
-        "title": "What amount should I enter?",
+        "title": "What quantity should I enter?",
         "innerComponent": "Enter the total quantity you'll need."
       }
     }
