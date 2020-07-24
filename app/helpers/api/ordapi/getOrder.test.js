@@ -185,16 +185,6 @@ describe('sort service recipients by name', () => {
 
     expect(sortedServiceRecipients).toEqual(expectedServiceRecipients);
   });
-
-  it('should return a list of 2 service recipients sorted by name', () => {
-    const expectedServiceRecipients = [firstRecipient, secondRecipient];
-
-    const serviceRecipients = [secondRecipient, firstRecipient];
-
-    const sortedServiceRecipients = sortServiceRecipients(serviceRecipients);
-
-    expect(sortedServiceRecipients).toEqual(expectedServiceRecipients);
-  });
 });
 
 describe('group orderItems by serviceRecipientOdsCode', () => {
@@ -266,7 +256,6 @@ describe('sort orderItems by serviceRecipients name', () => {
     id: 'order-item-1',
     serviceRecipientsOdsCode: 'recipient1',
   };
-
   const recipient1OrderItem2 = {
     id: 'order-item-2',
     serviceRecipientsOdsCode: 'recipient1',
@@ -276,12 +265,10 @@ describe('sort orderItems by serviceRecipients name', () => {
     id: 'order-item-1',
     serviceRecipientsOdsCode: 'recipient2',
   };
-
   const recipient2OrderItem2 = {
     id: 'order-item-2',
     serviceRecipientsOdsCode: 'recipient2',
   };
-
 
   it('return a single order item', () => {
     const serviceRecipients = [recipient1];
@@ -307,7 +294,8 @@ describe('sort orderItems by serviceRecipients name', () => {
     const serviceRecipients = [recipient2, recipient1];
 
     const orderItems = [
-      recipient2OrderItem1, recipient1OrderItem2, recipient1OrderItem1, recipient2OrderItem2];
+      recipient2OrderItem1, recipient1OrderItem2, recipient1OrderItem1, recipient2OrderItem2,
+    ];
 
     const sortedOrderItems = sortOrderItems(serviceRecipients, orderItems);
 
