@@ -24,24 +24,40 @@ const transformOrderItems = (orderItems = []) => {
   return { oneOffCostItems, recurringCostItems };
 };
 
-export const sortServiceRecipients = (serviceRecipients) => {
-  const sortedServiceRecipients = serviceRecipients.sort((a, b) => {
-    const nameA = a.name.toLowerCase();
-    const nameB = b.name.toLowerCase();
+export const sortServiceRecipients = serviceRecipients => (
+  serviceRecipients.sort((recipientA, recipientB) => {
+    const recipientAName = recipientA.name.toLowerCase();
+    const recipientBName = recipientB.name.toLowerCase();
 
-    if (nameA < nameB) return -1;
-    if (nameA > nameB) return 1;
+    if (recipientAName < recipientBName) return -1;
+    if (recipientAName > recipientBName) return 1;
     return 0;
-  });
-  return sortedServiceRecipients;
-};
+  })
+);
+
+export const groupOrderItemsByOdsCode = orderItems => (
+  orderItems.reduce((groupedOrderItems, orderItem) => {
+    const odsCode = orderItem.serviceRecipientsOdsCode;
+
+    const accumulatedOrderItems = groupedOrderItems[odsCode]
+      ? groupedOrderItems[odsCode].concat(orderItem)
+      : [orderItem];
+
+    return {
+      ...groupedOrderItems,
+      [odsCode]: accumulatedOrderItems,
+    };
+  }, {})
+);
 
 export const sortOrderItems = (serviceRecipients, orderItems) => {
-  const a = Object.keys(serviceRecipients).reduce((items, serviceRecipientOdsCode) => {
-    return items.concat(orderItems.filter(orderItem => orderItem.serviceRecipientsOdsCode === serviceRecipientOdsCode));
-  }, []);
+  const sortedServiceRecipients = sortServiceRecipients(serviceRecipients);
+  const groupedOrderItems = groupOrderItemsByOdsCode(orderItems);
 
-  return a;
+  return sortedServiceRecipients
+    .reduce((items, sortedServiceRecipient) => (
+      items.concat(groupedOrderItems[sortedServiceRecipient.odsCode])
+    ), []);
 };
 
 export const getOrder = async ({ orderId, accessToken }) => {
@@ -51,10 +67,17 @@ export const getOrder = async ({ orderId, accessToken }) => {
   });
   logger.info(`Order data returned for ${orderId}`);
 
-  const serviceRecipients = createServiceRecipientsDict(orderData.serviceRecipients);
-  const { recurringCostItems, oneOffCostItems } = transformOrderItems(orderData.orderItems);
+  if (orderData.serviceRecipients && orderData.serviceRecipients.length > 0
+    && orderData.orderItems && orderData.orderItems.length > 0) {
+    const sortedOrderItems = sortOrderItems(orderData.serviceRecipients, orderData.orderItems);
+    const { recurringCostItems, oneOffCostItems } = transformOrderItems(sortedOrderItems);
+    const serviceRecipients = createServiceRecipientsDict(orderData.serviceRecipients);
 
+    return {
+      orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
+    };
+  }
   return {
-    orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
+    orderData, oneOffCostItems: [], recurringCostItems: [], serviceRecipients: {},
   };
 };
