@@ -127,7 +127,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
     const response = validateAssociatedServicePriceForm({ data: req.body });
     if (response.success) {
       sessionManager.saveToSession({ req, key: 'selectedPriceId', value: req.body.selectAssociatedServicePrice });
-      logger.info('redirecting to associated services select recipient page');
+      logger.info('Redirect to new associated service order item page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/neworderitem`);
     }
 

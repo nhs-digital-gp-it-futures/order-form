@@ -102,6 +102,12 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       });
 
       if (apiResponse.success) {
+        sessionManager.clearFromSession({
+          req,
+          keys: [
+            'selectedItemId', 'selectedItemName', 'selectedRecipientId', 'selectedRecipientName', 'selectedPriceId', 'selectedCatalogueSolutionId',
+          ],
+        });
         logger.info('redirecting catalogue solutions main page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
       }
