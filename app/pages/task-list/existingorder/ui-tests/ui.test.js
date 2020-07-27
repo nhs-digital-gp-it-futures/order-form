@@ -923,7 +923,6 @@ test('should enable the "Submit order" button when sectionStatus is "complete"',
   const submitOrderButtonLink = submitOrderButton.find('a');
 
   await t
-    .debug()
     .expect(await extractInnerText(submitOrderButton)).eql(commonContent.submitOrderButton.text)
     .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
