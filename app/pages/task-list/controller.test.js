@@ -1,10 +1,8 @@
-import { getData } from 'buying-catalogue-library';
 import { getTaskListPageContext } from './controller';
 import * as contextCreator from './contextCreator';
-import { orderApiUrl } from '../../config';
-import { logger } from '../../logger';
+import { getOrderSummary } from '../../helpers/api/ordapi/getOrderSummary';
 
-jest.mock('buying-catalogue-library');
+jest.mock('../../helpers/api/ordapi/getOrderSummary');
 
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
@@ -27,31 +25,31 @@ describe('task-list controller', () => {
     const mockExistingOrderData = {
       orderId: 'order-id',
       description: 'Some description',
+      sections: [],
+      enableSubmitButton: false,
     };
 
     afterEach(() => {
-      getData.mockReset();
-      contextCreator.getContext.mockReset();
+      jest.resetAllMocks();
     });
 
-    it('should call getData once with the correct params', async () => {
-      getData.mockResolvedValueOnce(mockExistingOrderData);
+    it('should call getOrderSummary once with the correct params', async () => {
+      getOrderSummary.mockResolvedValueOnce(mockExistingOrderData);
 
       await getTaskListPageContext({
         orderId: 'order-id',
         accessToken: 'access_token',
       });
 
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/summary`,
+      expect(getOrderSummary.mock.calls.length).toEqual(1);
+      expect(getOrderSummary).toHaveBeenCalledWith({
+        orderId: 'order-id',
         accessToken: 'access_token',
-        logger,
       });
     });
 
     it('should call getContext with the correct params when existing order data is returned by getData', async () => {
-      getData.mockResolvedValueOnce(mockExistingOrderData);
+      getOrderSummary.mockResolvedValueOnce(mockExistingOrderData);
       contextCreator.getContext.mockResolvedValueOnce();
 
       await getTaskListPageContext({
@@ -60,7 +58,12 @@ describe('task-list controller', () => {
       });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', orderDescription: mockExistingOrderData.description });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({
+        orderId: 'order-id',
+        orderDescription: mockExistingOrderData.description,
+        sectionsData: [],
+        enableSubmitButton: false,
+      });
     });
   });
 });
