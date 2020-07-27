@@ -28,7 +28,7 @@ describe('Funding Sources controller', () => {
     describe('when there are no validation errors', () => {
       it('should return success as true', () => {
         const data = {
-          selectFundingSource: true,
+          selectFundingSource: 'true',
         };
 
         const response = validateFundingSourcesForm({ data });
