@@ -138,10 +138,10 @@ describe('task-list contextCreator', () => {
         text: commonManifest.submitOrderButton.text,
         altText: commonManifest.submitOrderButton.disabledAltText,
         href: '#',
-        disabled: true,
+        disabled: false,
       };
 
-      const context = getContext({ orderId: 'order-id' });
+      const context = getContext({ orderId: 'order-id', enableSubmitButton: true });
 
       expect(context.submitOrderButton).toEqual(expectedSubmitOrderButtonContext);
     });
