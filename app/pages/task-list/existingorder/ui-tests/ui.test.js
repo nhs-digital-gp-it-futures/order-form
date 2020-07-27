@@ -15,6 +15,7 @@ const mockExistingOrderSummary = {
       status: 'complete',
     },
   ],
+  sectionStatus: 'some status',
 };
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id';
@@ -901,10 +902,29 @@ test('should render the "Submit order" button', async (t) => {
   await t.navigateTo(pageUrl);
 
   const submitOrderButton = Selector('[data-test-id="submit-order-button"]');
+  const submitOrderButtonLink = submitOrderButton.find('a');
 
   await t
     .expect(await extractInnerText(submitOrderButton)).eql(commonContent.submitOrderButton.text)
     .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
-    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
-    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
+    .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
+    .expect(submitOrderButtonLink.hasClass('nhsuk-button--disabled')).eql(true);
+});
+
+test('should enable the "Submit order" button when sectionStatus is "complete"', async (t) => {
+  const mockCompleteOrderSummary = {
+    ...mockExistingOrderSummary,
+    sectionStatus: 'complete',
+  };
+  await pageSetup({ ...defaultPageSetup, mockData: mockCompleteOrderSummary });
+  await t.navigateTo(pageUrl);
+
+  const submitOrderButton = Selector('[data-test-id="submit-order-button"]');
+  const submitOrderButtonLink = submitOrderButton.find('a');
+
+  await t
+    .expect(await extractInnerText(submitOrderButton)).eql(commonContent.submitOrderButton.text)
+    .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
+    .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
+    .expect(submitOrderButtonLink.hasClass('nhsuk-button--disabled')).eql(false);
 });
