@@ -104,6 +104,12 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       });
 
       if (apiResponse.success) {
+        sessionManager.clearFromSession({
+          req,
+          keys: [
+            'selectedItemId', 'selectedItemName', 'selectedRecipientId', 'selectedRecipientName', 'selectedPriceId', 'selectedCatalogueSolutionId',
+          ],
+        });
         logger.info('Redirecting to the additional-services main page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services`);
       }
