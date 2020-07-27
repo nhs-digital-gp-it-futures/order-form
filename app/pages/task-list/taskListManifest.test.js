@@ -91,7 +91,9 @@ describe('taskListManifest', () => {
   });
 
   const taskList = generateTaskList({
-    orderId: 'order-1', taskListManifest, sectionsData,
+    orderId: 'order-1',
+    taskListManifest,
+    sectionsData,
   });
 
   expect(Boolean(taskList[7].items[0].href)).toBe(expectedEnabled);
