@@ -8,9 +8,9 @@ export const formatPrice = (priceValue) => {
   return truncatedTo2dp;
 };
 
-export const formatDecimal = (priceValue) => {
-  if ((priceValue || {}).toString().includes('.') && priceValue.toString().split('.')[1].length < 3) {
-    return parseFloat(priceValue).toFixed(2);
+export const formatDecimal = (priceValue, decimalPlaces = 3) => {
+  if ((priceValue || {}).toString().includes('.') && priceValue.toString().split('.')[1].length > 0) {
+    return parseFloat(priceValue).toFixed(decimalPlaces);
   }
   return priceValue;
 };

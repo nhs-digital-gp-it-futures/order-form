@@ -1,10 +1,11 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../../../config';
 import { getSectionErrorContext } from '../../../../getSectionErrorContext';
+import { formatDecimal } from '../../../../../../helpers/common/priceFormatter';
 
 const generateFlatPriceItem = (mappedPrice, timeUnitdescription, selectedPriceId) => ({
   value: mappedPrice.priceId,
-  text: `£${mappedPrice.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}`,
+  text: `£${formatDecimal(mappedPrice.price, 2)} ${mappedPrice.itemUnit.description} ${timeUnitdescription}`,
   checked: mappedPrice.priceId === selectedPriceId ? true : undefined,
 });
 
@@ -12,7 +13,7 @@ const generateTieredPriceItem = (mappedPrice, timeUnitdescription, selectedPrice
   let tieredHtml = '';
   mappedPrice.tiers.forEach((tier) => {
     const tieredRange = tier.end ? `${tier.start} - ${tier.end}` : `${tier.start}+`;
-    tieredHtml += `<div>${tieredRange} ${mappedPrice.itemUnit.tierName} £${tier.price} ${mappedPrice.itemUnit.description} ${timeUnitdescription}</div>`;
+    tieredHtml += `<div>${tieredRange} ${mappedPrice.itemUnit.tierName} £${formatDecimal(tier.price, 2)} ${mappedPrice.itemUnit.description} ${timeUnitdescription}</div>`;
   });
   return {
     value: mappedPrice.priceId,
