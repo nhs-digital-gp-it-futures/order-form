@@ -9,8 +9,7 @@ const getExistingOrderTaskListPageContext = async ({ accessToken, orderId }) => 
   logger.info(`Existing order summary '${orderSummary.orderId}' returned`);
   return getContext({
     orderId,
-    orderDescription:
-    orderSummary.description,
+    orderDescription: orderSummary.description,
     sectionsData: orderSummary.sections,
     enableSubmitButton: orderSummary.enableSubmitButton,
   });
