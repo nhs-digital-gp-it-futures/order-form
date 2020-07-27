@@ -17,10 +17,12 @@ import * as orderingPartyController from './ordering-party/controller';
 import * as commencementDateController from './commencement-date/controller';
 import * as serviceRecipientsController from './service-recipients/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
+import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import * as fundingSourcesController from './funding-sources/controller';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
+jest.mock('../../helpers/api/ordapi/putFundingSource');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -632,9 +634,12 @@ describe('section routes', () => {
       })
     ));
 
-    it('should show the associated service select price page with errors if there are validation errors', async () => {
+    it('should show the funding source select price page with errors if there are validation errors', async () => {
       fundingSourcesController.validateFundingSourcesForm = jest.fn()
-        .mockReturnValue({ success: false });
+        .mockReturnValue({
+          success: false,
+          errors: [{}],
+        });
 
       fundingSourcesController
         .getFundingSourcesErrorPageContext = jest.fn()
@@ -661,9 +666,11 @@ describe('section routes', () => {
       expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
 
-    it('should return the correct status and text if response.success is true', async () => {
+    it('should return the correct status and text if response.success and api response.success is true', async () => {
       fundingSourcesController.validateFundingSourcesForm = jest.fn()
         .mockReturnValue({ success: true });
+
+      putFundingSource.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -682,6 +689,37 @@ describe('section routes', () => {
           expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
+    });
+
+    it('should return the correct status and text if response.success is true but apiResponse.success is false', async () => {
+      fundingSourcesController.validateFundingSourcesForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      putFundingSource.mockResolvedValue({ success: false, errors: [{}] });
+
+      fundingSourcesController
+        .getFundingSourcesErrorPageContext = jest.fn()
+          .mockResolvedValue({
+            errors: [{ text: 'error', href: '#selectFundingSource' }],
+          });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="funding-sources-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
   });
 });

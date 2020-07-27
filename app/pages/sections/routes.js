@@ -19,6 +19,7 @@ import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/rout
 import { additionalServicesRoutes } from './order-items/additional-services/routes';
 import { associatedServicesRoutes } from './order-items/associated-services/routes';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
+import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 
 const router = express.Router({ mergeParams: true });
 
@@ -148,16 +149,32 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.post('/funding-sources', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const validationErrors = [];
 
-    const response = validateFundingSourcesForm({ data: req.body });
+    const response = validateFundingSourcesForm({
+      orderId,
+      data: req.body,
+      accessToken,
+    });
     if (response.success) {
-      logger.info('redirecting to associated services select recipient page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+      const apiResponse = await putFundingSource({
+        orderId,
+        fundingSource: req.body.selectFundingSource,
+        accessToken,
+      });
+      if (apiResponse.success) {
+        logger.info('redirecting to order summary page');
+        return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+      }
+      validationErrors.push(...apiResponse.errors);
+    } else {
+      validationErrors.push(...response.errors);
     }
 
     const context = await getFundingSourcesErrorPageContext({
       orderId,
-      validationErrors: response.errors,
+      validationErrors,
     });
 
     return res.render('pages/sections/funding-sources/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
