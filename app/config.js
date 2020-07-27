@@ -32,6 +32,9 @@ module.exports = {
   // LOGGER_LEVEL options are info, warn, error, off
   loggerLevel: process.env.LOGGER_LEVEL || 'error',
 
+  // IDENTITY_SERVER
+  identityServerUrl: process.env.IDENTITY_SERVER || 'http://localhost:5102/identity',
+
   // The base uri of identity service
   oidcBaseUri: process.env.OIDC_BASE_URI || 'http://localhost:5102/identity',
 
