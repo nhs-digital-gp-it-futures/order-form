@@ -666,7 +666,7 @@ describe('section routes', () => {
       expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
 
-    it('should return the correct status and text if response.success and api response.success is true', async () => {
+    it('should return the correct status and text when the FE validation and the API call are both successful', async () => {
       fundingSourcesController.validateFundingSourcesForm = jest.fn()
         .mockReturnValue({ success: true });
 
@@ -691,7 +691,7 @@ describe('section routes', () => {
         });
     });
 
-    it('should return the correct status and text if response.success is true but apiResponse.success is false', async () => {
+    it('should return the correct status and text when FE validation successful but API call returned an error', async () => {
       fundingSourcesController.validateFundingSourcesForm = jest.fn()
         .mockReturnValue({ success: true });
 
