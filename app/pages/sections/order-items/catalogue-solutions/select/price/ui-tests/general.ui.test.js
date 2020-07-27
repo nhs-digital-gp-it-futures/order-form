@@ -10,8 +10,6 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-sol
 const selectedItemNameInSession = 'Solution One';
 const selectedItemIdInSession = 'solution-1';
 const mockSolutionPricing = {
-  id: 'solution-1',
-  name: 'Solution name',
   prices: [
     {
       priceId: 1,
@@ -73,7 +71,7 @@ const selectedPriceIdInSession = '2';
 
 const mocks = () => {
   nock(solutionsApiUrl)
-    .get('/api/v1/solutions/solution-1/prices')
+    .get('/api/v1/prices?catalogueItemId=solution-1')
     .reply(200, mockSolutionPricing);
 };
 
@@ -156,7 +154,7 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="solution-price-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql(`${content.title} Solution name`);
+    .expect(await extractInnerText(title)).eql(`${content.title} Solution One`);
 });
 
 test('should render the description', async (t) => {
