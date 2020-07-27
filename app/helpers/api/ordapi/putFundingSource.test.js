@@ -10,10 +10,6 @@ describe('putOrderItem', () => {
     jest.resetAllMocks();
   });
 
-  const formData = {
-    _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-    fundingSource: true,
-  };
 
   describe('with errors', () => {
     it('should throw an error if api request is unsuccessful', async () => {
@@ -24,7 +20,7 @@ describe('putOrderItem', () => {
         await putFundingSource({
           orderId: 'order1',
           accessToken: 'access_token',
-          formData,
+          fundingSource: true,
         });
       } catch (err) {
         expect(err).toEqual({ response: { data: { errors: [{}] }, status: 400 } });
@@ -39,7 +35,7 @@ describe('putOrderItem', () => {
       await putFundingSource({
         orderId: 'order1',
         accessToken: 'access_token',
-        formData,
+        fundingSource: true,
       });
 
       expect(putData.mock.calls.length).toEqual(1);
@@ -57,7 +53,7 @@ describe('putOrderItem', () => {
       const response = await putFundingSource({
         orderId: 'order1',
         accessToken: 'access_token',
-        formData,
+        fundingSource: true,
       });
 
       expect(response.success).toEqual(true);

@@ -2,18 +2,18 @@ import { putData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
-const formatPutData = ({ formData }) => ({
-  onlyGMS: formData.fundingSource,
+const formatPutData = ({ fundingSource }) => ({
+  onlyGMS: fundingSource,
 });
 
 const putFundingSourceEndpoint = orderId => (
   `${orderApiUrl}/api/v1/orders/${orderId}/funding-source`
 );
 
-export const putFundingSource = async ({ orderId, formData, accessToken }) => {
+export const putFundingSource = async ({ orderId, fundingSource, accessToken }) => {
   const endpoint = putFundingSourceEndpoint(orderId);
   const body = formatPutData({
-    formData,
+    fundingSource,
   });
 
   await putData({
