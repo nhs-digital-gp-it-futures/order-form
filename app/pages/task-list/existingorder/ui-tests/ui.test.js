@@ -747,7 +747,7 @@ test('should render task 8 item 1 as text if recipients saved and count 1', asyn
     .expect(task8Item1.find('a').exists).notOk();
 });
 
-test('should only render task 8 item 1 as a link if recipients saved, catalogue solution saved, additional service saved and associated service saved', async (t) => {
+test('should render task 8 item 1 as text if recipients saved, catalogue solution saved, additional service saved and associated service saved', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
@@ -763,9 +763,7 @@ test('should only render task 8 item 1 as a link if recipients saved, catalogue 
   const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
 
   await t
-    .expect(task8Item1.find('a').exists).ok()
-    .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
+    .expect(task8Item1.find('a').exists).notOk();
 });
 
 test('should only render task 8 item 1 as a link if recipients saved and count 0, associated service saved and count 1', async (t) => {
@@ -787,7 +785,7 @@ test('should only render task 8 item 1 as a link if recipients saved and count 0
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
 });
 
-test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 1 and associated service saved and count 1', async (t) => {
+test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 0 and associated service saved and count 1', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
@@ -807,7 +805,7 @@ test('should only render task 8 item 1 as a link if recipients saved and count 1
     .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
 });
 
-test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 1 and associated service saved and count 1', async (t) => {
+test('should render task 8 item 1 as text if recipients saved and count 0, Catalogue solution saved and count 0 and associated service saved and count 0', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
@@ -822,9 +820,7 @@ test('should only render task 8 item 1 as a link if recipients saved and count 1
   const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
 
   await t
-    .expect(task8Item1.find('a').exists).ok()
-    .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
+    .expect(task8Item1.find('a').exists).notOk();
 });
 
 test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 1 and associated service saved and count 1', async (t) => {
@@ -833,8 +829,8 @@ test('should only render task 8 item 1 as a link if recipients saved and count 1
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
     { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 0 },
-    { id: 'associated-services', status: 'complete', count: 0 },
+    { id: 'catalogue-solutions', status: 'complete', count: 1 },
+    { id: 'associated-services', status: 'complete', count: 1 },
   ]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
