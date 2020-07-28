@@ -56,7 +56,9 @@ export const sortOrderItems = (serviceRecipients, orderItems) => {
 
   return sortedServiceRecipients
     .reduce((items, sortedServiceRecipient) => (
-      items.concat(groupedOrderItems[sortedServiceRecipient.odsCode])
+      groupedOrderItems[sortedServiceRecipient.odsCode]
+        ? items.concat(groupedOrderItems[sortedServiceRecipient.odsCode])
+        : items
     ), []);
 };
 
