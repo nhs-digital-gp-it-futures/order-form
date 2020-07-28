@@ -251,6 +251,7 @@ describe('group orderItems by serviceRecipientOdsCode', () => {
 describe('sort orderItems by serviceRecipients name', () => {
   const recipient1 = { name: 'A recipient', odsCode: 'recipient1' };
   const recipient2 = { name: 'B recipient', odsCode: 'recipient2' };
+  const recipient3 = { name: 'C recipient', odsCode: 'recipient3' };
 
   const recipient1OrderItem1 = {
     id: 'order-item-1',
@@ -292,6 +293,20 @@ describe('sort orderItems by serviceRecipients name', () => {
 
   it('return a multiple order items for different recipients', () => {
     const serviceRecipients = [recipient2, recipient1];
+
+    const orderItems = [
+      recipient2OrderItem1, recipient1OrderItem2, recipient1OrderItem1, recipient2OrderItem2,
+    ];
+
+    const sortedOrderItems = sortOrderItems(serviceRecipients, orderItems);
+
+    expect(sortedOrderItems).toEqual([
+      recipient1OrderItem2, recipient1OrderItem1, recipient2OrderItem1, recipient2OrderItem2,
+    ]);
+  });
+
+  it('should not add an entry for service recipients that does not have any orders', () => {
+    const serviceRecipients = [recipient2, recipient1, recipient3];
 
     const orderItems = [
       recipient2OrderItem1, recipient1OrderItem2, recipient1OrderItem1, recipient2OrderItem2,
