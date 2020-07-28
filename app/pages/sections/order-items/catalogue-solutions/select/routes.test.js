@@ -18,11 +18,13 @@ import { baseUrl } from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItems } from '../../../../../helpers/api/bapi/getCatalogueItems';
+import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
 jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItems');
+jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -253,21 +255,19 @@ describe('catalogue-solutions select routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select price page if authorised', () => {
+    it('should return the catalogue-solutions select price page if authorised', async () => {
       catalogueSolutionPriceController.getSolutionPricePageContext = jest.fn()
         .mockResolvedValue({});
 
-      catalogueSolutionPriceController.findSolutionPrices = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItemPricing.mockResolvedValue([]);
 
-      return request(setUpFakeApp())
+      const res = await request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie, mockSolutionsCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('data-test-id="solution-price-page"')).toBeTruthy();
-          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="solution-price-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
 
@@ -307,8 +307,7 @@ describe('catalogue-solutions select routes', () => {
       catalogueSolutionPriceController.validateSolutionPriceForm = jest.fn()
         .mockReturnValue({ success: false });
 
-      catalogueSolutionPriceController.findSolutionPrices = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItemPricing.mockResolvedValue([]);
 
       catalogueSolutionPriceController.getSolutionPriceErrorPageContext = jest.fn()
         .mockResolvedValue({

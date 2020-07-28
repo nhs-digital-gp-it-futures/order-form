@@ -10,7 +10,6 @@ import {
   validateSolutionForm,
 } from './solution/controller';
 import {
-  findSolutionPrices,
   getSolutionPriceErrorPageContext,
   getSolutionPricePageContext,
   validateSolutionPriceForm,
@@ -27,6 +26,7 @@ import {
 import {
   getCatalogueItems,
 } from '../../../../../helpers/api/bapi/getCatalogueItems';
+import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 
 const router = express.Router({ mergeParams: true });
 
@@ -84,11 +84,22 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedPriceId = Number(sessionManager.getFromSession({ req, key: 'selectedPriceId' }));
-    const solutionId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
-    const solutionPrices = await findSolutionPrices({ solutionId, accessToken });
+    const catalogueItemId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
+    const selectedCatalogueItemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
+
+    const solutionPrices = await getCatalogueItemPricing({
+      catalogueItemId,
+      accessToken,
+      loggerText: 'Catalogue solution',
+    });
     sessionManager.saveToSession({ req, key: 'solutionPrices', value: solutionPrices });
 
-    const context = getSolutionPricePageContext({ orderId, solutionPrices, selectedPriceId });
+    const context = getSolutionPricePageContext({
+      orderId,
+      solutionPrices,
+      selectedPriceId,
+      selectedCatalogueItemName,
+    });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select price page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
