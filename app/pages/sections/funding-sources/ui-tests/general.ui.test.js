@@ -97,6 +97,24 @@ test('should render save button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });
 
+test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/funding-source', { onlyGMS: true })
+    .reply(200, {});
+
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const selectFundingSourceRadioOptions = Selector('[data-test-id="question-selectFundingSource"]');
+  const button = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .click(selectFundingSourceRadioOptions.find('input').nth(0))
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+});
+
+
 test('should render the title on validation error', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);

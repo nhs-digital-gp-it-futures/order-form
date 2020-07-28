@@ -20,7 +20,7 @@ describe('putOrderItem', () => {
         await putFundingSource({
           orderId: 'order1',
           accessToken: 'access_token',
-          fundingSource: true,
+          fundingSource: 'true',
         });
       } catch (err) {
         expect(err).toEqual({ response: { data: { errors: [{}] }, status: 400 } });
@@ -35,7 +35,7 @@ describe('putOrderItem', () => {
       await putFundingSource({
         orderId: 'order1',
         accessToken: 'access_token',
-        fundingSource: true,
+        fundingSource: 'true',
       });
 
       expect(putData.mock.calls.length).toEqual(1);
@@ -53,7 +53,7 @@ describe('putOrderItem', () => {
       const response = await putFundingSource({
         orderId: 'order1',
         accessToken: 'access_token',
-        fundingSource: true,
+        fundingSource: 'true',
       });
 
       expect(response.success).toEqual(true);
