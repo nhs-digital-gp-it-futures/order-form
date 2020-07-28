@@ -1,5 +1,5 @@
 import { ErrorContext } from 'buying-catalogue-library';
-import { appBaseUri } from '../../config';
+import { appBaseUri, isDevelopment } from '../../config';
 import { getEndpoint } from '../../endpoints';
 
 export const withCatch = (logger, authProvider, route) => async (req, res, next) => {
@@ -16,7 +16,10 @@ export const withCatch = (logger, authProvider, route) => async (req, res, next)
     }
 
     logger.error(`Unexpected Error:\n${err.stack}`);
-    const defaultError = new ErrorContext({ status: 500 });
+
+    const stackTrace = isDevelopment() ? err.stack : undefined;
+    const defaultError = new ErrorContext({ status: 500, stackTrace });
+
     return next(defaultError);
   }
 };
