@@ -18,7 +18,7 @@ import * as commencementDateController from './commencement-date/controller';
 import * as serviceRecipientsController from './service-recipients/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
-import * as fundingSourcesController from './funding-sources/controller';
+import * as fundingSourcesController from './funding-source/controller';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
@@ -569,8 +569,8 @@ describe('section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/funding-sources', () => {
-    const path = '/organisation/some-order-id/funding-sources';
+  describe('GET /organisation/:orderId/funding-source', () => {
+    const path = '/organisation/some-order-id/funding-source';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -596,14 +596,14 @@ describe('section routes', () => {
         .expect(200)
         .then((res) => {
           expect(res.status).toBe(200);
-          expect(res.text.includes('data-test-id="funding-sources-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="funding-source-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });
   });
 
-  describe('POST /organisation/:orderId/funding-sources', () => {
-    const path = '/organisation/some-order-id/funding-sources';
+  describe('POST /organisation/:orderId/funding-source', () => {
+    const path = '/organisation/some-order-id/funding-source';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -661,7 +661,7 @@ describe('section routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200);
 
-      expect(res.text.includes('data-test-id="funding-sources-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="funding-source-page"')).toEqual(true);
       expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
       expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
@@ -717,7 +717,7 @@ describe('section routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200);
 
-      expect(res.text.includes('data-test-id="funding-sources-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="funding-source-page"')).toEqual(true);
       expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
       expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });

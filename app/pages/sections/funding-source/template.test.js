@@ -3,7 +3,7 @@ import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/sections/funding-sources/template.njk',
+    path: 'pages/sections/funding-source/template.njk',
   },
 };
 
@@ -40,7 +40,7 @@ describe('funding sources page', () => {
 
   it('should render the funding sources page title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const title = $('h1[data-test-id="funding-sources-page-title"]');
+      const title = $('h1[data-test-id="funding-source-page-title"]');
       expect(title.length).toEqual(1);
       expect(title.text().trim()).toEqual(context.title);
     });
@@ -48,7 +48,7 @@ describe('funding sources page', () => {
 
   it('should render the funding sources page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="funding-sources-page-description"]');
+      const description = $('h2[data-test-id="funding-source-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });

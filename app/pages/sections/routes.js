@@ -13,7 +13,7 @@ import {
   validateCommencementDateForm,
 } from './commencement-date/controller';
 import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
-import { getFundingSourcesContext, getFundingSourcesErrorPageContext, validateFundingSourcesForm } from './funding-sources/controller';
+import { getFundingSourcesContext, getFundingSourcesErrorPageContext, validateFundingSourcesForm } from './funding-source/controller';
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/routes';
 import { additionalServicesRoutes } from './order-items/additional-services/routes';
@@ -137,17 +137,17 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
 
-  router.get('/funding-sources', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+  router.get('/funding-source', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const fundingSource = await getFundingSource({ orderId, accessToken });
 
     const context = await getFundingSourcesContext({ orderId, fundingSource });
-    logger.info(`navigating to order ${orderId} funding-sources page`);
-    res.render('pages/sections/funding-sources/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    logger.info(`navigating to order ${orderId} funding-source page`);
+    res.render('pages/sections/funding-source/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/funding-sources', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+  router.post('/funding-source', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const validationErrors = [];
@@ -177,7 +177,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       validationErrors,
     });
 
-    return res.render('pages/sections/funding-sources/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/funding-source/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
