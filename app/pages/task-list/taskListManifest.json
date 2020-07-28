@@ -123,21 +123,12 @@
           "title": "Explain how you're paying for this order",
           "dependencies": [
             {
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients", "catalogue-solutions", "additional-services", "associated-services"]
-            },
-            {
               "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients", "associated-services"],
-              "countDependencies": ["associated-services"],
-              "zeroCountDependencies": ["service-recipients"]
+              "countDependencies": ["associated-services"]
             },
             {
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients", "catalogue-solutions", "associated-services"],
-              "countDependencies": ["service-recipients", "associated-services"],
-              "zeroCountDependencies": ["catalogue-solutions"]
-            },
-            {
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients", "catalogue-solutions", "associated-services"],
-              "zeroCountDependencies": ["catalogue-solutions", "associated-services"]
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients", "associated-services", "catalogue-solutions"],
+              "countDependencies": ["catalogue-solutions", "service-recipients"]
             }
           ]
         }
