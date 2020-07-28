@@ -13,7 +13,7 @@ import {
   validateCommencementDateForm,
 } from './commencement-date/controller';
 import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
-import { getFundingSourcesContext, getFundingSourcesErrorPageContext, validateFundingSourcesForm } from './funding-source/controller';
+import { getFundingSourceContext, getFundingSourceErrorPageContext, validateFundingSourceForm } from './funding-source/controller';
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/routes';
 import { additionalServicesRoutes } from './order-items/additional-services/routes';
@@ -142,7 +142,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const fundingSource = await getFundingSource({ orderId, accessToken });
 
-    const context = await getFundingSourcesContext({ orderId, fundingSource });
+    const context = await getFundingSourceContext({ orderId, fundingSource });
     logger.info(`navigating to order ${orderId} funding-source page`);
     res.render('pages/sections/funding-source/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -152,7 +152,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const validationErrors = [];
 
-    const response = validateFundingSourcesForm({
+    const response = validateFundingSourceForm({
       orderId,
       data: req.body,
       accessToken,
@@ -172,7 +172,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       validationErrors.push(...response.errors);
     }
 
-    const context = await getFundingSourcesErrorPageContext({
+    const context = await getFundingSourceErrorPageContext({
       orderId,
       validationErrors,
     });

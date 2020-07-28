@@ -18,7 +18,7 @@ import * as commencementDateController from './commencement-date/controller';
 import * as serviceRecipientsController from './service-recipients/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
-import * as fundingSourcesController from './funding-source/controller';
+import * as fundingSourceController from './funding-source/controller';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
@@ -635,14 +635,14 @@ describe('section routes', () => {
     ));
 
     it('should show the funding source select price page with errors if there are validation errors', async () => {
-      fundingSourcesController.validateFundingSourcesForm = jest.fn()
+      fundingSourceController.validateFundingSourceForm = jest.fn()
         .mockReturnValue({
           success: false,
           errors: [{}],
         });
 
-      fundingSourcesController
-        .getFundingSourcesErrorPageContext = jest.fn()
+      fundingSourceController
+        .getFundingSourceErrorPageContext = jest.fn()
           .mockResolvedValue({
             errors: [{ text: 'Select a funding source', href: '#selectFundingSource' }],
           });
@@ -667,7 +667,7 @@ describe('section routes', () => {
     });
 
     it('should return the correct status and text when the FE validation and the API call are both successful', async () => {
-      fundingSourcesController.validateFundingSourcesForm = jest.fn()
+      fundingSourceController.validateFundingSourceForm = jest.fn()
         .mockReturnValue({ success: true });
 
       putFundingSource.mockResolvedValue({ success: true });
@@ -692,13 +692,13 @@ describe('section routes', () => {
     });
 
     it('should return the correct status and text when FE validation successful but API call returned an error', async () => {
-      fundingSourcesController.validateFundingSourcesForm = jest.fn()
+      fundingSourceController.validateFundingSourceForm = jest.fn()
         .mockReturnValue({ success: true });
 
       putFundingSource.mockResolvedValue({ success: false, errors: [{}] });
 
-      fundingSourcesController
-        .getFundingSourcesErrorPageContext = jest.fn()
+      fundingSourceController
+        .getFundingSourceErrorPageContext = jest.fn()
           .mockResolvedValue({
             errors: [{ text: 'error', href: '#selectFundingSource' }],
           });
