@@ -119,7 +119,7 @@
       "name": "Indicate funding source",
       "sections": [
         {
-          "id": "funding-sources",
+          "id": "funding-source",
           "title": "Explain how you're paying for this order",
           "dependencies": [
             {

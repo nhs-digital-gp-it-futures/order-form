@@ -5,7 +5,7 @@
 {% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
 
 {% block body %}
-  <div class="nhsuk-width-container" data-test-id="funding-sources-page">
+  <div class="nhsuk-width-container" data-test-id="funding-source-page">
     <div data-test-id="go-back-link">
       {{ backLink({
         "href": backLinkHref,
@@ -21,8 +21,8 @@
           }) }}
         {% endif %}
 
-        <h1 data-test-id="funding-sources-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
-        <h2 data-test-id="funding-sources-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
+        <h1 data-test-id="funding-source-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
+        <h2 data-test-id="funding-source-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
 
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

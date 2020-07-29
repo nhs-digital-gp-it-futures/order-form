@@ -782,7 +782,7 @@ test('should only render task 8 item 1 as a link if recipients saved and count 0
   await t
     .expect(task8Item1.find('a').exists).ok()
     .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
 });
 
 test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 0 and associated service saved and count 1', async (t) => {
@@ -802,7 +802,7 @@ test('should only render task 8 item 1 as a link if recipients saved and count 1
   await t
     .expect(task8Item1.find('a').exists).ok()
     .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
 });
 
 test('should render task 8 item 1 as text if recipients saved and count 0, Catalogue solution saved and count 0 and associated service saved and count 0', async (t) => {
@@ -840,11 +840,11 @@ test('should only render task 8 item 1 as a link if recipients saved and count 1
   await t
     .expect(task8Item1.find('a').exists).ok()
     .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
 });
 
 test('should not render the complete tag for task 8 item 1 when returned as incomplete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-sources', status: 'incomplete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-source', status: 'incomplete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -855,7 +855,7 @@ test('should not render the complete tag for task 8 item 1 when returned as inco
 });
 
 test('should only render the complete tag for task 8 item 1 when returned as complete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-sources', status: 'complete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-source', status: 'complete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 

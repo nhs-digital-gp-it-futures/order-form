@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/funding-sources';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/funding-source';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -22,7 +22,7 @@ const pageSetup = async (setup = { withAuth: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Funding sources page - general')
+fixture('Funding source page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -40,11 +40,11 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render funding sources page', async (t) => {
+test('should render funding source page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const page = Selector('[data-test-id="funding-sources-page"]');
+  const page = Selector('[data-test-id="funding-source-page"]');
 
   await t
     .expect(page.exists).ok();
@@ -54,7 +54,7 @@ test('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const title = Selector('h1[data-test-id="funding-sources-page-title"]');
+  const title = Selector('h1[data-test-id="funding-source-page-title"]');
 
   await t
     .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
@@ -64,7 +64,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="funding-sources-page-description"]');
+  const description = Selector('h2[data-test-id="funding-source-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -120,7 +120,7 @@ test('should render the title on validation error', async (t) => {
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="save-button"] button');
-  const title = Selector('h1[data-test-id="funding-sources-page-title"]');
+  const title = Selector('h1[data-test-id="funding-source-page-title"]');
   const errorSummary = Selector('[data-test-id="error-summary"]');
 
   await t
@@ -152,7 +152,7 @@ test('should render select funding source field as errors with error message whe
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const fundingSourceSelectPage = Selector('[data-test-id="funding-sources-page"]');
+  const fundingSourceSelectPage = Selector('[data-test-id="funding-source-page"]');
   const continueButton = Selector('[data-test-id="save-button"] button');
   const fundingSourceSelectField = fundingSourceSelectPage.find('[data-test-id="question-selectFundingSource"]');
 
