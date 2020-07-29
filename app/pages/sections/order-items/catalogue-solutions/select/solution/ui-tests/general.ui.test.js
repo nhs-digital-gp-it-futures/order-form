@@ -3,79 +3,52 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../../../config';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution';
 
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
-
+const selectedItemIdInSession = 'solution-2';
 const mockSolutions = [
   {
-    id: 'solution-1',
+    catalogueItemId: 'solution-1',
     name: 'Solution 1',
   },
   {
-    id: 'solution-2',
+    catalogueItemId: 'solution-2',
     name: 'Solution 2',
   },
 ];
-
-const solutionsState = ClientFunction(() => {
-  const cookieValue = JSON.stringify([
-    {
-      id: 'solution-1',
-      name: 'Solution 1',
-    },
-    {
-      id: 'solution-2',
-      name: 'Solution 2',
-    },
-  ]);
-
-  document.cookie = `solutions=${cookieValue}`;
-});
-
-const selectedSolutionIdState = ClientFunction(() => {
-  const cookieValue = 'solution-2';
-
-  document.cookie = `selectedSolutionId=${cookieValue}`;
-});
+const solutionsInSession = JSON.stringify(mockSolutions);
 
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, { supplierId: 'supp-1' });
   nock(solutionsApiUrl)
-    .get('/api/v1/solutions?supplierId=supp-1')
-    .reply(200, { solutions: mockSolutions });
+    .get('/api/v1/catalogue-items?supplierId=supp-1&catalogueItemType=Solution')
+    .reply(200, mockSolutions);
 };
 
-const pageSetup = async (
-  withAuth = true, withSolutionsFoundState = false, withSelectedSolutionIdState = false) => {
-  if (withAuth) {
-    mocks();
-    await setCookies();
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (withSolutionsFoundState) await solutionsState();
-  if (withSelectedSolutionIdState) await selectedSolutionIdState();
+  if (setup.getRoute) {
+    mocks();
+  }
+  if (setup.postRoute) {
+    await setState(ClientFunction)('solutions', solutionsInSession);
+  }
 };
+
 
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Catalogue-solutions - solution page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
-
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+    await nockAndErrorCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
@@ -83,7 +56,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false);
+  await pageSetup({ ...defaultPageSetup, withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -93,22 +66,39 @@ test('when user is not authenticated - should navigate to the identity server lo
 test('should render Catalogue-solutions select page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+
   const page = Selector('[data-test-id="solution-select-page"]');
 
   await t
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id/catalogue-solutions when click on backlink', async (t) => {
+
+test('should link to /organisation/order-id/catalogue-solutions for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions');
+});
+
+test('should link to /organisation/order-id/catalogue-solutions for backlink with validation errors', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+  const button = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions');
 });
 
 test('should render the title', async (t) => {
@@ -118,7 +108,6 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="solution-select-page-title"]');
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
 });
 
@@ -129,7 +118,6 @@ test('should render the description', async (t) => {
   const description = Selector('h2[data-test-id="solution-select-page-description"]');
 
   await t
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
@@ -151,8 +139,9 @@ test('should render a selectSolution question as radio button options', async (t
     .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(1))).eql('Solution 2');
 });
 
-test('should render the radioButton as checked for the selectedSolutionId', async (t) => {
-  await pageSetup(true, true, true);
+test('should render the radioButton as checked for the selectedItemId', async (t) => {
+  await setState(ClientFunction)('selectedItemId', selectedItemIdInSession);
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolution"]');
@@ -171,12 +160,11 @@ test('should render the Continue button', async (t) => {
   const button = Selector('[data-test-id="continue-button"] button');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
 test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price when a solution is selected', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolution"]');
@@ -190,7 +178,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
 });
 
 test('should show the error summary when no solution selected causing validation error', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -207,7 +195,7 @@ test('should show the error summary when no solution selected causing validation
 });
 
 test('should render select solution field as errors with error message when no solution selected causing validation error', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const solutionSelectPage = Selector('[data-test-id="solution-select-page"]');
@@ -224,7 +212,7 @@ test('should render select solution field as errors with error message when no s
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');

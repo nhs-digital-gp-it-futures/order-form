@@ -4,20 +4,9 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { baseUrl, orderApiUrl } from '../../../config';
 import mockOrdersData from '../../../test-utils/mockData/mockOrders.json';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113',
-    name: 'Cool Dude',
-    ordering: 'manage',
-    primaryOrganisationId: 'org-id',
-    primaryOrganisationName: 'org-name',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -25,10 +14,12 @@ const mocks = () => {
     .reply(200, mockOrdersData);
 };
 
-const pageSetup = async (withAuth = true) => {
-  if (withAuth) {
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
     mocks();
-    await setCookies();
   }
 };
 
@@ -37,12 +28,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Dashboard page')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
-
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+    await nockAndErrorCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
@@ -50,7 +36,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false);
+  await pageSetup({ withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -73,7 +59,6 @@ test('should navigate to /re-login when click Back', async (t) => {
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
     .expect(goBackLink.getAttribute('href')).eql('http://localhost:3000/re-login');
 });
 
@@ -84,7 +69,6 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="dashboard-page-title"]');
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql('org-name orders');
 });
 
@@ -95,7 +79,6 @@ test('should render the description', async (t) => {
   const description = Selector('h2[data-test-id="dashboard-page-description"]');
 
   await t
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
@@ -106,7 +89,6 @@ test('should render add new order button', async (t) => {
   const button = Selector('[data-test-id="new-order-button"] a');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.newOrderButtonText)
     .expect(button.getAttribute('href')).eql(`${baseUrl}/organisation/neworder`);
 });
@@ -118,7 +100,6 @@ test('should navigate to the new order page when add new order button is clicked
   const button = Selector('[data-test-id="new-order-button"] a');
 
   await t
-    .expect(button.exists).ok()
     .click(button)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/neworder');
 });
@@ -136,18 +117,11 @@ test('should render the unsubmitted orders table', async (t) => {
   const unsubmittedColumnHeading5 = unsubmittedTable.find('[data-test-id="column-heading-4"]');
 
   await t
-    .expect(unsubmittedTable.exists).ok()
-    .expect(unsubmittedTableTitle.exists).ok()
     .expect(await extractInnerText(unsubmittedTableTitle)).eql(content.unsubmittedOrdersTableTitle)
-    .expect(unsubmittedColumnHeading1.exists).ok()
     .expect(await extractInnerText(unsubmittedColumnHeading1)).eql(content.columnInfo[0].data)
-    .expect(unsubmittedColumnHeading2.exists).ok()
     .expect(await extractInnerText(unsubmittedColumnHeading2)).eql(content.columnInfo[1].data)
-    .expect(unsubmittedColumnHeading3.exists).ok()
     .expect(await extractInnerText(unsubmittedColumnHeading3)).eql(content.columnInfo[2].data)
-    .expect(unsubmittedColumnHeading4.exists).ok()
     .expect(await extractInnerText(unsubmittedColumnHeading4)).eql(content.columnInfo[3].data)
-    .expect(unsubmittedColumnHeading5.exists).ok()
     .expect(await extractInnerText(unsubmittedColumnHeading5)).eql(content.columnInfo[4].data);
 });
 
@@ -164,17 +138,11 @@ test('should render the unsubmitted orders table content', async (t) => {
   const dateCreated = row.find('div[data-test-id="order1-dateCreated"]');
 
   await t
-    .expect(row.exists).ok()
-    .expect(orderId.exists).ok()
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[0].orderId)
     .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order1`)
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(mockOrdersData[0].description)
-    .expect(lastUpdatedBy.exists).ok()
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[0].lastUpdatedBy)
-    .expect(lastUpdated.exists).ok()
     .expect(await extractInnerText(lastUpdated)).eql('6 May 2020')
-    .expect(dateCreated.exists).ok()
     .expect(await extractInnerText(dateCreated)).eql('6 January 2020');
 });
 
@@ -191,18 +159,11 @@ test('should render the submitted orders table', async (t) => {
   const submittedColumnHeading5 = submittedTable.find('[data-test-id="column-heading-4"]');
 
   await t
-    .expect(submittedTable.exists).ok()
-    .expect(submittedTableTitle.exists).ok()
     .expect(await extractInnerText(submittedTableTitle)).eql(content.submittedOrdersTableTitle)
-    .expect(submittedColumnHeading1.exists).ok()
     .expect(await extractInnerText(submittedColumnHeading1)).eql(content.columnInfo[0].data)
-    .expect(submittedColumnHeading2.exists).ok()
     .expect(await extractInnerText(submittedColumnHeading2)).eql(content.columnInfo[1].data)
-    .expect(submittedColumnHeading3.exists).ok()
     .expect(await extractInnerText(submittedColumnHeading3)).eql(content.columnInfo[2].data)
-    .expect(submittedColumnHeading4.exists).ok()
     .expect(await extractInnerText(submittedColumnHeading4)).eql(content.columnInfo[3].data)
-    .expect(submittedColumnHeading5.exists).ok()
     .expect(await extractInnerText(submittedColumnHeading5)).eql(content.columnInfo[4].data);
 });
 
@@ -219,17 +180,11 @@ test('should render the submitted orders table content', async (t) => {
   const dateCreated = row.find('div[data-test-id="order2-dateCreated"]');
 
   await t
-    .expect(row.exists).ok()
-    .expect(orderId.exists).ok()
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[1].orderId)
     .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order2`)
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(mockOrdersData[1].description)
-    .expect(lastUpdatedBy.exists).ok()
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[1].lastUpdatedBy)
-    .expect(lastUpdated.exists).ok()
     .expect(await extractInnerText(lastUpdated)).eql('9 December 2020')
-    .expect(dateCreated.exists).ok()
     .expect(await extractInnerText(dateCreated)).eql('9 October 2020');
 });
 
@@ -242,9 +197,6 @@ test('should navigate to the order page when an order id is clicked', async (t) 
   const orderId = row.find('a[data-test-id="order2-id"]');
 
   await t
-    .expect(table.exists).ok()
-    .expect(row.exists).ok()
-    .expect(orderId.exists).ok()
     .click(orderId)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order2');
 });

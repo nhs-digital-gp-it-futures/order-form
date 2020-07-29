@@ -1,0 +1,15 @@
+{
+  "backLinkText": "Go back",
+  "title": "List price for",
+  "description": "Select the list price for this Associated Service. If you’ve agreed a different price with the supplier, the values can be altered later.",
+  "questions": [
+    {
+      "id": "selectAssociatedServicePrice",
+      "mainAdvice": "Select list price"
+    }
+  ],
+  "errorMessages": {
+    "SelectAssociatedServicePriceRequired": "Select a list price"
+  },
+  "continueButtonText": "Continue"
+}

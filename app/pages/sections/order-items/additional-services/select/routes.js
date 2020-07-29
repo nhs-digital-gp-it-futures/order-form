@@ -7,13 +7,11 @@ import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import {
   findAdditionalServices,
   findAddedCatalogueSolutions,
-  findSelectedCatalogueItemInSession,
   getAdditionalServicePageContext,
   getAdditionalServiceErrorPageContext,
   validateAdditionalServicesForm,
 } from './additional-service/controller';
 import {
-  findAdditionalServicePrices,
   getAdditionalServicePricePageContext,
   getAdditionalServicePriceErrorPageContext,
   validateAdditionalServicePriceForm,
@@ -24,6 +22,10 @@ import {
   validateAdditionalServiceRecipientForm,
   getAdditionalServiceRecipientName,
 } from './recipient/controller';
+import {
+  findSelectedCatalogueItemInSession,
+} from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
+import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 
 const router = express.Router({ mergeParams: true });
 
@@ -80,10 +82,12 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         req,
         selectedItemId,
         sessionManager,
+        catalogueItemsKey: 'additionalServices',
       });
 
       sessionManager.saveToSession({ req, key: 'selectedItemId', value: selectedItemId });
       sessionManager.saveToSession({ req, key: 'selectedItemName', value: selectedItem.name });
+      sessionManager.saveToSession({ req, key: 'selectedCatalogueSolutionId', value: selectedItem.solution.solutionId });
 
       logger.info('redirecting additional services select price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);
@@ -109,9 +113,10 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     const catalogueItemId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
     const selectedAdditionalServiceName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
 
-    const additionalServicePrices = await findAdditionalServicePrices({
+    const additionalServicePrices = await getCatalogueItemPricing({
       catalogueItemId,
       accessToken,
+      loggerText: 'Additional service',
     });
     sessionManager.saveToSession({ req, key: 'additionalServicePrices', value: additionalServicePrices });
 
@@ -155,7 +160,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     const recipients = await getRecipients({ orderId, accessToken });
     sessionManager.saveToSession({ req, key: 'recipients', value: recipients });
 
-    const selectedAdditionalRecipientId = sessionManager.getFromSession({ req, key: 'selectedAdditionalRecipientId' });
+    const selectedAdditionalRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
 
     const context = await getAdditionalServiceRecipientPageContext({
       orderId,
@@ -178,7 +183,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       const selectedRecipientName = getAdditionalServiceRecipientName(
         { serviceRecipientId: selectedRecipientId, recipients },
       );
-      sessionManager.saveToSession({ req, key: 'selectedAdditionalRecipientId', value: selectedRecipientId });
+      sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: selectedRecipientId });
       sessionManager.saveToSession({ req, key: 'selectedRecipientName', value: selectedRecipientName });
       logger.info('Redirect to new additional service order item page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/neworderitem`);

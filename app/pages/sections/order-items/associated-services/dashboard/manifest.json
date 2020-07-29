@@ -1,0 +1,18 @@
+{
+    "backLinkText": "Go back",
+    "title": "Associated Services for",
+    "description": "Add the Associated Services you want to be part of this order, for example training packages.",
+    "insetAdvice": "If you do not want to add any, or have finished adding Associated Services, continue to the next step.",
+    "orderDescriptionHeading": "Order description",
+    "noOrderItemsText": "No Associated Services added",
+    "addOrderItemButtonText": "Add Associated Service",
+    "addedOrderItemsTable": {
+      "columnInfo": [
+        {
+          "data": "Associated Services for this order"
+        }
+      ],
+      "columnClass": "nhsuk-grid-column-one-half nhsuk-u-font-size-16"
+    },
+    "continueButtonText": "Continue"
+  }

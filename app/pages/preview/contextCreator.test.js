@@ -283,6 +283,65 @@ describe('order summary preview contextCreator', () => {
         .toEqual(manifest.oneOffCostTotalsTable.columnInfo);
     });
 
+    it('should return the oneOff cost table with items when order items are provided', () => {
+      const classes = 'nhsuk-u-font-size-14';
+      const expectedContext = {
+        oneOffCostTable: {
+          ...manifest.oneOffCostTable,
+          items: [
+            [
+              { classes, data: 'Some Recipient Name (A10001)', dataTestId: 'recipient-name' },
+              { classes, data: 'item-1', dataTestId: 'item-id' },
+              { classes, data: 'Some item name', dataTestId: 'item-name' },
+              { classes, data: '585.00 per Day ', dataTestId: 'price-unit' },
+              { classes, data: '70 ', dataTestId: 'quantity' },
+              { classes: `${classes} nhsuk-table__cell--numeric`, data: '40,850.00', dataTestId: 'item-cost' },
+            ],
+          ],
+        },
+      };
+
+      const mockOneOffCosts = [{
+        catalogueItemType: 'AssociatedService',
+        itemId: 'item-1',
+        provisioningType: 'Declarative',
+        serviceRecipientsOdsCode: 'A10001',
+        cataloguePriceType: 'Flat',
+        catalogueItemName: 'Some item name',
+        price: 585.00,
+        itemUnitDescription: 'per Day',
+        quantity: 70,
+        costPerYear: 40850.00,
+      }];
+
+      const contextData = {
+        orderId: 'order-1',
+        orderData: mockOrderData,
+        oneOffCostItems: mockOneOffCosts,
+        serviceRecipients: {
+          A10001: {
+            name: 'Some Recipient Name',
+            odsCode: 'A10001',
+          },
+        },
+      };
+
+      const context = getContext(contextData);
+      expect(context.oneOffCostTable).toEqual(expectedContext.oneOffCostTable);
+    });
+
+    it('should return an empty recurring cost table when no order items are provided', () => {
+      const expectedContext = {
+        oneOffCostTable: {
+          ...manifest.oneOffCostTable,
+          items: [],
+        },
+      };
+
+      const context = getContext({ orderId: 'order-1', orderData: {} });
+      expect(context.oneOffCostTable).toEqual(expectedContext.oneOffCostTable);
+    });
+
     it('should return the oneOffCostTotalsTable with items and the total cost value set to 0.00 when not provided', () => {
       const expectedContext = {
         oneOffCostTotalsTable: {

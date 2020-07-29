@@ -81,6 +81,58 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Add Associated Services",
+      "sections": [
+        {
+          "id": "associated-services",
+          "title": "Add Associated Services to your order",
+          "dependencies": [
+            {
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients"],
+              "zeroCountDependencies": ["service-recipients"]
+            },
+            {
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","catalogue-solutions"],
+              "zeroCountDependencies": ["catalogue-solutions"],
+              "countDependencies": ["service-recipients"]
+            },
+            { 
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","catalogue-solutions","additional-services"],
+              "zeroCountDependencies": ["additional-services"],
+              "countDependencies": ["service-recipients","catalogue-solutions"]
+            },
+            { 
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","catalogue-solutions","additional-services"],
+              "countDependencies": ["service-recipients"]
+            },
+            { 
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","associated-services"],
+              "countDependencies": ["service-recipients", "associated-services"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Indicate funding source",
+      "sections": [
+        {
+          "id": "funding-source",
+          "title": "Explain how you're paying for this order",
+          "dependencies": [
+            {
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients", "associated-services"],
+              "countDependencies": ["associated-services"]
+            },
+            {
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients", "associated-services", "catalogue-solutions"],
+              "countDependencies": ["catalogue-solutions", "service-recipients"]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

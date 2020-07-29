@@ -2,22 +2,11 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
 
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-  document.cookie = `fakeToken=${cookieValue}`;
-});
-
-const setSessionState = ClientFunction(() => {
-  const cookieValue = 'supplier-1';
-  document.cookie = `selectedSupplier=${cookieValue}`;
-});
-
-const supplierDataFromBapi = {
+const mockSupplierData = {
   name: 'SupplierTwo',
   address: {
     line1: 'address 1',
@@ -37,6 +26,8 @@ const supplierDataFromBapi = {
     telephoneNumber: '07765432198',
   },
 };
+
+const supplierDataFromBapi = mockSupplierData;
 
 const supplierErrorResponse = {
   errors: [
@@ -59,25 +50,40 @@ const supplierErrorResponse = {
   ],
 };
 
-const mocks = (withPutErrorResponse) => {
+const requestPutBody = {
+  name: mockSupplierData.name,
+  address: {
+    line1: mockSupplierData.address.line1,
+    line2: mockSupplierData.address.line2,
+    line4: mockSupplierData.address.line4,
+    line5: mockSupplierData.address.line5,
+    town: mockSupplierData.address.town,
+    county: mockSupplierData.address.county,
+    postcode: mockSupplierData.address.postcode,
+    country: mockSupplierData.address.country,
+  },
+  primaryContact: mockSupplierData.primaryContact,
+};
+
+const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
-    .times(withPutErrorResponse ? 2 : 1)
     .reply(200, {});
 
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
-
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/supplier')
-    .reply(withPutErrorResponse ? 400 : 200, withPutErrorResponse ? supplierErrorResponse : {});
 };
 
-const pageSetup = async (withSessionState = false, withPutErrorResponse = false) => {
-  await setCookies();
-  if (withSessionState) await setSessionState();
-  mocks(withPutErrorResponse);
+const defaultPageSetup = { withAuth: true, getRoute: true, mockData: {} };
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks(setup.mockData);
+    await setState(ClientFunction)('selectedSupplier', 'supplier-1');
+  }
 };
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -85,28 +91,34 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Supplier page - errors')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
-
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
-  await pageSetup(true, false);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier', requestPutBody)
+    .reply(200, {});
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .expect(saveButton.exists).ok()
     .click(saveButton)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier', requestPutBody)
+    .reply(400, supplierErrorResponse);
+
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -126,7 +138,15 @@ test('should show the error summary when there are validation errors', async (t)
 });
 
 test('should ensure details are repopulated when there are validation errors', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier', requestPutBody)
+    .reply(400, supplierErrorResponse);
+
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const page = Selector('[data-test-id="supplier-page"]');
@@ -146,7 +166,6 @@ test('should ensure details are repopulated when there are validation errors', a
   const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
 
   await t
-    .expect(saveButton.exists).ok()
     .click(saveButton);
 
   await t
@@ -166,7 +185,15 @@ test('should ensure details are repopulated when there are validation errors', a
 });
 
 test('should show text fields as errors with error message when there are validation errors', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier', requestPutBody)
+    .reply(400, supplierErrorResponse);
+
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const page = Selector('[data-test-id="supplier-page"]');
@@ -177,7 +204,6 @@ test('should show text fields as errors with error message when there are valida
   const phoneField = page.find('[data-test-id="question-telephoneNumber"]');
 
   await t
-    .expect(firstNameField.exists).ok()
     .expect(firstNameField.find('[data-test-id="text-field-input-error"]').exists).notOk()
     .expect(lastNameField.find('[data-test-id="text-field-input-error"]').exists).notOk()
     .expect(phoneField.find('[data-test-id="text-field-input-error"]').exists).notOk()
@@ -196,7 +222,15 @@ test('should show text fields as errors with error message when there are valida
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/supplier', requestPutBody)
+    .reply(400, supplierErrorResponse);
+
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/supplier')
+    .reply(200, {});
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');

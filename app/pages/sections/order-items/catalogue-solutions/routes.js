@@ -4,16 +4,16 @@ import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
 import {
   getCatalogueSolutionsPageContext,
-  putCatalogueSolutions,
 } from './dashboard/controller';
+import { catalogueSolutionsSelectRoutes } from './select/routes';
 import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
-  saveSolutionOrderItem,
 } from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getPageData } from './order-item/routesHelper';
-import { catalogueSolutionsSelectRoutes } from './select/routes';
+import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
+import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 
 const router = express.Router({ mergeParams: true });
 
@@ -33,8 +33,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    await putCatalogueSolutions({
+    await putOrderSection({
       orderId,
+      sectionId: 'catalogue-solutions',
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
@@ -47,7 +48,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const pageData = await getPageData({
+    const pageData = await getOrderItemPageData({
       req,
       sessionManager,
       accessToken,
@@ -61,7 +62,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       orderId,
       orderItemId,
       orderItemType: 'Solution',
-      solutionName: pageData.solutionName,
+      solutionName: pageData.itemName,
       odsCode: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,
@@ -87,19 +88,26 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
-      const apiResponse = await saveSolutionOrderItem({
+      const apiResponse = await saveOrderItem({
         accessToken,
         orderId,
         orderItemId,
-        selectedRecipientId: pageData.serviceRecipientId,
+        orderItemType: 'Solution',
+        serviceRecipientId: pageData.serviceRecipientId,
         serviceRecipientName: pageData.serviceRecipientName,
-        selectedSolutionId: pageData.solutionId,
-        solutionName: pageData.solutionName,
+        itemId: pageData.itemId,
+        itemName: pageData.itemName,
         selectedPrice: pageData.selectedPrice,
         formData: req.body,
       });
 
       if (apiResponse.success) {
+        sessionManager.clearFromSession({
+          req,
+          keys: [
+            'selectedItemId', 'selectedItemName', 'selectedRecipientId', 'selectedRecipientName', 'selectedPriceId', 'selectedCatalogueSolutionId',
+          ],
+        });
         logger.info('redirecting catalogue solutions main page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
       }
@@ -110,7 +118,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       orderId,
       orderItemId,
       orderItemType: 'Solution',
-      solutionName: pageData.solutionName,
+      solutionName: pageData.itemName,
       selectedRecipientId: pageData.serviceRecipientId,
       serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,

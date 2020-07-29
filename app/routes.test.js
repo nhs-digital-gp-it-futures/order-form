@@ -8,12 +8,14 @@ import {
 import { App } from './app';
 import { routes } from './routes';
 import { baseUrl } from './config';
+import { getOrder } from './helpers/api/ordapi/getOrder';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
 import * as documentController from './documentController';
 import * as previewController from './pages/preview/controller';
 
 jest.mock('./logger');
+jest.mock('./helpers/api/ordapi/getOrder');
 
 dashboardController.getDashboardContext = jest.fn()
   .mockResolvedValue({});
@@ -210,8 +212,7 @@ describe('routes', () => {
     ));
 
     it('should return the correct status and text when the user is authorised', () => {
-      previewController.getOrder = jest.fn()
-        .mockResolvedValueOnce({});
+      getOrder.mockResolvedValueOnce({});
 
       previewController.getPreviewPageContext = jest.fn()
         .mockResolvedValueOnce({});

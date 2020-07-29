@@ -1,7 +1,7 @@
 import { putData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
-import { getEndpoint } from '../../../endpoints';
 import { extractDate } from '../../controllers/extractDate';
+import { orderApiUrl } from '../../../config';
 
 const formatPutData = ({
   formData,
@@ -12,13 +12,15 @@ const formatPutData = ({
   price: parseFloat(formData.price),
 });
 
+const getPutOrderItemEndpoint = (orderId, orderItemId) => `${orderApiUrl}/api/v1/orders/${orderId}/order-items/${orderItemId}`;
+
 export const putOrderItem = async ({
   accessToken,
   orderId,
   orderItemId,
   formData,
 }) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putOrderItem', options: { orderId, orderItemId } });
+  const endpoint = getPutOrderItemEndpoint(orderId, orderItemId);
   const body = formatPutData({
     formData,
   });

@@ -13,9 +13,13 @@ import {
   validateCommencementDateForm,
 } from './commencement-date/controller';
 import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
+import { getFundingSourceContext, getFundingSourceErrorPageContext, validateFundingSourceForm } from './funding-source/controller';
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/routes';
 import { additionalServicesRoutes } from './order-items/additional-services/routes';
+import { associatedServicesRoutes } from './order-items/associated-services/routes';
+import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
+import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 
 const router = express.Router({ mergeParams: true });
 
@@ -78,6 +82,8 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.use('/additional-services', additionalServicesRoutes(authProvider, addContext, sessionManager));
 
+  router.use('/associated-services', associatedServicesRoutes(authProvider, addContext, sessionManager));
+
   router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const context = await getCommencementDateContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
@@ -129,6 +135,49 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     });
 
     return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+  }));
+
+  router.get('/funding-source', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const fundingSource = await getFundingSource({ orderId, accessToken });
+
+    const context = await getFundingSourceContext({ orderId, fundingSource });
+    logger.info(`navigating to order ${orderId} funding-source page`);
+    res.render('pages/sections/funding-source/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/funding-source', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const validationErrors = [];
+
+    const response = validateFundingSourceForm({
+      orderId,
+      data: req.body,
+      accessToken,
+    });
+    if (response.success) {
+      const apiResponse = await putFundingSource({
+        orderId,
+        fundingSource: req.body.selectFundingSource,
+        accessToken,
+      });
+      if (apiResponse.success) {
+        logger.info('redirecting to order summary page');
+        return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+      }
+      validationErrors.push(...apiResponse.errors);
+    } else {
+      validationErrors.push(...response.errors);
+    }
+
+    const context = await getFundingSourceErrorPageContext({
+      orderId,
+      validationErrors,
+    });
+
+    return res.render('pages/sections/funding-source/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;

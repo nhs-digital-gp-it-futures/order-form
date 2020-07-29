@@ -1,22 +1,12 @@
-import { getData, postData, putData } from 'buying-catalogue-library';
-import { solutionsApiUrl, organisationApiUrl, orderApiUrl } from '../../../../../config';
-import { logger } from '../../../../../logger';
 import {
-  getOrderItem,
-  getRecipientName,
-  getSelectedPrice,
   getOrderItemContext,
-  saveSolutionOrderItem,
+  getOrderItemErrorPageContext,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from '../../../../../helpers/controllers/manifestProvider';
 
 jest.mock('buying-catalogue-library');
-
-jest.mock('./contextCreator', () => ({
-  getContext: jest.fn(),
-}));
-
+jest.mock('./contextCreator', () => ({ getContext: jest.fn(), getErrorContext: jest.fn() }));
 jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
 
 jest.mock('../../../../../helpers/controllers/manifestProvider', () => ({
@@ -127,262 +117,57 @@ describe('catalogue-solutions order-item controller', () => {
     });
   });
 
-  describe('getCatalogueOrderItem', () => {
+  describe('getOrderItemErrorPageContext', () => {
     afterEach(() => {
-      getData.mockReset();
+      jest.resetAllMocks();
     });
 
-    it('should call getData once with the correct params', async () => {
-      getData
-        .mockResolvedValueOnce({ data: {} });
-
-      await getOrderItem({ orderId: 'order-1', orderItemId: 'order-item-1', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-1/sections/catalogue-solutions/order-item-1`,
-        accessToken: 'access_token',
-        logger,
-      });
-    });
-  });
-
-  describe('getRecipient', () => {
-    afterEach(() => {
-      getData.mockReset();
-    });
-
-    it('should call getData once with the correct params', async () => {
-      getData
-        .mockResolvedValueOnce({ data: {} });
-
-      await getRecipientName({ selectedRecipientId: 'org-1', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${organisationApiUrl}/api/v1/ods/org-1`,
-        accessToken: 'access_token',
-        logger,
-      });
-    });
-  });
-
-  describe('getPrice', () => {
-    afterEach(() => {
-      getData.mockReset();
-    });
-
-    it('should call getData once with the correct params', async () => {
-      getData
-        .mockResolvedValueOnce({ data: {} });
-
-      await getSelectedPrice({ selectedPriceId: 'price-1', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${solutionsApiUrl}/api/v1/prices/price-1`,
-        accessToken: 'access_token',
-        logger,
-      });
-    });
-  });
-
-  describe('saveSolutionOrderItem', () => {
-    describe('when order item is new', () => {
-      afterEach(() => {
-        postData.mockReset();
+    it('should call getSelectedPriceManifest with the correct params', async () => {
+      await getOrderItemErrorPageContext({
+        orderId: 'order-1',
+        orderItemType,
+        itemName: 'item-name',
+        selectedPriceId: 'some-price-id',
+        selectedPrice,
+        formData: { quantity: '100' },
+        validationErrors: {},
       });
 
-      const serviceRecipient = { name: 'Recipient 1', odsCode: 'ods1' };
-      const solution = { id: 'solutionId1', name: 'Solution 1' };
-      const formData = {
-        _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-        'deliveryDate-day': '25',
-        'deliveryDate-month': '12',
-        'deliveryDate-year': '2020',
-        price: '500.49',
-        quantity: '1',
-        selectEstimationPeriod: 'month',
-      };
-
-      describe('with errors', () => {
-        it('should return error.response if api request is unsuccessful with 400', async () => {
-          const responseData = { errors: [{}] };
-          postData.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
-
-          const response = await saveSolutionOrderItem({
-            orderId: 'order1',
-            orderItemId: 'neworderitem',
-            accessToken: 'access_token',
-            selectedRecipientId: serviceRecipient.odsCode,
-            serviceRecipientName: serviceRecipient.name,
-            selectedSolutionId: solution.id,
-            solutionName: solution.name,
-            selectedPrice,
-            formData,
-          });
-
-          expect(response).toEqual(responseData);
-        });
-
-        it('should throw an error if api request is unsuccessful with non 400', async () => {
-          postData.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
-
-          try {
-            await saveSolutionOrderItem({
-              orderId: 'order1',
-              orderItemId: 'neworderitem',
-              accessToken: 'access_token',
-              selectedRecipientId: serviceRecipient.odsCode,
-              serviceRecipientName: serviceRecipient.name,
-              selectedSolutionId: solution.id,
-              solutionName: solution.name,
-              selectedPrice,
-              formData,
-            });
-          } catch (err) {
-            expect(err).toEqual(new Error());
-          }
-        });
-      });
-
-      describe('with no errors', () => {
-        it('should post correctly formatted data', async () => {
-          postData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
-
-          await saveSolutionOrderItem({
-            orderId: 'order1',
-            orderItemId: 'neworderitem',
-            accessToken: 'access_token',
-            selectedRecipientId: serviceRecipient.odsCode,
-            serviceRecipientName: serviceRecipient.name,
-            selectedSolutionId: solution.id,
-            solutionName: solution.name,
-            selectedPrice,
-            formData,
-          });
-
-          expect(postData.mock.calls.length).toEqual(1);
-          expect(postData).toHaveBeenCalledWith({
-            endpoint: `${orderApiUrl}/api/v1/orders/order1/sections/catalogue-solutions`,
-            body: {
-              ...selectedPrice,
-              serviceRecipient,
-              catalogueItemId: 'solutionId1',
-              catalogueItemName: 'Solution 1',
-              catalogueItemType: 'Solution',
-              deliveryDate: '2020-12-25',
-              quantity: 1,
-              estimationPeriod: 'month',
-              price: 500.49,
-            },
-            accessToken: 'access_token',
-            logger,
-          });
-        });
-
-        it('should return success as true if data is saved successfully', async () => {
-          postData.mockResolvedValueOnce({ success: true });
-
-          const response = await saveSolutionOrderItem({
-            orderId: 'order1',
-            orderItemId: 'neworderitem',
-            accessToken: 'access_token',
-            selectedRecipientId: serviceRecipient.odsCode,
-            serviceRecipientName: serviceRecipient.name,
-            selectedSolutionId: solution.id,
-            solutionName: solution.name,
-            selectedPrice,
-            formData,
-          });
-
-          expect(response.success).toEqual(true);
-          expect(response.errors).toEqual(undefined);
-        });
+      expect(getSelectedPriceManifest.getSelectedPriceManifest.mock.calls.length).toEqual(1);
+      expect(getSelectedPriceManifest.getSelectedPriceManifest).toHaveBeenCalledWith({
+        orderItemType,
+        provisioningType: selectedPrice.provisioningType,
+        type: selectedPrice.type,
       });
     });
 
-    describe('when order item is existing', () => {
-      afterEach(() => {
-        putData.mockReset();
+    it('should call getOrderItemErrorPageContext with the correct params', async () => {
+      const selectedPriceManifest = { description: 'fake manifest' };
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+
+      await getOrderItemErrorPageContext({
+        orderId: 'order-1',
+        itemName: 'item-name',
+        selectedPriceId: 'some-price-id',
+        selectedPrice,
+        formData: {
+          quantity: '100  ',
+          price: '  0.1',
+        },
       });
 
-      const formData = {
-        _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-        'deliveryDate-day': '25',
-        'deliveryDate-month': '12',
-        'deliveryDate-year': '2020',
-        price: '500.49',
-        quantity: '1',
-        selectEstimationPeriod: 'month',
-      };
-
-      describe('with errors', () => {
-        it('should return error.respose if api request is unsuccessful with 400', async () => {
-          const responseData = { errors: [{}] };
-          putData.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
-
-          const response = await saveSolutionOrderItem({
-            orderId: 'order1',
-            orderItemId: 'orderItemId-1',
-            accessToken: 'access_token',
-            formData,
-          });
-
-          expect(response).toEqual(responseData);
-        });
-
-        it('should throw an error if api request is unsuccessful with non 400', async () => {
-          putData.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
-
-          try {
-            await saveSolutionOrderItem({
-              orderId: 'order1',
-              orderItemId: 'orderItemId-1',
-              accessToken: 'access_token',
-              formData,
-            });
-          } catch (err) {
-            expect(err).toEqual(new Error());
-          }
-        });
-      });
-
-      describe('with no errors', () => {
-        it('should post correctly formatted data', async () => {
-          putData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
-
-          await saveSolutionOrderItem({
-            orderId: 'order1',
-            orderItemId: 'orderItemId-1',
-            accessToken: 'access_token',
-            formData,
-          });
-
-          expect(putData.mock.calls.length).toEqual(1);
-          expect(putData).toHaveBeenCalledWith({
-            endpoint: `${orderApiUrl}/api/v1/orders/order1/sections/catalogue-solutions/orderItemId-1`,
-            body: {
-              deliveryDate: '2020-12-25',
-              quantity: 1,
-              estimationPeriod: 'month',
-              price: 500.49,
-            },
-            accessToken: 'access_token',
-            logger,
-          });
-        });
-
-        it('should return success as true if data is saved successfully', async () => {
-          putData.mockResolvedValueOnce({ success: true });
-
-          const response = await saveSolutionOrderItem({
-            orderId: 'order1',
-            orderItemId: 'orderItemId-1',
-            accessToken: 'access_token',
-            formData,
-          });
-
-          expect(response.success).toEqual(true);
-          expect(response.errors).toEqual(undefined);
-        });
+      expect(contextCreator.getErrorContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getErrorContext).toHaveBeenCalledWith({
+        commonManifest: { title: 'fake manifest' },
+        selectedPriceManifest,
+        orderId: 'order-1',
+        itemName: 'item-name',
+        selectedPriceId: 'some-price-id',
+        selectedPrice,
+        formData: {
+          quantity: '100',
+          price: '0.1',
+        },
       });
     });
   });

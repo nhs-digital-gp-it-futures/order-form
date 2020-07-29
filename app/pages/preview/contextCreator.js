@@ -206,43 +206,43 @@ const generateRecurringCostDetailsTable = ({
     const serviceRecipient = serviceRecipients[item.serviceRecipientsOdsCode];
 
     columns.push(({
-      classes: manifest.recurringCostTable.cellInfo.recipientName.classes,
+      classes: recurringCostTable.cellInfo.recipientName.classes,
       data: `${serviceRecipient.name} (${serviceRecipient.odsCode})`,
       dataTestId: 'recipient-name',
     }));
 
     columns.push(({
-      classes: manifest.recurringCostTable.cellInfo.itemId.classes,
+      classes: recurringCostTable.cellInfo.itemId.classes,
       data: item.itemId,
       dataTestId: 'item-id',
     }));
 
     columns.push(({
-      classes: manifest.recurringCostTable.cellInfo.itemName.classes,
+      classes: recurringCostTable.cellInfo.itemName.classes,
       data: item.catalogueItemName,
       dataTestId: 'item-name',
     }));
 
     columns.push(({
-      classes: manifest.recurringCostTable.cellInfo.priceUnit.classes,
+      classes: recurringCostTable.cellInfo.priceUnit.classes,
       data: `${formatPrice(item.price)} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
       dataTestId: 'price-unit',
     }));
 
     columns.push(({
-      classes: manifest.recurringCostTable.cellInfo.quantity.classes,
+      classes: recurringCostTable.cellInfo.quantity.classes,
       data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription ? item.quantityPeriodDescription : ''}`,
       dataTestId: 'quantity',
     }));
 
     columns.push(({
-      classes: manifest.recurringCostTable.cellInfo.plannedDeliveryDate.classes,
+      classes: recurringCostTable.cellInfo.plannedDeliveryDate.classes,
       data: formatDate(item.deliveryDate),
       dataTestId: 'planned-date',
     }));
 
     columns.push(({
-      classes: manifest.recurringCostTable.cellInfo.itemCost.classes,
+      classes: recurringCostTable.cellInfo.itemCost.classes,
       data: formatPrice(item.costPerYear),
       dataTestId: 'item-cost',
     }));
@@ -256,8 +256,66 @@ const generateRecurringCostDetailsTable = ({
   });
 };
 
+const generateOneOffCostDetailsTable = ({
+  oneOffCostTable, oneOffCostItems = [], serviceRecipients = {},
+}) => {
+  const items = oneOffCostItems.map((item) => {
+    const columns = [];
+
+    if (!serviceRecipients[item.serviceRecipientsOdsCode]) {
+      logger.error(`service recipient ${item.serviceRecipientsOdsCode} not found`);
+      throw new Error();
+    }
+
+    const serviceRecipient = serviceRecipients[item.serviceRecipientsOdsCode];
+
+    columns.push(({
+      classes: oneOffCostTable.cellInfo.recipientName.classes,
+      data: `${serviceRecipient.name} (${serviceRecipient.odsCode})`,
+      dataTestId: 'recipient-name',
+    }));
+
+    columns.push(({
+      classes: oneOffCostTable.cellInfo.itemId.classes,
+      data: item.itemId,
+      dataTestId: 'item-id',
+    }));
+
+    columns.push(({
+      classes: oneOffCostTable.cellInfo.itemName.classes,
+      data: item.catalogueItemName,
+      dataTestId: 'item-name',
+    }));
+
+    columns.push(({
+      classes: oneOffCostTable.cellInfo.priceUnit.classes,
+      data: `${formatPrice(item.price)} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
+      dataTestId: 'price-unit',
+    }));
+
+    columns.push(({
+      classes: oneOffCostTable.cellInfo.quantity.classes,
+      data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription ? item.quantityPeriodDescription : ''}`,
+      dataTestId: 'quantity',
+    }));
+
+    columns.push(({
+      classes: oneOffCostTable.cellInfo.itemCost.classes,
+      data: formatPrice(item.costPerYear),
+      dataTestId: 'item-cost',
+    }));
+
+    return columns;
+  });
+
+  return ({
+    ...oneOffCostTable,
+    items,
+  });
+};
+
 export const getContext = ({
-  orderId, orderData, recurringCostItems, serviceRecipients,
+  orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
 }) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
@@ -267,6 +325,11 @@ export const getContext = ({
     callOffAndSupplierTable: manifest.callOffAndSupplierTable,
     orderPartyData: orderData.orderParty,
     supplierData: orderData.supplier,
+  }),
+  oneOffCostTable: generateOneOffCostDetailsTable({
+    oneOffCostTable: manifest.oneOffCostTable,
+    oneOffCostItems,
+    serviceRecipients,
   }),
   oneOffCostTotalsTable: generateOneOffCostTotalsTable({
     oneOffCostTotalsTable: manifest.oneOffCostTotalsTable,

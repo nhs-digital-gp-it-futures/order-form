@@ -3,16 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl, organisationApiUrl } from '../../../../config';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/ordering-party';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mockDataFromOapi = {
   name: 'Org name from oapi',
@@ -45,20 +38,19 @@ const mocks = () => {
     .reply(200, mockDataFromOapi);
 };
 
-const pageSetup = async () => {
-  mocks();
-  await setCookies();
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
+  }
 };
 
 fixture('Ordering-party page - without saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
-
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render organisation name with data from OAPI', async (t) => {
@@ -69,9 +61,7 @@ test('should render organisation name with data from OAPI', async (t) => {
   const text = Selector('div[data-test-id="organisation-name"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.orgNameHeading)
-    .expect(text.exists).ok()
     .expect(await extractInnerText(text)).eql(mockDataFromOapi.name);
 });
 
@@ -83,9 +73,7 @@ test('should render organisation ods code with data from OAPI', async (t) => {
   const text = Selector('div[data-test-id="organisation-ods-code"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.odsCodeHeading)
-    .expect(text.exists).ok()
     .expect(await extractInnerText(text)).eql(mockDataFromOapi.odsCode);
 });
 
@@ -105,25 +93,15 @@ test('should render organisation address with data from OAPI', async (t) => {
   const addressTextCountry = Selector('[data-test-id="organisation-address-country"]');
 
   await t
-    .expect(heading.exists).ok()
     .expect(await extractInnerText(heading)).eql(content.orgAddressHeading)
-    .expect(addressTextLine1.exists).ok()
     .expect(await extractInnerText(addressTextLine1)).eql(mockDataFromOapi.address.line1)
-    .expect(addressTextLine2.exists).ok()
     .expect(await extractInnerText(addressTextLine2)).eql(mockDataFromOapi.address.line2)
-    .expect(addressTextLine3.exists).ok()
     .expect(await extractInnerText(addressTextLine3)).eql('')
-    .expect(addressTextLine4.exists).ok()
     .expect(await extractInnerText(addressTextLine4)).eql(mockDataFromOapi.address.line4)
-    .expect(addressTextLine5.exists).ok()
     .expect(await extractInnerText(addressTextLine5)).eql(mockDataFromOapi.address.line5)
-    .expect(addressTextTown.exists).ok()
     .expect(await extractInnerText(addressTextTown)).eql(mockDataFromOapi.address.town)
-    .expect(addressTextCounty.exists).ok()
     .expect(await extractInnerText(addressTextCounty)).eql(mockDataFromOapi.address.county)
-    .expect(addressTextPostcode.exists).ok()
     .expect(await extractInnerText(addressTextPostcode)).eql(mockDataFromOapi.address.postcode)
-    .expect(addressTextCountry.exists).ok()
     .expect(await extractInnerText(addressTextCountry)).eql(mockDataFromOapi.address.country);
 });
 

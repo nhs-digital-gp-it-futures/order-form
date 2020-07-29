@@ -3,16 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/ordering-party';
-
-const setCookies = ClientFunction(() => {
-  const cookieValue = JSON.stringify({
-    id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-  });
-
-  document.cookie = `fakeToken=${cookieValue}`;
-});
 
 const mockOrgData = {
   name: 'Org name',
@@ -51,21 +44,28 @@ const putOrderingPartyErrorResponse = {
   ],
 };
 
-const mocks = (putErrorNock) => {
+const requestPutBody = {
+  ...mockOrgData,
+  primaryContact: {
+    firstName: null,
+    lastName: null,
+    emailAddress: null,
+    telephoneNumber: null,
+  },
+};
+
+const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/ordering-party')
     .reply(200, mockOrgData);
-  if (putErrorNock) {
-    nock(orderApiUrl)
-      .put('/api/v1/orders/order-id/sections/ordering-party')
-      .reply(400, putOrderingPartyErrorResponse);
-  }
 };
 
-const pageSetup = async (withAuth = true, putErrorNock = false) => {
-  if (withAuth) {
-    mocks(putErrorNock);
-    await setCookies();
+const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
   }
 };
 
@@ -74,12 +74,7 @@ const getLocation = ClientFunction(() => document.location.href);
 fixture('Ordering-party page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
-
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+    await nockAndErrorCheck(nock, t);
   });
 
 test('when user is not authenticated - should navigate to the identity server login page', async (t) => {
@@ -87,7 +82,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup(false);
+  await pageSetup({ withAuth: false, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -97,22 +92,21 @@ test('when user is not authenticated - should navigate to the identity server lo
 test('should render ordering-party page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+
   const page = Selector('[data-test-id="ordering-party-page"]');
 
   await t
     .expect(page.exists).ok();
 });
 
-test('should navigate to /organisation/order-id when click on backLink', async (t) => {
+test('should link to /order/organisation/order-id for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.exists).ok()
-    .click(goBackLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -122,7 +116,6 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="ordering-party-page-title"]');
 
   await t
-    .expect(title.exists).ok()
     .expect(await extractInnerText(title)).eql('Call-off Ordering Party information for order-id');
 });
 
@@ -133,7 +126,6 @@ test('should render the description', async (t) => {
   const description = Selector('h2[data-test-id="ordering-party-page-description"]');
 
   await t
-    .expect(description.exists).ok()
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
@@ -157,22 +149,18 @@ test('should render a text field for each question', async (t) => {
   const phoneNumberFooterText = phoneNumber.find('span');
 
   await t
-    .expect(firstName.exists).ok()
     .expect(await extractInnerText(firstNameLabel)).eql(content.questions[0].mainAdvice)
     .expect(firstName.find('input').count).eql(1)
     .expect(await extractInnerText(firstNameFooterText)).eql(content.questions[0].footerAdvice)
 
-    .expect(lastName.exists).ok()
     .expect(await extractInnerText(lastNameLabel)).eql(content.questions[1].mainAdvice)
     .expect(lastName.find('input').count).eql(1)
     .expect(await extractInnerText(lastNameFooterText)).eql(content.questions[1].footerAdvice)
 
-    .expect(emailAddress.exists).ok()
     .expect(await extractInnerText(emailAddressLabel)).eql(content.questions[2].mainAdvice)
     .expect(emailAddress.find('input').count).eql(1)
     .expect(await extractInnerText(emailAddressFooterText)).eql(content.questions[2].footerAdvice)
 
-    .expect(phoneNumber.exists).ok()
     .expect(await extractInnerText(phoneNumberLabel)).eql(content.questions[3].mainAdvice)
     .expect(phoneNumber.find('input').count).eql(1)
     .expect(await extractInnerText(phoneNumberFooterText)).eql(content.questions[3].footerAdvice);
@@ -185,13 +173,12 @@ test('should render save button', async (t) => {
   const button = Selector('[data-test-id="save-button"] button');
 
   await t
-    .expect(button.exists).ok()
     .expect(await extractInnerText(button)).eql(content.saveButtonText);
 });
 
 test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/sections/ordering-party')
+    .put('/api/v1/orders/order-id/sections/ordering-party', requestPutBody)
     .reply(200, {});
 
   await pageSetup();
@@ -206,7 +193,11 @@ test('should navigate to task list page if save button is clicked and data is va
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/ordering-party', requestPutBody)
+    .reply(400, putOrderingPartyErrorResponse);
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -226,7 +217,22 @@ test('should show the error summary when there are validation errors', async (t)
 });
 
 test('should ensure details are repopulated when there are validation errors', async (t) => {
-  await pageSetup(true, true);
+  const typedText = 'A really long string for';
+  const updatedRequestPutBody = {
+    ...requestPutBody,
+    primaryContact: {
+      firstName: `${typedText} firstName`,
+      lastName: `${typedText} lastName`,
+      emailAddress: `${typedText} emailAddress`,
+      telephoneNumber: `${typedText} phoneNumber`,
+    },
+  };
+
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/ordering-party', updatedRequestPutBody)
+    .reply(400, putOrderingPartyErrorResponse);
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -243,8 +249,6 @@ test('should ensure details are repopulated when there are validation errors', a
   const lastName = Selector('[data-test-id="question-lastName"]');
   const emailAddress = Selector('[data-test-id="question-emailAddress"]');
   const phoneNumber = Selector('[data-test-id="question-telephoneNumber"]');
-
-  const typedText = 'A really long string for';
 
   await t
     .typeText(firstName.find('input'), `${typedText} firstName`)
@@ -270,7 +274,11 @@ test('should ensure details are repopulated when there are validation errors', a
 });
 
 test('should show text fields as errors with error message when there are validation errors', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/ordering-party', requestPutBody)
+    .reply(400, putOrderingPartyErrorResponse);
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const page = Selector('[data-test-id="ordering-party-page"]');
@@ -300,7 +308,11 @@ test('should show text fields as errors with error message when there are valida
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/sections/ordering-party', requestPutBody)
+    .reply(400, putOrderingPartyErrorResponse);
+
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -312,7 +324,6 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
   await t
     .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#firstName`)
     .click(errorSummary.find('li a').nth(1))

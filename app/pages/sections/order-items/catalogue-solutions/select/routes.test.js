@@ -16,9 +16,15 @@ import { App } from '../../../../../app';
 import { routes } from '../../../../../routes';
 import { baseUrl } from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
+import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
+import { getCatalogueItems } from '../../../../../helpers/api/bapi/getCatalogueItems';
+import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
+jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
+jest.mock('../../../../../helpers/api/bapi/getCatalogueItems');
+jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -36,8 +42,8 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 
 const mockSessionSolutionsState = JSON.stringify([
-  { id: 'solution-1', name: 'Solution 1' },
-  { id: 'solution-2', name: 'Solution 2' },
+  { catalogueItemId: 'solution-1', name: 'Solution 1' },
+  { catalogueItemId: 'solution-2', name: 'Solution 2' },
 ]);
 const mockSolutionsCookie = `suppliersFound=${mockSessionSolutionsState}`;
 
@@ -90,8 +96,7 @@ describe('catalogue-solutions select routes', () => {
       selectSolutionController.getSupplierId = jest.fn()
         .mockResolvedValue('supp-1');
 
-      selectSolutionController.findSolutions = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItems.mockResolvedValue([]);
 
       return request(setUpFakeApp())
         .get(path)
@@ -130,8 +135,7 @@ describe('catalogue-solutions select routes', () => {
       selectSolutionController.getSupplierId = jest.fn()
         .mockResolvedValue('supp-1');
 
-      selectSolutionController.findSolutions = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItems.mockResolvedValue([]);
 
       return request(setUpFakeApp())
         .get(path)
@@ -208,6 +212,8 @@ describe('catalogue-solutions select routes', () => {
       selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: true });
 
+      findSelectedCatalogueItemInSession.mockResolvedValue({ name: 'Solution One' });
+
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
@@ -249,21 +255,19 @@ describe('catalogue-solutions select routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select price page if authorised', () => {
+    it('should return the catalogue-solutions select price page if authorised', async () => {
       catalogueSolutionPriceController.getSolutionPricePageContext = jest.fn()
         .mockResolvedValue({});
 
-      catalogueSolutionPriceController.findSolutionPrices = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItemPricing.mockResolvedValue([]);
 
-      return request(setUpFakeApp())
+      const res = await request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie, mockSolutionsCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('data-test-id="solution-price-page"')).toBeTruthy();
-          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="solution-price-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
 
@@ -303,8 +307,7 @@ describe('catalogue-solutions select routes', () => {
       catalogueSolutionPriceController.validateSolutionPriceForm = jest.fn()
         .mockReturnValue({ success: false });
 
-      catalogueSolutionPriceController.findSolutionPrices = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItemPricing.mockResolvedValue([]);
 
       catalogueSolutionPriceController.getSolutionPriceErrorPageContext = jest.fn()
         .mockResolvedValue({
@@ -376,9 +379,6 @@ describe('catalogue-solutions select routes', () => {
     ));
 
     it('should return the catalogue-solutions select recipient page if authorised', () => {
-      selectRecipientController.getSolution = jest.fn()
-        .mockResolvedValue({});
-
       getRecipients.mockResolvedValue([]);
 
       selectRecipientController.getRecipientPageContext = jest.fn()
@@ -418,9 +418,6 @@ describe('catalogue-solutions select routes', () => {
     ));
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      selectRecipientController.getSolution = jest.fn()
-        .mockResolvedValue({ name: 'Solution One ' });
-
       getRecipients.mockResolvedValue([]);
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -443,9 +440,6 @@ describe('catalogue-solutions select routes', () => {
 
       selectRecipientController.validateRecipientForm = jest.fn()
         .mockReturnValue({ success: false });
-
-      selectRecipientController.getSolution = jest.fn()
-        .mockResolvedValue({ name: 'Solution One ' });
 
       selectRecipientController.getRecipientErrorPageContext = jest.fn()
         .mockResolvedValue({
@@ -474,9 +468,6 @@ describe('catalogue-solutions select routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/catalogue-solutions/neworderitem if a recipient is selected', async () => {
-      selectRecipientController.getSolution = jest.fn()
-        .mockResolvedValue({ name: 'Solution One ' });
-
       getRecipients.mockResolvedValue([]);
 
       selectRecipientController.validateRecipientForm = jest.fn()

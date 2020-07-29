@@ -3,6 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl } from '../../../../../../../../config';
+import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
 
@@ -20,57 +21,54 @@ const selectedPrice = {
   price: 0.11,
 };
 
-const authTokenInSession = JSON.stringify({
-  id: '88421113', name: 'Cool Dude', ordering: 'manage', primaryOrganisationId: 'org-id',
-});
 const itemIdInSession = 'item-1';
+const itemNameInSession = 'Item One';
+const catalogueSolutionIdInSession = 'solution-1';
 const selectedRecipientIdInSession = 'recipient-1';
 const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
 
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
+  itemName: itemNameInSession,
+  catalogueSolutionId: catalogueSolutionIdInSession,
   serviceRecipientId: selectedRecipientIdInSession,
   serviceRecipientName: selectedRecipientNameInSession,
   selectedPrice,
 });
 
-const setState = ClientFunction((key, value) => {
-  document.cookie = `${key}=${value}`;
-});
-
-const mocks = () => {
-  nock(solutionsApiUrl)
-    .get('/api/v1/catalogue-items/item-1')
-    .reply(200, { id: 'item-1', name: 'Item One' });
+const mocks = (mockSelectedPrice) => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
-    .reply(200, selectedPrice);
+    .reply(200, mockSelectedPrice);
 };
 
-const pageSetup = async (withAuth = true, postRoute = false) => {
-  if (withAuth) {
-    mocks();
-    await setState('fakeToken', authTokenInSession);
-    await setState('selectedRecipientId', selectedRecipientIdInSession);
-    await setState('selectedRecipientName', selectedRecipientNameInSession);
-    await setState('selectedItemId', itemIdInSession);
-    await setState('selectedPriceId', selectedPriceIdInSession);
-    if (postRoute) {
-      await setState('orderItemPageData', orderItemPageDataInSession);
-    }
+const defaultPageSetup = {
+  withAuth: true, getRoute: true, postRoute: false, mockData: selectedPrice,
+};
+const pageSetup = async (setup = defaultPageSetup) => {
+  if (setup.withAuth) {
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks(setup.mockData);
+    await setState(ClientFunction)('fakeToken', authTokenInSession);
+    await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
+    await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
+    await setState(ClientFunction)('selectedItemId', itemIdInSession);
+    await setState(ClientFunction)('selectedItemName', itemNameInSession);
+    await setState(ClientFunction)('selectedCatalogueSolutionId', catalogueSolutionIdInSession);
+    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+  }
+  if (setup.postRoute) {
+    await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
   }
 };
 
 fixture('Additional-services - flat declarative - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
-    const isDone = nock.isDone();
-    if (!isDone) {
-      nock.cleanAll();
-    }
-
-    await t.expect(isDone).ok('Not all nock interceptors were used!');
+    await nockAndErrorCheck(nock, t);
   });
 
 test('should render a text field for the quantity question', async (t) => {
@@ -81,7 +79,6 @@ test('should render a text field for the quantity question', async (t) => {
   const quantityLabel = quantity.find('label.nhsuk-label');
 
   await t
-    .expect(quantity.exists).ok()
     .expect(await extractInnerText(quantityLabel)).eql(content.questions.quantity.mainAdvice)
     .expect(quantity.find('input').count).eql(1);
 });
@@ -93,7 +90,6 @@ test('should render an expandable section for the quantity question', async (t) 
   const expandableSection = Selector('[data-test-id="view-section-quantity-id"]');
 
   await t
-    .expect(expandableSection.exists).ok()
     .expect(await extractInnerText(expandableSection)).eql(content.questions.quantity.expandableSection.title)
     .expect(expandableSection.find('details[open]').exists).notOk()
     .click(expandableSection.find('summary'))
@@ -111,10 +107,7 @@ test('should render the price table headings', async (t) => {
   const unitColumnHeading = priceTable.find('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(priceTable.exists).ok()
-    .expect(priceColumnHeading.exists).ok()
     .expect(await extractInnerText(priceColumnHeading)).eql(content.addPriceTable.columnInfo[0].data)
-    .expect(unitColumnHeading.exists).ok()
     .expect(await extractInnerText(unitColumnHeading)).eql(content.addPriceTable.columnInfo[1].data);
 });
 
@@ -129,9 +122,8 @@ test('should render the price table content', async (t) => {
   const orderUnit = row.find('div[data-test-id="unit-of-order"]');
 
   await t
-    .expect(row.exists).ok()
-    .expect(priceInput.exists).ok()
     .expect(priceInput.getAttribute('value')).eql(selectedPrice.price.toString())
+
     .expect(expandableSection.exists).ok()
     .expect(await extractInnerText(expandableSection)).eql(content.addPriceTable.cellInfo.price.expandableSection.title)
     .expect(expandableSection.find('details[open]').exists).notOk()
@@ -139,12 +131,25 @@ test('should render the price table content', async (t) => {
     .expect(expandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
     .eql(content.addPriceTable.cellInfo.price.expandableSection.innerComponent)
-    .expect(orderUnit.exists).ok()
+
     .expect(await extractInnerText(orderUnit)).eql(selectedPrice.itemUnit.description);
 });
 
+test('should render the price with a value of 0 when returned from the API', async (t) => {
+  const mockSelectedPrice = { ...selectedPrice, price: 0 };
+  await pageSetup({ ...defaultPageSetup, postRoute: true, mockData: mockSelectedPrice });
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="price-table"]');
+  const row = table.find('[data-test-id="table-row-0"]');
+  const priceInput = row.find('[data-test-id="question-price"] input');
+
+  await t
+    .expect(priceInput.getAttribute('value')).eql(mockSelectedPrice.price.toString());
+});
+
 test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const orderItemPage = Selector('[data-test-id="order-item-page"]');
@@ -153,7 +158,6 @@ test('should render select quantity field as errors with error message when no q
   const quantityFieldWithError = quantityField.find('[data-test-id="text-field-input-error"]');
 
   await t
-    .expect(saveButton.exists).ok()
     .expect(quantityFieldWithError.exists).notOk()
     .click(saveButton);
 
@@ -163,7 +167,7 @@ test('should render select quantity field as errors with error message when no q
 });
 
 test('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const orderItemPage = Selector('[data-test-id="order-item-page"]');
@@ -182,7 +186,7 @@ test('should render select price field as errors with error message when no pric
 });
 
 test('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -193,14 +197,12 @@ test('should anchor to the quantity field when clicking on the quantity required
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#quantity`);
 });
 
 test('should anchor to the quantity field when clicking on the numerical quantity error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -213,14 +215,12 @@ test('should anchor to the quantity field when clicking on the numerical quantit
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#quantity`);
 });
 
 test('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -233,13 +233,12 @@ test('should anchor to the price field when clicking on the price required error
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .click(errorSummary.find('li a').nth(1))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
 
 test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
-  await pageSetup(true, true);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const saveButton = Selector('[data-test-id="save-button"] button');
@@ -252,8 +251,6 @@ test('should anchor to the price field when clicking on the numerical price erro
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
-
     .click(errorSummary.find('li a').nth(1))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
