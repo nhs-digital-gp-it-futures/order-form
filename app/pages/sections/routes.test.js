@@ -602,7 +602,7 @@ describe('section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/complete-order', () => {
+  describe('POST /organisation/:orderId/funding-source', () => {
     const path = '/organisation/some-order-id/funding-source';
 
     it('should return 403 forbidden if no csrf token is available', () => (
