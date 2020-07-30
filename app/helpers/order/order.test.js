@@ -36,7 +36,7 @@ describe('order helper', () => {
     });
 
     it('should not call getOrderDescription (ORDAPI) when the order description is in session', async () => {
-      fakeSessionManager.getFromSession = () => 'sup-1';
+      fakeSessionManager.getFromSession = () => 'Some description';
       fakeSessionManager.saveToSession = () => {};
 
       getOrderDescriptionFromApi.mockResolvedValueOnce();
@@ -52,7 +52,7 @@ describe('order helper', () => {
     });
 
     it('should return the expected result', async () => {
-      const description = 'Gerald is great';
+      const description = 'Order description';
 
       fakeSessionManager.getFromSession = () => description;
       fakeSessionManager.saveToSession = () => {};
