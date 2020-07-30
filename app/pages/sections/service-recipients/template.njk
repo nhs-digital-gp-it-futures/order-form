@@ -3,6 +3,7 @@
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/inset-text/macro.njk' import insetText %}
 {% from 'components/checkboxes/macro.njk' import checkboxes %}
+{% from 'components/bc-table-flexible/macro.njk' import bcTableFlexible %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="service-recipients-page">
@@ -32,35 +33,15 @@
           })}}
         </form>
 
-        <div class="nhsuk-grid-row nhsuk-u-font-size-19 nhsuk-u-font-weight-bold">
-          <div data-test-id="organisation-heading" class="nhsuk-grid-column-two-thirds">
-            {{ organisationHeading }}
-          </div>
-          <div data-test-id="ods-code-heading" class="nhsuk-grid-column-one-third">
-            {{ odsCodeHeading }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <hr class="bc-c-order-table__hr nhsuk-grid-column-full nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4"/>
-
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds nhsuk-u-font-size-19">
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-          {% for row in tableData %}
-            <div class="nhsuk-grid-row">
-              <div data-test-id="organisation-name-checkbox-{{row.odsCode}}" class="nhsuk-grid-column-two-thirds">
-                {{ checkboxes({
-                    items: [row.organisationName]
-                  }) }}
-              </div>
-              <div data-test-id="ods-code-{{row.odsCode}}" class="nhsuk-grid-column-one-third bc-c-service-recipients-table__ods">
-                {{ row.odsCode }}
-              </div>
-            </div>
-          {% endfor %} 
+          <div data-test-id="price-table" class=" nhsuk-u-margin-top-0">
+            {{ bcTableFlexible({
+              columnInfo: serviceRecipientsTable.columnInfo,
+              classes: serviceRecipientsTable.classes,
+              data: serviceRecipientsTable.items
+            }) }}
+          </div>
           {{ bcButton({
               dataTestId: "continue-button",
               text: continueButtonText,
