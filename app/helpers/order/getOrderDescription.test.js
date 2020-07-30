@@ -1,5 +1,5 @@
 import { fakeSessionManager } from 'buying-catalogue-library';
-import { getOrderDescription } from './order';
+import { getOrderDescription } from './getOrderDescription';
 import { logger } from '../../logger';
 import { getOrderDescription as getOrderDescriptionFromApi } from '../api/ordapi/getOrderDescription';
 
