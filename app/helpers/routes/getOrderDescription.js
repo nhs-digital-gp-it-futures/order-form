@@ -1,5 +1,5 @@
 import { getOrderDescription as getOrderDescriptionFromApi } from '../api/ordapi/getOrderDescription';
-import { getFromSessionOrApi } from '../routes/sessionHelper';
+import { getFromSessionOrApi } from './sessionHelper';
 
 export const getOrderDescription = async ({
   req,

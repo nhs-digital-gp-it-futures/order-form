@@ -2,7 +2,7 @@ import { fakeSessionManager } from 'buying-catalogue-library';
 import { getOrderDescription } from './getOrderDescription';
 import { logger } from '../../logger';
 import { getOrderDescription as getOrderDescriptionFromApi } from '../api/ordapi/getOrderDescription';
-import { getFromSessionOrApi } from '../routes/sessionHelper';
+import { getFromSessionOrApi } from './sessionHelper';
 
 jest.mock('../../logger');
 jest.mock('../api/ordapi/getOrderDescription', () => ({
