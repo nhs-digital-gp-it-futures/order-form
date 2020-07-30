@@ -24,16 +24,20 @@ const transformOrderItems = (orderItems = []) => {
   return { oneOffCostItems, recurringCostItems };
 };
 
-export const sortServiceRecipients = serviceRecipients => (
-  serviceRecipients.sort((recipientA, recipientB) => {
-    const recipientAName = recipientA.name.toLowerCase();
-    const recipientBName = recipientB.name.toLowerCase();
+const sortItems = (items, propToSort) => (
+  items.sort((itemA, itemB) => {
+    const itemAPropValue = itemA[propToSort].toLowerCase();
+    const itemBPropValue = itemB[propToSort].toLowerCase();
 
-    if (recipientAName < recipientBName) return -1;
-    if (recipientAName > recipientBName) return 1;
+    if (itemAPropValue < itemBPropValue) return -1;
+    if (itemAPropValue > itemBPropValue) return 1;
     return 0;
   })
 );
+
+export const sortServiceRecipients = serviceRecipients => sortItems(serviceRecipients, 'name');
+
+export const sortGroupedOrderItems = groupedOrderItems => sortItems(groupedOrderItems, 'catalogueItemName');
 
 export const groupOrderItemsByOdsCode = orderItems => (
   orderItems.reduce((groupedOrderItems, orderItem) => {
@@ -55,11 +59,14 @@ export const sortOrderItems = (serviceRecipients, orderItems) => {
   const groupedOrderItems = groupOrderItemsByOdsCode(orderItems);
 
   return sortedServiceRecipients
-    .reduce((items, sortedServiceRecipient) => (
-      groupedOrderItems[sortedServiceRecipient.odsCode]
-        ? items.concat(groupedOrderItems[sortedServiceRecipient.odsCode])
-        : items
-    ), []);
+    .reduce((items, sortedServiceRecipient) => {
+      const sortedGroupedOrderItems = groupedOrderItems[sortedServiceRecipient.odsCode]
+        && sortGroupedOrderItems(groupedOrderItems[sortedServiceRecipient.odsCode]);
+
+      return groupedOrderItems[sortedServiceRecipient.odsCode]
+        ? items.concat(sortedGroupedOrderItems)
+        : items;
+    }, []);
 };
 
 export const getOrder = async ({ orderId, accessToken }) => {
