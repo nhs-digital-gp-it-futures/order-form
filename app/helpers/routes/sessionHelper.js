@@ -3,13 +3,13 @@ export const getFromSessionOrApi = async ({
   sessionManager,
   apiCall,
 }) => {
-  const savedResult = sessionManager.getFromSession(sessionData);
-  if (savedResult) {
-    return savedResult;
+  const savedValue = sessionManager.getFromSession(sessionData);
+  if (savedValue) {
+    return savedValue;
   }
 
-  const result = await apiCall();
-  sessionManager.saveToSession({ ...sessionData, value: result });
+  const value = await apiCall();
+  sessionManager.saveToSession({ ...sessionData, value });
 
-  return result;
+  return value;
 };
