@@ -35,6 +35,17 @@ export const sortServiceRecipients = serviceRecipients => (
   })
 );
 
+export const sortGroupedOrderItems = groupedOrderItems => (
+  groupedOrderItems.sort((itemA, itemB) => {
+    const itemAName = itemA.catalogueItemName.toLowerCase();
+    const itemBName = itemB.catalogueItemName.toLowerCase();
+
+    if (itemAName < itemBName) return -1;
+    if (itemAName > itemBName) return 1;
+    return 0;
+  })
+);
+
 export const groupOrderItemsByOdsCode = orderItems => (
   orderItems.reduce((groupedOrderItems, orderItem) => {
     const odsCode = orderItem.serviceRecipientsOdsCode;
@@ -55,11 +66,14 @@ export const sortOrderItems = (serviceRecipients, orderItems) => {
   const groupedOrderItems = groupOrderItemsByOdsCode(orderItems);
 
   return sortedServiceRecipients
-    .reduce((items, sortedServiceRecipient) => (
-      groupedOrderItems[sortedServiceRecipient.odsCode]
-        ? items.concat(groupedOrderItems[sortedServiceRecipient.odsCode])
-        : items
-    ), []);
+    .reduce((items, sortedServiceRecipient) => {
+      const sortedGroupedOrderItems = groupedOrderItems[sortedServiceRecipient.odsCode]
+        && sortGroupedOrderItems(groupedOrderItems[sortedServiceRecipient.odsCode]);
+
+      return groupedOrderItems[sortedServiceRecipient.odsCode]
+        ? items.concat(sortedGroupedOrderItems)
+        : items;
+    }, []);
 };
 
 export const getOrder = async ({ orderId, accessToken }) => {
