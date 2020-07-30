@@ -2,71 +2,88 @@ import { fakeSessionManager } from 'buying-catalogue-library';
 import { getOrderDescription } from './getOrderDescription';
 import { logger } from '../../logger';
 import { getOrderDescription as getOrderDescriptionFromApi } from '../api/ordapi/getOrderDescription';
+import { getFromSessionOrApi } from '../routes/sessionHelper';
 
 jest.mock('../../logger');
 jest.mock('../api/ordapi/getOrderDescription', () => ({
   getOrderDescription: jest.fn(),
 }));
 
-describe('order helper', () => {
+jest.mock('../routes/sessionHelper', () => ({
+  getFromSessionOrApi: jest.fn(),
+}));
+
+describe('getOrderDescription', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
 
-  describe('getOrderDescription', () => {
-    it('should call getOrderDescription (ORDAPI) with the correct params when the order description is not in session', async () => {
-      fakeSessionManager.getFromSession = () => undefined;
-      fakeSessionManager.saveToSession = () => {};
+  it('should call getOrderDescription (ORDAPI) with the correct params', async () => {
+    getOrderDescriptionFromApi.mockResolvedValueOnce({ description: 'A description' });
+    getFromSessionOrApi.mockImplementation(async ({ apiCall }) => apiCall());
 
-      getOrderDescriptionFromApi.mockResolvedValueOnce({ description: 'A description' });
+    const orderId = 'order-1';
+    const req = { params: { orderId } };
+    const accessToken = 'access-token';
 
-      const orderId = 'order-1';
-      const req = { params: { orderId } };
-      const accessToken = 'access-token';
-
-      await getOrderDescription({
-        req,
-        sessionManager: fakeSessionManager,
-        accessToken,
-        logger,
-      });
-
-      expect(getOrderDescriptionFromApi.mock.calls.length).toEqual(1);
-      expect(getOrderDescriptionFromApi).toHaveBeenCalledWith({ orderId, accessToken, logger });
+    await getOrderDescription({
+      req,
+      sessionManager: fakeSessionManager,
+      accessToken,
+      logger,
     });
 
-    it('should not call getOrderDescription (ORDAPI) when the order description is in session', async () => {
-      fakeSessionManager.getFromSession = () => 'Some description';
-      fakeSessionManager.saveToSession = () => {};
+    expect(getOrderDescriptionFromApi.mock.calls.length).toEqual(1);
+    expect(getOrderDescriptionFromApi).toHaveBeenCalledWith({ orderId, accessToken, logger });
+  });
 
-      getOrderDescriptionFromApi.mockResolvedValueOnce();
+  it('should return the expected result from the API', async () => {
+    const description = 'Order description';
 
-      await getOrderDescription({
-        req: { params: { orderId: 'order-1' } },
-        sessionManager: fakeSessionManager,
-        accessToken: 'access-token',
-        logger,
-      });
+    getOrderDescriptionFromApi.mockResolvedValueOnce({ description });
+    getFromSessionOrApi.mockImplementation(async ({ apiCall }) => apiCall());
 
-      expect(getOrderDescriptionFromApi.mock.calls.length).toEqual(0);
+    const actualResult = await getOrderDescription({
+      req: { params: { orderId: 'order-1' } },
+      sessionManager: fakeSessionManager,
+      accessToken: 'access-token',
+      logger,
     });
 
-    it('should return the expected result', async () => {
-      const description = 'Order description';
+    expect(actualResult).toEqual(description);
+  });
 
-      fakeSessionManager.getFromSession = () => description;
-      fakeSessionManager.saveToSession = () => {};
+  it('should call getFromSessionOrApi with the correct params', async () => {
+    const orderId = 'order-1';
+    const req = { params: { orderId } };
+    const sessionData = { req, key: 'orderDescription' };
 
-      getOrderDescriptionFromApi.mockResolvedValueOnce({ description });
-
-      const actualResult = await getOrderDescription({
-        req: { params: { orderId: 'order-1' } },
-        sessionManager: fakeSessionManager,
-        accessToken: 'access-token',
-        logger,
-      });
-
-      expect(actualResult).toEqual(description);
+    await getOrderDescription({
+      req,
+      sessionManager: fakeSessionManager,
+      accessToken: 'access-token',
+      logger,
     });
+
+    expect(getFromSessionOrApi.mock.calls.length).toEqual(1);
+    expect(getFromSessionOrApi).toHaveBeenCalledWith({
+      sessionData,
+      sessionManager: fakeSessionManager,
+      apiCall: expect.anything(),
+    });
+  });
+
+  it('should return the expected result', async () => {
+    const description = 'Order description';
+    getFromSessionOrApi.mockResolvedValueOnce(description);
+
+    const actualResult = await getOrderDescription({
+      req: { params: { orderId: 'order-1' } },
+      sessionManager: fakeSessionManager,
+      accessToken: 'access-token',
+      logger,
+    });
+
+    expect(actualResult).toEqual(description);
   });
 });

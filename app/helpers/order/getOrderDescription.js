@@ -1,4 +1,5 @@
 import { getOrderDescription as getOrderDescriptionFromApi } from '../api/ordapi/getOrderDescription';
+import { getFromSessionOrApi } from '../routes/sessionHelper';
 
 export const getOrderDescription = async ({
   req,
@@ -6,16 +7,17 @@ export const getOrderDescription = async ({
   accessToken,
   logger,
 }) => {
-  const key = 'orderDescription';
-  const storedDescription = sessionManager.getFromSession({ req, key });
-  if (storedDescription) {
-    return storedDescription;
-  }
+  const apiCall = async () => {
+    const { orderId } = req.params;
+    const { description } = await getOrderDescriptionFromApi({
+      orderId,
+      accessToken,
+      logger,
+    });
 
-  const { orderId } = req.params;
-  const { description } = await getOrderDescriptionFromApi({ orderId, accessToken, logger });
+    return description;
+  };
 
-  sessionManager.saveToSession({ req, key, value: description });
-
-  return description;
+  const sessionData = { req, key: 'orderDescription' };
+  return getFromSessionOrApi({ sessionData, sessionManager, apiCall });
 };
