@@ -1,7 +1,7 @@
 {
   "backLinkText": "Go back",
   "title": "Order summary for",
-  "description": "Review your order before submitting. Once submitted, you'll be unable to make changes.",
+  "description": "Review your order before marking it complete. Once the order is completed, you'll be unable to make changes.",
   "orderDescriptionHeading": "Order description",
   "dateSummaryCreatedLabel": "Date order summary created:",
   "callOffAndSupplierTable": {
