@@ -152,6 +152,32 @@ const mockOrder = {
       costPerYear: 5040.00,
       serviceRecipientsOdsCode: 'A10002',
     },
+    {
+      itemId: 'C000001-01-A10001-33',
+      cataloguePriceType: 'Flat',
+      catalogueItemType: 'AssociatedService',
+      catalogueItemName: 'All Training',
+      catalogueItemId: '10000-S-003',
+      provisioningType: 'Declarative',
+      price: 50.00,
+      itemUnitDescription: 'per Day',
+      quantity: 10,
+      costPerYear: 501.00,
+      serviceRecipientsOdsCode: 'A10001',
+    },
+    {
+      itemId: 'C000001-01-A10001-34',
+      cataloguePriceType: 'Flat',
+      catalogueItemType: 'AssociatedService',
+      catalogueItemName: '55 Training',
+      catalogueItemId: '10000-S-003',
+      provisioningType: 'Declarative',
+      price: 55.55,
+      itemUnitDescription: 'per Day',
+      quantity: 55,
+      costPerYear: 5555.55,
+      serviceRecipientsOdsCode: 'A10001',
+    },
   ],
   serviceRecipients: [
     {
@@ -240,14 +266,30 @@ test('should render the oneOff cost item details in the table', async (t) => {
 
   const oneOffCostTable = Selector('[data-test-id="one-off-cost-table"]');
   const oneOffCostRow0 = oneOffCostTable.find('[data-test-id="table-row-0"]');
+  const oneOffCostRow1 = oneOffCostTable.find('[data-test-id="table-row-1"]');
+  const oneOffCostRow2 = oneOffCostTable.find('[data-test-id="table-row-2"]');
 
   await t
     .expect(await extractInnerText(oneOffCostRow0.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
-    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(1))).eql('C000001-01-A10001-23')
-    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(2))).eql('Core Training')
-    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(3))).eql('585.00 per Day')
-    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(4))).eql('70')
-    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(5))).eql('40,850.00');
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(1))).eql('C000001-01-A10001-34')
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(2))).eql('55 Training')
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(3))).eql('55.55 per Day')
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(4))).eql('55')
+    .expect(await extractInnerText(oneOffCostRow0.find('td').nth(5))).eql('5,555.55')
+
+    .expect(await extractInnerText(oneOffCostRow1.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(oneOffCostRow1.find('td').nth(1))).eql('C000001-01-A10001-33')
+    .expect(await extractInnerText(oneOffCostRow1.find('td').nth(2))).eql('All Training')
+    .expect(await extractInnerText(oneOffCostRow1.find('td').nth(3))).eql('50.00 per Day')
+    .expect(await extractInnerText(oneOffCostRow1.find('td').nth(4))).eql('10')
+    .expect(await extractInnerText(oneOffCostRow1.find('td').nth(5))).eql('501.00')
+
+    .expect(await extractInnerText(oneOffCostRow2.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(oneOffCostRow2.find('td').nth(1))).eql('C000001-01-A10001-23')
+    .expect(await extractInnerText(oneOffCostRow2.find('td').nth(2))).eql('Core Training')
+    .expect(await extractInnerText(oneOffCostRow2.find('td').nth(3))).eql('585.00 per Day')
+    .expect(await extractInnerText(oneOffCostRow2.find('td').nth(4))).eql('70')
+    .expect(await extractInnerText(oneOffCostRow2.find('td').nth(5))).eql('40,850.00');
 });
 
 test('should render the one off cost totals table with one off cost total price', async (t) => {
