@@ -226,6 +226,24 @@ describe('routes', () => {
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });
+
+    it('should return the printable preview page when the print flag is passed in', () => {
+      const pathWithPrintFlag = `${path}?print=true`;
+
+      getOrder.mockResolvedValueOnce({});
+
+      previewController.getPreviewPageContext = jest.fn()
+        .mockResolvedValueOnce({});
+
+      return request(setUpFakeApp())
+        .get(pathWithPrintFlag)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="preview-page-print"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
   });
 
   describe('GET *', () => {
