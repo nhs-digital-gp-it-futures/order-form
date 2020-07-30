@@ -52,7 +52,7 @@ export const getExistingOrderContext = ({
   submitOrderButton: {
     text: commonManifest.submitOrderButton.text,
     altText: commonManifest.submitOrderButton.disabledAltText,
-    href: '#',
+    href: `${baseUrl}/organisation/${orderId}/complete-order`,
     disabled: !enableSubmitButton,
   },
 });

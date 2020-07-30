@@ -137,7 +137,7 @@ describe('task-list contextCreator', () => {
       const expectedSubmitOrderButtonContext = {
         text: commonManifest.submitOrderButton.text,
         altText: commonManifest.submitOrderButton.disabledAltText,
-        href: '#',
+        href: `${baseUrl}/organisation/order-id/complete-order`,
         disabled: false,
       };
 
