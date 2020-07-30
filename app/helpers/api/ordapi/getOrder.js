@@ -24,27 +24,20 @@ const transformOrderItems = (orderItems = []) => {
   return { oneOffCostItems, recurringCostItems };
 };
 
-export const sortServiceRecipients = serviceRecipients => (
-  serviceRecipients.sort((recipientA, recipientB) => {
-    const recipientAName = recipientA.name.toLowerCase();
-    const recipientBName = recipientB.name.toLowerCase();
+const sortItems = (items, propToSort) => (
+  items.sort((itemA, itemB) => {
+    const itemAPropValue = itemA[propToSort].toLowerCase();
+    const itemBPropValue = itemB[propToSort].toLowerCase();
 
-    if (recipientAName < recipientBName) return -1;
-    if (recipientAName > recipientBName) return 1;
+    if (itemAPropValue < itemBPropValue) return -1;
+    if (itemAPropValue > itemBPropValue) return 1;
     return 0;
   })
 );
 
-export const sortGroupedOrderItems = groupedOrderItems => (
-  groupedOrderItems.sort((itemA, itemB) => {
-    const itemAName = itemA.catalogueItemName.toLowerCase();
-    const itemBName = itemB.catalogueItemName.toLowerCase();
+export const sortServiceRecipients = serviceRecipients => sortItems(serviceRecipients, 'name');
 
-    if (itemAName < itemBName) return -1;
-    if (itemAName > itemBName) return 1;
-    return 0;
-  })
-);
+export const sortGroupedOrderItems = groupedOrderItems => sortItems(groupedOrderItems, 'catalogueItemName');
 
 export const groupOrderItemsByOdsCode = orderItems => (
   orderItems.reduce((groupedOrderItems, orderItem) => {
