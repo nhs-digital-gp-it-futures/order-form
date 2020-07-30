@@ -180,5 +180,11 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     return res.render('pages/sections/funding-source/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.get('/complete-order', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    logger.info(`navigating to order ${orderId} funding-source page`);
+    res.send('complete-order page');
+  }));
+
   return router;
 };
