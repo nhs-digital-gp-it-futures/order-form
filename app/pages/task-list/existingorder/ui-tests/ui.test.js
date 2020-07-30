@@ -923,5 +923,5 @@ test('should enable the "Submit order" button when sectionStatus is "complete"',
     .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--disabled')).eql(false)
-    .expect(submitOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/preview`);
+    .expect(submitOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/complete-order`);
 });
