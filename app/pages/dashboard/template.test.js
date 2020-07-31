@@ -14,8 +14,8 @@ const context = {
   title: 'org1 orders',
   proxyLinkHref: '/proxy/href',
   newOrderButtonHref: '/organisation/neworder',
-  submittedOrders: [mockOrders[0]],
-  unsubmittedOrders: [mockOrders[1], mockOrders[2]],
+  completeOrders: [mockOrders[0]],
+  incompleteOrders: [mockOrders[1], mockOrders[2]],
 };
 
 describe('dashboard page', () => {
@@ -44,18 +44,18 @@ describe('dashboard page', () => {
     });
   }));
 
-  describe('unsubmitted orders table', () => {
+  describe('incomplete orders table', () => {
     it('should render the table title', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const tableTitle = $('h3[data-test-id="unsubmitted-orders-table-title"]');
+        const tableTitle = $('h3[data-test-id="incomplete-orders-table-title"]');
         expect(tableTitle.length).toEqual(1);
-        expect(tableTitle.text().trim()).toEqual(context.unsubmittedOrdersTableTitle);
+        expect(tableTitle.text().trim()).toEqual(context.incompleteOrdersTableTitle);
       });
     }));
 
     it('should render the table headings', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="unsubmitted-orders-table"]');
+        const table = $('div[data-test-id="incomplete-orders-table"]');
         expect(table.length).toEqual(1);
         expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.columnInfo[0].data);
         expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.columnInfo[1].data);
@@ -67,7 +67,7 @@ describe('dashboard page', () => {
 
     it('should render the data', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="unsubmitted-orders-table"]');
+        const table = $('div[data-test-id="incomplete-orders-table"]');
         const row1 = table.find('[data-test-id="table-row-0"]');
         const orderId1 = row1.find('a[data-test-id="order2-id"]');
         const description1 = row1.find('div[data-test-id="order2-description"]');
@@ -113,18 +113,18 @@ describe('dashboard page', () => {
     }));
   });
 
-  describe('submitted orders table', () => {
+  describe('complete orders table', () => {
     it('should render the table title', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const tableTitle = $('h3[data-test-id="submitted-orders-table-title"]');
+        const tableTitle = $('h3[data-test-id="complete-orders-table-title"]');
         expect(tableTitle.length).toEqual(1);
-        expect(tableTitle.text().trim()).toEqual(context.submittedOrdersTableTitle);
+        expect(tableTitle.text().trim()).toEqual(context.completeOrdersTableTitle);
       });
     }));
 
     it('should render the table headings', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="submitted-orders-table"]');
+        const table = $('div[data-test-id="complete-orders-table"]');
         expect(table.length).toEqual(1);
         expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.columnInfo[0].data);
         expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.columnInfo[1].data);
@@ -136,7 +136,7 @@ describe('dashboard page', () => {
 
     it('should render the data', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="submitted-orders-table"]');
+        const table = $('div[data-test-id="complete-orders-table"]');
         const row = table.find('[data-test-id="table-row-0"]');
         const orderId = row.find('a[data-test-id="order1-id"]');
         const description = row.find('div[data-test-id="order1-description"]');
