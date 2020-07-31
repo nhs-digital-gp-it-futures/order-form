@@ -19,7 +19,7 @@ describe('description controller', () => {
     });
 
     it('should call getOrderDescription once with the correct params for an order with an id', async () => {
-      getOrderDescription.mockResolvedValueOnce({ description: 'a lovely description' });
+      getOrderDescription.mockResolvedValueOnce('a lovely description');
 
       const orderId = 'order-id';
       const req = { params: { orderId } };
