@@ -20,6 +20,7 @@ import { additionalServicesRoutes } from './order-items/additional-services/rout
 import { associatedServicesRoutes } from './order-items/associated-services/routes';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
+import { getOrderDescription } from '../../helpers/api/ordapi/getOrderDescription';
 
 const router = express.Router({ mergeParams: true });
 
@@ -41,7 +42,10 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       accessToken,
     });
 
-    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
+    if (response.success) {
+      sessionManager.saveToSession({ req, key: 'description', value: req.body.description.trim() });
+      return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
+    }
 
     const context = await getDescriptionErrorContext({
       validationErrors: response.errors,
@@ -184,6 +188,10 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     await getFundingSource({ orderId, accessToken });
+    let description = sessionManager.getFromSession({ req, key: 'description' });
+    if (!description) {
+      description = await getOrderDescription({ orderId, accessToken });
+    }
 
     logger.info(`navigating to order ${orderId} complete-order page`);
     res.send('complete-order page');
