@@ -22,8 +22,11 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const { orderId } = req.params;
 
     const context = await getCatalogueSolutionsPageContext({
+      req,
       orderId,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      sessionManager,
+      logger,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions dashboard page`);

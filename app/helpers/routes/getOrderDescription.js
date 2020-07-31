@@ -1,5 +1,5 @@
 import { getOrderDescription as getOrderDescriptionFromApi } from '../api/ordapi/getOrderDescription';
-import { getFromSessionOrApi } from './sessionHelper';
+import { sessionKeys, getFromSessionOrApi } from './sessionHelper';
 
 export const getOrderDescription = async ({
   req,
@@ -18,6 +18,6 @@ export const getOrderDescription = async ({
     return description;
   };
 
-  const sessionData = { req, key: 'orderDescription' };
+  const sessionData = { req, key: sessionKeys.orderDescription };
   return getFromSessionOrApi({ sessionData, sessionManager, apiCall });
 };

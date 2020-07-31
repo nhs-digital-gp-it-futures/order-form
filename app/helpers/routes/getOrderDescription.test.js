@@ -2,7 +2,7 @@ import { fakeSessionManager } from 'buying-catalogue-library';
 import { getOrderDescription } from './getOrderDescription';
 import { logger } from '../../logger';
 import { getOrderDescription as getOrderDescriptionFromApi } from '../api/ordapi/getOrderDescription';
-import { getFromSessionOrApi } from './sessionHelper';
+import { getFromSessionOrApi, sessionKeys } from './sessionHelper';
 
 jest.mock('../../logger');
 jest.mock('../api/ordapi/getOrderDescription', () => ({
@@ -11,6 +11,7 @@ jest.mock('../api/ordapi/getOrderDescription', () => ({
 
 jest.mock('../routes/sessionHelper', () => ({
   getFromSessionOrApi: jest.fn(),
+  sessionKeys: jest.requireActual(),
 }));
 
 describe('getOrderDescription', () => {
@@ -56,7 +57,7 @@ describe('getOrderDescription', () => {
   it('should call getFromSessionOrApi with the correct params', async () => {
     const orderId = 'order-1';
     const req = { params: { orderId } };
-    const sessionData = { req, key: 'orderDescription' };
+    const sessionData = { req, key: sessionKeys.orderDescription };
 
     await getOrderDescription({
       req,
