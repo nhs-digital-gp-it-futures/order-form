@@ -182,6 +182,9 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.get('/complete-order', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    await getFundingSource({ orderId, accessToken });
+
     logger.info(`navigating to order ${orderId} complete-order page`);
     res.send('complete-order page');
   }));
