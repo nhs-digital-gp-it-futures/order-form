@@ -1,9 +1,9 @@
 {
   "backLinkText": "Go back to homepage",
-  "description": "Manage orders currently in progress and view orders that have been submitted.",
+  "description": "Manage orders currently in progress and view orders that have been completed.",
   "newOrderButtonText": "Create new order",
-  "unsubmittedOrdersTableTitle": "Unsubmitted orders",
-  "submittedOrdersTableTitle": "Submitted orders",
+  "incompleteOrdersTableTitle": "Incomplete orders",
+  "completeOrdersTableTitle": "Completed orders",
   "columnInfo": [
     {
       "data": "Call-off Agreement ID"

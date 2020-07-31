@@ -27,17 +27,17 @@ export const getContext = ({ orgName, ordersData = [] }) => {
         dataTestId: `${order.orderId}-dateCreated`,
       },
     ];
-    if (order.status === 'Submitted') acc.submittedOrders.push(formattedOrder);
-    else acc.unsubmittedOrders.push(formattedOrder);
+    if (order.status.toLowerCase() === 'complete') acc.completeOrders.push(formattedOrder);
+    else acc.incompleteOrders.push(formattedOrder);
     return acc;
-  }, { submittedOrders: [], unsubmittedOrders: [] });
+  }, { completeOrders: [], incompleteOrders: [] });
 
   return ({
     ...manifest,
     title: `${orgName} orders`,
     newOrderButtonHref: `${baseUrl}/organisation/neworder`,
     proxyLinkHref: '#',
-    submittedOrders: formattedOrders.submittedOrders,
-    unsubmittedOrders: formattedOrders.unsubmittedOrders,
+    completeOrders: formattedOrders.completeOrders,
+    incompleteOrders: formattedOrders.incompleteOrders,
   });
 };
