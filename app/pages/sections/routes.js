@@ -27,7 +27,14 @@ const router = express.Router({ mergeParams: true });
 export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/description', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const context = await getDescriptionContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    const context = await getDescriptionContext({
+      req,
+      orderId,
+      accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      sessionManager,
+      logger,
+    });
+
     logger.info(`navigating to order ${orderId} description page`);
     res.render('pages/sections/description/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

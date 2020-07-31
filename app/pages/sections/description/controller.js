@@ -2,15 +2,26 @@ import { postData, putData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
-import { getOrderDescription } from '../../../helpers/api/ordapi/getOrderDescription';
+import { getOrderDescription } from '../../../helpers/routes/getOrderDescription';
 
-export const getDescriptionContext = async ({ orderId, accessToken }) => {
+export const getDescriptionContext = async ({
+  req,
+  orderId,
+  accessToken,
+  sessionManager,
+}) => {
   let descriptionData = '';
+
   if (orderId !== 'neworder') {
-    descriptionData = await getOrderDescription({ orderId, accessToken });
+    descriptionData = await getOrderDescription({
+      req,
+      accessToken,
+      sessionManager,
+      logger,
+    });
   }
 
-  return getContext({ orderId, description: descriptionData ? descriptionData.description : '' });
+  return getContext({ orderId, description: descriptionData || '' });
 };
 
 export const getDescriptionErrorContext = async params => getErrorContext(params);

@@ -11,8 +11,7 @@ describe('getOrderDescription', () => {
   });
 
   it('should call getData once with the correct params', async () => {
-    getData
-      .mockResolvedValueOnce({ data: {} });
+    getData.mockResolvedValueOnce({ data: {} });
 
     await getOrderDescription({ orderId: 'order-1', accessToken: 'access_token' });
     expect(getData.mock.calls.length).toEqual(1);
@@ -24,16 +23,14 @@ describe('getOrderDescription', () => {
   });
 
   it('should return order description', async () => {
-    getData
-      .mockResolvedValueOnce({ description: 'some description' });
+    getData.mockResolvedValueOnce({ description: 'some description' });
 
     const actual = await getOrderDescription({ orderId: 'order-1', accessToken: 'access_token' });
     expect(actual).toEqual({ description: 'some description' });
   });
 
   it('should return undefined when order description is undefined', async () => {
-    getData
-      .mockResolvedValueOnce(undefined);
+    getData.mockResolvedValueOnce(undefined);
 
     const actual = await getOrderDescription({ orderId: 'order-1', accessToken: 'access_token' });
     expect(actual).toEqual(undefined);
