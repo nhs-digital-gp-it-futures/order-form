@@ -18,11 +18,13 @@ import * as commencementDateController from './commencement-date/controller';
 import * as serviceRecipientsController from './service-recipients/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
+import { getOrderDescription } from '../../helpers/routes/getOrderDescription';
 import * as fundingSourceController from './funding-source/controller';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
 jest.mock('../../helpers/api/ordapi/putFundingSource');
+jest.mock('../../helpers/routes/getOrderDescription');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -744,6 +746,7 @@ describe('section routes', () => {
 
     it('should return the correct status and text when the user is authorised', () => {
       getFundingSource.mockResolvedValue({});
+      getOrderDescription.mockResolvedValue({});
       request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])

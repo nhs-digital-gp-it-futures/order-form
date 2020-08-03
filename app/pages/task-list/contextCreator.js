@@ -23,9 +23,9 @@ export const getNewOrderContext = ({ orderId }) => ({
     href: '#',
     disabled: true,
   },
-  submitOrderButton: {
-    text: commonManifest.submitOrderButton.text,
-    altText: commonManifest.submitOrderButton.disabledAltText,
+  completeOrderButton: {
+    text: commonManifest.completeOrderButton.text,
+    altText: commonManifest.completeOrderButton.disabledAltText,
     href: '#',
     disabled: true,
   },
@@ -49,10 +49,10 @@ export const getExistingOrderContext = ({
     text: commonManifest.previewOrderButton.text,
     href: `${baseUrl}/organisation/${orderId}/preview`,
   },
-  submitOrderButton: {
-    text: commonManifest.submitOrderButton.text,
-    altText: commonManifest.submitOrderButton.disabledAltText,
-    href: '#',
+  completeOrderButton: {
+    text: commonManifest.completeOrderButton.text,
+    altText: commonManifest.completeOrderButton.disabledAltText,
+    href: `${baseUrl}/organisation/${orderId}/complete-order`,
     disabled: !enableSubmitButton,
   },
 });

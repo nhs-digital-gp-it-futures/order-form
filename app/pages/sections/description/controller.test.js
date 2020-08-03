@@ -1,16 +1,16 @@
-import { postData, putData } from 'buying-catalogue-library';
+import { postData, putData, fakeSessionManager } from 'buying-catalogue-library';
 import { postOrPutDescription, getDescriptionContext } from './controller';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
-import { getOrderDescription } from '../../../helpers/api/ordapi/getOrderDescription';
+import { getOrderDescription } from '../../../helpers/routes/getOrderDescription';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
-jest.mock('../../../helpers/api/ordapi/getOrderDescription');
+jest.mock('../../../helpers/routes/getOrderDescription');
 
 describe('description controller', () => {
   describe('getDescriptionContext', () => {
@@ -19,39 +19,63 @@ describe('description controller', () => {
     });
 
     it('should call getOrderDescription once with the correct params for an order with an id', async () => {
-      getOrderDescription
-        .mockResolvedValueOnce({ description: 'a lovely description' });
+      getOrderDescription.mockResolvedValueOnce('a lovely description');
 
-      await getDescriptionContext({ orderId: 'order-id', accessToken: 'access_token' });
+      const orderId = 'order-id';
+      const req = { params: { orderId } };
+      const accessToken = 'access_token';
+
+      await getDescriptionContext({
+        req,
+        orderId,
+        accessToken,
+        sessionManager: fakeSessionManager,
+      });
+
       expect(getOrderDescription.mock.calls.length).toEqual(1);
       expect(getOrderDescription).toHaveBeenCalledWith({
-        orderId: 'order-id',
-        accessToken: 'access_token',
+        req,
+        accessToken,
+        sessionManager: fakeSessionManager,
+        logger,
       });
     });
 
     it('should not call getOrderDescription for a new order', async () => {
-      await getDescriptionContext({ orderId: 'neworder', accessToken: 'access_token' });
+      await getDescriptionContext({
+        req: {},
+        orderId: 'neworder',
+        accessToken: 'access_token',
+        sessionManager: fakeSessionManager,
+      });
+
       expect(getOrderDescription.mock.calls.length).toEqual(0);
     });
 
     it('should call getContext with the correct params for an order with an id and data returned from getOrderDescription', async () => {
-      getOrderDescription
-        .mockResolvedValueOnce({ description: 'a lovely description' });
-      contextCreator.getContext
-        .mockResolvedValueOnce();
+      getOrderDescription.mockResolvedValueOnce('a lovely description');
+      contextCreator.getContext.mockResolvedValueOnce();
 
-      await getDescriptionContext({ orderId: 'order-id', accessToken: 'access_token' });
+      await getDescriptionContext({
+        req: {},
+        orderId: 'order-id',
+        accessToken: 'access_token',
+        sessionManager: fakeSessionManager,
+      });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', description: 'a lovely description' });
     });
 
     it('should call getContext with the correct params for a new order', async () => {
-      contextCreator.getContext
-        .mockResolvedValueOnce();
+      contextCreator.getContext.mockResolvedValueOnce();
 
-      await getDescriptionContext({ orderId: 'neworder', accessToken: 'access_token' });
+      await getDescriptionContext({
+        req: {},
+        orderId: 'neworder',
+        accessToken: 'access_token',
+        sessionManager: fakeSessionManager,
+      });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'neworder', description: '' });
