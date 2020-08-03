@@ -49,7 +49,10 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       accessToken,
     });
 
-    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
+    if (response.success) {
+      sessionManager.saveToSession({ req, key: 'orderDescription', value: req.body.description.trim() });
+      return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
+    }
 
     const context = await getDescriptionErrorContext({
       validationErrors: response.errors,
@@ -192,10 +195,12 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     await getFundingSource({ orderId, accessToken });
-    let description = sessionManager.getFromSession({ req, key: 'description' });
-    if (!description) {
-      description = await getOrderDescription({ orderId, accessToken });
-    }
+    getOrderDescription({
+      req,
+      sessionManager,
+      accessToken,
+      logger,
+    });
 
     logger.info(`navigating to order ${orderId} complete-order page`);
     res.send('complete-order page');
