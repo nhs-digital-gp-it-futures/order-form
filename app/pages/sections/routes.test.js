@@ -591,7 +591,7 @@ describe('section routes', () => {
 
     it('should return the correct status and text when the user is authorised', () => {
       getFundingSource.mockResolvedValue({});
-      request(setUpFakeApp())
+      return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)

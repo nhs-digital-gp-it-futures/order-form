@@ -40,6 +40,10 @@ const setUpFakeApp = () => {
 describe('GET /organisation/:orderId/complete-order', () => {
   const path = '/organisation/some-order-id/complete-order';
 
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should redirect to the login page if the user is not logged in', () => (
     testAuthorisedGetPathForUnauthenticatedUser({
       app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
@@ -57,15 +61,15 @@ describe('GET /organisation/:orderId/complete-order', () => {
   ));
 
   it('should return the correct status and text when the user is authorised', () => {
-    getFundingSource.mockResolvedValue({});
+    getFundingSource.mockResolvedValue(true);
     getOrderDescription.mockResolvedValue({});
-    request(setUpFakeApp())
+    return request(setUpFakeApp())
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
         expect(res.status).toBe(200);
-        expect(res.text.includes('complete-order page')).toBeTruthy();
+        expect(res.text.includes('complete-order-page')).toBeTruthy();
       });
   });
 });
