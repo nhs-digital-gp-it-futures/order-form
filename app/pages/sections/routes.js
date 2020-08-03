@@ -21,6 +21,7 @@ import { associatedServicesRoutes } from './order-items/associated-services/rout
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { getOrderDescription } from '../../helpers/routes/getOrderDescription';
+import { sessionKeys } from '../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
 
@@ -50,7 +51,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     });
 
     if (response.success) {
-      sessionManager.saveToSession({ req, key: 'orderDescription', value: req.body.description.trim() });
+      sessionManager.clearFromSession(req, sessionKeys.orderDescription);
       return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
     }
 
