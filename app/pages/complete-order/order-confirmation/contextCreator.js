@@ -1,5 +1,5 @@
 import withFundingManifest from './withFundingManifest.json';
-import { baseUrl } from '../../config';
+import { baseUrl } from '../../../config';
 
 export const addParamsToManifest = (json, params) => JSON.parse(
   Object.entries(params).reduce(
@@ -7,13 +7,12 @@ export const addParamsToManifest = (json, params) => JSON.parse(
   ),
 );
 
-export const getContext = ({ orderId, orderDescription, fundingSource }) => {
+export const getContext = ({ orderId, fundingSource }) => {
   const manifest = fundingSource ? withFundingManifest : undefined;
   const context = ({
     ...addParamsToManifest(manifest, { orderId }),
-    title: `${manifest.title} ${orderId}?`,
-    orderDescription,
-    backLinkHref: `${baseUrl}/organisation/${orderId}`,
+    title: `${manifest.title} ${orderId} completed`,
+    backLinkHref: `${baseUrl}/organisation`,
   });
   return context;
 };
