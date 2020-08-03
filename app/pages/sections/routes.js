@@ -20,6 +20,7 @@ import { additionalServicesRoutes } from './order-items/additional-services/rout
 import { associatedServicesRoutes } from './order-items/associated-services/routes';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
+import { getOrderDescription } from '../../helpers/routes/getOrderDescription';
 import { sessionKeys } from '../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
@@ -195,6 +196,12 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     await getFundingSource({ orderId, accessToken });
+    await getOrderDescription({
+      req,
+      sessionManager,
+      accessToken,
+      logger,
+    });
 
     logger.info(`navigating to order ${orderId} complete-order page`);
     res.send('complete-order page');
