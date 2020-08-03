@@ -11,6 +11,7 @@ import { getTaskListPageContext } from './pages/task-list/controller';
 import { getOrder } from './helpers/api/ordapi/getOrder';
 import { getPreviewPageContext } from './pages/preview/controller';
 import { sectionRoutes } from './pages/sections/routes';
+import { completeOrderRoutes } from './pages/complete-order/routes';
 import includesContext from './includes/manifest.json';
 
 const addContext = ({ context, user, csrfToken }) => ({
@@ -80,6 +81,7 @@ export const routes = (authProvider, sessionManager) => {
     res.render('pages/preview/template.njk', addContext({ context, user: req.user }));
   }));
 
+  router.use('/organisation/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
   router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
 
   router.get('*', (req) => {
