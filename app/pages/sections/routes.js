@@ -20,6 +20,7 @@ import { additionalServicesRoutes } from './order-items/additional-services/rout
 import { associatedServicesRoutes } from './order-items/associated-services/routes';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
+import { sessionKeys } from '../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
 
@@ -48,7 +49,10 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       accessToken,
     });
 
-    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
+    if (response.success) {
+      sessionManager.clearFromSession(req, sessionKeys.orderDescription);
+      return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
+    }
 
     const context = await getDescriptionErrorContext({
       validationErrors: response.errors,
