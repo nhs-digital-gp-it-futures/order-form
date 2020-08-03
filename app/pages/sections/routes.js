@@ -196,7 +196,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     await getFundingSource({ orderId, accessToken });
-    getOrderDescription({
+    await getOrderDescription({
       req,
       sessionManager,
       accessToken,
