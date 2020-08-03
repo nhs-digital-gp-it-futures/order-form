@@ -1,0 +1,30 @@
+{% extends 'includes/layout.njk' %}
+{% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
+
+{% block body %}
+  <div class="nhsuk-width-container" data-test-id="complete-order-page">
+    <div data-test-id="go-back-link">
+      {{ backLink({
+        "href": backLinkHref,
+        "text": backLinkText
+      }) }}
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <h1 data-test-id="complete-order-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
+        <h2 data-test-id="complete-order-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
+        <h3 data-test-id="order-description-title" class="nhsuk-u-margin-bottom-3">{{ orderDescriptionTitle }}</h3>
+        <h4 data-test-id="order-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ orderDescription }}</h4>
+
+        <form method="post">
+          {{ bcButton({
+              dataTestId: "complete-order-button",
+              text: completeOrderButtonText,
+              classes: "nhsuk-u-margin-top-9"
+          })}}
+        </form>
+    </div>
+  </div>
+{% endblock %}
