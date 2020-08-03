@@ -82,6 +82,14 @@ export const routes = (authProvider, sessionManager) => {
   }));
 
   router.use('/organisation/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
+
+  router.get('/organisation/:orderId/delete-order', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    logger.info(`navigating to order ${orderId} delete-order page`);
+    res.send('delete-order page');
+  }));
+
   router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
 
   router.get('*', (req) => {
