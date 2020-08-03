@@ -69,6 +69,7 @@ export const routes = (authProvider, sessionManager) => {
   router.get('/organisation/:orderId/preview', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
+    const { print } = req.query;
 
     const {
       orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
@@ -78,7 +79,11 @@ export const routes = (authProvider, sessionManager) => {
       orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
     });
 
-    res.render('pages/preview/template.njk', addContext({ context, user: req.user }));
+    if (print) {
+      return res.render('pages/preview/templatePrint.njk', addContext({ context, user: req.user }));
+    }
+
+    return res.render('pages/preview/template.njk', addContext({ context, user: req.user }));
   }));
 
   router.use('/organisation/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
