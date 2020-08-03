@@ -18,13 +18,13 @@ import * as commencementDateController from './commencement-date/controller';
 import * as serviceRecipientsController from './service-recipients/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
-import { getOrderDescription } from '../../helpers/api/ordapi/getOrderDescription';
+import { getOrderDescription } from '../../helpers/routes/getOrderDescription';
 import * as fundingSourceController from './funding-source/controller';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
 jest.mock('../../helpers/api/ordapi/putFundingSource');
-jest.mock('../../helpers/api/ordapi/getOrderDescription');
+jest.mock('../../helpers/routes/getOrderDescription');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});

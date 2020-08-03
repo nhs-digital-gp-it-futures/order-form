@@ -20,14 +20,22 @@ import { additionalServicesRoutes } from './order-items/additional-services/rout
 import { associatedServicesRoutes } from './order-items/associated-services/routes';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
-import { getOrderDescription } from '../../helpers/api/ordapi/getOrderDescription';
+import { getOrderDescription } from '../../helpers/routes/getOrderDescription';
+import { sessionKeys } from '../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
 
 export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/description', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const context = await getDescriptionContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    const context = await getDescriptionContext({
+      req,
+      orderId,
+      accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      sessionManager,
+      logger,
+    });
+
     logger.info(`navigating to order ${orderId} description page`);
     res.render('pages/sections/description/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -43,7 +51,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     });
 
     if (response.success) {
-      sessionManager.saveToSession({ req, key: 'description', value: req.body.description.trim() });
+      sessionManager.clearFromSession(req, sessionKeys.orderDescription);
       return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
     }
 
@@ -188,10 +196,12 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     await getFundingSource({ orderId, accessToken });
-    let description = sessionManager.getFromSession({ req, key: 'description' });
-    if (!description) {
-      description = await getOrderDescription({ orderId, accessToken });
-    }
+    await getOrderDescription({
+      req,
+      sessionManager,
+      accessToken,
+      logger,
+    });
 
     logger.info(`navigating to order ${orderId} complete-order page`);
     res.send('complete-order page');

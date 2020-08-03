@@ -1,3 +1,7 @@
+export const sessionKeys = {
+  orderDescription: 'orderDescription',
+};
+
 export const getFromSessionOrApi = async ({
   sessionData,
   sessionManager,

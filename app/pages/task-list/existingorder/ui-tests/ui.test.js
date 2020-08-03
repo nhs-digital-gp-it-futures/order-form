@@ -893,21 +893,21 @@ test('should render the "Preview order summary" button', async (t) => {
     .expect(previewOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/preview`);
 });
 
-test('should render the "Submit order" button', async (t) => {
+test('should render the "Complete order" button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const submitOrderButton = Selector('[data-test-id="submit-order-button"]');
-  const submitOrderButtonLink = submitOrderButton.find('a');
+  const completeOrderButton = Selector('[data-test-id="complete-order-button"]');
+  const submitOrderButtonLink = completeOrderButton.find('a');
 
   await t
-    .expect(await extractInnerText(submitOrderButton)).eql(commonContent.submitOrderButton.text)
-    .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
+    .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)
+    .expect(completeOrderButton.getAttribute('aria-label')).eql(commonContent.completeOrderButton.disabledAltText)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--disabled')).eql(true);
 });
 
-test('should enable the "Submit order" button when sectionStatus is "complete"', async (t) => {
+test('should enable the "Complete order" button when sectionStatus is "complete"', async (t) => {
   const mockCompleteOrderSummary = {
     ...mockExistingOrderSummary,
     sectionStatus: 'complete',
@@ -915,13 +915,13 @@ test('should enable the "Submit order" button when sectionStatus is "complete"',
   await pageSetup({ ...defaultPageSetup, mockData: mockCompleteOrderSummary });
   await t.navigateTo(pageUrl);
 
-  const submitOrderButton = Selector('[data-test-id="submit-order-button"]');
-  const submitOrderButtonLink = submitOrderButton.find('a');
+  const completeOrderButton = Selector('[data-test-id="complete-order-button"]');
+  const submitOrderButtonLink = completeOrderButton.find('a');
 
   await t
-    .expect(await extractInnerText(submitOrderButton)).eql(commonContent.submitOrderButton.text)
-    .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
+    .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)
+    .expect(completeOrderButton.getAttribute('aria-label')).eql(commonContent.completeOrderButton.disabledAltText)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--disabled')).eql(false)
-    .expect(submitOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/complete-order`);
+    .expect(completeOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/complete-order`);
 });
