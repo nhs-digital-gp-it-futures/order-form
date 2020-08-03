@@ -10,6 +10,7 @@ const setup = {
 const context = {
   ...withFundingManifest,
   backLinkHref: '/organisation/order-1',
+  orderDescription: 'some description',
 };
 
 describe('complete order page', () => {
@@ -35,6 +36,17 @@ describe('complete order page', () => {
       const description = $('h2[data-test-id="complete-order-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
+    });
+  }));
+
+  it('should render the complete order order details', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const orderDescriptionTitle = $('h3[data-test-id="order-description-title"]');
+      const orderDescription = $('h4[data-test-id="order-description"]');
+      expect(orderDescriptionTitle.length).toEqual(1);
+      expect(orderDescriptionTitle.text().trim()).toEqual(context.orderDescriptionTitle);
+      expect(orderDescription.length).toEqual(1);
+      expect(orderDescription.text().trim()).toEqual(context.orderDescription);
     });
   }));
 
