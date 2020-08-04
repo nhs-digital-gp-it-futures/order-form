@@ -1,11 +1,6 @@
 import withFundingManifest from './withFundingManifest.json';
 import { baseUrl } from '../../config';
-
-export const addParamsToManifest = (json, params) => JSON.parse(
-  Object.entries(params).reduce(
-    (string, [key, value]) => string.replace(new RegExp(`{{${key}}}`, 'g'), value), JSON.stringify(json),
-  ),
-);
+import { addParamsToManifest } from '../../helpers/contextCreators/addParamsToManifest';
 
 export const getContext = ({ orderId, orderDescription, fundingSource }) => {
   const manifest = fundingSource ? withFundingManifest : undefined;
