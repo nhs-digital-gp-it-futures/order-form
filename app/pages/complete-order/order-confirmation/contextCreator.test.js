@@ -17,7 +17,7 @@ describe('Order confirmation contextCreator', () => {
 
     it('should return the title', () => {
       const context = getContext({ orderId: 'order-1', fundingSource: true });
-      expect(context.title).toEqual(`${withFundingManifest.title} order-1 completed`);
+      expect(context.title).toEqual('Order order-1 completed');
     });
 
     it('should return the description', () => {

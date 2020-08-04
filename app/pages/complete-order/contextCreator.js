@@ -11,7 +11,6 @@ export const getContext = ({ orderId, orderDescription, fundingSource }) => {
   const manifest = fundingSource ? withFundingManifest : undefined;
   const context = ({
     ...addParamsToManifest(manifest, { orderId }),
-    title: `${manifest.title} ${orderId}?`,
     orderDescription,
     backLinkHref: `${baseUrl}/organisation/${orderId}`,
   });

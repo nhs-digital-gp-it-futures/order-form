@@ -74,8 +74,8 @@ describe('GET /organisation/:orderId/complete-order', () => {
   });
 });
 
-describe('GET /organisation/:orderId/order-confirmation', () => {
-  const path = '/organisation/some-order-id/order-confirmation';
+describe('GET /organisation/:orderId/complete-order/order-confirmation', () => {
+  const path = '/organisation/some-order-id/complete-order/order-confirmation';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -106,7 +106,7 @@ describe('GET /organisation/:orderId/order-confirmation', () => {
       .expect(200)
       .then((res) => {
         expect(res.status).toBe(200);
-        expect(res.text.includes('complete-order-page')).toBeTruthy();
+        expect(res.text.includes('order-confirmation-page')).toBeTruthy();
       });
   });
 });
