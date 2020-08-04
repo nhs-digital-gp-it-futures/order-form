@@ -50,6 +50,16 @@ test('should render funding source page', async (t) => {
     .expect(page.exists).ok();
 });
 
+test('should render go back link with href /organisation/order-id', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+
+  await t
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+});
+
 test('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
