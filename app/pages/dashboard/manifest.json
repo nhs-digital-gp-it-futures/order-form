@@ -4,48 +4,104 @@
   "newOrderButtonText": "Create new order",
   "incompleteOrdersTableTitle": "Incomplete orders",
   "completeOrdersTableTitle": "Completed orders",
-  "columnInfo": [
-    {
-      "data": "Call-off Agreement ID",
-      "classes": "nhsuk-u-font-size-16",
-      "width": "20%"
-    },
-    {
-      "data": "Order description",
-      "classes": "nhsuk-u-font-size-16",
-      "width": "20%"
-    },
-    {
-      "data": "Last updated by",
-      "classes": "nhsuk-u-font-size-16",
-      "width": "20%"
-    },
-    {
-      "data": "Last updated",
-      "classes": "nhsuk-u-font-size-16",
-      "width": "20%"
-    },
-    {
-      "data": "Date created",
-      "classes": "nhsuk-u-font-size-16",
-      "width": "20%"
+  "incompleteOrdersTable": {
+    "columnInfo": [
+      {
+        "data": "Call-off Agreement ID",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "20%"
+      },
+      {
+        "data": "Order description",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "20%"
+      },
+      {
+        "data": "Last updated by",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "20%"
+      },
+      {
+        "data": "Last updated",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "20%"
+      },
+      {
+        "data": "Date created",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "20%"
+      }
+    ],
+    "cellInfo": {
+      "orderId": {
+        "classes": "nhsuk-u-font-size-16"
+      },
+      "description": {
+        "classes": "nhsuk-u-font-size-16"
+      },
+      "lastUpdatedBy": {
+        "classes": "nhsuk-u-font-size-16"
+      },
+      "lastUpdated": {
+        "classes": "nhsuk-u-font-size-16"
+      },
+      "dateCreated": {
+        "classes": "nhsuk-u-font-size-16"
+      }
     }
-  ],
-  "cellInfo": {
-    "orderId": {
-      "classes": "nhsuk-u-font-size-16"
-    },
-    "description": {
-      "classes": "nhsuk-u-font-size-16"
-    },
-    "lastUpdatedBy": {
-      "classes": "nhsuk-u-font-size-16"
-    },
-    "lastUpdated": {
-      "classes": "nhsuk-u-font-size-16"
-    },
-    "dateCreated": {
-      "classes": "nhsuk-u-font-size-16"
+  },
+  "completeOrdersTable": {
+    "columnInfo": [
+      {
+        "data": "Call-off Agreement ID",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "21%"
+      },
+      {
+        "data": "Order description",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "21%"
+      },
+      {
+        "data": "Last updated by",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "17%"
+      },
+      {
+        "data": "Last updated",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "17%"
+      },
+      {
+        "data": "Date created",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "17%"
+      },
+      {
+        "data": "Automatically processed",
+        "classes": "nhsuk-u-font-size-16",
+        "width": "7%"
+      }
+    ],
+    "cellInfo": {
+      "orderId": {
+        "classes": "nhsuk-u-font-size-16"
+      },
+      "description": {
+        "classes": "nhsuk-u-font-size-16"
+      },
+      "lastUpdatedBy": {
+        "classes": "nhsuk-u-font-size-16"
+      },
+      "lastUpdated": {
+        "classes": "nhsuk-u-font-size-16"
+      },
+      "dateCreated": {
+        "classes": "nhsuk-u-font-size-16"
+      },
+      "automaticallyProcessed": {
+        "classes": "nhsuk-u-font-size-16"
+      }
     }
   }
 }
