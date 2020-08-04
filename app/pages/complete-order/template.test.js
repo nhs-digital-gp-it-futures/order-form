@@ -1,6 +1,4 @@
 import { componentTester } from '../../test-utils/componentTester';
-import withFundingManifest from './withFundingManifest.json';
-import withoutFundingManifest from './withoutFundingManifest.json';
 
 const setup = {
   template: {
