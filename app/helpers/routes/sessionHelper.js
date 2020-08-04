@@ -1,5 +1,21 @@
 export const sessionKeys = {
   orderDescription: 'orderDescription',
+  selectedSupplier: 'selectedSupplier',
+  suppliersFound: 'suppliersFound',
+  selectedItemId: 'selectedItemId',
+  selectedItemName: 'selectedItemName',
+  selectedRecipientId: 'selectedRecipientId',
+  selectedRecipientName: 'selectedRecipientName',
+  selectedPriceId: 'selectedPriceId',
+  selectedCatalogueSolutionId: 'selectedCatalogueSolutionId',
+  orderItemPageData: 'orderItemPageData',
+  additionalServices: 'additionalServices',
+  additionalServicePrices: 'additionalServicePrices',
+  recipients: 'recipients',
+  associatedServices: 'associatedServices',
+  associatedServicePrices: 'associatedServicePrices',
+  solutions: 'solutions',
+  solutionPrices: 'solutionPrices',
 };
 
 export const getFromSessionOrApi = async ({
