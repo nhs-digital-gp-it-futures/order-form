@@ -10,6 +10,7 @@ const pageSetup = async (setup = { withAuth: true }) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
     await setState(ClientFunction)('orderId', 'order-id');
+    await setState(ClientFunction)('fundingSource', true);
   }
 };
 
