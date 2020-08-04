@@ -19,6 +19,7 @@ import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItems } from '../../../../../helpers/api/bapi/getCatalogueItems';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
+import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
@@ -45,20 +46,20 @@ const mockSessionSolutionsState = JSON.stringify([
   { catalogueItemId: 'solution-1', name: 'Solution 1' },
   { catalogueItemId: 'solution-2', name: 'Solution 2' },
 ]);
-const mockSolutionsCookie = `suppliersFound=${mockSessionSolutionsState}`;
+const mockSolutionsCookie = `${sessionKeys.suppliersFound}=${mockSessionSolutionsState}`;
 
 const mockRecipientSessionState = JSON.stringify([
   { id: 'recipient-1', name: 'Recipient 1' },
   { id: 'recipient-2', name: 'Recipient 2' },
 ]);
-const mockRecipientsCookie = `recipients=${mockRecipientSessionState}`;
+const mockRecipientsCookie = `${sessionKeys.recipients}=${mockRecipientSessionState}`;
 
 const mockSolutionPrices = JSON.stringify({
   id: 'sol-1',
   name: 'Solution name',
   prices: [],
 });
-const mocksolutionPricesCookie = `solutionPrices=${mockSolutionPrices}`;
+const mocksolutionPricesCookie = `${sessionKeys.solutionPrices}=${mockSolutionPrices}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
