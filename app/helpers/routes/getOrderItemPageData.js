@@ -8,12 +8,24 @@ export const getOrderItemPageData = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
 }) => {
   if (orderItemId === 'neworderitem') {
-    const itemId = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemId });
-    const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
-    const serviceRecipientId = sessionManager.getFromSession({ req, key: sessionKeys.selectedRecipientId });
-    const serviceRecipientName = sessionManager.getFromSession({ req, key: sessionKeys.selectedRecipientName });
-    const selectedPriceId = sessionManager.getFromSession({ req, key: sessionKeys.selectedPriceId });
-    const catalogueSolutionId = sessionManager.getFromSession({ req, key: sessionKeys.selectedCatalogueSolutionId });
+    const itemId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemId,
+    });
+    const itemName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+    const serviceRecipientId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipientId,
+    });
+    const serviceRecipientName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipientName,
+    });
+    const selectedPriceId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedPriceId,
+    });
+    const catalogueSolutionId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedCatalogueSolutionId,
+    });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     const formData = { price: formatDecimal(selectedPrice.price) };
