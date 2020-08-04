@@ -118,11 +118,11 @@ test('should render the incomplete orders table', async (t) => {
 
   await t
     .expect(await extractInnerText(incompleteTableTitle)).eql(content.incompleteOrdersTableTitle)
-    .expect(await extractInnerText(incompleteColumnHeading1)).eql(content.columnInfo[0].data)
-    .expect(await extractInnerText(incompleteColumnHeading2)).eql(content.columnInfo[1].data)
-    .expect(await extractInnerText(incompleteColumnHeading3)).eql(content.columnInfo[2].data)
-    .expect(await extractInnerText(incompleteColumnHeading4)).eql(content.columnInfo[3].data)
-    .expect(await extractInnerText(incompleteColumnHeading5)).eql(content.columnInfo[4].data);
+    .expect(await extractInnerText(incompleteColumnHeading1)).eql(content.incompleteOrdersTable.columnInfo[0].data)
+    .expect(await extractInnerText(incompleteColumnHeading2)).eql(content.incompleteOrdersTable.columnInfo[1].data)
+    .expect(await extractInnerText(incompleteColumnHeading3)).eql(content.incompleteOrdersTable.columnInfo[2].data)
+    .expect(await extractInnerText(incompleteColumnHeading4)).eql(content.incompleteOrdersTable.columnInfo[3].data)
+    .expect(await extractInnerText(incompleteColumnHeading5)).eql(content.incompleteOrdersTable.columnInfo[4].data);
 });
 
 test('should render the incomplete orders table content', async (t) => {
@@ -157,14 +157,16 @@ test('should render the complete orders table', async (t) => {
   const completeColumnHeading3 = completeTable.find('[data-test-id="column-heading-2"]');
   const completeColumnHeading4 = completeTable.find('[data-test-id="column-heading-3"]');
   const completeColumnHeading5 = completeTable.find('[data-test-id="column-heading-4"]');
+  const completeColumnHeading6 = completeTable.find('[data-test-id="column-heading-5"]');
 
   await t
     .expect(await extractInnerText(completeTableTitle)).eql(content.completeOrdersTableTitle)
-    .expect(await extractInnerText(completeColumnHeading1)).eql(content.columnInfo[0].data)
-    .expect(await extractInnerText(completeColumnHeading2)).eql(content.columnInfo[1].data)
-    .expect(await extractInnerText(completeColumnHeading3)).eql(content.columnInfo[2].data)
-    .expect(await extractInnerText(completeColumnHeading4)).eql(content.columnInfo[3].data)
-    .expect(await extractInnerText(completeColumnHeading5)).eql(content.columnInfo[4].data);
+    .expect(await extractInnerText(completeColumnHeading1)).eql(content.completeOrdersTable.columnInfo[0].data)
+    .expect(await extractInnerText(completeColumnHeading2)).eql(content.completeOrdersTable.columnInfo[1].data)
+    .expect(await extractInnerText(completeColumnHeading3)).eql(content.completeOrdersTable.columnInfo[2].data)
+    .expect(await extractInnerText(completeColumnHeading4)).eql(content.completeOrdersTable.columnInfo[3].data)
+    .expect(await extractInnerText(completeColumnHeading5)).eql(content.completeOrdersTable.columnInfo[4].data)
+    .expect(await extractInnerText(completeColumnHeading6)).eql(content.completeOrdersTable.columnInfo[5].data);
 });
 
 test('should render the complete orders table content', async (t) => {
@@ -178,6 +180,7 @@ test('should render the complete orders table content', async (t) => {
   const lastUpdatedBy = row.find('div[data-test-id="order2-lastUpdatedBy"]');
   const lastUpdated = row.find('div[data-test-id="order2-lastUpdated"]');
   const dateCreated = row.find('div[data-test-id="order2-dateCreated"]');
+  const automaticallyProcessed = row.find('div[data-test-id="order2-automaticallyProcessed"]');
 
   await t
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[1].orderId)
@@ -185,7 +188,8 @@ test('should render the complete orders table content', async (t) => {
     .expect(await extractInnerText(description)).eql(mockOrdersData[1].description)
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[1].lastUpdatedBy)
     .expect(await extractInnerText(lastUpdated)).eql('9 December 2020')
-    .expect(await extractInnerText(dateCreated)).eql('9 October 2020');
+    .expect(await extractInnerText(dateCreated)).eql('9 October 2020')
+    .expect(await extractInnerText(automaticallyProcessed)).eql('Yes');
 });
 
 test('should navigate to the order page when an order id is clicked', async (t) => {
