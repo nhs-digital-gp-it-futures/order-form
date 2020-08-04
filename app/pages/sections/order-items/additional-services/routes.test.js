@@ -18,6 +18,7 @@ import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
+import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../logger');
 jest.mock('../../../../helpers/routes/getOrderItemPageData');
@@ -40,7 +41,7 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 
-const mockSelectedItemIdCookie = 'selectedItemId=item-1';
+const mockSelectedItemIdCookie = `${sessionKeys.selectedItemId}=item-1`;
 const mockSelectedRecipientIdCookie = 'selectedRecipientId=recipient-1';
 const mockSelectedPriceIdCookie = 'selectedPriceId=1';
 const mockGetPageDataCookie = 'orderItemPageData={}';
