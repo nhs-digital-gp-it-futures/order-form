@@ -16,7 +16,7 @@ const pageSetup = async (setup = { withAuth: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Complete order page - general')
+fixture('Order confirmation page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -34,7 +34,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render complete order page', async (t) => {
+test('should render order confirmation page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
