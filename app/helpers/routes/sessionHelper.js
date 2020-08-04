@@ -16,6 +16,7 @@ export const sessionKeys = {
   associatedServicePrices: 'associatedServicePrices',
   solutions: 'solutions',
   solutionPrices: 'solutionPrices',
+  fundingSource: 'fundingSource',
 };
 
 export const getFromSessionOrApi = async ({
