@@ -9,7 +9,6 @@ const setup = {
 };
 
 describe('complete order page - with funding', () => {
-
   const context = {
     ...withFundingManifest,
     backLinkHref: '/organisation/order-1',
@@ -74,7 +73,6 @@ describe('complete order page - with funding', () => {
 });
 
 describe('complete order page - without funding', () => {
-
   const context = {
     ...withoutFundingManifest,
     backLinkHref: '/organisation/order-1',
