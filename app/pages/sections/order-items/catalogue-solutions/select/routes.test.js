@@ -53,8 +53,6 @@ const mockRecipientSessionState = JSON.stringify([
 ]);
 const mockRecipientsCookie = `recipients=${mockRecipientSessionState}`;
 
-const mockSelectedSolutionIdCookie = 'selectedSolutionId=solution-1';
-
 const mockSolutionPrices = JSON.stringify({
   id: 'sol-1',
   name: 'Solution name',
@@ -410,9 +408,9 @@ describe('catalogue-solutions select routes', () => {
         getPath: path,
         postPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
+          mockAuthorisedCookie, mockRecipientsCookie,
         ],
-        postPathCookies: [mockRecipientsCookie, mockSelectedSolutionIdCookie],
+        postPathCookies: [mockRecipientsCookie],
         expectedRedirectPath: 'http://identity-server/login',
       })
     ));
@@ -425,10 +423,10 @@ describe('catalogue-solutions select routes', () => {
         getPath: path,
         postPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
+          mockAuthorisedCookie, mockRecipientsCookie,
         ],
         postPathCookies: [
-          mockUnauthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
+          mockUnauthorisedCookie, mockRecipientsCookie,
         ],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
@@ -450,14 +448,14 @@ describe('catalogue-solutions select routes', () => {
         app: request(setUpFakeApp()),
         getPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
+          mockAuthorisedCookie, mockRecipientsCookie,
         ],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie])
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
@@ -480,14 +478,14 @@ describe('catalogue-solutions select routes', () => {
         app: request(setUpFakeApp()),
         getPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
+          mockAuthorisedCookie, mockRecipientsCookie,
         ],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie])
         .send({
           selectRecipient: 'recipient-1',
           _csrf: csrfToken,

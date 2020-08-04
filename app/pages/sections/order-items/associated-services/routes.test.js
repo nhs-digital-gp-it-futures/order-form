@@ -42,8 +42,8 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 
 const mockSelectedItemIdCookie = `${sessionKeys.selectedItemId}=item-1`;
-const mockSelectedPriceIdCookie = 'selectedPriceId=1';
-const mockGetPageDataCookie = 'orderItemPageData={}';
+const mockSelectedPriceIdCookie = `${sessionKeys.selectedPriceId}=1`;
+const mockGetPageDataCookie = `${sessionKeys.orderItemPageData}={}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
