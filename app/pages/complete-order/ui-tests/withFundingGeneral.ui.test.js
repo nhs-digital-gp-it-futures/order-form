@@ -25,7 +25,7 @@ const pageSetup = async (setup = { withAuth: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Complete order page - general')
+fixture('Complete order page - general - with funding')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
