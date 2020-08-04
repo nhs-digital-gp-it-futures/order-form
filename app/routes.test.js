@@ -226,6 +226,55 @@ describe('routes', () => {
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });
+
+    it('should return the printable preview page when the print flag is passed in', () => {
+      const pathWithPrintFlag = `${path}?print=true`;
+
+      getOrder.mockResolvedValueOnce({});
+
+      previewController.getPreviewPageContext = jest.fn()
+        .mockResolvedValueOnce({});
+
+      return request(setUpFakeApp())
+        .get(pathWithPrintFlag)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="preview-page-print"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
+  });
+
+  describe('GET /organisation/:orderId/delete-order', () => {
+    const path = '/organisation/some-order-id/delete-order';
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should return the correct status and text when the user is authorised', () => {
+      request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.text.includes('delete-order page')).toBeTruthy();
+        });
+    });
   });
 
   describe('GET *', () => {

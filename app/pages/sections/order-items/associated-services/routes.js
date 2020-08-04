@@ -22,9 +22,12 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     const { orderId } = req.params;
 
     const context = await getAssociatedServicesPageContext({
+      req,
       orderId,
       catalogueItemType: 'AssociatedService',
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      sessionManager,
+      logger,
     });
 
     logger.info(`navigating to order ${orderId} associated-services dashboard page`);

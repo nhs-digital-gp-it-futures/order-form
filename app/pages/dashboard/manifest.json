@@ -1,25 +1,51 @@
 {
   "backLinkText": "Go back to homepage",
-  "description": "Manage orders currently in progress and view orders that have been submitted.",
+  "description": "Manage orders currently in progress and view orders that have been completed.",
   "newOrderButtonText": "Create new order",
-  "unsubmittedOrdersTableTitle": "Unsubmitted orders",
-  "submittedOrdersTableTitle": "Submitted orders",
+  "incompleteOrdersTableTitle": "Incomplete orders",
+  "completeOrdersTableTitle": "Completed orders",
   "columnInfo": [
     {
-      "data": "Call-off Agreement ID"
+      "data": "Call-off Agreement ID",
+      "classes": "nhsuk-u-font-size-16",
+      "width": "20%"
     },
     {
-      "data": "Order description"
+      "data": "Order description",
+      "classes": "nhsuk-u-font-size-16",
+      "width": "20%"
     },
     {
-      "data": "Last updated by"
+      "data": "Last updated by",
+      "classes": "nhsuk-u-font-size-16",
+      "width": "20%"
     },
     {
-      "data": "Last updated"
+      "data": "Last updated",
+      "classes": "nhsuk-u-font-size-16",
+      "width": "20%"
     },
     {
-      "data": "Date created"
+      "data": "Date created",
+      "classes": "nhsuk-u-font-size-16",
+      "width": "20%"
     }
   ],
-  "columnClass": "bc-grid-column-one-fifth nhsuk-u-font-size-16"
+  "cellInfo": {
+    "orderId": {
+      "classes": "nhsuk-u-font-size-16"
+    },
+    "description": {
+      "classes": "nhsuk-u-font-size-16"
+    },
+    "lastUpdatedBy": {
+      "classes": "nhsuk-u-font-size-16"
+    },
+    "lastUpdated": {
+      "classes": "nhsuk-u-font-size-16"
+    },
+    "dateCreated": {
+      "classes": "nhsuk-u-font-size-16"
+    }
+  }
 }

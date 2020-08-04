@@ -11,7 +11,6 @@ const endpoints = {
     getSupplier: options => `${solutionsApiUrl}/api/v1/suppliers/${options.supplierId}`,
     getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
     getSolution: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}`,
-    getSolutionPricing: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}/prices`,
     getSelectedPrice: options => `${solutionsApiUrl}/api/v1/prices/${options.selectedPriceId}`,
     getAdditionalServices: (options) => {
       const queryString = `solutionIds=${options.addedCatalogueSolutions.join('&solutionIds=')}`;
@@ -29,7 +28,6 @@ const endpoints = {
   },
   ordapi: {
     getOrders: options => `${orderApiUrl}/api/v1/organisations/${options.orgId}/orders`,
-    getOrderSummary: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/summary`,
     getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
     getSupplier: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/supplier`,
     postSolutionOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions`,

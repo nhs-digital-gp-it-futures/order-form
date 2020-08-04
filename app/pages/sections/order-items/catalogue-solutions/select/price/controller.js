@@ -1,22 +1,6 @@
-import { getData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
-import { getEndpoint } from '../../../../../../endpoints';
-import { logger } from '../../../../../../logger';
 
 export const getSolutionPricePageContext = params => getContext(params);
-
-export const findSolutionPrices = async ({ accessToken, solutionId }) => {
-  const solutionPricingEndpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSolutionPricing', options: { solutionId } });
-  const solutionPricingData = await getData({
-    endpoint: solutionPricingEndpoint,
-    accessToken,
-    logger,
-  });
-
-  logger.info(`Solution pricing for solution with id: ${solutionId} found in BAPI.`);
-
-  return solutionPricingData;
-};
 
 export const getSolutionPriceErrorPageContext = params => getErrorContext(params);
 

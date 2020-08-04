@@ -94,7 +94,7 @@ describe('catalogue-solutions select-price contextCreator', () => {
     });
 
     it('should return the title', () => {
-      const context = getContext({ orderId: 'order-1', solutionPrices });
+      const context = getContext({ orderId: 'order-1', solutionPrices, selectedCatalogueItemName: 'Solution name' });
       expect(context.title).toEqual(`${manifest.title} Solution name`);
     });
 

@@ -423,15 +423,15 @@ test('should render the "Preview order summary" button', async (t) => {
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
 
-test('should render the "Submit order" button', async (t) => {
+test('should render the "Complete order" button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const submitOrderButton = Selector('[data-test-id="submit-order-button"]');
+  const completeOrderButton = Selector('[data-test-id="complete-order-button"]');
 
   await t
-    .expect(await extractInnerText(submitOrderButton)).eql(commonContent.submitOrderButton.text)
-    .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
-    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
-    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
+    .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)
+    .expect(completeOrderButton.getAttribute('aria-label')).eql(commonContent.completeOrderButton.disabledAltText)
+    .expect(completeOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
+    .expect(completeOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });

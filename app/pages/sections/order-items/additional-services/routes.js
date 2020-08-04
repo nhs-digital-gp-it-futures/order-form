@@ -22,9 +22,12 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const { orderId } = req.params;
 
     const context = await getAdditionalServicesPageContext({
+      req,
       orderId,
       catalogueItemType: 'AdditionalService',
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      sessionManager,
+      logger,
     });
 
     logger.info(`navigating to order ${orderId} additional-services dashboard page`);
