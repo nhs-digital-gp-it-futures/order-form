@@ -70,7 +70,7 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="complete-order-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql(`${content.title} order-id?`);
+    .expect(await extractInnerText(title)).eql('Complete order order-id?');
 });
 
 test('should render the page description', async (t) => {
@@ -83,14 +83,14 @@ test('should render the page description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
-test('should render the warning advice', async (t) => {
+test('should render the inset advice', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const warningAdvice = Selector('[data-test-id="complete-order-page-warning-advice"] p');
+  const insetAdvice = Selector('[data-test-id="complete-order-page-inset-advice"]');
 
   await t
-    .expect(await extractInnerText(warningAdvice)).eql(content.warningAdvice);
+    .expect(await extractInnerText(insetAdvice)).contains(content.insetAdvice);
 });
 
 test('should render the order description title', async (t) => {

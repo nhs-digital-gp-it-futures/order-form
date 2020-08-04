@@ -20,7 +20,7 @@ describe('complete order contextCreator', () => {
 
     it('should return the title', () => {
       const context = getContext({ orderId: 'order-1', fundingSource });
-      expect(context.title).toEqual(`${withFundingManifest.title} order-1?`);
+      expect(context.title).toEqual('Complete order order-1?');
     });
 
     it('should return the description', () => {
@@ -59,7 +59,7 @@ describe('complete order contextCreator', () => {
 
     it('should return the title', () => {
       const context = getContext({ orderId: 'order-1', fundingSource });
-      expect(context.title).toEqual(`${withoutFundingManifest.title} order-1?`);
+      expect(context.title).toEqual('Complete order order-1?');
     });
 
     it('should return the page description', () => {
@@ -67,9 +67,9 @@ describe('complete order contextCreator', () => {
       expect(context.description).toEqual(withoutFundingManifest.description);
     });
 
-    it('should return the warning advice', () => {
+    it('should return the inset advice', () => {
       const context = getContext({ orderId: 'order-1', fundingSource });
-      expect(context.warningAdvice).toEqual(withoutFundingManifest.warningAdvice);
+      expect(context.insetAdvice).toEqual(withoutFundingManifest.insetAdvice);
     });
 
     it('should return the order description provided', () => {
