@@ -29,6 +29,7 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
   id: '88421113', name: 'Cool Dude',
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
+const mockFundingCookie = `fundingSource=${true}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
@@ -102,7 +103,7 @@ describe('GET /organisation/:orderId/complete-order/order-confirmation', () => {
     getOrderDescription.mockResolvedValue({});
     return request(setUpFakeApp())
       .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
+      .set('Cookie', [mockAuthorisedCookie, mockFundingCookie])
       .expect(200)
       .then((res) => {
         expect(res.status).toBe(200);
