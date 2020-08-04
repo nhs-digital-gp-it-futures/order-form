@@ -190,3 +190,13 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .click(errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#selectFundingSource`);
 });
+
+test('should render the inset advice', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  await Promise.all(content.insetAdvice.map(async (advice, idx) => {
+    const selectedAdvice = Selector(`div[data-test-id="funding-source-page-insetAdvice"] p:nth-child(${idx + 1})`);
+    await t.expect(await extractInnerText(selectedAdvice)).eql(advice);
+  }));
+});
