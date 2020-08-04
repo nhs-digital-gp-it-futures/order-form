@@ -8,7 +8,7 @@ describe('complete order contextCreator', () => {
     const fundingSource = true;
 
     it('should return the backLinkText', () => {
-      const context = getContext({ orderId: 'order-1', fundingSource });
+      const context = getContext({ orderId: 'order-1', fundingSource: true });
       expect(context.backLinkText).toEqual(withFundingManifest.backLinkText);
     });
 
