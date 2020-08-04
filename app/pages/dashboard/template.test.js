@@ -57,11 +57,11 @@ describe('dashboard page', () => {
       harness.request(context, ($) => {
         const table = $('div[data-test-id="incomplete-orders-table"]');
         expect(table.length).toEqual(1);
-        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.columnInfo[0].data);
-        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.columnInfo[1].data);
-        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual(context.columnInfo[2].data);
-        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual(context.columnInfo[3].data);
-        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual(context.columnInfo[4].data);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.incompleteOrdersTable.columnInfo[0].data);
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.incompleteOrdersTable.columnInfo[1].data);
+        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual(context.incompleteOrdersTable.columnInfo[2].data);
+        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual(context.incompleteOrdersTable.columnInfo[3].data);
+        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual(context.incompleteOrdersTable.columnInfo[4].data);
       });
     }));
 
@@ -126,11 +126,12 @@ describe('dashboard page', () => {
       harness.request(context, ($) => {
         const table = $('div[data-test-id="complete-orders-table"]');
         expect(table.length).toEqual(1);
-        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.columnInfo[0].data);
-        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.columnInfo[1].data);
-        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual(context.columnInfo[2].data);
-        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual(context.columnInfo[3].data);
-        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual(context.columnInfo[4].data);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual(context.completeOrdersTable.columnInfo[0].data);
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual(context.completeOrdersTable.columnInfo[1].data);
+        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual(context.completeOrdersTable.columnInfo[2].data);
+        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual(context.completeOrdersTable.columnInfo[3].data);
+        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual(context.completeOrdersTable.columnInfo[4].data);
+        expect(table.find('[data-test-id="column-heading-5"]').text().trim()).toEqual(context.completeOrdersTable.columnInfo[5].data);
       });
     }));
 
@@ -143,6 +144,7 @@ describe('dashboard page', () => {
         const lastUpdatedBy = row.find('div[data-test-id="order1-lastUpdatedBy"]');
         const lastUpdated = row.find('div[data-test-id="order1-lastUpdated"]');
         const dateCreated = row.find('div[data-test-id="order1-dateCreated"]');
+        const automaticallyProcessed = row.find('div[data-test-id="order1-automaticallyProcessed"]');
 
         expect(table.length).toEqual(1);
         expect(table.find('[data-test-id="table"]').length).toEqual(1);
@@ -159,6 +161,8 @@ describe('dashboard page', () => {
         expect(lastUpdated.text().trim()).toEqual('9 December 2020');
         expect(dateCreated.length).toEqual(1);
         expect(dateCreated.text().trim()).toEqual('9 October 2020');
+        expect(automaticallyProcessed.length).toEqual(1);
+        expect(automaticallyProcessed.text().trim()).toEqual('Yes');
       });
     }));
   });
