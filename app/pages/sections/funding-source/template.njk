@@ -32,6 +32,16 @@
             })
           }}
 
+        {% if (insetAdvice.length > 0) %}
+          <div data-test-id="funding-source-page-insetAdvice" class="nhsuk-inset-text nhsuk-u-padding-top-2 nhsuk-u-padding-right-4 nhsuk-u-padding-bottom-2 nhsuk-u-padding-left-4 nhsuk-u-margin-top-5 nhsuk-u-margin-bottom-6">
+            {% for advice in insetAdvice %}
+              <p>
+                {{ advice }}
+              </p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
           {{ bcButton({
               dataTestId: "save-button",
               text: saveButtonText,

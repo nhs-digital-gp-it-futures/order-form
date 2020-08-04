@@ -16,6 +16,10 @@
       }]
     }
   ],
+  "insetAdvice": [
+    "We can only process your order if you’re paying for it in full using GMS funding. You’ll need to create a separate order for any items that are being paid for using a different funding source.",
+    "Once your order is completed, you'll be able to get a copy of your order summary to include in the contract you send to the supplier."
+  ],
   "errorMessages": {
     "SelectFundingSourceRequired": "Select yes if GMS is your only source of funding for this order"
   },

@@ -1,6 +1,6 @@
 {
   "backLinkText": "Go back to homepage",
-  "description": "Manage orders currently in progress and view orders that have been completed.",
+  "description": "Manage orders currently in progress and view completed orders.",
   "newOrderButtonText": "Create new order",
   "incompleteOrdersTableTitle": "Incomplete orders",
   "completeOrdersTableTitle": "Completed orders",
