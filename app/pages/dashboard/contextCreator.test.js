@@ -55,7 +55,7 @@ describe('getContext', () => {
   });
 
   describe('ordersData', () => {
-    it('should format a complete orders correctly', () => {
+    it('should format completed orders correctly', () => {
       const context = getContext({ orgName: 'Org1', ordersData: mockOrdersData });
       expect(context.completeOrders.length).toEqual(2);
 
