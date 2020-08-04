@@ -11,6 +11,7 @@ const context = {
   ...withFundingManifest,
   backLinkHref: '/organisation/order-1',
   orderDescription: 'some description',
+  csrfToken: 'mockCsrfToken',
 };
 
 describe('complete order page', () => {
@@ -47,6 +48,15 @@ describe('complete order page', () => {
       expect(orderDescriptionTitle.text().trim()).toEqual(context.orderDescriptionTitle);
       expect(orderDescription.length).toEqual(1);
       expect(orderDescription.text().trim()).toEqual(context.orderDescription);
+    });
+  }));
+
+  it('should render hidden input with csrf token', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const formElement = $('input[name=_csrf]');
+      expect(formElement.length).toEqual(1);
+      expect(formElement.attr('type')).toEqual('hidden');
+      expect(formElement.attr('value')).toEqual(context.csrfToken);
     });
   }));
 
