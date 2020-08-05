@@ -1,5 +1,4 @@
 import { componentTester } from '../../../test-utils/componentTester';
-import withFundingManifest from './withFundingManifest.json';
 
 const setup = {
   template: {
@@ -8,8 +7,10 @@ const setup = {
 };
 
 const context = {
-  ...withFundingManifest,
-  backLinkHref: '/organisation',
+  backLinkText: 'some go back text',
+  title: 'some order confirmation page title',
+  description: 'some order confirmation page description',
+  backLinkHref: '/some-back-link',
 };
 
 describe('order confirmation page', () => {
@@ -17,8 +18,8 @@ describe('order confirmation page', () => {
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
-      expect(backLink.text().trim()).toEqual('Go back to all orders');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation');
+      expect(backLink.text().trim()).toEqual(context.backLinkText);
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 
@@ -35,6 +36,51 @@ describe('order confirmation page', () => {
       const description = $('h2[data-test-id="order-confirmation-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
+    });
+  }));
+
+  it('should render the order summary button text', componentTester(setup, (harness) => {
+    const withOrderSummaryButtonTextContext = {
+      ...context,
+      orderSummaryButtonText: 'some order summary button text',
+    };
+
+    harness.request(withOrderSummaryButtonTextContext, ($) => {
+      const orderSummaryButton = $('[data-test-id="order-confirmation-page-orderSummaryButton"]');
+      expect(orderSummaryButton.length).toEqual(1);
+      expect(orderSummaryButton.text().trim()).toEqual(
+        withOrderSummaryButtonTextContext.orderSummaryButtonText,
+      );
+    });
+  }));
+
+  it('should not render the order summary button when no order summary button text is provided', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const orderSummaryButton = $('[data-test-id="order-confirmation-page-orderSummaryButton"]');
+      expect(orderSummaryButton.length).toEqual(0);
+    });
+  }));
+
+  it('should render order summary advice', componentTester(setup, (harness) => {
+    const withOrderSummaryAdviceContext = {
+      ...context,
+      orderSummaryAdvice: [
+        'some order summary advice',
+        'some more order summary advice',
+      ],
+    };
+
+    harness.request(withOrderSummaryAdviceContext, ($) => {
+      withOrderSummaryAdviceContext.orderSummaryAdvice.map((advice, idx) => {
+        expect($(`div[data-test-id="order-confirmation-page-orderSummaryAdvice"] p:nth-child(${idx + 1})`).text().trim()).toEqual(advice);
+      });
+    });
+  }));
+
+  it('should not render order summary advice when order summary advice is provided', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const orderSummaryAdvice = $('div[data-test-id="order-confirmation-page-orderSummaryAdvice"]');
+      expect(orderSummaryAdvice.length).toEqual(0);
     });
   }));
 });
