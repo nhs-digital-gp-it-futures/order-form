@@ -33,18 +33,6 @@ describe('preview print page', () => {
     });
   }));
 
-  it('should render the preview page description', componentTester(setup, (harness) => {
-    const context = {
-      description: manifest.description,
-    };
-
-    harness.request(context, ($) => {
-      const description = $('h2[data-test-id="preview-page-description"]');
-      expect(description.length).toEqual(1);
-      expect(description.text().trim()).toEqual(context.description);
-    });
-  }));
-
   it('should render the order description', componentTester(setup, (harness) => {
     const context = {
       orderDescriptionHeading: manifest.orderDescriptionHeading,
