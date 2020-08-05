@@ -4,6 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../../../../../config';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
+import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/item-1';
 
@@ -57,7 +58,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
     mocks();
   }
   if (setup.postRoute) {
-    await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
+    await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
   }
 };
 
