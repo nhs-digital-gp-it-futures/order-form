@@ -1,11 +1,14 @@
 import { getContext } from './contextCreator';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
-import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
+import { getOrderDescription } from '../../../../../helpers/routes/getOrderDescription';
 
 export const getAdditionalServicesPageContext = async ({
+  req,
   orderId,
   catalogueItemType,
   accessToken,
+  sessionManager,
+  logger,
 }) => {
   const additionalServiceOrderItemsData = await getOrderItems({
     orderId,
@@ -13,11 +16,16 @@ export const getAdditionalServicesPageContext = async ({
     accessToken,
   });
 
-  const orderDescriptionData = await getOrderDescription({ orderId, accessToken });
+  const orderDescriptionData = await getOrderDescription({
+    req,
+    sessionManager,
+    accessToken,
+    logger,
+  });
 
   return getContext({
     orderId,
-    orderDescription: orderDescriptionData ? orderDescriptionData.description : '',
+    orderDescription: orderDescriptionData || '',
     orderItems: additionalServiceOrderItemsData,
   });
 };

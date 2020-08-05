@@ -18,6 +18,7 @@ import { App } from '../../../../app';
 import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
+import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../logger');
 jest.mock('../../../../helpers/routes/getOrderItemPageData');
@@ -40,11 +41,10 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 
-const mockSelectedSolutionIdCookie = 'selectedSolutionId=solution-1';
-const mockSelectedRecipientIdCookie = 'selectedRecipientId=recipient-1';
-const mockSelectedPriceIdCookie = 'selectedPriceId=1';
+const mockSelectedRecipientIdCookie = `${sessionKeys.selectedRecipientId}=recipient-1`;
+const mockSelectedPriceIdCookie = `${sessionKeys.selectedPriceId}=1`;
 
-const mockGetPageDataCookie = 'orderItemPageData={}';
+const mockGetPageDataCookie = `${sessionKeys.orderItemPageData}={}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
@@ -205,7 +205,6 @@ describe('catalogue-solutions section routes', () => {
         postPath: path,
         getPathCookies: [
           mockAuthorisedCookie,
-          mockSelectedSolutionIdCookie,
           mockSelectedRecipientIdCookie,
           mockSelectedPriceIdCookie,
         ],
@@ -224,7 +223,6 @@ describe('catalogue-solutions section routes', () => {
         postPath: path,
         getPathCookies: [
           mockAuthorisedCookie,
-          mockSelectedSolutionIdCookie,
           mockSelectedRecipientIdCookie,
           mockSelectedPriceIdCookie,
         ],

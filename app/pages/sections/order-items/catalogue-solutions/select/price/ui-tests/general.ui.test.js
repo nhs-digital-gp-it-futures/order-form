@@ -4,14 +4,13 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
+import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price';
 
 const selectedItemNameInSession = 'Solution One';
 const selectedItemIdInSession = 'solution-1';
 const mockSolutionPricing = {
-  id: 'solution-1',
-  name: 'Solution name',
   prices: [
     {
       priceId: 1,
@@ -73,7 +72,7 @@ const selectedPriceIdInSession = '2';
 
 const mocks = () => {
   nock(solutionsApiUrl)
-    .get('/api/v1/solutions/solution-1/prices')
+    .get('/api/v1/prices?catalogueItemId=solution-1')
     .reply(200, mockSolutionPricing);
 };
 
@@ -84,11 +83,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
-    await setState(ClientFunction)('selectedItemName', selectedItemNameInSession);
-    await setState(ClientFunction)('selectedItemId', selectedItemIdInSession);
+    await setState(ClientFunction)(sessionKeys.selectedItemName, selectedItemNameInSession);
+    await setState(ClientFunction)(sessionKeys.selectedItemId, selectedItemIdInSession);
   }
   if (setup.postRoute) {
-    await setState(ClientFunction)('solutionPrices', solutionPricesInSession);
+    await setState(ClientFunction)(sessionKeys.solutionPrices, solutionPricesInSession);
   }
 };
 
@@ -156,7 +155,7 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="solution-price-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql(`${content.title} Solution name`);
+    .expect(await extractInnerText(title)).eql(`${content.title} Solution One`);
 });
 
 test('should render the description', async (t) => {
@@ -191,7 +190,7 @@ test('should render a selectSolutionPrice question as radio button options', asy
 });
 
 test('should render the radioButton as checked for the selectedPriceId', async (t) => {
-  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+  await setState(ClientFunction)(sessionKeys.selectedPriceId, selectedPriceIdInSession);
   await pageSetup();
   await t.navigateTo(pageUrl);
 

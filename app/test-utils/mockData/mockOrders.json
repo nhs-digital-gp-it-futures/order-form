@@ -5,7 +5,7 @@
     "lastUpdatedBy": "Alice Smith",
     "lastUpdated": "2020-05-06T11:29:52.4965647Z",
     "dateCreated": "2020-01-06T09:29:52.4965653Z",
-    "status": "Unsubmitted"
+    "status": "Incomplete"
   },
   {
     "orderId": "order2",
@@ -13,6 +13,7 @@
     "lastUpdatedBy": "Bob Smith",
     "lastUpdated": "2020-12-09T09:29:52.49657Z",
     "dateCreated": "2020-10-09T09:29:52.4965701Z",
-    "status": "Submitted"
+    "status": "Complete",
+    "automaticallyProcessed": true
   }
 ]

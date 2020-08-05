@@ -18,11 +18,14 @@ import { baseUrl } from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItems } from '../../../../../helpers/api/bapi/getCatalogueItems';
+import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
+import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
 jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItems');
+jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -43,22 +46,20 @@ const mockSessionSolutionsState = JSON.stringify([
   { catalogueItemId: 'solution-1', name: 'Solution 1' },
   { catalogueItemId: 'solution-2', name: 'Solution 2' },
 ]);
-const mockSolutionsCookie = `suppliersFound=${mockSessionSolutionsState}`;
+const mockSolutionsCookie = `${sessionKeys.suppliersFound}=${mockSessionSolutionsState}`;
 
 const mockRecipientSessionState = JSON.stringify([
   { id: 'recipient-1', name: 'Recipient 1' },
   { id: 'recipient-2', name: 'Recipient 2' },
 ]);
-const mockRecipientsCookie = `recipients=${mockRecipientSessionState}`;
-
-const mockSelectedSolutionIdCookie = 'selectedSolutionId=solution-1';
+const mockRecipientsCookie = `${sessionKeys.recipients}=${mockRecipientSessionState}`;
 
 const mockSolutionPrices = JSON.stringify({
   id: 'sol-1',
   name: 'Solution name',
   prices: [],
 });
-const mocksolutionPricesCookie = `solutionPrices=${mockSolutionPrices}`;
+const mocksolutionPricesCookie = `${sessionKeys.solutionPrices}=${mockSolutionPrices}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
@@ -253,21 +254,19 @@ describe('catalogue-solutions select routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select price page if authorised', () => {
+    it('should return the catalogue-solutions select price page if authorised', async () => {
       catalogueSolutionPriceController.getSolutionPricePageContext = jest.fn()
         .mockResolvedValue({});
 
-      catalogueSolutionPriceController.findSolutionPrices = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItemPricing.mockResolvedValue([]);
 
-      return request(setUpFakeApp())
+      const res = await request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie, mockSolutionsCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('data-test-id="solution-price-page"')).toBeTruthy();
-          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="solution-price-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
 
@@ -307,8 +306,7 @@ describe('catalogue-solutions select routes', () => {
       catalogueSolutionPriceController.validateSolutionPriceForm = jest.fn()
         .mockReturnValue({ success: false });
 
-      catalogueSolutionPriceController.findSolutionPrices = jest.fn()
-        .mockResolvedValue([]);
+      getCatalogueItemPricing.mockResolvedValue([]);
 
       catalogueSolutionPriceController.getSolutionPriceErrorPageContext = jest.fn()
         .mockResolvedValue({
@@ -411,9 +409,9 @@ describe('catalogue-solutions select routes', () => {
         getPath: path,
         postPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
+          mockAuthorisedCookie, mockRecipientsCookie,
         ],
-        postPathCookies: [mockRecipientsCookie, mockSelectedSolutionIdCookie],
+        postPathCookies: [mockRecipientsCookie],
         expectedRedirectPath: 'http://identity-server/login',
       })
     ));
@@ -426,10 +424,10 @@ describe('catalogue-solutions select routes', () => {
         getPath: path,
         postPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
+          mockAuthorisedCookie, mockRecipientsCookie,
         ],
         postPathCookies: [
-          mockUnauthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
+          mockUnauthorisedCookie, mockRecipientsCookie,
         ],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
@@ -451,14 +449,14 @@ describe('catalogue-solutions select routes', () => {
         app: request(setUpFakeApp()),
         getPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
+          mockAuthorisedCookie, mockRecipientsCookie,
         ],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie])
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
@@ -481,14 +479,14 @@ describe('catalogue-solutions select routes', () => {
         app: request(setUpFakeApp()),
         getPath: path,
         getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie,
+          mockAuthorisedCookie, mockRecipientsCookie,
         ],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie, mockSelectedSolutionIdCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie])
         .send({
           selectRecipient: 'recipient-1',
           _csrf: csrfToken,

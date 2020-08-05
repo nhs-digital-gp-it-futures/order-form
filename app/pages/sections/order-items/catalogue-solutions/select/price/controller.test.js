@@ -1,9 +1,5 @@
-import { getData } from 'buying-catalogue-library';
-import { solutionsApiUrl } from '../../../../../../config';
-import { logger } from '../../../../../../logger';
 import * as contextCreator from './contextCreator';
 import {
-  findSolutionPrices,
   getSolutionPricePageContext,
   validateSolutionPriceForm,
 } from './controller';
@@ -14,9 +10,7 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-const accessToken = 'access_token';
 const orderId = 'order-id';
-const solutionId = 'sol-1';
 
 const solutionPrices = {
   id: 'sol-1',
@@ -48,25 +42,6 @@ describe('select-price controller', () => {
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId, solutionPrices });
-    });
-  });
-
-  describe('findSolutionPrices', () => {
-    afterEach(() => {
-      getData.mockReset();
-    });
-
-    it('should call getData once with the correct params', async () => {
-      getData
-        .mockResolvedValueOnce({ data: {} });
-
-      await findSolutionPrices({ accessToken, solutionId });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${solutionsApiUrl}/api/v1/solutions/${solutionId}/prices`,
-        accessToken: 'access_token',
-        logger,
-      });
     });
   });
 

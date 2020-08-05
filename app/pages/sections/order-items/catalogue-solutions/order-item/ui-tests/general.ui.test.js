@@ -5,6 +5,7 @@ import commonContent from '../commonManifest.json';
 import content from '../flat/ondemand/manifest.json';
 import { solutionsApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
+import { sessionKeys } from '../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
@@ -48,14 +49,14 @@ const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)('fakeToken', authTokenInSession);
-    await setState(ClientFunction)('selectedRecipientId', selectedRecipientIdInSession);
-    await setState(ClientFunction)('selectedRecipientName', selectedRecipientNameInSession);
-    await setState(ClientFunction)('selectedItemId', itemIdInSession);
-    await setState(ClientFunction)('selectedItemName', itemNameInSession);
-    await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+    await setState(ClientFunction)(sessionKeys.selectedRecipientId, selectedRecipientIdInSession);
+    await setState(ClientFunction)(sessionKeys.selectedRecipientName, selectedRecipientNameInSession);
+    await setState(ClientFunction)(sessionKeys.selectedItemId, itemIdInSession);
+    await setState(ClientFunction)(sessionKeys.selectedItemName, itemNameInSession);
+    await setState(ClientFunction)(sessionKeys.selectedPriceId, selectedPriceIdInSession);
   }
   if (setup.postRoute) {
-    await setState(ClientFunction)('orderItemPageData', orderItemPageDataInSession);
+    await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
   }
 };
 

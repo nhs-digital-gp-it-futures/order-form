@@ -11,7 +11,9 @@ import { getTaskListPageContext } from './pages/task-list/controller';
 import { getOrder } from './helpers/api/ordapi/getOrder';
 import { getPreviewPageContext } from './pages/preview/controller';
 import { sectionRoutes } from './pages/sections/routes';
+import { completeOrderRoutes } from './pages/complete-order/routes';
 import includesContext from './includes/manifest.json';
+import { sessionKeys } from './helpers/routes/sessionHelper';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -58,7 +60,9 @@ export const routes = (authProvider, sessionManager) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
 
-    sessionManager.clearFromSession({ req, keys: ['selectedSupplier', 'suppliersFound'] });
+    sessionManager.clearFromSession({
+      req, keys: [sessionKeys.selectedSupplier, sessionKeys.suppliersFound],
+    });
 
     const context = await getTaskListPageContext({ accessToken, orderId });
     logger.info(`navigating to order ${orderId} task list page`);
@@ -68,6 +72,7 @@ export const routes = (authProvider, sessionManager) => {
   router.get('/organisation/:orderId/preview', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
+    const { print } = req.query;
 
     const {
       orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
@@ -77,7 +82,20 @@ export const routes = (authProvider, sessionManager) => {
       orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
     });
 
-    res.render('pages/preview/template.njk', addContext({ context, user: req.user }));
+    if (print) {
+      return res.render('pages/preview/templatePrint.njk', addContext({ context, user: req.user }));
+    }
+
+    return res.render('pages/preview/template.njk', addContext({ context, user: req.user }));
+  }));
+
+  router.use('/organisation/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
+
+  router.get('/organisation/:orderId/delete-order', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    logger.info(`navigating to order ${orderId} delete-order page`);
+    res.send('delete-order page');
   }));
 
   router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));

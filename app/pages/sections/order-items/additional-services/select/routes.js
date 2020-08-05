@@ -26,6 +26,7 @@ import {
   findSelectedCatalogueItemInSession,
 } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
+import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
 
@@ -57,8 +58,12 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         });
       }
 
-      const selectedAdditionalServiceId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
-      sessionManager.saveToSession({ req, key: 'additionalServices', value: additionalServices });
+      const selectedAdditionalServiceId = sessionManager.getFromSession({
+        req, key: sessionKeys.selectedItemId,
+      });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.additionalServices, value: additionalServices,
+      });
 
       const context = getAdditionalServicePageContext({
         orderId,
@@ -85,15 +90,23 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         catalogueItemsKey: 'additionalServices',
       });
 
-      sessionManager.saveToSession({ req, key: 'selectedItemId', value: selectedItemId });
-      sessionManager.saveToSession({ req, key: 'selectedItemName', value: selectedItem.name });
-      sessionManager.saveToSession({ req, key: 'selectedCatalogueSolutionId', value: selectedItem.solution.solutionId });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedItemId, value: selectedItemId,
+      });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedItemName, value: selectedItem.name,
+      });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedCatalogueSolutionId, value: selectedItem.solution.solutionId,
+      });
 
       logger.info('redirecting additional services select price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);
     }
 
-    const additionalServices = sessionManager.getFromSession({ req, key: 'additionalServices' });
+    const additionalServices = sessionManager.getFromSession({
+      req, key: sessionKeys.additionalServices,
+    });
     const context = await getAdditionalServiceErrorPageContext({
       orderId,
       additionalServices,
@@ -109,16 +122,24 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
   router.get('/additional-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const selectedPriceId = Number(sessionManager.getFromSession({ req, key: 'selectedPriceId' }));
-    const catalogueItemId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
-    const selectedAdditionalServiceName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
+    const selectedPriceId = Number(sessionManager.getFromSession({
+      req, key: sessionKeys.selectedPriceId,
+    }));
+    const catalogueItemId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemId,
+    });
+    const selectedAdditionalServiceName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
 
     const additionalServicePrices = await getCatalogueItemPricing({
       catalogueItemId,
       accessToken,
       loggerText: 'Additional service',
     });
-    sessionManager.saveToSession({ req, key: 'additionalServicePrices', value: additionalServicePrices });
+    sessionManager.saveToSession({
+      req, key: sessionKeys.additionalServicePrices, value: additionalServicePrices,
+    });
 
     const context = getAdditionalServicePricePageContext({
       orderId,
@@ -136,13 +157,19 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
     const response = validateAdditionalServicePriceForm({ data: req.body });
     if (response.success) {
-      sessionManager.saveToSession({ req, key: 'selectedPriceId', value: req.body.selectAdditionalServicePrice });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedPriceId, value: req.body.selectAdditionalServicePrice,
+      });
       logger.info('redirecting to additional services select recipient page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`);
     }
 
-    const selectedAdditionalServiceName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
-    const additionalServicePrices = sessionManager.getFromSession({ req, key: 'additionalServicePrices' });
+    const selectedAdditionalServiceName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+    const additionalServicePrices = sessionManager.getFromSession({
+      req, key: sessionKeys.additionalServicePrices,
+    });
     const context = await getAdditionalServicePriceErrorPageContext({
       orderId,
       additionalServicePrices,
@@ -156,11 +183,13 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
   router.get('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const itemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
+    const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
     const recipients = await getRecipients({ orderId, accessToken });
-    sessionManager.saveToSession({ req, key: 'recipients', value: recipients });
+    sessionManager.saveToSession({ req, key: sessionKeys.recipients, value: recipients });
 
-    const selectedAdditionalRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
+    const selectedAdditionalRecipientId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipientId,
+    });
 
     const context = await getAdditionalServiceRecipientPageContext({
       orderId,
@@ -175,7 +204,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
   router.post('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const recipients = sessionManager.getFromSession({ req, key: 'recipients' });
+    const recipients = sessionManager.getFromSession({ req, key: sessionKeys.recipients });
 
     const response = validateAdditionalServiceRecipientForm({ data: req.body });
     if (response.success) {
@@ -183,13 +212,17 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       const selectedRecipientName = getAdditionalServiceRecipientName(
         { serviceRecipientId: selectedRecipientId, recipients },
       );
-      sessionManager.saveToSession({ req, key: 'selectedRecipientId', value: selectedRecipientId });
-      sessionManager.saveToSession({ req, key: 'selectedRecipientName', value: selectedRecipientName });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedRecipientId, value: selectedRecipientId,
+      });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedRecipientName, value: selectedRecipientName,
+      });
       logger.info('Redirect to new additional service order item page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/neworderitem`);
     }
 
-    const itemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
+    const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
 
     const context = await getAdditionalServiceRecipientErrorPageContext({
       orderId,

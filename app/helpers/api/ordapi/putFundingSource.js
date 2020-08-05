@@ -3,7 +3,7 @@ import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
 const formatPutData = ({ fundingSource }) => ({
-  onlyGMS: fundingSource,
+  onlyGMS: fundingSource === 'true',
 });
 
 const putFundingSourceEndpoint = orderId => (

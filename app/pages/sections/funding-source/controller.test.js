@@ -1,4 +1,4 @@
-import { getFundingSourcesContext, validateFundingSourcesForm } from './controller';
+import { getFundingSourceContext, validateFundingSourceForm } from './controller';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
@@ -7,8 +7,8 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-describe('Funding Sources controller', () => {
-  describe('getFundingSourcesContext', () => {
+describe('Funding Source controller', () => {
+  describe('getFundingSourceContext', () => {
     afterEach(() => {
       jest.resetAllMocks();
     });
@@ -17,21 +17,21 @@ describe('Funding Sources controller', () => {
       contextCreator.getContext
         .mockResolvedValueOnce();
 
-      await getFundingSourcesContext({ orderId: 'order-id' });
+      await getFundingSourceContext({ orderId: 'order-id' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id' });
     });
   });
 
-  describe('validateFundingSourcesForm', () => {
+  describe('validateFundingSourceForm', () => {
     describe('when there are no validation errors', () => {
       it('should return success as true', () => {
         const data = {
           selectFundingSource: 'true',
         };
 
-        const response = validateFundingSourcesForm({ data });
+        const response = validateFundingSourceForm({ data });
 
         expect(response.success).toEqual(true);
       });
@@ -50,7 +50,7 @@ describe('Funding Sources controller', () => {
           selectFundingSource: '',
         };
 
-        const response = validateFundingSourcesForm({ data });
+        const response = validateFundingSourceForm({ data });
 
         expect(response.success).toEqual(false);
         expect(response.errors).toEqual(expectedValidationErrors);
@@ -61,7 +61,7 @@ describe('Funding Sources controller', () => {
           selectFundingSource: '   ',
         };
 
-        const response = validateFundingSourcesForm({ data });
+        const response = validateFundingSourceForm({ data });
 
         expect(response.success).toEqual(false);
         expect(response.errors).toEqual(expectedValidationErrors);
@@ -70,7 +70,7 @@ describe('Funding Sources controller', () => {
       it('should return a validation error if selectFundingSource is undefined', () => {
         const data = {};
 
-        const response = validateFundingSourcesForm({ data });
+        const response = validateFundingSourceForm({ data });
 
         expect(response.errors).toEqual(expectedValidationErrors);
       });

@@ -15,6 +15,7 @@ const mockExistingOrderSummary = {
       status: 'complete',
     },
   ],
+  sectionStatus: 'some status',
 };
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id';
@@ -746,7 +747,7 @@ test('should render task 8 item 1 as text if recipients saved and count 1', asyn
     .expect(task8Item1.find('a').exists).notOk();
 });
 
-test('should only render task 8 item 1 as a link if recipients saved, catalogue solution saved, additional service saved and associated service saved', async (t) => {
+test('should render task 8 item 1 as text if recipients saved, catalogue solution saved, additional service saved and associated service saved', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
@@ -762,9 +763,7 @@ test('should only render task 8 item 1 as a link if recipients saved, catalogue 
   const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
 
   await t
-    .expect(task8Item1.find('a').exists).ok()
-    .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
+    .expect(task8Item1.find('a').exists).notOk();
 });
 
 test('should only render task 8 item 1 as a link if recipients saved and count 0, associated service saved and count 1', async (t) => {
@@ -783,10 +782,10 @@ test('should only render task 8 item 1 as a link if recipients saved and count 0
   await t
     .expect(task8Item1.find('a').exists).ok()
     .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
 });
 
-test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 1 and associated service saved and count 1', async (t) => {
+test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 0 and associated service saved and count 1', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
@@ -803,10 +802,10 @@ test('should only render task 8 item 1 as a link if recipients saved and count 1
   await t
     .expect(task8Item1.find('a').exists).ok()
     .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
 });
 
-test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 1 and associated service saved and count 1', async (t) => {
+test('should render task 8 item 1 as text if recipients saved and count 0, Catalogue solution saved and count 0 and associated service saved and count 0', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
@@ -821,9 +820,7 @@ test('should only render task 8 item 1 as a link if recipients saved and count 1
   const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
 
   await t
-    .expect(task8Item1.find('a').exists).ok()
-    .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
+    .expect(task8Item1.find('a').exists).notOk();
 });
 
 test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 1 and associated service saved and count 1', async (t) => {
@@ -832,8 +829,8 @@ test('should only render task 8 item 1 as a link if recipients saved and count 1
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
     { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 0 },
-    { id: 'associated-services', status: 'complete', count: 0 },
+    { id: 'catalogue-solutions', status: 'complete', count: 1 },
+    { id: 'associated-services', status: 'complete', count: 1 },
   ]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
@@ -843,11 +840,11 @@ test('should only render task 8 item 1 as a link if recipients saved and count 1
   await t
     .expect(task8Item1.find('a').exists).ok()
     .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-sources`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
 });
 
 test('should not render the complete tag for task 8 item 1 when returned as incomplete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-sources', status: 'incomplete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-source', status: 'incomplete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -858,7 +855,7 @@ test('should not render the complete tag for task 8 item 1 when returned as inco
 });
 
 test('should only render the complete tag for task 8 item 1 when returned as complete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-sources', status: 'complete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-source', status: 'complete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -896,15 +893,35 @@ test('should render the "Preview order summary" button', async (t) => {
     .expect(previewOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/preview`);
 });
 
-test('should render the "Submit order" button', async (t) => {
+test('should render the "Complete order" button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const submitOrderButton = Selector('[data-test-id="submit-order-button"]');
+  const completeOrderButton = Selector('[data-test-id="complete-order-button"]');
+  const submitOrderButtonLink = completeOrderButton.find('a');
 
   await t
-    .expect(await extractInnerText(submitOrderButton)).eql(commonContent.submitOrderButton.text)
-    .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
-    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
-    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
+    .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)
+    .expect(completeOrderButton.getAttribute('aria-label')).eql(commonContent.completeOrderButton.disabledAltText)
+    .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
+    .expect(submitOrderButtonLink.hasClass('nhsuk-button--disabled')).eql(true);
+});
+
+test('should enable the "Complete order" button when sectionStatus is "complete"', async (t) => {
+  const mockCompleteOrderSummary = {
+    ...mockExistingOrderSummary,
+    sectionStatus: 'complete',
+  };
+  await pageSetup({ ...defaultPageSetup, mockData: mockCompleteOrderSummary });
+  await t.navigateTo(pageUrl);
+
+  const completeOrderButton = Selector('[data-test-id="complete-order-button"]');
+  const submitOrderButtonLink = completeOrderButton.find('a');
+
+  await t
+    .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)
+    .expect(completeOrderButton.getAttribute('aria-label')).eql(commonContent.completeOrderButton.disabledAltText)
+    .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
+    .expect(submitOrderButtonLink.hasClass('nhsuk-button--disabled')).eql(false)
+    .expect(completeOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/complete-order`);
 });

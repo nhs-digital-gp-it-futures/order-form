@@ -1,6 +1,6 @@
 import { getData } from 'buying-catalogue-library';
 import {
-  getOrder, sortServiceRecipients, sortOrderItems, groupOrderItemsByOdsCode,
+  getOrder, sortServiceRecipients, sortOrderItems, groupOrderItemsByOdsCode, sortGroupedOrderItems,
 } from './getOrder';
 import { orderApiUrl } from '../../../config';
 import { logger } from '../../../logger';
@@ -16,16 +16,32 @@ describe('getOrder', () => {
   const orderId = 'order-id';
 
   const oneOffCostItem1 = {
-    catalogueItemType: 'AssociatedService', provisioningType: 'Declarative', itemId: 'one-off-1', serviceRecipientsOdsCode: 'recipient1',
+    catalogueItemType: 'AssociatedService',
+    catalogueItemName: 'Apple training',
+    provisioningType: 'Declarative',
+    itemId: 'one-off-1',
+    serviceRecipientsOdsCode: 'recipient1',
   };
   const oneOffCostItem2 = {
-    catalogueItemType: 'AssociatedService', provisioningType: 'Declarative', itemId: 'one-off-2', serviceRecipientsOdsCode: 'recipient1',
+    catalogueItemType: 'AssociatedService',
+    catalogueItemName: 'Banana training',
+    provisioningType: 'Declarative',
+    itemId: 'one-off-2',
+    serviceRecipientsOdsCode: 'recipient1',
   };
   const recipient1recurringCostItem1 = {
-    catalogueItemType: 'AssociatedService', provisioningType: 'OnDemand', itemId: 'recurring-2', serviceRecipientsOdsCode: 'recipient1',
+    catalogueItemType: 'AssociatedService',
+    catalogueItemName: 'Apple annual training',
+    provisioningType: 'OnDemand',
+    itemId: 'recurring-2',
+    serviceRecipientsOdsCode: 'recipient1',
   };
   const recipient2recurringCostItem1 = {
-    catalogueItemType: 'Solution', provisioningType: 'OnDemand', itemId: 'recurring-1', serviceRecipientsOdsCode: 'recipient2',
+    catalogueItemType: 'Solution',
+    catalogueItemName: 'Cat solution',
+    provisioningType: 'OnDemand',
+    itemId: 'recurring-1',
+    serviceRecipientsOdsCode: 'recipient2',
   };
 
   const recipient1 = {
@@ -97,7 +113,9 @@ describe('getOrder', () => {
       expect(recurringCostItems).toEqual([
         recipient1recurringCostItem1, recipient2recurringCostItem1,
       ]);
-      expect(oneOffCostItems).toEqual([oneOffCostItem2, oneOffCostItem1]);
+      expect(oneOffCostItems).toEqual([
+        oneOffCostItem1, oneOffCostItem2,
+      ]);
     });
   });
 
@@ -187,6 +205,73 @@ describe('sort service recipients by name', () => {
   });
 });
 
+describe('sort groupedOrderItems by catalogueItemName', () => {
+  const itemStartingWithA = {
+    itemId: '4',
+    catalogueItemName: 'A Item-name',
+  };
+
+  const itemStartingWithB = {
+    itemId: '2',
+    catalogueItemName: 'B Item-Name',
+  };
+
+  const itemStartingWith1 = {
+    itemId: '3',
+    catalogueItemName: '1 Item-Name',
+  };
+
+  const itemStartingWith2 = {
+    itemId: '1',
+    catalogueItemName: '2 Item-Name',
+  };
+
+  const itemStartingWithAa = {
+    itemId: '5',
+    catalogueItemName: 'Aa Item-Name',
+  };
+
+  it('should return a list of 1 orderItem sorted by catalogueItemName', () => {
+    const groupedOrderItems = [itemStartingWithB];
+
+    const sortedGroupedOrderItems = sortGroupedOrderItems(groupedOrderItems);
+
+    expect(sortedGroupedOrderItems).toEqual(groupedOrderItems);
+  });
+
+  it('should return a list of 2 orderItems sorted by catalogueItemName', () => {
+    const expectedSortedOrderItems = [itemStartingWithA, itemStartingWithAa, itemStartingWithB];
+
+    const groupedOrderItems = [itemStartingWithAa, itemStartingWithB, itemStartingWithA];
+
+    const sortedGroupedOrderItems = sortGroupedOrderItems(groupedOrderItems);
+
+    expect(sortedGroupedOrderItems).toEqual(expectedSortedOrderItems);
+  });
+
+  it('should return a list of orderItems sorted with those starting with numbers at the start', () => {
+    const expectedSortedOrderItems = [
+      itemStartingWith1,
+      itemStartingWith2,
+      itemStartingWithA,
+      itemStartingWithAa,
+      itemStartingWithB,
+    ];
+
+    const groupedOrderItems = [
+      itemStartingWithB,
+      itemStartingWith2,
+      itemStartingWithA,
+      itemStartingWithAa,
+      itemStartingWith1,
+    ];
+
+    const sortedGroupedOrderItems = sortGroupedOrderItems(groupedOrderItems);
+
+    expect(sortedGroupedOrderItems).toEqual(expectedSortedOrderItems);
+  });
+});
+
 describe('group orderItems by serviceRecipientOdsCode', () => {
   const recipient1OrderItem1 = {
     id: 'order-item-1',
@@ -248,59 +333,106 @@ describe('group orderItems by serviceRecipientOdsCode', () => {
   });
 });
 
-describe('sort orderItems by serviceRecipients name', () => {
+describe('sort orderItems by serviceRecipients name and catalogueItemName', () => {
   const recipient1 = { name: 'A recipient', odsCode: 'recipient1' };
   const recipient2 = { name: 'B recipient', odsCode: 'recipient2' };
+  const recipient3 = { name: 'C recipient', odsCode: 'recipient3' };
 
-  const recipient1OrderItem1 = {
-    id: 'order-item-1',
+  const recipient1OrderItemStartingWith1 = {
+    itemId: '2',
     serviceRecipientsOdsCode: 'recipient1',
+    catalogueItemName: '1 Item-name',
   };
-  const recipient1OrderItem2 = {
-    id: 'order-item-2',
+  const recipient1OrderItemStartingWithA = {
+    itemId: '3',
     serviceRecipientsOdsCode: 'recipient1',
+    catalogueItemName: 'A Item-name',
+  };
+  const recipient1OrderItemStartingWithB = {
+    itemId: '1',
+    serviceRecipientsOdsCode: 'recipient1',
+    catalogueItemName: 'B Item-name',
   };
 
-  const recipient2OrderItem1 = {
-    id: 'order-item-1',
+  const recipient2OrderItemStartingWithA = {
+    itemId: '1',
     serviceRecipientsOdsCode: 'recipient2',
+    catalogueItemName: '1 Item-name',
   };
-  const recipient2OrderItem2 = {
-    id: 'order-item-2',
+  const recipient2OrderItemStartingWithAa = {
+    itemId: '3',
     serviceRecipientsOdsCode: 'recipient2',
+    catalogueItemName: '1 Item-name',
+  };
+  const recipient2OrderItemStartingWithB = {
+    itemId: '2',
+    serviceRecipientsOdsCode: 'recipient2',
+    catalogueItemName: 'B Item-name',
   };
 
   it('return a single order item', () => {
     const serviceRecipients = [recipient1];
 
-    const orderItems = [recipient1OrderItem1];
+    const orderItems = [recipient1OrderItemStartingWith1];
 
     const sortedOrderItems = sortOrderItems(serviceRecipients, orderItems);
 
-    expect(sortedOrderItems).toEqual([recipient1OrderItem1]);
+    expect(sortedOrderItems).toEqual([recipient1OrderItemStartingWith1]);
   });
 
   it('return a single order items for different recipients', () => {
     const serviceRecipients = [recipient2, recipient1];
 
-    const orderItems = [recipient2OrderItem1, recipient1OrderItem1];
+    const orderItems = [recipient2OrderItemStartingWithA, recipient1OrderItemStartingWith1];
 
     const sortedOrderItems = sortOrderItems(serviceRecipients, orderItems);
 
-    expect(sortedOrderItems).toEqual([recipient1OrderItem1, recipient2OrderItem1]);
+    expect(sortedOrderItems).toEqual([
+      recipient1OrderItemStartingWith1, recipient2OrderItemStartingWithA,
+    ]);
   });
 
   it('return a multiple order items for different recipients', () => {
     const serviceRecipients = [recipient2, recipient1];
 
     const orderItems = [
-      recipient2OrderItem1, recipient1OrderItem2, recipient1OrderItem1, recipient2OrderItem2,
+      recipient2OrderItemStartingWithA,
+      recipient1OrderItemStartingWithA,
+      recipient2OrderItemStartingWithB,
+      recipient1OrderItemStartingWith1,
+      recipient2OrderItemStartingWithAa,
+      recipient1OrderItemStartingWithB,
     ];
 
     const sortedOrderItems = sortOrderItems(serviceRecipients, orderItems);
 
     expect(sortedOrderItems).toEqual([
-      recipient1OrderItem2, recipient1OrderItem1, recipient2OrderItem1, recipient2OrderItem2,
+      recipient1OrderItemStartingWith1,
+      recipient1OrderItemStartingWithA,
+      recipient1OrderItemStartingWithB,
+      recipient2OrderItemStartingWithA,
+      recipient2OrderItemStartingWithAa,
+      recipient2OrderItemStartingWithB,
+    ]);
+  });
+
+  it('should not add an entry for service recipients that does not have any orders', () => {
+    const serviceRecipients = [recipient2, recipient1, recipient3];
+
+    const orderItems = [
+      recipient2OrderItemStartingWithA,
+      recipient1OrderItemStartingWithA,
+      recipient1OrderItemStartingWith1,
+      recipient2OrderItemStartingWithAa,
+    ];
+
+    const sortedOrderItems = sortOrderItems(serviceRecipients, orderItems);
+
+    expect(sortedOrderItems).toEqual([
+      recipient1OrderItemStartingWith1,
+      recipient1OrderItemStartingWithA,
+      recipient2OrderItemStartingWithA,
+      recipient2OrderItemStartingWithAa,
     ]);
   });
 });
