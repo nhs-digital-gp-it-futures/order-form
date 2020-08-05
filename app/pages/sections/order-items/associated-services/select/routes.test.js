@@ -17,6 +17,7 @@ import * as selectAssociatedServiceController from './associated-service/control
 import * as selectAssociatedServicePriceController from './price/controller';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
+import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
@@ -241,8 +242,8 @@ describe('associated-services select routes', () => {
         getPathCookies: [mockAuthorisedCookie],
       });
 
-      const mockSelectedItemCookie = `selectedItemId=${associatedServiceId}`;
-      const mockAssociatedServicesCookie = `associatedServices=${JSON.stringify(associatedServices)}`;
+      const mockSelectedItemCookie = `${sessionKeys.selectedItemId}=${associatedServiceId}`;
+      const mockAssociatedServicesCookie = `${sessionKeys.associatedServices}=${JSON.stringify(associatedServices)}`;
 
       const res = await request(setUpFakeApp())
         .post(path)
@@ -312,7 +313,7 @@ describe('associated-services select routes', () => {
         price: 1.64,
       }];
 
-    const pricesCookie = `associatedServicePrices=${JSON.stringify(prices)}`;
+    const pricesCookie = `${sessionKeys.associatedServicePrices}=${JSON.stringify(prices)}`;
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({

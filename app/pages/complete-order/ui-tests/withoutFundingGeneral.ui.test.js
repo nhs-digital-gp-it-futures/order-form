@@ -1,7 +1,7 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import content from '../withFundingManifest.json';
+import content from '../withoutFundingManifest.json';
 import { orderApiUrl } from '../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 
@@ -10,7 +10,7 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/complete-orde
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/funding-source')
-    .reply(200, { onlyGMS: true });
+    .reply(200, { onlyGMS: false });
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/description')
     .reply(200, { description: 'Some super cool order description' });
@@ -25,7 +25,7 @@ const pageSetup = async (setup = { withAuth: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Complete order page - general')
+fixture('Complete order page - general - without funding')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -73,7 +73,7 @@ test('should render the title', async (t) => {
     .expect(await extractInnerText(title)).eql('Complete order order-id?');
 });
 
-test('should render the description', async (t) => {
+test('should render the page description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -81,6 +81,16 @@ test('should render the description', async (t) => {
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
+});
+
+test('should render the inset advice', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const insetAdvice = Selector('[data-test-id="complete-order-page-inset-advice"]');
+
+  await t
+    .expect(await extractInnerText(insetAdvice)).contains(content.insetAdvice);
 });
 
 test('should render the order description title', async (t) => {
@@ -111,16 +121,4 @@ test('should render complete order button', async (t) => {
 
   await t
     .expect(await extractInnerText(button)).eql(content.completeOrderButtonText);
-});
-
-test('should navigate to task list page when complete is clicked', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/status', { status: 'complete' })
-    .reply(200, {});
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-  const button = Selector('[data-test-id="complete-order-button"] button');
-  await t
-    .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/complete-order/order-confirmation');
 });

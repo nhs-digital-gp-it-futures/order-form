@@ -7,6 +7,7 @@ import { getOrderConfirmationContext } from './order-confirmation/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putOrderStatus } from '../../helpers/api/ordapi/putOrderStatus';
 import { getOrderDescription } from '../../helpers/routes/getOrderDescription';
+import { sessionKeys } from '../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
 
@@ -15,7 +16,7 @@ export const completeOrderRoutes = (authProvider, addContext, sessionManager) =>
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const fundingSource = await getFundingSource({ orderId, accessToken });
-    sessionManager.saveToSession({ req, key: 'fundingSource', value: fundingSource });
+    sessionManager.saveToSession({ req, key: sessionKeys.fundingSource, value: fundingSource });
     const orderDescription = await getOrderDescription({
       req,
       sessionManager,
@@ -42,7 +43,7 @@ export const completeOrderRoutes = (authProvider, addContext, sessionManager) =>
 
   router.get('/order-confirmation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const fundingSource = sessionManager.getFromSession({ req, key: 'fundingSource' });
+    const fundingSource = sessionManager.getFromSession({ req, key: sessionKeys.fundingSource });
 
     const context = await getOrderConfirmationContext({ orderId, fundingSource });
 
