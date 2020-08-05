@@ -112,3 +112,15 @@ test('should render complete order button', async (t) => {
   await t
     .expect(await extractInnerText(button)).eql(content.completeOrderButtonText);
 });
+
+test('should navigate to task list page when complete is clicked', async (t) => {
+  nock(orderApiUrl)
+    .put('/api/v1/orders/order-id/status', { status: 'complete' })
+    .reply(200, {});
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+  const button = Selector('[data-test-id="complete-order-button"] button');
+  await t
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/complete-order/order-confirmation');
+});
