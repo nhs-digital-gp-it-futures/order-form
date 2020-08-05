@@ -3,7 +3,7 @@ import { getDeleteOrderPageContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
 describe('delete-order contextCreator', () => {
-  describe('getContext', () => {
+  describe('getDeleteOrderPageContext', () => {
     it('should return the backLinkText', () => {
       const context = getDeleteOrderPageContext({ orderId: 'order-1' });
       expect(context.backLinkText).toEqual(manifest.backLinkText);
