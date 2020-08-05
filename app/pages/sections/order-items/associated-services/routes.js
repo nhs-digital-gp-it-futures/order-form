@@ -107,17 +107,6 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       });
 
       if (apiResponse.success) {
-        sessionManager.clearFromSession({
-          req,
-          keys: [
-            sessionKeys.selectedItemId,
-            sessionKeys.selectedItemName,
-            sessionKeys.selectedRecipientId,
-            sessionKeys.selectedRecipientName,
-            sessionKeys.selectedPriceId,
-            sessionKeys.selectedCatalogueSolutionId,
-          ],
-        });
         logger.info('Redirecting to the associated-services main page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services`);
       }

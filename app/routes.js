@@ -13,7 +13,7 @@ import { getPreviewPageContext } from './pages/preview/controller';
 import { sectionRoutes } from './pages/sections/routes';
 import { completeOrderRoutes } from './pages/complete-order/routes';
 import includesContext from './includes/manifest.json';
-import { sessionKeys } from './helpers/routes/sessionHelper';
+import { clearSession } from './helpers/routes/sessionHelper';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -60,9 +60,7 @@ export const routes = (authProvider, sessionManager) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
 
-    sessionManager.clearFromSession({
-      req, keys: [sessionKeys.selectedSupplier, sessionKeys.suppliersFound],
-    });
+    clearSession({ req, sessionManager });
 
     const context = await getTaskListPageContext({ accessToken, orderId });
     logger.info(`navigating to order ${orderId} task list page`);

@@ -34,3 +34,13 @@ export const getFromSessionOrApi = async ({
 
   return value;
 };
+
+export const clearSession = async ({
+  req,
+  sessionManager,
+}) => {
+  sessionManager.clearFromSession({
+    req,
+    keys: Object.values(sessionKeys),
+  });
+};

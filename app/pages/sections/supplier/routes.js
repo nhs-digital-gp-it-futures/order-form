@@ -68,14 +68,6 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    sessionManager.clearFromSession({
-      req,
-      keys: [
-        sessionKeys.selectedSupplier,
-        sessionKeys.suppliersFound,
-      ],
-    });
-
     const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
 
