@@ -14,6 +14,7 @@ import { sectionRoutes } from './pages/sections/routes';
 import { completeOrderRoutes } from './pages/complete-order/routes';
 import includesContext from './includes/manifest.json';
 import { clearSession } from './helpers/routes/sessionHelper';
+import { getDeleteOrderPageContext } from './pages/delete-order/contextCreator';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -92,8 +93,10 @@ export const routes = (authProvider, sessionManager) => {
   router.get('/organisation/:orderId/delete-order', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
+    const context = getDeleteOrderPageContext({ orderId, orderDescription: 'orderDesc' });
+
     logger.info(`navigating to order ${orderId} delete-order page`);
-    res.send('delete-order page');
+    res.render('pages/delete-order/template.njk', addContext({ context, user: req.user }));
   }));
 
   router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
