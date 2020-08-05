@@ -32,14 +32,16 @@ describe('task-list contextCreator', () => {
     });
 
     it('should return the deleteOrderButton context', () => {
+      const orderId = 'neworder';
+
       const expectedDeleteOrderButtonContext = {
         text: commonManifest.deleteOrderButton.text,
         altText: commonManifest.deleteOrderButton.disabledAltText,
-        href: '#',
+        href: `${baseUrl}/organisation/${orderId}/preview`,
         disabled: true,
       };
 
-      const context = getContext({ orderId: 'neworder' });
+      const context = getContext({ orderId });
 
       expect(context.deleteOrderButton).toEqual(expectedDeleteOrderButtonContext);
     });
