@@ -29,6 +29,7 @@
         <h4 data-test-id="order-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ orderDescription }}</h4>
 
         <form method="post">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
           {{ bcButton({
               dataTestId: "complete-order-button",
               text: completeOrderButtonText,
