@@ -58,6 +58,11 @@ describe('Order confirmation contextCreator', () => {
       expect(context.orderSummaryButtonText).toEqual(manifest.orderSummaryButtonText);
     });
 
+    it('should return the order summary button href', () => {
+      const context = getContext({ orderId: 'order-1', fundingSource });
+      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/order-1/preview?print=true`);
+    });
+
     it('should return the order summary advice', () => {
       const context = getContext({ orderId: 'order-1', fundingSource });
       expect(context.orderSummaryAdvice).toEqual(manifest.orderSummaryAdvice);
