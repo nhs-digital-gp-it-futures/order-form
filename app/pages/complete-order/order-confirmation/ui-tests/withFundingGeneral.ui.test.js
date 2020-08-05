@@ -16,7 +16,7 @@ const pageSetup = async (setup = { withAuth: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Order confirmation page - general')
+fixture('Order confirmation page - general - with funding')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -72,4 +72,22 @@ test('should render the description', async (t) => {
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
+});
+
+test('should not render the get order summary button', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const orderSummaryButton = Selector('[data-test-id="order-confirmation-page-orderSummaryButton"]');
+
+  await t.expect(orderSummaryButton.exists).notOk();
+});
+
+test('should not render the order summary advice', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const advice = Selector('div[data-test-id="order-confirmation-page-orderSummaryAdvice"]');
+
+  await t.expect(advice.exists).notOk();
 });
