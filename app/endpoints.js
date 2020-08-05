@@ -1,10 +1,10 @@
 import {
-  oidcBaseUri, orderApiUrl, organisationApiUrl, solutionsApiUrl, documentApiHost,
+  orderApiUrl, organisationApiUrl, solutionsApiUrl, documentApiHost, identityServerUrl,
 } from './config';
 
 const endpoints = {
   identity: {
-    getApiHealth: () => `${oidcBaseUri}/health/ready`,
+    getApiHealth: () => `${identityServerUrl}/health/ready`,
   },
   bapi: {
     getSearchSuppliers: options => `${solutionsApiUrl}/api/v1/suppliers?name=${encodeURIComponent(options.name)}&solutionPublicationStatus=Published`,
