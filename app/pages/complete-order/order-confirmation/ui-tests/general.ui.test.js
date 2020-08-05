@@ -3,14 +3,14 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../withFundingManifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
+import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/complete-order/order-confirmation';
 
 const pageSetup = async (setup = { withAuth: true }) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
-    await setState(ClientFunction)('orderId', 'order-id');
-    await setState(ClientFunction)('fundingSource', true);
+    await setState(ClientFunction)(sessionKeys.fundingSource, true);
   }
 };
 

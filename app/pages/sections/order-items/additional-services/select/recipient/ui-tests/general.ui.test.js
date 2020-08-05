@@ -4,6 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
+import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient';
 
@@ -33,10 +34,10 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
-    await setState(ClientFunction)('selectedItemName', selectedItemName);
+    await setState(ClientFunction)(sessionKeys.selectedItemName, selectedItemName);
   }
   if (setup.postRoute) {
-    await setState(ClientFunction)('recipients', JSON.stringify(serviceRecipients));
+    await setState(ClientFunction)(sessionKeys.recipients, JSON.stringify(serviceRecipients));
   }
 };
 

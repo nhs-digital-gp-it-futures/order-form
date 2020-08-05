@@ -12,6 +12,7 @@ import {
 import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';
+import { sessionKeys } from '../../../helpers/routes/sessionHelper';
 import * as supplierSearchController from './search/controller';
 import * as supplierSelectController from './select/controller';
 import * as supplierController from './supplier/controller';
@@ -40,11 +41,11 @@ const mockSuppliersFoundState = JSON.stringify([
   { supplierId: 'supplier-2', name: 'Supplier 2' },
 ]);
 
-const mockSuppliersFoundCookie = `suppliersFound=${mockSuppliersFoundState}`;
+const mockSuppliersFoundCookie = `${sessionKeys.suppliersFound}=${mockSuppliersFoundState}`;
 
 const mockSelectedSupplierState = 'supplier-1';
 
-const mockSelectedSupplierCookie = `selectedSupplier=${mockSelectedSupplierState}`;
+const mockSelectedSupplierCookie = `${sessionKeys.selectedSupplier}=${mockSelectedSupplierState}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
