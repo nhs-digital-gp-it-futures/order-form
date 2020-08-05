@@ -4,6 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl as bapiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
+import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service';
 
@@ -35,10 +36,10 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
-    await setState(ClientFunction)('selectedSupplier', selectedSupplierInSession);
+    await setState(ClientFunction)(sessionKeys.selectedSupplier, selectedSupplierInSession);
   }
   if (setup.postRoute) {
-    await setState(ClientFunction)('associatedServices', associatedServicesInSession);
+    await setState(ClientFunction)(sessionKeys.associatedServices, associatedServicesInSession);
   }
 };
 
@@ -131,7 +132,7 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should render the error page if no associated services are found', async (t) => {
-  await setState(ClientFunction)('selectedSupplier', selectedSupplierInSession);
+  await setState(ClientFunction)(sessionKeys.selectedSupplier, selectedSupplierInSession);
   nock(bapiUrl)
     .get('/api/v1/catalogue-items?supplierId=sup-1&catalogueItemType=AssociatedService')
     .reply(200, []);

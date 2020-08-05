@@ -20,6 +20,7 @@ import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import * as routerHelper from '../../../../../helpers/routes/routerHelper';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
+import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
@@ -45,10 +46,10 @@ const mockRecipientSessionState = JSON.stringify([
   { id: 'recipient-1', name: 'Recipient 1' },
   { id: 'recipient-2', name: 'Recipient 2' },
 ]);
-const mockRecipientsCookie = `recipients=${mockRecipientSessionState}`;
+const mockRecipientsCookie = `${sessionKeys.recipients}=${mockRecipientSessionState}`;
 
 const mockSelectedItemNameState = 'Item name';
-const mockSelectedItemNameCookie = `selectedItemName=${mockSelectedItemNameState}`;
+const mockSelectedItemNameCookie = `${sessionKeys.selectedItemName}=${mockSelectedItemNameState}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
@@ -267,8 +268,8 @@ describe('additional-services select routes', () => {
         getPathCookies: [mockAuthorisedCookie],
       });
 
-      const mockSelectedItemCookie = `selectedItemId=${additionalServiceId}`;
-      const mockAdditionalServicesCookie = `additionalServices=${JSON.stringify(additionalServices)}`;
+      const mockSelectedItemCookie = `${sessionKeys.selectedItemId}=${additionalServiceId}`;
+      const mockAdditionalServicesCookie = `${sessionKeys.additionalServices}=${JSON.stringify(additionalServices)}`;
 
       const res = await request(setUpFakeApp())
         .post(path)
@@ -315,7 +316,7 @@ describe('additional-services select routes', () => {
 
       await request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie, `selectedItemId=${selectedAdditionalServiceId}`]);
+        .set('Cookie', [mockAuthorisedCookie, `${sessionKeys.selectedItemId}=${selectedAdditionalServiceId}`]);
 
       expect(getCatalogueItemPricing.mock.calls.length)
         .toEqual(1);
@@ -361,7 +362,7 @@ describe('additional-services select routes', () => {
         price: 1.64,
       }];
 
-    const pricesCookie = `additionalServicePrices=${JSON.stringify(prices)}`;
+    const pricesCookie = `${sessionKeys.additionalServicePrices}=${JSON.stringify(prices)}`;
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({

@@ -2,17 +2,30 @@ import { getSelectedPrice } from '../api/bapi/getSelectedPrice';
 import { getOrderItem } from '../api/ordapi/getOrderItem';
 import { formatDecimal } from '../common/priceFormatter';
 import { destructureDate } from '../common/dateFormatter';
+import { sessionKeys } from './sessionHelper';
 
 export const getOrderItemPageData = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
 }) => {
   if (orderItemId === 'neworderitem') {
-    const itemId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
-    const itemName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
-    const serviceRecipientId = sessionManager.getFromSession({ req, key: 'selectedRecipientId' });
-    const serviceRecipientName = sessionManager.getFromSession({ req, key: 'selectedRecipientName' });
-    const selectedPriceId = sessionManager.getFromSession({ req, key: 'selectedPriceId' });
-    const catalogueSolutionId = sessionManager.getFromSession({ req, key: 'selectedCatalogueSolutionId' });
+    const itemId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemId,
+    });
+    const itemName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+    const serviceRecipientId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipientId,
+    });
+    const serviceRecipientName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipientName,
+    });
+    const selectedPriceId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedPriceId,
+    });
+    const catalogueSolutionId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedCatalogueSolutionId,
+    });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     const formData = { price: formatDecimal(selectedPrice.price) };
