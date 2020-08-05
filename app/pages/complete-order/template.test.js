@@ -15,6 +15,7 @@ describe('complete order page', () => {
     title: 'some complete order title',
     backLinkHref: '/organisation/order-1',
     orderDescription: 'some order description',
+    csrfToken: 'mockCsrfToken',
   };
 
   it('should render a backLink', componentTester(setup, (harness) => {
@@ -81,6 +82,15 @@ describe('complete order page', () => {
       const description = $('h2[data-test-id="complete-order-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
+    });
+  }));
+
+  it('should render hidden input with csrf token', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const formElement = $('input[name=_csrf]');
+      expect(formElement.length).toEqual(1);
+      expect(formElement.attr('type')).toEqual('hidden');
+      expect(formElement.attr('value')).toEqual(context.csrfToken);
     });
   }));
 
