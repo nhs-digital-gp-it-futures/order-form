@@ -1,0 +1,10 @@
+{
+  "backLinkText": "Go back to all orders",
+  "title": "Order {{orderId}} completed",
+  "description": "You've successfully completed your order, but it'll not be automatically processed and paid for. You'll need to include a copy of your order summary in your contract.",
+  "orderSummaryButtonText": "Get order summary",
+  "orderSummaryAdvice": [
+    "By using this button you can view your order summary. You'll be given the option to print a copy or create a PDF version that can be included in your contract.",
+    "You can get a copy of your order summary at any time by using the relevant link in your Organisation's completed orders section."
+  ]
+}

@@ -76,6 +76,14 @@ describe('funding source page', () => {
     });
   }));
 
+  it('should render the insetAdvice', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      context.insetAdvice.map((advice, idx) => {
+        expect($(`div[data-test-id="funding-source-page-insetAdvice"] p:nth-child(${idx + 1})`).text().trim()).toEqual(advice);
+      });
+    });
+  }));
+
   it('should render errors on selectFundingSource field if there are errors', componentTester(setup, (harness) => {
     const errorContext = {
       questions: [

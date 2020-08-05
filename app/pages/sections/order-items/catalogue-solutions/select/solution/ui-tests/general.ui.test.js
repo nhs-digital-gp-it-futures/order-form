@@ -4,6 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
+import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution';
 
@@ -38,7 +39,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
     mocks();
   }
   if (setup.postRoute) {
-    await setState(ClientFunction)('solutions', solutionsInSession);
+    await setState(ClientFunction)(sessionKeys.solutions, solutionsInSession);
   }
 };
 
@@ -140,7 +141,7 @@ test('should render a selectSolution question as radio button options', async (t
 });
 
 test('should render the radioButton as checked for the selectedItemId', async (t) => {
-  await setState(ClientFunction)('selectedItemId', selectedItemIdInSession);
+  await setState(ClientFunction)(sessionKeys.selectedItemId, selectedItemIdInSession);
   await pageSetup();
   await t.navigateTo(pageUrl);
 

@@ -16,6 +16,7 @@ import {
   validateAssociatedServicePriceForm,
 } from './price/controller';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
+import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
 
@@ -48,8 +49,12 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         });
       }
 
-      const selectedAssociatedServiceId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
-      sessionManager.saveToSession({ req, key: 'associatedServices', value: associatedServices });
+      const selectedAssociatedServiceId = sessionManager.getFromSession({
+        req, key: sessionKeys.selectedItemId,
+      });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.associatedServices, value: associatedServices,
+      });
 
       const context = getAssociatedServicePageContext({
         orderId,
@@ -75,14 +80,20 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         catalogueItemsKey: 'associatedServices',
       });
 
-      sessionManager.saveToSession({ req, key: 'selectedItemId', value: selectedItemId });
-      sessionManager.saveToSession({ req, key: 'selectedItemName', value: selectedItem.name });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedItemId, value: selectedItemId,
+      });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedItemName, value: selectedItem.name,
+      });
 
       logger.info('redirecting to associated services select price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`);
     }
 
-    const associatedServices = sessionManager.getFromSession({ req, key: 'associatedServices' });
+    const associatedServices = sessionManager.getFromSession({
+      req, key: sessionKeys.associatedServices,
+    });
     const context = await getAssociatedServiceErrorPageContext({
       orderId,
       associatedServices,
@@ -98,9 +109,15 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
   router.get('/associated-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const selectedPriceId = Number(sessionManager.getFromSession({ req, key: 'selectedPriceId' }));
-    const catalogueItemId = sessionManager.getFromSession({ req, key: 'selectedItemId' });
-    const selectedAssociatedServiceName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
+    const selectedPriceId = Number(sessionManager.getFromSession({
+      req, key: sessionKeys.selectedPriceId,
+    }));
+    const catalogueItemId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemId,
+    });
+    const selectedAssociatedServiceName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
 
     const associatedServicePrices = await getCatalogueItemPricing({
       catalogueItemId,
@@ -108,7 +125,9 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
       loggerText: 'Associated service',
     });
 
-    sessionManager.saveToSession({ req, key: 'associatedServicePrices', value: associatedServicePrices });
+    sessionManager.saveToSession({
+      req, key: sessionKeys.associatedServicePrices, value: associatedServicePrices,
+    });
 
     const context = getAssociatedServicePricePageContext({
       orderId,
@@ -126,13 +145,19 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
 
     const response = validateAssociatedServicePriceForm({ data: req.body });
     if (response.success) {
-      sessionManager.saveToSession({ req, key: 'selectedPriceId', value: req.body.selectAssociatedServicePrice });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedPriceId, value: req.body.selectAssociatedServicePrice,
+      });
       logger.info('Redirect to new associated service order item page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/neworderitem`);
     }
 
-    const selectedAssociatedServiceName = sessionManager.getFromSession({ req, key: 'selectedItemName' });
-    const associatedServicePrices = sessionManager.getFromSession({ req, key: 'associatedServicePrices' });
+    const selectedAssociatedServiceName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+    const associatedServicePrices = sessionManager.getFromSession({
+      req, key: sessionKeys.associatedServicePrices,
+    });
     const context = await getAssociatedServicePriceErrorPageContext({
       orderId,
       associatedServicePrices,
