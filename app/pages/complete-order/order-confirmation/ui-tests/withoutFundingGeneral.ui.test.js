@@ -27,7 +27,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .get('/login')
     .reply(200);
 
-  await pageSetup({ withAuth: false, getRoute: false });
+  await pageSetup({ withAuth: false });
   await t.navigateTo(pageUrl);
 
   await t
@@ -82,6 +82,16 @@ test('should render the get order summary button', async (t) => {
 
   await t
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
+});
+
+test('should render the get order summary button link with href /order/organisation/order-id/preview?print=true', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const orderSummaryButton = Selector('[data-test-id="order-confirmation-page-orderSummaryButton"] a');
+
+  await t
+    .expect(orderSummaryButton.getAttribute('href')).eql('/order/organisation/order-id/preview?print=true');
 });
 
 test('should render the order summary advice', async (t) => {
