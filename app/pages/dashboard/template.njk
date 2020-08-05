@@ -31,7 +31,7 @@
           <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-3 bc-c-order-table__hr"/>
           <div class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
             {{ bcTableFlexible({
-              columnInfo: columnInfo,
+              columnInfo: incompleteOrdersTable.columnInfo,
               data: incompleteOrders
             }) }}
           </div>
@@ -42,7 +42,7 @@
           <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-3 bc-c-order-table__hr"/>
           <div class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
             {{ bcTableFlexible({
-              columnInfo: columnInfo,
+              columnInfo: completeOrdersTable.columnInfo,
               data: completeOrders
             })}}
           </div>

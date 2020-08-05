@@ -18,6 +18,12 @@ const mockOrdersData = [
     lastUpdated: '2020-06-06T09:29:52.49657Z',
     dateCreated: '2020-06-06T09:29:52.4965701Z',
     status: 'Complete',
+    automaticallyProcessed: true,
+  },
+  {
+    orderId: 'order3',
+    status: 'Complete',
+    automaticallyProcessed: false,
   },
 ];
 
@@ -31,7 +37,11 @@ describe('getContext', () => {
     expect(context.newOrderButtonText).toEqual(manifest.newOrderButtonText);
     expect(context.incompleteOrdersTableTitle).toEqual(manifest.incompleteOrdersTableTitle);
     expect(context.completeOrdersTableTitle).toEqual(manifest.completeOrdersTableTitle);
-    expect(context.columnInfo).toEqual(manifest.columnInfo);
+    expect(context.incompleteOrdersTable.columnInfo).toEqual(
+      manifest.incompleteOrdersTable.columnInfo,
+    );
+
+    expect(context.completeOrdersTable.columnInfo).toEqual(manifest.completeOrdersTable.columnInfo);
   });
 
   it('should construct title', () => {
@@ -45,10 +55,13 @@ describe('getContext', () => {
   });
 
   describe('ordersData', () => {
-    it('should format a complete order correctly', () => {
+    it('should format completed orders correctly', () => {
       const context = getContext({ orgName: 'Org1', ordersData: mockOrdersData });
-      expect(context.completeOrders.length).toEqual(1);
+      expect(context.completeOrders.length).toEqual(2);
+
       const completeOrder1 = context.completeOrders[0];
+      expect(completeOrder1.length).toEqual(6);
+
       expect(completeOrder1[0].data).toEqual('order2');
       expect(completeOrder1[0].classes).toEqual(classes);
       expect(completeOrder1[0].href).toEqual(`${baseUrl}/organisation/order2`);
@@ -65,12 +78,29 @@ describe('getContext', () => {
       expect(completeOrder1[4].data).toEqual('6 June 2020');
       expect(completeOrder1[4].classes).toEqual(classes);
       expect(completeOrder1[4].dataTestId).toEqual('order2-dateCreated');
+      expect(completeOrder1[5].data).toEqual('Yes');
+      expect(completeOrder1[5].classes).toEqual(classes);
+      expect(completeOrder1[5].dataTestId).toEqual('order2-automaticallyProcessed');
+
+      const completeOrder2 = context.completeOrders[1];
+      expect(completeOrder2.length).toEqual(6);
+
+      expect(completeOrder2[0].data).toEqual('order3');
+      expect(completeOrder2[0].classes).toEqual(classes);
+      expect(completeOrder2[0].href).toEqual(`${baseUrl}/organisation/order3`);
+      expect(completeOrder2[0].dataTestId).toEqual('order3-id');
+      expect(completeOrder2[5].data).toEqual('No');
+      expect(completeOrder2[5].classes).toEqual(classes);
+      expect(completeOrder2[5].dataTestId).toEqual('order3-automaticallyProcessed');
     });
 
     it('should format an incomplete order correctly', () => {
       const context = getContext({ orgName: 'Org1', ordersData: mockOrdersData });
       expect(context.incompleteOrders.length).toEqual(1);
+
       const incompleteOrder1 = context.incompleteOrders[0];
+      expect(incompleteOrder1.length).toEqual(5);
+
       expect(incompleteOrder1[0].data).toEqual('order1');
       expect(incompleteOrder1[0].classes).toEqual(classes);
       expect(incompleteOrder1[0].href).toEqual(`${baseUrl}/organisation/order1`);

@@ -1,0 +1,8 @@
+{
+  "backLinkText": "Go back",
+  "title": "Complete order {{orderId}}?",
+  "description": "You’re about to complete this order and will be unable to make any further changes. As GMS is not your only source of funding for this order, it'll not be automatically processed and paid for. You’ll need to include your order summary as part of your contract.",
+  "insetAdvice": "Remember, if you're paying for any items using GMS funding, you'll need to create a separate order which will be processed automatically.",
+  "orderDescriptionTitle": "Order description",
+  "completeOrderButtonText": "Complete order"
+}

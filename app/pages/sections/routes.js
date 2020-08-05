@@ -50,7 +50,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     });
 
     if (response.success) {
-      sessionManager.clearFromSession(req, sessionKeys.orderDescription);
+      sessionManager.clearFromSession({ req, keys: [sessionKeys.orderDescription] });
       return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
     }
 

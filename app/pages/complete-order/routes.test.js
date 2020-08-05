@@ -29,6 +29,7 @@ const mockUnauthorisedJwtPayload = JSON.stringify({
   id: '88421113', name: 'Cool Dude',
 });
 const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
+const mockFundingCookie = `fundingSource=${true}`;
 
 const setUpFakeApp = () => {
   const authProvider = new FakeAuthProvider(mockLogoutMethod);
@@ -70,6 +71,43 @@ describe('GET /organisation/:orderId/complete-order', () => {
       .then((res) => {
         expect(res.status).toBe(200);
         expect(res.text.includes('complete-order-page')).toBeTruthy();
+      });
+  });
+});
+
+describe('GET /organisation/:orderId/complete-order/order-confirmation', () => {
+  const path = '/organisation/some-order-id/complete-order/order-confirmation';
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it('should redirect to the login page if the user is not logged in', () => (
+    testAuthorisedGetPathForUnauthenticatedUser({
+      app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+    })
+  ));
+
+  it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+    testAuthorisedGetPathForUnauthorisedUser({
+      app: request(setUpFakeApp()),
+      getPath: path,
+      getPathCookies: [mockUnauthorisedCookie],
+      expectedPageId: 'data-test-id="error-title"',
+      expectedPageMessage: 'You are not authorised to view this page',
+    })
+  ));
+
+  it('should return the correct status and text when the user is authorised', () => {
+    getFundingSource.mockResolvedValue(true);
+    getOrderDescription.mockResolvedValue({});
+    return request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie, mockFundingCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        expect(res.text.includes('order-confirmation-page')).toBeTruthy();
       });
   });
 });

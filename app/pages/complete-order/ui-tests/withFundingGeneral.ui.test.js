@@ -25,7 +25,7 @@ const pageSetup = async (setup = { withAuth: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Complete order page - general')
+fixture('Complete order page - general - with funding')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -70,7 +70,7 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="complete-order-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql(`${content.title} order-id?`);
+    .expect(await extractInnerText(title)).eql('Complete order order-id?');
 });
 
 test('should render the description', async (t) => {
