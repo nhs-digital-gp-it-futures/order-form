@@ -1,7 +1,5 @@
 import { getDashboardContext } from './controller';
 import * as contextCreator from './contextCreator';
-import { logger } from '../../logger';
-import { orderApiUrl } from '../../config';
 import mockOrdersData from '../../test-utils/mockData/mockOrders.json';
 import { getOrders } from '../../helpers/api/ordapi/getOrders';
 
