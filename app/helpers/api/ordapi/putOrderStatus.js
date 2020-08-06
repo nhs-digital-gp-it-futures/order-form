@@ -8,7 +8,7 @@ export const putOrderStatus = async ({ orderId, accessToken }) => {
   const endpoint = getOrderStatusEndpoint(orderId);
 
   const body = {
-    status: 'complete',
+    status: 'Complete',
   };
 
   await putData({
