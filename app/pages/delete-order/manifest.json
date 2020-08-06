@@ -1,0 +1,8 @@
+{
+  "backLinkText": "Go back",
+  "title": "Delete order",
+  "description": "Confirm you want to delete this order.",
+  "orderDescriptionTitle": "Order description",
+  "noButtonText": "No",
+  "yesButtonText": "Yes"
+}

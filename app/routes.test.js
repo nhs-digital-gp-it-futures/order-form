@@ -9,6 +9,7 @@ import { App } from './app';
 import { routes } from './routes';
 import { baseUrl } from './config';
 import { getOrder } from './helpers/api/ordapi/getOrder';
+import { getOrderDescription } from './helpers/routes/getOrderDescription';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
 import * as documentController from './documentController';
@@ -16,6 +17,7 @@ import * as previewController from './pages/preview/controller';
 
 jest.mock('./logger');
 jest.mock('./helpers/api/ordapi/getOrder');
+jest.mock('./helpers/routes/getOrderDescription');
 
 dashboardController.getDashboardContext = jest.fn()
   .mockResolvedValue({});
@@ -265,15 +267,14 @@ describe('routes', () => {
       })
     ));
 
-    it('should return the correct status and text when the user is authorised', () => {
-      request(setUpFakeApp())
+    it('should return the deleted-order page if authorised', async () => {
+      getOrderDescription.mockResolvedValueOnce({});
+
+      const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.status).toBe(200);
-          expect(res.text.includes('delete-order page')).toBeTruthy();
-        });
+        .expect(200);
+      expect(res.text.includes('data-test-id="delete-order-page"')).toBeTruthy();
     });
   });
 
