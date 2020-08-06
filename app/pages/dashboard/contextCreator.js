@@ -87,19 +87,15 @@ const generateCompletedOrdersTable = (completedOrders, completeOrdersTable) => {
   };
 };
 
-export const getContext = ({ orgName, completedOrders = [], incompletedOrders = [] }) => {
-  // const formattedOrders = formatOrderData({ ordersData });
-
-  return ({
-    ...manifest,
-    title: `${orgName} orders`,
-    newOrderButtonHref: `${baseUrl}/organisation/neworder`,
-    proxyLinkHref: '#',
-    completeOrders: generateCompletedOrdersTable(
-      completedOrders, manifest.completeOrdersTable,
-    ),
-    incompleteOrders: generateIncompletedOrdersTable(
-      incompletedOrders, manifest.incompleteOrdersTable,
-    ),
-  });
-};
+export const getContext = ({ orgName, completedOrders = [], incompletedOrders = [] }) => ({
+  ...manifest,
+  title: `${orgName} orders`,
+  newOrderButtonHref: `${baseUrl}/organisation/neworder`,
+  proxyLinkHref: '#',
+  completeOrders: generateCompletedOrdersTable(
+    completedOrders, manifest.completeOrdersTable,
+  ),
+  incompleteOrders: generateIncompletedOrdersTable(
+    incompletedOrders, manifest.incompleteOrdersTable,
+  ),
+});
