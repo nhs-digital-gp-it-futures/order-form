@@ -23,7 +23,9 @@
             HTML: insetAdvice
           }) }}
         </div>
+      </div>
 
+      <div class="nhsuk-grid-column-full">
         <form method="get" action="{{selectDeselectButtonAction}}">
           <input type="hidden" name="selectStatus" value="{{selectStatus}}" />
           {{ bcButton({
@@ -48,6 +50,7 @@
               classes: "nhsuk-u-margin-top-9"
           })}}
         </form>
+      </div>
     </div>
   </div>
 {% endblock %}
