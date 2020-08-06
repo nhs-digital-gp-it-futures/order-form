@@ -12,13 +12,14 @@ const generateItems = ({
   selectStatus,
   serviceRecipientsData,
   selectedRecipientIdsData,
-  cellInfo,
+  serviceRecipientsTable,
 }) => {
   const items = serviceRecipientsData.map((serviceRecipient) => {
     const columns = [];
     columns.push(({
+      ...serviceRecipientsTable.cellInfo.organisation,
       question: {
-        ...cellInfo.organisation.question,
+        ...serviceRecipientsTable.cellInfo.organisation.question,
         dataTestId: `${serviceRecipient.name}-organisationName`,
         checked: getCheckedStatus({ selectStatus, serviceRecipient, selectedRecipientIdsData }),
         id: `${serviceRecipient.name}-organisationName`,
@@ -29,7 +30,7 @@ const generateItems = ({
       dataTestId: `${serviceRecipient.name}-organisationName`,
     }));
     columns.push(({
-      ...cellInfo.odsCode,
+      ...serviceRecipientsTable.cellInfo.odsCode,
       data: serviceRecipient.odsCode,
       dataTestId: `${serviceRecipient.odsCode}-odsCode`,
     }));
@@ -49,7 +50,7 @@ const generateServiceRecipientsTable = ({
     selectStatus,
     serviceRecipientsData,
     selectedRecipientIdsData,
-    cellInfo: serviceRecipientsTable.cellInfo,
+    serviceRecipientsTable,
   }),
 });
 
