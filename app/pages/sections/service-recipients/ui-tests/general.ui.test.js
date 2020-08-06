@@ -109,20 +109,20 @@ test('should render the organisation heading', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const heading = Selector('div[data-test-id="organisation-heading"]');
+  const heading = Selector('[data-test-id="column-heading-0"]');
 
   await t
-    .expect(await extractInnerText(heading)).eql(content.organisationHeading);
+    .expect(await extractInnerText(heading)).eql(content.serviceRecipientsTable.columnInfo[0].data);
 });
 
 test('should render the ods code heading', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const heading = Selector('div[data-test-id="ods-code-heading"]');
+  const heading = Selector('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(await extractInnerText(heading)).eql(content.odsCodeHeading);
+    .expect(await extractInnerText(heading)).eql(content.serviceRecipientsTable.columnInfo[1].data);
 });
 
 test('should render the "Continue" button', async (t) => {

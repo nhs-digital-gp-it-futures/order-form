@@ -12,25 +12,6 @@ const context = {
   title: 'Service Recipients for order-id',
   backLinkHref: '/organisation/order-1',
   csrfToken: 'mockCsrfToken',
-  tableData: [{
-    organisationName: {
-      id: 'ods1-id',
-      name: 'ods1-name',
-      value: 'ods1',
-      text: 'orgName1',
-      checked: false,
-    },
-    odsCode: 'ods1',
-  }, {
-    organisationName: {
-      id: 'ods2-id',
-      name: 'ods2-name',
-      value: 'ods2',
-      text: 'orgName2',
-      checked: false,
-    },
-    odsCode: 'ods2',
-  }],
   selectDeselectButtonAction: '/organisation/order-1/service-recipients',
   selectStatus: 'select',
   selectDeselectButtonText: 'Select all',
@@ -90,57 +71,65 @@ describe('service-recipients page', () => {
   });
 
   describe('table', () => {
-    it('should render the organisation heading', componentTester(setup, (harness) => {
-      harness.request(context, ($) => {
-        const heading = $('[data-test-id="organisation-heading"]');
-        expect(heading.length).toEqual(1);
-        expect(heading.text().trim()).toEqual(context.organisationHeading);
+    it('should render the table headings', componentTester(setup, (harness) => {
+      const tableContext = {
+        serviceRecipientsTable: {
+          columnInfo: [
+            {
+              data: 'Organisation',
+            },
+            {
+              data: 'ODS Code',
+            },
+          ],
+        },
+      };
+
+      harness.request(tableContext, ($) => {
+        const table = $('div[data-test-id="recipients-table"]');
+        expect(table.length).toEqual(1);
+        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Organisation');
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('ODS Code');
       });
     }));
 
-    it('should render a checkbox for each organisation name', componentTester(setup, (harness) => {
-      harness.request(context, ($) => {
-        const checkbox1 = $('[data-test-id="organisation-name-checkbox-ods1"]');
-        expect(checkbox1.length).toEqual(1);
-        expect(checkbox1.text().trim()).toEqual(context.tableData[0].organisationName.text);
+    it('should render the data', componentTester(setup, (harness) => {
+      const tableContext = {
+        serviceRecipientsTable: {
+          items: [[{
+            question: {
+              dataTestId: 'recipient-name-organisationName',
+              checked: true,
+              type: 'checkbox',
+              id: 'recipient-name-organisationName',
+              name: 'ods-code',
+              value: 'recipient-name',
+              text: 'Recipient name',
+            },
+            dataTestId: 'recipient-name-organisationName',
+            classes: 'nhsuk-u-font-size-12',
+          }, {
+            data: 'ODS',
+            dataTestId: 'ods-code-odsCode',
+            classes: 'nhsuk-u-margin-top-2',
+          }]],
+        },
+      };
 
-        const checkboxInput1 = checkbox1.find('input');
-        expect(checkboxInput1.attr('id')).toEqual(context.tableData[0].organisationName.id);
-        expect(checkboxInput1.attr('name')).toEqual(context.tableData[0].organisationName.name);
-        expect(checkboxInput1.attr('type')).toEqual('checkbox');
-        expect(checkboxInput1.attr('checked')).toEqual(undefined);
-        expect(checkboxInput1.attr('value')).toEqual(context.tableData[0].organisationName.value);
+      harness.request(tableContext, ($) => {
+        const table = $('div[data-test-id="recipients-table"]');
+        const row = table.find('[data-test-id="table-row-0"]');
+        const organisationInput = row.find('[data-test-id="recipient-name-organisationName"] input');
+        const organisationLabel = row.find('[data-test-id="recipient-name-organisationName"] label');
+        const odsCode = row.find('div[data-test-id="ods-code-odsCode"]');
 
-        const checkbox2 = $('[data-test-id="organisation-name-checkbox-ods2"]');
-        expect(checkbox2.length).toEqual(1);
-        expect(checkbox2.text().trim()).toEqual(context.tableData[1].organisationName.text);
-
-        const checkboxInput2 = checkbox2.find('input');
-        expect(checkboxInput2.attr('id')).toEqual(context.tableData[1].organisationName.id);
-        expect(checkboxInput2.attr('name')).toEqual(context.tableData[1].organisationName.name);
-        expect(checkboxInput2.attr('type')).toEqual('checkbox');
-        expect(checkboxInput2.attr('checked')).toEqual(undefined);
-        expect(checkboxInput2.attr('value')).toEqual(context.tableData[1].organisationName.value);
-      });
-    }));
-
-    it('should render the ods code heading', componentTester(setup, (harness) => {
-      harness.request(context, ($) => {
-        const odsCode1 = $('[data-test-id="ods-code-ods1"]');
-        expect(odsCode1.length).toEqual(1);
-        expect(odsCode1.text().trim()).toEqual(context.tableData[0].odsCode);
-
-        const odsCode2 = $('[data-test-id="ods-code-ods2"]');
-        expect(odsCode2.length).toEqual(1);
-        expect(odsCode2.text().trim()).toEqual(context.tableData[1].odsCode);
-      });
-    }));
-
-    it('should render the data for each ods code', componentTester(setup, (harness) => {
-      harness.request(context, ($) => {
-        const heading = $('[data-test-id="ods-code-heading"]');
-        expect(heading.length).toEqual(1);
-        expect(heading.text().trim()).toEqual(context.odsCodeHeading);
+        expect(row.length).toEqual(1);
+        expect(organisationInput.length).toEqual(1);
+        expect(organisationInput.val()).toEqual('recipient-name');
+        expect(organisationLabel[0].attribs.for).toEqual('recipient-name-organisationName');
+        expect(organisationLabel[0].children[0].data.trim()).toEqual('Recipient name');
+        expect(odsCode.length).toEqual(1);
+        expect(odsCode.text().trim()).toEqual('ODS');
       });
     }));
   });

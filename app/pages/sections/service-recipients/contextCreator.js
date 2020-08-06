@@ -1,26 +1,57 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../config';
 
-const getCheckedStatus = ({ selectStatus, data, selectedRecipientIdsData = [] }) => {
+const getCheckedStatus = ({ selectStatus, serviceRecipient, selectedRecipientIdsData = [] }) => {
   if (selectStatus === 'select') return true;
   if (selectStatus === 'deselect') return false;
   return !!selectedRecipientIdsData
-    .find(checkedRecipient => checkedRecipient.odsCode === data.odsCode);
+    .find(checkedRecipient => checkedRecipient.odsCode === serviceRecipient.odsCode);
 };
 
-const formatTableData = ({
-  selectStatus, serviceRecipientsData, selectedRecipientIdsData,
-}) => serviceRecipientsData
-  .map(data => ({
-    organisationName: {
-      id: data.odsCode,
-      name: data.odsCode,
-      value: data.name,
-      text: data.name,
-      checked: getCheckedStatus({ selectStatus, data, selectedRecipientIdsData }),
-    },
-    odsCode: data.odsCode,
-  }));
+const generateItems = ({
+  selectStatus,
+  serviceRecipientsData,
+  selectedRecipientIdsData,
+  serviceRecipientsTable,
+}) => {
+  const items = serviceRecipientsData.map((serviceRecipient) => {
+    const columns = [];
+    columns.push(({
+      ...serviceRecipientsTable.cellInfo.organisation,
+      question: {
+        ...serviceRecipientsTable.cellInfo.organisation.question,
+        checked: getCheckedStatus({ selectStatus, serviceRecipient, selectedRecipientIdsData }),
+        id: `${serviceRecipient.odsCode}-organisationName`,
+        name: serviceRecipient.odsCode,
+        value: serviceRecipient.name,
+        text: serviceRecipient.name,
+      },
+      dataTestId: `${serviceRecipient.odsCode}-organisationName`,
+    }));
+    columns.push(({
+      ...serviceRecipientsTable.cellInfo.odsCode,
+      data: serviceRecipient.odsCode,
+      dataTestId: `${serviceRecipient.odsCode}-odsCode`,
+    }));
+    return columns;
+  });
+  return items;
+};
+
+const generateServiceRecipientsTable = ({
+  selectStatus,
+  serviceRecipientsTable,
+  serviceRecipientsData,
+  selectedRecipientIdsData,
+}) => ({
+  ...serviceRecipientsTable,
+  items: generateItems({
+    selectStatus,
+    serviceRecipientsData,
+    selectedRecipientIdsData,
+    serviceRecipientsTable,
+  }),
+});
 
 export const getContext = ({
   orderId, serviceRecipientsData = [], selectedRecipientIdsData = [], selectStatus,
@@ -30,8 +61,11 @@ export const getContext = ({
     ...manifest,
     title: `${manifest.title} ${orderId}`,
     backLinkHref: `${baseUrl}/organisation/${orderId}`,
-    tableData: formatTableData({
-      selectStatus, serviceRecipientsData, selectedRecipientIdsData,
+    serviceRecipientsTable: generateServiceRecipientsTable({
+      selectStatus,
+      serviceRecipientsTable: manifest.serviceRecipientsTable,
+      serviceRecipientsData,
+      selectedRecipientIdsData,
     }),
     selectDeselectButtonAction: `${baseUrl}/organisation/${orderId}/service-recipients`,
     selectStatus: toggledStatus,
