@@ -103,8 +103,8 @@ spec:
             - name: IDENTITY_SERVER
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .baseUriConfig.name | quote }}
-                  key: {{ .baseUriConfig.key | quote }}             
+                  name: {{ .name | quote }}
+                  key: {{ .key | quote }}             
             {{- end }}
             {{- with .Values.serviceDependencies.ordapi }}
             - name: ORDER_API_URL
