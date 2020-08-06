@@ -3,13 +3,25 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
+import { orderApiUrl } from '../../../config';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/delete-order';
 
-const defaultPageSetup = { withAuth: true };
+const orderDescriptionMock = 'desc';
+
+const mocks = () => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/description')
+    .reply(200, { description: orderDescriptionMock });
+};
+
+const defaultPageSetup = { withAuth: true, getRoute: true };
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
+  }
+  if (setup.getRoute) {
+    mocks();
   }
 };
 
@@ -91,7 +103,7 @@ test('should render the order description', async (t) => {
   const orderDescription = Selector('h4[data-test-id="order-description"]');
 
   await t
-    .expect(await extractInnerText(orderDescription)).eql('orderDesc');
+    .expect(await extractInnerText(orderDescription)).eql(orderDescriptionMock);
 });
 
 test('should render the No button', async (t) => {
