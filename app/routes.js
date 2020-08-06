@@ -14,7 +14,7 @@ import { sectionRoutes } from './pages/sections/routes';
 import { completeOrderRoutes } from './pages/complete-order/routes';
 import includesContext from './includes/manifest.json';
 import { clearSession } from './helpers/routes/sessionHelper';
-import { getDeleteOrderContext, deleteAnOrder } from './pages/delete-order/controller';
+import { getDeleteOrderContext, deleteOrder } from './pages/delete-order/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -109,7 +109,7 @@ export const routes = (authProvider, sessionManager) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    await deleteAnOrder({ orderId, accessToken });
+    await deleteOrder({ orderId, accessToken });
 
     return res.redirect(`${config.baseUrl}/organisation/${orderId}/delete-order/confirmation`);
   }));

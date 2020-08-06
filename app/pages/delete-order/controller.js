@@ -1,6 +1,6 @@
 import { getContext } from './contextCreator';
 import { getOrderDescription } from '../../helpers/routes/getOrderDescription';
-import { deleteOrder } from '../../helpers/api/ordapi/deleteOrder';
+import { deleteOrder as apiDeleteOrder } from '../../helpers/api/ordapi/deleteOrder';
 
 export const getDeleteOrderContext = async ({
   req,
@@ -19,9 +19,9 @@ export const getDeleteOrderContext = async ({
   return getContext({ orderId, orderDescription });
 };
 
-export const deleteAnOrder = async ({
+export const deleteOrder = async ({
   orderId,
   accessToken,
 }) => {
-  await deleteOrder({ orderId, accessToken });
+  await apiDeleteOrder({ orderId, accessToken });
 };

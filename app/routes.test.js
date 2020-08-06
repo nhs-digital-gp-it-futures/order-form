@@ -332,7 +332,7 @@ describe('routes', () => {
       deleteOrderController.getDeleteOrderContext = jest.fn()
         .mockResolvedValueOnce();
 
-      deleteOrderController.deleteAnOrder = jest.fn().mockResolvedValueOnce();
+      deleteOrderController.deleteOrder = jest.fn().mockResolvedValueOnce();
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
