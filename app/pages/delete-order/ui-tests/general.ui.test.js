@@ -63,7 +63,7 @@ test('should link to /order/organisation for backLink', async (t) => {
 
   await t
     .expect(await extractInnerText(goBackLink)).eql(content.backLinkText)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -110,10 +110,11 @@ test('should render the No button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="no-button"] button');
+  const button = Selector('[data-test-id="no-button"] a');
 
   await t
-    .expect(await extractInnerText(button)).eql(content.noButtonText);
+    .expect(await extractInnerText(button)).eql(content.noButtonText)
+    .expect(button.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
 test('should render the Yes button', async (t) => {

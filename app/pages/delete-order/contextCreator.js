@@ -6,7 +6,7 @@ export const getDeleteOrderPageContext = ({ orderId, orderDescription }) => {
     ...manifest,
     title: `${manifest.title} ${orderId}`,
     orderDescription,
-    backLinkHref: `${baseUrl}/organisation`,
+    backLinkHref: `${baseUrl}/organisation/${orderId}`,
   });
   return context;
 };

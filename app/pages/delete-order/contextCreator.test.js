@@ -10,8 +10,9 @@ describe('delete-order contextCreator', () => {
     });
 
     it('should construct the backLinkHref', () => {
-      const context = getDeleteOrderPageContext({});
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
+      const orderId = 'order-1';
+      const context = getDeleteOrderPageContext({ orderId });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -37,8 +38,10 @@ describe('delete-order contextCreator', () => {
     });
 
     it('should return the no button', () => {
-      const context = getDeleteOrderPageContext({});
+      const orderId = 'order-1';
+      const context = getDeleteOrderPageContext({ orderId });
       expect(context.noButtonText).toEqual(manifest.noButtonText);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
 
     it('should return the yes button', () => {
