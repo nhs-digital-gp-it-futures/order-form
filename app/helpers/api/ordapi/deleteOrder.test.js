@@ -27,7 +27,7 @@ describe('deleteOrder', () => {
 
   describe('with no errors', () => {
     it('should call deleteData with the expected parameters', async () => {
-      deleteData.mockResolvedValueOnce({ response: { status: 204 } });
+      deleteData.mockResolvedValueOnce();
 
       await deleteOrder({
         orderId: 'order1',

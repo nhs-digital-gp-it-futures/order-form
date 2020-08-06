@@ -300,9 +300,6 @@ describe('routes', () => {
     });
 
     it('should redirect to the login page if the user is not logged in', async () => {
-      deleteOrderController.getDeleteOrderContext = jest.fn()
-        .mockResolvedValueOnce();
-
       await testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
         getPath: path,
@@ -313,20 +310,15 @@ describe('routes', () => {
       });
     });
 
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      deleteOrderController.getDeleteOrderContext = jest.fn()
-        .mockResolvedValueOnce();
-
-      return testAuthorisedPostPathForUnauthorisedUsers({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        postPath: path,
-        getPathCookies: [mockAuthorisedCookie],
-        postPathCookies: [mockUnauthorisedCookie],
-        expectedPageId: 'data-test-id="error-title"',
-        expectedPageMessage: 'You are not authorised to view this page',
-      });
-    });
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => testAuthorisedPostPathForUnauthorisedUsers({
+      app: request(setUpFakeApp()),
+      getPath: path,
+      postPath: path,
+      getPathCookies: [mockAuthorisedCookie],
+      postPathCookies: [mockUnauthorisedCookie],
+      expectedPageId: 'data-test-id="error-title"',
+      expectedPageMessage: 'You are not authorised to view this page',
+    }));
 
     it('should redirect to /delete-order/confirmation page, if the order is deleted', async () => {
       deleteOrderController.getDeleteOrderContext = jest.fn()
