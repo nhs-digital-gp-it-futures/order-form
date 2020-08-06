@@ -3,27 +3,32 @@ import {
   FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
+  testPostPathWithoutCsrf,
+  testAuthorisedPostPathForUnauthenticatedUser,
+  testAuthorisedPostPathForUnauthorisedUsers,
+  getCsrfTokenFromGet,
   fakeSessionManager,
 } from 'buying-catalogue-library';
 import { App } from './app';
 import { routes } from './routes';
 import { baseUrl } from './config';
 import { getOrder } from './helpers/api/ordapi/getOrder';
-import { getOrderDescription } from './helpers/routes/getOrderDescription';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
 import * as documentController from './documentController';
 import * as previewController from './pages/preview/controller';
+import * as deleteOrderController from './pages/delete-order/controller';
 
 jest.mock('./logger');
 jest.mock('./helpers/api/ordapi/getOrder');
 jest.mock('./helpers/routes/getOrderDescription');
+jest.mock('./helpers/api/ordapi/deleteOrder');
 
 dashboardController.getDashboardContext = jest.fn()
-  .mockResolvedValue({});
+  .mockResolvedValueOnce({});
 
 documentController.getDocumentByFileName = jest.fn()
-  .mockResolvedValue({});
+  .mockResolvedValueOnce({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
@@ -49,6 +54,10 @@ const setUpFakeApp = () => {
 };
 
 describe('routes', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('GET /', () => {
     const path = '/';
 
@@ -268,13 +277,80 @@ describe('routes', () => {
     ));
 
     it('should return the deleted-order page if authorised', async () => {
-      getOrderDescription.mockResolvedValueOnce({});
+      deleteOrderController.getDeleteOrderContext = jest.fn()
+        .mockResolvedValueOnce();
 
       const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200);
       expect(res.text.includes('data-test-id="delete-order-page"')).toBeTruthy();
+    });
+  });
+
+  describe('POST /organisation/:orderId/delete-order', () => {
+    const path = '/organisation/order-1/delete-order';
+
+    it('should return 403 forbidden if no csrf token is available', async () => {
+      await testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()),
+        postPath: path,
+        postPathCookies: [mockAuthorisedCookie],
+      });
+    });
+
+    it('should redirect to the login page if the user is not logged in', async () => {
+      deleteOrderController.getDeleteOrderContext = jest.fn()
+        .mockResolvedValueOnce();
+
+      await testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+        expectedRedirectPath: 'http://identity-server/login',
+      });
+    });
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      deleteOrderController.getDeleteOrderContext = jest.fn()
+        .mockResolvedValueOnce();
+
+      return testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      });
+    });
+
+    it('should redirect to /delete-order/confirmation page, if the order is deleted', async () => {
+      deleteOrderController.getDeleteOrderContext = jest.fn()
+        .mockResolvedValueOnce();
+
+      deleteOrderController.deleteAnOrder = jest.fn().mockResolvedValueOnce();
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({
+          _csrf: csrfToken,
+        })
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/delete-order/confirmation`);
     });
   });
 
