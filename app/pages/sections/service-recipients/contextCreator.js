@@ -19,14 +19,13 @@ const generateItems = ({
     columns.push(({
       question: {
         ...cellInfo.organisation.question,
-        dataTestId: `${serviceRecipient.name}-organisationName`,
         checked: getCheckedStatus({ selectStatus, serviceRecipient, selectedRecipientIdsData }),
-        id: `${serviceRecipient.name}-organisationName`,
+        id: `${serviceRecipient.odsCode}-organisationName`,
         name: serviceRecipient.odsCode,
         value: serviceRecipient.name,
         text: serviceRecipient.name,
       },
-      dataTestId: `${serviceRecipient.name}-organisationName`,
+      dataTestId: `${serviceRecipient.odsCode}-organisationName`,
     }));
     columns.push(({
       ...cellInfo.odsCode,
