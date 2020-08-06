@@ -1,11 +1,11 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../config';
 
-const getCheckedStatus = ({ selectStatus, data, selectedRecipientIdsData = [] }) => {
+const getCheckedStatus = ({ selectStatus, serviceRecipient, selectedRecipientIdsData = [] }) => {
   if (selectStatus === 'select') return true;
   if (selectStatus === 'deselect') return false;
   return !!selectedRecipientIdsData
-    .find(checkedRecipient => checkedRecipient.odsCode === data.odsCode);
+    .find(checkedRecipient => checkedRecipient.odsCode === serviceRecipient.odsCode);
 };
 
 const generateItems = ({
@@ -25,11 +25,13 @@ const generateItems = ({
         value: serviceRecipient.name,
         text: serviceRecipient.name,
       },
+      dataTestId: `${serviceRecipient.name}-organisationName`,
       classes: 'nhsuk-u-font-size-12',
     }));
     columns.push(({
       data: serviceRecipient.odsCode,
       dataTestId: `${serviceRecipient.odsCode}-odsCode`,
+      classes: 'nhsuk-u-margin-top-2',
     }));
     return columns;
   });

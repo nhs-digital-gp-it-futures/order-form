@@ -47,32 +47,32 @@ test('should render unchecked checkbox for each service recipient', async (t) =>
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const checkbox1Input = Selector('[data-test-id="organisation-name-checkbox-ods1"] input');
-  const checkbox1Label = Selector('[data-test-id="organisation-name-checkbox-ods1"] label');
-  const checkbox2Input = Selector('[data-test-id="organisation-name-checkbox-ods2"] input');
-  const checkbox2Label = Selector('[data-test-id="organisation-name-checkbox-ods2"] label');
+  const checkbox1Input = Selector('[data-test-id="Some service recipient 1-organisationName"] input');
+  const checkbox1Label = Selector('[data-test-id="Some service recipient 1-organisationName"] label');
+  const checkbox2Input = Selector('[data-test-id="Some service recipient 2-organisationName"] input');
+  const checkbox2Label = Selector('[data-test-id="Some service recipient 2-organisationName"] label');
 
   await t
     .expect(checkbox1Input.getAttribute('name')).eql('ods1')
-    .expect(checkbox1Input.getAttribute('id')).eql('ods1')
+    .expect(checkbox1Input.getAttribute('id')).eql('Some service recipient 1-organisationName')
     .expect(checkbox1Input.getAttribute('type')).eql('checkbox')
     .expect(checkbox1Input.find(':checked').exists).notOk()
     .expect(await extractInnerText(checkbox1Label)).eql(mockOapiData[0].name)
-    .expect(checkbox1Label.getAttribute('for')).eql('ods1')
+    .expect(checkbox1Label.getAttribute('for')).eql('Some service recipient 1-organisationName')
 
     .expect(checkbox2Input.getAttribute('name')).eql('ods2')
-    .expect(checkbox2Input.getAttribute('id')).eql('ods2')
+    .expect(checkbox2Input.getAttribute('id')).eql('Some service recipient 2-organisationName')
     .expect(checkbox2Input.getAttribute('type')).eql('checkbox')
     .expect(checkbox2Input.find(':checked').exists).notOk()
     .expect(await extractInnerText(checkbox2Label)).eql(mockOapiData[1].name)
-    .expect(checkbox2Label.getAttribute('for')).eql('ods2');
+    .expect(checkbox2Label.getAttribute('for')).eql('Some service recipient 2-organisationName');
 });
 
 test('should render ods code for each service recipient', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
-  const odsCode1 = Selector('[data-test-id="ods-code-ods1"]');
-  const odsCode2 = Selector('[data-test-id="ods-code-ods2"]');
+  const odsCode1 = Selector('[data-test-id="ods1-odsCode"]');
+  const odsCode2 = Selector('[data-test-id="ods2-odsCode"]');
 
   await t
     .expect(await extractInnerText(odsCode1)).eql(mockOapiData[0].odsCode)
@@ -99,8 +99,8 @@ test('should check all checkboxes and change button text when "Select all button
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="select-deselect-button"] button');
-  const checkbox1Input = Selector('[data-test-id="organisation-name-checkbox-ods1"] input');
-  const checkbox2Input = Selector('[data-test-id="organisation-name-checkbox-ods2"] input');
+  const checkbox1Input = Selector('[data-test-id="Some service recipient 1-organisationName"] input');
+  const checkbox2Input = Selector('[data-test-id="Some service recipient 2-organisationName"] input');
 
   await t
     .expect(checkbox1Input.getAttribute('checked')).eql(undefined)
@@ -119,8 +119,8 @@ test('should uncheck all checkboxes and change button text when all are selected
   await t.navigateTo(`${pageUrl}?selectStatus=select`);
 
   const button = Selector('[data-test-id="select-deselect-button"] button');
-  const checkbox1Input = Selector('[data-test-id="organisation-name-checkbox-ods1"] input');
-  const checkbox2Input = Selector('[data-test-id="organisation-name-checkbox-ods2"] input');
+  const checkbox1Input = Selector('[data-test-id="Some service recipient 1-organisationName"] input');
+  const checkbox2Input = Selector('[data-test-id="Some service recipient 2-organisationName"] input');
 
   await t
     .expect(checkbox1Input.getAttribute('checked')).eql('')
