@@ -12,33 +12,33 @@ const generateItems = ({
   selectStatus,
   serviceRecipientsData,
   selectedRecipientIdsData,
+  cellInfo,
 }) => {
   const items = serviceRecipientsData.map((serviceRecipient) => {
     const columns = [];
     columns.push(({
       question: {
+        ...cellInfo.organisation.question,
         dataTestId: `${serviceRecipient.name}-organisationName`,
         checked: getCheckedStatus({ selectStatus, serviceRecipient, selectedRecipientIdsData }),
-        type: 'checkbox',
         id: `${serviceRecipient.name}-organisationName`,
         name: serviceRecipient.odsCode,
         value: serviceRecipient.name,
         text: serviceRecipient.name,
       },
       dataTestId: `${serviceRecipient.name}-organisationName`,
-      classes: 'nhsuk-u-font-size-12',
     }));
     columns.push(({
+      ...cellInfo.odsCode,
       data: serviceRecipient.odsCode,
       dataTestId: `${serviceRecipient.odsCode}-odsCode`,
-      classes: 'nhsuk-u-margin-top-2',
     }));
     return columns;
   });
   return items;
 };
 
-const generateAddedOrderItemsTable = ({
+const generateServiceRecipientsTable = ({
   selectStatus,
   serviceRecipientsTable,
   serviceRecipientsData,
@@ -49,6 +49,7 @@ const generateAddedOrderItemsTable = ({
     selectStatus,
     serviceRecipientsData,
     selectedRecipientIdsData,
+    cellInfo: serviceRecipientsTable.cellInfo,
   }),
 });
 
@@ -60,7 +61,7 @@ export const getContext = ({
     ...manifest,
     title: `${manifest.title} ${orderId}`,
     backLinkHref: `${baseUrl}/organisation/${orderId}`,
-    serviceRecipientsTable: generateAddedOrderItemsTable({
+    serviceRecipientsTable: generateServiceRecipientsTable({
       selectStatus,
       serviceRecipientsTable: manifest.serviceRecipientsTable,
       serviceRecipientsData,

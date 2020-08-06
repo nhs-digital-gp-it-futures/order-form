@@ -10,13 +10,27 @@
   "serviceRecipientsTable": {
     "columnInfo": [
       {
-        "data": "Organisation"
+        "data": "Organisation",
+        "classes": "nhsuk-u-font-size-12",
+        "width": "50%"
       },
       {
-        "data": "ODS Code"
+        "data": "ODS Code",
+        "classes": "nhsuk-u-font-size-12",
+        "width": "50%"
       }
     ],
-    "columnClass": "nhsuk-grid-column-one-half nhsuk-u-font-size-16"
+    "cellInfo": {
+      "organisation": {
+        "question": {
+          "type": "checkbox"
+        },
+        "classes": "nhsuk-input--width-10"
+      },
+      "odsCode": {
+        "classes": "nhsuk-input--width-10 nhsuk-u-margin-top-2"
+      }
+    }
   },
   "continueButtonText": "Continue"
 }
