@@ -265,16 +265,13 @@ describe('routes', () => {
       })
     ));
 
-    it('should return the correct status and text when the user is authorised', () => {
-      request(setUpFakeApp())
-        .get(path)
-        .set('Cookie', [mockAuthorisedCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.status).toBe(200);
-          expect(res.text.includes('delete-order page')).toBeTruthy();
-        });
-    });
+    it('should return the deleted-order page if authorised', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(200)
+      .then((res) => {
+        expect(res.text.includes('data-test-id="delete-order-page"')).toBeTruthy();
+      }));
   });
 
   describe('GET *', () => {

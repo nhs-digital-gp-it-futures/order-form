@@ -39,10 +39,11 @@ describe('order confirmation page', () => {
     });
   }));
 
-  it('should render the order summary button text', componentTester(setup, (harness) => {
+  it('should render the order summary button', componentTester(setup, (harness) => {
     const withOrderSummaryButtonTextContext = {
       ...context,
       orderSummaryButtonText: 'some order summary button text',
+      orderSummaryButtonHref: '/some-order-summary-link',
     };
 
     harness.request(withOrderSummaryButtonTextContext, ($) => {
@@ -50,6 +51,9 @@ describe('order confirmation page', () => {
       expect(orderSummaryButton.length).toEqual(1);
       expect(orderSummaryButton.text().trim()).toEqual(
         withOrderSummaryButtonTextContext.orderSummaryButtonText,
+      );
+      expect(orderSummaryButton.find('a').attr('href')).toEqual(
+        withOrderSummaryButtonTextContext.orderSummaryButtonHref,
       );
     });
   }));
