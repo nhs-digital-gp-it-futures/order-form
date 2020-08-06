@@ -1,6 +1,5 @@
 import { getDashboardContext } from './controller';
 import * as contextCreator from './contextCreator';
-import mockOrdersData from '../../test-utils/mockData/mockOrders.json';
 import { getOrders } from '../../helpers/api/ordapi/getOrders';
 
 jest.mock('buying-catalogue-library');
@@ -17,7 +16,7 @@ describe('dashboard controller', () => {
     });
 
     it('should call getOrders once with the correct params', async () => {
-      getOrders.mockResolvedValueOnce(mockOrdersData);
+      getOrders.mockResolvedValueOnce({ completedOrders: [], incompletedOrders: [] });
 
       await getDashboardContext({ orgId: 'org-id', orgName: 'org1', accessToken: 'access_token' });
       expect(getOrders.mock.calls.length).toEqual(1);
@@ -28,13 +27,13 @@ describe('dashboard controller', () => {
     });
 
     it('should call getContext with the correct params when orders data is returned by getData', async () => {
-      getOrders.mockResolvedValueOnce(mockOrdersData);
+      getOrders.mockResolvedValueOnce({ completedOrders: [], incompletedOrders: [] });
       contextCreator.getContext.mockResolvedValueOnce();
 
       await getDashboardContext({ orgId: 'org-id', orgName: 'org1', accessToken: 'access_token' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orgName: 'org1', ordersData: mockOrdersData });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({ orgName: 'org1', completedOrders: [], incompletedOrders: [] });
     });
   });
 });
