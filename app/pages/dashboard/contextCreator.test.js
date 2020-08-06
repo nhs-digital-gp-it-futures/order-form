@@ -15,7 +15,7 @@ const mockOrdersData = [
     orderId: 'order2',
     description: 'Some new order',
     lastUpdatedBy: 'Alice Smith',
-    lastUpdated: '2020-06-06T09:29:52.49657Z',
+    dateCompleted: '2020-06-06T09:29:52.49657Z',
     dateCreated: '2020-06-06T09:29:52.4965701Z',
     status: 'Complete',
     automaticallyProcessed: true,
@@ -74,7 +74,7 @@ describe('getContext', () => {
       expect(completeOrder1[2].dataTestId).toEqual('order2-lastUpdatedBy');
       expect(completeOrder1[3].data).toEqual('6 June 2020');
       expect(completeOrder1[3].classes).toEqual(classes);
-      expect(completeOrder1[3].dataTestId).toEqual('order2-lastUpdated');
+      expect(completeOrder1[3].dataTestId).toEqual('order2-dateCompleted');
       expect(completeOrder1[4].data).toEqual('6 June 2020');
       expect(completeOrder1[4].classes).toEqual(classes);
       expect(completeOrder1[4].dataTestId).toEqual('order2-dateCreated');

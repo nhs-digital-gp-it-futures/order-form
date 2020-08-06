@@ -27,9 +27,9 @@ const formatOrderData = ({ ordersData = [] }) => ordersData.reduce((acc, order) 
       classes: cellInfo.lastUpdatedBy.classes,
     },
     {
-      data: formatDate(order.lastUpdated),
-      dataTestId: `${order.orderId}-lastUpdated`,
-      classes: cellInfo.lastUpdated.classes,
+      data: isComplete ? formatDate(order.dateCompleted) : formatDate(order.lastUpdated),
+      dataTestId: isComplete ? `${order.orderId}-dateCompleted` : `${order.orderId}-lastUpdated`,
+      classes: isComplete ? cellInfo.dateCompleted.classes : cellInfo.lastUpdated.classes,
     },
     {
       data: formatDate(order.dateCreated),

@@ -1,11 +1,8 @@
-import { getData } from 'buying-catalogue-library';
 import { getContext } from './contextCreator';
-import { logger } from '../../logger';
-import { getEndpoint } from '../../endpoints';
+import { getOrders } from '../../helpers/api/ordapi/getOrders';
 
 export const getDashboardContext = async ({ orgName, orgId, accessToken }) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getOrders', options: { orgId } });
-  const ordersData = await getData({ endpoint, accessToken, logger });
-  logger.info(`${ordersData ? ordersData.length : 'No'} orders found`);
+  const ordersData = await getOrders({ orgId, accessToken });
+
   return getContext({ orgName, ordersData: ordersData || [] });
 };

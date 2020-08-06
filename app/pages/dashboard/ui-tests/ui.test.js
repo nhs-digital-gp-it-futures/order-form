@@ -178,7 +178,7 @@ test('should render the complete orders table content', async (t) => {
   const orderId = row.find('a[data-test-id="order2-id"]');
   const description = row.find('div[data-test-id="order2-description"]');
   const lastUpdatedBy = row.find('div[data-test-id="order2-lastUpdatedBy"]');
-  const lastUpdated = row.find('div[data-test-id="order2-lastUpdated"]');
+  const dateCompleted = row.find('div[data-test-id="order2-dateCompleted"]');
   const dateCreated = row.find('div[data-test-id="order2-dateCreated"]');
   const automaticallyProcessed = row.find('div[data-test-id="order2-automaticallyProcessed"]');
 
@@ -187,7 +187,7 @@ test('should render the complete orders table content', async (t) => {
     .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order2`)
     .expect(await extractInnerText(description)).eql(mockOrdersData[1].description)
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[1].lastUpdatedBy)
-    .expect(await extractInnerText(lastUpdated)).eql('9 December 2020')
+    .expect(await extractInnerText(dateCompleted)).eql('9 December 2020')
     .expect(await extractInnerText(dateCreated)).eql('9 October 2020')
     .expect(await extractInnerText(automaticallyProcessed)).eql('Yes');
 });
