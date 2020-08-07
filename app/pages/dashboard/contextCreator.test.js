@@ -2,7 +2,7 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 import { getContext } from './contextCreator';
 
-const mockOrdersData = [
+const incompletedOrders = [
   {
     orderId: 'order1',
     description: 'Some Order',
@@ -11,11 +11,14 @@ const mockOrdersData = [
     dateCreated: '2020-05-06T09:29:52.4965653Z',
     status: 'Incomplete',
   },
+];
+
+const completedOrders = [
   {
     orderId: 'order2',
     description: 'Some new order',
     lastUpdatedBy: 'Alice Smith',
-    lastUpdated: '2020-06-06T09:29:52.49657Z',
+    dateCompleted: '2020-06-06T09:29:52.49657Z',
     dateCreated: '2020-06-06T09:29:52.4965701Z',
     status: 'Complete',
     automaticallyProcessed: true,
@@ -56,10 +59,11 @@ describe('getContext', () => {
 
   describe('ordersData', () => {
     it('should format completed orders correctly', () => {
-      const context = getContext({ orgName: 'Org1', ordersData: mockOrdersData });
-      expect(context.completeOrders.length).toEqual(2);
+      const context = getContext({ orgName: 'Org1', completedOrders, incompletedOrders });
 
-      const completeOrder1 = context.completeOrders[0];
+      expect(context.completeOrders.items.length).toEqual(2);
+
+      const completeOrder1 = context.completeOrders.items[0];
       expect(completeOrder1.length).toEqual(6);
 
       expect(completeOrder1[0].data).toEqual('order2');
@@ -74,7 +78,7 @@ describe('getContext', () => {
       expect(completeOrder1[2].dataTestId).toEqual('order2-lastUpdatedBy');
       expect(completeOrder1[3].data).toEqual('6 June 2020');
       expect(completeOrder1[3].classes).toEqual(classes);
-      expect(completeOrder1[3].dataTestId).toEqual('order2-lastUpdated');
+      expect(completeOrder1[3].dataTestId).toEqual('order2-dateCompleted');
       expect(completeOrder1[4].data).toEqual('6 June 2020');
       expect(completeOrder1[4].classes).toEqual(classes);
       expect(completeOrder1[4].dataTestId).toEqual('order2-dateCreated');
@@ -82,7 +86,7 @@ describe('getContext', () => {
       expect(completeOrder1[5].classes).toEqual(classes);
       expect(completeOrder1[5].dataTestId).toEqual('order2-automaticallyProcessed');
 
-      const completeOrder2 = context.completeOrders[1];
+      const completeOrder2 = context.completeOrders.items[1];
       expect(completeOrder2.length).toEqual(6);
 
       expect(completeOrder2[0].data).toEqual('order3');
@@ -95,10 +99,10 @@ describe('getContext', () => {
     });
 
     it('should format an incomplete order correctly', () => {
-      const context = getContext({ orgName: 'Org1', ordersData: mockOrdersData });
-      expect(context.incompleteOrders.length).toEqual(1);
+      const context = getContext({ orgName: 'Org1', completedOrders, incompletedOrders });
+      expect(context.incompleteOrders.items.length).toEqual(1);
 
-      const incompleteOrder1 = context.incompleteOrders[0];
+      const incompleteOrder1 = context.incompleteOrders.items[0];
       expect(incompleteOrder1.length).toEqual(5);
 
       expect(incompleteOrder1[0].data).toEqual('order1');
@@ -117,21 +121,6 @@ describe('getContext', () => {
       expect(incompleteOrder1[4].data).toEqual('6 May 2020');
       expect(incompleteOrder1[4].classes).toEqual(classes);
       expect(incompleteOrder1[4].dataTestId).toEqual('order1-dateCreated');
-    });
-
-    it('should sort orders on complete/incomplete', () => {
-      const manyMockOrders = [
-        { status: 'Incomplete' },
-        { status: 'Incomplete' },
-        { status: 'Complete' },
-        { status: 'Incomplete' },
-        { status: 'Complete' },
-        { status: 'Incomplete' },
-        { status: 'Incomplete' },
-      ];
-      const context = getContext({ orgName: 'Org1', ordersData: manyMockOrders });
-      expect(context.incompleteOrders.length).toEqual(5);
-      expect(context.completeOrders.length).toEqual(2);
     });
   });
 });
