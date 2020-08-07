@@ -9,19 +9,25 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/delete-order'
 
 const orderDescriptionMock = 'desc';
 
-const mocks = () => {
+const mocks = ({ postRoute = false }) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/description')
     .reply(200, { description: orderDescriptionMock });
+
+  if (postRoute) {
+    nock(orderApiUrl)
+      .delete('/api/v1/orders/order-id')
+      .reply(204);
+  }
 };
 
-const defaultPageSetup = { withAuth: true, getRoute: true };
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
   if (setup.getRoute) {
-    mocks();
+    mocks({ postRoute: setup.postRoute });
   }
 };
 
@@ -63,7 +69,7 @@ test('should link to /order/organisation for backLink', async (t) => {
 
   await t
     .expect(await extractInnerText(goBackLink)).eql(content.backLinkText)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -110,10 +116,11 @@ test('should render the No button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="no-button"] button');
+  const button = Selector('[data-test-id="no-button"] a');
 
   await t
-    .expect(await extractInnerText(button)).eql(content.noButtonText);
+    .expect(await extractInnerText(button)).eql(content.noButtonText)
+    .expect(button.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
 test('should render the Yes button', async (t) => {
@@ -124,4 +131,15 @@ test('should render the Yes button', async (t) => {
 
   await t
     .expect(await extractInnerText(button)).eql(content.yesButtonText);
+});
+
+test('should redirect to /organisation/order-id/delete-order/confirmation when Yes is clicked', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="yes-button"] button');
+
+  await t
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/delete-order/confirmation');
 });
