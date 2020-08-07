@@ -3,11 +3,11 @@ import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/preview/templatePrint.njk',
+    path: 'pages/summary/templatePrint.njk',
   },
 };
 
-describe('preview print page', () => {
+describe('summary print page', () => {
   it('should not render a backLink', componentTester(setup, (harness) => {
     const context = {
       orderId: 'order-1',
@@ -21,13 +21,13 @@ describe('preview print page', () => {
     });
   }));
 
-  it('should render the preview page title', componentTester(setup, (harness) => {
+  it('should render the summary page title', componentTester(setup, (harness) => {
     const context = {
       title: 'Order summary for order-1',
     };
 
     harness.request(context, ($) => {
-      const title = $('h1[data-test-id="preview-page-title"]');
+      const title = $('h1[data-test-id="summary-page-title"]');
       expect(title.length).toEqual(1);
       expect(title.text().trim()).toEqual(context.title);
     });

@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { orderApiUrl } from '../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/preview';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
 
 const mockOrder = {
   description: 'some order description',
@@ -214,7 +214,7 @@ const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
   }
 };
 
-fixture('Order Summary Preview - with saved data')
+fixture('Order Summary Summary - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);

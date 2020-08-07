@@ -2,7 +2,7 @@ import manifest from './manifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
-describe('order summary preview contextCreator', () => {
+describe('order summary summary contextCreator', () => {
   describe('getContext', () => {
     const mockOrderData = { description: 'Some order description' };
     const mockEmptyCallOffPartyRow = { multiLine: { data: [''] }, dataTestId: 'call-off-party' };

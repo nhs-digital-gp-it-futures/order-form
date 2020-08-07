@@ -1,4 +1,4 @@
-import { getPreviewPageContext } from './controller';
+import { getSummaryPageContext } from './controller';
 import * as contextCreator from './contextCreator';
 
 jest.mock('buying-catalogue-library');
@@ -7,8 +7,8 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-describe('order summary preview controller', () => {
-  describe('getPreviewPageContext', () => {
+describe('order summary summary controller', () => {
+  describe('getSummaryPageContext', () => {
     afterEach(() => {
       contextCreator.getContext.mockReset();
     });
@@ -31,7 +31,7 @@ describe('order summary preview controller', () => {
         serviceRecipients,
       };
 
-      getPreviewPageContext({
+      getSummaryPageContext({
         orderId,
         orderData,
         oneOffCostItems: [fakeOneOffCostItem],
