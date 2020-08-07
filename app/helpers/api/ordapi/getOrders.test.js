@@ -5,6 +5,12 @@ import { getOrders, groupOrdersByStatus } from './getOrders';
 
 jest.mock('buying-catalogue-library');
 
+const order1 = { id: 1, status: 'Complete' };
+const order2 = { id: 2, status: 'Incomplete' };
+const order3 = { id: 3, status: 'Incomplete' };
+const order4 = { id: 4, status: 'Incomplete' };
+
+
 describe('getOrders', () => {
   afterEach(() => {
     jest.resetAllMocks();
@@ -26,21 +32,16 @@ describe('getOrders', () => {
   });
 
   it('should return the expected result', async () => {
-    getData.mockResolvedValueOnce([]);
+    getData.mockResolvedValueOnce([order1, order2, order3, order4]);
 
     const { completedOrders, incompletedOrders } = await getOrders({ orgId, accessToken });
-    expect(completedOrders).toEqual([]);
-    expect(incompletedOrders).toEqual([]);
+    expect(completedOrders).toEqual([order1]);
+    expect(incompletedOrders).toEqual([order2, order3, order4]);
   });
 });
 
 describe('groupOrdersByStatus', () => {
   it('should group complete and incomplete orders', () => {
-    const order1 = { id: 1, status: 'Complete' };
-    const order2 = { id: 2, status: 'Incomplete' };
-    const order3 = { id: 3, status: 'Incomplete' };
-    const order4 = { id: 4, status: 'Incomplete' };
-
     const orders = [order1, order2, order3, order4];
 
     const { completedOrders, incompletedOrders } = groupOrdersByStatus(orders);

@@ -11,8 +11,7 @@ jest.mock('./contextCreator', () => ({
 describe('dashboard controller', () => {
   describe('getDashboardContext', () => {
     afterEach(() => {
-      getOrders.mockReset();
-      contextCreator.getContext.mockReset();
+      jest.resetAllMocks();
     });
 
     it('should call getOrders once with the correct params', async () => {
