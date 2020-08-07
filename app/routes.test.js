@@ -16,7 +16,7 @@ import { getOrder } from './helpers/api/ordapi/getOrder';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
 import * as documentController from './documentController';
-import * as previewController from './pages/preview/controller';
+import * as summaryController from './pages/summary/controller';
 import * as deleteOrderController from './pages/delete-order/controller';
 
 jest.mock('./logger');
@@ -203,8 +203,8 @@ describe('routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/preview', () => {
-    const path = '/organisation/order-id/preview';
+  describe('GET /organisation/:orderId/summary', () => {
+    const path = '/organisation/order-id/summary';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -225,7 +225,7 @@ describe('routes', () => {
     it('should return the correct status and text when the user is authorised', () => {
       getOrder.mockResolvedValueOnce({});
 
-      previewController.getPreviewPageContext = jest.fn()
+      summaryController.getSummaryPageContext = jest.fn()
         .mockResolvedValueOnce({});
 
       return request(setUpFakeApp())
@@ -233,17 +233,17 @@ describe('routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('data-test-id="preview-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="summary-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });
 
-    it('should return the printable preview page when the print flag is passed in', () => {
+    it('should return the printable summary page when the print flag is passed in', () => {
       const pathWithPrintFlag = `${path}?print=true`;
 
       getOrder.mockResolvedValueOnce({});
 
-      previewController.getPreviewPageContext = jest.fn()
+      summaryController.getSummaryPageContext = jest.fn()
         .mockResolvedValueOnce({});
 
       return request(setUpFakeApp())
@@ -251,7 +251,7 @@ describe('routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('data-test-id="preview-page-print"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="summary-page-print"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });
