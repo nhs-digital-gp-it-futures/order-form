@@ -9,16 +9,10 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/delete-order/
 
 const orderDescriptionMock = 'desc';
 
-const mocks = ({ postRoute = false }) => {
+const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/description')
     .reply(200, { description: orderDescriptionMock });
-
-  if (postRoute) {
-    nock(orderApiUrl)
-      .delete('/api/v1/orders/order-id')
-      .reply(204);
-  }
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
@@ -79,7 +73,7 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="delete-order-confirmation-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql(`${content.titlePartOne} order-id ${content.titlePartTwo}`);
+    .expect(await extractInnerText(title)).eql('Order order-id deleted');
 });
 
 test('should render the description', async (t) => {

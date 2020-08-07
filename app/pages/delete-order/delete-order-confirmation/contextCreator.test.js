@@ -17,7 +17,7 @@ describe('delete-order-confirmation contextCreator', () => {
     it('should return the title', () => {
       const orderId = 'order-1';
       const context = getContext({ orderId });
-      expect(context.title).toEqual(`${manifest.titlePartOne} ${orderId} ${manifest.titlePartTwo}`);
+      expect(context.title).toEqual('Order order-1 deleted');
     });
 
     it('should return the order description title', () => {
