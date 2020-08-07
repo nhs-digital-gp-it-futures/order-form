@@ -129,7 +129,7 @@ describe('task-list contextCreator', () => {
     it('should return the previewOrderButton context', () => {
       const expectedPreviewOrderButtonContext = {
         text: commonManifest.previewOrderButton.text,
-        href: `${baseUrl}/organisation/order-id/preview`,
+        href: `${baseUrl}/organisation/order-id/summary`,
       };
 
       const context = getContext({ orderId: 'order-id' });
