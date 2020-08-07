@@ -6,7 +6,7 @@ import { orderApiUrl } from '../../../config';
 import { formatDate } from '../../../helpers/common/dateFormatter';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/preview';
+const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -25,7 +25,7 @@ const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Order Summary Preview - general')
+fixture('Order Summary Summary - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -43,10 +43,10 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render Preview page', async (t) => {
+test('should render Summary page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
-  const page = Selector('[data-test-id="preview-page"]');
+  const page = Selector('[data-test-id="summary-page"]');
 
   await t
     .expect(page.exists).ok();
@@ -66,7 +66,7 @@ test('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const title = Selector('h1[data-test-id="preview-page-title"]');
+  const title = Selector('h1[data-test-id="summary-page-title"]');
 
   await t
     .expect(await extractInnerText(title)).eql(`${content.title} order-1`);
@@ -76,7 +76,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="preview-page-description"]');
+  const description = Selector('h2[data-test-id="summary-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
