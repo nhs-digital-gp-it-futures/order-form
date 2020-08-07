@@ -15,6 +15,7 @@ import { completeOrderRoutes } from './pages/complete-order/routes';
 import includesContext from './includes/manifest.json';
 import { clearSession } from './helpers/routes/sessionHelper';
 import { getDeleteOrderContext, deleteOrder } from './pages/delete-order/controller';
+import { getDeleteOrderConfirmationContext } from './pages/delete-order/delete-order-confirmation/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -112,6 +113,21 @@ export const routes = (authProvider, sessionManager) => {
     await deleteOrder({ orderId, accessToken });
 
     return res.redirect(`${config.baseUrl}/organisation/${orderId}/delete-order/confirmation`);
+  }));
+
+  router.get('/organisation/:orderId/delete-order/confirmation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+
+    const context = await getDeleteOrderConfirmationContext({
+      req,
+      sessionManager,
+      accessToken,
+      logger,
+    });
+
+    logger.info(`navigating to order ${orderId} delete-order-confirmation page`);
+    res.render('pages/delete-order/delete-order-confirmation/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
