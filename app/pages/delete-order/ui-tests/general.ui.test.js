@@ -79,7 +79,7 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="delete-order-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql(`${content.title} order-id`);
+    .expect(await extractInnerText(title)).eql('Delete order order-id?');
 });
 
 test('should render the description', async (t) => {
