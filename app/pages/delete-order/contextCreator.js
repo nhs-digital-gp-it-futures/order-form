@@ -1,12 +1,12 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 
-export const getDeleteOrderPageContext = ({ orderId, orderDescription }) => {
+export const getContext = ({ orderId, orderDescription }) => {
   const context = ({
     ...manifest,
     title: `${manifest.title} ${orderId}`,
     orderDescription,
-    backLinkHref: `${baseUrl}/organisation`,
+    backLinkHref: `${baseUrl}/organisation/${orderId}`,
   });
   return context;
 };

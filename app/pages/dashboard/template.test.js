@@ -14,8 +14,8 @@ const context = {
   title: 'org1 orders',
   proxyLinkHref: '/proxy/href',
   newOrderButtonHref: '/organisation/neworder',
-  completeOrders: [mockOrders[0]],
-  incompleteOrders: [mockOrders[1], mockOrders[2]],
+  completeOrders: { items: [mockOrders[0]] },
+  incompleteOrders: { items: [mockOrders[1], mockOrders[2]] },
 };
 
 describe('dashboard page', () => {

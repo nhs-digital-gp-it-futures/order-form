@@ -14,8 +14,7 @@ import { sectionRoutes } from './pages/sections/routes';
 import { completeOrderRoutes } from './pages/complete-order/routes';
 import includesContext from './includes/manifest.json';
 import { clearSession } from './helpers/routes/sessionHelper';
-import { getDeleteOrderPageContext } from './pages/delete-order/contextCreator';
-import { getOrderDescription } from './helpers/routes/getOrderDescription';
+import { getDeleteOrderContext, deleteOrder } from './pages/delete-order/controller';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -94,17 +93,25 @@ export const routes = (authProvider, sessionManager) => {
   router.get('/organisation/:orderId/delete-order', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const orderDescription = await getOrderDescription({
+
+    const context = await getDeleteOrderContext({
       req,
       sessionManager,
       accessToken,
       logger,
     });
 
-    const context = getDeleteOrderPageContext({ orderId, orderDescription });
-
     logger.info(`navigating to order ${orderId} delete-order page`);
-    res.render('pages/delete-order/template.njk', addContext({ context, user: req.user }));
+    res.render('pages/delete-order/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/organisation/:orderId/delete-order', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+
+    await deleteOrder({ orderId, accessToken });
+
+    return res.redirect(`${config.baseUrl}/organisation/${orderId}/delete-order/confirmation`);
   }));
 
   router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));

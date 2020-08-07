@@ -11,7 +11,7 @@
     "orderId": "order2",
     "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean m",
     "lastUpdatedBy": "Bob Smith",
-    "lastUpdated": "2020-12-09T09:29:52.49657Z",
+    "dateCompleted": "2020-12-09T09:29:52.49657Z",
     "dateCreated": "2020-10-09T09:29:52.4965701Z",
     "status": "Complete",
     "automaticallyProcessed": true
