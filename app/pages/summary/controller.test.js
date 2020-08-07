@@ -7,7 +7,7 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
-describe('order summary summary controller', () => {
+describe('order summary controller', () => {
   describe('getSummaryPageContext', () => {
     afterEach(() => {
       contextCreator.getContext.mockReset();
