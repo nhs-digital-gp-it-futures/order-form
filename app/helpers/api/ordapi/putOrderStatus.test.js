@@ -39,7 +39,7 @@ describe('putOrderStatus', () => {
       expect(putData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order1/status`,
         body: {
-          status: 'complete',
+          status: 'Complete',
         },
         accessToken: 'access_token',
         logger,
