@@ -1,5 +1,5 @@
 import { componentTester } from '../../test-utils/componentTester';
-import manifest from './incomplete/manifest.json';
+import incompleteManifest from './incomplete/incompleteManifest.json';
 
 const setup = {
   template: {
@@ -37,7 +37,7 @@ describe('summary page', () => {
 
   it('should render the summary page description', componentTester(setup, (harness) => {
     const context = {
-      description: manifest.description,
+      description: incompleteManifest.description,
     };
 
     harness.request(context, ($) => {
@@ -49,7 +49,7 @@ describe('summary page', () => {
 
   it('should render the order description', componentTester(setup, (harness) => {
     const context = {
-      orderDescriptionHeading: manifest.orderDescriptionHeading,
+      orderDescriptionHeading: incompleteManifest.orderDescriptionHeading,
       orderDescription: 'some-order-description',
     };
 
@@ -66,7 +66,7 @@ describe('summary page', () => {
 
   it('should render the order summary created date', componentTester(setup, (harness) => {
     const context = {
-      dateSummaryCreatedLabel: manifest.dateSummaryCreatedLabel,
+      dateSummaryCreatedLabel: incompleteManifest.dateSummaryCreatedLabel,
       dateSummaryCreated: '19 June 2020',
     };
 
@@ -163,7 +163,7 @@ describe('summary page', () => {
 
   it('should render the commencement date', componentTester(setup, (harness) => {
     const context = {
-      commencementDateLabel: manifest.commencementDateLabel,
+      commencementDateLabel: incompleteManifest.commencementDateLabel,
       commencementDate: '19 June 2020',
     };
 
@@ -177,8 +177,8 @@ describe('summary page', () => {
 
   it('should render the one off cost heading and description', componentTester(setup, (harness) => {
     const context = {
-      oneOffCostHeading: manifest.oneOffCostHeading,
-      oneOffCostDescription: manifest.oneOffCostDescription,
+      oneOffCostHeading: incompleteManifest.oneOffCostHeading,
+      oneOffCostDescription: incompleteManifest.oneOffCostDescription,
     };
 
     harness.request(context, ($) => {
@@ -307,8 +307,8 @@ describe('summary page', () => {
 
   it('should render the recurring cost heading and description', componentTester(setup, (harness) => {
     const context = {
-      recurringCostHeading: manifest.recurringCostHeading,
-      recurringCostDescription: manifest.recurringCostDescription,
+      recurringCostHeading: incompleteManifest.recurringCostHeading,
+      recurringCostDescription: incompleteManifest.recurringCostDescription,
     };
 
     harness.request(context, ($) => {

@@ -1,7 +1,7 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import content from '../manifest.json';
+import content from '../incompleteManifest.json';
 import { orderApiUrl } from '../../../../config';
 import { formatDate } from '../../../../helpers/common/dateFormatter';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
