@@ -1,4 +1,4 @@
-import manifest from './manifest.json';
+import manifest from './incomplete/manifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
