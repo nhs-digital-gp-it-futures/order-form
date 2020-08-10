@@ -146,6 +146,35 @@ test('should render the incomplete orders table content', async (t) => {
     .expect(await extractInnerText(dateCreated)).eql('6 January 2020');
 });
 
+test('should render the incomplete orders sorted by descending dateCreated order', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="incomplete-orders-table"]');
+
+  const row1 = table.find('[data-test-id="table-row-0"]');
+  const row1OrderId = row1.find('a[data-test-id="order1-id"]');
+  const row1DateCreated = row1.find('div[data-test-id="order1-dateCreated"]');
+
+  const row2 = table.find('[data-test-id="table-row-1"]');
+  const row2OrderId = row2.find('a[data-test-id="order5-id"]');
+  const row2DateCreated = row2.find('div[data-test-id="order5-dateCreated"]');
+
+  const row3 = table.find('[data-test-id="table-row-2"]');
+  const row3OrderId = row3.find('a[data-test-id="order4-id"]');
+  const row3DateCreated = row3.find('div[data-test-id="order4-dateCreated"]');
+
+  await t
+    .expect(await extractInnerText(row1OrderId)).eql('order1')
+    .expect(await extractInnerText(row1DateCreated)).eql('6 January 2020')
+
+    .expect(await extractInnerText(row2OrderId)).eql('order5')
+    .expect(await extractInnerText(row2DateCreated)).eql('3 January 2020')
+
+    .expect(await extractInnerText(row3OrderId)).eql('order4')
+    .expect(await extractInnerText(row3DateCreated)).eql('1 January 2020');
+});
+
 test('should render the complete orders table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -190,6 +219,35 @@ test('should render the complete orders table content', async (t) => {
     .expect(await extractInnerText(dateCompleted)).eql('9 December 2020')
     .expect(await extractInnerText(dateCreated)).eql('9 October 2020')
     .expect(await extractInnerText(automaticallyProcessed)).eql('Yes');
+});
+
+test('should render the complete orders sorted by descending dateCompleted order', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="complete-orders-table"]');
+
+  const row1 = table.find('[data-test-id="table-row-0"]');
+  const row1OrderId = row1.find('a[data-test-id="order2-id"]');
+  const row1DateCompleted = row1.find('div[data-test-id="order2-dateCompleted"]');
+
+  const row2 = table.find('[data-test-id="table-row-1"]');
+  const row2OrderId = row2.find('a[data-test-id="order6-id"]');
+  const row2DateCompleted = row2.find('div[data-test-id="order6-dateCompleted"]');
+
+  const row3 = table.find('[data-test-id="table-row-2"]');
+  const row3OrderId = row3.find('a[data-test-id="order3-id"]');
+  const row3DateCompleted = row3.find('div[data-test-id="order3-dateCompleted"]');
+
+  await t
+    .expect(await extractInnerText(row1OrderId)).eql('order2')
+    .expect(await extractInnerText(row1DateCompleted)).eql('9 December 2020')
+
+    .expect(await extractInnerText(row2OrderId)).eql('order6')
+    .expect(await extractInnerText(row2DateCompleted)).eql('6 December 2020')
+
+    .expect(await extractInnerText(row3OrderId)).eql('order3')
+    .expect(await extractInnerText(row3DateCompleted)).eql('3 December 2020');
 });
 
 test('should navigate to the order page when an order id is clicked', async (t) => {
