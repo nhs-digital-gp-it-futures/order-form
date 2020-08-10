@@ -72,7 +72,7 @@ const generateCompletedOrdersTable = (completedOrders, completeOrdersTable) => {
         classes: completeOrdersTable.cellInfo.dateCreated.classes,
       },
       {
-        data: order.automaticallyProcessed ? 'Yes' : 'No',
+        data: order.onlyGMS ? 'Yes' : 'No',
         dataTestId: `${order.orderId}-automaticallyProcessed`,
         classes: completeOrdersTable.cellInfo.automaticallyProcessed.classes,
       },
