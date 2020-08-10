@@ -1,4 +1,4 @@
-import incompleteManifest from './incomplete/incompleteManifest.json';
+import incompleteManifest from './incomplete/manifest.json';
 import { baseUrl } from '../../config';
 import { formatDate } from '../../helpers/common/dateFormatter';
 import { formatPrice } from '../../helpers/common/priceFormatter';

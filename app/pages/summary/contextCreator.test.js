@@ -1,4 +1,4 @@
-import incompleteManifest from './incomplete/incompleteManifest.json';
+import incompleteManifest from './incomplete/manifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 

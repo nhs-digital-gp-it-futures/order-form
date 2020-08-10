@@ -1,5 +1,5 @@
 import { componentTester } from '../../test-utils/componentTester';
-import incompleteManifest from './incomplete/incompleteManifest.json';
+import incompleteManifest from './incomplete/manifest.json';
 
 const setup = {
   template: {
