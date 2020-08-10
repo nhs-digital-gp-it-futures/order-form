@@ -60,7 +60,7 @@ describe('Order confirmation contextCreator', () => {
 
     it('should return the order summary button href', () => {
       const context = getContext({ orderId: 'order-1', fundingSource });
-      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/order-1/preview?print=true`);
+      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/order-1/summary?print=true`);
     });
 
     it('should return the order summary advice', () => {
