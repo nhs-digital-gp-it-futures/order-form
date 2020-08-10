@@ -14,7 +14,7 @@
     "dateCompleted": "2020-12-09T09:29:52.49657Z",
     "dateCreated": "2020-10-09T09:29:52.4965701Z",
     "status": "Complete",
-    "automaticallyProcessed": true
+    "onlyGMS": true
   },
   {
     "orderId": "order3",
@@ -23,7 +23,7 @@
     "dateCompleted": "2020-12-03T09:29:52.49657Z",
     "dateCreated": "2020-10-06T09:29:52.4965701Z",
     "status": "Complete",
-    "automaticallyProcessed": false
+    "onlyGMS": false
   },
   {
     "orderId": "order4",
@@ -48,6 +48,6 @@
     "dateCompleted": "2020-12-06T09:29:52.49657Z",
     "dateCreated": "2020-10-09T09:29:52.4965701Z",
     "status": "Complete",
-    "automaticallyProcessed": true
+    "onlyGMS": true
   }
 ]

@@ -21,12 +21,12 @@ const completedOrders = [
     dateCompleted: '2020-06-06T09:29:52.49657Z',
     dateCreated: '2020-06-06T09:29:52.4965701Z',
     status: 'Complete',
-    automaticallyProcessed: true,
+    onlyGMS: true,
   },
   {
     orderId: 'order3',
     status: 'Complete',
-    automaticallyProcessed: false,
+    onlyGMS: false,
   },
 ];
 
