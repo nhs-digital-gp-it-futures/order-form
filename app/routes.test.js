@@ -12,7 +12,6 @@ import {
 import { App } from './app';
 import { routes } from './routes';
 import { baseUrl } from './config';
-import { getOrder } from './helpers/api/ordapi/getOrder';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
 import * as documentController from './documentController';
