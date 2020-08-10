@@ -3,6 +3,12 @@
   "title": "Delete order {{orderId}}?",
   "description": "Confirm you want to delete this order.",
   "orderDescriptionTitle": "Order description",
-  "noButtonText": "No",
-  "yesButtonText": "Yes"
+  "noButton": {
+    "text": "No",
+    "width": "20%"
+  },
+  "yesButton": {
+    "text": "Yes",
+    "width": "20%"
+  }
 }
