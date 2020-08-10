@@ -8,9 +8,8 @@ import { withCatch, getHealthCheckDependencies, extractAccessToken } from './hel
 import { getDocumentByFileName } from './documentController';
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getTaskListPageContext } from './pages/task-list/controller';
-import { getOrder } from './helpers/api/ordapi/getOrder';
-import { getSummaryPageContext } from './pages/summary/controller';
 import { sectionRoutes } from './pages/sections/routes';
+import { summaryRoutes } from './pages/summary/routes';
 import { completeOrderRoutes } from './pages/complete-order/routes';
 import includesContext from './includes/manifest.json';
 import { clearSession } from './helpers/routes/sessionHelper';
@@ -69,25 +68,7 @@ export const routes = (authProvider, sessionManager) => {
     res.render('pages/task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.get('/organisation/:orderId/summary', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const { orderId } = req.params;
-    const { print } = req.query;
-
-    const {
-      orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
-    } = await getOrder({ orderId, accessToken });
-
-    const context = await getSummaryPageContext({
-      orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
-    });
-
-    if (print) {
-      return res.render('pages/summary/templatePrint.njk', addContext({ context, user: req.user }));
-    }
-
-    return res.render('pages/summary/template.njk', addContext({ context, user: req.user }));
-  }));
+  router.use('/organisation/:orderId/summary', summaryRoutes(authProvider, addContext));
 
   router.use('/organisation/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
 
