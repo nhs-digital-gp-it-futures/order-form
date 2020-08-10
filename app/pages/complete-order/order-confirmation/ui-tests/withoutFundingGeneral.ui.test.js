@@ -84,14 +84,14 @@ test('should render the get order summary button', async (t) => {
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
 });
 
-test('should render the get order summary button link with href /order/organisation/order-id/preview?print=true', async (t) => {
+test('should render the get order summary button link with href /order/organisation/order-id/summary?print=true', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const orderSummaryButton = Selector('[data-test-id="order-confirmation-page-orderSummaryButton"] a');
 
   await t
-    .expect(orderSummaryButton.getAttribute('href')).eql('/order/organisation/order-id/preview?print=true');
+    .expect(orderSummaryButton.getAttribute('href')).eql('/order/organisation/order-id/summary?print=true');
 });
 
 test('should render the order summary advice', async (t) => {
