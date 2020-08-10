@@ -14,6 +14,6 @@
     "dateCompleted": "2020-12-09T09:29:52.49657Z",
     "dateCreated": "2020-10-09T09:29:52.4965701Z",
     "status": "Complete",
-    "automaticallyProcessed": true
+    "onlyGMS": true
   }
 ]
