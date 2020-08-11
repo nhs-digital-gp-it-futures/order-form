@@ -351,5 +351,6 @@ export const getContext = ({
     }),
     commencementDate: formatDate(orderData.commencementDate),
     backLinkHref: `${baseUrl}/organisation/${orderId}`,
+    orderSummaryButtonHref: `${baseUrl}/organisation/${orderId}/summary?print=true`,
   });
 };

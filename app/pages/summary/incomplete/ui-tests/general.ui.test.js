@@ -94,6 +94,65 @@ test('should render the orderDescription', async (t) => {
     .expect(await extractInnerText(orderDescription)).eql('some order description');
 });
 
+test('should render the get order summary top button', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const orderSummaryButton = Selector('[data-test-id="summary-page-orderSummaryButton-top"]');
+
+  await t
+    .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
+});
+
+test('should render the get order summary button top link with href /order/organisation/order-id/summary?print=true', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const orderSummaryButton = Selector('[data-test-id="summary-page-orderSummaryButton-top"] a');
+
+  await t
+    .expect(orderSummaryButton.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
+});
+
+test('should render the order summary button top information', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const description = Selector('[data-test-id="summary-page-orderSummaryButtonInfo-top"]');
+
+  await t
+    .expect(await extractInnerText(description)).eql(content.orderSummaryButtonInfoText);
+});
+
+test('should render the get order summary bottom button', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const orderSummaryButton = Selector('[data-test-id="summary-page-orderSummaryButton-bottom"]');
+
+  await t
+    .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
+});
+
+test('should render the get order summary button bottom link with href /order/organisation/order-id/summary?print=true', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const orderSummaryButton = Selector('[data-test-id="summary-page-orderSummaryButton-bottom"] a');
+  await t
+    .expect(orderSummaryButton.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
+});
+
+test('should render the order summary button bottom information', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const description = Selector('[data-test-id="summary-page-orderSummaryButtonInfo-bottom"]');
+
+  await t
+    .expect(await extractInnerText(description)).eql(content.orderSummaryButtonInfoText);
+});
+
 test('should render the date summary created', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
