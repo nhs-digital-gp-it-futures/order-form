@@ -189,5 +189,7 @@
         "hideSeperator": true
       }
     }
-  }
+  },
+  "orderSummaryButtonText": "Get order summary",
+  "orderSummaryButtonInfoText": "Using this button will give you the option to print a copy or create a PDF version of your order summary so you can check it's correct."
 }

@@ -39,6 +39,12 @@ describe('order summary contextCreator', () => {
       expect(context.orderDescription).toEqual('Some order description');
     });
 
+    it('should return the order summary button href', () => {
+      const orderId = 'order-1';
+      const context = getContext({ orderId, orderData: mockOrderData });
+      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/${orderId}/summary?print=true`);
+    });
+
     it('should return the dateSummaryCreatedLabel', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
       expect(context.dateSummaryCreatedLabel).toEqual(incompleteManifest.dateSummaryCreatedLabel);

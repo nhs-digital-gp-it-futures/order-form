@@ -64,6 +64,72 @@ describe('summary page', () => {
     });
   }));
 
+  it('should render the order summary button at the top of the page', componentTester(setup, (harness) => {
+    const withOrderSummaryButtonTextContext = {
+      orderSummaryButtonText: 'some order summary button text',
+      orderSummaryButtonHref: '/some-order-summary-link',
+    };
+
+    harness.request(withOrderSummaryButtonTextContext, ($) => {
+      const orderSummaryButton = $('[data-test-id="summary-page-orderSummaryButton-top"]');
+      expect(orderSummaryButton.length).toEqual(1);
+      expect(orderSummaryButton.text().trim()).toEqual(
+        withOrderSummaryButtonTextContext.orderSummaryButtonText,
+      );
+      expect(orderSummaryButton.find('a').attr('href')).toEqual(
+        withOrderSummaryButtonTextContext.orderSummaryButtonHref,
+      );
+    });
+  }));
+
+  it('should render the order summary button info text at the top of the page', componentTester(setup, (harness) => {
+    const context = {
+      orderSummaryButtonText: 'some-order-summary-button-text',
+      orderSummaryButtonInfoText: 'some-order-summary-info-text',
+    };
+
+    harness.request(context, ($) => {
+      const orderSummaryButtonInfoText = $('[data-test-id="summary-page-orderSummaryButtonInfo-top"]');
+
+      expect(orderSummaryButtonInfoText.length).toEqual(1);
+      expect(orderSummaryButtonInfoText.text()
+        .trim()).toContain(context.orderSummaryButtonInfoText);
+    });
+  }));
+
+  it('should render the order summary button at the bottom of the page', componentTester(setup, (harness) => {
+    const withOrderSummaryButtonTextContext = {
+      orderSummaryButtonText: 'some order summary button text',
+      orderSummaryButtonHref: '/some-order-summary-link',
+    };
+
+    harness.request(withOrderSummaryButtonTextContext, ($) => {
+      const orderSummaryButton = $('[data-test-id="summary-page-orderSummaryButton-bottom"]');
+      expect(orderSummaryButton.length).toEqual(1);
+      expect(orderSummaryButton.text().trim()).toEqual(
+        withOrderSummaryButtonTextContext.orderSummaryButtonText,
+      );
+      expect(orderSummaryButton.find('a').attr('href')).toEqual(
+        withOrderSummaryButtonTextContext.orderSummaryButtonHref,
+      );
+    });
+  }));
+
+  it('should render the order summary button info text at the bottom of the page', componentTester(setup, (harness) => {
+    const context = {
+      orderSummaryButtonText: 'some-order-summary-button-text',
+      orderSummaryButtonInfoText: 'some-order-summary-info-text',
+    };
+
+    harness.request(context, ($) => {
+      const orderSummaryButtonInfoText = $('[data-test-id="summary-page-orderSummaryButtonInfo-bottom"]');
+
+      expect(orderSummaryButtonInfoText.length).toEqual(1);
+      expect(orderSummaryButtonInfoText.text()
+        .trim()).toContain(context.orderSummaryButtonInfoText);
+    });
+  }));
+
   it('should render the order summary created date', componentTester(setup, (harness) => {
     const context = {
       dateSummaryCreatedLabel: incompleteManifest.dateSummaryCreatedLabel,

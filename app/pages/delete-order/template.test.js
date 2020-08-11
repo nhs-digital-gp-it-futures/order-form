@@ -59,7 +59,7 @@ describe('delete order page', () => {
     harness.request(context, ($) => {
       const button = $('[data-test-id="no-button"]');
       expect(button.length).toEqual(1);
-      expect(button.text().trim()).toEqual(context.noButtonText);
+      expect(button.text().trim()).toEqual(context.noButton.text);
       expect(button.find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
@@ -68,7 +68,7 @@ describe('delete order page', () => {
     harness.request(context, ($) => {
       const button = $('[data-test-id="yes-button"] button');
       expect(button.length).toEqual(1);
-      expect(button.text().trim()).toEqual(context.yesButtonText);
+      expect(button.text().trim()).toEqual(context.yesButton.text);
     });
   }));
 });
