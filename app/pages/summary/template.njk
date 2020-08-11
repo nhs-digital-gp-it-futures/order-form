@@ -1,6 +1,7 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-table-flexible/macro.njk' import bcTableFlexible %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
 
 {% block body %}
   <div data-test-id="summary-page">
@@ -95,5 +96,18 @@
       </div>
     </div>
 
+    <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
+      <div class="nhsuk-grid-column-full">
+        <div class="bc-u-float-right">
+          {% if (summaryButtonText) %}
+            {{ bcButton({
+                dataTestId: "summary-button",
+                text: summaryButtonText,
+                classes: "nhsuk-button--secondary nhsuk-u-margin-bottom-9"
+            })}}
+          {% endif %}
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}

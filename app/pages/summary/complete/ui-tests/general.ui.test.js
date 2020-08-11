@@ -11,7 +11,7 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1')
-    .reply(200, { description: 'some order description' });
+    .reply(200, { description: 'some order description', status: 'complete' });
 };
 
 const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
@@ -259,13 +259,12 @@ test('should render the recurring cost totals table with 0.00 for the price', as
     .expect(await extractInnerText(totalOwnershipTermsLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data);
 });
 
-
-test('should not render the summary button', async (t) => {
+test('should render the summary button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="summary-button"] button');
 
   await t
-    .expect(button.exists).notOk();
+    .expect(await extractInnerText(button)).eql(content.summaryButtonText);
 });

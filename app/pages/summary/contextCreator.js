@@ -1,4 +1,5 @@
 import incompleteManifest from './incomplete/manifest.json';
+import completeManifest from './complete/manifest.json';
 import { baseUrl } from '../../config';
 import { formatDate } from '../../helpers/common/dateFormatter';
 import { formatPrice } from '../../helpers/common/priceFormatter';
@@ -317,7 +318,7 @@ const generateOneOffCostDetailsTable = ({
 export const getContext = ({
   orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
 }) => {
-  const manifest = orderData.status === 'complete' ? null : incompleteManifest;
+  const manifest = orderData.status === 'complete' ? completeManifest : incompleteManifest;
 
   return ({
     ...manifest,
