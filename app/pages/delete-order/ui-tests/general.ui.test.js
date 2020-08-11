@@ -119,7 +119,7 @@ test('should render the No button', async (t) => {
   const button = Selector('[data-test-id="no-button"] a');
 
   await t
-    .expect(await extractInnerText(button)).eql(content.noButtonText)
+    .expect(await extractInnerText(button)).eql(content.noButton.text)
     .expect(button.getAttribute('href')).eql('/order/organisation/order-id');
 });
 
@@ -130,7 +130,7 @@ test('should render the Yes button', async (t) => {
   const button = Selector('[data-test-id="yes-button"] button');
 
   await t
-    .expect(await extractInnerText(button)).eql(content.yesButtonText);
+    .expect(await extractInnerText(button)).eql(content.yesButton.text);
 });
 
 test('should redirect to /organisation/order-id/delete-order/confirmation when Yes is clicked', async (t) => {
