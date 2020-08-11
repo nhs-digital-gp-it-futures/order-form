@@ -290,14 +290,3 @@ test('should render the recurring cost totals table with 0.00 for the price', as
 
     .expect(await extractInnerText(totalOwnershipTermsLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data);
 });
-
-
-test('should not render the summary button', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const button = Selector('[data-test-id="summary-button"] button');
-
-  await t
-    .expect(button.exists).notOk();
-});

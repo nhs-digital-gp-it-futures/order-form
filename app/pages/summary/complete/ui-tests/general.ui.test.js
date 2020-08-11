@@ -105,6 +105,38 @@ test('should render the date summary created', async (t) => {
     .expect(await extractInnerText(dateSummaryCreated)).eql(`${content.dateSummaryCreatedLabel} ${formattedCurrentDate}`);
 });
 
+test('should render the get order summary top button', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const orderSummaryButton = Selector('[data-test-id="summary-page-orderSummaryButton-top"]');
+  const orderSummaryButtonATag = Selector('[data-test-id="summary-page-orderSummaryButton-top"] a');
+  const orderSummaryButtonDescription = Selector('[data-test-id="summary-page-orderSummaryButtonInfo-top"]');
+
+  await t
+    .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
+  await t
+    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
+  await t
+    .expect(await extractInnerText(orderSummaryButtonDescription)).eql(content.orderSummaryButtonInfoText);
+});
+
+test('should render the get order summary bottom button', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const orderSummaryButton = Selector('[data-test-id="summary-page-orderSummaryButton-bottom"]');
+  const orderSummaryButtonATag = Selector('[data-test-id="summary-page-orderSummaryButton-bottom"] a');
+  const orderSummaryButtonDescription = Selector('[data-test-id="summary-page-orderSummaryButtonInfo-bottom"]');
+
+  await t
+    .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
+  await t
+    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
+  await t
+    .expect(await extractInnerText(orderSummaryButtonDescription)).eql(content.orderSummaryButtonInfoText);
+});
+
 test('should render the Call-off ordering party and supplier table with the column headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -257,14 +289,4 @@ test('should render the recurring cost totals table with 0.00 for the price', as
     .expect(await extractInnerText(totalOwnershipCostValueCell)).eql('0.00')
 
     .expect(await extractInnerText(totalOwnershipTermsLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data);
-});
-
-test('should render the summary button', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const button = Selector('[data-test-id="summary-button"] button');
-
-  await t
-    .expect(await extractInnerText(button)).eql(content.summaryButtonText);
 });
