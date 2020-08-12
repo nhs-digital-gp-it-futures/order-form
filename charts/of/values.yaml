@@ -75,7 +75,10 @@ cookieSecret:
   key:
 
 serviceDependencies: 
-  oidc:
+  isapi: # used for internal calls to isapi custom api
+    name:
+    key:
+  oidc: # used for external references to isapi for oidc use
     baseUriConfig:
       name: 
       key:     

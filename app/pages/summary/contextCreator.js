@@ -1,4 +1,4 @@
-import manifest from './manifest.json';
+import incompleteManifest from './incomplete/manifest.json';
 import { baseUrl } from '../../config';
 import { formatDate } from '../../helpers/common/dateFormatter';
 import { formatPrice } from '../../helpers/common/priceFormatter';
@@ -316,36 +316,41 @@ const generateOneOffCostDetailsTable = ({
 
 export const getContext = ({
   orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
-}) => ({
-  ...manifest,
-  title: `${manifest.title} ${orderId}`,
-  orderDescription: orderData.description,
-  dateSummaryCreated: getCurrentDate(),
-  callOffAndSupplierTable: generateCallOffAndSupplierDetailsTable({
-    callOffAndSupplierTable: manifest.callOffAndSupplierTable,
-    orderPartyData: orderData.orderParty,
-    supplierData: orderData.supplier,
-  }),
-  oneOffCostTable: generateOneOffCostDetailsTable({
-    oneOffCostTable: manifest.oneOffCostTable,
-    oneOffCostItems,
-    serviceRecipients,
-  }),
-  oneOffCostTotalsTable: generateOneOffCostTotalsTable({
-    oneOffCostTotalsTable: manifest.oneOffCostTotalsTable,
-    oneOffCostTotalValue: orderData.totalOneOffCost,
-  }),
-  recurringCostTable: generateRecurringCostDetailsTable({
-    recurringCostTable: manifest.recurringCostTable,
-    recurringCostItems,
-    serviceRecipients,
-  }),
-  recurringCostTotalsTable: generateRecurringCostTotalsTable({
-    recurringCostTotalsTable: manifest.recurringCostTotalsTable,
-    recurringYearCost: orderData.totalRecurringCostPerYear,
-    recurringMonthCost: orderData.totalRecurringCostPerMonth,
-    ownershipCost: orderData.totalOwnershipCost,
-  }),
-  commencementDate: formatDate(orderData.commencementDate),
-  backLinkHref: `${baseUrl}/organisation/${orderId}`,
-});
+}) => {
+  const manifest = orderData.status === 'complete' ? null : incompleteManifest;
+
+  return ({
+    ...manifest,
+    title: `${manifest.title} ${orderId}`,
+    orderDescription: orderData.description,
+    dateSummaryCreated: getCurrentDate(),
+    callOffAndSupplierTable: generateCallOffAndSupplierDetailsTable({
+      callOffAndSupplierTable: manifest.callOffAndSupplierTable,
+      orderPartyData: orderData.orderParty,
+      supplierData: orderData.supplier,
+    }),
+    oneOffCostTable: generateOneOffCostDetailsTable({
+      oneOffCostTable: manifest.oneOffCostTable,
+      oneOffCostItems,
+      serviceRecipients,
+    }),
+    oneOffCostTotalsTable: generateOneOffCostTotalsTable({
+      oneOffCostTotalsTable: manifest.oneOffCostTotalsTable,
+      oneOffCostTotalValue: orderData.totalOneOffCost,
+    }),
+    recurringCostTable: generateRecurringCostDetailsTable({
+      recurringCostTable: manifest.recurringCostTable,
+      recurringCostItems,
+      serviceRecipients,
+    }),
+    recurringCostTotalsTable: generateRecurringCostTotalsTable({
+      recurringCostTotalsTable: manifest.recurringCostTotalsTable,
+      recurringYearCost: orderData.totalRecurringCostPerYear,
+      recurringMonthCost: orderData.totalRecurringCostPerMonth,
+      ownershipCost: orderData.totalOwnershipCost,
+    }),
+    commencementDate: formatDate(orderData.commencementDate),
+    backLinkHref: `${baseUrl}/organisation/${orderId}`,
+    orderSummaryButtonHref: `${baseUrl}/organisation/${orderId}/summary?print=true`,
+  });
+};

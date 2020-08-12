@@ -115,7 +115,7 @@ test('should render complete order button', async (t) => {
 
 test('should navigate to task list page when complete is clicked', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-id/status', { status: 'complete' })
+    .put('/api/v1/orders/order-id/status', { status: 'Complete' })
     .reply(200, {});
   await pageSetup();
   await t.navigateTo(pageUrl);

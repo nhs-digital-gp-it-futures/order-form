@@ -43,11 +43,11 @@ export const getExistingOrderContext = ({
   taskList: generateTaskList({ orderId, taskListManifest, sectionsData }),
   deleteOrderButton: {
     text: commonManifest.deleteOrderButton.text,
-    href: '#',
+    href: `${baseUrl}/organisation/${orderId}/delete-order`,
   },
   previewOrderButton: {
     text: commonManifest.previewOrderButton.text,
-    href: `${baseUrl}/organisation/${orderId}/preview`,
+    href: `${baseUrl}/organisation/${orderId}/summary`,
   },
   completeOrderButton: {
     text: commonManifest.completeOrderButton.text,

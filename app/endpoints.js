@@ -1,10 +1,10 @@
 import {
-  oidcBaseUri, orderApiUrl, organisationApiUrl, solutionsApiUrl, documentApiHost,
+  orderApiUrl, organisationApiUrl, solutionsApiUrl, documentApiHost, identityServerUrl,
 } from './config';
 
 const endpoints = {
   identity: {
-    getApiHealth: () => `${oidcBaseUri}/health/ready`,
+    getApiHealth: () => `${identityServerUrl}/health/ready`,
   },
   bapi: {
     getSearchSuppliers: options => `${solutionsApiUrl}/api/v1/suppliers?name=${encodeURIComponent(options.name)}&solutionPublicationStatus=Published`,
@@ -27,7 +27,6 @@ const endpoints = {
     getServiceRecipient: options => `${organisationApiUrl}/api/v1/ods/${options.selectedRecipientId}`,
   },
   ordapi: {
-    getOrders: options => `${orderApiUrl}/api/v1/organisations/${options.orgId}/orders`,
     getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
     getSupplier: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/supplier`,
     postSolutionOrderItem: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/catalogue-solutions`,

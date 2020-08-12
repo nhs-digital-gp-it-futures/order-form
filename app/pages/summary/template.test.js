@@ -1,14 +1,14 @@
 import { componentTester } from '../../test-utils/componentTester';
-import manifest from './manifest.json';
+import incompleteManifest from './incomplete/manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/preview/templatePrint.njk',
+    path: 'pages/summary/template.njk',
   },
 };
 
-describe('preview print page', () => {
-  it('should not render a backLink', componentTester(setup, (harness) => {
+describe('summary page', () => {
+  it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
@@ -17,29 +17,31 @@ describe('preview print page', () => {
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
-      expect(backLink.length).toEqual(0);
+      expect(backLink.length).toEqual(1);
+      expect(backLink.text().trim()).toEqual('Go back');
+      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
     });
   }));
 
-  it('should render the preview page title', componentTester(setup, (harness) => {
+  it('should render the summary page title', componentTester(setup, (harness) => {
     const context = {
       title: 'Order summary for order-1',
     };
 
     harness.request(context, ($) => {
-      const title = $('h1[data-test-id="preview-page-title"]');
+      const title = $('h1[data-test-id="summary-page-title"]');
       expect(title.length).toEqual(1);
       expect(title.text().trim()).toEqual(context.title);
     });
   }));
 
-  it('should render the preview page description', componentTester(setup, (harness) => {
+  it('should render the summary page description', componentTester(setup, (harness) => {
     const context = {
-      description: manifest.description,
+      description: incompleteManifest.description,
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="preview-page-description"]');
+      const description = $('h2[data-test-id="summary-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -47,7 +49,7 @@ describe('preview print page', () => {
 
   it('should render the order description', componentTester(setup, (harness) => {
     const context = {
-      orderDescriptionHeading: manifest.orderDescriptionHeading,
+      orderDescriptionHeading: incompleteManifest.orderDescriptionHeading,
       orderDescription: 'some-order-description',
     };
 
@@ -62,9 +64,75 @@ describe('preview print page', () => {
     });
   }));
 
+  it('should render the order summary button at the top of the page', componentTester(setup, (harness) => {
+    const withOrderSummaryButtonTextContext = {
+      orderSummaryButtonText: 'some order summary button text',
+      orderSummaryButtonHref: '/some-order-summary-link',
+    };
+
+    harness.request(withOrderSummaryButtonTextContext, ($) => {
+      const orderSummaryButton = $('[data-test-id="summary-page-orderSummaryButton-top"]');
+      expect(orderSummaryButton.length).toEqual(1);
+      expect(orderSummaryButton.text().trim()).toEqual(
+        withOrderSummaryButtonTextContext.orderSummaryButtonText,
+      );
+      expect(orderSummaryButton.find('a').attr('href')).toEqual(
+        withOrderSummaryButtonTextContext.orderSummaryButtonHref,
+      );
+    });
+  }));
+
+  it('should render the order summary button info text at the top of the page', componentTester(setup, (harness) => {
+    const context = {
+      orderSummaryButtonText: 'some-order-summary-button-text',
+      orderSummaryButtonInfoText: 'some-order-summary-info-text',
+    };
+
+    harness.request(context, ($) => {
+      const orderSummaryButtonInfoText = $('[data-test-id="summary-page-orderSummaryButtonInfo-top"]');
+
+      expect(orderSummaryButtonInfoText.length).toEqual(1);
+      expect(orderSummaryButtonInfoText.text()
+        .trim()).toContain(context.orderSummaryButtonInfoText);
+    });
+  }));
+
+  it('should render the order summary button at the bottom of the page', componentTester(setup, (harness) => {
+    const withOrderSummaryButtonTextContext = {
+      orderSummaryButtonText: 'some order summary button text',
+      orderSummaryButtonHref: '/some-order-summary-link',
+    };
+
+    harness.request(withOrderSummaryButtonTextContext, ($) => {
+      const orderSummaryButton = $('[data-test-id="summary-page-orderSummaryButton-bottom"]');
+      expect(orderSummaryButton.length).toEqual(1);
+      expect(orderSummaryButton.text().trim()).toEqual(
+        withOrderSummaryButtonTextContext.orderSummaryButtonText,
+      );
+      expect(orderSummaryButton.find('a').attr('href')).toEqual(
+        withOrderSummaryButtonTextContext.orderSummaryButtonHref,
+      );
+    });
+  }));
+
+  it('should render the order summary button info text at the bottom of the page', componentTester(setup, (harness) => {
+    const context = {
+      orderSummaryButtonText: 'some-order-summary-button-text',
+      orderSummaryButtonInfoText: 'some-order-summary-info-text',
+    };
+
+    harness.request(context, ($) => {
+      const orderSummaryButtonInfoText = $('[data-test-id="summary-page-orderSummaryButtonInfo-bottom"]');
+
+      expect(orderSummaryButtonInfoText.length).toEqual(1);
+      expect(orderSummaryButtonInfoText.text()
+        .trim()).toContain(context.orderSummaryButtonInfoText);
+    });
+  }));
+
   it('should render the order summary created date', componentTester(setup, (harness) => {
     const context = {
-      dateSummaryCreatedLabel: manifest.dateSummaryCreatedLabel,
+      dateSummaryCreatedLabel: incompleteManifest.dateSummaryCreatedLabel,
       dateSummaryCreated: '19 June 2020',
     };
 
@@ -161,7 +229,7 @@ describe('preview print page', () => {
 
   it('should render the commencement date', componentTester(setup, (harness) => {
     const context = {
-      commencementDateLabel: manifest.commencementDateLabel,
+      commencementDateLabel: incompleteManifest.commencementDateLabel,
       commencementDate: '19 June 2020',
     };
 
@@ -175,8 +243,8 @@ describe('preview print page', () => {
 
   it('should render the one off cost heading and description', componentTester(setup, (harness) => {
     const context = {
-      oneOffCostHeading: manifest.oneOffCostHeading,
-      oneOffCostDescription: manifest.oneOffCostDescription,
+      oneOffCostHeading: incompleteManifest.oneOffCostHeading,
+      oneOffCostDescription: incompleteManifest.oneOffCostDescription,
     };
 
     harness.request(context, ($) => {
@@ -305,8 +373,8 @@ describe('preview print page', () => {
 
   it('should render the recurring cost heading and description', componentTester(setup, (harness) => {
     const context = {
-      recurringCostHeading: manifest.recurringCostHeading,
-      recurringCostDescription: manifest.recurringCostDescription,
+      recurringCostHeading: incompleteManifest.recurringCostHeading,
+      recurringCostDescription: incompleteManifest.recurringCostDescription,
     };
 
     harness.request(context, ($) => {

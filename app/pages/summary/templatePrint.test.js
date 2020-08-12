@@ -1,14 +1,14 @@
 import { componentTester } from '../../test-utils/componentTester';
-import manifest from './manifest.json';
+import incompleteManifest from './incomplete/manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/preview/template.njk',
+    path: 'pages/summary/templatePrint.njk',
   },
 };
 
-describe('preview page', () => {
-  it('should render a backLink', componentTester(setup, (harness) => {
+describe('summary print page', () => {
+  it('should not render a backLink', componentTester(setup, (harness) => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
@@ -17,39 +17,25 @@ describe('preview page', () => {
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
-      expect(backLink.length).toEqual(1);
-      expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect(backLink.length).toEqual(0);
     });
   }));
 
-  it('should render the preview page title', componentTester(setup, (harness) => {
+  it('should render the summary page title', componentTester(setup, (harness) => {
     const context = {
       title: 'Order summary for order-1',
     };
 
     harness.request(context, ($) => {
-      const title = $('h1[data-test-id="preview-page-title"]');
+      const title = $('h1[data-test-id="summary-page-title"]');
       expect(title.length).toEqual(1);
       expect(title.text().trim()).toEqual(context.title);
     });
   }));
 
-  it('should render the preview page description', componentTester(setup, (harness) => {
-    const context = {
-      description: manifest.description,
-    };
-
-    harness.request(context, ($) => {
-      const description = $('h2[data-test-id="preview-page-description"]');
-      expect(description.length).toEqual(1);
-      expect(description.text().trim()).toEqual(context.description);
-    });
-  }));
-
   it('should render the order description', componentTester(setup, (harness) => {
     const context = {
-      orderDescriptionHeading: manifest.orderDescriptionHeading,
+      orderDescriptionHeading: incompleteManifest.orderDescriptionHeading,
       orderDescription: 'some-order-description',
     };
 
@@ -66,7 +52,7 @@ describe('preview page', () => {
 
   it('should render the order summary created date', componentTester(setup, (harness) => {
     const context = {
-      dateSummaryCreatedLabel: manifest.dateSummaryCreatedLabel,
+      dateSummaryCreatedLabel: incompleteManifest.dateSummaryCreatedLabel,
       dateSummaryCreated: '19 June 2020',
     };
 
@@ -163,7 +149,7 @@ describe('preview page', () => {
 
   it('should render the commencement date', componentTester(setup, (harness) => {
     const context = {
-      commencementDateLabel: manifest.commencementDateLabel,
+      commencementDateLabel: incompleteManifest.commencementDateLabel,
       commencementDate: '19 June 2020',
     };
 
@@ -177,8 +163,8 @@ describe('preview page', () => {
 
   it('should render the one off cost heading and description', componentTester(setup, (harness) => {
     const context = {
-      oneOffCostHeading: manifest.oneOffCostHeading,
-      oneOffCostDescription: manifest.oneOffCostDescription,
+      oneOffCostHeading: incompleteManifest.oneOffCostHeading,
+      oneOffCostDescription: incompleteManifest.oneOffCostDescription,
     };
 
     harness.request(context, ($) => {
@@ -307,8 +293,8 @@ describe('preview page', () => {
 
   it('should render the recurring cost heading and description', componentTester(setup, (harness) => {
     const context = {
-      recurringCostHeading: manifest.recurringCostHeading,
-      recurringCostDescription: manifest.recurringCostDescription,
+      recurringCostHeading: incompleteManifest.recurringCostHeading,
+      recurringCostDescription: incompleteManifest.recurringCostDescription,
     };
 
     harness.request(context, ($) => {

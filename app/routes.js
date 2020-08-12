@@ -8,12 +8,12 @@ import { withCatch, getHealthCheckDependencies, extractAccessToken } from './hel
 import { getDocumentByFileName } from './documentController';
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getTaskListPageContext } from './pages/task-list/controller';
-import { getOrder } from './helpers/api/ordapi/getOrder';
-import { getPreviewPageContext } from './pages/preview/controller';
 import { sectionRoutes } from './pages/sections/routes';
+import { summaryRoutes } from './pages/summary/routes';
 import { completeOrderRoutes } from './pages/complete-order/routes';
+import { deleteOrderRoutes } from './pages/delete-order/routes';
 import includesContext from './includes/manifest.json';
-import { sessionKeys } from './helpers/routes/sessionHelper';
+import { clearSession } from './helpers/routes/sessionHelper';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -60,43 +60,18 @@ export const routes = (authProvider, sessionManager) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { orderId } = req.params;
 
-    sessionManager.clearFromSession({
-      req, keys: [sessionKeys.selectedSupplier, sessionKeys.suppliersFound],
-    });
+    clearSession({ req, sessionManager });
 
     const context = await getTaskListPageContext({ accessToken, orderId });
     logger.info(`navigating to order ${orderId} task list page`);
     res.render('pages/task-list/template.njk', addContext({ context, user: req.user }));
   }));
 
-  router.get('/organisation/:orderId/preview', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const { orderId } = req.params;
-    const { print } = req.query;
-
-    const {
-      orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
-    } = await getOrder({ orderId, accessToken });
-
-    const context = await getPreviewPageContext({
-      orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
-    });
-
-    if (print) {
-      return res.render('pages/preview/templatePrint.njk', addContext({ context, user: req.user }));
-    }
-
-    return res.render('pages/preview/template.njk', addContext({ context, user: req.user }));
-  }));
+  router.use('/organisation/:orderId/summary', summaryRoutes(authProvider, addContext));
 
   router.use('/organisation/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
 
-  router.get('/organisation/:orderId/delete-order', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
-
-    logger.info(`navigating to order ${orderId} delete-order page`);
-    res.send('delete-order page');
-  }));
+  router.use('/organisation/:orderId/delete-order', deleteOrderRoutes(authProvider, addContext, sessionManager));
 
   router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
 

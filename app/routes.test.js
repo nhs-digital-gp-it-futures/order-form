@@ -8,20 +8,19 @@ import {
 import { App } from './app';
 import { routes } from './routes';
 import { baseUrl } from './config';
-import { getOrder } from './helpers/api/ordapi/getOrder';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
 import * as documentController from './documentController';
-import * as previewController from './pages/preview/controller';
 
 jest.mock('./logger');
 jest.mock('./helpers/api/ordapi/getOrder');
+jest.mock('./helpers/routes/getOrderDescription');
 
 dashboardController.getDashboardContext = jest.fn()
-  .mockResolvedValue({});
+  .mockResolvedValueOnce({});
 
 documentController.getDocumentByFileName = jest.fn()
-  .mockResolvedValue({});
+  .mockResolvedValueOnce({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
@@ -47,6 +46,10 @@ const setUpFakeApp = () => {
 };
 
 describe('routes', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('GET /', () => {
     const path = '/';
 
@@ -188,91 +191,6 @@ describe('routes', () => {
         .then((res) => {
           expect(res.text.includes('data-test-id="order-id-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
-    });
-  });
-
-  describe('GET /organisation/:orderId/preview', () => {
-    const path = '/organisation/order-id/preview';
-
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
-
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedGetPathForUnauthorisedUser({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        getPathCookies: [mockUnauthorisedCookie],
-        expectedPageId: 'data-test-id="error-title"',
-        expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
-
-    it('should return the correct status and text when the user is authorised', () => {
-      getOrder.mockResolvedValueOnce({});
-
-      previewController.getPreviewPageContext = jest.fn()
-        .mockResolvedValueOnce({});
-
-      return request(setUpFakeApp())
-        .get(path)
-        .set('Cookie', [mockAuthorisedCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('data-test-id="preview-page"')).toBeTruthy();
-          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
-    });
-
-    it('should return the printable preview page when the print flag is passed in', () => {
-      const pathWithPrintFlag = `${path}?print=true`;
-
-      getOrder.mockResolvedValueOnce({});
-
-      previewController.getPreviewPageContext = jest.fn()
-        .mockResolvedValueOnce({});
-
-      return request(setUpFakeApp())
-        .get(pathWithPrintFlag)
-        .set('Cookie', [mockAuthorisedCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('data-test-id="preview-page-print"')).toBeTruthy();
-          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
-    });
-  });
-
-  describe('GET /organisation/:orderId/delete-order', () => {
-    const path = '/organisation/some-order-id/delete-order';
-
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
-
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedGetPathForUnauthorisedUser({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        getPathCookies: [mockUnauthorisedCookie],
-        expectedPageId: 'data-test-id="error-title"',
-        expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
-
-    it('should return the correct status and text when the user is authorised', () => {
-      request(setUpFakeApp())
-        .get(path)
-        .set('Cookie', [mockAuthorisedCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.status).toBe(200);
-          expect(res.text.includes('delete-order page')).toBeTruthy();
         });
     });
   });
