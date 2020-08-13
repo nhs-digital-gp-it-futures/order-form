@@ -11,7 +11,7 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1')
-    .reply(200, { description: 'some order description' });
+    .reply(200, { description: 'some order description', status: 'Complete', dateCompleted: formatDate(new Date()) });
 };
 
 const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
@@ -25,7 +25,7 @@ const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Order Summary for incomplete order - general')
+fixture('Order Summary for complete order - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -94,6 +94,28 @@ test('should render the orderDescription', async (t) => {
     .expect(await extractInnerText(orderDescription)).eql('some order description');
 });
 
+test('should render the date summary created', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const formattedCurrentDate = formatDate(new Date());
+  const dateSummaryCreated = Selector('[data-test-id="date-summary-created"]');
+
+  await t
+    .expect(await extractInnerText(dateSummaryCreated)).eql(`${content.dateSummaryCreatedLabel} ${formattedCurrentDate}`);
+});
+
+test('should render the date completed', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const formattedCurrentDate = formatDate(new Date());
+  const dateCompleted = Selector('[data-test-id="date-completed"]');
+
+  await t
+    .expect(await extractInnerText(dateCompleted)).eql(`${content.dateCompletedLabel} ${formattedCurrentDate}`);
+});
+
 test('should render the get order summary top button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -124,17 +146,6 @@ test('should render the get order summary bottom button', async (t) => {
     .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
   await t
     .expect(await extractInnerText(orderSummaryButtonDescription)).eql(content.orderSummaryButtonInfoText);
-});
-
-test('should render the date summary created', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const formattedCurrentDate = formatDate(new Date());
-  const dateSummaryCreated = Selector('[data-test-id="date-summary-created"]');
-
-  await t
-    .expect(await extractInnerText(dateSummaryCreated)).eql(`${content.dateSummaryCreatedLabel} ${formattedCurrentDate}`);
 });
 
 test('should render the Call-off ordering party and supplier table with the column headings', async (t) => {
