@@ -1,9 +1,9 @@
 const { isApiReady } = require('buying-catalogue-library');
-const { identityServerUrl } = require('../../config');
+const { oidcBaseUri } = require('../../config');
 const { logger } = require('../../logger');
 
 const getWellKnownConfigEndpoint = () => (
-  `${identityServerUrl}/.well-known/openid-configuration`
+  `${oidcBaseUri}/.well-known/openid-configuration`
 );
 
 export const isIdentityReady = async () => {
