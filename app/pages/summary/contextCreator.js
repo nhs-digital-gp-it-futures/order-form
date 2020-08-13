@@ -318,7 +318,7 @@ const generateOneOffCostDetailsTable = ({
 export const getContext = ({
   orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
 }) => {
-  const manifest = orderData.status === 'complete' ? completeManifest : incompleteManifest;
+  const manifest = orderData.status === 'Complete' ? completeManifest : incompleteManifest;
 
   return ({
     ...manifest,

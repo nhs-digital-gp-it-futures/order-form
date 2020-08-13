@@ -11,7 +11,7 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1')
-    .reply(200, { description: 'some order description', status: 'complete', dateCompleted: formatDate(new Date()) });
+    .reply(200, { description: 'some order description', status: 'Complete', dateCompleted: formatDate(new Date()) });
 };
 
 const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
@@ -141,6 +141,7 @@ test('should render the get order summary bottom button', async (t) => {
   const orderSummaryButtonDescription = Selector('[data-test-id="summary-page-orderSummaryButtonInfo-bottom"]');
 
   await t
+  .debug()
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
   await t
     .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');

@@ -6,7 +6,7 @@ import { baseUrl } from '../../config';
 describe('order summary contextCreator', () => {
   describe('getContext', () => {
     const mockOrderData = { description: 'Some order description' };
-    const mockCompletedOrderData = { description: 'Some order description', status: 'complete', dateCompleted: '20 July 2020' };
+    const mockCompletedOrderData = { description: 'Some order description', status: 'Complete', dateCompleted: '20 July 2020' };
     const mockEmptyCallOffPartyRow = { multiLine: { data: [''] }, dataTestId: 'call-off-party' };
     const mockEmptySupplierRow = { multiLine: { data: [''] }, dataTestId: 'supplier' };
 
