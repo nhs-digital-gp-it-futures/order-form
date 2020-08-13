@@ -68,7 +68,7 @@ describe('order summary contextCreator', () => {
       expect(context.dateCompletedLabel).toEqual(completeManifest.dateCompletedLabel);
     });
 
-    it('should return the mockCompletedOrderData as the current date for a completed order', () => {
+    it('should return the mockCompletedOrderData as the provided date for a completed order', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockCompletedOrderData });
       expect(context.dateCompleted).toEqual('20 July 2020');
     });
