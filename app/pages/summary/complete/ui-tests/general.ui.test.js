@@ -141,7 +141,6 @@ test('should render the get order summary bottom button', async (t) => {
   const orderSummaryButtonDescription = Selector('[data-test-id="summary-page-orderSummaryButtonInfo-bottom"]');
 
   await t
-  .debug()
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
   await t
     .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
