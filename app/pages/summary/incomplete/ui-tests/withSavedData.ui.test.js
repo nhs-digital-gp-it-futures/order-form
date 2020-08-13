@@ -214,7 +214,7 @@ const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
   }
 };
 
-fixture('Order Summary  for complete order - with saved data')
+fixture('Order Summary for incomplete order - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
