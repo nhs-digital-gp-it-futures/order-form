@@ -352,7 +352,7 @@ export const getContext = ({
       ownershipCost: orderData.totalOwnershipCost,
     }),
     commencementDate: formatDate(orderData.commencementDate),
-    backLinkHref: `${baseUrl}/organisation/${orderId}`,
+    backLinkHref: orderData.status === 'Complete' ? `${baseUrl}/organisation` : `${baseUrl}/organisation/${orderId}`,
     orderSummaryButtonHref: `${baseUrl}/organisation/${orderId}/summary?print=true`,
   });
 };
