@@ -11,7 +11,7 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1')
-    .reply(200, { description: 'some order description', status: 'complete' });
+    .reply(200, { description: 'some order description', status: 'complete', dateCompleted: formatDate(new Date()) });
 };
 
 const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
@@ -25,7 +25,7 @@ const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Order Summary Summary - general')
+fixture('Order Summary for complete order - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -103,6 +103,17 @@ test('should render the date summary created', async (t) => {
 
   await t
     .expect(await extractInnerText(dateSummaryCreated)).eql(`${content.dateSummaryCreatedLabel} ${formattedCurrentDate}`);
+});
+
+test('should render the date completed', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const formattedCurrentDate = formatDate(new Date());
+  const dateCompleted = Selector('[data-test-id="date-completed"]');
+
+  await t
+    .expect(await extractInnerText(dateCompleted)).eql(`${content.dateCompletedLabel} ${formattedCurrentDate}`);
 });
 
 test('should render the get order summary top button', async (t) => {

@@ -4,6 +4,7 @@
   "description": "This order is complete and can no longer be changed. You can use the button below to get a copy of the order summary.",
   "orderDescriptionHeading": "Order description",
   "dateSummaryCreatedLabel": "Date order summary created:",
+  "dateCompletedLabel": "Date order completed:",
   "callOffAndSupplierTable": {
     "columnInfo": [
       {

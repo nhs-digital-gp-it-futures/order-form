@@ -1,10 +1,12 @@
 import incompleteManifest from './incomplete/manifest.json';
+import completeManifest from './complete/manifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
 describe('order summary contextCreator', () => {
   describe('getContext', () => {
     const mockOrderData = { description: 'Some order description' };
+    const mockCompletedOrderData = { description: 'Some order description', status: 'complete', dateCompleted: '20 July 2020' };
     const mockEmptyCallOffPartyRow = { multiLine: { data: [''] }, dataTestId: 'call-off-party' };
     const mockEmptySupplierRow = { multiLine: { data: [''] }, dataTestId: 'supplier' };
 
@@ -27,6 +29,11 @@ describe('order summary contextCreator', () => {
     it('should return the description', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
       expect(context.description).toEqual(incompleteManifest.description);
+    });
+
+    it('should return the description for a completed order', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockCompletedOrderData });
+      expect(context.description).toEqual(completeManifest.description);
     });
 
     it('should return the orderDescriptionHeading', () => {
@@ -54,6 +61,16 @@ describe('order summary contextCreator', () => {
       Date.now = jest.fn().mockReturnValue('2020-07-19T13:41:38.838Z');
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
       expect(context.dateSummaryCreated).toEqual('19 July 2020');
+    });
+
+    it('should return the dateCompletedLabel for a completed order', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockCompletedOrderData });
+      expect(context.dateCompletedLabel).toEqual(completeManifest.dateCompletedLabel);
+    });
+
+    it('should return the mockCompletedOrderData as the current date for a completed order', () => {
+      const context = getContext({ orderId: 'order-1', orderData: mockCompletedOrderData });
+      expect(context.dateCompleted).toEqual('20 July 2020');
     });
 
     it('should return the callOffAndSupplierTable colummInfo', () => {
