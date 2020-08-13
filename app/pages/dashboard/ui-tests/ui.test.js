@@ -213,7 +213,7 @@ test('should render the complete orders table content', async (t) => {
 
   await t
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[1].orderId)
-    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order2`)
+    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order2/summary`)
     .expect(await extractInnerText(description)).eql(mockOrdersData[1].description)
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[1].lastUpdatedBy)
     .expect(await extractInnerText(dateCompleted)).eql('9 December 2020')
@@ -250,7 +250,7 @@ test('should render the complete orders sorted by descending dateCompleted order
     .expect(await extractInnerText(row3DateCompleted)).eql('3 December 2020');
 });
 
-test('should navigate to the order page when an order id is clicked', async (t) => {
+test('should navigate to the summary page when an order id is clicked', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -260,5 +260,5 @@ test('should navigate to the order page when an order id is clicked', async (t) 
 
   await t
     .click(orderId)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order2');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order2/summary');
 });

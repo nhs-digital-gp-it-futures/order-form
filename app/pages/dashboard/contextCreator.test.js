@@ -68,7 +68,7 @@ describe('getContext', () => {
 
       expect(completeOrder1[0].data).toEqual('order2');
       expect(completeOrder1[0].classes).toEqual(classes);
-      expect(completeOrder1[0].href).toEqual(`${baseUrl}/organisation/order2`);
+      expect(completeOrder1[0].href).toEqual(`${baseUrl}/organisation/order2/summary`);
       expect(completeOrder1[0].dataTestId).toEqual('order2-id');
       expect(completeOrder1[1].data).toEqual('Some new order');
       expect(completeOrder1[1].classes).toEqual(classes);
@@ -91,7 +91,7 @@ describe('getContext', () => {
 
       expect(completeOrder2[0].data).toEqual('order3');
       expect(completeOrder2[0].classes).toEqual(classes);
-      expect(completeOrder2[0].href).toEqual(`${baseUrl}/organisation/order3`);
+      expect(completeOrder2[0].href).toEqual(`${baseUrl}/organisation/order3/summary`);
       expect(completeOrder2[0].dataTestId).toEqual('order3-id');
       expect(completeOrder2[5].data).toEqual('No');
       expect(completeOrder2[5].classes).toEqual(classes);

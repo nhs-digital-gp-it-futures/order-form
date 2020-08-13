@@ -59,7 +59,7 @@ test('should link to /order/organisation/order-1 for backlink', async (t) => {
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
 });
 
 test('should render the title', async (t) => {
