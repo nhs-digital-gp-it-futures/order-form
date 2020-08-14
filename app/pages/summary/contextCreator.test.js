@@ -15,7 +15,13 @@ describe('order summary contextCreator', () => {
       expect(context.backLinkText).toEqual(incompleteManifest.backLinkText);
     });
 
-    it('should construct the backLinkHref', () => {
+    it('should construct the backLinkHref for a complete order', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId, orderData: mockCompletedOrderData });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
+    });
+
+    it('should construct the backLinkHref for an incomplete order', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId, orderData: mockOrderData });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
