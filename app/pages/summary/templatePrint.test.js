@@ -1,5 +1,6 @@
 import { componentTester } from '../../test-utils/componentTester';
 import incompleteManifest from './incomplete/manifest.json';
+import completeManifest from './complete/manifest.json';
 
 const setup = {
   template: {
@@ -61,6 +62,20 @@ describe('summary print page', () => {
 
       expect(dateSummaryCreated.length).toEqual(1);
       expect(dateSummaryCreated.text().trim()).toContain(`${context.dateSummaryCreatedLabel} ${context.dateSummaryCreated}`);
+    });
+  }));
+
+  it('should render the order completed date for a complete order', componentTester(setup, (harness) => {
+    const context = {
+      dateCompletedLabel: completeManifest.dateCompletedLabel,
+      dateCompleted: '19 June 2020',
+    };
+
+    harness.request(context, ($) => {
+      const dateCompleted = $('[data-test-id="date-completed"]');
+
+      expect(dateCompleted.length).toEqual(1);
+      expect(dateCompleted.text().trim()).toContain(`${context.dateCompletedLabel} ${context.dateCompleted}`);
     });
   }));
 
