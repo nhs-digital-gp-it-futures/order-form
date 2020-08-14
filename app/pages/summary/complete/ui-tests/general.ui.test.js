@@ -82,6 +82,16 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
+test('should not render the orderDescription for print page', async (t) => {
+  await pageSetup();
+  await t.navigateTo(`${pageUrl}?print=true`);
+
+  const description = Selector('h2[data-test-id="summary-page-description"]');
+
+  await t
+    .expect(description.exists).notOk();
+});
+
 test('should render the orderDescription', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -108,6 +118,17 @@ test('should render the date summary created', async (t) => {
 test('should render the date completed', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+
+  const formattedCurrentDate = formatDate(new Date());
+  const dateCompleted = Selector('[data-test-id="date-completed"]');
+
+  await t
+    .expect(await extractInnerText(dateCompleted)).eql(`${content.dateCompletedLabel} ${formattedCurrentDate}`);
+});
+
+test('should render the date completed when on print page', async (t) => {
+  await pageSetup();
+  await t.navigateTo(`${pageUrl}?print=true`);
 
   const formattedCurrentDate = formatDate(new Date());
   const dateCompleted = Selector('[data-test-id="date-completed"]');

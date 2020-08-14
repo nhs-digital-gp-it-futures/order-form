@@ -38,6 +38,11 @@
         <div data-test-id="commencement-date">
           <span class="nhsuk-u-font-weight-bold">{{ commencementDateLabel }}</span> {{ commencementDate }}
         </div>
+        <div data-test-id="date-completed">
+          {% if (dateCompletedLabel) %}
+            <span class="nhsuk-u-font-weight-bold">{{ dateCompletedLabel }}</span> {{ dateCompleted }}
+          {% endif %}
+        </div>
       </div>
     </div>
 
