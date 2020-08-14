@@ -10,7 +10,6 @@ const endpoints = {
     getSearchSuppliers: options => `${solutionsApiUrl}/api/v1/suppliers?name=${encodeURIComponent(options.name)}&solutionPublicationStatus=Published`,
     getSupplier: options => `${solutionsApiUrl}/api/v1/suppliers/${options.supplierId}`,
     getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
-    getSolution: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}`,
     getSelectedPrice: options => `${solutionsApiUrl}/api/v1/prices/${options.selectedPriceId}`,
     getAdditionalServices: (options) => {
       const queryString = `solutionIds=${options.addedCatalogueSolutions.join('&solutionIds=')}`;
