@@ -73,6 +73,7 @@ baseUri:
 cookieSecret:
   name: 
   key:
+feedbackLinkUrl:
 
 serviceDependencies: 
   isapi: # used for internal calls to isapi custom api
