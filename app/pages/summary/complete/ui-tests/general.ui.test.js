@@ -11,7 +11,7 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1')
-    .reply(200, { description: 'some order description', status: 'Complete', dateCompleted: formatDate(new Date()) });
+    .reply(200, { description: 'some order description', status: 'Complete', dateCompleted: '19 June 2020' });
 };
 
 const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
@@ -82,7 +82,7 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
-test('should not render the orderDescription for print page', async (t) => {
+test('should not render the description for print page', async (t) => {
   await pageSetup();
   await t.navigateTo(`${pageUrl}?print=true`);
 
@@ -119,22 +119,20 @@ test('should render the date completed', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const formattedCurrentDate = formatDate(new Date());
   const dateCompleted = Selector('[data-test-id="date-completed"]');
 
   await t
-    .expect(await extractInnerText(dateCompleted)).eql(`${content.dateCompletedLabel} ${formattedCurrentDate}`);
+    .expect(await extractInnerText(dateCompleted)).eql(`${content.dateCompletedLabel} 19 June 2020`);
 });
 
 test('should render the date completed when on print page', async (t) => {
   await pageSetup();
   await t.navigateTo(`${pageUrl}?print=true`);
 
-  const formattedCurrentDate = formatDate(new Date());
   const dateCompleted = Selector('[data-test-id="date-completed"]');
 
   await t
-    .expect(await extractInnerText(dateCompleted)).eql(`${content.dateCompletedLabel} ${formattedCurrentDate}`);
+    .expect(await extractInnerText(dateCompleted)).eql(`${content.dateCompletedLabel} 19 June 2020`);
 });
 
 test('should render the get order summary top button', async (t) => {

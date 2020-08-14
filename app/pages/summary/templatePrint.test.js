@@ -65,7 +65,7 @@ describe('summary print page', () => {
     });
   }));
 
-  it('should render the order summary created date for a complete order', componentTester(setup, (harness) => {
+  it('should render the order completed date for a complete order', componentTester(setup, (harness) => {
     const context = {
       dateCompletedLabel: completeManifest.dateCompletedLabel,
       dateCompleted: '19 June 2020',
