@@ -1,14 +1,16 @@
 import { getData, putData } from 'buying-catalogue-library';
 import * as contextCreator from './contextCreator';
 import { logger } from '../../../../logger';
-import { solutionsApiUrl, orderApiUrl } from '../../../../config';
+import { orderApiUrl } from '../../../../config';
 import { getSupplierPageContext, putSupplier } from './controller';
+import { getSupplier as getSupplierFromBapi } from '../../../../helpers/api/bapi/getSupplier';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
+jest.mock('../../../../helpers/api/bapi/getSupplier');
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
@@ -45,17 +47,15 @@ describe('supplier controller', () => {
 
     describe('when ordapi does not have supplier data and supplierId is provided', () => {
       it('should call getData with the correct params', async () => {
-        getData
-          .mockResolvedValueOnce({});
+        getSupplierFromBapi.mockResolvedValueOnce({});
 
         await getSupplierPageContext({
           orderId, supplierId: 'supp-id', accessToken, hasSavedData: false,
         });
-        expect(getData.mock.calls.length).toEqual(1);
-        expect(getData).toHaveBeenCalledWith({
-          endpoint: `${solutionsApiUrl}/api/v1/suppliers/supp-id`,
+        expect(getSupplierFromBapi.mock.calls.length).toEqual(1);
+        expect(getSupplierFromBapi).toHaveBeenCalledWith({
+          supplierId: 'supp-id',
           accessToken,
-          logger,
         });
       });
 
