@@ -1,5 +1,5 @@
 import {
-  orderApiUrl, organisationApiUrl, solutionsApiUrl, documentApiHost, identityServerUrl,
+  orderApiUrl, organisationApiUrl, solutionsApiUrl, identityServerUrl,
 } from './config';
 
 const endpoints = {
