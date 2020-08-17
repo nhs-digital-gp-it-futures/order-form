@@ -4,6 +4,7 @@ import { logger } from '../../../../logger';
 import { orderApiUrl } from '../../../../config';
 import { getSupplierPageContext, putSupplier } from './controller';
 import { getSupplier as getSupplierFromBapi } from '../../../../helpers/api/bapi/getSupplier';
+import { getSupplier as getSupplierFromOrdapi } from '../../../../helpers/api/ordapi/getSupplier';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../../logger');
@@ -11,6 +12,7 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 jest.mock('../../../../helpers/api/bapi/getSupplier');
+jest.mock('../../../../helpers/api/ordapi/getSupplier');
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
@@ -18,25 +20,23 @@ const orderId = 'order-id';
 describe('supplier controller', () => {
   describe('getSupplierPageContext', () => {
     afterEach(() => {
-      getData.mockReset();
-      contextCreator.getContext.mockReset();
+      jest.resetAllMocks();
     });
 
     describe('when ordapi has supplier data', () => {
       it('should call getData with the correct params when hasSavedData is true', async () => {
-        getData.mockResolvedValueOnce({ name: 'a lovely name' });
+        getSupplierFromOrdapi.mockResolvedValueOnce({ name: 'a lovely name' });
 
         await getSupplierPageContext({ orderId, accessToken, hasSavedData: true });
-        expect(getData.mock.calls.length).toEqual(1);
-        expect(getData).toHaveBeenCalledWith({
-          endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/supplier`,
+        expect(getSupplierFromOrdapi.mock.calls.length).toEqual(1);
+        expect(getSupplierFromOrdapi).toHaveBeenCalledWith({
+          orderId: 'order-id',
           accessToken,
-          logger,
         });
       });
 
       it('should call getContext with the correct params', async () => {
-        getData.mockResolvedValueOnce({ name: 'a lovely name' });
+        getSupplierFromOrdapi.mockResolvedValueOnce({ name: 'a lovely name' });
         contextCreator.getContext.mockResolvedValueOnce({});
 
         await getSupplierPageContext({ orderId, accessToken, hasSavedData: true });
@@ -60,8 +60,7 @@ describe('supplier controller', () => {
       });
 
       it('should call getContext with the correct params', async () => {
-        getData
-          .mockResolvedValueOnce({ name: 'supplier' });
+        getSupplierFromOrdapi.mockResolvedValueOnce({ name: 'supplier' });
         contextCreator.getContext.mockResolvedValueOnce({});
 
         await getSupplierPageContext({

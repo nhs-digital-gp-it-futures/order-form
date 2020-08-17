@@ -1,10 +1,9 @@
-import { getData } from 'buying-catalogue-library';
-import { logger } from '../../../logger';
-import { orderApiUrl } from '../../../config';
 import { checkOrdapiForSupplier } from './controller';
+import { getSupplier } from '../../../helpers/api/ordapi/getSupplier';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
+jest.mock('../../../helpers/api/ordapi/getSupplier');
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
@@ -12,31 +11,30 @@ const orderId = 'order-id';
 describe('supplier base controller', () => {
   describe('checkOrdapiForSupplier', () => {
     afterEach(() => {
-      getData.mockReset();
+      jest.resetAllMocks();
     });
 
     describe('checkOrdapiForSupplier', () => {
       it('should call getData with the correct params', async () => {
-        getData.mockResolvedValueOnce({ name: 'a lovely name' });
+        getSupplier.mockResolvedValueOnce({ name: 'a lovely name' });
 
         await checkOrdapiForSupplier({ orderId, accessToken });
-        expect(getData.mock.calls.length).toEqual(1);
-        expect(getData).toHaveBeenCalledWith({
-          endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/supplier`,
+        expect(getSupplier.mock.calls.length).toEqual(1);
+        expect(getSupplier).toHaveBeenCalledWith({
+          orderId: 'order-id',
           accessToken,
-          logger,
         });
       });
 
       it('should return true if ORDAPI returns data', async () => {
-        getData.mockResolvedValueOnce({ name: 'a lovely name' });
+        getSupplier.mockResolvedValueOnce({ name: 'a lovely name' });
 
         const response = await checkOrdapiForSupplier({ orderId, accessToken });
         expect(response).toEqual(true);
       });
 
       it('should return false if ORDAPI returns no data', async () => {
-        getData.mockResolvedValueOnce({});
+        getSupplier.mockResolvedValueOnce({});
 
         const response = await checkOrdapiForSupplier({ orderId, accessToken });
         expect(response).toEqual(false);

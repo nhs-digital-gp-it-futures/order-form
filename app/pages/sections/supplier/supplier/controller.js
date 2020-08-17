@@ -1,8 +1,9 @@
-import { getData, putData } from 'buying-catalogue-library';
+import { putData } from 'buying-catalogue-library';
 import { getEndpoint } from '../../../../endpoints';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getSupplier as getSupplierFromBapi } from '../../../../helpers/api/bapi/getSupplier';
+import { getSupplier as getSupplierFromOrdapi } from '../../../../helpers/api/ordapi/getSupplier';
 
 const formatFormData = data => ({
   supplierId: data.supplierId ? data.supplierId.trim() : undefined,
@@ -30,12 +31,8 @@ export const getSupplierPageContext = async ({
   orderId, supplierId, accessToken, hasSavedData,
 }) => {
   if (hasSavedData) {
-    const ordapiSupplierDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getSupplier', options: { orderId } });
-    const ordapiSupplierData = await getData({
-      endpoint: ordapiSupplierDataEndpoint, accessToken, logger,
-    });
+    const ordapiSupplierData = await getSupplierFromOrdapi({ orderId, accessToken });
 
-    logger.info(`Supplier data found in ORDAPI for ${orderId}`);
     return getContext({
       orderId,
       supplierData: ordapiSupplierData,
