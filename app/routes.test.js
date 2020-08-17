@@ -10,16 +10,14 @@ import { routes } from './routes';
 import { baseUrl } from './config';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
-import * as getDocumentByFileName from './helpers/api/dapi/getDocumentByFileName';
+import { getDocumentByFileName } from './helpers/api/dapi/getDocumentByFileName';
 
 jest.mock('./logger');
 jest.mock('./helpers/api/ordapi/getOrder');
 jest.mock('./helpers/routes/getOrderDescription');
+jest.mock('./helpers/api/dapi/getDocumentByFileName');
 
 dashboardController.getDashboardContext = jest.fn()
-  .mockResolvedValueOnce({});
-
-getDocumentByFileName.getDocumentByFileName = jest.fn()
   .mockResolvedValueOnce({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
@@ -72,12 +70,11 @@ describe('routes', () => {
   describe('GET /document/:documentName', () => {
     const path = '/document/a-document';
     beforeEach(() => {
-      getDocumentByFileName.getDocumentByFileName = jest.fn()
-        .mockResolvedValue({ on: (a, b) => b() });
+      getDocumentByFileName.mockResolvedValue({ on: (a, b) => b() });
     });
 
     afterEach(() => {
-      getDocumentByFileName.getDocumentByFileName.mockReset();
+      getDocumentByFileName.mockReset();
     });
 
     it('should redirect to the login page if the user is not logged in', () => (
@@ -100,13 +97,12 @@ describe('routes', () => {
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
       .then(() => {
-        expect(getDocumentByFileName.getDocumentByFileName.mock.calls.length).toEqual(1);
-        expect(getDocumentByFileName.getDocumentByFileName).toHaveBeenCalledWith({
+        expect(getDocumentByFileName.mock.calls.length).toEqual(1);
+        expect(getDocumentByFileName).toHaveBeenCalledWith({
           res: expect.any(Object),
           documentName: 'a-document',
           contentType: 'application/pdf',
         });
-        getDocumentByFileName.getDocumentByFileName.mockReset();
       }));
 
     it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
