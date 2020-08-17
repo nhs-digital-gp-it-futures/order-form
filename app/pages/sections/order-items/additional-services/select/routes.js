@@ -5,7 +5,6 @@ import config from '../../../../../config';
 import { withCatch, extractAccessToken } from '../../../../../helpers/routes/routerHelper';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import {
-  findAdditionalServices,
   findAddedCatalogueSolutions,
   getAdditionalServicePageContext,
   getAdditionalServiceErrorPageContext,
@@ -26,6 +25,7 @@ import {
   findSelectedCatalogueItemInSession,
 } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
+import { getAdditionalServices } from '../../../../../helpers/api/bapi/getAdditionalServices';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
@@ -43,7 +43,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       const { orderId } = req.params;
       const accessToken = extractAccessToken({ req, tokenType: 'access' });
       const addedCatalogueSolutions = await findAddedCatalogueSolutions({ orderId, accessToken });
-      const additionalServices = await findAdditionalServices({
+      const additionalServices = await getAdditionalServices({
         addedCatalogueSolutions,
         accessToken,
       });

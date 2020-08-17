@@ -13,12 +13,14 @@ import { App } from '../../../app';
 import { routes } from '../../../routes';
 import { baseUrl } from '../../../config';
 import { sessionKeys } from '../../../helpers/routes/sessionHelper';
+import { getSearchSuppliers } from '../../../helpers/api/bapi/getSearchSuppliers';
 import * as supplierSearchController from './search/controller';
 import * as supplierSelectController from './select/controller';
 import * as supplierController from './supplier/controller';
 import * as baseController from './controller';
 
 jest.mock('../../../logger');
+jest.mock('../../../helpers/api/bapi/getSearchSuppliers');
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
@@ -338,8 +340,7 @@ describe('supplier section routes', () => {
       supplierSearchController.validateSupplierSearchForm = jest.fn()
         .mockImplementation(() => ({ success: true }));
 
-      supplierSearchController.findSuppliers = jest.fn()
-        .mockResolvedValue([{ supplierId: 'some-supplier-id', name: 'some-supplier-name' }]);
+      getSearchSuppliers.mockResolvedValue([{ supplierId: 'some-supplier-id', name: 'some-supplier-name' }]);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -363,8 +364,7 @@ describe('supplier section routes', () => {
     });
 
     it('should show the error page indicating no suppliers found', async () => {
-      supplierSearchController.findSuppliers = jest.fn()
-        .mockResolvedValue([]);
+      getSearchSuppliers.mockResolvedValue([]);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),

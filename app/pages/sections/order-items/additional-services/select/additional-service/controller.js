@@ -1,22 +1,9 @@
-import { getData } from 'buying-catalogue-library';
-import { getEndpoint } from '../../../../../../endpoints';
 import { logger } from '../../../../../../logger';
 import { getContext, getErrorContext } from './contextCreator';
 import { getOrderItems } from '../../../../../../helpers/api/ordapi/getOrderItems';
 
 export const getAdditionalServicePageContext = params => getContext(params);
 export const getAdditionalServiceErrorPageContext = params => getErrorContext(params);
-
-export const findAdditionalServices = async ({ addedCatalogueSolutions, accessToken }) => {
-  const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getAdditionalServices', options: { addedCatalogueSolutions } });
-  const { additionalServices } = await getData({ endpoint, accessToken, logger });
-  if (!additionalServices) {
-    return [];
-  }
-
-  logger.info(`Found ${additionalServices.length} additional service(s).`);
-  return additionalServices;
-};
 
 export const findAddedCatalogueSolutions = async ({ orderId, accessToken }) => {
   const catalogueSolutions = await getOrderItems({ orderId, catalogueItemType: 'Solution', accessToken });
