@@ -1,6 +1,6 @@
 import { getDocument, ErrorContext } from 'buying-catalogue-library';
-import { getDocumentByFileName } from './documentController';
-import { logger } from './logger';
+import { getDocumentByFileName } from './getDocumentByFileName';
+import { logger } from '../../../logger';
 
 jest.mock('buying-catalogue-library');
 
@@ -29,7 +29,7 @@ describe('Document controller', () => {
 
       expect(getDocument.mock.calls.length).toEqual(1);
       expect(getDocument).toHaveBeenCalledWith({
-        endpoint: 'http://localhost:5101/api/v1/documents/a-document.pdf',
+        documentEndpoint: 'http://localhost:5101/api/v1/documents/a-document.pdf',
         logger,
       });
     });

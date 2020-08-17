@@ -10,7 +10,7 @@ import { routes } from './routes';
 import { baseUrl } from './config';
 import * as dashboardController from './pages/dashboard/controller';
 import * as taskListController from './pages/task-list/controller';
-import * as documentController from './documentController';
+import * as getDocumentByFileName from './helpers/api/dapi/getDocumentByFileName';
 
 jest.mock('./logger');
 jest.mock('./helpers/api/ordapi/getOrder');
@@ -19,7 +19,7 @@ jest.mock('./helpers/routes/getOrderDescription');
 dashboardController.getDashboardContext = jest.fn()
   .mockResolvedValueOnce({});
 
-documentController.getDocumentByFileName = jest.fn()
+getDocumentByFileName.getDocumentByFileName = jest.fn()
   .mockResolvedValueOnce({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
@@ -72,12 +72,12 @@ describe('routes', () => {
   describe('GET /document/:documentName', () => {
     const path = '/document/a-document';
     beforeEach(() => {
-      documentController.getDocumentByFileName = jest.fn()
+      getDocumentByFileName.getDocumentByFileName = jest.fn()
         .mockResolvedValue({ on: (a, b) => b() });
     });
 
     afterEach(() => {
-      documentController.getDocumentByFileName.mockReset();
+      getDocumentByFileName.getDocumentByFileName.mockReset();
     });
 
     it('should redirect to the login page if the user is not logged in', () => (
@@ -100,13 +100,13 @@ describe('routes', () => {
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
       .then(() => {
-        expect(documentController.getDocumentByFileName.mock.calls.length).toEqual(1);
-        expect(documentController.getDocumentByFileName).toHaveBeenCalledWith({
+        expect(getDocumentByFileName.getDocumentByFileName.mock.calls.length).toEqual(1);
+        expect(getDocumentByFileName.getDocumentByFileName).toHaveBeenCalledWith({
           res: expect.any(Object),
           documentName: 'a-document',
           contentType: 'application/pdf',
         });
-        documentController.getDocumentByFileName.mockReset();
+        getDocumentByFileName.getDocumentByFileName.mockReset();
       }));
 
     it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
