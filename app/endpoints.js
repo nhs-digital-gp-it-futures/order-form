@@ -17,10 +17,6 @@ const endpoints = {
       return `${solutionsApiUrl}/api/v1/additional-services?${queryString}`;
     },
   },
-  dapi: {
-    getApiHealth: () => `${documentApiHost}/health/ready`,
-    getDocument: options => `${documentApiHost}/api/v1/documents/${options.documentName}`,
-  },
   oapi: {
     getOrganisation: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}`,
     getServiceRecipients: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}/service-recipients`,
