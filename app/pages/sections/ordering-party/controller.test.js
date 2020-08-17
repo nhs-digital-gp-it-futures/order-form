@@ -3,12 +3,14 @@ import { getCallOffOrderingPartyContext, putCallOffOrderingParty } from './contr
 import { logger } from '../../../logger';
 import { orderApiUrl, organisationApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
+import { getCallOffOrderingParty } from '../../../helpers/api/ordapi/getCallOffOrderingParty';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
+jest.mock('../../../helpers/api/ordapi/getCallOffOrderingParty');
 
 const mockPrimaryContact = {
   firstName: 'first name',
@@ -54,24 +56,24 @@ const mockFormData = {
 describe('ordering-party controller', () => {
   describe('getCallOffOrderingPartyContext', () => {
     afterEach(() => {
-      getData.mockReset();
-      contextCreator.getContext.mockReset();
+      jest.resetAllMocks();
     });
 
     describe('when ordering-party is not completed yet', () => {
-      it('should call getData twice with the correct params', async () => {
+      it('should initially call ordapi to get callOffOrderingParty and then getData with the correct params', async () => {
+        getCallOffOrderingParty.mockResolvedValueOnce({});
+
         getData
-          .mockResolvedValueOnce({})
           .mockResolvedValueOnce(mockDataFromOapi);
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
-        expect(getData.mock.calls.length).toEqual(2);
-        expect(getData).toHaveBeenNthCalledWith(1, {
-          endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
+        expect(getCallOffOrderingParty.mock.calls.length).toEqual(1);
+        expect(getCallOffOrderingParty).toHaveBeenCalledWith({
+          orderId: 'order-id',
           accessToken: 'access_token',
-          logger,
         });
-        expect(getData).toHaveBeenNthCalledWith(2, {
+        expect(getData.mock.calls.length).toEqual(1);
+        expect(getData).toHaveBeenCalledWith({
           endpoint: `${organisationApiUrl}/api/v1/Organisations/org-id`,
           accessToken: 'access_token',
           logger,
@@ -79,9 +81,8 @@ describe('ordering-party controller', () => {
       });
 
       it('should call getContext with the correct params when organisation data returned from organisations API', async () => {
-        getData
-          .mockResolvedValueOnce({})
-          .mockResolvedValueOnce(mockDataFromOapi);
+        getCallOffOrderingParty.mockResolvedValueOnce({});
+        getData.mockResolvedValueOnce(mockDataFromOapi);
         contextCreator.getContext
           .mockResolvedValueOnce();
 
@@ -92,9 +93,8 @@ describe('ordering-party controller', () => {
       });
 
       it('should call getContext with the correct params when primary contact data returned from organisations API', async () => {
-        getData
-          .mockResolvedValueOnce({})
-          .mockResolvedValueOnce(mockOrganisation);
+        getCallOffOrderingParty.mockResolvedValueOnce({});
+        getData.mockResolvedValueOnce(mockOrganisation);
         contextCreator.getContext
           .mockResolvedValueOnce();
 
@@ -106,22 +106,19 @@ describe('ordering-party controller', () => {
     });
 
     describe('when ordering-party is already completed', () => {
-      it('should call getData once with the correct params', async () => {
-        getData
-          .mockResolvedValueOnce(mockCompleteData);
+      it('should call getCallOffOrderingParty with the correct params', async () => {
+        getCallOffOrderingParty.mockResolvedValueOnce(mockCompleteData);
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
-        expect(getData.mock.calls.length).toEqual(1);
-        expect(getData).toHaveBeenCalledWith({
-          endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
+        expect(getCallOffOrderingParty.mock.calls.length).toEqual(1);
+        expect(getCallOffOrderingParty).toHaveBeenCalledWith({
+          orderId: 'order-id',
           accessToken: 'access_token',
-          logger,
         });
       });
 
       it('should call getContext with the correct params when data returned from ordering API', async () => {
-        getData
-          .mockResolvedValueOnce(mockCompleteData);
+        getCallOffOrderingParty.mockResolvedValueOnce(mockCompleteData);
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 

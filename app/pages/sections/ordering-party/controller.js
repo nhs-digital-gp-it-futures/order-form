@@ -1,6 +1,7 @@
 import { getData, putData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { getEndpoint } from '../../../endpoints';
+import { getCallOffOrderingParty } from '../../../helpers/api/ordapi/getCallOffOrderingParty';
 import { logger } from '../../../logger';
 
 const formatFormData = data => ({
@@ -26,8 +27,7 @@ const formatFormData = data => ({
 });
 
 export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessToken }) => {
-  const callOffOrgDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCallOffOrderingParty', options: { orderId } });
-  const callOffOrgData = await getData({ endpoint: callOffOrgDataEndpoint, accessToken, logger });
+  const callOffOrgData = await getCallOffOrderingParty({ orderId, accessToken });
   if (callOffOrgData && callOffOrgData.name) {
     logger.info(`Call off ordering party found in ORDAPI for ${orderId}`);
     return getContext({
