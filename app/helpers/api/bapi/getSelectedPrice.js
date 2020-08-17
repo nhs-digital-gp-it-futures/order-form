@@ -9,7 +9,7 @@ const getSelectedPriceEndpoint = selectedPriceId => (
 export const getSelectedPrice = async ({ selectedPriceId, accessToken }) => {
   const endpoint = getSelectedPriceEndpoint(selectedPriceId);
   const selectedPriceData = await getData({ endpoint, accessToken, logger });
-  logger.info(`Price details returned for ${selectedPriceId}`);
+  logger.info(`Retrieved Price data from BAPI for ${selectedPriceId}`);
 
   return selectedPriceData;
 };
