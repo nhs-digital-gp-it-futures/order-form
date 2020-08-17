@@ -113,7 +113,7 @@ test('should render the order description', async (t) => {
     .expect(await extractInnerText(orderDescription)).eql('Some super cool order description');
 });
 
-test.only('should render Continue editing order button', async (t) => {
+test('should render Continue editing order button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

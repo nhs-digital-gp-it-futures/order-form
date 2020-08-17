@@ -113,7 +113,7 @@ test('should render complete order button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.completeOrderButtonText);
 });
 
-test.only('should render Continue editing order button', async (t) => {
+test('should render Continue editing order button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
