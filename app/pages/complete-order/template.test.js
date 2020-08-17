@@ -1,5 +1,4 @@
 import { componentTester } from '../../test-utils/componentTester';
-import { t } from 'testcafe';
 
 const setup = {
   template: {
