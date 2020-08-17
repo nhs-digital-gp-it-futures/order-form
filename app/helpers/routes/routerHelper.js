@@ -1,5 +1,5 @@
 import { ErrorContext } from 'buying-catalogue-library';
-import { appBaseUri, isDevelopment } from '../../config';
+import { appBaseUri, isDevelopment, documentApiHost } from '../../config';
 import { getEndpoint } from '../../endpoints';
 
 export const withCatch = (logger, authProvider, route) => async (req, res, next) => {
@@ -36,7 +36,7 @@ export const getHealthCheckDependencies = () => {
     },
     {
       name: 'Document API',
-      endpoint: getEndpoint({ api: 'dapi', endpointLocator: 'getApiHealth' }),
+      endpoint: `${documentApiHost}/health/ready`,
     },
   ];
 

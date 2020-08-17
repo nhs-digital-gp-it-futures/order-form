@@ -5,7 +5,7 @@ import {
 import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routes/routerHelper';
-import { getDocumentByFileName } from './documentController';
+import { getDocumentByFileName } from './helpers/api/dapi/getDocumentByFileName';
 import { getDashboardContext } from './pages/dashboard/controller';
 import { getTaskListPageContext } from './pages/task-list/controller';
 import { sectionRoutes } from './pages/sections/routes';
