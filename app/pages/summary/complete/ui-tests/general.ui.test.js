@@ -11,7 +11,7 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1')
-    .reply(200, { description: 'some order description', status: 'Complete', dateCompleted: '19 June 2020' });
+    .reply(200, { description: 'some order description', status: 'Complete', dateCompleted: '2020-06-19T00:00:00' });
 };
 
 const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
