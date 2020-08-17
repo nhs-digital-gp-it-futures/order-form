@@ -1,16 +1,10 @@
 import {
-  orderApiUrl, organisationApiUrl, solutionsApiUrl, documentApiHost, identityServerUrl,
+  orderApiUrl, organisationApiUrl, documentApiHost, identityServerUrl,
 } from './config';
 
 const endpoints = {
   identity: {
     getApiHealth: () => `${identityServerUrl}/health/ready`,
-  },
-  bapi: {
-    getAdditionalServices: (options) => {
-      const queryString = `solutionIds=${options.addedCatalogueSolutions.join('&solutionIds=')}`;
-      return `${solutionsApiUrl}/api/v1/additional-services?${queryString}`;
-    },
   },
   dapi: {
     getApiHealth: () => `${documentApiHost}/health/ready`,
