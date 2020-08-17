@@ -30,11 +30,21 @@
 
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          <div class="bc-u-inline-block">
+          {{ bcButton({
+              dataTestId: "continue-editing-order-button",
+              text: continueEditingOrderButtonText,
+              classes: "nhsuk-u-margin-top-9",
+              href: continueEditingOrderButtonHref
+          })}}
+          </div>
+          <div class="bc-u-inline-block">
           {{ bcButton({
               dataTestId: "complete-order-button",
               text: completeOrderButtonText,
               classes: "nhsuk-u-margin-top-9"
           })}}
+          </div>
         </form>
     </div>
   </div>

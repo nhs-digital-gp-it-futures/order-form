@@ -1,4 +1,5 @@
 import { componentTester } from '../../test-utils/componentTester';
+import { t } from 'testcafe';
 
 const setup = {
   template: {
@@ -12,8 +13,10 @@ describe('complete order page', () => {
     description: 'some page description',
     orderDescriptionTitle: 'some order description title',
     completeOrderButtonText: 'Complete order',
+    continueEditingOrderButtonText: 'Continue editing order',
     title: 'some complete order title',
     backLinkHref: '/organisation/order-1',
+    continueEditingOrderButtonHref: '/organisation/order-1',
     orderDescription: 'some order description',
     csrfToken: 'mockCsrfToken',
   };
@@ -91,6 +94,15 @@ describe('complete order page', () => {
       expect(formElement.length).toEqual(1);
       expect(formElement.attr('type')).toEqual('hidden');
       expect(formElement.attr('value')).toEqual(context.csrfToken);
+    });
+  }));
+
+  it('should render the complete order page continue editing order button', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const button = $('[data-test-id="continue-editing-order-button"] a');
+      expect(button.length).toEqual(1);
+      expect(button.text().trim()).toEqual(context.continueEditingOrderButtonText);
+      expect($(button).attr('href')).toEqual('/organisation/order-1');
     });
   }));
 

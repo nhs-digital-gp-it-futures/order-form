@@ -41,6 +41,18 @@ describe('complete order contextCreator', () => {
       const context = getContext({ orderId: 'order-1', fundingSource });
       expect(context.completeOrderButtonText).toEqual(withFundingManifest.completeOrderButtonText);
     });
+
+    it('should return the continueEditingOrderButtonText', () => {
+      const context = getContext({ orderId: 'order-1', fundingSource });
+      expect(context.continueEditingOrderButtonText)
+        .toEqual(withFundingManifest.continueEditingOrderButtonText);
+    });
+
+    it('should construct the continueEditingOrderButtonHref', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId, fundingSource });
+      expect(context.continueEditingOrderButtonHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+    });
   });
 
   describe('getContext - without funding', () => {
@@ -79,6 +91,18 @@ describe('complete order contextCreator', () => {
         fundingSource,
       });
       expect(context.orderDescription).toEqual('Some order description');
+    });
+
+    it('should return the continueEditingOrderButtonText', () => {
+      const context = getContext({ orderId: 'order-1', fundingSource });
+      expect(context.continueEditingOrderButtonText)
+        .toEqual(withFundingManifest.continueEditingOrderButtonText);
+    });
+
+    it('should construct the continueEditingOrderButtonHref', () => {
+      const orderId = 'order-id';
+      const context = getContext({ orderId, fundingSource });
+      expect(context.continueEditingOrderButtonHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
 
     it('should return the completeOrderButtonText', () => {
