@@ -1,6 +1,3 @@
-import { getData } from 'buying-catalogue-library';
-import { getEndpoint } from '../../../../endpoints';
-import { logger } from '../../../../logger';
 import { getContext, getErrorContext } from './contextCreator';
 
 export const getSupplierSearchPageContext = async ({ orderId }) => (
@@ -19,14 +16,6 @@ export const validateSupplierSearchForm = ({ data }) => {
     },
   ];
   return { success: false, errors };
-};
-
-export const findSuppliers = async ({ name, accessToken }) => {
-  const endpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSearchSuppliers', options: { name } });
-  const suppliersFound = await getData({ endpoint, accessToken, logger });
-  logger.info(`Searching for "${name}" returned ${suppliersFound.length} suppliers`);
-
-  return suppliersFound;
 };
 
 export const getSupplierSearchPageErrorContext = params => getErrorContext(params);
