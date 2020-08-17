@@ -7,7 +7,6 @@ const endpoints = {
     getApiHealth: () => `${identityServerUrl}/health/ready`,
   },
   bapi: {
-    getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
     getAdditionalServices: (options) => {
       const queryString = `solutionIds=${options.addedCatalogueSolutions.join('&solutionIds=')}`;
       return `${solutionsApiUrl}/api/v1/additional-services?${queryString}`;
