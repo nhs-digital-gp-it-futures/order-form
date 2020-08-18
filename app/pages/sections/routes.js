@@ -8,7 +8,6 @@ import {
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './description/controller';
 import {
   getCommencementDateContext,
-  putCommencementDate,
   getCommencementDateErrorContext,
   validateCommencementDateForm,
 } from './commencement-date/controller';
@@ -21,6 +20,7 @@ import { associatedServicesRoutes } from './order-items/associated-services/rout
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
+import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
 
 const router = express.Router({ mergeParams: true });
 

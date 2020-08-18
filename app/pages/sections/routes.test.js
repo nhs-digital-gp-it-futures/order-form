@@ -19,6 +19,7 @@ import * as serviceRecipientsController from './service-recipients/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
+import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
 import * as fundingSourceController from './funding-source/controller';
 
 jest.mock('../../logger');
@@ -26,6 +27,7 @@ jest.mock('../../helpers/api/ordapi/getFundingSource');
 jest.mock('../../helpers/api/ordapi/putFundingSource');
 jest.mock('../../helpers/routes/getOrderDescription');
 jest.mock('../../helpers/api/ordapi/putOrderingParty');
+jest.mock('../../helpers/api/ordapi/putCommencementDate');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -342,16 +344,13 @@ describe('section routes', () => {
     commencementDateController.validateCommencementDateForm = jest.fn()
       .mockReturnValue([]);
 
-    commencementDateController.putCommencementDate = jest.fn()
-      .mockResolvedValue({});
+    putCommencementDate.mockResolvedValue({});
 
     commencementDateController.getCommencementDateErrorContext = jest.fn()
       .mockResolvedValue({});
 
     afterEach(() => {
-      commencementDateController.validateCommencementDateForm.mockReset();
-      commencementDateController.putCommencementDate.mockReset();
-      commencementDateController.getCommencementDateErrorContext.mockReset();
+      jest.resetAllMocks();
     });
 
     it('should return 403 forbidden if no csrf token is available', () => (
@@ -387,8 +386,7 @@ describe('section routes', () => {
       commencementDateController.validateCommencementDateForm = jest.fn()
         .mockReturnValue([]);
 
-      commencementDateController.putCommencementDate = jest.fn()
-        .mockResolvedValue({ success: true });
+      putCommencementDate.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -439,8 +437,7 @@ describe('section routes', () => {
       commencementDateController.validateCommencementDateForm = jest.fn()
         .mockReturnValue([]);
 
-      commencementDateController.putCommencementDate = jest.fn()
-        .mockResolvedValue({ success: false, errors: [{}] });
+      putCommencementDate.mockResolvedValue({ success: false, errors: [{}] });
 
       commencementDateController.getCommencementDateErrorContext = jest.fn()
         .mockResolvedValue({
