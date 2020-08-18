@@ -1,5 +1,5 @@
 import {
-  orderApiUrl, organisationApiUrl, documentApiHost, identityServerUrl,
+  organisationApiUrl, documentApiHost, identityServerUrl,
 } from './config';
 
 const endpoints = {
@@ -14,9 +14,6 @@ const endpoints = {
     getOrganisation: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}`,
     getServiceRecipients: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}/service-recipients`,
     getServiceRecipient: options => `${organisationApiUrl}/api/v1/ods/${options.selectedRecipientId}`,
-  },
-  ordapi: {
-    putServiceRecipients: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/service-recipients`,
   },
 };
 

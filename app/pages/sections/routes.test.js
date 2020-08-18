@@ -20,6 +20,7 @@ import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
+import { putServiceRecipients } from '../../helpers/api/ordapi/putServiceRecipients';
 import * as fundingSourceController from './funding-source/controller';
 
 jest.mock('../../logger');
@@ -28,6 +29,7 @@ jest.mock('../../helpers/api/ordapi/putFundingSource');
 jest.mock('../../helpers/routes/getOrderDescription');
 jest.mock('../../helpers/api/ordapi/putOrderingParty');
 jest.mock('../../helpers/api/ordapi/putCommencementDate');
+jest.mock('../../helpers/api/ordapi/putServiceRecipients');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -39,9 +41,6 @@ orderingPartyController.getCallOffOrderingPartyContext = jest.fn()
   .mockResolvedValue({});
 
 serviceRecipientsController.getServiceRecipientsContext = jest.fn()
-  .mockResolvedValue({});
-
-serviceRecipientsController.putServiceRecipients = jest.fn()
   .mockResolvedValue({});
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
@@ -508,7 +507,7 @@ describe('section routes', () => {
     const path = '/organisation/order-id/service-recipients';
 
     afterEach(() => {
-      serviceRecipientsController.putServiceRecipients.mockReset();
+      jest.resetAllMocks();
     });
 
     it('should return 403 forbidden if no csrf token is available', () => (
@@ -541,8 +540,7 @@ describe('section routes', () => {
     ));
 
     it('should return the correct status and text if response.success is true', async () => {
-      serviceRecipientsController.putServiceRecipients = jest.fn()
-        .mockResolvedValue({ success: true });
+      putServiceRecipients.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),

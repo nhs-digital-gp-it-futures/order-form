@@ -1,4 +1,4 @@
-import { getData, putData } from 'buying-catalogue-library';
+import { getData } from 'buying-catalogue-library';
 import { getContext } from './contextCreator';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
@@ -30,20 +30,4 @@ export const getServiceRecipientsContext = async ({
     selectedRecipientIdsData: selectedData ? selectedData.serviceRecipients : [],
     selectStatus,
   });
-};
-
-const formatPutData = data => Object.entries(data).filter(item => item[0] !== '_csrf')
-  .map(([odsCode, name]) => ({ name, odsCode }));
-
-export const putServiceRecipients = async ({ accessToken, data, orderId }) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putServiceRecipients', options: { orderId } });
-  const body = { serviceRecipients: formatPutData(data) };
-  await putData({
-    endpoint,
-    body,
-    accessToken,
-    logger,
-  });
-  logger.info(`Service recipients updated - order id: ${orderId}, ${JSON.stringify(body)}`);
-  return { success: true };
 };

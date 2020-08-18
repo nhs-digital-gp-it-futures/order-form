@@ -11,7 +11,7 @@ import {
   getCommencementDateErrorContext,
   validateCommencementDateForm,
 } from './commencement-date/controller';
-import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
+import { getServiceRecipientsContext } from './service-recipients/controller';
 import { getFundingSourceContext, getFundingSourceErrorPageContext, validateFundingSourceForm } from './funding-source/controller';
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/routes';
@@ -21,6 +21,7 @@ import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
+import { putServiceRecipients } from '../../helpers/api/ordapi/putServiceRecipients';
 
 const router = express.Router({ mergeParams: true });
 
