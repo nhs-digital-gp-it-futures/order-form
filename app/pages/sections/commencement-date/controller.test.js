@@ -2,7 +2,6 @@ import { getCommencementDateContext, validateCommencementDateForm } from './cont
 import * as contextCreator from './contextCreator';
 import { getCommencementDate } from '../../../helpers/api/ordapi/getCommencementDate';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),

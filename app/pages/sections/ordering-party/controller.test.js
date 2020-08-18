@@ -1,16 +1,14 @@
-import { getData } from 'buying-catalogue-library';
 import { getCallOffOrderingPartyContext } from './controller';
-import { logger } from '../../../logger';
-import { organisationApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
 import { getCallOffOrderingParty } from '../../../helpers/api/ordapi/getCallOffOrderingParty';
+import { getOrganisation } from '../../../helpers/api/oapi/getOrganisation';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 jest.mock('../../../helpers/api/ordapi/getCallOffOrderingParty');
+jest.mock('../../../helpers/api/oapi/getOrganisation');
 
 const mockPrimaryContact = {
   firstName: 'first name',
@@ -53,31 +51,29 @@ describe('ordering-party controller', () => {
     });
 
     describe('when ordering-party is not completed yet', () => {
-      it('should initially call ordapi to get callOffOrderingParty and then getData with the correct params', async () => {
+      it('should initially call ordapi to get callOffOrderingParty and then getOrganisation with the correct params', async () => {
         getCallOffOrderingParty.mockResolvedValueOnce({});
-
-        getData
-          .mockResolvedValueOnce(mockDataFromOapi);
+        getOrganisation.mockResolvedValueOnce(mockDataFromOapi);
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
+
         expect(getCallOffOrderingParty.mock.calls.length).toEqual(1);
         expect(getCallOffOrderingParty).toHaveBeenCalledWith({
           orderId: 'order-id',
           accessToken: 'access_token',
         });
-        expect(getData.mock.calls.length).toEqual(1);
-        expect(getData).toHaveBeenCalledWith({
-          endpoint: `${organisationApiUrl}/api/v1/Organisations/org-id`,
+
+        expect(getOrganisation.mock.calls.length).toEqual(1);
+        expect(getOrganisation).toHaveBeenCalledWith({
+          orgId: 'org-id',
           accessToken: 'access_token',
-          logger,
         });
       });
 
       it('should call getContext with the correct params when organisation data returned from organisations API', async () => {
         getCallOffOrderingParty.mockResolvedValueOnce({});
-        getData.mockResolvedValueOnce(mockDataFromOapi);
-        contextCreator.getContext
-          .mockResolvedValueOnce();
+        getOrganisation.mockResolvedValueOnce(mockDataFromOapi);
+        contextCreator.getContext.mockResolvedValueOnce();
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 
@@ -87,9 +83,8 @@ describe('ordering-party controller', () => {
 
       it('should call getContext with the correct params when primary contact data returned from organisations API', async () => {
         getCallOffOrderingParty.mockResolvedValueOnce({});
-        getData.mockResolvedValueOnce(mockOrganisation);
-        contextCreator.getContext
-          .mockResolvedValueOnce();
+        getOrganisation.mockResolvedValueOnce(mockOrganisation);
+        contextCreator.getContext.mockResolvedValueOnce();
 
         await getCallOffOrderingPartyContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 

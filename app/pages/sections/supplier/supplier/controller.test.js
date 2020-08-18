@@ -1,10 +1,8 @@
-import { getData } from 'buying-catalogue-library';
 import * as contextCreator from './contextCreator';
 import { getSupplierPageContext } from './controller';
 import { getSupplier as getSupplierFromBapi } from '../../../../helpers/api/bapi/getSupplier';
 import { getSupplier as getSupplierFromOrdapi } from '../../../../helpers/api/ordapi/getSupplier';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
@@ -70,11 +68,11 @@ describe('supplier controller', () => {
     });
 
     describe('when ordapi does not have supplier data and supplierId not provided', () => {
-      it('should not call getData', async () => {
+      it('should not call getSupplierFromOrdapi', async () => {
         try {
           await getSupplierPageContext({ orderId, accessToken, hasSavedData: false });
         } catch (err) {
-          expect(getData.mock.calls.length).toEqual(0);
+          expect(getSupplierFromOrdapi.mock.calls.length).toEqual(0);
         }
       });
 

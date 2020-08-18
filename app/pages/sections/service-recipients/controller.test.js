@@ -3,7 +3,6 @@ import * as contextCreator from './contextCreator';
 import { getRecipients as getRecipientsFromOrdapi } from '../../../helpers/api/ordapi/getRecipients';
 import { getServiceRecipients as getRecipientsFromOapi } from '../../../helpers/api/oapi/getServiceRecipients';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),

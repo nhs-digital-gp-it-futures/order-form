@@ -1,7 +1,6 @@
 import { checkOrdapiForSupplier } from './controller';
 import { getSupplier } from '../../../helpers/api/ordapi/getSupplier';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('../../../helpers/api/ordapi/getSupplier');
 

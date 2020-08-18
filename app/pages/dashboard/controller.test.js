@@ -2,7 +2,6 @@ import { getDashboardContext } from './controller';
 import * as contextCreator from './contextCreator';
 import { getOrders } from '../../helpers/api/ordapi/getOrders';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../helpers/api/ordapi/getOrders');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),

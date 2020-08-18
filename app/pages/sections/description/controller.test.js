@@ -6,7 +6,6 @@ import { getOrderDescription } from '../../../helpers/routes/getOrderDescription
 import { postDescription } from '../../../helpers/api/ordapi/postDescription';
 import { putDescription } from '../../../helpers/api/ordapi/putDescription';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
