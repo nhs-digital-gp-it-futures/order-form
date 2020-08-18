@@ -1,6 +1,4 @@
-import { getData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
-import { getEndpoint } from '../../../endpoints';
 import { getCallOffOrderingParty } from '../../../helpers/api/ordapi/getCallOffOrderingParty';
 import { logger } from '../../../logger';
 import { getOrganisation } from '../../../helpers/api/oapi/getOrganisation';
