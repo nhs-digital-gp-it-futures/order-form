@@ -1,15 +1,10 @@
 import {
-  orderApiUrl, organisationApiUrl, identityServerUrl,
+  orderApiUrl, identityServerUrl,
 } from './config';
 
 const endpoints = {
   identity: {
     getApiHealth: () => `${identityServerUrl}/health/ready`,
-  },
-  oapi: {
-    getOrganisation: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}`,
-    getServiceRecipients: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}/service-recipients`,
-    getServiceRecipient: options => `${organisationApiUrl}/api/v1/ods/${options.selectedRecipientId}`,
   },
   ordapi: {
     getCallOffOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
