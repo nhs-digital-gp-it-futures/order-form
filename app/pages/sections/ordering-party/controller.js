@@ -1,4 +1,4 @@
-import { getData, putData } from 'buying-catalogue-library';
+import { getData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { getEndpoint } from '../../../endpoints';
 import { getCallOffOrderingParty } from '../../../helpers/api/ordapi/getCallOffOrderingParty';
@@ -59,28 +59,4 @@ export const getCallOffOrderingPartyErrorContext = async (params) => {
   };
 
   return getErrorContext(updatedParams);
-};
-
-export const putCallOffOrderingParty = async ({
-  orderId, data, accessToken,
-}) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putOrderingParty', options: { orderId } });
-  const body = formatFormData(data);
-
-  try {
-    await putData({
-      endpoint,
-      body,
-      accessToken,
-      logger,
-    });
-    logger.info(`Call off ordering party updated - order id: ${orderId}, ${JSON.stringify(data)}`);
-    return { success: true };
-  } catch (err) {
-    if (err.response.status === 400 && err.response.data && err.response.data.errors) {
-      return err.response.data;
-    }
-    logger.error('Error updating ordering-party for order');
-    throw new Error();
-  }
 };

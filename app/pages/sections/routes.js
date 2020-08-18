@@ -3,7 +3,7 @@ import { logger } from '../../logger';
 import config from '../../config';
 import { withCatch, extractAccessToken } from '../../helpers/routes/routerHelper';
 import {
-  getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext, putCallOffOrderingParty,
+  getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext,
 } from './ordering-party/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './description/controller';
 import {
@@ -20,6 +20,7 @@ import { additionalServicesRoutes } from './order-items/additional-services/rout
 import { associatedServicesRoutes } from './order-items/associated-services/routes';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
+import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 
 const router = express.Router({ mergeParams: true });
 
@@ -70,7 +71,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.post('/ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const response = await putCallOffOrderingParty({
+    const response = await putOrderingParty({
       orderId,
       data: req.body,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),

@@ -1,7 +1,7 @@
-import { getData, putData } from 'buying-catalogue-library';
-import { getCallOffOrderingPartyContext, putCallOffOrderingParty } from './controller';
+import { getData } from 'buying-catalogue-library';
+import { getCallOffOrderingPartyContext } from './controller';
 import { logger } from '../../../logger';
-import { orderApiUrl, organisationApiUrl } from '../../../config';
+import { organisationApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
 import { getCallOffOrderingParty } from '../../../helpers/api/ordapi/getCallOffOrderingParty';
 
@@ -44,13 +44,6 @@ const mockDataFromOapi = {
   primaryRoleId: 'RO98',
   catalogueAgreementSigned: false,
   ...mockOrganisation,
-};
-
-const mockFormData = {
-  name: mockOrganisation.name,
-  odsCode: mockOrganisation.odsCode,
-  ...mockOrganisation.address,
-  ...mockPrimaryContact,
 };
 
 describe('ordering-party controller', () => {
@@ -125,88 +118,6 @@ describe('ordering-party controller', () => {
         expect(contextCreator.getContext.mock.calls.length).toEqual(1);
         expect(contextCreator.getContext).toHaveBeenCalledWith({ orgData: mockCompleteData, orderId: 'order-id' });
       });
-    });
-  });
-
-  describe('putCallOffOrderingParty', () => {
-    afterEach(() => {
-      putData.mockReset();
-    });
-
-    it('should call putData once with the correct params', async () => {
-      putData
-        .mockResolvedValueOnce({});
-
-      await putCallOffOrderingParty({
-        orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
-      });
-      expect(putData.mock.calls.length).toEqual(1);
-      expect(putData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
-        body: mockCompleteData,
-        accessToken: 'access_token',
-        logger,
-      });
-    });
-
-    it('should trim whitespace from the data', async () => {
-      const mockData = {
-        ...mockFormData,
-        line2: '   line 2  ',
-        line3: '  line 3',
-        line4: null,
-        line5: 'line 5  ',
-        town: ' townville  ',
-      };
-
-      putData
-        .mockResolvedValueOnce({});
-
-      await putCallOffOrderingParty({
-        orderId: 'order-id', data: mockData, accessToken: 'access_token',
-      });
-      expect(putData.mock.calls.length).toEqual(1);
-      expect(putData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/ordering-party`,
-        body: mockCompleteData,
-        accessToken: 'access_token',
-        logger,
-      });
-    });
-
-    it('should return success: true if put is successful', async () => {
-      putData
-        .mockResolvedValueOnce({});
-
-      const response = await putCallOffOrderingParty({
-        orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
-      });
-      expect(response).toEqual({ success: true });
-    });
-
-    it('should return error.respose.data if api request is unsuccessful with 400', async () => {
-      const responseData = { errors: [{}] };
-      putData
-        .mockRejectedValueOnce({ response: { status: 400, data: responseData } });
-
-      const response = await putCallOffOrderingParty({
-        orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
-      });
-
-      expect(response).toEqual(responseData);
-    });
-
-    it('should throw an error if api request is unsuccessful with non 400', async () => {
-      putData
-        .mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
-
-      try {
-        await putCallOffOrderingParty({
-          orderId: 'order-id', data: mockFormData, accessToken: 'access_token',
-        });
-      } catch (err) {
-        expect(err).toEqual(new Error());
-      }
     });
   });
 });

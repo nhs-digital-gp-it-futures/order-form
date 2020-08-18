@@ -18,12 +18,14 @@ import * as commencementDateController from './commencement-date/controller';
 import * as serviceRecipientsController from './service-recipients/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
+import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import * as fundingSourceController from './funding-source/controller';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
 jest.mock('../../helpers/api/ordapi/putFundingSource');
 jest.mock('../../helpers/routes/getOrderDescription');
+jest.mock('../../helpers/api/ordapi/putOrderingParty');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -32,9 +34,6 @@ descriptionController.postOrPutDescription = jest.fn()
   .mockResolvedValue({});
 
 orderingPartyController.getCallOffOrderingPartyContext = jest.fn()
-  .mockResolvedValue({});
-
-orderingPartyController.putCallOffOrderingParty = jest.fn()
   .mockResolvedValue({});
 
 serviceRecipientsController.getServiceRecipientsContext = jest.fn()
@@ -221,7 +220,7 @@ describe('section routes', () => {
     const path = '/organisation/order-id/ordering-party';
 
     afterEach(() => {
-      orderingPartyController.putCallOffOrderingParty.mockReset();
+      jest.resetAllMocks();
     });
 
     it('should return 403 forbidden if no csrf token is available', () => (
@@ -254,8 +253,7 @@ describe('section routes', () => {
     ));
 
     it('should return the correct status and text if response.success is true', async () => {
-      orderingPartyController.putCallOffOrderingParty = jest.fn()
-        .mockImplementation(() => Promise.resolve({ success: true }));
+      putOrderingParty.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -277,8 +275,7 @@ describe('section routes', () => {
     });
 
     it('should return the correct status and text if response.success is not true', async () => {
-      orderingPartyController.putCallOffOrderingParty = jest.fn()
-        .mockImplementation(() => Promise.resolve({ success: false }));
+      putOrderingParty.mockResolvedValue({ success: false });
 
       orderingPartyController.getCallOffOrderingPartyErrorContext = jest.fn()
         .mockImplementation(() => Promise.resolve({
