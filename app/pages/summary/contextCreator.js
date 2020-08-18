@@ -325,7 +325,7 @@ export const getContext = ({
     title: `${manifest.title} ${orderId}`,
     orderDescription: orderData.description,
     dateSummaryCreated: getCurrentDate(),
-    dateCompleted: orderData.dateCompleted,
+    dateCompleted: formatDate(orderData.dateCompleted),
     callOffAndSupplierTable: generateCallOffAndSupplierDetailsTable({
       callOffAndSupplierTable: manifest.callOffAndSupplierTable,
       orderPartyData: orderData.orderParty,

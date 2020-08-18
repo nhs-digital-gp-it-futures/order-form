@@ -1,18 +1,16 @@
 import { getDocument, ErrorContext } from 'buying-catalogue-library';
-import { logger } from './logger';
-import { getEndpoint } from './endpoints';
+import { logger } from '../../../logger';
+import { documentApiHost } from '../../../config';
 
-export const getDocumentByFileName = async ({
-  res, documentName, contentType,
-}) => {
+export const getDocumentEndpoint = ({ documentName }) => (
+  `${documentApiHost}/api/v1/documents/${documentName}`
+);
+
+export const getDocumentByFileName = async ({ res, documentName, contentType }) => {
   logger.info(`Downloading ${documentName}`);
-  const endpoint = getEndpoint({
-    api: 'dapi',
-    endpointLocator: 'getDocument',
-    options: { documentName },
-  });
+  const documentEndpoint = getDocumentEndpoint({ documentName });
   try {
-    const response = await getDocument({ endpoint, logger });
+    const response = await getDocument({ documentEndpoint, logger });
     res.setHeader('Content-type', contentType);
     return response.data.pipe(res);
   } catch (err) {

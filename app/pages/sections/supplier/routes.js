@@ -7,7 +7,6 @@ import {
   getSupplierSearchPageContext,
   validateSupplierSearchForm,
   getSupplierSearchPageErrorContext,
-  findSuppliers,
 } from './search/controller';
 import {
   getSupplierSelectPageContext,
@@ -19,6 +18,7 @@ import {
   getSupplierPageErrorContext,
   putSupplier,
 } from './supplier/controller';
+import { getSearchSuppliers } from '../../../helpers/api/bapi/getSearchSuppliers';
 import { checkOrdapiForSupplier } from './controller';
 import { sessionKeys } from '../../../helpers/routes/sessionHelper';
 
@@ -84,7 +84,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     if (response.success) {
       const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-      const suppliersFound = await findSuppliers({
+      const suppliersFound = await getSearchSuppliers({
         name: req.body.supplierName, accessToken,
       });
 

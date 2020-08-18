@@ -2,6 +2,7 @@ import { getData, putData } from 'buying-catalogue-library';
 import { getEndpoint } from '../../../../endpoints';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
+import { getSupplier as getSupplierFromBapi } from '../../../../helpers/api/bapi/getSupplier';
 
 const formatFormData = data => ({
   supplierId: data.supplierId ? data.supplierId.trim() : undefined,
@@ -44,8 +45,7 @@ export const getSupplierPageContext = async ({
 
   if (supplierId) {
     logger.info(`SupplierId found in session for ${orderId} - ${supplierId}`);
-    const getSupplierDataEndpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSupplier', options: { supplierId } });
-    const supplierData = await getData({ endpoint: getSupplierDataEndpoint, accessToken, logger });
+    const supplierData = await getSupplierFromBapi({ supplierId, accessToken });
 
     const context = getContext({ orderId, supplierData });
     return context;
