@@ -113,6 +113,27 @@ test('should render the order description', async (t) => {
     .expect(await extractInnerText(orderDescription)).eql('Some super cool order description');
 });
 
+test('should render Continue editing order button', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-editing-order-button"] a');
+
+  await t
+    .expect(await extractInnerText(button)).eql(content.continueEditingOrderButtonText);
+});
+
+test('should navigate back to order when Continue editing order button is clicked', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-editing-order-button"] a');
+
+  await t
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+});
+
 test('should render complete order button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
