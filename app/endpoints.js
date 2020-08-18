@@ -16,12 +16,10 @@ const endpoints = {
     getServiceRecipient: options => `${organisationApiUrl}/api/v1/ods/${options.selectedRecipientId}`,
   },
   ordapi: {
-    putDescription: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/description`,
     putOrderingParty: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/ordering-party`,
     putCommencementDate: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/commencement-date`,
     putSupplier: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/supplier`,
     putServiceRecipients: options => `${orderApiUrl}/api/v1/orders/${options.orderId}/sections/service-recipients`,
-    postDescription: () => `${orderApiUrl}/api/v1/orders`,
   },
 };
 
