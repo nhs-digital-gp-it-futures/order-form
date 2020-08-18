@@ -1,22 +1,12 @@
-import { getData } from 'buying-catalogue-library';
 import { getContext } from './contextCreator';
-import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 import { getRecipients as getRecipientsFromOrdapi } from '../../../helpers/api/ordapi/getRecipients';
+import { getServiceRecipients as getRecipientsFromOapi } from '../../../helpers/api/oapi/getServiceRecipients';
 
 export const getServiceRecipientsContext = async ({
   orderId, orgId, accessToken, selectStatus,
 }) => {
   let selectedData;
-
-  const serviceRecipientEndpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getServiceRecipients', options: { orgId } });
-  const serviceRecipientsData = await getData({
-    endpoint: serviceRecipientEndpoint,
-    accessToken,
-    logger,
-  });
-  logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI.`);
-
   try {
     selectedData = await getRecipientsFromOrdapi({ orderId, accessToken });
   } catch (err) {
@@ -26,7 +16,7 @@ export const getServiceRecipientsContext = async ({
 
   return getContext({
     orderId,
-    serviceRecipientsData,
+    serviceRecipientsData: await getRecipientsFromOapi({ orgId, accessToken }),
     selectedRecipientIdsData: selectedData ? selectedData.serviceRecipients : [],
     selectStatus,
   });

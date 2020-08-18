@@ -1,9 +1,7 @@
-import { getData } from 'buying-catalogue-library';
 import { getServiceRecipientsContext } from './controller';
-import { logger } from '../../../logger';
-import { organisationApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
 import { getRecipients as getRecipientsFromOrdapi } from '../../../helpers/api/ordapi/getRecipients';
+import { getServiceRecipients as getRecipientsFromOapi } from '../../../helpers/api/oapi/getServiceRecipients';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
@@ -11,6 +9,7 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 jest.mock('../../../helpers/api/ordapi/getRecipients');
+jest.mock('../../../helpers/api/oapi/getServiceRecipients');
 
 const dataFromOapi = [{
   name: 'Some service recipient 1',
@@ -33,17 +32,18 @@ describe('service-recipients controller', () => {
       jest.resetAllMocks();
     });
 
-    it('calls getData and then getRecipientsFromOrdapi with correct params', async () => {
-      getData.mockResolvedValueOnce({});
+    it('calls getRecipientsFromOapi and then getRecipientsFromOrdapi with correct params', async () => {
+      getRecipientsFromOapi.mockResolvedValueOnce({});
       getRecipientsFromOrdapi.mockResolvedValueOnce({ serviceRecipients: [] });
 
       await getServiceRecipientsContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${organisationApiUrl}/api/v1/Organisations/org-id/service-recipients`,
+
+      expect(getRecipientsFromOapi.mock.calls.length).toEqual(1);
+      expect(getRecipientsFromOapi).toHaveBeenCalledWith({
+        orgId: 'org-id',
         accessToken: 'access_token',
-        logger,
       });
+
       expect(getRecipientsFromOrdapi.mock.calls.length).toEqual(1);
       expect(getRecipientsFromOrdapi).toHaveBeenCalledWith({
         orderId: 'order-id',
@@ -52,7 +52,7 @@ describe('service-recipients controller', () => {
     });
 
     it('calls getContext once with correct params if data returned from OAPI', async () => {
-      getData.mockResolvedValueOnce(dataFromOapi);
+      getRecipientsFromOapi.mockResolvedValueOnce(dataFromOapi);
       getRecipientsFromOrdapi.mockResolvedValueOnce({ serviceRecipients: [] });
       contextCreator.getContext.mockResolvedValueOnce();
 
@@ -67,7 +67,7 @@ describe('service-recipients controller', () => {
     });
 
     it('calls getContext once with correct params if data returned from OAPI and selectStatus is passed in', async () => {
-      getData.mockResolvedValueOnce(dataFromOapi);
+      getRecipientsFromOapi.mockResolvedValueOnce(dataFromOapi);
       getRecipientsFromOrdapi.mockResolvedValueOnce({ serviceRecipients: [] });
       contextCreator.getContext
         .mockResolvedValueOnce();
@@ -86,7 +86,7 @@ describe('service-recipients controller', () => {
     });
 
     it('calls getContext once with correct params if data returned from OAPI and selected recipients data is returned from ORDAPI', async () => {
-      getData.mockResolvedValueOnce(dataFromOapi);
+      getRecipientsFromOapi.mockResolvedValueOnce(dataFromOapi);
       getRecipientsFromOrdapi.mockResolvedValueOnce(dataFromOrdapi);
       contextCreator.getContext
         .mockResolvedValueOnce();

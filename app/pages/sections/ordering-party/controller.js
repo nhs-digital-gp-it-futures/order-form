@@ -3,6 +3,7 @@ import { getContext, getErrorContext } from './contextCreator';
 import { getEndpoint } from '../../../endpoints';
 import { getCallOffOrderingParty } from '../../../helpers/api/ordapi/getCallOffOrderingParty';
 import { logger } from '../../../logger';
+import { getOrganisation } from '../../../helpers/api/oapi/getOrganisation';
 
 const formatFormData = data => ({
   name: data.name ? data.name.trim() : null,
@@ -37,12 +38,9 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
   }
   logger.info(`No call off ordering party found in ORDAPI for ${orderId}.`);
   try {
-    const orgDataEndpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getOrganisation', options: { orgId } });
-    const organisationData = await getData({ endpoint: orgDataEndpoint, accessToken, logger });
-    logger.info(`Organisation with id: ${orgId} found in OAPI`);
     return getContext({
       orderId,
-      orgData: organisationData,
+      orgData: await getOrganisation({ orgId, accessToken }),
     });
   } catch (error) {
     logger.error(`No organisation data returned from OAPI for id: ${orgId}. ${error}`);
