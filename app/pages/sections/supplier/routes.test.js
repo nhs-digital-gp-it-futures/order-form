@@ -18,9 +18,11 @@ import * as supplierSearchController from './search/controller';
 import * as supplierSelectController from './select/controller';
 import * as supplierController from './supplier/controller';
 import * as baseController from './controller';
+import { putSupplier } from '../../../helpers/api/ordapi/putSupplier';
 
 jest.mock('../../../logger');
 jest.mock('../../../helpers/api/bapi/getSearchSuppliers');
+jest.mock('../../../helpers/api/ordapi/putSupplier');
 
 const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
 
@@ -171,8 +173,7 @@ describe('supplier section routes', () => {
     });
 
     it('should return the correct status and text if response.success is true', async () => {
-      supplierController.putSupplier = jest.fn()
-        .mockResolvedValue({ success: true });
+      putSupplier.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -194,8 +195,7 @@ describe('supplier section routes', () => {
     });
 
     it('should return the correct status and text if response.success is not true', async () => {
-      supplierController.putSupplier = jest.fn()
-        .mockImplementation(() => Promise.resolve({ success: false }));
+      putSupplier.mockResolvedValue({ success: false });
 
       supplierController.getSupplierPageErrorContext = jest.fn()
         .mockImplementation(() => Promise.resolve({

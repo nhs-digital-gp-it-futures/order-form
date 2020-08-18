@@ -1,5 +1,3 @@
-import { putData } from 'buying-catalogue-library';
-import { getEndpoint } from '../../../../endpoints';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
 import { getSupplier as getSupplierFromBapi } from '../../../../helpers/api/bapi/getSupplier';
@@ -50,29 +48,6 @@ export const getSupplierPageContext = async ({
 
   logger.info(`No supplier data found in ORDAPI and no supplierId in session for ${orderId}`);
   throw new Error();
-};
-
-export const putSupplier = async ({
-  orderId, data, accessToken,
-}) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putSupplier', options: { orderId } });
-  const body = formatFormData(data);
-  try {
-    await putData({
-      endpoint,
-      body,
-      accessToken,
-      logger,
-    });
-    logger.info(`Supplier updated - order id: ${orderId}, ${JSON.stringify(data)}`);
-    return { success: true };
-  } catch (err) {
-    if (err.response.status === 400 && err.response.data && err.response.data.errors) {
-      return err.response.data;
-    }
-    logger.error(`Error updating supplier for ${orderId}`);
-    throw new Error();
-  }
 };
 
 export const getSupplierPageErrorContext = async (params) => {

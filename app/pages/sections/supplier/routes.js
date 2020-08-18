@@ -16,11 +16,11 @@ import {
 import {
   getSupplierPageContext,
   getSupplierPageErrorContext,
-  putSupplier,
 } from './supplier/controller';
 import { getSearchSuppliers } from '../../../helpers/api/bapi/getSearchSuppliers';
 import { checkOrdapiForSupplier } from './controller';
 import { sessionKeys } from '../../../helpers/routes/sessionHelper';
+import { putSupplier } from '../../../helpers/api/ordapi/putSupplier';
 
 const router = express.Router({ mergeParams: true });
 
