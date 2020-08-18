@@ -1,10 +1,11 @@
-import { getData, putData } from 'buying-catalogue-library';
+import { putData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
 import { getDateErrors } from '../../../helpers/controllers/getDateErrors';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 import { extractDate } from '../../../helpers/controllers/extractDate';
 import { destructureDate } from '../../../helpers/common/dateFormatter';
+import { getCommencementDate } from '../../../helpers/api/ordapi/getCommencementDate';
 
 const formatPutData = data => ({
   commencementDate: extractDate('commencementDate', data),
@@ -23,12 +24,8 @@ const generateFormData = (commencementDateData) => {
 };
 
 export const getCommencementDateContext = async ({ orderId, accessToken }) => {
-  const commencementDateDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCommencementDate', options: { orderId } });
-  const commencementDateData = await getData({
-    endpoint: commencementDateDataEndpoint, accessToken, logger,
-  });
+  const commencementDateData = await getCommencementDate({ orderId, accessToken });
 
-  logger.info(`Commencement date ${commencementDateData ? '' : 'not '}found for ${orderId}`);
   return getContext({
     orderId,
     data: generateFormData(commencementDateData),

@@ -3,12 +3,14 @@ import { getCommencementDateContext, putCommencementDate, validateCommencementDa
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
+import { getCommencementDate } from '../../../helpers/api/ordapi/getCommencementDate';
 
 jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
+jest.mock('../../../helpers/api/ordapi/getCommencementDate');
 
 const mockData = {
   'commencementDate-day': '21',
@@ -19,26 +21,22 @@ const mockData = {
 describe('commencement-date controller', () => {
   describe('getCommencementDateContext', () => {
     afterEach(() => {
-      getData.mockReset();
-      contextCreator.getContext.mockReset();
+      jest.resetAllMocks();
     });
 
-    it('calls getData once with correct params', async () => {
-      getData
-        .mockResolvedValueOnce({});
+    it('calls getCommencementDate once with correct params', async () => {
+      getCommencementDate.mockResolvedValueOnce({});
 
       await getCommencementDateContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/commencement-date`,
+      expect(getCommencementDate.mock.calls.length).toEqual(1);
+      expect(getCommencementDate).toHaveBeenCalledWith({
+        orderId: 'order-id',
         accessToken: 'access_token',
-        logger,
       });
     });
 
     it('calls getContext once with correct params if no data returned', async () => {
-      getData
-        .mockResolvedValueOnce({});
+      getCommencementDate.mockResolvedValueOnce({});
       contextCreator.getContext
         .mockResolvedValueOnce();
 
@@ -50,8 +48,7 @@ describe('commencement-date controller', () => {
 
     it('calls getContext once with correct params if data is returned', async () => {
       const commencementDate = '2020-01-01';
-      getData
-        .mockResolvedValueOnce({ commencementDate });
+      getCommencementDate.mockResolvedValueOnce({ commencementDate });
       contextCreator.getContext
         .mockResolvedValueOnce();
 
