@@ -1,25 +1,10 @@
 import {
-  orderApiUrl, organisationApiUrl, solutionsApiUrl, documentApiHost, identityServerUrl,
+  orderApiUrl, organisationApiUrl, identityServerUrl,
 } from './config';
 
 const endpoints = {
   identity: {
     getApiHealth: () => `${identityServerUrl}/health/ready`,
-  },
-  bapi: {
-    getSearchSuppliers: options => `${solutionsApiUrl}/api/v1/suppliers?name=${encodeURIComponent(options.name)}&solutionPublicationStatus=Published`,
-    getSupplier: options => `${solutionsApiUrl}/api/v1/suppliers/${options.supplierId}`,
-    getSolutionsForSupplier: options => `${solutionsApiUrl}/api/v1/solutions?supplierId=${options.supplierId}`,
-    getSolution: options => `${solutionsApiUrl}/api/v1/solutions/${options.solutionId}`,
-    getSelectedPrice: options => `${solutionsApiUrl}/api/v1/prices/${options.selectedPriceId}`,
-    getAdditionalServices: (options) => {
-      const queryString = `solutionIds=${options.addedCatalogueSolutions.join('&solutionIds=')}`;
-      return `${solutionsApiUrl}/api/v1/additional-services?${queryString}`;
-    },
-  },
-  dapi: {
-    getApiHealth: () => `${documentApiHost}/health/ready`,
-    getDocument: options => `${documentApiHost}/api/v1/documents/${options.documentName}`,
   },
   oapi: {
     getOrganisation: options => `${organisationApiUrl}/api/v1/Organisations/${options.orgId}`,

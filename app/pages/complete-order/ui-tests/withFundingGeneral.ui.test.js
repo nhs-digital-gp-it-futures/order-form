@@ -113,6 +113,27 @@ test('should render complete order button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.completeOrderButtonText);
 });
 
+test('should render Continue editing order button', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-editing-order-button"] a');
+
+  await t
+    .expect(await extractInnerText(button)).eql(content.continueEditingOrderButtonText);
+});
+
+test('should navigate back to order when Continue editing order button is clicked', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-editing-order-button"] a');
+
+  await t
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+});
+
 test('should navigate to task list page when complete is clicked', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-id/status', { status: 'Complete' })
