@@ -1,4 +1,4 @@
-import { getData, putData } from 'buying-catalogue-library';
+import { putData } from 'buying-catalogue-library';
 import { getCommencementDateContext, putCommencementDate, validateCommencementDateForm } from './controller';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';

@@ -2,6 +2,7 @@ import { getData, putData } from 'buying-catalogue-library';
 import { getContext } from './contextCreator';
 import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
+import { getRecipients as getRecipientsFromOrdapi } from '../../../helpers/api/ordapi/getRecipients';
 
 export const getServiceRecipientsContext = async ({
   orderId, orgId, accessToken, selectStatus,
@@ -17,13 +18,7 @@ export const getServiceRecipientsContext = async ({
   logger.info(`Service recipients for organisation with id: ${orgId} found in OAPI.`);
 
   try {
-    const selectedServiceRecipientsEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getSelectedServiceRecipients', options: { orderId } });
-    selectedData = await getData({
-      endpoint: selectedServiceRecipientsEndpoint,
-      accessToken,
-      logger,
-    });
-    logger.info(`${selectedData.serviceRecipients ? selectedData.serviceRecipients : 'No'} selected service recipients found in ORDAPI.`);
+    selectedData = await getRecipientsFromOrdapi({ orderId, accessToken });
   } catch (err) {
     logger.error(`Error getting service recipients data from ORDAPI for org id: ${orgId}. ${JSON.stringify(err)}`);
     throw new Error();
