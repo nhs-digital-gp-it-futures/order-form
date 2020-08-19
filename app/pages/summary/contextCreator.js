@@ -1,4 +1,5 @@
 import incompleteManifest from './incomplete/manifest.json';
+import completeManifest from './complete/manifest.json';
 import { baseUrl } from '../../config';
 import { formatDate } from '../../helpers/common/dateFormatter';
 import { formatPrice } from '../../helpers/common/priceFormatter';
@@ -317,13 +318,14 @@ const generateOneOffCostDetailsTable = ({
 export const getContext = ({
   orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
 }) => {
-  const manifest = orderData.status === 'complete' ? null : incompleteManifest;
+  const manifest = orderData.status === 'Complete' ? completeManifest : incompleteManifest;
 
   return ({
     ...manifest,
     title: `${manifest.title} ${orderId}`,
     orderDescription: orderData.description,
     dateSummaryCreated: getCurrentDate(),
+    dateCompleted: formatDate(orderData.dateCompleted),
     callOffAndSupplierTable: generateCallOffAndSupplierDetailsTable({
       callOffAndSupplierTable: manifest.callOffAndSupplierTable,
       orderPartyData: orderData.orderParty,
@@ -350,7 +352,7 @@ export const getContext = ({
       ownershipCost: orderData.totalOwnershipCost,
     }),
     commencementDate: formatDate(orderData.commencementDate),
-    backLinkHref: `${baseUrl}/organisation/${orderId}`,
+    backLinkHref: orderData.status === 'Complete' ? `${baseUrl}/organisation` : `${baseUrl}/organisation/${orderId}`,
     orderSummaryButtonHref: `${baseUrl}/organisation/${orderId}/summary?print=true`,
   });
 };

@@ -47,7 +47,7 @@ const generateCompletedOrdersTable = (completedOrders, completeOrdersTable) => {
     const columns = [
       {
         data: order.orderId,
-        href: `${baseUrl}/organisation/${order.orderId}`,
+        href: `${baseUrl}/organisation/${order.orderId}/summary`,
         dataTestId: `${order.orderId}-id`,
         classes: completeOrdersTable.cellInfo.orderId.classes,
       },

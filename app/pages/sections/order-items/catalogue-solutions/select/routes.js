@@ -4,7 +4,6 @@ import config from '../../../../../config';
 import { withCatch, extractAccessToken } from '../../../../../helpers/routes/routerHelper';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import {
-  getSupplierId,
   getSolutionsErrorPageContext,
   getSolutionsPageContext,
   validateSolutionForm,
@@ -27,6 +26,7 @@ import {
   getCatalogueItems,
 } from '../../../../../helpers/api/bapi/getCatalogueItems';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
+import { getSupplier } from '../../../../../helpers/api/ordapi/getSupplier';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
@@ -43,8 +43,8 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const selectedSolutionId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemId,
     });
-    const supplierId = await getSupplierId({ orderId, accessToken });
-    const solutions = await getCatalogueItems({ supplierId, catalogueItemType: 'Solution' });
+    const supplierData = await getSupplier({ orderId, accessToken });
+    const solutions = await getCatalogueItems({ supplierId: supplierData.supplierId, catalogueItemType: 'Solution' });
     sessionManager.saveToSession({ req, key: sessionKeys.solutions, value: solutions });
 
     const context = await getSolutionsPageContext({ orderId, solutions, selectedSolutionId });

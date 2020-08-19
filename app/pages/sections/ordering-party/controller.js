@@ -1,7 +1,7 @@
-import { getData, putData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
-import { getEndpoint } from '../../../endpoints';
+import { getCallOffOrderingParty } from '../../../helpers/api/ordapi/getCallOffOrderingParty';
 import { logger } from '../../../logger';
+import { getOrganisation } from '../../../helpers/api/oapi/getOrganisation';
 
 const formatFormData = data => ({
   name: data.name ? data.name.trim() : null,
@@ -26,8 +26,7 @@ const formatFormData = data => ({
 });
 
 export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessToken }) => {
-  const callOffOrgDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getCallOffOrderingParty', options: { orderId } });
-  const callOffOrgData = await getData({ endpoint: callOffOrgDataEndpoint, accessToken, logger });
+  const callOffOrgData = await getCallOffOrderingParty({ orderId, accessToken });
   if (callOffOrgData && callOffOrgData.name) {
     logger.info(`Call off ordering party found in ORDAPI for ${orderId}`);
     return getContext({
@@ -37,12 +36,9 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
   }
   logger.info(`No call off ordering party found in ORDAPI for ${orderId}.`);
   try {
-    const orgDataEndpoint = getEndpoint({ api: 'oapi', endpointLocator: 'getOrganisation', options: { orgId } });
-    const organisationData = await getData({ endpoint: orgDataEndpoint, accessToken, logger });
-    logger.info(`Organisation with id: ${orgId} found in OAPI`);
     return getContext({
       orderId,
-      orgData: organisationData,
+      orgData: await getOrganisation({ orgId, accessToken }),
     });
   } catch (error) {
     logger.error(`No organisation data returned from OAPI for id: ${orgId}. ${error}`);
@@ -59,28 +55,4 @@ export const getCallOffOrderingPartyErrorContext = async (params) => {
   };
 
   return getErrorContext(updatedParams);
-};
-
-export const putCallOffOrderingParty = async ({
-  orderId, data, accessToken,
-}) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putOrderingParty', options: { orderId } });
-  const body = formatFormData(data);
-
-  try {
-    await putData({
-      endpoint,
-      body,
-      accessToken,
-      logger,
-    });
-    logger.info(`Call off ordering party updated - order id: ${orderId}, ${JSON.stringify(data)}`);
-    return { success: true };
-  } catch (err) {
-    if (err.response.status === 400 && err.response.data && err.response.data.errors) {
-      return err.response.data;
-    }
-    logger.error('Error updating ordering-party for order');
-    throw new Error();
-  }
 };

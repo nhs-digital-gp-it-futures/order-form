@@ -1,7 +1,7 @@
-import { getData, putData } from 'buying-catalogue-library';
-import { getEndpoint } from '../../../../endpoints';
 import { getContext, getErrorContext } from './contextCreator';
 import { logger } from '../../../../logger';
+import { getSupplier as getSupplierFromBapi } from '../../../../helpers/api/bapi/getSupplier';
+import { getSupplier as getSupplierFromOrdapi } from '../../../../helpers/api/ordapi/getSupplier';
 
 const formatFormData = data => ({
   supplierId: data.supplierId ? data.supplierId.trim() : undefined,
@@ -29,12 +29,8 @@ export const getSupplierPageContext = async ({
   orderId, supplierId, accessToken, hasSavedData,
 }) => {
   if (hasSavedData) {
-    const ordapiSupplierDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getSupplier', options: { orderId } });
-    const ordapiSupplierData = await getData({
-      endpoint: ordapiSupplierDataEndpoint, accessToken, logger,
-    });
+    const ordapiSupplierData = await getSupplierFromOrdapi({ orderId, accessToken });
 
-    logger.info(`Supplier data found in ORDAPI for ${orderId}`);
     return getContext({
       orderId,
       supplierData: ordapiSupplierData,
@@ -44,8 +40,7 @@ export const getSupplierPageContext = async ({
 
   if (supplierId) {
     logger.info(`SupplierId found in session for ${orderId} - ${supplierId}`);
-    const getSupplierDataEndpoint = getEndpoint({ api: 'bapi', endpointLocator: 'getSupplier', options: { supplierId } });
-    const supplierData = await getData({ endpoint: getSupplierDataEndpoint, accessToken, logger });
+    const supplierData = await getSupplierFromBapi({ supplierId, accessToken });
 
     const context = getContext({ orderId, supplierData });
     return context;
@@ -53,29 +48,6 @@ export const getSupplierPageContext = async ({
 
   logger.info(`No supplier data found in ORDAPI and no supplierId in session for ${orderId}`);
   throw new Error();
-};
-
-export const putSupplier = async ({
-  orderId, data, accessToken,
-}) => {
-  const endpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'putSupplier', options: { orderId } });
-  const body = formatFormData(data);
-  try {
-    await putData({
-      endpoint,
-      body,
-      accessToken,
-      logger,
-    });
-    logger.info(`Supplier updated - order id: ${orderId}, ${JSON.stringify(data)}`);
-    return { success: true };
-  } catch (err) {
-    if (err.response.status === 400 && err.response.data && err.response.data.errors) {
-      return err.response.data;
-    }
-    logger.error(`Error updating supplier for ${orderId}`);
-    throw new Error();
-  }
 };
 
 export const getSupplierPageErrorContext = async (params) => {

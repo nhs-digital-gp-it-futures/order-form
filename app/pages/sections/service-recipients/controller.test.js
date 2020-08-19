@@ -1,14 +1,14 @@
-import { getData, putData } from 'buying-catalogue-library';
-import { getServiceRecipientsContext, putServiceRecipients } from './controller';
-import { logger } from '../../../logger';
-import { organisationApiUrl, orderApiUrl } from '../../../config';
+import { getServiceRecipientsContext } from './controller';
 import * as contextCreator from './contextCreator';
+import { getRecipients as getRecipientsFromOrdapi } from '../../../helpers/api/ordapi/getRecipients';
+import { getServiceRecipients as getRecipientsFromOapi } from '../../../helpers/api/oapi/getServiceRecipients';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
+jest.mock('../../../helpers/api/ordapi/getRecipients');
+jest.mock('../../../helpers/api/oapi/getServiceRecipients');
 
 const dataFromOapi = [{
   name: 'Some service recipient 1',
@@ -25,51 +25,35 @@ const dataFromOrdapi = {
   }],
 };
 
-const mockData = {
-  _csrf: 'testCSRF',
-  XX1: 'Some service recipient 1',
-  XX2: 'Some service recipient 2',
-};
-
-const formattedMockData = {
-  serviceRecipients: [
-    { name: 'Some service recipient 1', odsCode: 'XX1' },
-    { name: 'Some service recipient 2', odsCode: 'XX2' },
-  ],
-};
-
 describe('service-recipients controller', () => {
   describe('getServiceRecipientsContext', () => {
     afterEach(() => {
-      getData.mockReset();
-      contextCreator.getContext.mockReset();
+      jest.resetAllMocks();
     });
 
-    it('calls getData twice with correct params', async () => {
-      getData
-        .mockResolvedValueOnce({})
-        .mockResolvedValueOnce({ serviceRecipients: [] });
+    it('calls getRecipientsFromOapi and then getRecipientsFromOrdapi with correct params', async () => {
+      getRecipientsFromOapi.mockResolvedValueOnce({});
+      getRecipientsFromOrdapi.mockResolvedValueOnce({ serviceRecipients: [] });
 
       await getServiceRecipientsContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
-      expect(getData.mock.calls.length).toEqual(2);
-      expect(getData).toHaveBeenNthCalledWith(1, {
-        endpoint: `${organisationApiUrl}/api/v1/Organisations/org-id/service-recipients`,
+
+      expect(getRecipientsFromOapi.mock.calls.length).toEqual(1);
+      expect(getRecipientsFromOapi).toHaveBeenCalledWith({
+        orgId: 'org-id',
         accessToken: 'access_token',
-        logger,
       });
-      expect(getData).toHaveBeenNthCalledWith(2, {
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/service-recipients`,
+
+      expect(getRecipientsFromOrdapi.mock.calls.length).toEqual(1);
+      expect(getRecipientsFromOrdapi).toHaveBeenCalledWith({
+        orderId: 'order-id',
         accessToken: 'access_token',
-        logger,
       });
     });
 
     it('calls getContext once with correct params if data returned from OAPI', async () => {
-      getData
-        .mockResolvedValueOnce(dataFromOapi)
-        .mockResolvedValueOnce({ serviceRecipients: [] });
-      contextCreator.getContext
-        .mockResolvedValueOnce();
+      getRecipientsFromOapi.mockResolvedValueOnce(dataFromOapi);
+      getRecipientsFromOrdapi.mockResolvedValueOnce({ serviceRecipients: [] });
+      contextCreator.getContext.mockResolvedValueOnce();
 
       await getServiceRecipientsContext({ orderId: 'order-id', orgId: 'org-id', accessToken: 'access_token' });
 
@@ -82,9 +66,8 @@ describe('service-recipients controller', () => {
     });
 
     it('calls getContext once with correct params if data returned from OAPI and selectStatus is passed in', async () => {
-      getData
-        .mockResolvedValueOnce(dataFromOapi)
-        .mockResolvedValueOnce({ serviceRecipients: [] });
+      getRecipientsFromOapi.mockResolvedValueOnce(dataFromOapi);
+      getRecipientsFromOrdapi.mockResolvedValueOnce({ serviceRecipients: [] });
       contextCreator.getContext
         .mockResolvedValueOnce();
 
@@ -102,9 +85,8 @@ describe('service-recipients controller', () => {
     });
 
     it('calls getContext once with correct params if data returned from OAPI and selected recipients data is returned from ORDAPI', async () => {
-      getData
-        .mockResolvedValueOnce(dataFromOapi)
-        .mockResolvedValueOnce(dataFromOrdapi);
+      getRecipientsFromOapi.mockResolvedValueOnce(dataFromOapi);
+      getRecipientsFromOrdapi.mockResolvedValueOnce(dataFromOrdapi);
       contextCreator.getContext
         .mockResolvedValueOnce();
 
@@ -116,38 +98,6 @@ describe('service-recipients controller', () => {
         serviceRecipientsData: dataFromOapi,
         selectedRecipientIdsData: dataFromOrdapi.serviceRecipients,
       });
-    });
-  });
-
-  describe('putServiceRecipients', () => {
-    beforeEach(() => {
-      putData.mockReset();
-    });
-
-    it('should call putData once with the correct params', async () => {
-      putData
-        .mockResolvedValueOnce({});
-
-      await putServiceRecipients({
-        orderId: 'order-id', data: mockData, accessToken: 'access_token',
-      });
-      expect(putData.mock.calls.length).toEqual(1);
-      expect(putData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/service-recipients`,
-        body: formattedMockData,
-        accessToken: 'access_token',
-        logger,
-      });
-    });
-
-    it('should return success as true if data is saved successfully', async () => {
-      putData
-        .mockResolvedValueOnce({});
-      const response = await putServiceRecipients({
-        orderId: 'order-id', data: mockData, accessToken: 'access_token',
-      });
-      expect(response.success).toEqual(true);
-      expect(response.errors).toEqual(undefined);
     });
   });
 });

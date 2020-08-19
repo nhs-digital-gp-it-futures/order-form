@@ -4,7 +4,6 @@ import {
   validateSolutionPriceForm,
 } from './controller';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),

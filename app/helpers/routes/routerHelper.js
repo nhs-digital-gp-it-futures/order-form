@@ -1,6 +1,10 @@
 import { ErrorContext } from 'buying-catalogue-library';
-import { appBaseUri, isDevelopment } from '../../config';
-import { getEndpoint } from '../../endpoints';
+import {
+  appBaseUri,
+  isDevelopment,
+  documentApiHost,
+  identityServerUrl,
+} from '../../config';
 
 export const withCatch = (logger, authProvider, route) => async (req, res, next) => {
   try {
@@ -31,12 +35,12 @@ export const getHealthCheckDependencies = () => {
   const dependencies = [
     {
       name: 'Identity Server',
-      endpoint: getEndpoint({ api: 'identity', endpointLocator: 'getApiHealth' }),
+      endpoint: `${identityServerUrl}/health/ready`,
       critical: true,
     },
     {
       name: 'Document API',
-      endpoint: getEndpoint({ api: 'dapi', endpointLocator: 'getApiHealth' }),
+      endpoint: `${documentApiHost}/health/ready`,
     },
   ];
 

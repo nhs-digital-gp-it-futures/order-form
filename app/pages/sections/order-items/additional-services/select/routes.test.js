@@ -20,12 +20,14 @@ import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import * as routerHelper from '../../../../../helpers/routes/routerHelper';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
+import { getAdditionalServices } from '../../../../../helpers/api/bapi/getAdditionalServices';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
 jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
+jest.mock('../../../../../helpers/api/bapi/getAdditionalServices');
 
 const mockLogoutMethod = jest.fn().mockResolvedValue({});
 
@@ -120,8 +122,7 @@ describe('additional-services select routes', () => {
           },
         ]);
 
-      selectAdditionalServiceController.findAdditionalServices = jest.fn()
-        .mockResolvedValue({});
+      getAdditionalServices.mockResolvedValue({});
 
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
@@ -139,8 +140,7 @@ describe('additional-services select routes', () => {
       selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
         .mockResolvedValue([]);
 
-      selectAdditionalServiceController.findAdditionalServices = jest.fn()
-        .mockResolvedValue([]);
+      getAdditionalServices.mockResolvedValue([]);
 
       try {
         await request(setUpFakeApp())
@@ -167,8 +167,7 @@ describe('additional-services select routes', () => {
       selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
         .mockResolvedValue([]);
 
-      selectAdditionalServiceController.findAdditionalServices = jest.fn()
-        .mockResolvedValue([{ id: '1' }]);
+      getAdditionalServices.mockResolvedValue([{ id: '1' }]);
 
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
@@ -187,8 +186,7 @@ describe('additional-services select routes', () => {
       selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
         .mockResolvedValue([]);
 
-      selectAdditionalServiceController.findAdditionalServices = jest.fn()
-        .mockResolvedValue([{ id: '1' }]);
+      getAdditionalServices.mockResolvedValue([{ id: '1' }]);
 
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
@@ -212,8 +210,7 @@ describe('additional-services select routes', () => {
           },
         ]);
 
-      selectAdditionalServiceController.findAdditionalServices = jest.fn()
-        .mockResolvedValue({});
+      getAdditionalServices.mockResolvedValue({});
 
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
@@ -253,8 +250,7 @@ describe('additional-services select routes', () => {
           additionalServiceId,
           name: 'Additional Service 1',
         }];
-      selectAdditionalServiceController.findAdditionalServices = jest.fn()
-        .mockResolvedValue(additionalServices);
+      getAdditionalServices.mockResolvedValue(additionalServices);
 
       selectAdditionalServiceController.validateAdditionalServicesForm = jest.fn()
         .mockReturnValue({ success: true });

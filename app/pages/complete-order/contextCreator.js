@@ -9,6 +9,7 @@ export const getContext = ({ orderId, orderDescription, fundingSource }) => {
     ...addParamsToManifest(manifest, { orderId }),
     orderDescription,
     backLinkHref: `${baseUrl}/organisation/${orderId}`,
+    continueEditingOrderButtonHref: `${baseUrl}/organisation/${orderId}`,
   });
   return context;
 };

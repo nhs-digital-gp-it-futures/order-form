@@ -1,7 +1,6 @@
 import { getFundingSourceContext, validateFundingSourceForm } from './controller';
 import * as contextCreator from './contextCreator';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
