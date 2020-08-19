@@ -2,8 +2,6 @@ import {
   validateAssociatedServicePriceForm,
 } from './controller';
 
-jest.mock('buying-catalogue-library');
-
 describe('validateAssociatedServicePriceForm', () => {
   describe('when there are no validation errors', () => {
     it('should return success as true', () => {

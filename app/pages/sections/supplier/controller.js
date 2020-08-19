@@ -1,11 +1,6 @@
-import { getData } from 'buying-catalogue-library';
-import { getEndpoint } from '../../../endpoints';
-import { logger } from '../../../logger';
+import { getSupplier } from '../../../helpers/api/ordapi/getSupplier';
 
 export const checkOrdapiForSupplier = async ({ orderId, accessToken }) => {
-  const ordapiSupplierDataEndpoint = getEndpoint({ api: 'ordapi', endpointLocator: 'getSupplier', options: { orderId } });
-  const ordapiSupplierData = await getData({
-    endpoint: ordapiSupplierDataEndpoint, accessToken, logger,
-  });
+  const ordapiSupplierData = await getSupplier({ orderId, accessToken });
   return !!(ordapiSupplierData && ordapiSupplierData.name);
 };

@@ -7,8 +7,6 @@ import {
 import * as contextCreator from './contextCreator';
 import { getOrderItems } from '../../../../../../helpers/api/ordapi/getOrderItems';
 
-jest.mock('buying-catalogue-library');
-
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
   getErrorContext: jest.fn(),

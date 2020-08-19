@@ -5,7 +5,6 @@ import { deleteOrder as apiDeleteOrder } from '../../helpers/api/ordapi/deleteOr
 import { logger } from '../../logger';
 import * as contextCreator from './contextCreator';
 
-jest.mock('buying-catalogue-library');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));

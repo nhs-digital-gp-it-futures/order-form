@@ -1,8 +1,8 @@
-import { postData, putData } from 'buying-catalogue-library';
 import { getContext, getErrorContext } from './contextCreator';
-import { getEndpoint } from '../../../endpoints';
 import { logger } from '../../../logger';
 import { getOrderDescription } from '../../../helpers/routes/getOrderDescription';
+import { postDescription } from '../../../helpers/api/ordapi/postDescription';
+import { putDescription } from '../../../helpers/api/ordapi/putDescription';
 
 export const getDescriptionContext = async ({
   req,
@@ -30,26 +30,10 @@ export const postOrPutDescription = async ({
   orgId, orderId, accessToken, data,
 }) => {
   const isNewOrder = orderId === 'neworder';
-  const endpoint = isNewOrder
-    ? getEndpoint({ api: 'ordapi', endpointLocator: 'postDescription' })
-    : getEndpoint({ api: 'ordapi', endpointLocator: 'putDescription', options: { orderId } });
-  const apiCallParams = {
-    endpoint,
-    body: isNewOrder ? {
-      description: data.description.trim(),
-      organisationId: orgId,
-    } : { description: data.description.trim() },
-    accessToken,
-    logger,
-  };
-
   try {
-    const response = isNewOrder ? await postData(apiCallParams) : await putData(apiCallParams);
-    const returnOrderId = (response.data && response.data.orderId)
-      ? response.data.orderId
-      : orderId;
-    logger.info(`Order description ${isNewOrder ? 'added' : 'updated'} - id: ${returnOrderId}, ${JSON.stringify(data)}`);
-    return { success: true, orderId: returnOrderId };
+    return isNewOrder
+      ? await postDescription({ orgId, accessToken, formData: data })
+      : await putDescription({ orderId, accessToken, formData: data });
   } catch (err) {
     if (err.response.status === 400 && err.response.data && err.response.data.errors) {
       return err.response.data;

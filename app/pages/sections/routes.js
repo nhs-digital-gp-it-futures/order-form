@@ -3,16 +3,15 @@ import { logger } from '../../logger';
 import config from '../../config';
 import { withCatch, extractAccessToken } from '../../helpers/routes/routerHelper';
 import {
-  getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext, putCallOffOrderingParty,
+  getCallOffOrderingPartyContext, getCallOffOrderingPartyErrorContext,
 } from './ordering-party/controller';
 import { getDescriptionContext, getDescriptionErrorContext, postOrPutDescription } from './description/controller';
 import {
   getCommencementDateContext,
-  putCommencementDate,
   getCommencementDateErrorContext,
   validateCommencementDateForm,
 } from './commencement-date/controller';
-import { getServiceRecipientsContext, putServiceRecipients } from './service-recipients/controller';
+import { getServiceRecipientsContext } from './service-recipients/controller';
 import { getFundingSourceContext, getFundingSourceErrorPageContext, validateFundingSourceForm } from './funding-source/controller';
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/routes';
@@ -20,6 +19,9 @@ import { additionalServicesRoutes } from './order-items/additional-services/rout
 import { associatedServicesRoutes } from './order-items/associated-services/routes';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
+import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
+import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
+import { putServiceRecipients } from '../../helpers/api/ordapi/putServiceRecipients';
 
 const router = express.Router({ mergeParams: true });
 
@@ -70,7 +72,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.post('/ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const response = await putCallOffOrderingParty({
+    const response = await putOrderingParty({
       orderId,
       data: req.body,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),

@@ -4,7 +4,6 @@ import { getOrderDescription } from '../../../helpers/routes/getOrderDescription
 import { logger } from '../../../logger';
 import * as contextCreator from './contextCreator';
 
-jest.mock('buying-catalogue-library');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));

@@ -3,8 +3,6 @@ import {
   getSupplierSearchPageContext, validateSupplierSearchForm,
 } from './controller';
 
-jest.mock('buying-catalogue-library');
-
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
