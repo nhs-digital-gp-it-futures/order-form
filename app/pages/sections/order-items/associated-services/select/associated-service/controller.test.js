@@ -10,7 +10,6 @@ import * as contextCreator from './contextCreator';
 import * as getCatalogueItems from '../../../../../../helpers/api/bapi/getCatalogueItems';
 import * as getSupplier from '../../../../../../helpers/api/ordapi/getSupplier';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../../../../logger');
 
 jest.mock('./contextCreator', () => ({
