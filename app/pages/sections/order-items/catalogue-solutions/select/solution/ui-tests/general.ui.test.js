@@ -43,7 +43,6 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Catalogue-solutions - solution page - general')
