@@ -1,16 +1,17 @@
 import request from 'supertest';
 import {
-  FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
   testAuthorisedGetPathForUnauthorisedUser,
   getCsrfTokenFromGet,
-  fakeSessionManager,
 } from 'buying-catalogue-library';
-import { App } from '../../../app';
-import { routes } from '../../../routes';
+import {
+  mockUnauthorisedCookie,
+  mockAuthorisedCookie,
+  setUpFakeApp,
+} from '../../../test-utils/routesTestHelper';
 import { baseUrl } from '../../../config';
 import { sessionKeys } from '../../../helpers/routes/sessionHelper';
 import { getSearchSuppliers } from '../../../helpers/api/bapi/getSearchSuppliers';
@@ -24,39 +25,13 @@ jest.mock('../../../logger');
 jest.mock('../../../helpers/api/bapi/getSearchSuppliers');
 jest.mock('../../../helpers/api/ordapi/putSupplier');
 
-const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
-
-const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113',
-  name: 'Cool Dude',
-  ordering: 'manage',
-  primaryOrganisationId: 'org-id',
-});
-
-const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
-
-const mockUnauthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
-});
-const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
-
 const mockSuppliersFoundState = JSON.stringify([
   { supplierId: 'supplier-1', name: 'Supplier 1' },
   { supplierId: 'supplier-2', name: 'Supplier 2' },
 ]);
-
 const mockSuppliersFoundCookie = `${sessionKeys.suppliersFound}=${mockSuppliersFoundState}`;
-
 const mockSelectedSupplierState = 'supplier-1';
-
 const mockSelectedSupplierCookie = `${sessionKeys.selectedSupplier}=${mockSelectedSupplierState}`;
-
-const setUpFakeApp = () => {
-  const authProvider = new FakeAuthProvider(mockLogoutMethod);
-  const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, fakeSessionManager()));
-  return app;
-};
 
 describe('supplier section routes', () => {
   describe('GET /organisation/:orderId/supplier', () => {
