@@ -14,7 +14,7 @@ import {
 } from '../../../../../test-utils/routesTestHelper';
 import * as catalogueSolutionPriceController from './price/controller';
 import * as selectSolutionController from './solution/controller';
-import * as selectRecipientController from './recipient/controller';
+import * as selectRecipientController from './recipients/controller';
 import { baseUrl } from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
@@ -35,12 +35,6 @@ const mockSessionSolutionsState = JSON.stringify([
   { catalogueItemId: 'solution-2', name: 'Solution 2' },
 ]);
 const mockSolutionsCookie = `${sessionKeys.suppliersFound}=${mockSessionSolutionsState}`;
-
-const mockRecipientSessionState = JSON.stringify([
-  { id: 'recipient-1', name: 'Recipient 1' },
-  { id: 'recipient-2', name: 'Recipient 2' },
-]);
-const mockRecipientsCookie = `${sessionKeys.recipients}=${mockRecipientSessionState}`;
 
 const mockSolutionPrices = JSON.stringify({
   id: 'sol-1',
@@ -332,13 +326,13 @@ describe('catalogue-solutions select routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select/solution/price/recipient`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select/solution/price/recipients`);
         });
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/select/solution/price/recipient', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select/solution/price/recipient';
+  describe('GET /organisation/:orderId/catalogue-solutions/select/solution/price/recipients', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/select/solution/price/recipients';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -359,7 +353,7 @@ describe('catalogue-solutions select routes', () => {
     it('should return the catalogue-solutions select recipient page if authorised', () => {
       getRecipients.mockResolvedValue([]);
 
-      selectRecipientController.getRecipientPageContext = jest.fn()
+      selectRecipientController.getServiceRecipientsContext = jest.fn()
         .mockResolvedValue({});
 
       return request(setUpFakeApp())
@@ -367,113 +361,8 @@ describe('catalogue-solutions select routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
-          expect(res.text.includes('data-test-id="solution-recipient-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
-    });
-  });
-
-  describe('POST /organisation/:orderId/catalogue-solutions/select/solution/price/recipient', () => {
-    const path = '/organisation/order-1/catalogue-solutions/select/solution/price/recipient';
-
-    it('should return 403 forbidden if no csrf token is available', () => (
-      testPostPathWithoutCsrf({
-        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
-      })
-    ));
-
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedPostPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        postPath: path,
-        getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie,
-        ],
-        postPathCookies: [mockRecipientsCookie],
-        expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
-
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      getRecipients.mockResolvedValue([]);
-
-      return testAuthorisedPostPathForUnauthorisedUsers({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        postPath: path,
-        getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie,
-        ],
-        postPathCookies: [
-          mockUnauthorisedCookie, mockRecipientsCookie,
-        ],
-        expectedPageId: 'data-test-id="error-title"',
-        expectedPageMessage: 'You are not authorised to view this page',
-      });
-    });
-
-    it('should show the recipient select page with errors if there are validation errors', async () => {
-      getRecipients.mockResolvedValue([]);
-
-      selectRecipientController.validateRecipientForm = jest.fn()
-        .mockReturnValue({ success: false });
-
-      selectRecipientController.getRecipientErrorPageContext = jest.fn()
-        .mockResolvedValue({
-          errors: [{ text: 'Select a recipient', href: '#selectRecipient' }],
-        });
-
-      const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie,
-        ],
-      });
-
-      return request(setUpFakeApp())
-        .post(path)
-        .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie])
-        .send({ _csrf: csrfToken })
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('data-test-id="solution-recipient-page"')).toEqual(true);
-          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
-          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-        });
-    });
-
-    it('should redirect to /organisation/some-order-id/catalogue-solutions/neworderitem if a recipient is selected', async () => {
-      getRecipients.mockResolvedValue([]);
-
-      selectRecipientController.validateRecipientForm = jest.fn()
-        .mockReturnValue({ success: true });
-
-      selectRecipientController.getServiceRecipientName = jest.fn()
-        .mockReturnValue('service recipient one');
-
-      const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        getPathCookies: [
-          mockAuthorisedCookie, mockRecipientsCookie,
-        ],
-      });
-
-      return request(setUpFakeApp())
-        .post(path)
-        .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie])
-        .send({
-          selectRecipient: 'recipient-1',
-          _csrf: csrfToken,
-        })
-        .expect(302)
-        .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/neworderitem`);
         });
     });
   });
