@@ -1,6 +1,7 @@
 import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
+import { sortItems } from '../../common/sortItems';
 
 const getOrderEndpoint = orderId => `${orderApiUrl}/api/v1/orders/${orderId}`;
 
@@ -23,17 +24,6 @@ const transformOrderItems = (orderItems = []) => {
 
   return { oneOffCostItems, recurringCostItems };
 };
-
-const sortItems = (items, propToSort) => (
-  items.sort((itemA, itemB) => {
-    const itemAPropValue = itemA[propToSort].toLowerCase();
-    const itemBPropValue = itemB[propToSort].toLowerCase();
-
-    if (itemAPropValue < itemBPropValue) return -1;
-    if (itemAPropValue > itemBPropValue) return 1;
-    return 0;
-  })
-);
 
 export const sortServiceRecipients = serviceRecipients => sortItems(serviceRecipients, 'name');
 
