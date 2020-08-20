@@ -1,6 +1,7 @@
 import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { solutionsApiUrl } from '../../../config';
+import { sortItems } from '../../common/sortItems';
 
 const getCatalogueItemsQueryString = ({ supplierId, catalogueItemType }) => {
   const queryParameters = [];
@@ -28,7 +29,7 @@ export const getCatalogueItems = async ({ supplierId, catalogueItemType }) => {
 
   logger.info(`Retrieving ${catalogueItemType} catalogue items from BAPI for supplier ${supplierId}`);
   const catalogueItems = await getData({ endpoint, logger });
-  catalogueItems.sort((a, b) => ((a.name > b.name) ? 1 : -1));
+  sortItems(catalogueItems, 'name');
 
   logger.info(`Found ${catalogueItems.length} ${catalogueItemType}(s) for supplier "${supplierId}".`);
   return catalogueItems;

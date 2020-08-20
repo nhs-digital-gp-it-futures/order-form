@@ -33,7 +33,14 @@ describe('getCatalogueItems', () => {
 });
 
   it('should return the catalogueItems', async () => {
-    const expectedCatalogueItems = [{}, {}];
+    const expectedCatalogueItems = [{
+      catalogueItemId: 'solution-B',
+      name: 'b',
+    },
+    {
+      catalogueItemId: 'solution-A',
+      name: 'a',
+    }];
 
     getData.mockResolvedValueOnce(expectedCatalogueItems);
 
