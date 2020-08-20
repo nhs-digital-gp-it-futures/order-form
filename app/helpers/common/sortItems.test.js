@@ -1,6 +1,6 @@
 import { sortItems } from './sortItems';
 
-describe('sort service recipients by name', () => {
+describe('sortItems', () => {
   const toSort1 = {
     sortBy: 'A1',
     notSortBy: 'field',
@@ -19,18 +19,18 @@ describe('sort service recipients by name', () => {
   it('should return a list of 1 item sorted by correct key', () => {
     const toSortArray = [toSort1];
 
-    const sortedServiceRecipients = sortItems(toSortArray, 'sortBy');
+    const sortedItems = sortItems(toSortArray, 'sortBy');
 
-    expect(sortedServiceRecipients).toEqual(toSortArray);
+    expect(sortedItems).toEqual(toSortArray);
   });
 
-  it('should return a list of 3 service recipients sorted by name', () => {
+  it('should return a list of 3 items sorted by correct key', () => {
     const sortedArray = [toSort1, toSort2, toSort3];
 
     const toSortArray = [toSort2, toSort3, toSort1];
 
-    const sortedServiceRecipients = sortItems(toSortArray, 'sortBy');
+    const sortedItems = sortItems(toSortArray, 'sortBy');
 
-    expect(sortedServiceRecipients).toEqual(sortedArray);
+    expect(sortedItems).toEqual(sortedArray);
   });
 });
