@@ -8,17 +8,10 @@ import {
   mockAuthorisedCookie,
   setUpFakeApp,
 } from '../../test-utils/routesTestHelper';
-import { getOrder } from '../../helpers/api/ordapi/getOrder';
-import * as summaryController from './controller';
+import * as taskListController from './controller';
 
-jest.mock('../../helpers/api/ordapi/getOrder');
-
-describe('GET /organisation/:orderId/summary', () => {
-  const path = '/organisation/order-id/summary';
-
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
+describe('GET /organisation/:orderId', () => {
+  const path = '/organisation/order-id';
 
   it('should redirect to the login page if the user is not logged in', () => (
     testAuthorisedGetPathForUnauthenticatedUser({
@@ -36,36 +29,30 @@ describe('GET /organisation/:orderId/summary', () => {
     })
   ));
 
-  it('should return the correct status and text when the user is authorised', () => {
-    getOrder.mockResolvedValueOnce({});
-
-    summaryController.getSummaryPageContext = jest.fn()
-      .mockResolvedValueOnce({});
+  it('should return the neworder page with correct status when the user is authorised', () => {
+    taskListController.getTaskListPageContext = jest.fn()
+      .mockResolvedValueOnce({ orderId: 'neworder' });
 
     return request(setUpFakeApp())
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text.includes('data-test-id="summary-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="neworder-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       });
   });
 
-  it('should return the printable summary page when the print flag is passed in', () => {
-    const pathWithPrintFlag = `${path}?print=true`;
-
-    getOrder.mockResolvedValueOnce({});
-
-    summaryController.getSummaryPageContext = jest.fn()
-      .mockResolvedValueOnce({});
+  it('should return the existing order page with correct status when the user is authorised', () => {
+    taskListController.getTaskListPageContext = jest.fn()
+      .mockResolvedValueOnce({ orderId: 'order-id' });
 
     return request(setUpFakeApp())
-      .get(pathWithPrintFlag)
+      .get(path)
       .set('Cookie', [mockAuthorisedCookie])
       .expect(200)
       .then((res) => {
-        expect(res.text.includes('data-test-id="summary-page-print"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="order-id-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
       });
   });

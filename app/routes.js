@@ -4,16 +4,15 @@ import {
 } from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
-import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routes/routerHelper';
+import { withCatch, getHealthCheckDependencies } from './helpers/routes/routerHelper';
 import { getDocumentByFileName } from './helpers/api/dapi/getDocumentByFileName';
-import { getDashboardContext } from './pages/dashboard/controller';
-import { getTaskListPageContext } from './pages/task-list/controller';
+import { dashboardRoutes } from './pages/dashboard/routes';
+import { tasklistRoutes } from './pages/task-list/routes';
 import { sectionRoutes } from './pages/sections/routes';
 import { summaryRoutes } from './pages/summary/routes';
 import { completeOrderRoutes } from './pages/complete-order/routes';
 import { deleteOrderRoutes } from './pages/delete-order/routes';
 import includesContext from './includes/manifest.json';
-import { clearSession } from './helpers/routes/sessionHelper';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -45,27 +44,9 @@ export const routes = (authProvider, sessionManager) => {
     stream.on('close', () => res.end());
   }));
 
-  router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const context = await getDashboardContext({
-      accessToken,
-      orgId: req.user.primaryOrganisationId,
-      orgName: req.user.primaryOrganisationName,
-    });
-    logger.info('navigating to organisation orders page');
-    res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
-  }));
+  router.use('/organisation', dashboardRoutes(authProvider, addContext));
 
-  router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const { orderId } = req.params;
-
-    clearSession({ req, sessionManager });
-
-    const context = await getTaskListPageContext({ accessToken, orderId });
-    logger.info(`navigating to order ${orderId} task list page`);
-    res.render('pages/task-list/template.njk', addContext({ context, user: req.user }));
-  }));
+  router.use('/organisation/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
 
   router.use('/organisation/:orderId/summary', summaryRoutes(authProvider, addContext));
 
