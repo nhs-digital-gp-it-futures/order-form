@@ -9,3 +9,17 @@ export const getServiceRecipientsContext = async ({
   selectedRecipientIdsData: [],
   selectStatus,
 });
+
+export const validateSolutionRecipientsForm = ({ data }) => {
+  if (Object.keys(data).length > 1) {
+    return { success: true };
+  }
+
+  const errors = [
+    {
+      field: 'selectSolutionRecipients',
+      id: 'selectSolutionRecipientsRequired',
+    },
+  ];
+  return { success: false, errors };
+};

@@ -31,5 +31,8 @@
       }
     }
   },
-  "continueButtonText": "Continue"
+  "continueButtonText": "Continue",
+  "errorMessages": {
+
+  }
 }
