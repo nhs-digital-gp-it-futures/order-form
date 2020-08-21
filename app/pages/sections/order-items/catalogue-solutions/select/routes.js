@@ -159,5 +159,12 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.post('/solution/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+
+    logger.info('Redirect to new solution page');
+    return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+  }));
+
   return router;
 };
