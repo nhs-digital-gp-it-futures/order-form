@@ -1,5 +1,6 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../../../config';
+import { addParamsToManifest } from '../../../../../../helpers/contextCreators/addParamsToManifest';
 
 const getCheckedStatus = ({ selectStatus, serviceRecipient, selectedRecipientIdsData = [] }) => {
   if (selectStatus === 'select') return true;
@@ -54,12 +55,11 @@ const generateServiceRecipientsTable = ({
 });
 
 export const getContext = ({
-  orderId, serviceRecipientsData = [], selectedRecipientIdsData = [], selectStatus,
+  orderId, itemName, serviceRecipientsData = [], selectedRecipientIdsData = [], selectStatus,
 }) => {
   const toggledStatus = selectStatus === 'select' ? 'deselect' : 'select';
   return {
-    ...manifest,
-    title: `${manifest.title} ${orderId}`,
+    ...addParamsToManifest(manifest, { itemName, orderId }),
     backLinkHref: `${baseUrl}/organisation/${orderId}`,
     serviceRecipientsTable: generateServiceRecipientsTable({
       selectStatus,
@@ -67,7 +67,7 @@ export const getContext = ({
       serviceRecipientsData,
       selectedRecipientIdsData,
     }),
-    selectDeselectButtonAction: `${baseUrl}/organisation/${orderId}/service-recipients`,
+    selectDeselectButtonAction: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`,
     selectStatus: toggledStatus,
     selectDeselectButtonText: manifest.selectDeselectButtonText[toggledStatus]
       || manifest.selectDeselectButtonText.select,

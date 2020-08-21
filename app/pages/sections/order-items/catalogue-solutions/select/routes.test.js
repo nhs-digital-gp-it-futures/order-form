@@ -16,7 +16,7 @@ import * as catalogueSolutionPriceController from './price/controller';
 import * as selectSolutionController from './solution/controller';
 import * as selectRecipientController from './recipients/controller';
 import { baseUrl } from '../../../../../config';
-import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
+import { getServiceRecipients as getRecipientsFromOapi } from '../../../../../helpers/api/oapi/getServiceRecipients';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItems } from '../../../../../helpers/api/bapi/getCatalogueItems';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
@@ -24,7 +24,7 @@ import { getSupplier } from '../../../../../helpers/api/ordapi/getSupplier';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../../logger');
-jest.mock('../../../../../helpers/api/ordapi/getRecipients');
+jest.mock('../../../../../helpers/api/oapi/getServiceRecipients');
 jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItems');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
@@ -351,7 +351,7 @@ describe('catalogue-solutions select routes', () => {
     ));
 
     it('should return the catalogue-solutions select recipient page if authorised', () => {
-      getRecipients.mockResolvedValue([]);
+      getRecipientsFromOapi.mockResolvedValue([]);
 
       selectRecipientController.getServiceRecipientsContext = jest.fn()
         .mockResolvedValue({});

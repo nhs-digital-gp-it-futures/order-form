@@ -21,6 +21,7 @@ import {
 } from '../../../../../helpers/api/bapi/getCatalogueItems';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getSupplier } from '../../../../../helpers/api/ordapi/getSupplier';
+import { getServiceRecipients as getRecipientsFromOapi } from '../../../../../helpers/api/oapi/getServiceRecipients';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
@@ -139,8 +140,20 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   router.get('/solution/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const { selectStatus } = req.query;
+
+    const itemName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+
+    const orgId = req.user.primaryOrganisationId;
+
+    const serviceRecipients = await getRecipientsFromOapi({ orgId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    sessionManager.saveToSession({
+      req, key: sessionKeys.recipients, value: serviceRecipients,
+    });
+
     const context = await getServiceRecipientsContext({
-      orderId, orgId: req.user.primaryOrganisationId, selectStatus, accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      orderId, itemName, selectStatus, serviceRecipients,
     });
     logger.info(`navigating to order ${orderId} catalogue-solutions select recipient page`);
     res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));

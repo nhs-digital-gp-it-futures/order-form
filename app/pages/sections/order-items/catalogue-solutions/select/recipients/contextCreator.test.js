@@ -3,6 +3,7 @@ import { getContext } from './contextCreator';
 import { baseUrl } from '../../../../../../config';
 
 const orderId = 'order-id';
+const itemName = 'Solution One';
 const serviceRecipientsData = [{
   name: 'Some service recipient 1',
   odsCode: 'ods1',
@@ -22,15 +23,14 @@ describe('service-recipients contextCreator', () => {
       const context = getContext({});
       expect(context.backLinkText).toEqual(manifest.backLinkText);
       expect(context.description).toEqual(manifest.description);
-      expect(context.insetAdvice).toEqual(manifest.insetAdvice);
       expect(context.organisationHeading).toEqual(manifest.organisationHeading);
       expect(context.odsCodeHeading).toEqual(manifest.odsCodeHeading);
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
     });
 
     it('should construct the title', () => {
-      const context = getContext({ orderId });
-      expect(context.title).toEqual('Service Recipients for order-id');
+      const context = getContext({ orderId, itemName });
+      expect(context.title).toEqual('Service Recipients for Solution One for order-id');
     });
 
     it('should construct the backLinkHref', () => {

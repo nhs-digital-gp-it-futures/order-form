@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
-import { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
+import { solutionsApiUrl, organisationApiUrl } from '../../../../../../../config';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price';
@@ -214,9 +214,9 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price/recipients when a price is selected', async (t) => {
-  nock(orderApiUrl)
+  nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
-    .reply(200, {});
+    .reply(200, []);
 
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);

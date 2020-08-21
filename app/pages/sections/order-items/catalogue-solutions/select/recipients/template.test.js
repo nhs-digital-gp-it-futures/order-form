@@ -3,13 +3,13 @@ import manifest from './manifest.json';
 
 const setup = {
   template: {
-    path: 'pages/sections/service-recipients/template.njk',
+    path: 'pages/sections/order-items/catalogue-solutions/select/recipients/template.njk',
   },
 };
 
 const context = {
   ...manifest,
-  title: 'Service Recipients for order-id',
+  title: 'Service Recipients for Solution One for order-id',
   backLinkHref: '/organisation/order-1',
   csrfToken: 'mockCsrfToken',
   selectDeselectButtonAction: '/organisation/order-1/service-recipients',
@@ -17,7 +17,7 @@ const context = {
   selectDeselectButtonText: 'Select all',
 };
 
-describe('service-recipients page', () => {
+describe('recipients page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
@@ -29,7 +29,7 @@ describe('service-recipients page', () => {
 
   it('should render the page title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const title = $('h1[data-test-id="service-recipients-page-title"]');
+      const title = $('h1[data-test-id="solution-recipients-page-title"]');
       expect(title.length).toEqual(1);
       expect(title.text().trim()).toEqual(context.title);
     });
@@ -37,17 +37,9 @@ describe('service-recipients page', () => {
 
   it('should render the page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="service-recipients-page-description"]');
+      const description = $('h2[data-test-id="solution-recipients-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
-    });
-  }));
-
-  it('should render the supplier page inset advice', componentTester(setup, (harness) => {
-    harness.request(context, ($) => {
-      const insetAdvice = $('[data-test-id="service-recipients-page-insetAdvice"]');
-      expect(insetAdvice.length).toEqual(1);
-      expect(insetAdvice.text().trim()).toContain(context.insetAdvice);
     });
   }));
 
