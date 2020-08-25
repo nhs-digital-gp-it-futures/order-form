@@ -41,18 +41,6 @@
       ]
     },
     {
-      "name": "Select Service Recipients",
-      "sections": [
-        {
-          "id": "service-recipients",
-          "title": "Select the organisations you are ordering for",
-          "dependencies": [
-            { "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date"] }
-          ]
-        }
-      ]
-    },
-    {
       "name": "Add Catalogue Solutions",
       "sections": [
         {
@@ -60,8 +48,7 @@
           "title": "Add Catalogue Solutions to your order",
           "dependencies": [
             {
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients"],
-              "countDependencies": ["service-recipients"]
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date"]
             }
           ]
         }
@@ -75,8 +62,8 @@
           "title": "Add Additional Services to your order",
           "dependencies": [
             {
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","catalogue-solutions"],
-              "countDependencies": ["service-recipients","catalogue-solutions"]
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "catalogue-solutions"],
+              "countDependencies": ["catalogue-solutions"]
             }
           ]
         }
@@ -90,26 +77,20 @@
           "title": "Add Associated Services to your order",
           "dependencies": [
             {
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients"],
-              "zeroCountDependencies": ["service-recipients"]
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date"]
             },
             {
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","catalogue-solutions"],
-              "zeroCountDependencies": ["catalogue-solutions"],
-              "countDependencies": ["service-recipients"]
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "catalogue-solutions"],
+              "zeroCountDependencies": ["catalogue-solutions"]
             },
             { 
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","catalogue-solutions","additional-services"],
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "catalogue-solutions","additional-services"],
               "zeroCountDependencies": ["additional-services"],
-              "countDependencies": ["service-recipients","catalogue-solutions"]
+              "countDependencies": ["catalogue-solutions"]
             },
             { 
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","catalogue-solutions","additional-services"],
-              "countDependencies": ["service-recipients"]
-            },
-            { 
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients","associated-services"],
-              "countDependencies": ["service-recipients", "associated-services"]
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "associated-services"],
+              "countDependencies": ["associated-services"]
             }
           ]
         }
@@ -123,12 +104,12 @@
           "title": "Explain how you're paying for this order",
           "dependencies": [
             {
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients", "associated-services"],
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "associated-services"],
               "countDependencies": ["associated-services"]
             },
             {
-              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "service-recipients", "associated-services", "catalogue-solutions"],
-              "countDependencies": ["catalogue-solutions", "service-recipients"]
+              "statusDependencies": ["description", "ordering-party", "supplier", "commencement-date", "associated-services", "catalogue-solutions"],
+              "countDependencies": ["catalogue-solutions"]
             }
           ]
         }

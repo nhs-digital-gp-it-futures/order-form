@@ -322,8 +322,8 @@ test('should render task 4 item 1', async (t) => {
 
   await t
     .expect(await extractInnerText(task4.find('h2 span'))).eql('4.')
-    .expect(await extractInnerText(task4.find('h2 div'))).eql('Select Service Recipients')
-    .expect(await extractInnerText(task4Item1.find('span'))).eql('Select the organisations you are ordering for');
+    .expect(await extractInnerText(task4.find('h2 div'))).eql('Add Catalogue Solutions')
+    .expect(await extractInnerText(task4Item1.find('span'))).eql('Add Catalogue Solutions to your order');
 });
 
 test('should render task 4 item 1 as text if all dependencies are not met', async (t) => {
@@ -354,11 +354,11 @@ test('should only render task 4 item 1 as a link if all dependencies are met', a
 
   await t
     .click(task4Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/service-recipients`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/catalogue-solutions`);
 });
 
 test('should not render the complete tag for task 4 item 1 when returned as incomplete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'service-recipients', status: 'incomplete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'catalogue-solutions', status: 'incomplete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -369,7 +369,7 @@ test('should not render the complete tag for task 4 item 1 when returned as inco
 });
 
 test('should only render the complete tag for task 4 item 1 when returned as complete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'service-recipients', status: 'complete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'catalogue-solutions', status: 'complete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -389,8 +389,8 @@ test('should render task 5 item 1', async (t) => {
 
   await t
     .expect(await extractInnerText(task5.find('h2 span'))).eql('5.')
-    .expect(await extractInnerText(task5.find('h2 div'))).eql('Add Catalogue Solutions')
-    .expect(await extractInnerText(task5Item1.find('span'))).eql('Add Catalogue Solutions to your order');
+    .expect(await extractInnerText(task5.find('h2 div'))).eql('Add Additional Services')
+    .expect(await extractInnerText(task5Item1.find('span'))).eql('Add Additional Services to your order');
 });
 
 test('should render task 5 item 1 as text if all dependencies are not met', async (t) => {
@@ -398,7 +398,7 @@ test('should render task 5 item 1 as text if all dependencies are not met', asyn
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 0 },
+    { id: 'catalogue-solutions', status: 'complete', count: 0 },
   ]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
@@ -414,7 +414,7 @@ test('should only render task 5 item 1 as a link if all dependencies are met', a
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
+    { id: 'catalogue-solutions', status: 'complete', count: 1 },
   ]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
@@ -423,11 +423,11 @@ test('should only render task 5 item 1 as a link if all dependencies are met', a
 
   await t
     .click(task5Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/catalogue-solutions`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/additional-services`);
 });
 
 test('should not render the complete tag for task 5 item 1 when returned as incomplete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'catalogue-solutions', status: 'incomplete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'additional-services', status: 'incomplete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -438,7 +438,7 @@ test('should not render the complete tag for task 5 item 1 when returned as inco
 });
 
 test('should only render the complete tag for task 5 item 1 when returned as complete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'catalogue-solutions', status: 'complete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'additional-services', status: 'complete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -458,16 +458,15 @@ test('should render task 6 item 1', async (t) => {
 
   await t
     .expect(await extractInnerText(task6.find('h2 span'))).eql('6.')
-    .expect(await extractInnerText(task6.find('h2 div'))).eql('Add Additional Services')
-    .expect(await extractInnerText(task6Item1.find('span'))).eql('Add Additional Services to your order');
+    .expect(await extractInnerText(task6.find('h2 div'))).eql('Add Associated Services')
+    .expect(await extractInnerText(task6Item1.find('span'))).eql('Add Associated Services to your order');
 });
 
-test('should render task 6 item 1 as text if all dependencies are not met', async (t) => {
+test('should only render task 6 item 1 as a link if Catalogue solution saved and count 0', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 0 },
     { id: 'catalogue-solutions', status: 'complete', count: 0 },
   ]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
@@ -476,16 +475,16 @@ test('should render task 6 item 1 as text if all dependencies are not met', asyn
   const task6Item1 = Selector('li[data-test-id="task-5-item-0"]');
 
   await t
-    .expect(task6Item1.find('a').exists).notOk();
+    .click(task6Item1.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
 });
 
-test('should only render task 6 item 1 as a link if all dependencies are met', async (t) => {
+test('should render task 6 item 1 as link catalogue solution not viewed', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 1 },
+    { id: 'catalogue-solutions', status: 'incomplete', count: 0 },
   ]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
@@ -494,11 +493,82 @@ test('should only render task 6 item 1 as a link if all dependencies are met', a
 
   await t
     .click(task6Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/additional-services`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+});
+
+test('should render task 6 item 1 as text catalogue solution incomplete, add additional services incomplete', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+    { id: 'catalogue-solutions', status: 'complete', count: 1 },
+    { id: 'additional-services', status: 'incomplete', count: 0 },
+  ]);
+  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
+  await t.navigateTo(pageUrl);
+
+  const task6Item1 = Selector('li[data-test-id="task-5-item-0"]');
+
+  await t
+    .click(task6Item1.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+});
+
+test('should only render task 6 item 1 as a link if catalogue solution 1 and additional services viewed with 0 services', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+    { id: 'catalogue-solutions', status: 'complete', count: 1 },
+    { id: 'additional-services', status: 'complete', count: 0 },
+  ]);
+  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
+  await t.navigateTo(pageUrl);
+
+  const task6Item1 = Selector('li[data-test-id="task-5-item-0"]');
+
+  await t
+    .click(task6Item1.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+});
+
+test('should only render task 6 item 1 as a link if catalogue solution 1 and additional services 1', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+    { id: 'catalogue-solutions', status: 'complete', count: 1 },
+    { id: 'additional-services', status: 'complete', count: 1 },
+  ]);
+  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
+  await t.navigateTo(pageUrl);
+
+  const task6Item1 = Selector('li[data-test-id="task-5-item-0"]');
+
+  await t
+    .click(task6Item1.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+});
+
+test('should only render task 6 item 1 as a link if associated-services completed', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+    { id: 'associated-services', status: 'complete', count: 1 },
+  ]);
+  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
+  await t.navigateTo(pageUrl);
+
+  const task6Item1 = Selector('li[data-test-id="task-5-item-0"]');
+
+  await t
+    .click(task6Item1.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
 });
 
 test('should not render the complete tag for task 6 item 1 when returned as incomplete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'additional-services', status: 'incomplete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'associated-services', status: 'incomplete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -509,7 +579,7 @@ test('should not render the complete tag for task 6 item 1 when returned as inco
 });
 
 test('should only render the complete tag for task 6 item 1 when returned as complete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'additional-services', status: 'complete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'associated-services', status: 'complete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -528,17 +598,18 @@ test('should render task 7 item 1', async (t) => {
   const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
 
   await t
+    .expect(task7.exists).ok()
     .expect(await extractInnerText(task7.find('h2 span'))).eql('7.')
-    .expect(await extractInnerText(task7.find('h2 div'))).eql('Add Associated Services')
-    .expect(await extractInnerText(task7Item1.find('span'))).eql('Add Associated Services to your order');
+    .expect(await extractInnerText(task7.find('h2 div'))).eql('Indicate funding source')
+    .expect(task7Item1.exists).ok()
+    .expect(await extractInnerText(task7Item1.find('span'))).eql('Explain how you\'re paying for this order');
 });
 
-test('should render task 7 item 1 as text if recipients saved and count 1', async (t) => {
+test('should render task 7 item 1 as text if not all requirements met', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
   ]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
@@ -549,138 +620,29 @@ test('should render task 7 item 1 as text if recipients saved and count 1', asyn
     .expect(task7Item1.find('a').exists).notOk();
 });
 
-test('should only render task 7 item 1 as a link if recipients saved and count 0', async (t) => {
+test('should render task 7 item 1 as text if catalogue solution saved, additional service saved and associated service saved', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 0 },
+    { id: 'catalogue-solutions', status: 'complete' },
+    { id: 'additional-services', status: 'complete' },
+    { id: 'associated-services', status: 'complete' },
   ]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
-  const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
-
-  await t
-    .click(task7Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
-});
-
-test('should only render task 7 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 0', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 0 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
-
-  await t
-    .click(task7Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
-});
-
-test('should render task 7 item 1 as text recipients > 1 and catalogue solution not viewed', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'incomplete', count: 0 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
+  const task7Item1 = Selector('li[data-test-id="task-7-item-0"]');
 
   await t
     .expect(task7Item1.find('a').exists).notOk();
 });
 
-test('should render task 7 item 1 as text recipients > 1, catalogue solution incomplete, add additional services incomplete', async (t) => {
+test('should only render task 7 item 1 as a link if associated service saved and count 1', async (t) => {
   const mockOrderSummary = generateMockOrderSummary([
     { id: 'ordering-party', status: 'complete' },
     { id: 'supplier', status: 'complete' },
     { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 1 },
-    { id: 'additional-services', status: 'incomplete', count: 0 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
-
-  await t
-    .expect(task7Item1.find('a').exists).notOk();
-});
-
-test('should only render task 7 item 1 as a link if recipients 1 and catalogue solution viewed', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 0 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
-
-  await t
-    .click(task7Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
-});
-
-test('should only render task 7 item 1 as a link if recipients 1, catalogue solution 1 and additional services viewed with 0 services', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 1 },
-    { id: 'additional-services', status: 'complete', count: 0 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
-
-  await t
-    .click(task7Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
-});
-
-test('should only render task 7 item 1 as a link if recipients 1, catalogue solution 1 and additional services 1', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 1 },
-    { id: 'additional-services', status: 'complete', count: 1 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
-
-  await t
-    .click(task7Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
-});
-
-test('should only render task 7 item 1 as a link if associated-services completed', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
     { id: 'associated-services', status: 'complete', count: 1 },
   ]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
@@ -689,12 +651,68 @@ test('should only render task 7 item 1 as a link if associated-services complete
   const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
 
   await t
+    .expect(task7Item1.find('a').exists).ok()
     .click(task7Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
+});
+
+test('should only render task 7 item 1 as a link if Catalogue solution saved and count 0 and associated service saved and count 1', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+    { id: 'catalogue-solutions', status: 'complete', count: 0 },
+    { id: 'associated-services', status: 'complete', count: 1 },
+  ]);
+  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
+  await t.navigateTo(pageUrl);
+
+  const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
+
+  await t
+    .expect(task7Item1.find('a').exists).ok()
+    .click(task7Item1.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
+});
+
+test('should render task 7 item 1 as text if Catalogue solution saved and count 0 and associated service saved and count 0', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+    { id: 'catalogue-solutions', status: 'complete', count: 0 },
+    { id: 'associated-services', status: 'complete', count: 0 },
+  ]);
+  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
+  await t.navigateTo(pageUrl);
+
+  const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
+
+  await t
+    .expect(task7Item1.find('a').exists).notOk();
+});
+
+test('should only render task 7 item 1 as a link if Catalogue solution saved and count 1 and associated service saved and count 1', async (t) => {
+  const mockOrderSummary = generateMockOrderSummary([
+    { id: 'ordering-party', status: 'complete' },
+    { id: 'supplier', status: 'complete' },
+    { id: 'commencement-date', status: 'complete' },
+    { id: 'catalogue-solutions', status: 'complete', count: 1 },
+    { id: 'associated-services', status: 'complete', count: 1 },
+  ]);
+  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
+  await t.navigateTo(pageUrl);
+
+  const task7Item1 = Selector('li[data-test-id="task-6-item-0"]');
+
+  await t
+    .expect(task7Item1.find('a').exists).ok()
+    .click(task7Item1.find('a'))
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
 });
 
 test('should not render the complete tag for task 7 item 1 when returned as incomplete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'associated-services', status: 'incomplete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-source', status: 'incomplete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -705,7 +723,7 @@ test('should not render the complete tag for task 7 item 1 when returned as inco
 });
 
 test('should only render the complete tag for task 7 item 1 when returned as complete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'associated-services', status: 'complete' }]);
+  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-source', status: 'complete' }]);
   await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
   await t.navigateTo(pageUrl);
 
@@ -713,156 +731,6 @@ test('should only render the complete tag for task 7 item 1 when returned as com
 
   await t
     .expect(task7Item1CompleteTag.exists).ok();
-});
-
-// Task 8 Item 1 Tests
-test('should render task 8 item 1', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const task8 = Selector('li[data-test-id="task-7"]');
-  const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
-
-  await t
-    .expect(task8.exists).ok()
-    .expect(await extractInnerText(task8.find('h2 span'))).eql('8.')
-    .expect(await extractInnerText(task8.find('h2 div'))).eql('Indicate funding source')
-    .expect(task8Item1.exists).ok()
-    .expect(await extractInnerText(task8Item1.find('span'))).eql('Explain how you\'re paying for this order');
-});
-
-test('should render task 8 item 1 as text if recipients saved and count 1', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
-
-  await t
-    .expect(task8Item1.find('a').exists).notOk();
-});
-
-test('should render task 8 item 1 as text if recipients saved, catalogue solution saved, additional service saved and associated service saved', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete' },
-    { id: 'catalogue-solutions', status: 'complete' },
-    { id: 'additional-services', status: 'complete' },
-    { id: 'associated-services', status: 'complete' },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
-
-  await t
-    .expect(task8Item1.find('a').exists).notOk();
-});
-
-test('should only render task 8 item 1 as a link if recipients saved and count 0, associated service saved and count 1', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 0 },
-    { id: 'associated-services', status: 'complete', count: 1 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
-
-  await t
-    .expect(task8Item1.find('a').exists).ok()
-    .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
-});
-
-test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 0 and associated service saved and count 1', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 0 },
-    { id: 'associated-services', status: 'complete', count: 1 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
-
-  await t
-    .expect(task8Item1.find('a').exists).ok()
-    .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
-});
-
-test('should render task 8 item 1 as text if recipients saved and count 0, Catalogue solution saved and count 0 and associated service saved and count 0', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 0 },
-    { id: 'catalogue-solutions', status: 'complete', count: 0 },
-    { id: 'associated-services', status: 'complete', count: 0 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
-
-  await t
-    .expect(task8Item1.find('a').exists).notOk();
-});
-
-test('should only render task 8 item 1 as a link if recipients saved and count 1, Catalogue solution saved and count 1 and associated service saved and count 1', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([
-    { id: 'ordering-party', status: 'complete' },
-    { id: 'supplier', status: 'complete' },
-    { id: 'commencement-date', status: 'complete' },
-    { id: 'service-recipients', status: 'complete', count: 1 },
-    { id: 'catalogue-solutions', status: 'complete', count: 1 },
-    { id: 'associated-services', status: 'complete', count: 1 },
-  ]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
-
-  await t
-    .expect(task8Item1.find('a').exists).ok()
-    .click(task8Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
-});
-
-test('should not render the complete tag for task 8 item 1 when returned as incomplete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-source', status: 'incomplete' }]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task8Item1CompleteTag = Selector('[data-test-id="task-7-item-0-complete-tag"]');
-
-  await t
-    .expect(task8Item1CompleteTag.exists).notOk();
-});
-
-test('should only render the complete tag for task 8 item 1 when returned as complete from the API', async (t) => {
-  const mockOrderSummary = generateMockOrderSummary([{ id: 'funding-source', status: 'complete' }]);
-  await pageSetup({ ...defaultPageSetup, mockData: mockOrderSummary });
-  await t.navigateTo(pageUrl);
-
-  const task8Item1CompleteTag = Selector('[data-test-id="task-7-item-0-complete-tag"]');
-
-  await t
-    .expect(task8Item1CompleteTag.exists).ok();
 });
 
 // Buttons tests
