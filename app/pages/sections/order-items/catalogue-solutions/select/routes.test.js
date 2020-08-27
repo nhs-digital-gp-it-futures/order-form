@@ -50,7 +50,7 @@ const mockRecipientsState = JSON.stringify([{
   name: 'Some service recipient 2',
   odsCode: 'ods2',
 }]);
-const mockRecipientsCookie=`${sessionKeys.recipients}=${mockRecipientsState}`;
+const mockRecipientsCookie = `${sessionKeys.recipients}=${mockRecipientsState}`;
 
 const mockItemNameCookie = `${sessionKeys.selectedItemName}=Solution One`;
 
