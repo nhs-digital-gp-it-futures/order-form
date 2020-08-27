@@ -111,7 +111,7 @@ test('should render the organisation heading', async (t) => {
   const heading = Selector('[data-test-id="column-heading-0"]');
 
   await t
-    .expect(await extractInnerText(heading)).eql(content.serviceRecipientsTable.columnInfo[0].data);
+    .expect(await extractInnerText(heading)).eql(content.question.selectSolutionRecipients.recipientsTable.columnInfo[0].data);
 });
 
 test('should render the ods code heading', async (t) => {
@@ -121,7 +121,7 @@ test('should render the ods code heading', async (t) => {
   const heading = Selector('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(await extractInnerText(heading)).eql(content.serviceRecipientsTable.columnInfo[1].data);
+    .expect(await extractInnerText(heading)).eql(content.question.selectSolutionRecipients.recipientsTable.columnInfo[1].data);
 });
 
 test('should render unchecked checkbox for each service recipient', async (t) => {
