@@ -61,12 +61,17 @@ export const getContext = ({
   return {
     ...addParamsToManifest(manifest, { itemName, orderId }),
     backLinkHref: `${baseUrl}/organisation/${orderId}`,
-    serviceRecipientsTable: generateServiceRecipientsTable({
-      selectStatus,
-      serviceRecipientsTable: manifest.serviceRecipientsTable,
-      serviceRecipientsData,
-      selectedRecipientIdsData,
-    }),
+    question: {
+      selectSolutionRecipients: {
+        id: manifest.question.selectSolutionRecipients.id,
+        recipientsTable: generateServiceRecipientsTable({
+          selectStatus,
+          serviceRecipientsTable: manifest.question.selectSolutionRecipients.recipientsTable,
+          serviceRecipientsData,
+          selectedRecipientIdsData,
+        }),
+      },
+    },
     selectDeselectButtonAction: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`,
     selectStatus: toggledStatus,
     selectDeselectButtonText: manifest.selectDeselectButtonText[toggledStatus]

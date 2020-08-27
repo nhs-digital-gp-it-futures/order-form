@@ -65,15 +65,20 @@ describe('recipients page', () => {
   describe('table', () => {
     it('should render the table headings', componentTester(setup, (harness) => {
       const tableContext = {
-        serviceRecipientsTable: {
-          columnInfo: [
-            {
-              data: 'Organisation',
+        question: {
+          selectSolutionRecipients: {
+            id: 'selectSolutionRecipients',
+            recipientsTable: {
+              columnInfo: [
+                {
+                  data: 'Organisation',
+                },
+                {
+                  data: 'ODS Code',
+                },
+              ],
             },
-            {
-              data: 'ODS Code',
-            },
-          ],
+          },
         },
       };
 
@@ -87,24 +92,28 @@ describe('recipients page', () => {
 
     it('should render the data', componentTester(setup, (harness) => {
       const tableContext = {
-        serviceRecipientsTable: {
-          items: [[{
-            question: {
-              dataTestId: 'recipient-name-organisationName',
-              checked: true,
-              type: 'checkbox',
-              id: 'recipient-name-organisationName',
-              name: 'ods-code',
-              value: 'recipient-name',
-              text: 'Recipient name',
+        question: {
+          selectSolutionRecipients: {
+            recipientsTable: {
+              items: [[{
+                question: {
+                  dataTestId: 'recipient-name-organisationName',
+                  checked: true,
+                  type: 'checkbox',
+                  id: 'recipient-name-organisationName',
+                  name: 'ods-code',
+                  value: 'recipient-name',
+                  text: 'Recipient name',
+                },
+                dataTestId: 'recipient-name-organisationName',
+                classes: 'nhsuk-u-font-size-12',
+              }, {
+                data: 'ODS',
+                dataTestId: 'ods-code-odsCode',
+                classes: 'nhsuk-u-margin-top-2',
+              }]],
             },
-            dataTestId: 'recipient-name-organisationName',
-            classes: 'nhsuk-u-font-size-12',
-          }, {
-            data: 'ODS',
-            dataTestId: 'ods-code-odsCode',
-            classes: 'nhsuk-u-margin-top-2',
-          }]],
+          },
         },
       };
 

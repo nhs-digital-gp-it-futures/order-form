@@ -18,7 +18,7 @@ export const validateSolutionRecipientsForm = ({ data }) => {
   const errors = [
     {
       field: 'selectSolutionRecipients',
-      id: 'selectSolutionRecipientsRequired',
+      id: 'SelectSolutionRecipientsRequired',
     },
   ];
   return { success: false, errors };

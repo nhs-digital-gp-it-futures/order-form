@@ -4,6 +4,7 @@
 {% from 'components/inset-text/macro.njk' import insetText %}
 {% from 'components/checkboxes/macro.njk' import checkboxes %}
 {% from 'components/bc-table-flexible/macro.njk' import bcTableFlexible %}
+{% from 'components/bc-error-wrapper/macro.njk' import bcErrorWrapper %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="solution-recipients-page">
@@ -32,13 +33,17 @@
 
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-          <div data-test-id="recipients-table" class=" nhsuk-u-margin-top-0">
-            {{ bcTableFlexible({
-              columnInfo: serviceRecipientsTable.columnInfo,
-              classes: serviceRecipientsTable.classes,
-              data: serviceRecipientsTable.items
-            }) }}
-          </div>
+          {{ bcErrorWrapper({
+            id: question.selectSolutionRecipients.id,
+            dataTestId: 'recipients-table',
+            classes: 'nhsuk-u-margin-top-0',
+            errorMessage: question.selectSolutionRecipients.error,
+            innerComponent: bcTableFlexible({
+              columnInfo: question.selectSolutionRecipients.recipientsTable.columnInfo,
+              classes: question.selectSolutionRecipients.recipientsTable.classes,
+              data: question.selectSolutionRecipients.recipientsTable.items
+            })
+          }) }}
           {{ bcButton({
               dataTestId: "continue-button",
               text: continueButtonText,
