@@ -209,6 +209,10 @@ describe('catalogue-solutions select routes', () => {
   });
 
   describe('GET /organisation/:orderId/catalogue-solutions/select/solution/price', () => {
+    afterEach(() => {
+      jest.resetAllMocks();
+    });
+
     const path = '/organisation/some-order-id/catalogue-solutions/select/solution/price';
 
     it('should redirect to the login page if the user is not logged in', () => (
@@ -240,6 +244,21 @@ describe('catalogue-solutions select routes', () => {
 
       expect(res.text.includes('data-test-id="solution-price-page"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+    });
+
+    it('should return the catalogue-solutions select service recipients page if only one price returned', async () => {
+      catalogueSolutionPriceController.getSolutionPricePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      getCatalogueItemPricing.mockResolvedValue({ prices: [{ priceId: 1 }] });
+
+      await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/catalogue-solutions/select/solution/price/recipients`);
+        });
     });
   });
 
