@@ -96,7 +96,7 @@ const mocks = () => {
 };
 
 const defaultPageSetup = {
-  withAuth: true, getRoute: true, postRoute: false, onePrice: false,
+  withAuth: true, getRoute: true, postRoute: false,
 };
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
@@ -109,9 +109,6 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.solutionPrices, solutionPricesInSession);
-  }
-  if (setup.onePrice) {
-    await setState(ClientFunction)(sessionKeys.selectedItemId, selectedItemIdInSession);
   }
 };
 
@@ -260,7 +257,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
     .get('/api/v1/prices?catalogueItemId=solution-1')
     .reply(200, mockSinglePriceSolution);
 
-  await pageSetup({ ...defaultPageSetup, getRoute: false, onePrice: true });
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
   await t
