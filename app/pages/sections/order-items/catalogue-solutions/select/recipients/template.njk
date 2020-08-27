@@ -5,6 +5,7 @@
 {% from 'components/checkboxes/macro.njk' import checkboxes %}
 {% from 'components/bc-table-flexible/macro.njk' import bcTableFlexible %}
 {% from 'components/bc-error-wrapper/macro.njk' import bcErrorWrapper %}
+{% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="solution-recipients-page">
@@ -15,8 +16,13 @@
       }) }}
     </div>
     <div class="nhsuk-grid-row">
-    
+
       <div class="nhsuk-grid-column-two-thirds">
+        {% if (errors.length > 0) %}
+          {{ bcErrorSummary({
+            errors: errors
+          }) }}
+        {% endif %}
         <h1 data-test-id="solution-recipients-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
         <h2 data-test-id="solution-recipients-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-7">{{ description }}</h2>
       </div>
@@ -37,7 +43,7 @@
             id: question.selectSolutionRecipients.id,
             dataTestId: 'recipients-table',
             classes: 'nhsuk-u-margin-top-0',
-            errorMessage: question.selectSolutionRecipients.error,
+            errorMessage: question.selectSolutionRecipients.errorMessages,
             innerComponent: bcTableFlexible({
               columnInfo: question.selectSolutionRecipients.recipientsTable.columnInfo,
               classes: question.selectSolutionRecipients.recipientsTable.classes,

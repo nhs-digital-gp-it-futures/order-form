@@ -1,5 +1,5 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../../../../config';
 
 const orderId = 'order-id';
@@ -109,6 +109,32 @@ describe('service-recipients contextCreator', () => {
       expect(recipientsTable.items.length).toEqual(serviceRecipientsData.length);
       expect(recipientsTable.items[0][0].question.checked).toEqual(false);
       expect(recipientsTable.items[1][0].question.checked).toEqual(false);
+    });
+  });
+
+  describe('getErrorContext', () => {
+    it('should return the context with Errors', () => {
+      const expectedContext = {
+        errors: [
+          {
+            href: '#selectSolutionRecipients',
+            text: manifest.errorMessages.SelectSolutionRecipientsRequired,
+          },
+        ],
+        question: {
+          selectSolutionRecipients: {
+            errorMessages: manifest.errorMessages.SelectSolutionRecipientsRequired,
+          },
+        },
+      };
+
+      const context = getErrorContext({
+        orderId, serviceRecipientsData, validationErrors: [{ field: 'selectSolutionRecipients', id: 'SelectSolutionRecipientsRequired' }],
+      });
+
+      expect(context.errors).toEqual(expectedContext.errors);
+      expect(context.question.selectSolutionRecipients.errorMessages)
+        .toEqual(expectedContext.question.selectSolutionRecipients.errorMessages);
     });
   });
 });

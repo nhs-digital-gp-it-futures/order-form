@@ -27,6 +27,25 @@ describe('recipients page', () => {
     });
   }));
 
+  it('should render the errorSummary if there are errors', componentTester(setup, (harness) => {
+    const contextWithErrors = {
+      errors: [
+        { text: 'some select recipient error message', href: '#selectSolutionRecipients' },
+      ],
+    };
+
+    harness.request(contextWithErrors, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(contextWithErrors.errors.length);
+      contextWithErrors.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
+    });
+  }));
+
   it('should render the page title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const title = $('h1[data-test-id="solution-recipients-page-title"]');
@@ -63,25 +82,43 @@ describe('recipients page', () => {
   });
 
   describe('table', () => {
-    it('should render the table headings', componentTester(setup, (harness) => {
-      const tableContext = {
-        question: {
-          selectSolutionRecipients: {
-            id: 'selectSolutionRecipients',
-            recipientsTable: {
-              columnInfo: [
-                {
-                  data: 'Organisation',
-                },
-                {
-                  data: 'ODS Code',
-                },
-              ],
-            },
+    const tableContext = {
+      question: {
+        selectSolutionRecipients: {
+          id: 'selectSolutionRecipients',
+          recipientsTable: {
+            columnInfo: [
+              {
+                data: 'Organisation',
+              },
+              {
+                data: 'ODS Code',
+              },
+            ],
+            items: [[{
+              question: {
+                dataTestId: 'recipient-name-organisationName',
+                checked: true,
+                type: 'checkbox',
+                id: 'recipient-name-organisationName',
+                name: 'ods-code',
+                value: 'recipient-name',
+                text: 'Recipient name',
+              },
+              dataTestId: 'recipient-name-organisationName',
+              classes: 'nhsuk-u-font-size-12',
+            }, {
+              data: 'ODS',
+              dataTestId: 'ods-code-odsCode',
+              classes: 'nhsuk-u-margin-top-2',
+            }]],
           },
+          errorMessages: 'Please select a solution recipient',
         },
-      };
+      },
+    };
 
+    it('should render the table headings', componentTester(setup, (harness) => {
       harness.request(tableContext, ($) => {
         const table = $('div[data-test-id="recipients-table"]');
         expect(table.length).toEqual(1);
@@ -91,32 +128,6 @@ describe('recipients page', () => {
     }));
 
     it('should render the data', componentTester(setup, (harness) => {
-      const tableContext = {
-        question: {
-          selectSolutionRecipients: {
-            recipientsTable: {
-              items: [[{
-                question: {
-                  dataTestId: 'recipient-name-organisationName',
-                  checked: true,
-                  type: 'checkbox',
-                  id: 'recipient-name-organisationName',
-                  name: 'ods-code',
-                  value: 'recipient-name',
-                  text: 'Recipient name',
-                },
-                dataTestId: 'recipient-name-organisationName',
-                classes: 'nhsuk-u-font-size-12',
-              }, {
-                data: 'ODS',
-                dataTestId: 'ods-code-odsCode',
-                classes: 'nhsuk-u-margin-top-2',
-              }]],
-            },
-          },
-        },
-      };
-
       harness.request(tableContext, ($) => {
         const table = $('div[data-test-id="recipients-table"]');
         const row = table.find('[data-test-id="table-row-0"]');
@@ -131,6 +142,16 @@ describe('recipients page', () => {
         expect(organisationLabel[0].children[0].data.trim()).toEqual('Recipient name');
         expect(odsCode.length).toEqual(1);
         expect(odsCode.text().trim()).toEqual('ODS');
+      });
+    }));
+
+    it('should render the table as an error if there are errors', componentTester(setup, (harness) => {
+      harness.request(tableContext, ($) => {
+        const table = $('div[data-test-id="recipients-table"]');
+        const errorMessage = table.find('[data-test-id="recipients-table-error"]');
+
+        expect(errorMessage.length).toEqual(1);
+        expect(errorMessage.text().trim()).toEqual('Please select a solution recipient');
       });
     }));
   });

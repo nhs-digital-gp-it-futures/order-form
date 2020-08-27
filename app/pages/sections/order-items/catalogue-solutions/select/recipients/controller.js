@@ -1,4 +1,4 @@
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 
 export const getServiceRecipientsContext = async ({
   orderId, itemName, selectStatus, serviceRecipients,
@@ -23,3 +23,14 @@ export const validateSolutionRecipientsForm = ({ data }) => {
   ];
   return { success: false, errors };
 };
+
+export const getServiceRecipientsErrorPageContext = async ({
+  orderId, itemName, selectStatus, serviceRecipients, validationErrors,
+}) => getErrorContext({
+  orderId,
+  itemName,
+  serviceRecipientsData: serviceRecipients,
+  selectedRecipientIdsData: [],
+  selectStatus,
+  validationErrors,
+});
