@@ -38,6 +38,6 @@
   },
   "continueButtonText": "Continue",
   "errorMessages": {
-    "SelectSolutionRecipientsRequired": "Please select a solution recipient"
+    "SelectSolutionRecipientsRequired": "Select a Service Recipient"
   }
 }

@@ -10,7 +10,7 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-sol
 
 const selectedItemNameInSession = 'Solution One';
 
-const mockOapiData = [{
+const mockRecipientsData = [{
   name: 'Some service recipient 1',
   odsCode: 'ods1',
 }, {
@@ -21,10 +21,10 @@ const mockOapiData = [{
 const mocks = () => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
-    .reply(200, mockOapiData);
+    .reply(200, mockRecipientsData);
 };
 
-const defaultPageSetup = { withAuth: true, getRoute: true };
+const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
@@ -32,6 +32,10 @@ const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)(sessionKeys.selectedItemName, selectedItemNameInSession);
+  }
+  if (setup.postRoute) {
+    await setState(ClientFunction)(sessionKeys.selectedItemName, selectedItemNameInSession);
+    await setState(ClientFunction)(sessionKeys.recipients, JSON.stringify(mockRecipientsData));
   }
 };
 
@@ -156,14 +160,14 @@ test('should render ods code for each service recipient', async (t) => {
   const odsCode2 = Selector('[data-test-id="ods2-odsCode"]');
 
   await t
-    .expect(await extractInnerText(odsCode1)).eql(mockOapiData[0].odsCode)
-    .expect(await extractInnerText(odsCode2)).eql(mockOapiData[1].odsCode);
+    .expect(await extractInnerText(odsCode1)).eql(mockRecipientsData[0].odsCode)
+    .expect(await extractInnerText(odsCode2)).eql(mockRecipientsData[1].odsCode);
 });
 
 test('should check all checkboxes and change button text when "Select all button" is clicked', async (t) => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
-    .reply(200, mockOapiData);
+    .reply(200, mockRecipientsData);
 
   await pageSetup({ ...defaultPageSetup });
   await t.navigateTo(pageUrl);
@@ -187,7 +191,7 @@ test('should check all checkboxes and change button text when "Select all button
 test('should uncheck all checkboxes and change button text when all are selected and "Deselect all button" is clicked', async (t) => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
-    .reply(200, mockOapiData);
+    .reply(200, mockRecipientsData);
 
   await pageSetup({ ...defaultPageSetup });
   await t.navigateTo(`${pageUrl}?selectStatus=select`);
@@ -216,4 +220,52 @@ test('should render the "Continue" button', async (t) => {
 
   await t
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
+});
+
+test('should show the error summary when no service recipients are selected', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const button = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(button);
+
+  await t
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select a Service Recipient');
+});
+
+test('should render select recipients table as errors with error message when no recipients are selected', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const recipientsTableError = Selector('[data-test-id="recipients-table-error"]');
+
+  await t
+    .expect(recipientsTableError.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .expect(recipientsTableError.exists).ok()
+    .expect(await extractInnerText(recipientsTableError)).contains('Select a Service Recipient');
+});
+
+test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const continueButton = Selector('[data-test-id="continue-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(continueButton);
+
+  await t
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#selectSolutionRecipients`);
 });
