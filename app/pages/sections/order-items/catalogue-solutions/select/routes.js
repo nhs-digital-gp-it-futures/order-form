@@ -12,7 +12,11 @@ import {
   getSolutionPricePageContext,
   validateSolutionPriceForm,
 } from './price/controller';
-import { getServiceRecipientsContext } from './recipients/controller';
+import {
+  getServiceRecipientsContext,
+  validateSolutionRecipientsForm,
+  getServiceRecipientsErrorPageContext,
+} from './recipients/controller';
 import {
   findSelectedCatalogueItemInSession,
 } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
@@ -163,7 +167,25 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       orderId, itemName, selectStatus, serviceRecipients,
     });
     logger.info(`navigating to order ${orderId} catalogue-solutions select recipient page`);
-    res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/solution/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const { selectStatus } = req.query;
+
+    const response = validateSolutionRecipientsForm({ data: req.body });
+    if (response.success) {
+      logger.info('Redirect to new solution page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+    }
+    const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
+    const serviceRecipients = sessionManager.getFromSession({ req, key: sessionKeys.recipients });
+    const context = await getServiceRecipientsErrorPageContext({
+      orderId, itemName, selectStatus, serviceRecipients, validationErrors: response.errors,
+    });
+
+    return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;

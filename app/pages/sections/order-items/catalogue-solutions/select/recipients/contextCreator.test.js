@@ -1,5 +1,5 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../../../../config';
 
 const orderId = 'order-id';
@@ -40,63 +40,101 @@ describe('service-recipients contextCreator', () => {
 
     it('should construct the tableData whenever serviceRecipientsData is provided with no selected recipients', () => {
       const context = getContext({ orderId, serviceRecipientsData });
-      expect(context.serviceRecipientsTable.items.length).toEqual(serviceRecipientsData.length);
-      expect(context.serviceRecipientsTable.items[0][0].question.id).toEqual('ods1-organisationName');
-      expect(context.serviceRecipientsTable.items[0][0].question.name).toEqual('ods1');
-      expect(context.serviceRecipientsTable.items[0][0].question.value).toEqual('Some service recipient 1');
-      expect(context.serviceRecipientsTable.items[0][0].question.text).toEqual('Some service recipient 1');
-      expect(context.serviceRecipientsTable.items[0][0].question.checked).toEqual(false);
-      expect(context.serviceRecipientsTable.items[0][1].data).toEqual('ods1');
 
-      expect(context.serviceRecipientsTable.items[1][0].question.id).toEqual('ods2-organisationName');
-      expect(context.serviceRecipientsTable.items[1][0].question.name).toEqual('ods2');
-      expect(context.serviceRecipientsTable.items[1][0].question.value).toEqual('Some service recipient 2');
-      expect(context.serviceRecipientsTable.items[1][0].question.text).toEqual('Some service recipient 2');
-      expect(context.serviceRecipientsTable.items[1][0].question.checked).toEqual(false);
-      expect(context.serviceRecipientsTable.items[1][1].data).toEqual('ods2');
+      const { recipientsTable } = context.question.selectSolutionRecipients;
+      expect(recipientsTable.items.length).toEqual(serviceRecipientsData.length);
+      expect(recipientsTable.items[0][0].question.id).toEqual('ods1-organisationName');
+      expect(recipientsTable.items[0][0].question.name).toEqual('ods1');
+      expect(recipientsTable.items[0][0].question.value).toEqual('Some service recipient 1');
+      expect(recipientsTable.items[0][0].question.text).toEqual('Some service recipient 1');
+      expect(recipientsTable.items[0][0].question.checked).toEqual(false);
+      expect(recipientsTable.items[0][1].data).toEqual('ods1');
+
+      expect(recipientsTable.items[1][0].question.id).toEqual('ods2-organisationName');
+      expect(recipientsTable.items[1][0].question.name).toEqual('ods2');
+      expect(recipientsTable.items[1][0].question.value).toEqual('Some service recipient 2');
+      expect(recipientsTable.items[1][0].question.text).toEqual('Some service recipient 2');
+      expect(recipientsTable.items[1][0].question.checked).toEqual(false);
+      expect(recipientsTable.items[1][1].data).toEqual('ods2');
     });
 
     it('should construct the correct checked value when selected recipients data is available and selectStatus is undefined', () => {
       const context = getContext({ orderId, serviceRecipientsData, selectedRecipientIdsData });
-      expect(context.serviceRecipientsTable.items.length).toEqual(serviceRecipientsData.length);
-      expect(context.serviceRecipientsTable.items[0][0].question.checked).toEqual(false);
-      expect(context.serviceRecipientsTable.items[1][0].question.checked).toEqual(true);
+
+      const { recipientsTable } = context.question.selectSolutionRecipients;
+      expect(recipientsTable.items.length).toEqual(serviceRecipientsData.length);
+      expect(recipientsTable.items[0][0].question.checked).toEqual(false);
+      expect(recipientsTable.items[1][0].question.checked).toEqual(true);
     });
 
     it('should mark all checked as true when selectStatus = select', () => {
       const context = getContext({
         orderId, serviceRecipientsData, selectStatus: 'select',
       });
-      expect(context.serviceRecipientsTable.items.length).toEqual(serviceRecipientsData.length);
-      expect(context.serviceRecipientsTable.items[0][0].question.checked).toEqual(true);
-      expect(context.serviceRecipientsTable.items[1][0].question.checked).toEqual(true);
+
+      const { recipientsTable } = context.question.selectSolutionRecipients;
+      expect(recipientsTable.items.length).toEqual(serviceRecipientsData.length);
+      expect(recipientsTable.items[0][0].question.checked).toEqual(true);
+      expect(recipientsTable.items[1][0].question.checked).toEqual(true);
     });
 
     it('should mark all checked as true when selectStatus = select and data is found in ORDAPI', () => {
       const context = getContext({
         orderId, serviceRecipientsData, selectedRecipientIdsData, selectStatus: 'select',
       });
-      expect(context.serviceRecipientsTable.items.length).toEqual(serviceRecipientsData.length);
-      expect(context.serviceRecipientsTable.items[0][0].question.checked).toEqual(true);
-      expect(context.serviceRecipientsTable.items[1][0].question.checked).toEqual(true);
+
+      const { recipientsTable } = context.question.selectSolutionRecipients;
+      expect(recipientsTable.items.length).toEqual(serviceRecipientsData.length);
+      expect(recipientsTable.items[0][0].question.checked).toEqual(true);
+      expect(recipientsTable.items[1][0].question.checked).toEqual(true);
     });
 
     it('should mark all checked as false when selectStatus = deselect', () => {
       const context = getContext({
         orderId, serviceRecipientsData, selectStatus: 'deselect',
       });
-      expect(context.serviceRecipientsTable.items.length).toEqual(serviceRecipientsData.length);
-      expect(context.serviceRecipientsTable.items[0][0].question.checked).toEqual(false);
-      expect(context.serviceRecipientsTable.items[1][0].question.checked).toEqual(false);
+
+      const { recipientsTable } = context.question.selectSolutionRecipients;
+      expect(recipientsTable.items.length).toEqual(serviceRecipientsData.length);
+      expect(recipientsTable.items[0][0].question.checked).toEqual(false);
+      expect(recipientsTable.items[1][0].question.checked).toEqual(false);
     });
 
     it('should mark all checked as true when selectStatus = deselect and data is found in ORDAPI', () => {
       const context = getContext({
         orderId, serviceRecipientsData, selectedRecipientIdsData, selectStatus: 'deselect',
       });
-      expect(context.serviceRecipientsTable.items.length).toEqual(serviceRecipientsData.length);
-      expect(context.serviceRecipientsTable.items[0][0].question.checked).toEqual(false);
-      expect(context.serviceRecipientsTable.items[1][0].question.checked).toEqual(false);
+
+      const { recipientsTable } = context.question.selectSolutionRecipients;
+      expect(recipientsTable.items.length).toEqual(serviceRecipientsData.length);
+      expect(recipientsTable.items[0][0].question.checked).toEqual(false);
+      expect(recipientsTable.items[1][0].question.checked).toEqual(false);
+    });
+  });
+
+  describe('getErrorContext', () => {
+    it('should return the context with Errors', () => {
+      const expectedContext = {
+        errors: [
+          {
+            href: '#selectSolutionRecipients',
+            text: manifest.errorMessages.SelectSolutionRecipientsRequired,
+          },
+        ],
+        question: {
+          selectSolutionRecipients: {
+            errorMessages: manifest.errorMessages.SelectSolutionRecipientsRequired,
+          },
+        },
+      };
+
+      const context = getErrorContext({
+        orderId, serviceRecipientsData, validationErrors: [{ field: 'selectSolutionRecipients', id: 'SelectSolutionRecipientsRequired' }],
+      });
+
+      expect(context.errors).toEqual(expectedContext.errors);
+      expect(context.question.selectSolutionRecipients.errorMessages)
+        .toEqual(expectedContext.question.selectSolutionRecipients.errorMessages);
     });
   });
 });

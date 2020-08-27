@@ -1,6 +1,8 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../../../config';
 import { addParamsToManifest } from '../../../../../../helpers/contextCreators/addParamsToManifest';
+import { generateErrorMap } from '../../../../../../helpers/contextCreators/generateErrorMap';
+import { generateErrorSummary } from '../../../../../../helpers/contextCreators/generateErrorSummary';
 
 const getCheckedStatus = ({ selectStatus, serviceRecipient, selectedRecipientIdsData = [] }) => {
   if (selectStatus === 'select') return true;
@@ -55,21 +57,63 @@ const generateServiceRecipientsTable = ({
 });
 
 export const getContext = ({
-  orderId, itemName, serviceRecipientsData = [], selectedRecipientIdsData = [], selectStatus,
+  orderId,
+  itemName,
+  serviceRecipientsData = [],
+  selectedRecipientIdsData = [],
+  selectStatus,
+  errorMap,
 }) => {
   const toggledStatus = selectStatus === 'select' ? 'deselect' : 'select';
+  const errorMessages = errorMap && errorMap.selectSolutionRecipients.errorMessages.join(', ');
   return {
     ...addParamsToManifest(manifest, { itemName, orderId }),
     backLinkHref: `${baseUrl}/organisation/${orderId}`,
-    serviceRecipientsTable: generateServiceRecipientsTable({
-      selectStatus,
-      serviceRecipientsTable: manifest.serviceRecipientsTable,
-      serviceRecipientsData,
-      selectedRecipientIdsData,
-    }),
+    question: {
+      selectSolutionRecipients: {
+        id: manifest.question.selectSolutionRecipients.id,
+        recipientsTable: generateServiceRecipientsTable({
+          selectStatus,
+          serviceRecipientsTable: manifest.question.selectSolutionRecipients.recipientsTable,
+          serviceRecipientsData,
+          selectedRecipientIdsData,
+        }),
+        errorMessages,
+      },
+    },
     selectDeselectButtonAction: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`,
     selectStatus: toggledStatus,
     selectDeselectButtonText: manifest.selectDeselectButtonText[toggledStatus]
       || manifest.selectDeselectButtonText.select,
   };
+};
+
+export const getErrorContext = ({
+  orderId,
+  itemName,
+  serviceRecipientsData = [],
+  selectedRecipientIdsData = [],
+  selectStatus,
+  validationErrors,
+}) => {
+  const errorMap = generateErrorMap({
+    validationErrors,
+    errorMessagesFromManifest: manifest.errorMessages,
+  });
+
+  const contextWithErrors = getContext({
+    orderId,
+    itemName,
+    serviceRecipientsData,
+    selectedRecipientIdsData,
+    selectStatus,
+    errorMap,
+  });
+
+  const errorSummary = generateErrorSummary({ errorMap });
+
+  return ({
+    errors: errorSummary,
+    ...contextWithErrors,
+  });
 };
