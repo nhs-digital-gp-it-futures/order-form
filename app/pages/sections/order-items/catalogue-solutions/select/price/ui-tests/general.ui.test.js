@@ -65,6 +65,25 @@ const mockSolutionPricing = {
   ],
 };
 
+const mockSinglePriceSolution = {
+  prices: [
+    {
+      priceId: 1,
+      type: 'flat',
+      currencyCode: 'GBP',
+      itemUnit: {
+        name: 'patient',
+        description: 'per patient',
+      },
+      timeUnit: {
+        name: 'year',
+        description: 'per year',
+      },
+      price: 1.64,
+    },
+  ],
+};
+
 const solutionPricesInSession = JSON.stringify(
   mockSolutionPricing,
 );
@@ -76,7 +95,9 @@ const mocks = () => {
     .reply(200, mockSolutionPricing);
 };
 
-const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const defaultPageSetup = {
+  withAuth: true, getRoute: true, postRoute: false, onePrice: false,
+};
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
@@ -88,6 +109,9 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.solutionPrices, solutionPricesInSession);
+  }
+  if (setup.onePrice) {
+    await setState(ClientFunction)(sessionKeys.selectedItemId, selectedItemIdInSession);
   }
 };
 
@@ -228,6 +252,18 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
   await t
     .click(firstSolution)
     .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipients');
+});
+
+test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price/recipients if only one price returned', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/prices?catalogueItemId=solution-1')
+    .reply(200, mockSinglePriceSolution);
+
+  await pageSetup({ ...defaultPageSetup, getRoute: false, onePrice: true });
+  await t.navigateTo(pageUrl);
+
+  await t
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipients');
 });
 
