@@ -106,6 +106,13 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
     sessionManager.saveToSession({ req, key: sessionKeys.solutionPrices, value: solutionPrices });
 
+    if (((solutionPrices || {}).prices || {}).length === 1) {
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedPriceId, value: solutionPrices.prices[0].priceId,
+      });
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`);
+    }
+
     const context = getSolutionPricePageContext({
       orderId,
       solutionPrices,
