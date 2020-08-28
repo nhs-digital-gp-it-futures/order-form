@@ -16,7 +16,6 @@ export const sessionKeys = {
   associatedServicePrices: 'associatedServicePrices',
   solutions: 'solutions',
   solutionPrices: 'solutionPrices',
-  solutionPricesCount: 'solutionPricesCount',
   fundingSource: 'fundingSource',
 };
 

@@ -59,12 +59,12 @@ export const getContext = ({
   itemName, serviceRecipientsData = [],
   selectedRecipientIdsData = [],
   selectStatus,
-  solutionPricesCount,
+  solutionPrices,
 }) => {
   const toggledStatus = selectStatus === 'select' ? 'deselect' : 'select';
   return {
     ...addParamsToManifest(manifest, { itemName, orderId }),
-    backLinkHref: solutionPricesCount === 1 ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution` : `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`,
+    backLinkHref: ((solutionPrices || {}).prices || {}).length === 1 ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution` : `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`,
     serviceRecipientsTable: generateServiceRecipientsTable({
       selectStatus,
       serviceRecipientsTable: manifest.serviceRecipientsTable,
