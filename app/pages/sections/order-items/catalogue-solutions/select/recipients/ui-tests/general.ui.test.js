@@ -68,14 +68,25 @@ test('should render solution-recipients page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id for backLink', async (t) => {
+test('should link to /order/organisation/order-id/catalogue-solutions/select/solution for backLink when price count is 1', async (t) => {
+  await setState(ClientFunction)('solutionPrices', JSON.stringify({ prices: [{}] }));
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution');
+});
+
+test('should link to /order/organisation/order-id/catalogue-solutions/select/solution/price for backLink price count is not 1', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+
+  await t
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution/price');
 });
 
 test('should render the title', async (t) => {

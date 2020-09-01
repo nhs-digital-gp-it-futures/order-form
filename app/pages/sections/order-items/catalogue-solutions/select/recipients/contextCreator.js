@@ -62,13 +62,14 @@ export const getContext = ({
   serviceRecipientsData = [],
   selectedRecipientIdsData = [],
   selectStatus,
+  solutionPrices,
   errorMap,
 }) => {
   const toggledStatus = selectStatus === 'select' ? 'deselect' : 'select';
   const errorMessages = errorMap && errorMap.selectSolutionRecipients.errorMessages.join(', ');
   return {
     ...addParamsToManifest(manifest, { itemName, orderId }),
-    backLinkHref: `${baseUrl}/organisation/${orderId}`,
+    backLinkHref: ((solutionPrices || {}).prices || {}).length === 1 ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution` : `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`,
     question: {
       selectSolutionRecipients: {
         id: manifest.question.selectSolutionRecipients.id,

@@ -110,6 +110,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedPriceId, value: solutionPrices.prices[0].priceId,
       });
+
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`);
     }
 
@@ -155,6 +156,9 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const itemName = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemName,
     });
+    const solutionPrices = sessionManager.getFromSession({
+      req, key: sessionKeys.solutionPrices,
+    });
 
     const orgId = req.user.primaryOrganisationId;
 
@@ -164,7 +168,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
 
     const context = await getServiceRecipientsContext({
-      orderId, itemName, selectStatus, serviceRecipients,
+      orderId, itemName, selectStatus, serviceRecipients, solutionPrices,
     });
     logger.info(`navigating to order ${orderId} catalogue-solutions select recipient page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
