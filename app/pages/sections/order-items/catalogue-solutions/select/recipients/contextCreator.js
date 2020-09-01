@@ -95,6 +95,7 @@ export const getErrorContext = ({
   serviceRecipientsData = [],
   selectedRecipientIdsData = [],
   selectStatus,
+  solutionPrices,
   validationErrors,
 }) => {
   const errorMap = generateErrorMap({
@@ -108,6 +109,7 @@ export const getErrorContext = ({
     serviceRecipientsData,
     selectedRecipientIdsData,
     selectStatus,
+    solutionPrices,
     errorMap,
   });
 

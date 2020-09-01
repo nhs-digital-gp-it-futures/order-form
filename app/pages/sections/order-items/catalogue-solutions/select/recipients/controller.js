@@ -26,12 +26,13 @@ export const validateSolutionRecipientsForm = ({ data }) => {
 };
 
 export const getServiceRecipientsErrorPageContext = async ({
-  orderId, itemName, selectStatus, serviceRecipients, validationErrors,
+  orderId, itemName, selectStatus, serviceRecipients, solutionPrices, validationErrors,
 }) => getErrorContext({
   orderId,
   itemName,
   serviceRecipientsData: serviceRecipients,
   selectedRecipientIdsData: [],
   selectStatus,
+  solutionPrices,
   validationErrors,
 });
