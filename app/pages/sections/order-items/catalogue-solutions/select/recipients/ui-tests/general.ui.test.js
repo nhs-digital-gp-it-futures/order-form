@@ -68,7 +68,7 @@ test('should render solution-recipients page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test.only('should link to /order/organisation/order-id/catalogue-solutions/select/solution for backLink when price count is 1', async (t) => {
+test('should link to /order/organisation/order-id/catalogue-solutions/select/solution for backLink when price count is 1', async (t) => {
   await setState(ClientFunction)('solutionPrices', JSON.stringify({ prices: [{}] }));
   await pageSetup();
   await t.navigateTo(pageUrl);
