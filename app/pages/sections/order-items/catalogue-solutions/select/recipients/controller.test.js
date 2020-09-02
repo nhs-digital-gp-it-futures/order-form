@@ -94,6 +94,7 @@ describe('service-recipients controller', () => {
         itemName: 'Solution One',
         selectStatus: 'select',
         serviceRecipients: dataFromOapi,
+        solutionPrices: [{}],
         validationErrors: [],
       });
 
@@ -104,6 +105,7 @@ describe('service-recipients controller', () => {
         serviceRecipientsData: dataFromOapi,
         selectedRecipientIdsData: [],
         selectStatus: 'select',
+        solutionPrices: [{}],
         validationErrors: [],
       });
     });
