@@ -3,7 +3,7 @@
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/inset-text/macro.njk' import insetText %}
 {% from 'components/checkboxes/macro.njk' import checkboxes %}
-{% from 'components/bc-table-flexible/macro.njk' import bcTableFlexible %}
+{% from 'components/bc-table/macro.njk' import bcTable %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="service-recipients-page">
@@ -38,7 +38,7 @@
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
           <div data-test-id="recipients-table" class=" nhsuk-u-margin-top-0">
-            {{ bcTableFlexible({
+            {{ bcTable({
               columnInfo: serviceRecipientsTable.columnInfo,
               classes: serviceRecipientsTable.classes,
               data: serviceRecipientsTable.items

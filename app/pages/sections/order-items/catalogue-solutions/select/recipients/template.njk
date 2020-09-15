@@ -3,7 +3,7 @@
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/inset-text/macro.njk' import insetText %}
 {% from 'components/checkboxes/macro.njk' import checkboxes %}
-{% from 'components/bc-table-flexible/macro.njk' import bcTableFlexible %}
+{% from 'components/bc-table/macro.njk' import bcTable %}
 {% from 'components/bc-error-wrapper/macro.njk' import bcErrorWrapper %}
 {% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
 
@@ -44,7 +44,7 @@
             dataTestId: 'recipients-table',
             classes: 'nhsuk-u-margin-top-0',
             errorMessage: question.selectSolutionRecipients.errorMessages,
-            innerComponent: bcTableFlexible({
+            innerComponent: bcTable({
               columnInfo: question.selectSolutionRecipients.recipientsTable.columnInfo,
               classes: question.selectSolutionRecipients.recipientsTable.classes,
               data: question.selectSolutionRecipients.recipientsTable.items

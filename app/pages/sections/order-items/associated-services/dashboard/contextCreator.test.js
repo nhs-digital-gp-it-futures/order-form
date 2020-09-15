@@ -70,6 +70,7 @@ describe('associated-services contextCreator', () => {
           items: [
             [
               {
+                classes: 'nhsuk-input--width-10',
                 data: 'Additional Service One',
                 href: '/order/organisation/order-1/associated-services/orderItem1',
                 dataTestId: 'orderItem1-catalogueItemName',
@@ -77,6 +78,7 @@ describe('associated-services contextCreator', () => {
             ],
             [
               {
+                classes: 'nhsuk-input--width-10',
                 data: 'Additional Service Two',
                 href: '/order/organisation/order-1/associated-services/orderItem2',
                 dataTestId: 'orderItem2-catalogueItemName',
