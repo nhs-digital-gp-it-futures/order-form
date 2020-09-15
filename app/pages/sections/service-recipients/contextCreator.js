@@ -57,6 +57,12 @@ export const getContext = ({
   orderId, serviceRecipientsData = [], selectedRecipientIdsData = [], selectStatus,
 }) => {
   const toggledStatus = selectStatus === 'select' ? 'deselect' : 'select';
+  console.log(generateServiceRecipientsTable({
+    selectStatus,
+    serviceRecipientsTable: manifest.serviceRecipientsTable,
+    serviceRecipientsData,
+    selectedRecipientIdsData,
+  }).items);
   return {
     ...manifest,
     title: `${manifest.title} ${orderId}`,
