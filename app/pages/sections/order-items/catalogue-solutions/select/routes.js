@@ -185,8 +185,14 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     }
     const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
     const serviceRecipients = sessionManager.getFromSession({ req, key: sessionKeys.recipients });
+    const solutionPrices = sessionManager.getFromSession({ req, key: sessionKeys.solutionPrices });
     const context = await getServiceRecipientsErrorPageContext({
-      orderId, itemName, selectStatus, serviceRecipients, validationErrors: response.errors,
+      orderId,
+      itemName,
+      selectStatus,
+      serviceRecipients,
+      solutionPrices,
+      validationErrors: response.errors,
     });
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
