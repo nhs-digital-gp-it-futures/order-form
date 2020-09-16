@@ -11,7 +11,6 @@ import {
   getCommencementDateErrorContext,
   validateCommencementDateForm,
 } from './commencement-date/controller';
-import { getServiceRecipientsContext } from './service-recipients/controller';
 import { getFundingSourceContext, getFundingSourceErrorPageContext, validateFundingSourceForm } from './funding-source/controller';
 import { supplierRoutes } from './supplier/routes';
 import { catalogueSolutionsRoutes } from './order-items/catalogue-solutions/routes';
@@ -21,7 +20,6 @@ import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
-import { putServiceRecipients } from '../../helpers/api/ordapi/putServiceRecipients';
 
 const router = express.Router({ mergeParams: true });
 
@@ -125,27 +123,6 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       data: req.body,
     });
     return res.render('pages/sections/commencement-date/template', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-  }));
-
-  router.get('/service-recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    const { selectStatus } = req.query;
-    const context = await getServiceRecipientsContext({
-      orderId, orgId: req.user.primaryOrganisationId, selectStatus, accessToken: extractAccessToken({ req, tokenType: 'access' }),
-    });
-    logger.info(`navigating to order ${orderId} service-recipients page`);
-    res.render('pages/sections/service-recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-  }));
-
-  router.post('/service-recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    await putServiceRecipients({
-      orderId,
-      data: req.body,
-      accessToken: extractAccessToken({ req, tokenType: 'access' }),
-    });
-
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
   }));
 
   router.get('/funding-source', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
