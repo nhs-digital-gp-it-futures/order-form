@@ -16,12 +16,10 @@ import { baseUrl } from '../../config';
 import * as descriptionController from './description/controller';
 import * as orderingPartyController from './ordering-party/controller';
 import * as commencementDateController from './commencement-date/controller';
-import * as serviceRecipientsController from './service-recipients/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
-import { putServiceRecipients } from '../../helpers/api/ordapi/putServiceRecipients';
 import * as fundingSourceController from './funding-source/controller';
 
 jest.mock('../../logger');
@@ -39,9 +37,6 @@ descriptionController.postOrPutDescription = jest.fn()
   .mockResolvedValue({});
 
 orderingPartyController.getCallOffOrderingPartyContext = jest.fn()
-  .mockResolvedValue({});
-
-serviceRecipientsController.getServiceRecipientsContext = jest.fn()
   .mockResolvedValue({});
 
 describe('section routes', () => {
@@ -436,105 +431,6 @@ describe('section routes', () => {
         .then((res) => {
           expect(res.text.includes('data-test-id="commencement-date-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
-          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-        });
-    });
-  });
-
-  describe('GET /organisation/:orderId/service-recipients', () => {
-    const path = '/organisation/some-order-id/service-recipients';
-
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
-
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedGetPathForUnauthorisedUser({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        getPathCookies: [mockUnauthorisedCookie],
-        expectedPageId: 'data-test-id="error-title"',
-        expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
-
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        expect(res.text.includes('data-test-id="service-recipients-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
-
-    it('should return the correct status and text when the user is authorised and the path has query string', () => request(setUpFakeApp())
-      .get(`${path}?selectStatus=select`)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        expect(res.text.includes('data-test-id="service-recipients-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
-  });
-
-  describe('POST /organisation/:orderId/service-recipients', () => {
-    const path = '/organisation/order-id/service-recipients';
-
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-
-    it('should return 403 forbidden if no csrf token is available', () => (
-      testPostPathWithoutCsrf({
-        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
-      })
-    ));
-
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedPostPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        postPath: path,
-        getPathCookies: [mockAuthorisedCookie],
-        postPathCookies: [],
-        expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
-
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedPostPathForUnauthorisedUsers({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        postPath: path,
-        getPathCookies: [mockAuthorisedCookie],
-        postPathCookies: [mockUnauthorisedCookie],
-        expectedPageId: 'data-test-id="error-title"',
-        expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
-
-    it('should return the correct status and text if response.success is true', async () => {
-      putServiceRecipients.mockResolvedValue({ success: true });
-
-      const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        getPathCookies: [mockAuthorisedCookie],
-      });
-
-      return request(setUpFakeApp())
-        .post(path)
-        .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie])
-        .send({ _csrf: csrfToken })
-        .expect(302)
-        .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
