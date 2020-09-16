@@ -43,6 +43,11 @@ describe('service-recipients contextCreator', () => {
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`);
     });
 
+    it('should construct the description', () => {
+      const context = getContext({ orderId, itemName });
+      expect(context.description).toEqual('These are all the possible Service Recipients for this Call-off Ordering Party. Select those you’ll be ordering this Catalogue Solution for.');
+    });
+
     it('should construct the tableData whenever serviceRecipientsData is provided with no selected recipients', () => {
       const context = getContext({ orderId, serviceRecipientsData });
 
