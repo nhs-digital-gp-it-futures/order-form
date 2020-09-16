@@ -20,7 +20,6 @@ import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
-import { putServiceRecipients } from '../../helpers/api/ordapi/putServiceRecipients';
 import * as fundingSourceController from './funding-source/controller';
 
 jest.mock('../../logger');
