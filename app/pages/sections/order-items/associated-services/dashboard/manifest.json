@@ -9,10 +9,16 @@
     "addedOrderItemsTable": {
       "columnInfo": [
         {
-          "data": "Associated Services for this order"
+          "data": "Associated Services for this order",
+          "classes": "nhsuk-u-font-size-12",
+          "width": "50%"
         }
       ],
-      "columnClass": "nhsuk-grid-column-one-half nhsuk-u-font-size-16"
+      "cellInfo": {
+        "catalogueItemName": {
+          "classes": "nhsuk-input--width-10"
+        }
+      }
     },
     "continueButtonText": "Continue"
   }

@@ -1,3 +1,7 @@
+const development = 'development';
+const env = process.env.NODE_ENV || development;
+const isDevelopment = () => env === development;
+
 module.exports = {
   // App name
   appName: 'NHSD Order Form',
@@ -8,8 +12,12 @@ module.exports = {
   // Public browse base URL
   publicBrowseBaseUrl: process.env.PUBLIC_BROWSE_BASE_URL || 'http://localhost:3000',
 
+  // feedback link URL
+  feedbackLinkUrl: process.env.FEEDBACK_LINK_URL || 'https://forms.office.com/Pages/ResponsePage.aspx?id=Hwf2UP67GkCIA2c3SOYp4nDHKEWnXcFHiqdJhf0fCJtUNDNFRUFZVFU5RkRQTEpWU0RQVlVXMUpRQi4u',
+
   // Environment
-  env: process.env.NODE_ENV || 'development',
+  env,
+  isDevelopment,
 
   // Port to run local development server on
   port: process.env.PORT || 3006,
@@ -31,6 +39,9 @@ module.exports = {
 
   // LOGGER_LEVEL options are info, warn, error, off
   loggerLevel: process.env.LOGGER_LEVEL || 'error',
+
+  // IDENTITY_SERVER
+  identityServerUrl: process.env.IDENTITY_SERVER || 'http://localhost:5102/identity',
 
   // The base uri of identity service
   oidcBaseUri: process.env.OIDC_BASE_URI || 'http://localhost:5102/identity',

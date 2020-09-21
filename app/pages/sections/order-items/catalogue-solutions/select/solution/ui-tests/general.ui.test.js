@@ -4,18 +4,19 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
+import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution';
 
-const selectedItemIdInSession = 'solution-2';
+const selectedItemIdInSession = 'solution-B';
 const mockSolutions = [
   {
-    catalogueItemId: 'solution-1',
-    name: 'Solution 1',
+    catalogueItemId: 'solution-B',
+    name: 'B - Solution B',
   },
   {
-    catalogueItemId: 'solution-2',
-    name: 'Solution 2',
+    catalogueItemId: 'solution-A',
+    name: 'A - Solution A',
   },
 ];
 const solutionsInSession = JSON.stringify(mockSolutions);
@@ -38,10 +39,9 @@ const pageSetup = async (setup = defaultPageSetup) => {
     mocks();
   }
   if (setup.postRoute) {
-    await setState(ClientFunction)('solutions', solutionsInSession);
+    await setState(ClientFunction)(sessionKeys.solutions, solutionsInSession);
   }
 };
-
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -121,7 +121,7 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
-test('should render a selectSolution question as radio button options', async (t) => {
+test('should render a selectSolution question as radio button options in alphabetical order', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -132,15 +132,15 @@ test('should render a selectSolution question as radio button options', async (t
     .expect(await extractInnerText(selectSolutionRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
     .expect(selectSolutionRadioOptions.find('input').count).eql(2)
 
-    .expect(selectSolutionRadioOptions.find('input').nth(0).getAttribute('value')).eql('solution-1')
-    .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(0))).eql('Solution 1')
+    .expect(selectSolutionRadioOptions.find('input').nth(0).getAttribute('value')).eql('solution-A')
+    .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(0))).eql('A - Solution A')
 
-    .expect(selectSolutionRadioOptions.find('input').nth(1).getAttribute('value')).eql('solution-2')
-    .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(1))).eql('Solution 2');
+    .expect(selectSolutionRadioOptions.find('input').nth(1).getAttribute('value')).eql('solution-B')
+    .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(1))).eql('B - Solution B');
 });
 
 test('should render the radioButton as checked for the selectedItemId', async (t) => {
-  await setState(ClientFunction)('selectedItemId', selectedItemIdInSession);
+  await setState(ClientFunction)(sessionKeys.selectedItemId, selectedItemIdInSession);
   await pageSetup();
   await t.navigateTo(pageUrl);
 

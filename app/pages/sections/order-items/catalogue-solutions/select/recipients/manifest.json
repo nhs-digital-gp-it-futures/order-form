@@ -1,0 +1,43 @@
+{
+  "backLinkText": "Go back",
+  "title": "Service Recipients for {{itemName}} for {{orderId}}",
+  "description": "These are all the possible Service Recipients for this Call-off Ordering Party. Select those you’ll be ordering this Catalogue Solution for.",
+  "selectDeselectButtonText": {
+    "select": "Select all",
+    "deselect": "Deselect all"
+  },
+  "question": {
+    "selectSolutionRecipients": {
+      "id": "selectSolutionRecipients",
+      "recipientsTable": {
+        "columnInfo": [
+          {
+            "data": "Organisation",
+            "classes": "nhsuk-u-font-size-12",
+            "width": "50%"
+          },
+          {
+            "data": "ODS Code",
+            "classes": "nhsuk-u-font-size-12",
+            "width": "50%"
+          }
+        ],
+        "cellInfo": {
+          "organisation": {
+            "question": {
+              "type": "checkbox"
+            },
+            "classes": "nhsuk-input--width-10"
+          },
+          "odsCode": {
+            "classes": "nhsuk-input--width-10 nhsuk-u-margin-top-2"
+          }
+        }
+      }
+    }
+  },
+  "continueButtonText": "Continue",
+  "errorMessages": {
+    "SelectSolutionRecipientsRequired": "Select a Service Recipient"
+  }
+}

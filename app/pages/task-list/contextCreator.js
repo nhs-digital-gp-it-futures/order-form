@@ -23,15 +23,17 @@ export const getNewOrderContext = ({ orderId }) => ({
     href: '#',
     disabled: true,
   },
-  submitOrderButton: {
-    text: commonManifest.submitOrderButton.text,
-    altText: commonManifest.submitOrderButton.disabledAltText,
+  completeOrderButton: {
+    text: commonManifest.completeOrderButton.text,
+    altText: commonManifest.completeOrderButton.disabledAltText,
     href: '#',
     disabled: true,
   },
 });
 
-export const getExistingOrderContext = ({ orderId, orderDescription, sectionsData }) => ({
+export const getExistingOrderContext = ({
+  orderId, orderDescription, sectionsData, enableSubmitButton = false,
+}) => ({
   ...commonManifest,
   ...existingorderPageManifest,
   backLinkHref: `${baseUrl}/organisation`,
@@ -41,23 +43,27 @@ export const getExistingOrderContext = ({ orderId, orderDescription, sectionsDat
   taskList: generateTaskList({ orderId, taskListManifest, sectionsData }),
   deleteOrderButton: {
     text: commonManifest.deleteOrderButton.text,
-    href: '#',
+    href: `${baseUrl}/organisation/${orderId}/delete-order`,
   },
   previewOrderButton: {
     text: commonManifest.previewOrderButton.text,
-    href: `${baseUrl}/organisation/${orderId}/preview`,
+    href: `${baseUrl}/organisation/${orderId}/summary`,
   },
-  submitOrderButton: {
-    text: commonManifest.submitOrderButton.text,
-    altText: commonManifest.submitOrderButton.disabledAltText,
-    href: '#',
-    disabled: true,
+  completeOrderButton: {
+    text: commonManifest.completeOrderButton.text,
+    altText: commonManifest.completeOrderButton.disabledAltText,
+    href: `${baseUrl}/organisation/${orderId}/complete-order`,
+    disabled: !enableSubmitButton,
   },
 });
 
-export const getContext = ({ orderId, orderDescription, sectionsData }) => {
+export const getContext = ({
+  orderId, orderDescription, sectionsData, enableSubmitButton,
+}) => {
   if (orderId === 'neworder') {
     return getNewOrderContext({ orderId });
   }
-  return getExistingOrderContext({ orderId, orderDescription, sectionsData });
+  return getExistingOrderContext({
+    orderId, orderDescription, sectionsData, enableSubmitButton,
+  });
 };

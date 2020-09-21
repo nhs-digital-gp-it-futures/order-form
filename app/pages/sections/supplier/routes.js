@@ -7,7 +7,6 @@ import {
   getSupplierSearchPageContext,
   validateSupplierSearchForm,
   getSupplierSearchPageErrorContext,
-  findSuppliers,
 } from './search/controller';
 import {
   getSupplierSelectPageContext,
@@ -17,9 +16,11 @@ import {
 import {
   getSupplierPageContext,
   getSupplierPageErrorContext,
-  putSupplier,
 } from './supplier/controller';
+import { getSearchSuppliers } from '../../../helpers/api/bapi/getSearchSuppliers';
 import { checkOrdapiForSupplier } from './controller';
+import { sessionKeys } from '../../../helpers/routes/sessionHelper';
+import { putSupplier } from '../../../helpers/api/ordapi/putSupplier';
 
 const router = express.Router({ mergeParams: true });
 
@@ -28,7 +29,9 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     const { orderId } = req.params;
     const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     try {
-      const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
+      const selectedSupplier = sessionManager.getFromSession({
+        req, key: sessionKeys.selectedSupplier,
+      });
       const context = await getSupplierPageContext({
         orderId,
         supplierId: selectedSupplier,
@@ -65,8 +68,6 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
 
-    sessionManager.clearFromSession({ req, keys: ['selectedSupplier', 'suppliersFound'] });
-
     const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
 
@@ -83,12 +84,14 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     if (response.success) {
       const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-      const suppliersFound = await findSuppliers({
+      const suppliersFound = await getSearchSuppliers({
         name: req.body.supplierName, accessToken,
       });
 
       if (suppliersFound.length > 0) {
-        sessionManager.saveToSession({ req, key: 'suppliersFound', value: suppliersFound });
+        sessionManager.saveToSession({
+          req, key: sessionKeys.suppliersFound, value: suppliersFound,
+        });
         logger.info('redirecting suppliers select page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier/search/select`);
       }
@@ -116,9 +119,13 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
 
     if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
 
-    const suppliersFound = sessionManager.getFromSession({ req, key: 'suppliersFound' });
+    const suppliersFound = sessionManager.getFromSession({
+      req, key: sessionKeys.suppliersFound,
+    });
     if (suppliersFound) {
-      const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
+      const selectedSupplier = sessionManager.getFromSession({
+        req, key: sessionKeys.selectedSupplier,
+      });
       const context = getSupplierSelectPageContext({
         orderId, suppliers: suppliersFound, selectedSupplier,
       });
@@ -133,13 +140,15 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
 
   router.post('/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    const suppliersFound = sessionManager.getFromSession({ req, key: 'suppliersFound' });
+    const suppliersFound = sessionManager.getFromSession({ req, key: sessionKeys.suppliersFound });
 
     if (suppliersFound) {
       const response = validateSupplierSelectForm({ data: req.body });
 
       if (response.success) {
-        sessionManager.saveToSession({ req, key: 'selectedSupplier', value: req.body.selectSupplier });
+        sessionManager.saveToSession({
+          req, key: sessionKeys.selectedSupplier, value: req.body.selectSupplier,
+        });
         logger.info('redirecting supplier section page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/supplier`);
       }

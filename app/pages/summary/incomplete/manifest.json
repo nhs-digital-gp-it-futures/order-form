@@ -1,0 +1,195 @@
+{
+  "backLinkText": "Go back",
+  "title": "Order summary for",
+  "description": "Review your order before marking it complete. Once the order is completed, you'll be unable to make changes.",
+  "orderDescriptionHeading": "Order description",
+  "dateSummaryCreatedLabel": "Date order summary created:",
+  "callOffAndSupplierTable": {
+    "columnInfo": [
+      {
+        "data": "Call-off Ordering Party",
+        "width": "50%"
+      },
+      {
+        "data": "Supplier",
+        "width": "50%"
+      }
+    ]
+  },
+  "commencementDateLabel": "Commencement date of the Call-off Agreement:",
+  "oneOffCostHeading": "Order items (one-off cost)",
+  "oneOffCostDescription": "The following items carry a one-off cost for the duration of this Call-off Agreement. They're the Associated Services in this order you can use as and when required",
+  "oneOffCostTable": {
+    "columnInfo": [
+      {
+        "data": "Recipient name (ODS code)",
+        "width": "20%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item ID",
+        "width": "15%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item name",
+        "width": "25%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Price unit of order (£)",
+        "width": "20%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Quantity",
+        "width": "10%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item cost (£)",
+        "width": "10%",
+        "classes": "nhsuk-u-font-size-14"
+      }
+    ],
+    "cellInfo": {
+      "recipientName": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemId": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemName": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "priceUnit": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "quantity": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemCost": {
+        "classes": "nhsuk-u-font-size-14 nhsuk-table__cell--numeric"
+      }
+    }
+  },
+  "oneOffCostTotalsTable": {
+    "columnInfo": [
+      { "data": "", "width": "80%" },
+      { "data": "", "width": "20%" }
+    ],
+    "cellInfo": {
+      "totalOneOffCostLabel": {
+        "data": "Total one-off cost (indicative)",
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19"
+      },
+      "totalOneOffCostValue": {
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19"
+      }
+    }
+  },
+  "recurringCostHeading": "Order items (recurring cost)",
+  "recurringCostDescription": "The following items carry a recurring annual cost for the duration of this Call-off Agreement. They're the Catalogue Solutions, Additional Services and Associated Services in this order that you'll be charged for at a monthly rate.",
+  "recurringCostTable": {
+    "columnInfo": [
+      {
+        "data": "Recipient name (ODS code)",
+        "width": "21%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item ID",
+        "width": "12%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item name",
+        "width": "23%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Price unit of order (£)",
+        "width": "15%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Quantity /period",
+        "width": "5%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Planned delivery date",
+        "width": "15%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Item cost per year (£)",
+        "width": "9%",
+        "classes": "nhsuk-u-font-size-14"
+      }
+    ],
+    "cellInfo": {
+      "recipientName": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemId": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemName": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "priceUnit": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "quantity": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "plannedDeliveryDate": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "itemCost": {
+        "classes": "nhsuk-u-font-size-14 nhsuk-table__cell--numeric"
+      }
+    }
+  },
+  "recurringCostTotalsTable": {
+    "columnInfo": [
+      { "data": "", "width": "80%" },
+      { "data": "", "width": "20%" }
+    ],
+    "cellInfo": {
+      "totalOneYearCostLabel": {
+        "data": "Total cost for one year (indicative)",
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19",
+        "hideSeperator": true
+      },
+      "totalOneYearCostValue": {
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19",
+        "hideSeperator": true
+      },
+      "totalMonthlyCostLabel": {
+        "data": "Total monthly cost (indicative)",
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-16"
+      },
+      "totalMonthlyCostValue": {
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-16"
+      },
+      "totalOwnershipCostLabel": {
+        "data": "Total cost of contract (indicative)",
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-22 nhsuk-u-margin-top-5",
+        "hideSeperator": true
+      },
+      "totalOwnershipCostValue": {
+        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-22 nhsuk-u-margin-top-5",
+        "hideSeperator": true
+      },
+      "totalOwnershipTerms": {
+        "data": "This is the total estimated cost for the entire duration of the Call-off Agreement, which is usually 3 years. The figure is made up of the one-off costs and the estimated yearly cost multiplied by 3.",
+        "classes": "nhsuk-grid-column-two-thirds bc-u-float-right nhsuk-table__cell--numeric nhsuk-u-padding-right-0 nhsuk-u-font-size-14",
+        "hideSeperator": true
+      }
+    }
+  },
+  "orderSummaryButtonText": "Get order summary",
+  "orderSummaryButtonInfoText": "Using this button will give you the option to print a copy or create a PDF version of your order summary so you can check it's correct."
+}

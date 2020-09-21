@@ -1,8 +1,6 @@
 import { getSupplierSelectPageContext, validateSupplierSelectForm } from './controller';
 import * as contextCreator from './contextCreator';
 
-jest.mock('buying-catalogue-library');
-
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));

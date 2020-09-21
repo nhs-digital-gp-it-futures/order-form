@@ -1,23 +1,34 @@
 import request from 'supertest';
 import {
-  FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
   testAuthorisedGetPathForUnauthorisedUser,
   getCsrfTokenFromGet,
-  fakeSessionManager,
 } from 'buying-catalogue-library';
-import { App } from '../../app';
-import { routes } from '../../routes';
+import {
+  mockUnauthorisedCookie,
+  mockAuthorisedCookie,
+  setUpFakeApp,
+} from '../../test-utils/routesTestHelper';
 import { baseUrl } from '../../config';
 import * as descriptionController from './description/controller';
 import * as orderingPartyController from './ordering-party/controller';
 import * as commencementDateController from './commencement-date/controller';
-import * as serviceRecipientsController from './service-recipients/controller';
+import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
+import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
+import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
+import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
+import * as fundingSourceController from './funding-source/controller';
 
 jest.mock('../../logger');
+jest.mock('../../helpers/api/ordapi/getFundingSource');
+jest.mock('../../helpers/api/ordapi/putFundingSource');
+jest.mock('../../helpers/routes/getOrderDescription');
+jest.mock('../../helpers/api/ordapi/putOrderingParty');
+jest.mock('../../helpers/api/ordapi/putCommencementDate');
+jest.mock('../../helpers/api/ordapi/putServiceRecipients');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -27,38 +38,6 @@ descriptionController.postOrPutDescription = jest.fn()
 
 orderingPartyController.getCallOffOrderingPartyContext = jest.fn()
   .mockResolvedValue({});
-
-orderingPartyController.putCallOffOrderingParty = jest.fn()
-  .mockResolvedValue({});
-
-serviceRecipientsController.getServiceRecipientsContext = jest.fn()
-  .mockResolvedValue({});
-
-serviceRecipientsController.putServiceRecipients = jest.fn()
-  .mockResolvedValue({});
-
-const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
-
-const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113',
-  name: 'Cool Dude',
-  ordering: 'manage',
-  primaryOrganisationId: 'org-id',
-});
-
-const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
-
-const mockUnauthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
-});
-const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
-
-const setUpFakeApp = () => {
-  const authProvider = new FakeAuthProvider(mockLogoutMethod);
-  const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, fakeSessionManager()));
-  return app;
-};
 
 describe('section routes', () => {
   describe('GET /organisation/:orderId/description', () => {
@@ -215,7 +194,7 @@ describe('section routes', () => {
     const path = '/organisation/order-id/ordering-party';
 
     afterEach(() => {
-      orderingPartyController.putCallOffOrderingParty.mockReset();
+      jest.resetAllMocks();
     });
 
     it('should return 403 forbidden if no csrf token is available', () => (
@@ -248,8 +227,7 @@ describe('section routes', () => {
     ));
 
     it('should return the correct status and text if response.success is true', async () => {
-      orderingPartyController.putCallOffOrderingParty = jest.fn()
-        .mockImplementation(() => Promise.resolve({ success: true }));
+      putOrderingParty.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -271,8 +249,7 @@ describe('section routes', () => {
     });
 
     it('should return the correct status and text if response.success is not true', async () => {
-      orderingPartyController.putCallOffOrderingParty = jest.fn()
-        .mockImplementation(() => Promise.resolve({ success: false }));
+      putOrderingParty.mockResolvedValue({ success: false });
 
       orderingPartyController.getCallOffOrderingPartyErrorContext = jest.fn()
         .mockImplementation(() => Promise.resolve({
@@ -339,16 +316,13 @@ describe('section routes', () => {
     commencementDateController.validateCommencementDateForm = jest.fn()
       .mockReturnValue([]);
 
-    commencementDateController.putCommencementDate = jest.fn()
-      .mockResolvedValue({});
+    putCommencementDate.mockResolvedValue({});
 
     commencementDateController.getCommencementDateErrorContext = jest.fn()
       .mockResolvedValue({});
 
     afterEach(() => {
-      commencementDateController.validateCommencementDateForm.mockReset();
-      commencementDateController.putCommencementDate.mockReset();
-      commencementDateController.getCommencementDateErrorContext.mockReset();
+      jest.resetAllMocks();
     });
 
     it('should return 403 forbidden if no csrf token is available', () => (
@@ -384,8 +358,7 @@ describe('section routes', () => {
       commencementDateController.validateCommencementDateForm = jest.fn()
         .mockReturnValue([]);
 
-      commencementDateController.putCommencementDate = jest.fn()
-        .mockResolvedValue({ success: true });
+      putCommencementDate.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -436,8 +409,7 @@ describe('section routes', () => {
       commencementDateController.validateCommencementDateForm = jest.fn()
         .mockReturnValue([]);
 
-      commencementDateController.putCommencementDate = jest.fn()
-        .mockResolvedValue({ success: false, errors: [{}] });
+      putCommencementDate.mockResolvedValue({ success: false, errors: [{}] });
 
       commencementDateController.getCommencementDateErrorContext = jest.fn()
         .mockResolvedValue({
@@ -464,8 +436,8 @@ describe('section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/service-recipients', () => {
-    const path = '/organisation/some-order-id/service-recipients';
+  describe('GET /organisation/:orderId/funding-source', () => {
+    const path = '/organisation/some-order-id/funding-source';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -483,33 +455,22 @@ describe('section routes', () => {
       })
     ));
 
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        expect(res.text.includes('data-test-id="service-recipients-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
-
-    it('should return the correct status and text when the user is authorised and the path has query string', () => request(setUpFakeApp())
-      .get(`${path}?selectStatus=select`)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        expect(res.text.includes('data-test-id="service-recipients-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
+    it('should return the correct status and text when the user is authorised', () => {
+      getFundingSource.mockResolvedValue({});
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.text.includes('data-test-id="funding-source-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
   });
 
-  describe('POST /organisation/:orderId/service-recipients', () => {
-    const path = '/organisation/order-id/service-recipients';
-
-    afterEach(() => {
-      serviceRecipientsController.putServiceRecipients.mockReset();
-    });
+  describe('POST /organisation/:orderId/funding-source', () => {
+    const path = '/organisation/some-order-id/funding-source';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -540,9 +501,43 @@ describe('section routes', () => {
       })
     ));
 
-    it('should return the correct status and text if response.success is true', async () => {
-      serviceRecipientsController.putServiceRecipients = jest.fn()
-        .mockResolvedValue({ success: true });
+    it('should show the funding source select price page with errors if there are validation errors', async () => {
+      fundingSourceController.validateFundingSourceForm = jest.fn()
+        .mockReturnValue({
+          success: false,
+          errors: [{}],
+        });
+
+      fundingSourceController
+        .getFundingSourceErrorPageContext = jest.fn()
+          .mockResolvedValue({
+            errors: [{ text: 'Select a funding source', href: '#selectFundingSource' }],
+          });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="funding-source-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+    });
+
+    it('should return the correct status and text when the FE validation and the API call are both successful', async () => {
+      fundingSourceController.validateFundingSourceForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      putFundingSource.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -558,39 +553,40 @@ describe('section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
-  });
 
-  describe('GET /organisation/:orderId/funding-sources', () => {
-    const path = '/organisation/some-order-id/funding-sources';
+    it('should return the correct status and text when FE validation successful but API call returned an error', async () => {
+      fundingSourceController.validateFundingSourceForm = jest.fn()
+        .mockReturnValue({ success: true });
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      putFundingSource.mockResolvedValue({ success: false, errors: [{}] });
 
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedGetPathForUnauthorisedUser({
+      fundingSourceController
+        .getFundingSourceErrorPageContext = jest.fn()
+          .mockResolvedValue({
+            errors: [{ text: 'error', href: '#selectFundingSource' }],
+          });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
-        getPathCookies: [mockUnauthorisedCookie],
-        expectedPageId: 'data-test-id="error-title"',
-        expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
+        getPathCookies: [mockAuthorisedCookie],
+        postPathCookies: [],
+      });
 
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        expect(res.text.includes('data-test-id="funding-sources-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200);
+
+      expect(res.text.includes('data-test-id="funding-source-page"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+      expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+    });
   });
 });

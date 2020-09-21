@@ -1,6 +1,10 @@
 import { ErrorContext } from 'buying-catalogue-library';
-import { appBaseUri } from '../../config';
-import { getEndpoint } from '../../endpoints';
+import {
+  appBaseUri,
+  isDevelopment,
+  documentApiHost,
+  identityServerUrl,
+} from '../../config';
 
 export const withCatch = (logger, authProvider, route) => async (req, res, next) => {
   try {
@@ -16,7 +20,10 @@ export const withCatch = (logger, authProvider, route) => async (req, res, next)
     }
 
     logger.error(`Unexpected Error:\n${err.stack}`);
-    const defaultError = new ErrorContext({ status: 500 });
+
+    const stackTrace = isDevelopment() ? err.stack : undefined;
+    const defaultError = new ErrorContext({ status: 500, stackTrace });
+
     return next(defaultError);
   }
 };
@@ -28,12 +35,12 @@ export const getHealthCheckDependencies = () => {
   const dependencies = [
     {
       name: 'Identity Server',
-      endpoint: getEndpoint({ api: 'identity', endpointLocator: 'getApiHealth' }),
+      endpoint: `${identityServerUrl}/health/ready`,
       critical: true,
     },
     {
       name: 'Document API',
-      endpoint: getEndpoint({ api: 'dapi', endpointLocator: 'getApiHealth' }),
+      endpoint: `${documentApiHost}/health/ready`,
     },
   ];
 

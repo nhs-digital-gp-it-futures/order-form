@@ -13,7 +13,7 @@
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",
         "title": "What quantity should I enter?",
-        "innerComponent": "Enter the total quantity you'll need"
+        "innerComponent": "Enter the total quantity you'll need."
       }
     }
   },

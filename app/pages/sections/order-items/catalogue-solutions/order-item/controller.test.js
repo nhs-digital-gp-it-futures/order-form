@@ -5,7 +5,6 @@ import {
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from '../../../../../helpers/controllers/manifestProvider';
 
-jest.mock('buying-catalogue-library');
 jest.mock('./contextCreator', () => ({ getContext: jest.fn(), getErrorContext: jest.fn() }));
 jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
 

@@ -1,0 +1,12 @@
+{
+  "backLinkText": "Go back",
+  "title": "Delete order {{orderId}}?",
+  "description": "Confirm you want to delete this order.",
+  "orderDescriptionTitle": "Order description",
+  "noButton": {
+    "text": "Cancel delete"
+  },
+  "yesButton": {
+    "text": "Confirm delete"
+  }
+}
