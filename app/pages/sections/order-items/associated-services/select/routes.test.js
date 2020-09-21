@@ -1,48 +1,28 @@
 import request from 'supertest';
 import {
-  FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
   getCsrfTokenFromGet,
-  fakeSessionManager,
   ErrorContext,
 } from 'buying-catalogue-library';
-import { App } from '../../../../../app';
-import { routes } from '../../../../../routes';
+import {
+  mockUnauthorisedCookie,
+  mockAuthorisedCookie,
+  setUpFakeApp,
+} from '../../../../../test-utils/routesTestHelper';
 import { baseUrl } from '../../../../../config';
 import * as selectAssociatedServiceController from './associated-service/controller';
 import * as selectAssociatedServicePriceController from './price/controller';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
+import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
-
-const mockLogoutMethod = jest.fn().mockResolvedValue({});
-
-const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113',
-  name: 'Cool Dude',
-  ordering: 'manage',
-  primaryOrganisationId: 'org-id',
-});
-const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
-
-const mockUnauthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
-});
-const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
-
-const setUpFakeApp = () => {
-  const authProvider = new FakeAuthProvider(mockLogoutMethod);
-  const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, fakeSessionManager()));
-  return app;
-};
 
 describe('associated-services select routes', () => {
   afterEach(() => {
@@ -241,8 +221,8 @@ describe('associated-services select routes', () => {
         getPathCookies: [mockAuthorisedCookie],
       });
 
-      const mockSelectedItemCookie = `selectedItemId=${associatedServiceId}`;
-      const mockAssociatedServicesCookie = `associatedServices=${JSON.stringify(associatedServices)}`;
+      const mockSelectedItemCookie = `${sessionKeys.selectedItemId}=${associatedServiceId}`;
+      const mockAssociatedServicesCookie = `${sessionKeys.associatedServices}=${JSON.stringify(associatedServices)}`;
 
       const res = await request(setUpFakeApp())
         .post(path)
@@ -312,7 +292,7 @@ describe('associated-services select routes', () => {
         price: 1.64,
       }];
 
-    const pricesCookie = `associatedServicePrices=${JSON.stringify(prices)}`;
+    const pricesCookie = `${sessionKeys.associatedServicePrices}=${JSON.stringify(prices)}`;
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({

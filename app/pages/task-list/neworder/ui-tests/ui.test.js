@@ -234,8 +234,8 @@ test('should render task 4 item 1', async (t) => {
 
   await t
     .expect(await extractInnerText(task4.find('h2 span'))).eql('4.')
-    .expect(await extractInnerText(task4.find('h2 div'))).eql('Select Service Recipients')
-    .expect(await extractInnerText(task4Item1.find('span'))).eql('Select the organisations you are ordering for');
+    .expect(await extractInnerText(task4.find('h2 div'))).eql('Add Catalogue Solutions')
+    .expect(await extractInnerText(task4Item1.find('span'))).eql('Add Catalogue Solutions to your order');
 });
 
 test('should render task 4 item 1 as a text', async (t) => {
@@ -268,8 +268,8 @@ test('should render task 5 item 1', async (t) => {
 
   await t
     .expect(await extractInnerText(task5.find('h2 span'))).eql('5.')
-    .expect(await extractInnerText(task5.find('h2 div'))).eql('Add Catalogue Solutions')
-    .expect(await extractInnerText(task5Item1.find('span'))).eql('Add Catalogue Solutions to your order');
+    .expect(await extractInnerText(task5.find('h2 div'))).eql('Add Additional Services')
+    .expect(await extractInnerText(task5Item1.find('span'))).eql('Add Additional Services to your order');
 });
 
 test('should render task 5 item 1 as a text', async (t) => {
@@ -302,8 +302,8 @@ test('should render task 6 item 1', async (t) => {
 
   await t
     .expect(await extractInnerText(task6.find('h2 span'))).eql('6.')
-    .expect(await extractInnerText(task6.find('h2 div'))).eql('Add Additional Services')
-    .expect(await extractInnerText(task6Item1.find('span'))).eql('Add Additional Services to your order');
+    .expect(await extractInnerText(task6.find('h2 div'))).eql('Add Associated Services')
+    .expect(await extractInnerText(task6Item1.find('span'))).eql('Add Associated Services to your order');
 });
 
 test('should render task 6 item 1 as a text', async (t) => {
@@ -335,9 +335,11 @@ test('should render task 7 item 1', async (t) => {
   const task7Item1 = Selector('[data-test-id="task-6-item-0"]');
 
   await t
+    .expect(task7.exists).ok()
     .expect(await extractInnerText(task7.find('h2 span'))).eql('7.')
-    .expect(await extractInnerText(task7.find('h2 div'))).eql('Add Associated Services')
-    .expect(await extractInnerText(task7Item1.find('span'))).eql('Add Associated Services to your order');
+    .expect(await extractInnerText(task7.find('h2 div'))).eql('Indicate funding source')
+    .expect(task7Item1.exists).ok()
+    .expect(await extractInnerText(task7Item1.find('span'))).eql('Explain how you\'re paying for this order');
 });
 
 test('should render task 7 item 1 as a text', async (t) => {
@@ -358,42 +360,6 @@ test('should not render the complete tag for task 7 item 1', async (t) => {
 
   await t
     .expect(task7Item1CompleteTag.exists).notOk();
-});
-
-// Task 8 Item 1 Tests
-test('should render task 8 item 1', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const task8 = Selector('li[data-test-id="task-7"]');
-  const task8Item1 = Selector('[data-test-id="task-7-item-0"]');
-
-  await t
-    .expect(task8.exists).ok()
-    .expect(await extractInnerText(task8.find('h2 span'))).eql('8.')
-    .expect(await extractInnerText(task8.find('h2 div'))).eql('Indicate funding source')
-    .expect(task8Item1.exists).ok()
-    .expect(await extractInnerText(task8Item1.find('span'))).eql('Explain how you\'re paying for this order');
-});
-
-test('should render task 8 item 1 as a text', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const task8Item1 = Selector('li[data-test-id="task-7-item-0"]');
-
-  await t
-    .expect(task8Item1.find('a').exists).notOk();
-});
-
-test('should not render the complete tag for task 8 item 1', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
-
-  const task8Item1CompleteTag = Selector('[data-test-id="task-7-item-0-complete-tag"]');
-
-  await t
-    .expect(task8Item1CompleteTag.exists).notOk();
 });
 
 // Buttons tests
@@ -423,15 +389,15 @@ test('should render the "Preview order summary" button', async (t) => {
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });
 
-test('should render the "Submit order" button', async (t) => {
+test('should render the "Complete order" button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const submitOrderButton = Selector('[data-test-id="submit-order-button"]');
+  const completeOrderButton = Selector('[data-test-id="complete-order-button"]');
 
   await t
-    .expect(await extractInnerText(submitOrderButton)).eql(commonContent.submitOrderButton.text)
-    .expect(submitOrderButton.getAttribute('aria-label')).eql(commonContent.submitOrderButton.disabledAltText)
-    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
-    .expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
+    .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)
+    .expect(completeOrderButton.getAttribute('aria-label')).eql(commonContent.completeOrderButton.disabledAltText)
+    .expect(completeOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
+    .expect(completeOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
 });

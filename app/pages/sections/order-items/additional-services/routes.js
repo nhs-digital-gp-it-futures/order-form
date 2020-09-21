@@ -14,6 +14,7 @@ import { validateOrderItemForm } from '../../../../helpers/controllers/validateO
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
+import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
 
@@ -22,9 +23,12 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const { orderId } = req.params;
 
     const context = await getAdditionalServicesPageContext({
+      req,
       orderId,
       catalogueItemType: 'AdditionalService',
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      sessionManager,
+      logger,
     });
 
     logger.info(`navigating to order ${orderId} additional-services dashboard page`);
@@ -57,7 +61,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       orderItemId,
     });
 
-    sessionManager.saveToSession({ req, key: 'orderItemPageData', value: pageData });
+    sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
 
     const context = await getOrderItemContext({
       orderId,
@@ -79,7 +83,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const validationErrors = [];
 
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const pageData = sessionManager.getFromSession({ req, key: 'orderItemPageData' });
+    const pageData = sessionManager.getFromSession({ req, key: sessionKeys.orderItemPageData });
 
     const errors = validateOrderItemForm({
       orderItemType: 'AdditionalService',

@@ -1,9 +1,13 @@
 const { isApiReady } = require('buying-catalogue-library');
-const { getEndpoint } = require('../../endpoints');
+const { oidcBaseUri } = require('../../config');
 const { logger } = require('../../logger');
 
+const getWellKnownConfigEndpoint = () => (
+  `${oidcBaseUri}/.well-known/openid-configuration`
+);
+
 export const isIdentityReady = async () => {
-  const identityHealthEndpoint = getEndpoint({ api: 'identity', endpointLocator: 'getApiHealth' });
+  const identityHealthEndpoint = getWellKnownConfigEndpoint();
   return isApiReady({
     attempt: 1,
     pollDuration: 1000,

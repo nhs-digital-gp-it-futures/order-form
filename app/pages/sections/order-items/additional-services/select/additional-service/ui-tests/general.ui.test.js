@@ -4,6 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { solutionsApiUrl as bapiUrl, orderApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
+import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service';
 
@@ -52,7 +53,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
     mocks();
   }
   if (setup.postRoute) {
-    await setState(ClientFunction)('additionalServices', additionalServicesInSession);
+    await setState(ClientFunction)(sessionKeys.additionalServices, additionalServicesInSession);
   }
 };
 

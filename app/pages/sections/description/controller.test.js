@@ -1,16 +1,18 @@
-import { postData, putData } from 'buying-catalogue-library';
+import { fakeSessionManager } from 'buying-catalogue-library';
 import { postOrPutDescription, getDescriptionContext } from './controller';
 import { logger } from '../../../logger';
-import { orderApiUrl } from '../../../config';
 import * as contextCreator from './contextCreator';
-import { getOrderDescription } from '../../../helpers/api/ordapi/getOrderDescription';
+import { getOrderDescription } from '../../../helpers/routes/getOrderDescription';
+import { postDescription } from '../../../helpers/api/ordapi/postDescription';
+import { putDescription } from '../../../helpers/api/ordapi/putDescription';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
-jest.mock('../../../helpers/api/ordapi/getOrderDescription');
+jest.mock('../../../helpers/routes/getOrderDescription');
+jest.mock('../../../helpers/api/ordapi/postDescription');
+jest.mock('../../../helpers/api/ordapi/putDescription');
 
 describe('description controller', () => {
   describe('getDescriptionContext', () => {
@@ -19,39 +21,63 @@ describe('description controller', () => {
     });
 
     it('should call getOrderDescription once with the correct params for an order with an id', async () => {
-      getOrderDescription
-        .mockResolvedValueOnce({ description: 'a lovely description' });
+      getOrderDescription.mockResolvedValueOnce('a lovely description');
 
-      await getDescriptionContext({ orderId: 'order-id', accessToken: 'access_token' });
+      const orderId = 'order-id';
+      const req = { params: { orderId } };
+      const accessToken = 'access_token';
+
+      await getDescriptionContext({
+        req,
+        orderId,
+        accessToken,
+        sessionManager: fakeSessionManager,
+      });
+
       expect(getOrderDescription.mock.calls.length).toEqual(1);
       expect(getOrderDescription).toHaveBeenCalledWith({
-        orderId: 'order-id',
-        accessToken: 'access_token',
+        req,
+        accessToken,
+        sessionManager: fakeSessionManager,
+        logger,
       });
     });
 
     it('should not call getOrderDescription for a new order', async () => {
-      await getDescriptionContext({ orderId: 'neworder', accessToken: 'access_token' });
+      await getDescriptionContext({
+        req: {},
+        orderId: 'neworder',
+        accessToken: 'access_token',
+        sessionManager: fakeSessionManager,
+      });
+
       expect(getOrderDescription.mock.calls.length).toEqual(0);
     });
 
     it('should call getContext with the correct params for an order with an id and data returned from getOrderDescription', async () => {
-      getOrderDescription
-        .mockResolvedValueOnce({ description: 'a lovely description' });
-      contextCreator.getContext
-        .mockResolvedValueOnce();
+      getOrderDescription.mockResolvedValueOnce('a lovely description');
+      contextCreator.getContext.mockResolvedValueOnce();
 
-      await getDescriptionContext({ orderId: 'order-id', accessToken: 'access_token' });
+      await getDescriptionContext({
+        req: {},
+        orderId: 'order-id',
+        accessToken: 'access_token',
+        sessionManager: fakeSessionManager,
+      });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'order-id', description: 'a lovely description' });
     });
 
     it('should call getContext with the correct params for a new order', async () => {
-      contextCreator.getContext
-        .mockResolvedValueOnce();
+      contextCreator.getContext.mockResolvedValueOnce();
 
-      await getDescriptionContext({ orderId: 'neworder', accessToken: 'access_token' });
+      await getDescriptionContext({
+        req: {},
+        orderId: 'neworder',
+        accessToken: 'access_token',
+        sessionManager: fakeSessionManager,
+      });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({ orderId: 'neworder', description: '' });
@@ -60,55 +86,51 @@ describe('description controller', () => {
 
   describe('postOrPutDescription', () => {
     afterEach(() => {
-      postData.mockReset();
-      putData.mockReset();
+      jest.resetAllMocks();
     });
 
-    it('should call postData once with the correct params for neworder', async () => {
-      postData
-        .mockResolvedValueOnce({ data: { orderId: 'order1' } });
+    it('should call postDescription once with the correct params for neworder', async () => {
+      postDescription.mockResolvedValueOnce({});
 
       await postOrPutDescription({
         orgId: 'org-id', orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_token',
       });
-      expect(postData.mock.calls.length).toEqual(1);
-      expect(postData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders`,
-        body: { description: 'an order description', organisationId: 'org-id' },
+      expect(postDescription.mock.calls.length).toEqual(1);
+      expect(postDescription).toHaveBeenCalledWith({
+        orgId: 'org-id',
         accessToken: 'access_token',
-        logger,
+        formData: { description: 'an order description' },
       });
     });
 
-    it('should call putData once with the correct params for existing order', async () => {
-      putData
-        .mockResolvedValueOnce({ data: { orderId: 'order1' } });
+    it('should call putDescription once with the correct params for existing order', async () => {
+      putDescription.mockResolvedValueOnce({});
 
       await postOrPutDescription({
         orgId: 'org-id', orderId: 'order-id', data: { description: 'an order description' }, accessToken: 'access_token',
       });
-      expect(putData.mock.calls.length).toEqual(1);
-      expect(putData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
-        body: { description: 'an order description' },
+      expect(putDescription.mock.calls.length).toEqual(1);
+      expect(putDescription).toHaveBeenCalledWith({
+        orderId: 'order-id',
         accessToken: 'access_token',
-        logger,
+        formData: { description: 'an order description' },
       });
     });
 
-    it('should return true if api request is successful', async () => {
-      postData
-        .mockResolvedValueOnce({ data: { orderId: 'order1' } });
+    it('should return success true and the order if api request to postDescription is successful', async () => {
+      postDescription.mockResolvedValueOnce({ success: true, orderId: 'order1' });
 
-      const response = await postOrPutDescription({ orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_token' });
+      const response = await postOrPutDescription({
+        orgId: 'org1', orderId: 'neworder', data: { description: 'an order description' }, accessToken: 'access_token',
+      });
 
       expect(response.success).toEqual(true);
+      expect(response.orderId).toEqual('order1');
     });
 
     it('should return error.respose.data if api request is unsuccessful with 400', async () => {
       const responseData = { description: 'an order description', errors: [{}] };
-      postData
-        .mockRejectedValueOnce({ response: { status: 400, data: responseData } });
+      postDescription.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 
       const response = await postOrPutDescription({
         orderId: 'neworder',
@@ -120,8 +142,7 @@ describe('description controller', () => {
     });
 
     it('should throw an error if api request is unsuccessful with non 400', async () => {
-      postData
-        .mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
+      postDescription.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
 
       try {
         await postOrPutDescription({
@@ -132,23 +153,6 @@ describe('description controller', () => {
       } catch (err) {
         expect(err).toEqual(new Error());
       }
-    });
-
-    it('should trim whitespace from the data', async () => {
-      const mockData = { description: '  an order description ' };
-
-      putData
-        .mockResolvedValueOnce({});
-
-      await postOrPutDescription({ orderId: 'order-id', data: mockData, accessToken: 'access_token' });
-
-      expect(putData.mock.calls.length).toEqual(1);
-      expect(putData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/sections/description`,
-        body: { description: 'an order description' },
-        accessToken: 'access_token',
-        logger,
-      });
     });
   });
 });

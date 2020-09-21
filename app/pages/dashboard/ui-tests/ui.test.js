@@ -104,32 +104,32 @@ test('should navigate to the new order page when add new order button is clicked
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/neworder');
 });
 
-test('should render the unsubmitted orders table', async (t) => {
+test('should render the incomplete orders table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const unsubmittedTable = Selector('div[data-test-id="unsubmitted-orders-table"]');
-  const unsubmittedTableTitle = Selector('h3[data-test-id="unsubmitted-orders-table-title"]');
-  const unsubmittedColumnHeading1 = unsubmittedTable.find('[data-test-id="column-heading-0"]');
-  const unsubmittedColumnHeading2 = unsubmittedTable.find('[data-test-id="column-heading-1"]');
-  const unsubmittedColumnHeading3 = unsubmittedTable.find('[data-test-id="column-heading-2"]');
-  const unsubmittedColumnHeading4 = unsubmittedTable.find('[data-test-id="column-heading-3"]');
-  const unsubmittedColumnHeading5 = unsubmittedTable.find('[data-test-id="column-heading-4"]');
+  const incompleteTable = Selector('div[data-test-id="incomplete-orders-table"]');
+  const incompleteTableTitle = Selector('h3[data-test-id="incomplete-orders-table-title"]');
+  const incompleteColumnHeading1 = incompleteTable.find('[data-test-id="column-heading-0"]');
+  const incompleteColumnHeading2 = incompleteTable.find('[data-test-id="column-heading-1"]');
+  const incompleteColumnHeading3 = incompleteTable.find('[data-test-id="column-heading-2"]');
+  const incompleteColumnHeading4 = incompleteTable.find('[data-test-id="column-heading-3"]');
+  const incompleteColumnHeading5 = incompleteTable.find('[data-test-id="column-heading-4"]');
 
   await t
-    .expect(await extractInnerText(unsubmittedTableTitle)).eql(content.unsubmittedOrdersTableTitle)
-    .expect(await extractInnerText(unsubmittedColumnHeading1)).eql(content.columnInfo[0].data)
-    .expect(await extractInnerText(unsubmittedColumnHeading2)).eql(content.columnInfo[1].data)
-    .expect(await extractInnerText(unsubmittedColumnHeading3)).eql(content.columnInfo[2].data)
-    .expect(await extractInnerText(unsubmittedColumnHeading4)).eql(content.columnInfo[3].data)
-    .expect(await extractInnerText(unsubmittedColumnHeading5)).eql(content.columnInfo[4].data);
+    .expect(await extractInnerText(incompleteTableTitle)).eql(content.incompleteOrdersTableTitle)
+    .expect(await extractInnerText(incompleteColumnHeading1)).eql(content.incompleteOrdersTable.columnInfo[0].data)
+    .expect(await extractInnerText(incompleteColumnHeading2)).eql(content.incompleteOrdersTable.columnInfo[1].data)
+    .expect(await extractInnerText(incompleteColumnHeading3)).eql(content.incompleteOrdersTable.columnInfo[2].data)
+    .expect(await extractInnerText(incompleteColumnHeading4)).eql(content.incompleteOrdersTable.columnInfo[3].data)
+    .expect(await extractInnerText(incompleteColumnHeading5)).eql(content.incompleteOrdersTable.columnInfo[4].data);
 });
 
-test('should render the unsubmitted orders table content', async (t) => {
+test('should render the incomplete orders table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const table = Selector('div[data-test-id="unsubmitted-orders-table"]');
+  const table = Selector('div[data-test-id="incomplete-orders-table"]');
   const row = table.find('[data-test-id="table-row-0"]');
   const orderId = row.find('a[data-test-id="order1-id"]');
   const description = row.find('div[data-test-id="order1-description"]');
@@ -146,57 +146,119 @@ test('should render the unsubmitted orders table content', async (t) => {
     .expect(await extractInnerText(dateCreated)).eql('6 January 2020');
 });
 
-test('should render the submitted orders table', async (t) => {
+test('should render the incomplete orders sorted by descending dateCreated order', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const submittedTable = Selector('div[data-test-id="submitted-orders-table"]');
-  const submittedTableTitle = Selector('h3[data-test-id="submitted-orders-table-title"]');
-  const submittedColumnHeading1 = submittedTable.find('[data-test-id="column-heading-0"]');
-  const submittedColumnHeading2 = submittedTable.find('[data-test-id="column-heading-1"]');
-  const submittedColumnHeading3 = submittedTable.find('[data-test-id="column-heading-2"]');
-  const submittedColumnHeading4 = submittedTable.find('[data-test-id="column-heading-3"]');
-  const submittedColumnHeading5 = submittedTable.find('[data-test-id="column-heading-4"]');
+  const table = Selector('div[data-test-id="incomplete-orders-table"]');
+
+  const row1 = table.find('[data-test-id="table-row-0"]');
+  const row1OrderId = row1.find('a[data-test-id="order1-id"]');
+  const row1DateCreated = row1.find('div[data-test-id="order1-dateCreated"]');
+
+  const row2 = table.find('[data-test-id="table-row-1"]');
+  const row2OrderId = row2.find('a[data-test-id="order5-id"]');
+  const row2DateCreated = row2.find('div[data-test-id="order5-dateCreated"]');
+
+  const row3 = table.find('[data-test-id="table-row-2"]');
+  const row3OrderId = row3.find('a[data-test-id="order4-id"]');
+  const row3DateCreated = row3.find('div[data-test-id="order4-dateCreated"]');
 
   await t
-    .expect(await extractInnerText(submittedTableTitle)).eql(content.submittedOrdersTableTitle)
-    .expect(await extractInnerText(submittedColumnHeading1)).eql(content.columnInfo[0].data)
-    .expect(await extractInnerText(submittedColumnHeading2)).eql(content.columnInfo[1].data)
-    .expect(await extractInnerText(submittedColumnHeading3)).eql(content.columnInfo[2].data)
-    .expect(await extractInnerText(submittedColumnHeading4)).eql(content.columnInfo[3].data)
-    .expect(await extractInnerText(submittedColumnHeading5)).eql(content.columnInfo[4].data);
+    .expect(await extractInnerText(row1OrderId)).eql('order1')
+    .expect(await extractInnerText(row1DateCreated)).eql('6 January 2020')
+
+    .expect(await extractInnerText(row2OrderId)).eql('order5')
+    .expect(await extractInnerText(row2DateCreated)).eql('3 January 2020')
+
+    .expect(await extractInnerText(row3OrderId)).eql('order4')
+    .expect(await extractInnerText(row3DateCreated)).eql('1 January 2020');
 });
 
-test('should render the submitted orders table content', async (t) => {
+test('should render the complete orders table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const table = Selector('div[data-test-id="submitted-orders-table"]');
+  const completeTable = Selector('div[data-test-id="complete-orders-table"]');
+  const completeTableTitle = Selector('h3[data-test-id="complete-orders-table-title"]');
+  const completeColumnHeading1 = completeTable.find('[data-test-id="column-heading-0"]');
+  const completeColumnHeading2 = completeTable.find('[data-test-id="column-heading-1"]');
+  const completeColumnHeading3 = completeTable.find('[data-test-id="column-heading-2"]');
+  const completeColumnHeading4 = completeTable.find('[data-test-id="column-heading-3"]');
+  const completeColumnHeading5 = completeTable.find('[data-test-id="column-heading-4"]');
+  const completeColumnHeading6 = completeTable.find('[data-test-id="column-heading-5"]');
+
+  await t
+    .expect(await extractInnerText(completeTableTitle)).eql(content.completeOrdersTableTitle)
+    .expect(await extractInnerText(completeColumnHeading1)).eql(content.completeOrdersTable.columnInfo[0].data)
+    .expect(await extractInnerText(completeColumnHeading2)).eql(content.completeOrdersTable.columnInfo[1].data)
+    .expect(await extractInnerText(completeColumnHeading3)).eql(content.completeOrdersTable.columnInfo[2].data)
+    .expect(await extractInnerText(completeColumnHeading4)).eql(content.completeOrdersTable.columnInfo[3].data)
+    .expect(await extractInnerText(completeColumnHeading5)).eql(content.completeOrdersTable.columnInfo[4].data)
+    .expect(await extractInnerText(completeColumnHeading6)).eql(content.completeOrdersTable.columnInfo[5].data);
+});
+
+test('should render the complete orders table content', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="complete-orders-table"]');
   const row = table.find('[data-test-id="table-row-0"]');
   const orderId = row.find('a[data-test-id="order2-id"]');
   const description = row.find('div[data-test-id="order2-description"]');
   const lastUpdatedBy = row.find('div[data-test-id="order2-lastUpdatedBy"]');
-  const lastUpdated = row.find('div[data-test-id="order2-lastUpdated"]');
+  const dateCompleted = row.find('div[data-test-id="order2-dateCompleted"]');
   const dateCreated = row.find('div[data-test-id="order2-dateCreated"]');
+  const automaticallyProcessed = row.find('div[data-test-id="order2-automaticallyProcessed"]');
 
   await t
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[1].orderId)
-    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order2`)
+    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order2/summary`)
     .expect(await extractInnerText(description)).eql(mockOrdersData[1].description)
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[1].lastUpdatedBy)
-    .expect(await extractInnerText(lastUpdated)).eql('9 December 2020')
-    .expect(await extractInnerText(dateCreated)).eql('9 October 2020');
+    .expect(await extractInnerText(dateCompleted)).eql('9 December 2020')
+    .expect(await extractInnerText(dateCreated)).eql('9 October 2020')
+    .expect(await extractInnerText(automaticallyProcessed)).eql('Yes');
 });
 
-test('should navigate to the order page when an order id is clicked', async (t) => {
+test('should render the complete orders sorted by descending dateCompleted order', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const table = Selector('div[data-test-id="submitted-orders-table"]');
+  const table = Selector('div[data-test-id="complete-orders-table"]');
+
+  const row1 = table.find('[data-test-id="table-row-0"]');
+  const row1OrderId = row1.find('a[data-test-id="order2-id"]');
+  const row1DateCompleted = row1.find('div[data-test-id="order2-dateCompleted"]');
+
+  const row2 = table.find('[data-test-id="table-row-1"]');
+  const row2OrderId = row2.find('a[data-test-id="order6-id"]');
+  const row2DateCompleted = row2.find('div[data-test-id="order6-dateCompleted"]');
+
+  const row3 = table.find('[data-test-id="table-row-2"]');
+  const row3OrderId = row3.find('a[data-test-id="order3-id"]');
+  const row3DateCompleted = row3.find('div[data-test-id="order3-dateCompleted"]');
+
+  await t
+    .expect(await extractInnerText(row1OrderId)).eql('order2')
+    .expect(await extractInnerText(row1DateCompleted)).eql('9 December 2020')
+
+    .expect(await extractInnerText(row2OrderId)).eql('order6')
+    .expect(await extractInnerText(row2DateCompleted)).eql('6 December 2020')
+
+    .expect(await extractInnerText(row3OrderId)).eql('order3')
+    .expect(await extractInnerText(row3DateCompleted)).eql('3 December 2020');
+});
+
+test('should navigate to the summary page when an order id is clicked', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="complete-orders-table"]');
   const row = table.find('[data-test-id="table-row-0"]');
   const orderId = row.find('a[data-test-id="order2-id"]');
 
   await t
     .click(orderId)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order2');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order2/summary');
 });

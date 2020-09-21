@@ -1,6 +1,7 @@
 import { getContext, getErrorContext } from './contextCreator';
 import { getCatalogueItems } from '../../../../../../helpers/api/bapi/getCatalogueItems';
 import { getSupplier } from '../../../../../../helpers/api/ordapi/getSupplier';
+import { sessionKeys } from '../../../../../../helpers/routes/sessionHelper';
 
 export const getAssociatedServicePageContext = params => getContext(params);
 export const getAssociatedServiceErrorPageContext = params => getErrorContext(params);
@@ -11,7 +12,9 @@ const getSupplierId = async ({
   accessToken,
   logger,
 }) => {
-  const selectedSupplier = sessionManager.getFromSession({ req, key: 'selectedSupplier' });
+  const selectedSupplier = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedSupplier,
+  });
   if (selectedSupplier) {
     return selectedSupplier;
   }
@@ -19,7 +22,7 @@ const getSupplierId = async ({
   const { orderId } = req.params;
   const { supplierId } = await getSupplier({ orderId, accessToken, logger });
 
-  sessionManager.saveToSession({ req, key: 'selectedSupplier', value: supplierId });
+  sessionManager.saveToSession({ req, key: sessionKeys.selectedSupplier, value: supplierId });
 
   return supplierId;
 };

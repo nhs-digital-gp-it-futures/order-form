@@ -1,17 +1,18 @@
+import { fakeSessionManager } from 'buying-catalogue-library';
 import * as contextCreator from './contextCreator';
 import {
   getAssociatedServicesPageContext,
 } from './controller';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
-import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
+import { getOrderDescription } from '../../../../../helpers/routes/getOrderDescription';
+import { logger } from '../../../../../logger';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 jest.mock('../../../../../helpers/api/ordapi/getOrderItems');
-jest.mock('../../../../../helpers/api/ordapi/getOrderDescription');
+jest.mock('../../../../../helpers/routes/getOrderDescription');
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
@@ -37,23 +38,40 @@ describe('associated-services controller', () => {
 
     it('should call getOrderDescription with the correct params', async () => {
       getOrderItems.mockResolvedValueOnce([]);
-      getOrderDescription.mockResolvedValueOnce({ description: 'some description' });
+      getOrderDescription.mockResolvedValueOnce('some description');
 
-      await getAssociatedServicesPageContext({ orderId, accessToken });
-      expect(getOrderDescription.mock.calls.length).toEqual(1);
-      expect(getOrderDescription).toHaveBeenCalledWith({
+      const req = { params: { orderId } };
+
+      await getAssociatedServicesPageContext({
+        req,
         orderId,
         accessToken,
+        sessionManager: fakeSessionManager,
+        logger,
+      });
+
+      expect(getOrderDescription.mock.calls.length).toEqual(1);
+      expect(getOrderDescription).toHaveBeenCalledWith({
+        req,
+        accessToken,
+        sessionManager: fakeSessionManager,
+        logger,
       });
     });
 
     it('should call getContext with the correct params', async () => {
       getOrderItems.mockResolvedValueOnce([]);
-      getOrderDescription
-        .mockResolvedValueOnce({ description: 'some description' });
+      getOrderDescription.mockResolvedValueOnce('some description');
       contextCreator.getContext.mockResolvedValueOnce({});
 
-      await getAssociatedServicesPageContext({ orderId, accessToken });
+      await getAssociatedServicesPageContext({
+        req: { params: { orderId: 'order-id' } },
+        orderId,
+        accessToken,
+        sessionManager: fakeSessionManager,
+        logger,
+      });
+
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith(
         { orderId, orderDescription: 'some description', orderItems: [] },

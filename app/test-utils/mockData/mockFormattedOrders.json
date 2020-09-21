@@ -20,6 +20,10 @@
     {
       "data": "9 October 2020",
       "dataTestId": "order1-dateCreated"
+    },
+    {
+      "data": "Yes",
+      "dataTestId": "order1-automaticallyProcessed"
     }
   ],
   [

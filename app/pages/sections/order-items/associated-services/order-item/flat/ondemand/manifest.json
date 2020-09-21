@@ -7,7 +7,7 @@
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",
         "title": "What quantity should I enter?",
-        "innerComponent": "This figure should relate to the entire duration of the order and not be an annual or monthly estimate. For example, if you want to order training to cover a three year period, with 10 training days per year, you would enter 30 days as the quantity."
+        "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
       }
     },
     "selectEstimationPeriod": {

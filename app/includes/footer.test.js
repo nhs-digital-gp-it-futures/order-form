@@ -24,7 +24,7 @@ const footerLinks = [
     URL: 'https://digital.nhs.uk/services/future-gp-it-systems-and-services',
   },
   {
-    label: 'Capabilities & Standards Model',
+    label: 'Capabilities and Standards Model',
     URL: 'https://gpitbjss.atlassian.net/wiki/spaces/GPITF/overview',
   },
 ];

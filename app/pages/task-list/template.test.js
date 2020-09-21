@@ -130,24 +130,24 @@ describe('neworder task-list page', () => {
     });
   }));
 
-  it('should render the "Submit order" as a primary and disabled button', componentTester(setup, (harness) => {
+  it('should render the "Complete order" as a primary and disabled button', componentTester(setup, (harness) => {
     const context = {
       orderId: 'neworder',
-      submitOrderButton: {
-        text: commonManifest.submitOrderButton.text,
-        altText: commonManifest.submitOrderButton.disabledAltText,
+      completeOrderButton: {
+        text: commonManifest.completeOrderButton.text,
+        altText: commonManifest.completeOrderButton.disabledAltText,
         href: '#',
         disabled: true,
       },
     };
 
     harness.request(context, ($) => {
-      const submitOrderButton = $('[data-test-id="submit-order-button"]');
-      expect(submitOrderButton.length).toEqual(1);
-      expect(submitOrderButton.text().trim()).toEqual(commonManifest.submitOrderButton.text);
-      expect(submitOrderButton.attr('aria-label')).toEqual(commonManifest.submitOrderButton.disabledAltText);
-      expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
-      expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      const completeOrderButton = $('[data-test-id="complete-order-button"]');
+      expect(completeOrderButton.length).toEqual(1);
+      expect(completeOrderButton.text().trim()).toEqual(commonManifest.completeOrderButton.text);
+      expect(completeOrderButton.attr('aria-label')).toEqual(commonManifest.completeOrderButton.disabledAltText);
+      expect(completeOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
+      expect(completeOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 });
@@ -274,24 +274,24 @@ describe('existingorder task-list page', () => {
     });
   }));
 
-  it('should render the "Submit order" as a primary and disabled button', componentTester(setup, (harness) => {
+  it('should render the "Complete order" as a primary and disabled button', componentTester(setup, (harness) => {
     const context = {
       orderId: 'neworder',
-      submitOrderButton: {
-        text: commonManifest.submitOrderButton.text,
-        altText: commonManifest.submitOrderButton.disabledAltText,
+      completeOrderButton: {
+        text: commonManifest.completeOrderButton.text,
+        altText: commonManifest.completeOrderButton.disabledAltText,
         href: '#',
         disabled: true,
       },
     };
 
     harness.request(context, ($) => {
-      const submitOrderButton = $('[data-test-id="submit-order-button"]');
-      expect(submitOrderButton.length).toEqual(1);
-      expect(submitOrderButton.text().trim()).toEqual(commonManifest.submitOrderButton.text);
-      expect(submitOrderButton.attr('aria-label')).toEqual(commonManifest.submitOrderButton.disabledAltText);
-      expect(submitOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
-      expect(submitOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      const completeOrderButton = $('[data-test-id="complete-order-button"]');
+      expect(completeOrderButton.length).toEqual(1);
+      expect(completeOrderButton.text().trim()).toEqual(commonManifest.completeOrderButton.text);
+      expect(completeOrderButton.attr('aria-label')).toEqual(commonManifest.completeOrderButton.disabledAltText);
+      expect(completeOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
+      expect(completeOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 });

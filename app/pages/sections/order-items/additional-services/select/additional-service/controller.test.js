@@ -1,19 +1,11 @@
-import { getData } from 'buying-catalogue-library';
-import {
-  solutionsApiUrl as bapiUrl,
-} from '../../../../../../config';
-import { logger } from '../../../../../../logger';
 import {
   getAdditionalServicePageContext,
   getAdditionalServiceErrorPageContext,
-  findAdditionalServices,
   findAddedCatalogueSolutions,
   validateAdditionalServicesForm,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import { getOrderItems } from '../../../../../../helpers/api/ordapi/getOrderItems';
-
-jest.mock('buying-catalogue-library');
 
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
@@ -51,51 +43,6 @@ describe('additional-services select-additional-service controller', () => {
 
       expect(contextCreator.getErrorContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getErrorContext).toHaveBeenCalledWith(params);
-    });
-  });
-
-  describe('findAdditionalServices', () => {
-    afterEach(() => {
-      getData.mockReset();
-    });
-
-    it('should call getData once with the correct params', async () => {
-      getData
-        .mockResolvedValueOnce({ additionalServices: [] });
-
-      const addedCatalogueSolutions = ['1', '2', '3'];
-      await findAdditionalServices({ addedCatalogueSolutions, accessToken });
-      expect(getData.mock.calls.length).toEqual(1);
-      expect(getData).toHaveBeenCalledWith({
-        endpoint: `${bapiUrl}/api/v1/additional-services?solutionIds=1&solutionIds=2&solutionIds=3`,
-        accessToken,
-        logger,
-      });
-    });
-
-    it('should return empty list when getData returns undefined', async () => {
-      getData
-        .mockResolvedValueOnce({ additionalServices: undefined });
-
-      const addedCatalogueSolutions = ['1', '2', '3'];
-      const expected = await findAdditionalServices({ addedCatalogueSolutions, accessToken });
-      expect(expected).toEqual([]);
-    });
-
-    it('should return expected list when addedCatalogueSolutions is an empty array', async () => {
-      const additionalServices = [
-        {
-          additionalServiceId: 'additional-service-1',
-          name: 'Additional Service 1',
-        },
-      ];
-
-      getData
-        .mockResolvedValueOnce({ additionalServices });
-
-      const addedCatalogueSolutions = [];
-      const expected = await findAdditionalServices({ addedCatalogueSolutions, accessToken });
-      expect(expected).toEqual(additionalServices);
     });
   });
 

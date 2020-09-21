@@ -1,20 +1,21 @@
+import { fakeSessionManager } from 'buying-catalogue-library';
 import * as contextCreator from './contextCreator';
-import {
-  getAdditionalServicesPageContext,
-} from './controller';
+import { getAdditionalServicesPageContext } from './controller';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
-import { getOrderDescription } from '../../../../../helpers/api/ordapi/getOrderDescription';
+import { getOrderDescription } from '../../../../../helpers/routes/getOrderDescription';
+import { logger } from '../../../../../logger';
 
-jest.mock('buying-catalogue-library');
 jest.mock('../../../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 jest.mock('../../../../../helpers/api/ordapi/getOrderItems');
-jest.mock('../../../../../helpers/api/ordapi/getOrderDescription');
+jest.mock('../../../../../helpers/routes/getOrderDescription');
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
+const req = { params: { orderId } };
+const catalogueItemType = 'AdditionalService';
 
 describe('additional-services controller', () => {
   describe('getAdditionalServicesPageContext', () => {
@@ -26,11 +27,19 @@ describe('additional-services controller', () => {
       getOrderItems.mockResolvedValueOnce([]);
       getOrderDescription.mockResolvedValueOnce({});
 
-      await getAdditionalServicesPageContext({ orderId, catalogueItemType: 'some-type', accessToken });
+      await getAdditionalServicesPageContext({
+        req,
+        orderId,
+        catalogueItemType,
+        accessToken,
+        sessionManager: fakeSessionManager,
+        logger,
+      });
+
       expect(getOrderItems.mock.calls.length).toEqual(1);
       expect(getOrderItems).toHaveBeenCalledWith({
         orderId: 'order-id',
-        catalogueItemType: 'some-type',
+        catalogueItemType,
         accessToken,
       });
     });
@@ -39,25 +48,46 @@ describe('additional-services controller', () => {
       getOrderItems.mockResolvedValueOnce([]);
       getOrderDescription.mockResolvedValueOnce({});
 
-      await getAdditionalServicesPageContext({ orderId, accessToken });
+      await getAdditionalServicesPageContext({
+        req,
+        orderId,
+        catalogueItemType,
+        accessToken,
+        sessionManager: fakeSessionManager,
+        logger,
+      });
+
       expect(getOrderDescription.mock.calls.length).toEqual(1);
       expect(getOrderDescription).toHaveBeenCalledWith({
-        orderId,
+        req,
         accessToken,
+        sessionManager: fakeSessionManager,
+        logger,
       });
     });
 
     it('should call getContext with the correct params', async () => {
+      const orderDescription = 'some order';
+
       getOrderItems.mockResolvedValueOnce([]);
-      getOrderDescription
-        .mockResolvedValueOnce({ description: 'some order' });
+      getOrderDescription.mockResolvedValueOnce(orderDescription);
       contextCreator.getContext.mockResolvedValueOnce({});
 
-      await getAdditionalServicesPageContext({ orderId, accessToken });
+      await getAdditionalServicesPageContext({
+        req,
+        orderId,
+        catalogueItemType,
+        accessToken,
+        sessionManager: fakeSessionManager,
+        logger,
+      });
+
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith(
-        { orderId, orderDescription: 'some order', orderItems: [] },
-      );
+      expect(contextCreator.getContext).toHaveBeenCalledWith({
+        orderId,
+        orderDescription,
+        orderItems: [],
+      });
     });
   });
 });

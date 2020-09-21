@@ -4,6 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
+import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price';
 
@@ -81,11 +82,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
-    await setState(ClientFunction)('selectedItemName', selectedItemNameInSession);
-    await setState(ClientFunction)('selectedItemId', selectedItemIdInSession);
+    await setState(ClientFunction)(sessionKeys.selectedItemName, selectedItemNameInSession);
+    await setState(ClientFunction)(sessionKeys.selectedItemId, selectedItemIdInSession);
   }
   if (setup.postRoute) {
-    await setState(ClientFunction)('additionalServicePrices', additionalServicePricesInSession);
+    await setState(ClientFunction)(sessionKeys.additionalServicePrices, additionalServicePricesInSession);
   }
 };
 
@@ -171,7 +172,7 @@ test('should render a selectAdditionalServicePrice question as radio button opti
 });
 
 test('should render the radioButton as checked for the selectedPriceId', async (t) => {
-  await setState(ClientFunction)('selectedPriceId', selectedPriceIdInSession);
+  await setState(ClientFunction)(sessionKeys.selectedPriceId, selectedPriceIdInSession);
   await pageSetup();
   await t.navigateTo(pageUrl);
 
