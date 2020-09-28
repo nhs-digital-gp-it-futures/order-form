@@ -18,6 +18,11 @@ import {
   getServiceRecipientsErrorPageContext,
 } from './recipients/controller';
 import {
+  getDeliveryDateContext,
+  validateDeliveryDateForm,
+  getDeliveryDateErrorPageContext,
+} from './date/controller';
+import {
   findSelectedCatalogueItemInSession,
 } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import {
@@ -25,7 +30,9 @@ import {
 } from '../../../../../helpers/api/bapi/getCatalogueItems';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getSupplier } from '../../../../../helpers/api/ordapi/getSupplier';
+import { getCommencementDate } from '../../../../../helpers/api/ordapi/getCommencementDate';
 import { getServiceRecipients as getRecipientsFromOapi } from '../../../../../helpers/api/oapi/getServiceRecipients';
+import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 const router = express.Router({ mergeParams: true });
@@ -181,7 +188,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const response = validateSolutionRecipientsForm({ data: req.body });
     if (response.success) {
       logger.info('Redirect to new solution page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`);
     }
     const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
     const serviceRecipients = sessionManager.getFromSession({ req, key: sessionKeys.recipients });
@@ -196,6 +203,59 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.get('/solution/price/recipients/date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+
+    const itemName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+
+    const { commencementDate } = await getCommencementDate({ orderId, accessToken });
+
+    const context = await getDeliveryDateContext({
+      orderId, itemName, commencementDate,
+    });
+
+    logger.info(`navigating to order ${orderId} catalogue-solutions select planned delivery date page`);
+    return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/solution/price/recipients/date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const validationErrors = [];
+
+    const errors = validateDeliveryDateForm({ data: req.body });
+    validationErrors.push(...errors);
+
+    if (validationErrors.length === 0) {
+      const catalogueItemId = sessionManager.getFromSession({
+        req, key: sessionKeys.selectedCatalogueSolutionId,
+      });
+      const priceId = sessionManager.getFromSession({
+        req, key: sessionKeys.selectedPriceId,
+      });
+
+      const apiResponse = await putPlannedDeliveryDate({
+        orderId,
+        catalogueItemId,
+        priceId,
+        data: req.body,
+        accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      });
+      if (apiResponse.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+      validationErrors.push(...apiResponse.errors);
+    }
+
+    const context = await getDeliveryDateErrorPageContext({
+      validationErrors,
+      orderId,
+      data: req.body,
+    });
+
+    return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;

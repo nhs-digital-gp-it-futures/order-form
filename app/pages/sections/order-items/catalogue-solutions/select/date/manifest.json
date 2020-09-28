@@ -1,0 +1,30 @@
+{
+  "backLinkText": "Go back",
+  "title": "Planned delivery date of {{itemName}} for {{orderId}}",
+  "description": "The date entered will be applied to all the organisations you’ll be ordering for. We’ve included the commencement date for this Call-off Agreement, but if your planned delivery date is different, you can change it here.",
+  "insetAdvice": "You'll be able to alter the planned delivery date for individual organisations later if required.",
+  "questions": {
+    "plannedDeliveryDate": {
+      "id": "plannedDeliveryDate",
+      "type": "date",
+      "mainAdvice": "Planned delivery date",
+      "additionalAdvice": "For example 14 01 2020",
+      "expandableSection": {
+        "dataTestId": "view-section-planned-delivery-date-id",
+        "title": "What date should I enter?",
+        "innerComponent": "Enter the planned delivery date you've agreed with the supplier. This is the day that each of the listed Service Recipients will start using this Catalogue Solution.<br><br>We've included the commencement date for this Call-off Agreement, but you can change it if you’ve agreed a different delivery date."
+      }
+    }
+  },
+  "errorMessages": {
+    "PlannedDeliveryDateRequired": "Enter a planned delivery date",
+    "PlannedDeliveryDateInvalid": "Enter a planned delivery date in a valid format",
+    "PlannedDeliveryDateGreaterThan": "Planned delivery date must be in the future or within the last 60 days",
+    "PlannedDeliveryDateNotReal": "Planned delivery date must be a real date",
+    "PlannedDeliveryDateDayRequired": "Planned delivery date must include a day",
+    "PlannedDeliveryDateMonthRequired": "Planned delivery date must include a month",
+    "PlannedDeliveryDateYearRequired": "Planned delivery date must include a year",
+    "PlannedDeliveryDateYearLength": "Year must be four numbers"
+  },
+  "continueButtonText": "continue"
+}
