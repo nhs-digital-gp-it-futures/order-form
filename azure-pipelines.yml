@@ -110,7 +110,8 @@ jobs:
   - task: HelmInstaller@1
     displayName: 'Install helm'
     inputs:
-      helmVersionToInstall: 'latest'
+      #helmVersionToInstall: 'latest'
+      helmVersionToInstall: '3.3.1'
   - bash: |
       cd charts
       helm package \
