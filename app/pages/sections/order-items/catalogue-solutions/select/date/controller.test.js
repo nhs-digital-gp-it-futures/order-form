@@ -7,7 +7,6 @@ import * as contextCreator from './contextCreator';
 jest.mock('../../../../../../logger');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
-  // getErrorContext: jest.fn(),
 }));
 
 describe('delivery-date controller', () => {

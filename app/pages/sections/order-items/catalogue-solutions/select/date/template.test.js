@@ -24,24 +24,24 @@ describe('delivery date page', () => {
     });
   }));
 
-  // it('should render the errorSummary if there are errors', componentTester(setup, (harness) => {
-  //   const contextWithErrors = {
-  //     errors: [
-  //       { text: 'some select recipient error message', href: '#selectSolutionRecipients' },
-  //     ],
-  //   };
+  it('should render the errorSummary if there are errors', componentTester(setup, (harness) => {
+    const contextWithErrors = {
+      errors: [
+        { text: 'some delivery date error message', href: '#plannedDeliveryDate' },
+      ],
+    };
 
-  //   harness.request(contextWithErrors, ($) => {
-  //     const errorSummary = $('[data-test-id="error-summary"]');
-  //     const errorArray = $('[data-test-id="error-summary"] li a');
-  //     expect(errorSummary.length).toEqual(1);
-  //     expect(errorArray.length).toEqual(contextWithErrors.errors.length);
-  //     contextWithErrors.errors.forEach((error, i) => {
-  //       expect(errorArray[i].attribs.href).toEqual(error.href);
-  //       expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
-  //     });
-  //   });
-  // }));
+    harness.request(contextWithErrors, ($) => {
+      const errorSummary = $('[data-test-id="error-summary"]');
+      const errorArray = $('[data-test-id="error-summary"] li a');
+      expect(errorSummary.length).toEqual(1);
+      expect(errorArray.length).toEqual(contextWithErrors.errors.length);
+      contextWithErrors.errors.forEach((error, i) => {
+        expect(errorArray[i].attribs.href).toEqual(error.href);
+        expect(errorArray[i].children[0].data.trim()).toEqual(error.text);
+      });
+    });
+  }));
 
   it('should render the page title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
@@ -146,34 +146,34 @@ describe('delivery date page', () => {
       });
     }));
 
-    // it('should render error field if there are errors', componentTester(setup, (harness) => {
-    //   const contextWithErrors = {
-    //     questions: {
-    //       commencementDate: {
-    //         ...context.questions.commencementDate,
-    //         error: {
-    //           message: 'Some commencement date error',
-    //           fields: ['day', 'month', 'year'],
-    //         },
-    //       },
-    //     },
-    //   };
+    it('should render error field if there are errors', componentTester(setup, (harness) => {
+      const contextWithErrors = {
+        questions: {
+          plannedDeliveryDate: {
+            ...context.questions.plannedDeliveryDate,
+            error: {
+              message: 'Some planned delivery date error',
+              fields: ['day', 'month', 'year'],
+            },
+          },
+        },
+      };
 
-    //   harness.request(contextWithErrors, ($) => {
-    //     const form = $('form');
-    //     const renderedQuestion = form.find('div[data-test-id="question-commencementDate"]');
-    //     const fieldError = renderedQuestion.find('div[data-test-id="date-field-input-error"]');
-    //     const errorMessage = renderedQuestion.find('.nhsuk-error-message');
-    //     const errorInputs = renderedQuestion.find('.nhsuk-input--error');
+      harness.request(contextWithErrors, ($) => {
+        const form = $('form');
+        const renderedQuestion = form.find('div[data-test-id="question-plannedDeliveryDate"]');
+        const fieldError = renderedQuestion.find('div[data-test-id="date-field-input-error"]');
+        const errorMessage = renderedQuestion.find('.nhsuk-error-message');
+        const errorInputs = renderedQuestion.find('.nhsuk-input--error');
 
-    //     expect(fieldError.length).toEqual(1);
-    //     expect(errorMessage.text().trim()).toEqual('Error: Some commencement date error');
-    //     expect(errorInputs.length).toEqual(3);
-    //     expect(errorInputs[0].attribs.id).toEqual('commencementDate-day');
-    //     expect(errorInputs[1].attribs.id).toEqual('commencementDate-month');
-    //     expect(errorInputs[2].attribs.id).toEqual('commencementDate-year');
-    //   });
-    // }));
+        expect(fieldError.length).toEqual(1);
+        expect(errorMessage.text().trim()).toEqual('Error: Some planned delivery date error');
+        expect(errorInputs.length).toEqual(3);
+        expect(errorInputs[0].attribs.id).toEqual('plannedDeliveryDate-day');
+        expect(errorInputs[1].attribs.id).toEqual('plannedDeliveryDate-month');
+        expect(errorInputs[2].attribs.id).toEqual('plannedDeliveryDate-year');
+      });
+    }));
   });
 
   it('should render the continue button', componentTester(setup, (harness) => {
