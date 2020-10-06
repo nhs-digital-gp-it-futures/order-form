@@ -4,8 +4,8 @@
   "description": "The date entered will be applied to all the organisations you’ll be ordering for. We’ve included the commencement date for this Call-off Agreement, but if your planned delivery date is different, you can change it here.",
   "insetAdvice": "You'll be able to alter the planned delivery date for individual organisations later if required.",
   "questions": {
-    "plannedDeliveryDate": {
-      "id": "plannedDeliveryDate",
+    "deliveryDate": {
+      "id": "deliveryDate",
       "type": "date",
       "mainAdvice": "Planned delivery date",
       "additionalAdvice": "For example 14 01 2020",
@@ -17,14 +17,14 @@
     }
   },
   "errorMessages": {
-    "PlannedDeliveryDateRequired": "Enter a planned delivery date",
-    "PlannedDeliveryDateInvalid": "Enter a planned delivery date in a valid format",
-    "PlannedDeliveryDateGreaterThan": "Planned delivery date must be in the future or within the last 60 days",
-    "PlannedDeliveryDateNotReal": "Planned delivery date must be a real date",
-    "PlannedDeliveryDateDayRequired": "Planned delivery date must include a day",
-    "PlannedDeliveryDateMonthRequired": "Planned delivery date must include a month",
-    "PlannedDeliveryDateYearRequired": "Planned delivery date must include a year",
-    "PlannedDeliveryDateYearLength": "Year must be four numbers"
+    "DeliveryDateRequired": "Enter a planned delivery date",
+    "DeliveryDateInvalid": "Enter a planned delivery date in a valid format",
+    "DeliveryDateOutsideDeliveryWindow": "Planned delivery date must be within 42 months from the commencement date for this Call-off Agreement",
+    "DeliveryDateNotReal": "Planned delivery date must be a real date",
+    "DeliveryDateDayRequired": "Planned delivery date must include a day",
+    "DeliveryDateMonthRequired": "Planned delivery date must include a month",
+    "DeliveryDateYearRequired": "Planned delivery date must include a year",
+    "DeliveryDateYearLength": "Year must be four numbers"
   },
-  "continueButtonText": "continue"
+  "continueButtonText": "Continue"
 }

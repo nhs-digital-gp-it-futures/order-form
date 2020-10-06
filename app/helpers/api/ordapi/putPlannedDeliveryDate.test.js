@@ -4,11 +4,12 @@ import { orderApiUrl } from '../../../config';
 import { logger } from '../../../logger';
 
 jest.mock('buying-catalogue-library');
+jest.mock('../../../logger');
 
 const mockData = {
-  'plannedDeliveryDate-day': '21',
-  'plannedDeliveryDate-month': '12',
-  'plannedDeliveryDate-year': '2020',
+  'deliveryDate-day': '21',
+  'deliveryDate-month': '12',
+  'deliveryDate-year': '2020',
 };
 
 describe('putPlannedDeliveryDate', () => {
@@ -64,9 +65,9 @@ describe('putPlannedDeliveryDate', () => {
         .mockResolvedValueOnce({});
 
       const data = {
-        'plannedDeliveryDate-day': '1',
-        'plannedDeliveryDate-month': '2',
-        'plannedDeliveryDate-year': '2020',
+        'deliveryDate-day': '1',
+        'deliveryDate-month': '2',
+        'deliveryDate-year': '2020',
       };
 
       await putPlannedDeliveryDate({

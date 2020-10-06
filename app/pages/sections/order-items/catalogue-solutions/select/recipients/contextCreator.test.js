@@ -12,10 +12,7 @@ const serviceRecipientsData = [{
   odsCode: 'ods2',
 }];
 
-const selectedRecipientIdsData = [{
-  name: 'Some service recipient 2',
-  odsCode: 'ods2',
-}];
+const selectedRecipientIdsData = ['ods2'];
 
 describe('service-recipients contextCreator', () => {
   describe('getContext', () => {

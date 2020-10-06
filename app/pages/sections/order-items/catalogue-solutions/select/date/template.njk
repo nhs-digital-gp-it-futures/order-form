@@ -37,8 +37,8 @@
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
           <div class="nhsuk-u-margin-bottom-5">
-            {{ dateField({ question: questions.plannedDeliveryDate }) }}
-            {{ viewExpandableSection(questions.plannedDeliveryDate.expandableSection) }}
+            {{ dateField({ question: questions.deliveryDate }) }}
+            {{ viewExpandableSection(questions.deliveryDate.expandableSection) }}
           </div>
 
           {{ bcButton({

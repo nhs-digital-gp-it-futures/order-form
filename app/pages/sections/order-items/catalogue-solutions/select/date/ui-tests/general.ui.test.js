@@ -8,13 +8,14 @@ import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipients/date';
 
-const catalogueId = 'catalouge-id';
+const catalogueId = 'catalogue-id';
+const itemName = 'One Solution';
 const priceId = 'price-id';
 
 const putPlannedDeliveryDateErrorResponse = {
   errors: [{
-    field: 'PlannedDeliveryDate',
-    id: 'PlannedDeliveryDateGreaterThan',
+    field: 'DeliveryDate',
+    id: 'DeliveryDateOutsideDeliveryWindow',
   }],
 };
 
@@ -31,10 +32,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
   if (setup.getRoute) {
+    await setState(ClientFunction)(sessionKeys.selectedItemName, itemName);
     mocks();
   }
   if (setup.postRoute) {
-    await setState(ClientFunction)(sessionKeys.selectedCatalogueSolutionId, catalogueId);
+    await setState(ClientFunction)(sessionKeys.selectedItemId, catalogueId);
     await setState(ClientFunction)(sessionKeys.selectedPriceId, priceId);
   }
 };
@@ -86,7 +88,7 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="planned-delivery-date-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql('Planned delivery date of undefined for order-id');
+    .expect(await extractInnerText(title)).eql(`Planned delivery date of ${itemName} for order-id`);
 });
 
 test('should render the description', async (t) => {
@@ -106,7 +108,7 @@ test('should render legend with mainAdvice', async (t) => {
   const mainAdvice = Selector('legend');
 
   await t
-    .expect(await extractInnerText(mainAdvice)).eql(content.questions.plannedDeliveryDate.mainAdvice);
+    .expect(await extractInnerText(mainAdvice)).eql(content.questions.deliveryDate.mainAdvice);
 });
 
 test('should render additionalAdvice', async (t) => {
@@ -116,7 +118,7 @@ test('should render additionalAdvice', async (t) => {
   const additionalAdvice = Selector('[data-test-id="date-field-input"] span.nhsuk-hint');
 
   await t
-    .expect(await extractInnerText(additionalAdvice)).eql(content.questions.plannedDeliveryDate.additionalAdvice);
+    .expect(await extractInnerText(additionalAdvice)).eql(content.questions.deliveryDate.additionalAdvice);
 });
 
 test('should render labels for day, month and year inputs', async (t) => {
@@ -138,22 +140,22 @@ test('should render input fields for day, month and year', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const inputFields = Selector('#plannedDeliveryDate input:not([name=_csrf])');
+  const inputFields = Selector('#deliveryDate input:not([name=_csrf])');
   const dayInput = inputFields.nth(0);
   const monthInput = inputFields.nth(1);
   const yearInput = inputFields.nth(2);
 
   await t
-    .expect(dayInput.getAttribute('id')).eql('plannedDeliveryDate-day')
-    .expect(dayInput.getAttribute('name')).eql('plannedDeliveryDate-day')
+    .expect(dayInput.getAttribute('id')).eql('deliveryDate-day')
+    .expect(dayInput.getAttribute('name')).eql('deliveryDate-day')
     .expect(dayInput.getAttribute('type')).eql('number')
 
-    .expect(monthInput.getAttribute('id')).eql('plannedDeliveryDate-month')
-    .expect(monthInput.getAttribute('name')).eql('plannedDeliveryDate-month')
+    .expect(monthInput.getAttribute('id')).eql('deliveryDate-month')
+    .expect(monthInput.getAttribute('name')).eql('deliveryDate-month')
     .expect(monthInput.getAttribute('type')).eql('number')
 
-    .expect(yearInput.getAttribute('id')).eql('plannedDeliveryDate-year')
-    .expect(yearInput.getAttribute('name')).eql('plannedDeliveryDate-year')
+    .expect(yearInput.getAttribute('id')).eql('deliveryDate-year')
+    .expect(yearInput.getAttribute('name')).eql('deliveryDate-year')
     .expect(yearInput.getAttribute('type')).eql('number');
 });
 
@@ -189,10 +191,10 @@ test('should show the correct error summary and input error when no date is ente
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -220,10 +222,10 @@ test('should show the correct error summary and input error when no day is enter
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -253,10 +255,10 @@ test('should show the correct error summary and input error when no month is ent
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -286,10 +288,10 @@ test('should show the correct error summary and input error when no year is ente
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -319,10 +321,10 @@ test('should show the correct error summary and input error when a year > 4 char
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -353,10 +355,10 @@ test('should show the correct error summary and input error when a year < 4 char
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -387,10 +389,10 @@ test('should show the correct error summary and input error when a day > 31 is e
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -421,10 +423,10 @@ test('should show the correct error summary and input error when a month > 12 is
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -455,10 +457,10 @@ test('should show the correct error summary and input error when a year < 1000 i
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -489,10 +491,10 @@ test('should show the correct error summary and input error when incorrect day/m
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -529,10 +531,10 @@ test('should show text fields as errors with error message when there are BE val
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -546,7 +548,7 @@ test('should show text fields as errors with error message when there are BE val
 
   await t
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must be in the future or within the last 60 days')
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql('Planned delivery date must be within 42 months from the commencement date for this Call-off Agreement')
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(dayInput.getAttribute('value')).eql('01')
@@ -569,10 +571,10 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
   const saveButton = Selector('[data-test-id="continue-button"] button');
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#plannedDeliveryDate-error span');
-  const dayInput = Selector('#plannedDeliveryDate-day');
-  const monthInput = Selector('#plannedDeliveryDate-month');
-  const yearInput = Selector('#plannedDeliveryDate-year');
+  const errorMessage = Selector('#deliveryDate-error span');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
 
   await t
     .expect(errorMessage.exists).notOk()
@@ -583,5 +585,5 @@ test('should anchor to the field when clicking on the error link in errorSummary
 
   await t
     .click(errorSummary.find('li a').nth(0))
-    .expect(getLocation()).eql(`${pageUrl}#plannedDeliveryDate`);
+    .expect(getLocation()).eql(`${pageUrl}#deliveryDate`);
 });
