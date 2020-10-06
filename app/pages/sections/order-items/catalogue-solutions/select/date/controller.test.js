@@ -29,21 +29,21 @@ describe('delivery-date controller', () => {
         orderId: 'order-id',
         itemName: 'Solution One',
         data: {
-          'plannedDeliveryDate-day': '10',
-          'plannedDeliveryDate-month': '10',
-          'plannedDeliveryDate-year': '2020',
+          'deliveryDate-day': '10',
+          'deliveryDate-month': '10',
+          'deliveryDate-year': '2020',
         },
       });
     });
   });
 
-  describe('validatePlannedDeliveryDate', () => {
+  describe('validateDeliveryDate', () => {
     describe('when there are no validation errors', () => {
       it('should return an empty erray', () => {
         const data = {
-          'plannedDeliveryDate-day': '09',
-          'plannedDeliveryDate-month': '02',
-          'plannedDeliveryDate-year': '2021',
+          'deliveryDate-day': '09',
+          'deliveryDate-month': '02',
+          'deliveryDate-year': '2021',
         };
 
         const errors = validateDeliveryDateForm({ data });
@@ -53,22 +53,22 @@ describe('delivery-date controller', () => {
     });
 
     describe('when there are validation errors', () => {
-      const plannedDeliveryDateRequired = {
-        field: 'PlannedDeliveryDate',
-        id: 'PlannedDeliveryDateRequired',
+      const deliveryDateRequired = {
+        field: 'DeliveryDate',
+        id: 'DeliveryDateRequired',
         part: ['day', 'month', 'year'],
       };
 
       it('should return an array of one validation error if deliveryDate is not valid', () => {
         const data = {
-          'plannedDeliveryDate-day': '',
-          'plannedDeliveryDate-month': '',
-          'plannedDeliveryDate-year': '',
+          'deliveryDate-day': '',
+          'deliveryDate-month': '',
+          'deliveryDate-year': '',
         };
 
         const errors = validateDeliveryDateForm({ data });
 
-        expect(errors).toEqual([plannedDeliveryDateRequired]);
+        expect(errors).toEqual([deliveryDateRequired]);
       });
     });
   });

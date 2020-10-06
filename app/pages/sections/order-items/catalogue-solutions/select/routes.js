@@ -31,7 +31,7 @@ import {
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getSupplier } from '../../../../../helpers/api/ordapi/getSupplier';
 import { getCommencementDate } from '../../../../../helpers/api/ordapi/getCommencementDate';
-import { getServiceRecipients as getRecipientsFromOapi } from '../../../../../helpers/api/oapi/getServiceRecipients';
+import { getServiceRecipients } from '../../../../../helpers/routes/getServiceRecipients';
 import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
@@ -167,16 +167,21 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       req, key: sessionKeys.solutionPrices,
     });
 
-    const orgId = req.user.primaryOrganisationId;
+    const serviceRecipients = await getServiceRecipients({
+      req,
+      accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      sessionManager,
+      logger,
+    });
 
-    const serviceRecipients = await getRecipientsFromOapi({ orgId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
-    sessionManager.saveToSession({
-      req, key: sessionKeys.recipients, value: serviceRecipients,
+    const selectedRecipients = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipients,
     });
 
     const context = await getServiceRecipientsContext({
-      orderId, itemName, selectStatus, serviceRecipients, solutionPrices,
+      orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices,
     });
+
     logger.info(`navigating to order ${orderId} catalogue-solutions select recipient page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -187,17 +192,32 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
 
     const response = validateSolutionRecipientsForm({ data: req.body });
     if (response.success) {
-      logger.info('Redirect to new solution page');
+      const selectedRecipients = Object
+        .entries(req.body)
+        .filter(item => item[0] !== '_csrf')
+        .map(([odsCode]) => odsCode);
+
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
+      });
+
+      logger.info('Redirect to planned delivery date page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`);
     }
     const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
     const serviceRecipients = sessionManager.getFromSession({ req, key: sessionKeys.recipients });
     const solutionPrices = sessionManager.getFromSession({ req, key: sessionKeys.solutionPrices });
+    const selectedRecipients = sessionManager.getFromSession({
+      req,
+      key: sessionKeys.selectedRecipients,
+    });
+
     const context = await getServiceRecipientsErrorPageContext({
       orderId,
       itemName,
       selectStatus,
       serviceRecipients,
+      selectedRecipients,
       solutionPrices,
       validationErrors: response.errors,
     });
@@ -232,8 +252,9 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
 
     if (validationErrors.length === 0) {
       const catalogueItemId = sessionManager.getFromSession({
-        req, key: sessionKeys.selectedCatalogueSolutionId,
+        req, key: sessionKeys.selectedItemId,
       });
+
       const priceId = sessionManager.getFromSession({
         req, key: sessionKeys.selectedPriceId,
       });
@@ -245,13 +266,20 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         data: req.body,
         accessToken: extractAccessToken({ req, tokenType: 'access' }),
       });
+
       if (apiResponse.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
       validationErrors.push(...apiResponse.errors);
     }
 
+    const itemName = sessionManager.getFromSession({
+      req,
+      key: sessionKeys.selectedItemName,
+    });
+
     const context = await getDeliveryDateErrorPageContext({
       validationErrors,
       orderId,
+      itemName,
       data: req.body,
     });
 

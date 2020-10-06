@@ -4,7 +4,7 @@ import { orderApiUrl } from '../../../config';
 import { extractDate } from '../../controllers/extractDate';
 
 const formatPutData = data => ({
-  deliveryDate: extractDate('plannedDeliveryDate', data),
+  deliveryDate: extractDate('deliveryDate', data),
 });
 
 const getPlannedDeliveryDateEndpoint = (orderId, catalogueItemId, priceId) => (

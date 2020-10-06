@@ -14,6 +14,7 @@ export const sessionKeys = {
   selectedPriceId: 'selectedPriceId',
   selectedRecipientId: 'selectedRecipientId',
   selectedRecipientName: 'selectedRecipientName',
+  selectedRecipients: 'selectedRecipients',
   selectedSupplier: 'selectedSupplier',
   solutionPrices: 'solutionPrices',
   solutions: 'solutions',
