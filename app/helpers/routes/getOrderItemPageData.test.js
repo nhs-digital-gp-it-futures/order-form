@@ -75,13 +75,20 @@ describe('getOrderItemPageData', () => {
     });
 
     it('should return the formData with the price from getSelectedPrice', async () => {
-      fakeSessionManager.getFromSession = () => 'some-selected-price-id';
+      fakeSessionManager.getFromSession = () => '2020-10-10';
 
       getSelectedPrice.mockResolvedValue({ price: 'some-price' });
 
       const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
 
-      expect(pageData.formData).toEqual({ price: 'some-price' });
+      expect(pageData.formData).toEqual({
+        price: 'some-price',
+        deliveryDate: {
+          day: '10',
+          month: '10',
+          year: '2020',
+        },
+      });
     });
   });
 

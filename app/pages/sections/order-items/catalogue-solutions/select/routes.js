@@ -34,6 +34,7 @@ import { getCommencementDate } from '../../../../../helpers/api/ordapi/getCommen
 import { getServiceRecipients as getRecipientsFromOapi } from '../../../../../helpers/api/oapi/getServiceRecipients';
 import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
+import { extractDate } from '../../../../../helpers/controllers/extractDate';
 
 const router = express.Router({ mergeParams: true });
 
@@ -237,6 +238,8 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       const priceId = sessionManager.getFromSession({
         req, key: sessionKeys.selectedPriceId,
       });
+
+      sessionManager.saveToSession({ req, key: sessionKeys.plannedDeliveryDate, value: extractDate('plannedDeliveryDate', req.body) });
 
       const apiResponse = await putPlannedDeliveryDate({
         orderId,

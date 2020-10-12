@@ -26,9 +26,23 @@ export const getOrderItemPageData = async ({
     const catalogueSolutionId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedCatalogueSolutionId,
     });
+    const deliveryDate = sessionManager.getFromSession({
+      req, key: sessionKeys.plannedDeliveryDate,
+    });
+    const recipients = sessionManager.getFromSession({
+      req, key: sessionKeys.recipients,
+    });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
-    const formData = { price: formatDecimal(selectedPrice.price) };
+    const [day, month, year] = destructureDate(deliveryDate);
+    const formData = {
+      deliveryDate: {
+        day,
+        month,
+        year,
+      },
+      price: formatDecimal(selectedPrice.price),
+    };
 
     return {
       itemId,
@@ -38,6 +52,7 @@ export const getOrderItemPageData = async ({
       serviceRecipientName,
       selectedPrice,
       formData,
+      recipients,
     };
   }
 

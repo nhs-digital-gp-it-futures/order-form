@@ -9,7 +9,7 @@ const orderItemTypeToFolderNameMap = {
 
 const getManifestPath = ({ orderItemType, provisioningType, type }) => {
   const orderItemsSectionPath = '../../pages/sections/order-items/';
-  const pathToManifest = `${orderItemTypeToFolderNameMap[orderItemType.toLowerCase()]}/order-item/${type.toLowerCase()}/${provisioningType.toLowerCase()}/manifest.json`;
+  const pathToManifest = `${orderItemTypeToFolderNameMap[orderItemType.toLowerCase()]}/edit-solution/${type.toLowerCase()}/${provisioningType.toLowerCase()}/manifest.json`;
   return `${orderItemsSectionPath}${pathToManifest}`;
 };
 
