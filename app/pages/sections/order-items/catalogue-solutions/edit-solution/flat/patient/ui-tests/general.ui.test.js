@@ -8,8 +8,6 @@ import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelpe
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
-const getLocation = ClientFunction(() => document.location.href);
-
 const selectedPrice = {
   priceId: 2,
   provisioningType: 'patient',
