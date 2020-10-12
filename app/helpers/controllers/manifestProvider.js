@@ -2,14 +2,14 @@ import fs from 'fs';
 import path from 'path';
 
 const orderItemTypeToFolderNameMap = {
-  solution: 'catalogue-solutions',
-  additionalservice: 'additional-services',
-  associatedservice: 'associated-services',
+  solution: 'catalogue-solutions/edit-solution',
+  additionalservice: 'additional-services/order-item',
+  associatedservice: 'associated-services/order-item',
 };
 
 const getManifestPath = ({ orderItemType, provisioningType, type }) => {
   const orderItemsSectionPath = '../../pages/sections/order-items/';
-  const pathToManifest = `${orderItemTypeToFolderNameMap[orderItemType.toLowerCase()]}/edit-solution/${type.toLowerCase()}/${provisioningType.toLowerCase()}/manifest.json`;
+  const pathToManifest = `${orderItemTypeToFolderNameMap[orderItemType.toLowerCase()]}/${type.toLowerCase()}/${provisioningType.toLowerCase()}/manifest.json`;
   return `${orderItemsSectionPath}${pathToManifest}`;
 };
 
