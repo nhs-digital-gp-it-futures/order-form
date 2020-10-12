@@ -6,9 +6,9 @@ const generateFormData = (commencementDate) => {
   if (commencementDate) {
     const [day, month, year] = destructureDate(commencementDate);
     return ({
-      'plannedDeliveryDate-day': day,
-      'plannedDeliveryDate-month': month,
-      'plannedDeliveryDate-year': year,
+      'deliveryDate-day': day,
+      'deliveryDate-month': month,
+      'deliveryDate-year': year,
     });
   }
   return undefined;
@@ -24,7 +24,7 @@ export const getDeliveryDateContext = async ({
 
 export const validateDeliveryDateForm = ({ data }) => {
   const errors = [];
-  const dateErrors = getDateErrors('plannedDeliveryDate', data);
+  const dateErrors = getDateErrors('deliveryDate', data);
   if (dateErrors) {
     errors.push(dateErrors);
   }

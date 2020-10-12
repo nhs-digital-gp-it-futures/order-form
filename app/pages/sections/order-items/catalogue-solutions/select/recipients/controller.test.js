@@ -28,20 +28,26 @@ describe('service-recipients controller', () => {
     it('calls getContext once with correct params', async () => {
       contextCreator.getContext.mockResolvedValueOnce();
 
+      const orderId = 'order-id';
+      const itemName = 'Solution One';
+      const selectStatus = 'select';
+      const selectedRecipients = ['00A'];
+
       await getServiceRecipientsContext({
-        orderId: 'order-id',
-        itemName: 'Solution One',
-        selectStatus: 'select',
+        orderId,
+        itemName,
+        selectStatus,
         serviceRecipients: dataFromOapi,
+        selectedRecipients,
       });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({
-        orderId: 'order-id',
-        itemName: 'Solution One',
+        orderId,
+        itemName,
         serviceRecipientsData: dataFromOapi,
-        selectedRecipientIdsData: [],
-        selectStatus: 'select',
+        selectedRecipientIdsData: selectedRecipients,
+        selectStatus,
       });
     });
   });
@@ -89,22 +95,28 @@ describe('service-recipients controller', () => {
     it('calls getErrorContext once with correct params', async () => {
       contextCreator.getErrorContext.mockResolvedValueOnce();
 
+      const orderId = 'order-id';
+      const itemName = 'Solution One';
+      const selectStatus = 'select';
+      const selectedRecipients = ['00A'];
+
       await getServiceRecipientsErrorPageContext({
-        orderId: 'order-id',
-        itemName: 'Solution One',
-        selectStatus: 'select',
+        orderId,
+        itemName,
+        selectStatus,
         serviceRecipients: dataFromOapi,
+        selectedRecipients,
         solutionPrices: [{}],
         validationErrors: [],
       });
 
       expect(contextCreator.getErrorContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getErrorContext).toHaveBeenCalledWith({
-        orderId: 'order-id',
-        itemName: 'Solution One',
+        orderId,
+        itemName,
         serviceRecipientsData: dataFromOapi,
-        selectedRecipientIdsData: [],
-        selectStatus: 'select',
+        selectedRecipientIdsData: selectedRecipients,
+        selectStatus,
         solutionPrices: [{}],
         validationErrors: [],
       });

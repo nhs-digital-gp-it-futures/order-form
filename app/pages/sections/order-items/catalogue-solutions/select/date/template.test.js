@@ -27,7 +27,7 @@ describe('delivery date page', () => {
   it('should render the errorSummary if there are errors', componentTester(setup, (harness) => {
     const contextWithErrors = {
       errors: [
-        { text: 'some delivery date error message', href: '#plannedDeliveryDate' },
+        { text: 'some delivery date error message', href: '#deliveryDate' },
       ],
     };
 
@@ -81,7 +81,7 @@ describe('delivery date page', () => {
       harness.request(context, ($) => {
         const legend = $('legend');
         expect(legend.length).toEqual(1);
-        expect(legend.text().trim()).toEqual(context.questions.plannedDeliveryDate.mainAdvice);
+        expect(legend.text().trim()).toEqual(context.questions.deliveryDate.mainAdvice);
       });
     }));
 
@@ -90,7 +90,7 @@ describe('delivery date page', () => {
         const addAdvice = $('[data-test-id="date-field-input"] span.nhsuk-hint');
         expect(addAdvice.length).toEqual(1);
         expect(addAdvice.text().trim())
-          .toEqual(context.questions.plannedDeliveryDate.additionalAdvice);
+          .toEqual(context.questions.deliveryDate.additionalAdvice);
       });
     }));
 
@@ -98,27 +98,27 @@ describe('delivery date page', () => {
       harness.request(context, ($) => {
         const labels = $('label');
         expect(labels.length).toEqual(3);
-        expect(labels[0].attribs.for).toEqual('plannedDeliveryDate-day');
+        expect(labels[0].attribs.for).toEqual('deliveryDate-day');
         expect(labels[0].children[0].data.trim()).toEqual('Day');
-        expect(labels[1].attribs.for).toEqual('plannedDeliveryDate-month');
+        expect(labels[1].attribs.for).toEqual('deliveryDate-month');
         expect(labels[1].children[0].data.trim()).toEqual('Month');
-        expect(labels[2].attribs.for).toEqual('plannedDeliveryDate-year');
+        expect(labels[2].attribs.for).toEqual('deliveryDate-year');
         expect(labels[2].children[0].data.trim()).toEqual('Year');
       });
     }));
 
     it('should render 3 input fields for date question', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const inputs = $('#plannedDeliveryDate input:not([name=_csrf])');
+        const inputs = $('#deliveryDate input:not([name=_csrf])');
         expect(inputs.length).toEqual(3);
-        expect(inputs[0].attribs.id).toEqual('plannedDeliveryDate-day');
-        expect(inputs[0].attribs.name).toEqual('plannedDeliveryDate-day');
+        expect(inputs[0].attribs.id).toEqual('deliveryDate-day');
+        expect(inputs[0].attribs.name).toEqual('deliveryDate-day');
         expect(inputs[0].attribs.type).toEqual('number');
-        expect(inputs[1].attribs.id).toEqual('plannedDeliveryDate-month');
-        expect(inputs[1].attribs.name).toEqual('plannedDeliveryDate-month');
+        expect(inputs[1].attribs.id).toEqual('deliveryDate-month');
+        expect(inputs[1].attribs.name).toEqual('deliveryDate-month');
         expect(inputs[1].attribs.type).toEqual('number');
-        expect(inputs[2].attribs.id).toEqual('plannedDeliveryDate-year');
-        expect(inputs[2].attribs.name).toEqual('plannedDeliveryDate-year');
+        expect(inputs[2].attribs.id).toEqual('deliveryDate-year');
+        expect(inputs[2].attribs.name).toEqual('deliveryDate-year');
         expect(inputs[2].attribs.type).toEqual('number');
       });
     }));
@@ -126,8 +126,8 @@ describe('delivery date page', () => {
     it('should render 3 input fields populated with data when the data is provided', componentTester(setup, (harness) => {
       const contextWithData = {
         questions: {
-          plannedDeliveryDate: {
-            ...context.questions.plannedDeliveryDate,
+          deliveryDate: {
+            ...context.questions.deliveryDate,
             data: {
               day: '09',
               month: '02',
@@ -138,7 +138,7 @@ describe('delivery date page', () => {
       };
 
       harness.request(contextWithData, ($) => {
-        const inputs = $('#plannedDeliveryDate input:not([name=_csrf])');
+        const inputs = $('#deliveryDate input:not([name=_csrf])');
         expect(inputs.length).toEqual(3);
         expect(inputs[0].attribs.value).toEqual('09');
         expect(inputs[1].attribs.value).toEqual('02');
@@ -149,8 +149,8 @@ describe('delivery date page', () => {
     it('should render error field if there are errors', componentTester(setup, (harness) => {
       const contextWithErrors = {
         questions: {
-          plannedDeliveryDate: {
-            ...context.questions.plannedDeliveryDate,
+          deliveryDate: {
+            ...context.questions.deliveryDate,
             error: {
               message: 'Some planned delivery date error',
               fields: ['day', 'month', 'year'],
@@ -161,7 +161,7 @@ describe('delivery date page', () => {
 
       harness.request(contextWithErrors, ($) => {
         const form = $('form');
-        const renderedQuestion = form.find('div[data-test-id="question-plannedDeliveryDate"]');
+        const renderedQuestion = form.find('div[data-test-id="question-deliveryDate"]');
         const fieldError = renderedQuestion.find('div[data-test-id="date-field-input-error"]');
         const errorMessage = renderedQuestion.find('.nhsuk-error-message');
         const errorInputs = renderedQuestion.find('.nhsuk-input--error');
@@ -169,9 +169,9 @@ describe('delivery date page', () => {
         expect(fieldError.length).toEqual(1);
         expect(errorMessage.text().trim()).toEqual('Error: Some planned delivery date error');
         expect(errorInputs.length).toEqual(3);
-        expect(errorInputs[0].attribs.id).toEqual('plannedDeliveryDate-day');
-        expect(errorInputs[1].attribs.id).toEqual('plannedDeliveryDate-month');
-        expect(errorInputs[2].attribs.id).toEqual('plannedDeliveryDate-year');
+        expect(errorInputs[0].attribs.id).toEqual('deliveryDate-day');
+        expect(errorInputs[1].attribs.id).toEqual('deliveryDate-month');
+        expect(errorInputs[2].attribs.id).toEqual('deliveryDate-year');
       });
     }));
   });

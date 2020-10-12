@@ -1,12 +1,12 @@
 import { getContext, getErrorContext } from './contextCreator';
 
 export const getServiceRecipientsContext = async ({
-  orderId, itemName, selectStatus, serviceRecipients, solutionPrices,
+  orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices,
 }) => getContext({
   orderId,
   itemName,
   serviceRecipientsData: serviceRecipients,
-  selectedRecipientIdsData: [],
+  selectedRecipientIdsData: selectedRecipients,
   selectStatus,
   solutionPrices,
 });
@@ -26,12 +26,18 @@ export const validateSolutionRecipientsForm = ({ data }) => {
 };
 
 export const getServiceRecipientsErrorPageContext = async ({
-  orderId, itemName, selectStatus, serviceRecipients, solutionPrices, validationErrors,
+  orderId,
+  itemName,
+  selectStatus,
+  serviceRecipients,
+  selectedRecipients,
+  solutionPrices,
+  validationErrors,
 }) => getErrorContext({
   orderId,
   itemName,
   serviceRecipientsData: serviceRecipients,
-  selectedRecipientIdsData: [],
+  selectedRecipientIdsData: selectedRecipients,
   selectStatus,
   solutionPrices,
   validationErrors,
