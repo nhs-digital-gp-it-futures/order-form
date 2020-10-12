@@ -1,9 +1,12 @@
 {
   "backLinkText": "Go back",
   "title": "information for",
-  "description": "Provide the delivery date and price you've agreed with the supplier and the quantity you want to order.",
+  "description": "The information we have about this order has been included, but can be changed if required. Refer to the guidance provided if you’re unsure what to enter.",
   "deleteButton": {
-    "text": "Delete"
+    "text": "Delete Catalogue Solution"
+  },
+  "editButton": {
+    "text": "Edit Service Recipients"
   },
   "saveButtonText": "Save"
 }

@@ -8,6 +8,7 @@ export const sessionKeys = {
   orderDescription: 'orderDescription',
   orderItemPageData: 'orderItemPageData',
   recipients: 'recipients',
+  plannedDeliveryDate: 'plannedDeliveryDate',
   selectedItemId: 'selectedItemId',
   selectedCatalogueSolutionId: 'selectedCatalogueSolutionId',
   selectedItemName: 'selectedItemName',

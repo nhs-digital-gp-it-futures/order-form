@@ -2,7 +2,7 @@ import { baseUrl } from '../../../../../config';
 import { generateErrorMap } from '../../../../../helpers/contextCreators/generateErrorMap';
 import { generateQuestions } from '../../../../../helpers/contextCreators/generateQuestions';
 import { generateErrorSummary } from '../../../../../helpers/contextCreators/generateErrorSummary';
-import { generateAddPriceTable } from '../../../../../helpers/contextCreators/generateAddPriceTable';
+import { generateSolutionTable } from '../../../../../helpers/contextCreators/generateSolutionTable';
 
 export const getContext = ({
   commonManifest,
@@ -10,36 +10,35 @@ export const getContext = ({
   orderId,
   orderItemId,
   solutionName,
-  serviceRecipientName,
-  odsCode,
-  selectedPrice,
   formData,
+  recipients,
   errorMap,
 }) => ({
   ...commonManifest,
-  title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
+  title: `${solutionName} ${commonManifest.title} ${orderId}`,
   questions: selectedPriceManifest && generateQuestions({
     questions: selectedPriceManifest.questions,
     formData,
     errorMap,
   }),
-  addPriceTable: selectedPriceManifest && generateAddPriceTable({
-    addPriceTable: selectedPriceManifest.addPriceTable,
-    price: formData && formData.price,
-    itemUnitDescription: selectedPrice
-      && selectedPrice.itemUnit
-      && selectedPrice.itemUnit.description,
-    timeUnitDescription: selectedPrice
-      && selectedPrice.timeUnit
-      && selectedPrice.timeUnit.description,
+  solutionTable: selectedPriceManifest && generateSolutionTable({
+    solutionTable: selectedPriceManifest.solutionTable,
+    deliveryDate: formData.deliveryDate,
+    recipients,
+    practiceSize: formData.practiceSize,
     errorMap,
   }),
+  editButton: {
+    text: commonManifest.editButton.text,
+    href: commonManifest.editButton.href,
+    disabled: orderItemId === 'neworderitem',
+  },
   deleteButton: {
     text: commonManifest.deleteButton.text,
     href: commonManifest.deleteButton.href,
     disabled: orderItemId === 'neworderitem',
   },
-  backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipient`
+  backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`
     : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
 });
 
