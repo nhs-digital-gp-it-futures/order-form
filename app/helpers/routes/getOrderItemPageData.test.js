@@ -74,7 +74,7 @@ describe('getOrderItemPageData', () => {
       expect(pageData.catalogueSolutionId).toEqual('some-catalogue-solution-id');
     });
 
-    it('should return the formData with the price from getSelectedPrice', async () => {
+    it('should return the formData', async () => {
       fakeSessionManager.getFromSession = () => '2020-10-10';
 
       getSelectedPrice.mockResolvedValue({ price: 'some-price' });

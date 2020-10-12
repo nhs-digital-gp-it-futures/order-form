@@ -27,7 +27,6 @@ describe('catalogue-solutions order-item page', () => {
     const context = {
       errors: [
         { text: 'price error message', href: '#price' },
-        { text: 'price error message', href: '#price' },
       ],
     };
 
