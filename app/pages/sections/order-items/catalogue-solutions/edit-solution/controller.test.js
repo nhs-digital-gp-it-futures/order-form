@@ -38,7 +38,6 @@ describe('catalogue-solutions order-item controller', () => {
         orderItemType,
         solutionName: 'solution-name',
         selectedRecipientId: 'fake-recipient-id',
-        serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
         selectedPrice,
       });
@@ -68,8 +67,6 @@ describe('catalogue-solutions order-item controller', () => {
       await getOrderItemContext({
         orderId: 'order-1',
         solutionName: 'solution-name',
-        odsCode: 'fake-recipient-id',
-        serviceRecipientName: 'Some service recipient 1',
         selectedPriceId: 'some-price-id',
         orderItemId: 'order-item-id',
         selectedPrice,
@@ -81,9 +78,7 @@ describe('catalogue-solutions order-item controller', () => {
       expect(contextCreator.getContext).toHaveBeenCalledWith({
         commonManifest: { title: 'fake manifest' },
         selectedPriceManifest,
-        odsCode: 'fake-recipient-id',
         orderId: 'order-1',
-        serviceRecipientName: 'Some service recipient 1',
         solutionName: 'solution-name',
         orderItemId: 'order-item-id',
         formData,

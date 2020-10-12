@@ -260,7 +260,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedPriceId,
       });
 
-      sessionManager.saveToSession({ req, key: sessionKeys.plannedDeliveryDate, value: extractDate('plannedDeliveryDate', req.body) });
+      sessionManager.saveToSession({ req, key: sessionKeys.plannedDeliveryDate, value: extractDate('deliveryDate', req.body) });
 
       const apiResponse = await putPlannedDeliveryDate({
         orderId,

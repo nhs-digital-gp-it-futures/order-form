@@ -10,14 +10,12 @@ export const getContext = ({
   orderId,
   orderItemId,
   solutionName,
-  serviceRecipientName,
-  odsCode,
   formData,
   recipients,
   errorMap,
 }) => ({
   ...commonManifest,
-  title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
+  title: `${solutionName} ${commonManifest.title} ${orderId}`,
   questions: selectedPriceManifest && generateQuestions({
     questions: selectedPriceManifest.questions,
     formData,

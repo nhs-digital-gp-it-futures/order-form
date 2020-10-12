@@ -8,11 +8,10 @@ import {
 import { catalogueSolutionsSelectRoutes } from './select/routes';
 import {
   getOrderItemContext,
-  getOrderItemErrorPageContext,
 } from './edit-solution/controller';
-import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
+// import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
-import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
+// import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
@@ -61,14 +60,11 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     });
 
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
-
     const context = await getOrderItemContext({
       orderId,
       orderItemId,
       orderItemType: 'Solution',
       solutionName: pageData.itemName,
-      odsCode: pageData.serviceRecipientId,
-      serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,
       formData: pageData.formData,
       deliveryDate: pageData.deliveryDate,
@@ -79,55 +75,57 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     return res.render('pages/sections/order-items/catalogue-solutions/edit-solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
-    const validationErrors = [];
+  // router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }),
+  // withCatch(logger, authProvider, async (req, res) => {
+  //   const { orderId, orderItemId } = req.params;
+  //   const validationErrors = [];
 
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const pageData = sessionManager.getFromSession({ req, key: sessionKeys.orderItemPageData });
+  //   const accessToken = extractAccessToken({ req, tokenType: 'access' });
+  //   const pageData = sessionManager.getFromSession({ req, key: sessionKeys.orderItemPageData });
 
-    const errors = validateOrderItemForm({
-      orderItemType: 'Solution',
-      data: req.body,
-      selectedPrice: pageData.selectedPrice,
-    });
-    validationErrors.push(...errors);
+  //   const errors = validateOrderItemForm({
+  //     orderItemType: 'Solution',
+  //     data: req.body,
+  //     selectedPrice: pageData.selectedPrice,
+  //   });
+  //   validationErrors.push(...errors);
 
-    if (validationErrors.length === 0) {
-      const apiResponse = await saveOrderItem({
-        accessToken,
-        orderId,
-        orderItemId,
-        orderItemType: 'Solution',
-        serviceRecipientId: pageData.serviceRecipientId,
-        serviceRecipientName: pageData.serviceRecipientName,
-        itemId: pageData.itemId,
-        itemName: pageData.itemName,
-        selectedPrice: pageData.selectedPrice,
-        formData: req.body,
-      });
+  //   if (validationErrors.length === 0) {
+  //     const apiResponse = await saveOrderItem({
+  //       accessToken,
+  //       orderId,
+  //       orderItemId,
+  //       orderItemType: 'Solution',
+  //       serviceRecipientId: pageData.serviceRecipientId,
+  //       serviceRecipientName: pageData.serviceRecipientName,
+  //       itemId: pageData.itemId,
+  //       itemName: pageData.itemName,
+  //       selectedPrice: pageData.selectedPrice,
+  //       formData: req.body,
+  //     });
 
-      if (apiResponse.success) {
-        logger.info('redirecting catalogue solutions main page');
-        return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
-      }
-      validationErrors.push(...apiResponse.errors);
-    }
+  //     if (apiResponse.success) {
+  //       logger.info('redirecting catalogue solutions main page');
+  //       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
+  //     }
+  //     validationErrors.push(...apiResponse.errors);
+  //   }
 
-    const context = await getOrderItemErrorPageContext({
-      orderId,
-      orderItemId,
-      orderItemType: 'Solution',
-      solutionName: pageData.itemName,
-      selectedRecipientId: pageData.serviceRecipientId,
-      serviceRecipientName: pageData.serviceRecipientName,
-      selectedPrice: pageData.selectedPrice,
-      formData: req.body,
-      validationErrors,
-    });
+  //   const context = await getOrderItemErrorPageContext({
+  //     orderId,
+  //     orderItemId,
+  //     orderItemType: 'Solution',
+  //     solutionName: pageData.itemName,
+  //     selectedRecipientId: pageData.serviceRecipientId,
+  //     serviceRecipientName: pageData.serviceRecipientName,
+  //     selectedPrice: pageData.selectedPrice,
+  //     formData: req.body,
+  //     validationErrors,
+  //   });
 
-    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-  }));
+  //   return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk',
+  // addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  // }));
 
   return router;
 };

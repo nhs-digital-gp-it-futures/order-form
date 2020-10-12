@@ -28,13 +28,12 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
     it('should return the title', () => {
       const solutionName = 'solution-name';
-      const serviceRecipientName = 'service-recipient-name';
-      const odsCode = 'ods-code';
+      const orderId = 'order-id';
 
       const context = getContext({
-        commonManifest, solutionName, serviceRecipientName, odsCode,
+        commonManifest, solutionName, orderId,
       });
-      expect(context.title).toEqual(`${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`);
+      expect(context.title).toEqual(`${solutionName} ${commonManifest.title} ${orderId}`);
     });
 
     it('should return the description', () => {
