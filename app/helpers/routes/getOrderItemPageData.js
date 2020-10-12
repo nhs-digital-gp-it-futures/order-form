@@ -14,6 +14,12 @@ export const getOrderItemPageData = async ({
     const itemName = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemName,
     });
+    const serviceRecipientId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipientId,
+    });
+    const serviceRecipientName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipientName,
+    });
     const selectedPriceId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedPriceId,
     });
@@ -42,6 +48,8 @@ export const getOrderItemPageData = async ({
       itemId,
       itemName,
       catalogueSolutionId,
+      serviceRecipientId,
+      serviceRecipientName,
       selectedPrice,
       formData,
       recipients,

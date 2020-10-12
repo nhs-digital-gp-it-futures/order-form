@@ -22,9 +22,9 @@ describe('getSelectedPriceManifest', () => {
 
   it.each`
     orderItemType           | provisioningType | type      | expectedPath
-    ${'Solution'}           | ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/edit-solution/flat/ondemand/manifest.json'}
-    ${'Solution'}           | ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/edit-solution/flat/patient/manifest.json'}
-    ${'Solution'}           | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/edit-solution/flat/declarative/manifest.json'}
+    ${'Solution'}           | ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/order-item/flat/ondemand/manifest.json'}
+    ${'Solution'}           | ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/order-item/flat/patient/manifest.json'}
+    ${'Solution'}           | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/order-items/catalogue-solutions/order-item/flat/declarative/manifest.json'}
     ${'AdditionalService'}  | ${'OnDemand'}    | ${'Flat'} | ${'../../pages/sections/order-items/additional-services/order-item/flat/ondemand/manifest.json'}
     ${'AdditionalService'}  | ${'Patient'}     | ${'Flat'} | ${'../../pages/sections/order-items/additional-services/order-item/flat/patient/manifest.json'}
     ${'AdditionalService'}  | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/order-items/additional-services/order-item/flat/declarative/manifest.json'}

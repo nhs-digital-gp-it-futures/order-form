@@ -13,7 +13,7 @@ import {
   setUpFakeApp,
 } from '../../../../test-utils/routesTestHelper';
 import * as catalogueSolutionsController from './dashboard/controller';
-import * as editSolutionController from './edit-solution/controller';
+import * as editSolutionController from './order-item/controller';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
 import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';

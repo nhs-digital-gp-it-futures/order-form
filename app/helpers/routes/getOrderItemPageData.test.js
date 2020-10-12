@@ -34,6 +34,26 @@ describe('getOrderItemPageData', () => {
       expect(pageData.itemName).toEqual('some item name');
     });
 
+    it('should get the selectedRecipientId from session and return this as serviceRecipientId', async () => {
+      fakeSessionManager.getFromSession = () => 'some-selected-recipient-id';
+
+      getSelectedPrice.mockResolvedValue({});
+
+      const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
+
+      expect(pageData.serviceRecipientId).toEqual('some-selected-recipient-id');
+    });
+
+    it('should get the selectedRecipientName from session and return this as serviceRecipientName', async () => {
+      fakeSessionManager.getFromSession = () => 'some recipient name';
+
+      getSelectedPrice.mockResolvedValue({});
+
+      const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
+
+      expect(pageData.serviceRecipientName).toEqual('some recipient name');
+    });
+
     it('should get the selectedPriceId from session, call  getSelectedPrice and return the selectedPrice', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-price-id';
 
