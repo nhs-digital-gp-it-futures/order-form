@@ -12,6 +12,7 @@ export const getContext = ({
   solutionName,
   formData,
   recipients,
+  selectedRecipients,
   errorMap,
 }) => ({
   ...commonManifest,
@@ -24,7 +25,9 @@ export const getContext = ({
   solutionTable: selectedPriceManifest && generateSolutionTable({
     solutionTable: selectedPriceManifest.solutionTable,
     deliveryDate: formData.deliveryDate,
-    recipients,
+    recipients: selectedRecipients.map(
+      selectedRecipient => recipients.find(recipient => recipient.odsCode === selectedRecipient),
+    ),
     practiceSize: formData.practiceSize,
     errorMap,
   }),

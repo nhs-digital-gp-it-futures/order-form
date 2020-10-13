@@ -69,6 +69,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       formData: pageData.formData,
       deliveryDate: pageData.deliveryDate,
       recipients: pageData.recipients,
+      selectedRecipients: pageData.selectedRecipients,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
