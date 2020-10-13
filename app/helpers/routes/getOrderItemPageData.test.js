@@ -74,6 +74,26 @@ describe('getOrderItemPageData', () => {
       expect(pageData.catalogueSolutionId).toEqual('some-catalogue-solution-id');
     });
 
+    it('should get the recipients from session and return this as recipients', async () => {
+      fakeSessionManager.getFromSession = () => [{ name: 'test', odsCode: 'code' }];
+
+      getSelectedPrice.mockResolvedValue({});
+
+      const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
+
+      expect(pageData.recipients).toEqual([{ name: 'test', odsCode: 'code' }]);
+    });
+
+    it('should get the selectedRecipientsfrom session and return this as selectedRecipients', async () => {
+      fakeSessionManager.getFromSession = () => ['odsCode'];
+
+      getSelectedPrice.mockResolvedValue({});
+
+      const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
+
+      expect(pageData.selectedRecipients).toEqual(['odsCode']);
+    });
+
     it('should return the formData', async () => {
       fakeSessionManager.getFromSession = () => '2020-10-10';
 

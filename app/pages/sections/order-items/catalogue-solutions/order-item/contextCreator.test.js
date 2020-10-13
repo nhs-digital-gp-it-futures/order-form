@@ -59,7 +59,9 @@ describe('catalogue-solutions order-item contextCreator', () => {
     });
 
     describe('flat - patient', () => {
-      const recipients = [{ name: 'test', odsCode: 'testCode' }];
+      const recipients = [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }];
+      const selectedRecipients = ['testCode'];
+
       it('should populate the price question with data provided', () => {
         const expectedContext = {
           questions: {
@@ -74,7 +76,11 @@ describe('catalogue-solutions order-item contextCreator', () => {
         const formData = { price: 1.25 };
 
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest, formData, recipients,
+          commonManifest,
+          selectedPriceManifest: flatPatientManifest,
+          formData,
+          recipients,
+          selectedRecipients,
         });
         expect(context.questions.price)
           .toEqual(expectedContext.questions.price);
@@ -82,7 +88,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
       it('should return the solutionTable colummInfo', () => {
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, formData: { practiceSize: '' },
+          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, formData: { practiceSize: '' },
         });
 
         expect(context.solutionTable.columnInfo)
@@ -142,9 +148,19 @@ describe('catalogue-solutions order-item contextCreator', () => {
           selectedPriceManifest: flatPatientManifest,
           formData,
           recipients,
+          selectedRecipients,
         });
 
         expect(context.solutionTable).toEqual(expectedContext.solutionTable);
+      });
+
+      it('should only add a recipient to the table if it has been selected', () => {
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, formData: { practiceSize: '' },
+        });
+
+        expect(context.solutionTable.items.length)
+          .toEqual(1);
       });
     });
   });

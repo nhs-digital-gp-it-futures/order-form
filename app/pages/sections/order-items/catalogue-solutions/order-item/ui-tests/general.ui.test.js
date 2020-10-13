@@ -29,6 +29,7 @@ const selectedPriceIdInSession = 'price-1';
 const catalogueSolutionIdInSession = 'solution-1';
 const plannedDeliveryDateInSession = '2020-10-10';
 const recipientsInSession = JSON.stringify([{ name: 'recipient-name', odsCode: 'code' }]);
+const selectedRecipientsInSession = JSON.stringify(['code']);
 
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
@@ -60,6 +61,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
     await setState(ClientFunction)(sessionKeys.catalogueSolutionId, catalogueSolutionIdInSession);
     await setState(ClientFunction)(sessionKeys.plannedDeliveryDate, plannedDeliveryDateInSession);
     await setState(ClientFunction)(sessionKeys.recipients, recipientsInSession);
+    await setState(ClientFunction)(sessionKeys.selectedRecipients, selectedRecipientsInSession);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);

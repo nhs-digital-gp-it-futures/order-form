@@ -10,6 +10,7 @@ export const getOrderItemContext = async ({
   selectedPrice,
   formData,
   recipients,
+  selectedRecipients,
 }) => {
   const selectedPriceManifest = getSelectedPriceManifest({
     orderItemType,
@@ -25,5 +26,6 @@ export const getOrderItemContext = async ({
     solutionName,
     formData,
     recipients,
+    selectedRecipients,
   });
 };

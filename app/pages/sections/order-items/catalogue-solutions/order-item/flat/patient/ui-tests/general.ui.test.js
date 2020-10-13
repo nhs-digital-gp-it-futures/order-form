@@ -31,7 +31,8 @@ const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
 const catalogueSolutionIdInSession = 'solution-1';
 const plannedDeliveryDateInSession = '2020-10-10';
-const recipientsInSession = JSON.stringify([{ name: 'recipient-name', odsCode: 'code' }]);
+const recipientsInSession = JSON.stringify([{ name: 'recipient-name', odsCode: 'code' }, { name: 'recipient-name', odsCode: 'code-not-used' }]);
+const selectedRecipientsInSession = JSON.stringify(['code']);
 
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
@@ -65,6 +66,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
     await setState(ClientFunction)(sessionKeys.catalogueSolutionId, catalogueSolutionIdInSession);
     await setState(ClientFunction)(sessionKeys.plannedDeliveryDate, plannedDeliveryDateInSession);
     await setState(ClientFunction)(sessionKeys.recipients, recipientsInSession);
+    await setState(ClientFunction)(sessionKeys.selectedRecipients, selectedRecipientsInSession);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
@@ -148,4 +150,18 @@ test('should render the price table content', async (t) => {
     .expect(dateExpandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(dateExpandableSection.find('.nhsuk-details__text')))
     .eql(content.solutionTable.cellInfo.plannedDeliveryDate.expandableSection.innerComponent.replace('<br><br>', ''));
+});
+
+test('should only render 1 row', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const table = Selector('div[data-test-id="solution-table"]');
+  const row0 = table.find('[data-test-id="table-row-0"]');
+  const row1 = table.find('[data-test-id="table-row-1"]');
+
+
+  await t
+    .expect(row0.exists).ok()
+    .expect(row1.exists).notOk();
 });

@@ -32,6 +32,9 @@ export const getOrderItemPageData = async ({
     const recipients = sessionManager.getFromSession({
       req, key: sessionKeys.recipients,
     });
+    const selectedRecipients = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipients,
+    });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     const [day, month, year] = destructureDate(deliveryDate);
@@ -53,6 +56,7 @@ export const getOrderItemPageData = async ({
       selectedPrice,
       formData,
       recipients,
+      selectedRecipients,
     };
   }
 
