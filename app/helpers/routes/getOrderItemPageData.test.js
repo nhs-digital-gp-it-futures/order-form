@@ -95,7 +95,7 @@ describe('getOrderItemPageData', () => {
     });
 
     it('should return the formData', async () => {
-      fakeSessionManager.getFromSession = () => '2020-10-10';
+      fakeSessionManager.getFromSession = () => '2020-11-10';
 
       getSelectedPrice.mockResolvedValue({ price: 'some-price' });
 
@@ -103,11 +103,11 @@ describe('getOrderItemPageData', () => {
 
       expect(pageData.formData).toEqual({
         price: 'some-price',
-        deliveryDate: {
-          day: '10',
-          month: '10',
-          year: '2020',
-        },
+        deliveryDate: [{
+          'deliveryDate-day': '10',
+          'deliveryDate-month': '11',
+          'deliveryDate-year': '2020',
+        }],
       });
     });
   });

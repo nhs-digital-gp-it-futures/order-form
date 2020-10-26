@@ -10,47 +10,7 @@ export const validateOrderItemForm = ({ data, selectedPrice, orderItemType }) =>
     type: selectedPrice.type,
   });
 
-  if (selectedPriceManifest.questions.deliveryDate) {
-    const deliveryDateError = getDateErrors('deliveryDate', data);
-    if (deliveryDateError) {
-      errors.push(deliveryDateError);
-    }
-  }
-
-  if (selectedPriceManifest.questions.quantity) {
-    if (!data.quantity || data.quantity.trim().length === 0) {
-      errors.push({
-        field: 'Quantity',
-        id: 'QuantityRequired',
-      });
-    } else if (isNaN(data.quantity)) {
-      errors.push({
-        field: 'Quantity',
-        id: 'QuantityMustBeANumber',
-      });
-    } else if (data.quantity.indexOf('.') !== -1) {
-      errors.push({
-        field: 'Quantity',
-        id: 'QuantityInvalid',
-      });
-    } else if (data.quantity > 2147483646) {
-      errors.push({
-        field: 'Quantity',
-        id: 'QuantityLessThanMax',
-      });
-    }
-  }
-
-  if (selectedPriceManifest.questions.selectEstimationPeriod) {
-    if (!data.selectEstimationPeriod) {
-      errors.push({
-        field: 'SelectEstimationPeriod',
-        id: 'EstimationPeriodRequired',
-      });
-    }
-  }
-
-  if (selectedPriceManifest.addPriceTable.cellInfo.price.question) {
+  if (selectedPriceManifest.questions.price) {
     if (!data.price || data.price.trim().length === 0) {
       errors.push({
         field: 'Price',
@@ -74,5 +34,41 @@ export const validateOrderItemForm = ({ data, selectedPrice, orderItemType }) =>
     }
   }
 
-  return errors;
+  if (selectedPriceManifest.solutionTable.cellInfo.practiceSize.question) {
+    data.practiceSize.map((size) => {
+      if (!size || size.trim().length === 0) {
+        errors.push({
+          field: 'PracticeSize',
+          id: 'PracticeSizeRequired',
+        });
+      } else if (isNaN(size)) {
+        errors.push({
+          field: 'PracticeSize',
+          id: 'PracticeSizeMustBeANumber',
+        });
+      } else if (size.indexOf('.') !== -1) {
+        errors.push({
+          field: 'PracticeSize',
+          id: 'PracticeSizeInvalid',
+        });
+      } else if (size > 2147483646) {
+        errors.push({
+          field: 'PracticeSize',
+          id: 'PracticeSizeLessThanMax',
+        });
+      }
+    });
+  }
+
+  if (selectedPriceManifest.solutionTable.cellInfo.deliveryDate.question) {
+    data.deliveryDate.map((date) => {
+      const deliveryDateError = getDateErrors('deliveryDate', date);
+      if (deliveryDateError) {
+        errors.push(deliveryDateError);
+      }
+    });
+  }
+
+  return [...new Set(errors.map(errorObject => JSON.stringify(errorObject)))]
+    .map(errorString => JSON.parse(errorString));
 };

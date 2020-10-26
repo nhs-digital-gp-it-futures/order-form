@@ -6,6 +6,8 @@ import { solutionsApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
+const getLocation = ClientFunction(() => document.location.href);
+
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
 const selectedPrice = {
@@ -23,6 +25,8 @@ const selectedPrice = {
   },
   price: 1.64,
 };
+const recipients = [{ name: 'recipient-name', odsCode: 'code' }, { name: 'recipient-name', odsCode: 'code-not-used' }];
+const selectedRecipients = ['code'];
 
 const itemIdInSession = 'solution-1';
 const itemNameInSession = 'solution-name';
@@ -30,9 +34,9 @@ const selectedRecipientIdInSession = 'recipient-1';
 const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
 const catalogueSolutionIdInSession = 'solution-1';
-const plannedDeliveryDateInSession = '2020-10-10';
-const recipientsInSession = JSON.stringify([{ name: 'recipient-name', odsCode: 'code' }, { name: 'recipient-name', odsCode: 'code-not-used' }]);
-const selectedRecipientsInSession = JSON.stringify(['code']);
+const deliveryDateInSession = '2020-10-10';
+const recipientsInSession = JSON.stringify(recipients);
+const selectedRecipientsInSession = JSON.stringify(selectedRecipients);
 
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
@@ -40,6 +44,9 @@ const orderItemPageDataInSession = JSON.stringify({
   serviceRecipientId: selectedRecipientIdInSession,
   serviceRecipientName: selectedRecipientNameInSession,
   selectedPrice,
+  recipients,
+  deliveryDate: deliveryDateInSession,
+  selectedRecipients,
 });
 
 const mocks = (mockSelectedPrice) => {
@@ -64,7 +71,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
     await setState(ClientFunction)(sessionKeys.selectedItemName, itemNameInSession);
     await setState(ClientFunction)(sessionKeys.selectedPriceId, selectedPriceIdInSession);
     await setState(ClientFunction)(sessionKeys.catalogueSolutionId, catalogueSolutionIdInSession);
-    await setState(ClientFunction)(sessionKeys.plannedDeliveryDate, plannedDeliveryDateInSession);
+    await setState(ClientFunction)(sessionKeys.plannedDeliveryDate, deliveryDateInSession);
     await setState(ClientFunction)(sessionKeys.recipients, recipientsInSession);
     await setState(ClientFunction)(sessionKeys.selectedRecipients, selectedRecipientsInSession);
   }
@@ -107,7 +114,7 @@ test('should render the price table content', async (t) => {
   const solutionName = row.find('div[data-test-id="recipient-name-code-recipient"]');
   const practiceSizeInput = row.find('[data-test-id="question-practiceSize"] input');
   const practiceSizeExpandableSection = row.find('[data-test-id="view-section-input-id-practice"]');
-  const dateInput = row.find('[data-test-id="question-plannedDeliveryDate"] input');
+  const dateInput = row.find('[data-test-id="question-deliveryDate"] input');
   const dayInput = dateInput.nth(0);
   const monthInput = dateInput.nth(1);
   const yearInput = dateInput.nth(2);
@@ -128,28 +135,28 @@ test('should render the price table content', async (t) => {
     .eql(content.solutionTable.cellInfo.practiceSize.expandableSection.innerComponent.replace('<br><br>', ''))
 
     .expect(dateInput.exists).ok()
-    .expect(dayInput.getAttribute('id')).eql('plannedDeliveryDate-day')
-    .expect(dayInput.getAttribute('name')).eql('plannedDeliveryDate-day')
+    .expect(dayInput.getAttribute('id')).eql('deliveryDate-day')
+    .expect(dayInput.getAttribute('name')).eql('deliveryDate-day')
     .expect(dayInput.getAttribute('type')).eql('number')
     .expect(dayInput.getAttribute('value')).eql('10')
 
-    .expect(monthInput.getAttribute('id')).eql('plannedDeliveryDate-month')
-    .expect(monthInput.getAttribute('name')).eql('plannedDeliveryDate-month')
+    .expect(monthInput.getAttribute('id')).eql('deliveryDate-month')
+    .expect(monthInput.getAttribute('name')).eql('deliveryDate-month')
     .expect(monthInput.getAttribute('type')).eql('number')
     .expect(monthInput.getAttribute('value')).eql('10')
 
-    .expect(yearInput.getAttribute('id')).eql('plannedDeliveryDate-year')
-    .expect(yearInput.getAttribute('name')).eql('plannedDeliveryDate-year')
+    .expect(yearInput.getAttribute('id')).eql('deliveryDate-year')
+    .expect(yearInput.getAttribute('name')).eql('deliveryDate-year')
     .expect(yearInput.getAttribute('type')).eql('number')
     .expect(yearInput.getAttribute('value')).eql('2020')
 
     .expect(dateExpandableSection.exists).ok()
-    .expect(await extractInnerText(dateExpandableSection)).eql(content.solutionTable.cellInfo.plannedDeliveryDate.expandableSection.title)
+    .expect(await extractInnerText(dateExpandableSection)).eql(content.solutionTable.cellInfo.deliveryDate.expandableSection.title)
     .expect(dateExpandableSection.find('details[open]').exists).notOk()
     .click(dateExpandableSection.find('summary'))
     .expect(dateExpandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(dateExpandableSection.find('.nhsuk-details__text')))
-    .eql(content.solutionTable.cellInfo.plannedDeliveryDate.expandableSection.innerComponent.replace('<br><br>', ''));
+    .eql(content.solutionTable.cellInfo.deliveryDate.expandableSection.innerComponent.replace('<br><br>', ''));
 });
 
 test('should only render 1 row', async (t) => {
@@ -164,4 +171,178 @@ test('should only render 1 row', async (t) => {
   await t
     .expect(row0.exists).ok()
     .expect(row1.exists).notOk();
+});
+
+test('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const orderItemPage = Selector('[data-test-id="order-item-page"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const priceField = orderItemPage.find('[data-test-id="question-price"]');
+  const priceInput = priceField.find('Input');
+  const priceFieldWithError = priceField.find('[data-test-id="text-field-input-error"]');
+
+  await t
+    .expect(priceFieldWithError.exists).notOk()
+    .selectText(priceInput).pressKey('delete')
+    .click(saveButton);
+
+  await t
+    .expect(priceFieldWithError.exists).ok()
+    .expect(await extractInnerText(priceField.find('#price-error'))).contains(content.errorMessages.PriceRequired);
+});
+
+test('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const priceInput = Selector('[data-test-id="question-price"] Input');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .selectText(priceInput).pressKey('delete')
+    .click(saveButton);
+
+  await t
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#price`);
+});
+
+test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const price = Selector('[data-test-id="question-price"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .typeText(price, 'blah', { paste: false })
+    .click(saveButton);
+
+  await t
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#price`);
+});
+
+test('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const priceInput = Selector('[data-test-id="question-price"] input');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .selectText(priceInput).pressKey('delete')
+    .click(saveButton);
+
+  await t
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#price`);
+});
+
+test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const priceInput = Selector('[data-test-id="question-price"] input');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .typeText(priceInput, 'blah', { paste: true })
+    .click(saveButton);
+
+  await t
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#price`);
+});
+
+test('should render solution table as errors with error message when no practice list sizes are entered', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const solutionTableError = Selector('[data-test-id="solution-table-error"]');
+
+  await t
+    .expect(solutionTableError.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(solutionTableError.exists).ok()
+    .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.PracticeSizeRequired);
+});
+
+test('should anchor to the table when clicking on the error select practice size link in errorSummary', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .click(saveButton);
+
+  await t
+    .click(errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#practiceSize`);
+});
+
+test('should render solution table as errors with error message when no date is entered', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const solutionTableError = Selector('[data-test-id="solution-table-error"]').nth(1);
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
+
+  await t
+    .expect(solutionTableError.exists).notOk()
+    .selectText(dayInput).pressKey('delete')
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .selectText(monthInput).pressKey('delete')
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .selectText(yearInput).pressKey('delete')
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .expect(solutionTableError.exists).ok()
+    .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.DeliveryDateRequired);
+});
+
+test('should anchor to the table when clicking on the error select date link in errorSummary', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const dayInput = Selector('#deliveryDate-day');
+  const monthInput = Selector('#deliveryDate-month');
+  const yearInput = Selector('#deliveryDate-year');
+
+  await t
+    .expect(errorSummary.exists).notOk()
+    .selectText(dayInput).pressKey('delete')
+    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
+    .selectText(monthInput).pressKey('delete')
+    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
+    .selectText(yearInput).pressKey('delete')
+    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .click(saveButton);
+
+  await t
+    .click(errorSummary.find('li a').nth(1))
+    .expect(getLocation()).eql(`${pageUrl}#deliveryDate`);
 });

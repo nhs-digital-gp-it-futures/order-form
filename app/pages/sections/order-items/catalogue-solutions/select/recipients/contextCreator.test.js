@@ -130,7 +130,7 @@ describe('service-recipients contextCreator', () => {
         ],
         question: {
           selectSolutionRecipients: {
-            errorMessages: manifest.errorMessages.SelectSolutionRecipientsRequired,
+            errorMessages: [manifest.errorMessages.SelectSolutionRecipientsRequired],
           },
         },
       };

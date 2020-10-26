@@ -39,11 +39,11 @@ export const getOrderItemPageData = async ({
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     const [day, month, year] = destructureDate(deliveryDate);
     const formData = {
-      deliveryDate: {
-        day,
-        month,
-        year,
-      },
+      deliveryDate: [{
+        'deliveryDate-day': day,
+        'deliveryDate-month': month,
+        'deliveryDate-year': year,
+      }],
       price: formatDecimal(selectedPrice.price),
     };
 

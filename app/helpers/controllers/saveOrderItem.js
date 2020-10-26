@@ -11,8 +11,9 @@ export const saveOrderItem = async ({
   serviceRecipientName,
   itemId,
   itemName,
-  catalogueSolutionId,
   selectedPrice,
+  recipients,
+  selectedRecipients,
   formData,
 }) => {
   try {
@@ -25,8 +26,11 @@ export const saveOrderItem = async ({
         serviceRecipientName,
         itemId,
         itemName,
-        catalogueSolutionId,
         selectedPrice,
+        recipients: selectedRecipients.map(
+          selectedRecipient => recipients
+            .find(recipient => recipient.odsCode === selectedRecipient),
+        ),
         formData,
       })
       : await putOrderItem({

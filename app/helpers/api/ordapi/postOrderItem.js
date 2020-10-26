@@ -5,28 +5,25 @@ import { orderApiUrl } from '../../../config';
 
 const formatPostData = ({
   orderItemType,
-  serviceRecipientId,
-  serviceRecipientName,
   itemId,
   itemName,
-  catalogueSolutionId,
   selectedPrice,
+  recipients,
   formData,
-}) => ({
+}) => recipients.map((recipient, index) => ({
   ...selectedPrice,
   serviceRecipient: {
-    name: serviceRecipientName,
-    odsCode: serviceRecipientId,
+    name: recipient.name,
+    odsCode: recipient.odsCode,
   },
   catalogueItemId: itemId,
   catalogueItemName: itemName,
   catalogueItemType: orderItemType,
-  catalogueSolutionId,
-  deliveryDate: extractDate('deliveryDate', formData),
-  quantity: parseInt(formData.quantity, 10),
-  estimationPeriod: formData.selectEstimationPeriod,
+  deliveryDate: extractDate('deliveryDate', formData.deliveryDate, index),
+  quantity: parseInt(formData.practiceSize[index], 10),
+  estimationPeriod: selectedPrice.timeUnit.name,
   price: parseFloat(formData.price),
-});
+}));
 
 const getPostOrderItemEndpoint = orderId => `${orderApiUrl}/api/v1/orders/${orderId}/order-items`;
 
@@ -34,29 +31,25 @@ export const postOrderItem = async ({
   accessToken,
   orderId,
   orderItemType,
-  serviceRecipientId,
-  serviceRecipientName,
-  itemId,
   itemName,
-  catalogueSolutionId,
+  itemId,
   selectedPrice,
+  recipients,
   formData,
 }) => {
   const endpoint = getPostOrderItemEndpoint(orderId);
   const body = formatPostData({
     orderItemType,
-    serviceRecipientId,
-    serviceRecipientName,
     itemId,
     itemName,
-    catalogueSolutionId,
     selectedPrice,
+    recipients,
     formData,
   });
 
   await postData({
     endpoint, body, accessToken, logger,
   });
-  logger.info(`Order item for ${itemName} and ${serviceRecipientName} successfully created for order id: ${orderId}`);
+  logger.info(`Order item for ${itemName} successfully created for order id: ${orderId}`);
   return { success: true };
 };

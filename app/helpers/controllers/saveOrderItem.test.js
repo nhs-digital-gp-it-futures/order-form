@@ -23,7 +23,8 @@ describe('saveOrderItem', () => {
       jest.resetAllMocks();
     });
 
-    const serviceRecipient = { name: 'Recipient 1', odsCode: 'ods1' };
+    const serviceRecipient = ['ods1'];
+    const recipients = [{ name: 'Recipient 1', odsCode: 'ods1' }, { name: 'Recipient 2', odsCode: 'ods2' }];
     const item = { id: 'item-1', name: 'Item One' };
     const formData = {
       _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
@@ -45,6 +46,8 @@ describe('saveOrderItem', () => {
           serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
+          recipients,
+          selectedRecipients: [serviceRecipient],
           selectedPrice,
           formData,
         });
@@ -64,6 +67,8 @@ describe('saveOrderItem', () => {
             serviceRecipientName: serviceRecipient.name,
             itemId: item.id,
             itemName: item.name,
+            recipients,
+            selectedRecipients: [serviceRecipient],
             selectedPrice,
             formData,
           });
@@ -81,11 +86,13 @@ describe('saveOrderItem', () => {
           orderId: 'order1',
           orderItemId: 'neworderitem',
           accessToken: 'access_token',
+          orderItemType: 'order-type',
           serviceRecipientId: serviceRecipient.odsCode,
           serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
-          catalogueSolutionId: 'some-solution-id',
+          recipients,
+          selectedRecipients: serviceRecipient,
           selectedPrice,
           formData,
         });
@@ -94,11 +101,12 @@ describe('saveOrderItem', () => {
         expect(postOrderItem).toHaveBeenCalledWith({
           accessToken: 'access_token',
           orderId: 'order1',
+          orderItemType: 'order-type',
           serviceRecipientId: serviceRecipient.odsCode,
           serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
-          catalogueSolutionId: 'some-solution-id',
+          recipients: [recipients[0]],
           selectedPrice,
           formData,
         });
@@ -115,6 +123,8 @@ describe('saveOrderItem', () => {
           serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
+          recipients,
+          selectedRecipients: [serviceRecipient],
           selectedPrice,
           formData,
         });

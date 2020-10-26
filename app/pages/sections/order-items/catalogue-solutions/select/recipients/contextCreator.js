@@ -66,7 +66,7 @@ export const getContext = ({
   errorMap,
 }) => {
   const toggledStatus = selectStatus === 'select' ? 'deselect' : 'select';
-  const errorMessages = errorMap && errorMap.selectSolutionRecipients.errorMessages.join(', ');
+  const errorMessages = errorMap && errorMap.selectSolutionRecipients.errorMessages;
   return {
     ...addParamsToManifest(manifest, { itemName, orderId }),
     backLinkHref: ((solutionPrices || {}).prices || {}).length === 1 ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution` : `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`,

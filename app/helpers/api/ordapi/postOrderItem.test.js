@@ -14,22 +14,27 @@ describe('postOrderItem', () => {
   const item = { id: 'item-1', name: 'Item One' };
   const formData = {
     _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-    'deliveryDate-day': '25',
-    'deliveryDate-month': '12',
-    'deliveryDate-year': '2020',
+    deliveryDate: {
+      'deliveryDate-day': '25',
+      'deliveryDate-month': '12',
+      'deliveryDate-year': '2020',
+    },
     price: '500.49',
-    quantity: '1',
-    selectEstimationPeriod: 'month',
+    practiceSize: ['1'],
   };
 
   const selectedPrice = {
     priceId: 1,
-    provisioningType: 'OnDemand',
+    provisioningType: 'Patient',
     type: 'flat',
     currencyCode: 'GBP',
     itemUnit: {
       name: 'consultation',
       description: 'per consultation',
+    },
+    timeUnit: {
+      name: 'month',
+      description: 'per month',
     },
     price: 0.1,
   };
@@ -45,11 +50,10 @@ describe('postOrderItem', () => {
           orderItemId: 'neworderitem',
           orderItemType: 'SomeOrderItemType',
           accessToken: 'access_token',
-          serviceRecipientId: serviceRecipient.odsCode,
-          serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
           selectedPrice,
+          recipients: [],
           formData,
         });
       } catch (err) {
@@ -67,30 +71,27 @@ describe('postOrderItem', () => {
         orderItemId: 'neworderitem',
         orderItemType: 'SomeOrderItemType',
         accessToken: 'access_token',
-        serviceRecipientId: serviceRecipient.odsCode,
-        serviceRecipientName: serviceRecipient.name,
         itemId: item.id,
         itemName: item.name,
-        catalogueSolutionId: 'some-solution-id',
         selectedPrice,
+        recipients: [serviceRecipient],
         formData,
       });
 
       expect(postData.mock.calls.length).toEqual(1);
       expect(postData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order1/order-items`,
-        body: {
+        body: [{
           ...selectedPrice,
           serviceRecipient,
           catalogueItemId: item.id,
           catalogueItemName: item.name,
           catalogueItemType: 'SomeOrderItemType',
-          catalogueSolutionId: 'some-solution-id',
           deliveryDate: '2020-12-25',
           quantity: 1,
           estimationPeriod: 'month',
           price: 500.49,
-        },
+        }],
         accessToken: 'access_token',
         logger,
       });
@@ -104,11 +105,10 @@ describe('postOrderItem', () => {
         orderItemId: 'neworderitem',
         orderItemType: 'SomeOrderItemType',
         accessToken: 'access_token',
-        serviceRecipientId: serviceRecipient.odsCode,
-        serviceRecipientName: serviceRecipient.name,
         itemId: item.id,
         itemName: item.name,
         selectedPrice,
+        recipients: [],
         formData,
       });
 
