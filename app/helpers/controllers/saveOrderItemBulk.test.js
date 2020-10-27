@@ -1,8 +1,8 @@
-import { saveOrderItem } from './saveOrderItem';
-import { postOrderItem } from '../api/ordapi/postOrderItem';
+import { saveOrderItemBulk } from './saveOrderItemBulk';
+import { postOrderItemBulk } from '../api/ordapi/postOrderItemBulk';
 import { putOrderItem } from '../api/ordapi/putOrderItem';
 
-jest.mock('../api/ordapi/postOrderItem');
+jest.mock('../api/ordapi/postOrderItemBulk');
 jest.mock('../api/ordapi/putOrderItem');
 
 const selectedPrice = {
@@ -17,13 +17,14 @@ const selectedPrice = {
   price: 0.1,
 };
 
-describe('saveOrderItem', () => {
+describe('saveOrderItemBulk', () => {
   describe('when order item is new', () => {
     afterEach(() => {
       jest.resetAllMocks();
     });
 
-    const serviceRecipient = { name: 'Recipient 1', odsCode: 'ods1' };
+    const serviceRecipient = ['ods1'];
+    const recipients = [{ name: 'Recipient 1', odsCode: 'ods1' }, { name: 'Recipient 2', odsCode: 'ods2' }];
     const item = { id: 'item-1', name: 'Item One' };
     const formData = {
       _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
@@ -35,9 +36,9 @@ describe('saveOrderItem', () => {
     describe('with errors', () => {
       it('should return error.response if api request is unsuccessful with 400', async () => {
         const responseData = { errors: [{}] };
-        postOrderItem.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
+        postOrderItemBulk.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 
-        const response = await saveOrderItem({
+        const response = await saveOrderItemBulk({
           orderId: 'order1',
           orderItemId: 'neworderitem',
           accessToken: 'access_token',
@@ -45,6 +46,8 @@ describe('saveOrderItem', () => {
           serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
+          recipients,
+          selectedRecipients: [serviceRecipient],
           selectedPrice,
           formData,
         });
@@ -53,10 +56,10 @@ describe('saveOrderItem', () => {
       });
 
       it('should throw an error if api request is unsuccessful with non 400', async () => {
-        postOrderItem.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
+        postOrderItemBulk.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
 
         try {
-          await saveOrderItem({
+          await saveOrderItemBulk({
             orderId: 'order1',
             orderItemId: 'neworderitem',
             accessToken: 'access_token',
@@ -64,6 +67,8 @@ describe('saveOrderItem', () => {
             serviceRecipientName: serviceRecipient.name,
             itemId: item.id,
             itemName: item.name,
+            recipients,
+            selectedRecipients: [serviceRecipient],
             selectedPrice,
             formData,
           });
@@ -75,39 +80,42 @@ describe('saveOrderItem', () => {
 
     describe('with no errors', () => {
       it('should post correctly formatted data', async () => {
-        postOrderItem.mockResolvedValueOnce({ data: { orderId: 'order1' } });
+        postOrderItemBulk.mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-        await saveOrderItem({
+        await saveOrderItemBulk({
           orderId: 'order1',
           orderItemId: 'neworderitem',
           accessToken: 'access_token',
+          orderItemType: 'order-type',
           serviceRecipientId: serviceRecipient.odsCode,
           serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
-          catalogueSolutionId: 'some-solution-id',
+          recipients,
+          selectedRecipients: serviceRecipient,
           selectedPrice,
           formData,
         });
 
-        expect(postOrderItem.mock.calls.length).toEqual(1);
-        expect(postOrderItem).toHaveBeenCalledWith({
+        expect(postOrderItemBulk.mock.calls.length).toEqual(1);
+        expect(postOrderItemBulk).toHaveBeenCalledWith({
           accessToken: 'access_token',
           orderId: 'order1',
+          orderItemType: 'order-type',
           serviceRecipientId: serviceRecipient.odsCode,
           serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
-          catalogueSolutionId: 'some-solution-id',
+          recipients: [recipients[0]],
           selectedPrice,
           formData,
         });
       });
 
       it('should return success as true if data is saved successfully', async () => {
-        postOrderItem.mockResolvedValueOnce({ success: true });
+        postOrderItemBulk.mockResolvedValueOnce({ success: true });
 
-        const response = await saveOrderItem({
+        const response = await saveOrderItemBulk({
           orderId: 'order1',
           orderItemId: 'neworderitem',
           accessToken: 'access_token',
@@ -115,6 +123,8 @@ describe('saveOrderItem', () => {
           serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
+          recipients,
+          selectedRecipients: [serviceRecipient],
           selectedPrice,
           formData,
         });
@@ -142,7 +152,7 @@ describe('saveOrderItem', () => {
         const responseData = { errors: [{}] };
         putOrderItem.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 
-        const response = await saveOrderItem({
+        const response = await saveOrderItemBulk({
           orderId: 'order1',
           orderItemId: 'orderItemId-1',
           accessToken: 'access_token',
@@ -156,7 +166,7 @@ describe('saveOrderItem', () => {
         putOrderItem.mockRejectedValueOnce({ response: { status: 500, data: '500 response data' } });
 
         try {
-          await saveOrderItem({
+          await saveOrderItemBulk({
             orderId: 'order1',
             orderItemId: 'orderItemId-1',
             accessToken: 'access_token',
@@ -172,7 +182,7 @@ describe('saveOrderItem', () => {
       it('should post correctly formatted data', async () => {
         putOrderItem.mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-        await saveOrderItem({
+        await saveOrderItemBulk({
           orderId: 'order1',
           orderItemId: 'orderItemId-1',
           accessToken: 'access_token',
@@ -191,7 +201,7 @@ describe('saveOrderItem', () => {
       it('should return success as true if data is saved successfully', async () => {
         putOrderItem.mockResolvedValueOnce({ success: true });
 
-        const response = await saveOrderItem({
+        const response = await saveOrderItemBulk({
           orderId: 'order1',
           orderItemId: 'orderItemId-1',
           accessToken: 'access_token',

@@ -14,17 +14,17 @@ import {
 } from '../../../../test-utils/routesTestHelper';
 import * as catalogueSolutionsController from './dashboard/controller';
 import * as orderItemController from './order-item/controller';
-import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { getOrderItemPageDataBulk } from '../../../../helpers/routes/getOrderItemPageDataBulk';
 import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
-import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
+import { validateOrderItemFormBulk } from '../../../../helpers/controllers/validateOrderItemFormBulk';
+import { saveOrderItemBulk } from '../../../../helpers/controllers/saveOrderItemBulk';
 
 jest.mock('../../../../logger');
-jest.mock('../../../../helpers/routes/getOrderItemPageData');
-jest.mock('../../../../helpers/controllers/validateOrderItemForm');
-jest.mock('../../../../helpers/controllers/saveOrderItem');
+jest.mock('../../../../helpers/routes/getOrderItemPageDataBulk');
+jest.mock('../../../../helpers/controllers/validateOrderItemFormBulk');
+jest.mock('../../../../helpers/controllers/saveOrderItemBulk');
 jest.mock('../../../../helpers/api/ordapi/putOrderSection');
 
 const mockSelectedRecipientIdCookie = `${sessionKeys.selectedRecipientId}=recipient-1`;
@@ -150,7 +150,7 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should return the catalogue-solutions order item page if authorised', () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return request(setUpFakeApp())
@@ -174,7 +174,7 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should redirect to the login page if the user is not logged in', () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthenticatedUser({
@@ -192,7 +192,7 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -213,10 +213,10 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the catalogue-solutions order item page with errors if there are FE caught validation errors', async () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
-      validateOrderItemForm.mockReturnValue([{}]);
+      validateOrderItemFormBulk.mockReturnValue([{}]);
       orderItemController.getOrderItemErrorContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
@@ -244,11 +244,11 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the catalogue-solutions order item page with errors if the api response is unsuccessful', async () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
-      validateOrderItemForm.mockReturnValue([]);
-      saveOrderItem.mockResolvedValue({ success: false, errors: [{}] });
+      validateOrderItemFormBulk.mockReturnValue([]);
+      saveOrderItemBulk.mockResolvedValue({ success: false, errors: [{}] });
       orderItemController.getOrderItemErrorContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
@@ -274,11 +274,11 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
-      validateOrderItemForm.mockReturnValue([]);
-      saveOrderItem.mockResolvedValue({ success: true });
+      validateOrderItemFormBulk.mockReturnValue([]);
+      saveOrderItemBulk.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),

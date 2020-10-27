@@ -11,9 +11,9 @@ import {
   getOrderItemContext,
   getOrderItemErrorContext,
 } from './order-item/controller';
-import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
-import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
+import { validateOrderItemFormBulk } from '../../../../helpers/controllers/validateOrderItemFormBulk';
+import { getOrderItemPageDataBulk } from '../../../../helpers/routes/getOrderItemPageDataBulk';
+import { saveOrderItemBulk } from '../../../../helpers/controllers/saveOrderItemBulk';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
@@ -53,7 +53,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const pageData = await getOrderItemPageData({
+    const pageData = await getOrderItemPageDataBulk({
       req,
       sessionManager,
       accessToken,
@@ -87,7 +87,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
     const formData = formatFormData({ formData: req.body });
 
-    const errors = validateOrderItemForm({
+    const errors = validateOrderItemFormBulk({
       orderItemType: 'Solution',
       data: formData,
       selectedPrice: pageData.selectedPrice,
@@ -95,7 +95,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
-      const apiResponse = await saveOrderItem({
+      const apiResponse = await saveOrderItemBulk({
         accessToken,
         orderId,
         orderItemId,

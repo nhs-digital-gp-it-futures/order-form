@@ -1,11 +1,11 @@
 import { postData } from 'buying-catalogue-library';
-import { postOrderItem } from './postOrderItem';
+import { postOrderItemBulk } from './postOrderItemBulk';
 import { orderApiUrl } from '../../../config';
 import { logger } from '../../../logger';
 
 jest.mock('buying-catalogue-library');
 
-describe('postOrderItem', () => {
+describe('postOrderItemBulk', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
@@ -14,22 +14,27 @@ describe('postOrderItem', () => {
   const item = { id: 'item-1', name: 'Item One' };
   const formData = {
     _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-    'deliveryDate-day': '25',
-    'deliveryDate-month': '12',
-    'deliveryDate-year': '2020',
+    deliveryDate: {
+      'deliveryDate-day': '25',
+      'deliveryDate-month': '12',
+      'deliveryDate-year': '2020',
+    },
     price: '500.49',
-    quantity: '1',
-    selectEstimationPeriod: 'month',
+    practiceSize: ['1'],
   };
 
   const selectedPrice = {
     priceId: 1,
-    provisioningType: 'OnDemand',
+    provisioningType: 'Patient',
     type: 'flat',
     currencyCode: 'GBP',
     itemUnit: {
       name: 'consultation',
       description: 'per consultation',
+    },
+    timeUnit: {
+      name: 'month',
+      description: 'per month',
     },
     price: 0.1,
   };
@@ -40,16 +45,15 @@ describe('postOrderItem', () => {
       postData.mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 
       try {
-        await postOrderItem({
+        await postOrderItemBulk({
           orderId: 'order1',
           orderItemId: 'neworderitem',
           orderItemType: 'SomeOrderItemType',
           accessToken: 'access_token',
-          serviceRecipientId: serviceRecipient.odsCode,
-          serviceRecipientName: serviceRecipient.name,
           itemId: item.id,
           itemName: item.name,
           selectedPrice,
+          recipients: [],
           formData,
         });
       } catch (err) {
@@ -62,35 +66,32 @@ describe('postOrderItem', () => {
     it('should post correctly formatted data', async () => {
       postData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
-      await postOrderItem({
+      await postOrderItemBulk({
         orderId: 'order1',
         orderItemId: 'neworderitem',
         orderItemType: 'SomeOrderItemType',
         accessToken: 'access_token',
-        serviceRecipientId: serviceRecipient.odsCode,
-        serviceRecipientName: serviceRecipient.name,
         itemId: item.id,
         itemName: item.name,
-        catalogueSolutionId: 'some-solution-id',
         selectedPrice,
+        recipients: [serviceRecipient],
         formData,
       });
 
       expect(postData.mock.calls.length).toEqual(1);
       expect(postData).toHaveBeenCalledWith({
         endpoint: `${orderApiUrl}/api/v1/orders/order1/order-items`,
-        body: {
+        body: [{
           ...selectedPrice,
           serviceRecipient,
           catalogueItemId: item.id,
           catalogueItemName: item.name,
           catalogueItemType: 'SomeOrderItemType',
-          catalogueSolutionId: 'some-solution-id',
           deliveryDate: '2020-12-25',
           quantity: 1,
           estimationPeriod: 'month',
           price: 500.49,
-        },
+        }],
         accessToken: 'access_token',
         logger,
       });
@@ -99,16 +100,15 @@ describe('postOrderItem', () => {
     it('should return success as true if data is saved successfully', async () => {
       postData.mockResolvedValueOnce({ success: true });
 
-      const response = await postOrderItem({
+      const response = await postOrderItemBulk({
         orderId: 'order1',
         orderItemId: 'neworderitem',
         orderItemType: 'SomeOrderItemType',
         accessToken: 'access_token',
-        serviceRecipientId: serviceRecipient.odsCode,
-        serviceRecipientName: serviceRecipient.name,
         itemId: item.id,
         itemName: item.name,
         selectedPrice,
+        recipients: [],
         formData,
       });
 

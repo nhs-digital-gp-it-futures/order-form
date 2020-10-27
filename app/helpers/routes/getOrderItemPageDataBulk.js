@@ -4,7 +4,7 @@ import { formatDecimal } from '../common/priceFormatter';
 import { destructureDate } from '../common/dateFormatter';
 import { sessionKeys } from './sessionHelper';
 
-export const getOrderItemPageData = async ({
+export const getOrderItemPageDataBulk = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
 }) => {
   if (orderItemId === 'neworderitem') {
@@ -26,9 +26,26 @@ export const getOrderItemPageData = async ({
     const catalogueSolutionId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedCatalogueSolutionId,
     });
+    const deliveryDate = sessionManager.getFromSession({
+      req, key: sessionKeys.plannedDeliveryDate,
+    });
+    const recipients = sessionManager.getFromSession({
+      req, key: sessionKeys.recipients,
+    });
+    const selectedRecipients = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipients,
+    });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
-    const formData = { price: formatDecimal(selectedPrice.price) };
+    const [day, month, year] = destructureDate(deliveryDate);
+    const formData = {
+      deliveryDate: [{
+        'deliveryDate-day': day,
+        'deliveryDate-month': month,
+        'deliveryDate-year': year,
+      }],
+      price: formatDecimal(selectedPrice.price),
+    };
 
     return {
       itemId,
@@ -38,6 +55,8 @@ export const getOrderItemPageData = async ({
       serviceRecipientName,
       selectedPrice,
       formData,
+      recipients,
+      selectedRecipients,
     };
   }
 

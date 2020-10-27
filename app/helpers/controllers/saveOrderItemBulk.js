@@ -1,8 +1,8 @@
 import { logger } from '../../logger';
-import { postOrderItem } from '../api/ordapi/postOrderItem';
+import { postOrderItemBulk } from '../api/ordapi/postOrderItemBulk';
 import { putOrderItem } from '../api/ordapi/putOrderItem';
 
-export const saveOrderItem = async ({
+export const saveOrderItemBulk = async ({
   orderId,
   orderItemId,
   orderItemType,
@@ -11,13 +11,14 @@ export const saveOrderItem = async ({
   serviceRecipientName,
   itemId,
   itemName,
-  catalogueSolutionId,
   selectedPrice,
+  recipients,
+  selectedRecipients,
   formData,
 }) => {
   try {
     const response = orderItemId === 'neworderitem'
-      ? await postOrderItem({
+      ? await postOrderItemBulk({
         accessToken,
         orderId,
         orderItemType,
@@ -25,8 +26,11 @@ export const saveOrderItem = async ({
         serviceRecipientName,
         itemId,
         itemName,
-        catalogueSolutionId,
         selectedPrice,
+        recipients: selectedRecipients.map(
+          selectedRecipient => recipients
+            .find(recipient => recipient.odsCode === selectedRecipient),
+        ),
         formData,
       })
       : await putOrderItem({
