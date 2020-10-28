@@ -28,8 +28,7 @@ const orderItemType = 'catalogue-solutions';
 describe('catalogue-solutions order-item controller', () => {
   describe('getOrderItemContext', () => {
     afterEach(() => {
-      contextCreator.getContext.mockReset();
-      getSelectedPriceManifest.getSelectedPriceManifest.mockReset();
+      jest.ResetAllMocks();
     });
 
     it('should call getSelectedPriceManifest with the correct params', async () => {
@@ -89,8 +88,7 @@ describe('catalogue-solutions order-item controller', () => {
 
   describe('getOrderItemErrorContext', () => {
     afterEach(() => {
-      contextCreator.getErrorContext.mockReset();
-      getSelectedPriceManifest.getSelectedPriceManifest.mockReset();
+      jest.ResetAllMocks();
     });
 
     it('should call getSelectedPriceManifest with the correct params', async () => {

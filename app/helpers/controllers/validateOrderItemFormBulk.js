@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 import { getDateErrors } from './getDateErrors';
 import { getSelectedPriceManifest } from './manifestProvider';
 
@@ -16,7 +15,7 @@ export const validateOrderItemFormBulk = ({ data, selectedPrice, orderItemType }
         field: 'Price',
         id: 'PriceRequired',
       });
-    } else if (isNaN(data.price)) {
+    } else if (Number.isNaN(Number(data.price))) {
       errors.push({
         field: 'Price',
         id: 'PriceMustBeANumber',
@@ -41,7 +40,7 @@ export const validateOrderItemFormBulk = ({ data, selectedPrice, orderItemType }
           field: 'PracticeSize',
           id: 'PracticeSizeRequired',
         });
-      } else if (isNaN(size)) {
+      } else if (Number.isNaN(Number(size))) {
         errors.push({
           field: 'PracticeSize',
           id: 'PracticeSizeMustBeANumber',

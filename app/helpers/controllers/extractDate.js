@@ -1,19 +1,17 @@
-export const extractDate = (fieldName, data, index) => {
-  let day;
-  let month;
-  let year;
+const extractDateComponents = ({ fieldName, data }) => ({
+  day: data[`${fieldName}-day`],
+  month: data[`${fieldName}-month`],
+  year: data[`${fieldName}-year`],
+});
 
-  if (Array.isArray(data)) {
-    day = data[index][`${fieldName}-day`];
-    month = data[index][`${fieldName}-month`];
-    year = data[index][`${fieldName}-year`];
-  } else {
-    day = data[`${fieldName}-day`];
-    month = data[`${fieldName}-month`];
-    year = data[`${fieldName}-year`];
-  }
-  if (day && month && year) {
-    return `${year}-${month.length === 1 ? '0' : ''}${month}-${day.length === 1 ? '0' : ''}${day}`;
+export const extractDate = (fieldName, data, index) => {
+  const date = extractDateComponents({
+    fieldName,
+    data: Array.isArray(data) ? data[index] : data,
+  });
+
+  if (date.day && date.month && date.year) {
+    return `${date.year}-${date.month.length === 1 ? '0' : ''}${date.month}-${date.day.length === 1 ? '0' : ''}${date.day}`;
   }
 
   return undefined;
