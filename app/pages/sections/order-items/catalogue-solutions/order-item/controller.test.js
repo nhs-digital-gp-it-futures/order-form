@@ -1,5 +1,5 @@
 import {
-  getOrderItemContext,
+  getOrderItemContext, getOrderItemErrorContext,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from '../../../../../helpers/controllers/manifestProvider';
@@ -28,8 +28,7 @@ const orderItemType = 'catalogue-solutions';
 describe('catalogue-solutions order-item controller', () => {
   describe('getOrderItemContext', () => {
     afterEach(() => {
-      contextCreator.getContext.mockReset();
-      getSelectedPriceManifest.getSelectedPriceManifest.mockReset();
+      jest.resetAllMocks();
     });
 
     it('should call getSelectedPriceManifest with the correct params', async () => {
@@ -83,6 +82,58 @@ describe('catalogue-solutions order-item controller', () => {
         orderItemId: 'order-item-id',
         formData,
         recipients,
+      });
+    });
+  });
+
+  describe('getOrderItemErrorContext', () => {
+    afterEach(() => {
+      jest.resetAllMocks();
+    });
+
+    it('should call getSelectedPriceManifest with the correct params', async () => {
+      const params = {
+        orderItemType,
+        selectedPrice,
+      };
+
+      await getOrderItemErrorContext(params);
+
+      expect(getSelectedPriceManifest.getSelectedPriceManifest.mock.calls.length).toEqual(1);
+      expect(getSelectedPriceManifest.getSelectedPriceManifest).toHaveBeenCalledWith({
+        orderItemType,
+        provisioningType: selectedPrice.provisioningType,
+        type: selectedPrice.type,
+      });
+    });
+
+    it('should call getContext with the correct params when formData passed in', async () => {
+      const selectedPriceManifest = { description: 'fake manifest' };
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+
+      const formData = {
+        deliveryDate: {
+          day: 9,
+          month: 2,
+          year: 2021,
+        },
+        price: 0.1,
+      };
+
+      const params = {
+        orderItemType,
+        selectedPrice,
+        formData,
+      };
+
+      await getOrderItemErrorContext(params);
+
+      expect(contextCreator.getErrorContext.mock.calls.length).toEqual(1);
+      expect(contextCreator.getErrorContext).toHaveBeenCalledWith({
+        ...params,
+        commonManifest: { title: 'fake manifest' },
+        selectedPriceManifest,
+        formData,
       });
     });
   });

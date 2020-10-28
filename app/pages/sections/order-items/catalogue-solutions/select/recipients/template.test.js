@@ -113,7 +113,7 @@ describe('recipients page', () => {
               classes: 'nhsuk-u-margin-top-2',
             }]],
           },
-          errorMessages: 'Please select a solution recipient',
+          errorMessages: ['Please select a solution recipient'],
         },
       },
     };

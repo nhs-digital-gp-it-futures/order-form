@@ -14,10 +14,10 @@ describe('generateSolutionTable', () => {
         },
         classes: 'nhsuk-input--width-10',
       },
-      plannedDeliveryDate: {
+      deliveryDate: {
         question: {
           type: 'input',
-          id: 'plannedDeliveryDate',
+          id: 'deliveryDate',
         },
         classes: 'nhsuk-input--width-10',
       },
@@ -46,10 +46,14 @@ describe('generateSolutionTable', () => {
           {
             classes: 'nhsuk-input--width-10',
             question: {
-              data: undefined,
+              data: {
+                day: undefined,
+                month: undefined,
+                year: undefined,
+              },
               dataTestId: 'test-1-deliveryDate',
               error: undefined,
-              id: 'plannedDeliveryDate',
+              id: 'deliveryDate',
               type: 'input',
             },
           },
@@ -58,7 +62,7 @@ describe('generateSolutionTable', () => {
     };
 
     const generatedAddPriceTable = generateSolutionTable({
-      solutionTable, recipients,
+      solutionTable, recipients, deliveryDate: [{}],
     });
 
     expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);
@@ -86,10 +90,14 @@ describe('generateSolutionTable', () => {
           {
             classes: 'nhsuk-input--width-10',
             question: {
-              data: 'test',
+              data: {
+                day: undefined,
+                month: undefined,
+                year: undefined,
+              },
               dataTestId: 'test-1-deliveryDate',
               error: { message: 'Error message' },
-              id: 'plannedDeliveryDate',
+              id: 'deliveryDate',
               type: 'input',
             },
           },
@@ -101,13 +109,13 @@ describe('generateSolutionTable', () => {
       practiceSize: {
         errorMessages: ['Error message'],
       },
-      plannedDeliveryDate: {
+      deliveryDate: {
         errorMessages: ['Error message'],
       },
     };
 
     const generatedAddPriceTable = generateSolutionTable({
-      solutionTable, errorMap, recipients, practiceSize: 'test', deliveryDate: 'test',
+      solutionTable, errorMap, recipients, practiceSize: ['test'], deliveryDate: ['test'],
     });
 
     expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);

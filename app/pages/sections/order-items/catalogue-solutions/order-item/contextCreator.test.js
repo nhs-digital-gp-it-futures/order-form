@@ -1,6 +1,6 @@
 import commonManifest from './commonManifest.json';
 import flatPatientManifest from './flat/patient/manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 
 describe('catalogue-solutions order-item contextCreator', () => {
   describe('getContext', () => {
@@ -73,7 +73,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
           },
         };
 
-        const formData = { price: 1.25 };
+        const formData = { price: 1.25, deliveryDate: [''] };
 
         const context = getContext({
           commonManifest,
@@ -88,7 +88,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
       it('should return the solutionTable colummInfo', () => {
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, formData: { practiceSize: '' },
+          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, formData: { practiceSize: '', deliveryDate: [''] },
         });
 
         expect(context.solutionTable.columnInfo)
@@ -116,9 +116,9 @@ describe('catalogue-solutions order-item contextCreator', () => {
                   },
                 },
                 {
-                  ...flatPatientManifest.solutionTable.cellInfo.plannedDeliveryDate,
+                  ...flatPatientManifest.solutionTable.cellInfo.deliveryDate,
                   question: {
-                    ...flatPatientManifest.solutionTable.cellInfo.plannedDeliveryDate.question,
+                    ...flatPatientManifest.solutionTable.cellInfo.deliveryDate.question,
                     data: {
                       day: 9,
                       month: 2,
@@ -135,12 +135,12 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
         const formData = {
           price: 0.11,
-          practiceSize: 100,
-          deliveryDate: {
-            day: 9,
-            month: 2,
-            year: 2021,
-          },
+          practiceSize: [100],
+          deliveryDate: [{
+            'deliveryDate-day': 9,
+            'deliveryDate-month': 2,
+            'deliveryDate-year': 2021,
+          }],
         };
 
         const context = getContext({
@@ -156,12 +156,115 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
       it('should only add a recipient to the table if it has been selected', () => {
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, formData: { practiceSize: '' },
+          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, formData: { practiceSize: '', deliveryDate: [''] },
         });
 
         expect(context.solutionTable.items.length)
           .toEqual(1);
       });
+    });
+  });
+
+  describe('getErrorContext', () => {
+    it('should return the context with Errors for price', () => {
+      const expectedContext = {
+        errors: [
+          {
+            href: '#price',
+            text: flatPatientManifest.errorMessages.PriceRequired,
+          },
+        ],
+        questions: {
+          price: {
+            error: { message: flatPatientManifest.errorMessages.PriceRequired },
+          },
+        },
+      };
+
+      const context = getErrorContext({
+        commonManifest,
+        selectedPriceManifest: flatPatientManifest,
+        orderId: 'order-id',
+        orderItemId: 'order-item-id',
+        solutionName: 'solution-name',
+        recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
+        selectedRecipients: ['testCode'],
+        formData: { price: 1.25, deliveryDate: [''] },
+        validationErrors: [{
+          field: 'Price',
+          id: 'PriceRequired',
+        }],
+      });
+
+      expect(context.errors).toEqual(expectedContext.errors);
+      expect(context.questions.price.error.message)
+        .toEqual(expectedContext.questions.price.error.message);
+    });
+
+    it('should return the context with Errors for practice size', () => {
+      const expectedContext = {
+        errors: [
+          {
+            href: '#practiceSize',
+            text: flatPatientManifest.errorMessages.PracticeSizeRequired,
+          },
+        ],
+        solutionTable: {
+          errorMessages: [flatPatientManifest.errorMessages.PracticeSizeRequired, undefined],
+        },
+      };
+
+      const context = getErrorContext({
+        commonManifest,
+        selectedPriceManifest: flatPatientManifest,
+        orderId: 'order-id',
+        orderItemId: 'order-item-id',
+        solutionName: 'solution-name',
+        recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
+        selectedRecipients: ['testCode'],
+        formData: { price: 1.25, deliveryDate: [''] },
+        validationErrors: [{
+          field: 'PracticeSize',
+          id: 'PracticeSizeRequired',
+        }],
+      });
+
+      expect(context.errors).toEqual(expectedContext.errors);
+      expect(context.solutionTable.errorMessages)
+        .toEqual(expectedContext.solutionTable.errorMessages);
+    });
+
+    it('should return the context with Errors for delivery date', () => {
+      const expectedContext = {
+        errors: [
+          {
+            href: '#deliveryDate',
+            text: flatPatientManifest.errorMessages.DeliveryDateRequired,
+          },
+        ],
+        solutionTable: {
+          errorMessages: ['', flatPatientManifest.errorMessages.DeliveryDateRequired],
+        },
+      };
+
+      const context = getErrorContext({
+        commonManifest,
+        selectedPriceManifest: flatPatientManifest,
+        orderId: 'order-id',
+        orderItemId: 'order-item-id',
+        solutionName: 'solution-name',
+        recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
+        selectedRecipients: ['testCode'],
+        formData: { price: 1.25, deliveryDate: [''] },
+        validationErrors: [{
+          field: 'DeliveryDate',
+          id: 'DeliveryDateRequired',
+        }],
+      });
+
+      expect(context.errors).toEqual(expectedContext.errors);
+      expect(context.solutionTable.errorMessages)
+        .toEqual(expectedContext.solutionTable.errorMessages);
     });
   });
 });

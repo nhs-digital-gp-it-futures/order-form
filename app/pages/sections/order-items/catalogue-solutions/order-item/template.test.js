@@ -152,11 +152,11 @@ describe('catalogue-solutions order-item page', () => {
       };
 
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="solution-table"]');
-        expect(table.length).toEqual(1);
-        expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Recipient name (ODS code)');
-        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Practice list size');
-        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual('Planned delivery date');
+        const headings = $('thead[data-test-id="table-headings"]');
+        expect(headings.length).toEqual(1);
+        expect(headings.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Recipient name (ODS code)');
+        expect(headings.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Practice list size');
+        expect(headings.find('[data-test-id="column-heading-2"]').text().trim()).toEqual('Planned delivery date');
       });
     }));
 
