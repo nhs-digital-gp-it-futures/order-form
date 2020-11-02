@@ -117,6 +117,9 @@ describe('Catalogue-solutions - Dashboard page', () => {
             data: 'Catalogue Solution',
           },
           {
+            data: 'Unit of order',
+          },
+          {
             data: 'Service Recipient (ODS code)',
           },
         ],
@@ -128,8 +131,15 @@ describe('Catalogue-solutions - Dashboard page', () => {
               dataTestId: 'orderItem1-catalogueItemName',
             },
             {
-              data: 'Recipient One (recipient-1)',
-              dataTestId: 'orderItem1-serviceRecipient',
+              data: 'per patient per year',
+              dataTestId: 'orderItem1-unitOfOrder',
+            },
+            {
+              expandableSection: {
+                dataTestId: 'orderItem1-serviceRecipients',
+                title: 'Service recipients (ODS code)',
+                innerComponent: 'Recipient One (recipient-1)<br><br>Recipient Two (recipient-3)',
+              },
             },
           ],
           [
@@ -139,8 +149,15 @@ describe('Catalogue-solutions - Dashboard page', () => {
               dataTestId: 'orderItem2-catalogueItemName',
             },
             {
-              data: 'Recipient Two (recipient-2)',
-              dataTestId: 'orderItem2-serviceRecipient',
+              data: 'per patient per year',
+              dataTestId: 'orderItem2-unitOfOrder',
+            },
+            {
+              expandableSection: {
+                dataTestId: 'orderItem2-serviceRecipients',
+                title: 'Service recipients (ODS code)',
+                innerComponent: 'Recipient Three (recipient-3',
+              },
             },
           ],
         ],
@@ -152,7 +169,8 @@ describe('Catalogue-solutions - Dashboard page', () => {
         const table = $('div[data-test-id="added-orderItems"]');
         expect(table.length).toEqual(1);
         expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Catalogue Solution');
-        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Service Recipient (ODS code)');
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Unit of order');
+        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual('Service Recipient (ODS code)');
       });
     }));
 
@@ -161,24 +179,27 @@ describe('Catalogue-solutions - Dashboard page', () => {
         const table = $('div[data-test-id="added-orderItems"]');
         const row1 = table.find('[data-test-id="table-row-0"]');
         const row1catalogueItemName = row1.find('a[data-test-id="orderItem1-catalogueItemName"]');
-        const row1serviceRecipient = row1.find('div[data-test-id="orderItem1-serviceRecipient"]');
+        const row1unitOfOrder = row1.find('div[data-test-id="orderItem1-unitOfOrder"]');
+        const row1serviceRecipients = row1.find('div[data-test-id="orderItem1-serviceRecipients"]');
         const row2 = table.find('[data-test-id="table-row-1"]');
         const row2catalogueItemName = row2.find('a[data-test-id="orderItem2-catalogueItemName"]');
-        const row2serviceRecipient = row2.find('div[data-test-id="orderItem2-serviceRecipient"]');
+        const row2serviceRecipients = row2.find('div[data-test-id="orderItem2-serviceRecipients"]');
 
         expect(row1.length).toEqual(1);
         expect(row1catalogueItemName.length).toEqual(1);
         expect(row1catalogueItemName.text().trim()).toEqual('Solution One');
         expect(row1catalogueItemName.attr('href')).toEqual('/orderItem1');
-        expect(row1serviceRecipient.length).toEqual(1);
-        expect(row1serviceRecipient.text().trim()).toEqual('Recipient One (recipient-1)');
+        expect(row1unitOfOrder.length).toEqual(1);
+        expect(row1unitOfOrder.text().trim()).toEqual('per patient per year');
+        expect(row1serviceRecipients.length).toEqual(1);
+        expect(row1serviceRecipients.text().trim()).toContain('Recipient One (recipient-1)Recipient Two (recipient-3)');
 
         expect(row2.length).toEqual(1);
         expect(row2catalogueItemName.length).toEqual(1);
         expect(row2catalogueItemName.text().trim()).toEqual('Solution Two');
         expect(row2catalogueItemName.attr('href')).toEqual('/orderItem2');
-        expect(row2serviceRecipient.length).toEqual(1);
-        expect(row2serviceRecipient.text().trim()).toEqual('Recipient Two (recipient-2)');
+        expect(row2serviceRecipients.length).toEqual(1);
+        expect(row2serviceRecipients.text().trim()).toContain('Recipient Three (recipient-3');
       });
     }));
   });

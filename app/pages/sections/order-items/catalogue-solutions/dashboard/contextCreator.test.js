@@ -70,19 +70,33 @@ describe('catalogue-solutions contextCreator', () => {
                 dataTestId: 'orderItem1-catalogueItemName',
               },
               {
-                data: 'Recipient One (recipient-1)',
-                dataTestId: 'orderItem1-serviceRecipient',
+                data: 'per patient per year',
+                dataTestId: 'orderItem1-unitOfOrder',
+              },
+              {
+                expandableSection: {
+                  dataTestId: 'orderItem1-serviceRecipients',
+                  title: 'Service recipients (ODS code)',
+                  innerComponent: 'Recipient One (recipient-1)<br><br>Recipient Two (recipient-2)',
+                },
               },
             ],
             [
               {
-                data: 'Solution One',
-                href: '/order/organisation/order-1/catalogue-solutions/orderItem2',
-                dataTestId: 'orderItem2-catalogueItemName',
+                data: 'Solution Two',
+                href: '/order/organisation/order-1/catalogue-solutions/orderItem3',
+                dataTestId: 'orderItem3-catalogueItemName',
               },
               {
-                data: 'Recipient Two (recipient-2)',
-                dataTestId: 'orderItem2-serviceRecipient',
+                data: 'per patient per year',
+                dataTestId: 'orderItem3-unitOfOrder',
+              },
+              {
+                expandableSection: {
+                  dataTestId: 'orderItem3-serviceRecipients',
+                  title: 'Service recipients (ODS code)',
+                  innerComponent: 'Recipient Three (recipient-3)',
+                },
               },
             ],
           ],
@@ -93,17 +107,52 @@ describe('catalogue-solutions contextCreator', () => {
         {
           orderItemId: 'orderItem1',
           catalogueItemName: 'Solution One',
+          catalogueItemId: '1',
           serviceRecipient: {
             name: 'Recipient One',
             odsCode: 'recipient-1',
+          },
+          itemUnit: {
+            name: 'patient',
+            description: 'per patient',
+          },
+          timeUnit: {
+            name: 'year',
+            description: 'per year',
           },
         },
         {
           orderItemId: 'orderItem2',
           catalogueItemName: 'Solution One',
+          catalogueItemId: '1',
           serviceRecipient: {
             name: 'Recipient Two',
             odsCode: 'recipient-2',
+          },
+          itemUnit: {
+            name: 'patient',
+            description: 'per patient',
+          },
+          timeUnit: {
+            name: 'year',
+            description: 'per year',
+          },
+        },
+        {
+          orderItemId: 'orderItem3',
+          catalogueItemName: 'Solution Two',
+          catalogueItemId: '2',
+          serviceRecipient: {
+            name: 'Recipient Three',
+            odsCode: 'recipient-3',
+          },
+          itemUnit: {
+            name: 'patient',
+            description: 'per patient',
+          },
+          timeUnit: {
+            name: 'year',
+            description: 'per year',
           },
         },
       ];
