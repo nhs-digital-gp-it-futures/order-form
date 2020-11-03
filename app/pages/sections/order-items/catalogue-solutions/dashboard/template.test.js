@@ -190,7 +190,7 @@ describe('Catalogue-solutions - Dashboard page', () => {
         const row1serviceRecipients = row1.find('div[data-test-id="orderItem1-serviceRecipients"]');
         const row2 = table.find('[data-test-id="table-row-1"]');
         const row2catalogueItemName = row2.find('a[data-test-id="orderItem2-catalogueItemName"]');
-        const row2unitOfOrder = row1.find('div[data-test-id="orderItem2-unitOfOrder"]');
+        const row2unitOfOrder = row2.find('div[data-test-id="orderItem2-unitOfOrder"]');
         const row2serviceRecipients = row2.find('div[data-test-id="orderItem2-serviceRecipients"]');
 
         expect(row1.length).toEqual(1);
@@ -200,7 +200,7 @@ describe('Catalogue-solutions - Dashboard page', () => {
         expect(row1unitOfOrder.length).toEqual(1);
         expect(row1unitOfOrder.text().trim()).toEqual(unitOfOrder);
         expect(row1serviceRecipients.length).toEqual(1);
-        expect(row1serviceRecipients.text().trim()).toContain(multipleServiceRecipients);
+        expect(row1serviceRecipients.text().trim()).toContain('Recipient One (recipient-1)Recipient Two (recipient-2)');
 
         expect(row2.length).toEqual(1);
         expect(row2catalogueItemName.length).toEqual(1);
