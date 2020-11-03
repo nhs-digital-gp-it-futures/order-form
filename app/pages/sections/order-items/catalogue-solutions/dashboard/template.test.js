@@ -110,6 +110,13 @@ describe('Catalogue-solutions - Dashboard page', () => {
   }));
 
   describe('Added Order Items table', () => {
+    const solutionOne = 'Solution One';
+    const hrefOne = '/orderItem1';
+    const solutionTwo = 'Solution Two';
+    const hrefTwo = '/orderItem2';
+    const unitOfOrder = 'per patient per year';
+    const multipleServiceRecipients = 'Recipient One (recipient-1)<br><br>Recipient Two (recipient-2)';
+    const singleServiceRecipient = 'Recipient Three (recipient-3)';
     const context = {
       addedOrderItemsTable: {
         columnInfo: [
@@ -126,37 +133,37 @@ describe('Catalogue-solutions - Dashboard page', () => {
         items: [
           [
             {
-              data: 'Solution One',
-              href: '/orderItem1',
+              data: solutionOne,
+              href: hrefOne,
               dataTestId: 'orderItem1-catalogueItemName',
             },
             {
-              data: 'per patient per year',
+              data: unitOfOrder,
               dataTestId: 'orderItem1-unitOfOrder',
             },
             {
               expandableSection: {
                 dataTestId: 'orderItem1-serviceRecipients',
                 title: 'Service recipients (ODS code)',
-                innerComponent: 'Recipient One (recipient-1)<br><br>Recipient Two (recipient-3)',
+                innerComponent: multipleServiceRecipients,
               },
             },
           ],
           [
             {
-              data: 'Solution Two',
-              href: '/orderItem2',
+              data: solutionTwo,
+              href: hrefTwo,
               dataTestId: 'orderItem2-catalogueItemName',
             },
             {
-              data: 'per patient per year',
+              data: unitOfOrder,
               dataTestId: 'orderItem2-unitOfOrder',
             },
             {
               expandableSection: {
                 dataTestId: 'orderItem2-serviceRecipients',
                 title: 'Service recipients (ODS code)',
-                innerComponent: 'Recipient Three (recipient-3',
+                innerComponent: singleServiceRecipient,
               },
             },
           ],
@@ -183,23 +190,26 @@ describe('Catalogue-solutions - Dashboard page', () => {
         const row1serviceRecipients = row1.find('div[data-test-id="orderItem1-serviceRecipients"]');
         const row2 = table.find('[data-test-id="table-row-1"]');
         const row2catalogueItemName = row2.find('a[data-test-id="orderItem2-catalogueItemName"]');
+        const row2unitOfOrder = row1.find('div[data-test-id="orderItem2-unitOfOrder"]');
         const row2serviceRecipients = row2.find('div[data-test-id="orderItem2-serviceRecipients"]');
 
         expect(row1.length).toEqual(1);
         expect(row1catalogueItemName.length).toEqual(1);
-        expect(row1catalogueItemName.text().trim()).toEqual('Solution One');
-        expect(row1catalogueItemName.attr('href')).toEqual('/orderItem1');
+        expect(row1catalogueItemName.text().trim()).toEqual(solutionOne);
+        expect(row1catalogueItemName.attr('href')).toEqual(hrefOne);
         expect(row1unitOfOrder.length).toEqual(1);
-        expect(row1unitOfOrder.text().trim()).toEqual('per patient per year');
+        expect(row1unitOfOrder.text().trim()).toEqual(unitOfOrder);
         expect(row1serviceRecipients.length).toEqual(1);
-        expect(row1serviceRecipients.text().trim()).toContain('Recipient One (recipient-1)Recipient Two (recipient-3)');
+        expect(row1serviceRecipients.text().trim()).toContain(multipleServiceRecipients);
 
         expect(row2.length).toEqual(1);
         expect(row2catalogueItemName.length).toEqual(1);
-        expect(row2catalogueItemName.text().trim()).toEqual('Solution Two');
-        expect(row2catalogueItemName.attr('href')).toEqual('/orderItem2');
+        expect(row2catalogueItemName.text().trim()).toEqual(solutionTwo);
+        expect(row2catalogueItemName.attr('href')).toEqual(hrefTwo);
+        expect(row2unitOfOrder.length).toEqual(1);
+        expect(row2unitOfOrder.text().trim()).toEqual(unitOfOrder);
         expect(row2serviceRecipients.length).toEqual(1);
-        expect(row2serviceRecipients.text().trim()).toContain('Recipient Three (recipient-3');
+        expect(row2serviceRecipients.text().trim()).toContain(singleServiceRecipient);
       });
     }));
   });
