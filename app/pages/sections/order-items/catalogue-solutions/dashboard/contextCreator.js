@@ -2,7 +2,13 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../../../../config';
 
 const generateItems = ({ orderId, orderItems }) => {
-  const items = orderItems.map((orderItem) => {
+  const items = [];
+  const catalogueIds = [];
+  orderItems.forEach((orderItem) => {
+    if (catalogueIds.includes(orderItem.catalogueItemId)) {
+      return;
+    }
+    catalogueIds.push(orderItem.catalogueItemId);
     const columns = [];
     columns.push(({
       data: orderItem.catalogueItemName,
@@ -10,10 +16,26 @@ const generateItems = ({ orderId, orderItems }) => {
       dataTestId: `${orderItem.orderItemId}-catalogueItemName`,
     }));
     columns.push(({
-      data: `${orderItem.serviceRecipient.name} (${orderItem.serviceRecipient.odsCode})`,
-      dataTestId: `${orderItem.orderItemId}-serviceRecipient`,
+      data: `${orderItem.itemUnit.description} ${orderItem.timeUnit.description}`,
+      dataTestId: `${orderItem.orderItemId}-unitOfOrder`,
     }));
-    return columns;
+
+    const serviceRecipients = [];
+    orderItems.forEach(
+      (orderItemFiltered) => {
+        if (orderItemFiltered.catalogueItemId === orderItem.catalogueItemId) {
+          serviceRecipients.push(`${orderItemFiltered.serviceRecipient.name} (${orderItemFiltered.serviceRecipient.odsCode})`);
+        }
+      },
+    );
+    columns.push(({
+      expandableSection: {
+        dataTestId: `${orderItem.orderItemId}-serviceRecipients`,
+        title: 'Service recipients (ODS code)',
+        innerComponent: serviceRecipients.join('<br><br>'),
+      },
+    }));
+    items.push(columns);
   });
   return items;
 };
