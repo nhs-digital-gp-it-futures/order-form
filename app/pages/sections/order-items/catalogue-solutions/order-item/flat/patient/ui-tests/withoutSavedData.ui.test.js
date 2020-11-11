@@ -98,7 +98,7 @@ fixture('Catalogue-solutions - flat patient - withoutSavedData')
 
 test('should navigate to catalogue-solutions dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/order-items', [{ ...requestPostBody, quantity: 10 }])
+    .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 10 }])
     .reply(200, {});
 
   await pageSetup();

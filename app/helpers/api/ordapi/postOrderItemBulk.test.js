@@ -80,7 +80,7 @@ describe('postOrderItemBulk', () => {
 
       expect(postData.mock.calls.length).toEqual(1);
       expect(postData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order1/order-items`,
+        endpoint: `${orderApiUrl}/api/v1/orders/order1/order-items/batch`,
         body: [{
           ...selectedPrice,
           serviceRecipient,
