@@ -248,7 +248,7 @@ describe('catalogue-solutions section routes', () => {
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
       validateOrderItemFormBulk.mockReturnValue([]);
-      saveOrderItemBulk.mockResolvedValue({ success: false, errors: [{}] });
+      saveOrderItemBulk.mockResolvedValue({ success: false, errors: {} });
       orderItemController.getOrderItemErrorContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],

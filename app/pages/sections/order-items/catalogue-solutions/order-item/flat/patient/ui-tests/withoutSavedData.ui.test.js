@@ -115,12 +115,11 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/order-items', [{ ...requestPostBody, quantity: 0 }])
+    .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 0 }])
     .reply(400, {
-      errors: [{
-        field: 'PracticeSize',
-        id: 'PracticeSizeGreaterThanZero',
-      }],
+      errors: {
+        '[0].PracticeSize': ['PracticeSizeGreaterThanZero'],
+      },
     });
 
   await pageSetup();

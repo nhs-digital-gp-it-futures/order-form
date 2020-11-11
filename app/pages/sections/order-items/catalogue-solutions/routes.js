@@ -114,7 +114,21 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
         logger.info('redirecting catalogue solutions main page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
       }
-      validationErrors.push(...apiResponse.errors);
+
+      const distinctApiErrors = Object
+        .entries(apiResponse.errors)
+        .reduce((acc, [key, value]) => {
+          const field = key.substring(4);
+          if (acc[field] === undefined) acc[field] = new Set();
+          value.forEach(v => acc[field].add(v));
+          return acc;
+        }, {});
+
+      const apiErrors = Object
+        .entries(distinctApiErrors)
+        .flatMap(([key, value]) => [...value].map(v => ({ field: key, id: v })));
+
+      validationErrors.push(...apiErrors);
     }
 
     const context = await getOrderItemErrorContext({
