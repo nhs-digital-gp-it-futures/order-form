@@ -1,68 +1,65 @@
 import { transformApiValidationResponse } from './transformApiValidationResponse';
 
 describe('transformApiValidationResponse', () => {
+  const deliveryDate = 'DeliveryDate';
+  const deliveryDateError = 'DeliveryDateOutsideDeliveryWindow';
+  const quantity = 'Quantity';
+  const quantityError = 'QuantityRequired';
+
   it('should transform a non-bulk validation error response', () => {
-    const field = 'DeliveryDate';
-    const id = 'DeliveryDateOutsideDeliveryWindow';
-    const response = { [`${field}`]: [id] };
+    const errors = transformApiValidationResponse({ [`${deliveryDate}`]: [deliveryDateError] });
 
-    const errors = transformApiValidationResponse(response);
-
-    expect(errors).toEqual([{ field, id }]);
+    expect(errors).toEqual([{ field: deliveryDate, id: deliveryDateError }]);
   });
 
   it('should transform multiple errors in a non-bulk validation error response', () => {
-    const field1 = 'DeliveryDate';
-    const id1 = 'DeliveryDateOutsideDeliveryWindow';
-    const field2 = 'Quantity';
-    const id2 = 'QuantityRequired';
-    const response = { [`${field1}`]: [id1], [`${field2}`]: [id2] };
+    const errors = transformApiValidationResponse({
+      [`${deliveryDate}`]: [deliveryDateError],
+      [`${quantity}`]: [quantityError],
+    });
 
-    const errors = transformApiValidationResponse(response);
-
-    expect(errors).toEqual([{ field: field1, id: id1 }, { field: field2, id: id2 }]);
+    expect(errors).toEqual([
+      { field: deliveryDate, id: deliveryDateError },
+      { field: quantity, id: quantityError },
+    ]);
   });
 
   it('should remove the index from a bulk validation error response', () => {
-    const field = 'DeliveryDate';
-    const id = 'DeliveryDateOutsideDeliveryWindow';
-    const response = { [`[0].${field}`]: [id] };
+    const errors = transformApiValidationResponse({ [`[0].${deliveryDate}`]: [deliveryDateError] });
 
-    const errors = transformApiValidationResponse(response);
-
-    expect(errors).toEqual([{ field, id }]);
+    expect(errors).toEqual([{ field: deliveryDate, id: deliveryDateError }]);
   });
 
   it('should transform multiple errors for the same field', () => {
-    const field = 'DeliveryDate';
-    const id1 = 'DeliveryDateError1';
-    const id2 = 'DeliveryDateError2';
-    const response = { [`[0].${field}`]: [id1, id2] };
+    const error1 = 'DeliveryDateError1';
+    const error2 = 'DeliveryDateError2';
 
-    const errors = transformApiValidationResponse(response);
+    const errors = transformApiValidationResponse({ [`[0].${deliveryDate}`]: [error1, error2] });
 
-    expect(errors).toEqual([{ field, id: id1 }, { field, id: id2 }]);
+    expect(errors).toEqual([
+      { field: deliveryDate, id: error1 },
+      { field: deliveryDate, id: error2 },
+    ]);
   });
 
   it('should de-duplicate errors in a bulk validation response', () => {
-    const field = 'DeliveryDate';
-    const id = 'DeliveryDateOutsideDeliveryWindow';
-    const response = { [`[0].${field}`]: [id], [`[1].${field}`]: [id] };
+    const errors = transformApiValidationResponse({
+      [`[0].${deliveryDate}`]: [deliveryDateError],
+      [`[1].${deliveryDate}`]: [deliveryDateError],
+    });
 
-    const errors = transformApiValidationResponse(response);
-
-    expect(errors).toEqual([{ field, id }]);
+    expect(errors).toEqual([{ field: deliveryDate, id: deliveryDateError }]);
   });
 
   it('should transform multiple errors in a bulk validation error response', () => {
-    const field1 = 'DeliveryDate';
-    const id1 = 'DeliveryDateOutsideDeliveryWindow';
-    const field2 = 'Quantity';
-    const id2 = 'QuantityRequired';
-    const response = { [`[0].${field1}`]: [id1], [`[0].${field2}`]: [id2] };
+    const errors = transformApiValidationResponse({
+      [`[0].${deliveryDate}`]: [deliveryDateError],
+      [`[0].${quantity}`]: [quantityError],
+    });
 
-    const errors = transformApiValidationResponse(response);
-
-    expect(errors).toEqual([{ field: field1, id: id1 }, { field: field2, id: id2 }]);
+    expect(errors).toEqual([
+      { field: deliveryDate, id: deliveryDateError },
+      { field: quantity, id: quantityError },
+    ]);
   });
 });
