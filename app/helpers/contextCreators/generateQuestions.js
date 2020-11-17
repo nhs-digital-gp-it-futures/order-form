@@ -51,7 +51,12 @@ const determineFields = ({ errorMap, questionId, questionType }) => {
   return undefined;
 };
 
-export const generateQuestions = ({ questions, formData, errorMap, unit }) => {
+export const generateQuestions = ({
+  questions,
+  formData,
+  errorMap,
+  unit,
+}) => {
   const { questionsAcc: modifiedQuestions } = Object.entries(questions)
     .reduce(({ questionsAcc }, [questionId, questionManifest]) => {
       const questionError = errorMap && errorMap[questionId]
