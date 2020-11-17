@@ -48,6 +48,7 @@ export const getOrderItemContext = async ({
     solutionName,
     formData,
     recipients,
+    selectedPrice,
     selectedRecipients,
   });
 };

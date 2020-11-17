@@ -3,6 +3,10 @@ import flatPatientManifest from './flat/patient/manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
 
 describe('catalogue-solutions order-item contextCreator', () => {
+  const selectedPrice = {
+    itemUnit: { description: 'per patient' },
+    timeUnit: { description: 'per year' },
+  };
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({
@@ -45,12 +49,26 @@ describe('catalogue-solutions order-item contextCreator', () => {
       const context = getContext({ commonManifest, orderItemId: 'neworderitem' });
       expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
       expect(context.deleteButton.disabled).toEqual(true);
+      expect(context.deleteButton.altText).toEqual('The Delete Catalogue Solution button will be disabled until you save for the first time');
     });
 
     it('should return the delete button when not neworderitem', () => {
       const context = getContext({ commonManifest, orderItemId: 'notneworderitem' });
       expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
       expect(context.deleteButton.disabled).toEqual(false);
+    });
+
+    it('should return the edit button disabled when neworderitem', () => {
+      const context = getContext({ commonManifest, orderItemId: 'neworderitem' });
+      expect(context.editButton.text).toEqual(commonManifest.editButton.text);
+      expect(context.editButton.disabled).toEqual(true);
+      expect(context.editButton.altText).toEqual('The Edit Service Recipients button will be disabled until you save for the first time');
+    });
+
+    it('should return the edit button when not neworderitem', () => {
+      const context = getContext({ commonManifest, orderItemId: 'notneworderitem' });
+      expect(context.editButton.text).toEqual(commonManifest.editButton.text);
+      expect(context.editButton.disabled).toEqual(false);
     });
 
     it('should return the save button', () => {
@@ -81,6 +99,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
           formData,
           recipients,
           selectedRecipients,
+          selectedPrice,
         });
         expect(context.questions.price)
           .toEqual(expectedContext.questions.price);
@@ -88,7 +107,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
       it('should return the solutionTable colummInfo', () => {
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, formData: { practiceSize: '', deliveryDate: [''] },
+          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, selectedPrice, formData: { practiceSize: '', deliveryDate: [''] },
         });
 
         expect(context.solutionTable.columnInfo)
@@ -149,6 +168,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
           formData,
           recipients,
           selectedRecipients,
+          selectedPrice,
         });
 
         expect(context.solutionTable).toEqual(expectedContext.solutionTable);
@@ -156,7 +176,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
       it('should only add a recipient to the table if it has been selected', () => {
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, formData: { practiceSize: '', deliveryDate: [''] },
+          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, selectedPrice, formData: { practiceSize: '', deliveryDate: [''] },
         });
 
         expect(context.solutionTable.items.length)
@@ -189,6 +209,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
         solutionName: 'solution-name',
         recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
         selectedRecipients: ['testCode'],
+        selectedPrice,
         formData: { price: 1.25, deliveryDate: [''] },
         validationErrors: [{
           field: 'Price',
@@ -222,6 +243,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
         solutionName: 'solution-name',
         recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
         selectedRecipients: ['testCode'],
+        selectedPrice,
         formData: { price: 1.25, deliveryDate: [''] },
         validationErrors: [{
           field: 'PracticeSize',
@@ -255,6 +277,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
         solutionName: 'solution-name',
         recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
         selectedRecipients: ['testCode'],
+        selectedPrice,
         formData: { price: 1.25, deliveryDate: [''] },
         validationErrors: [{
           field: 'DeliveryDate',
