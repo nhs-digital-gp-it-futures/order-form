@@ -10,15 +10,19 @@ import { sessionKeys } from '../../../../../../helpers/routes/sessionHelper';
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
 
 const selectedPrice = {
-  priceId: 1,
+  priceId: 2,
   provisioningType: 'patient',
-  type: 'Flat',
+  type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'consultation',
-    description: 'per consultation',
+    name: 'patient',
+    description: 'per patient',
   },
-  price: 0.1,
+  timeUnit: {
+    name: 'year',
+    description: 'per year',
+  },
+  price: 1.64,
 };
 
 const itemIdInSession = 'solution-1';

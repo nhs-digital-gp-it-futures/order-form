@@ -86,6 +86,20 @@ fixture('Catalogue-solutions - flat patient - general')
     await nockAndErrorCheck(nock, t);
   });
 
+test.only('should render a text field for the price question', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const price = Selector('[data-test-id="question-price"]');
+  const priceSpan = price.find('span');
+  const priceLabel = price.find('label.nhsuk-label');
+
+  await t
+    .expect(await extractInnerText(priceLabel)).eql(content.questions.price.mainAdvice)
+    .expect(price.find('input').count).eql(1)
+    .expect(await extractInnerText(priceSpan)).eql('per patient per year');
+});
+
 test('should render the solution table headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -105,7 +119,7 @@ test('should render the solution table headings', async (t) => {
     .expect(await extractInnerText(dateColumnHeading)).eql(`${content.solutionTable.columnInfo[2].data}\n${content.solutionTable.columnInfo[2].additionalAdvice}`);
 });
 
-test('should render the price table content', async (t) => {
+test('should render the solution table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
