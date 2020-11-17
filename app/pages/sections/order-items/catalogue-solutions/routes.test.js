@@ -20,18 +20,25 @@ import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection'
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 import { validateOrderItemFormBulk } from '../../../../helpers/controllers/validateOrderItemFormBulk';
 import { saveOrderItemBulk } from '../../../../helpers/controllers/saveOrderItemBulk';
+import { transformApiValidationResponse } from '../../../../helpers/common/transformApiValidationResponse';
 
 jest.mock('../../../../logger');
 jest.mock('../../../../helpers/routes/getOrderItemPageDataBulk');
 jest.mock('../../../../helpers/controllers/validateOrderItemFormBulk');
 jest.mock('../../../../helpers/controllers/saveOrderItemBulk');
 jest.mock('../../../../helpers/api/ordapi/putOrderSection');
+jest.mock('../../../../helpers/api/ordapi/putOrderSection');
+jest.mock('../../../../helpers/common/transformApiValidationResponse');
 
 const mockSelectedRecipientIdCookie = `${sessionKeys.selectedRecipientId}=recipient-1`;
 const mockSelectedPriceIdCookie = `${sessionKeys.selectedPriceId}=1`;
 const mockGetPageDataCookie = `${sessionKeys.orderItemPageData}=${{ selectedRecipients: [{}] }}`;
 
 describe('catalogue-solutions section routes', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('GET /organisation/:orderId/catalogue-solutions', () => {
     const path = '/organisation/some-order-id/catalogue-solutions';
 
@@ -248,7 +255,9 @@ describe('catalogue-solutions section routes', () => {
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
       validateOrderItemFormBulk.mockReturnValue([]);
-      saveOrderItemBulk.mockResolvedValue({ success: false, errors: [{}] });
+      saveOrderItemBulk.mockResolvedValue({ success: false, errors: {} });
+      transformApiValidationResponse.mockReturnValue([]);
+
       orderItemController.getOrderItemErrorContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],

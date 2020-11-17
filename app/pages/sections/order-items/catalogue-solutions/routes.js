@@ -16,6 +16,7 @@ import { getOrderItemPageDataBulk } from '../../../../helpers/routes/getOrderIte
 import { saveOrderItemBulk } from '../../../../helpers/controllers/saveOrderItemBulk';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
+import { transformApiValidationResponse } from '../../../../helpers/common/transformApiValidationResponse';
 
 const router = express.Router({ mergeParams: true });
 
@@ -114,7 +115,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
         logger.info('redirecting catalogue solutions main page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
       }
-      validationErrors.push(...apiResponse.errors);
+
+      const apiErrors = transformApiValidationResponse(apiResponse.errors);
+      validationErrors.push(...apiErrors);
     }
 
     const context = await getOrderItemErrorContext({
