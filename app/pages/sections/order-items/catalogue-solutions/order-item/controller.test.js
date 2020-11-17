@@ -82,6 +82,7 @@ describe('catalogue-solutions order-item controller', () => {
         orderItemId: 'order-item-id',
         formData,
         recipients,
+        selectedPrice,
       });
     });
   });

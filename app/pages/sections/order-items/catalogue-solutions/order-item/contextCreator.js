@@ -12,6 +12,7 @@ export const getContext = ({
   solutionName,
   formData,
   recipients,
+  selectedPrice,
   selectedRecipients,
   errorMap,
 }) => {
@@ -25,6 +26,7 @@ export const getContext = ({
       questions: selectedPriceManifest.questions,
       formData,
       errorMap,
+      unit: `${selectedPrice.itemUnit.description} ${selectedPrice.timeUnit.description}`,
     }),
     solutionTable: selectedPriceManifest && generateSolutionTable({
       solutionTable: selectedPriceManifest.solutionTable,
@@ -37,11 +39,13 @@ export const getContext = ({
     }),
     editButton: {
       text: commonManifest.editButton.text,
+      altText: orderItemId === 'neworderitem' ? commonManifest.editButton.altText : '',
       href: commonManifest.editButton.href,
       disabled: orderItemId === 'neworderitem',
     },
     deleteButton: {
       text: commonManifest.deleteButton.text,
+      altText: orderItemId === 'neworderitem' ? commonManifest.deleteButton.altText : '',
       href: commonManifest.deleteButton.href,
       disabled: orderItemId === 'neworderitem',
     },
@@ -64,6 +68,7 @@ export const getErrorContext = (params) => {
     solutionName: params.solutionName,
     recipients: params.recipients,
     selectedRecipients: params.selectedRecipients,
+    selectedPrice: params.selectedPrice,
     formData: params.formData,
     errorMap,
   });

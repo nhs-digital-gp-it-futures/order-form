@@ -4,7 +4,7 @@
 {% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
 {% from 'components/bc-table/macro.njk' import bcTable %}
 {% from 'components/date-field/macro.njk' import dateField %}
-{% from 'components/text-field/macro.njk' import textField %}
+{% from 'components/text-field-with-units/macro.njk' import textFieldWithUnits %}
 {% from 'components/radiobutton-options/macro.njk' import radiobuttonOptions %}
 {% from 'components/view/components/view-expandable-section/macro.njk' import viewExpandableSection %}
 {% from 'components/bc-error-wrapper/macro.njk' import bcErrorWrapper %}
@@ -35,14 +35,13 @@
 
           <div class="nhsuk-u-margin-bottom-5">
             <div class="">
-              {{ textField({ 
+              {{ textFieldWithUnits({ 
                 question: questions.price,
                 classes: "nhsuk-input--width-10"
               }) }}
               {{ viewExpandableSection(questions.price.expandableSection) }}
             </div>
           </div>
-
         </div>
 
         <div class="nhsuk-grid-column-full">
@@ -67,6 +66,7 @@
               {{ bcButton({
                   dataTestId: "delete-button",
                   text: deleteButton.text,
+                  altText: deleteButton.altText,
                   href: deleteButton.href,
                   disabled: deleteButton.disabled,
                   classes: "nhsuk-u-margin-top-9 nhsuk-button--secondary nhsuk-u-margin-right-5"
@@ -77,6 +77,7 @@
               {{ bcButton({
                   dataTestId: "edit-button",
                   text: editButton.text,
+                  altText: editButton.altText,
                   href: editButton.href,
                   disabled: editButton.disabled,
                   classes: "nhsuk-u-margin-top-9 nhsuk-button--secondary nhsuk-u-margin-right-5"

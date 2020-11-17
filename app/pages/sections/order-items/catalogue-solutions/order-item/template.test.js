@@ -85,6 +85,7 @@ describe('catalogue-solutions order-item page', () => {
         price: {
           id: 'price',
           mainAdvice: 'What price have you agreed? (£)',
+          unit: 'per patient per year',
           expandableSection: {
             dataTestId: 'view-section-price-id',
             title: 'What price should I enter?',
@@ -102,15 +103,16 @@ describe('catalogue-solutions order-item page', () => {
       });
     }));
 
-    it('should render a textField for price', componentTester(setup, (harness) => {
+    it('should render a textFieldWithUnits for price', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const input = $('[data-test-id="question-price"] input');
+        const span = $('[data-test-id="question-price"] span');
+        const input = span.find('input');
 
         expect(input.length).toEqual(1);
         expect(input.attr('id')).toEqual(context.questions.price.id);
-        expect(input.attr('name')).toEqual(context.questions.price.id);
         expect(input.attr('type')).toEqual('text');
         expect(input.hasClass('nhsuk-input--width-10')).toEqual(true);
+        expect(span.text().trim()).toEqual('per patient per year');
       });
     }));
 
