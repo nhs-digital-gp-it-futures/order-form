@@ -14,10 +14,10 @@ const formatPostData = ({
   formData,
 }) => ({
   ...selectedPrice,
-  serviceRecipient: {
+  serviceRecipient: serviceRecipientName || serviceRecipientId ? {
     name: serviceRecipientName,
     odsCode: serviceRecipientId,
-  },
+  } : undefined,
   catalogueItemId: itemId,
   catalogueItemName: itemName,
   catalogueItemType: orderItemType,

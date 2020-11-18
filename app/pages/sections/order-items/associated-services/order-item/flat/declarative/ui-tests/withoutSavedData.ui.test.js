@@ -34,7 +34,6 @@ const orderItemPageDataInSession = JSON.stringify({
 
 const requestPostBody = {
   ...selectedPrice,
-  serviceRecipient: {},
   catalogueItemId: 'item-1',
   catalogueItemName: 'Item One',
   catalogueItemType: 'AssociatedService',

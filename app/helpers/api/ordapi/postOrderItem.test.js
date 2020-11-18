@@ -96,6 +96,49 @@ describe('postOrderItem', () => {
       });
     });
 
+    it('should post correctly formatted data when there is no service recipient data', async () => {
+      const orderId = 'order1';
+
+      postData.mockResolvedValueOnce({ data: { orderId } });
+
+      const accessToken = 'access_token';
+      const catalogueSolutionId = 'some-solution-id';
+      const orderItemType = 'AssociatedService';
+
+      await postOrderItem({
+        orderId,
+        orderItemId: 'neworderitem',
+        orderItemType,
+        accessToken,
+        serviceRecipientId: null,
+        serviceRecipientName: undefined,
+        itemId: item.id,
+        itemName: item.name,
+        catalogueSolutionId,
+        selectedPrice,
+        formData,
+      });
+
+      expect(postData.mock.calls.length).toEqual(1);
+      expect(postData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/${orderId}/order-items`,
+        body: {
+          ...selectedPrice,
+          serviceRecipient: undefined,
+          catalogueItemId: item.id,
+          catalogueItemName: item.name,
+          catalogueItemType: orderItemType,
+          catalogueSolutionId,
+          deliveryDate: '2020-12-25',
+          quantity: 1,
+          estimationPeriod: 'month',
+          price: 500.49,
+        },
+        accessToken,
+        logger,
+      });
+    });
+
     it('should return success as true if data is saved successfully', async () => {
       postData.mockResolvedValueOnce({ success: true });
 
