@@ -58,6 +58,7 @@ const mockRecipientsState = JSON.stringify([{
 const mockRecipientsCookie = `${sessionKeys.recipients}=${mockRecipientsState}`;
 
 const mockItemNameCookie = `${sessionKeys.selectedItemName}=Solution One`;
+const mockDeliveryDate = `${sessionKeys.plannedDeliveryDate}=12-12-2020`;
 
 describe('catalogue-solutions select routes', () => {
   describe('GET /organisation/:orderId/catalogue-solutions/select', () => {
@@ -519,6 +520,19 @@ describe('catalogue-solutions select routes', () => {
       return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="planned-delivery-date-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
+
+    it('should return the catalogue-solutions select planned delivery date if authorised when delivery date in session', () => {
+      getCommencementDate.mockResolvedValue('');
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie, mockDeliveryDate])
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="planned-delivery-date-page"')).toBeTruthy();
