@@ -6,7 +6,7 @@ describe('transformApiValidationResponse', () => {
   const quantity = 'Quantity';
   const quantityError = 'QuantityRequired';
 
-  it('should transform a non-bulk validation error response', () => {
+  it.only('should transform a non-bulk validation error response', () => {
     const errors = transformApiValidationResponse({ [`${deliveryDate}`]: [deliveryDateError] });
 
     expect(errors).toEqual([{ field: deliveryDate, id: deliveryDateError }]);

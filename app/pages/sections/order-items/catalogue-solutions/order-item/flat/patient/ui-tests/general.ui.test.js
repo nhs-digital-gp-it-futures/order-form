@@ -86,7 +86,7 @@ fixture('Catalogue-solutions - flat patient - general')
     await nockAndErrorCheck(nock, t);
   });
 
-test.only('should render a text field for the price question', async (t) => {
+test('should render a text field for the price question', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

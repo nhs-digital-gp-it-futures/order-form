@@ -3,6 +3,7 @@ const transformPropertyName = propertyName => (propertyName.startsWith('[')
   : propertyName);
 
 export const transformApiValidationResponse = (validationResponse) => {
+  console.log(validationResponse);
   const distinctApiErrors = Object
     .entries(validationResponse)
     .reduce((acc, [key, value]) => {
@@ -15,6 +16,9 @@ export const transformApiValidationResponse = (validationResponse) => {
       value.forEach(v => acc[field].add(v));
       return acc;
     }, {});
+
+    console.log(distinctApiErrors);
+    console.log(Object.entries(distinctApiErrors));
 
   return Object
     .entries(distinctApiErrors)
