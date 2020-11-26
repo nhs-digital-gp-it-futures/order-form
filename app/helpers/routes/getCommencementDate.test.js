@@ -23,8 +23,8 @@ describe('getCommencementDate', () => {
     getCommencementDateFromApi.mockResolvedValueOnce('2020-12-20');
     getFromSessionOrApi.mockImplementation(async ({ apiCall }) => apiCall());
 
-    const orgId = '10001';
-    const req = { user: { primaryOrganisationId: orgId } };
+    const orderId = '10001';
+    const req = { params: { orderId } };
     const accessToken = 'access-token';
 
     await getCommencementDate({
@@ -35,7 +35,7 @@ describe('getCommencementDate', () => {
     });
 
     expect(getCommencementDateFromApi.mock.calls.length).toEqual(1);
-    expect(getCommencementDateFromApi).toHaveBeenCalledWith({ orgId, accessToken, logger });
+    expect(getCommencementDateFromApi).toHaveBeenCalledWith({ orderId, accessToken, logger });
   });
 
   it('should return the expected result from the API', async () => {
@@ -44,7 +44,7 @@ describe('getCommencementDate', () => {
     getFromSessionOrApi.mockImplementation(async ({ apiCall }) => apiCall());
 
     const actualResult = await getCommencementDate({
-      req: { user: { primaryOrganisationId: '10002' } },
+      req: { params: { orderId: '10002' } },
       sessionManager: fakeSessionManager,
       accessToken: 'access-token',
       logger,
@@ -54,15 +54,15 @@ describe('getCommencementDate', () => {
   });
 
   it('should call getFromSessionOrApi with the correct params', async () => {
-    const orgId = '10003';
-    const req = { user: { primaryOrganisationId: orgId } };
+    const orderId = '10003';
+    const req = { params: { orderId } };
     const sessionData = { req, key: sessionKeys.plannedDeliveryDate };
 
     getCommencementDateFromApi.mockResolvedValueOnce('');
     getFromSessionOrApi.mockImplementation(async ({ apiCall }) => apiCall());
 
     await getCommencementDate({
-      req: { user: { primaryOrganisationId: '10003' } },
+      req,
       sessionManager: fakeSessionManager,
       accessToken: 'access-token',
       logger,
