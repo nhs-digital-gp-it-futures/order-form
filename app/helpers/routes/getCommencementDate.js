@@ -9,11 +9,12 @@ export const getCommencementDate = async ({
 }) => {
   const apiCall = async () => {
     const orgId = req.user.primaryOrganisationId;
-    return getCommencementDateFromApi({
+    const { commencementDate } = await getCommencementDateFromApi({
       orgId,
       accessToken,
       logger,
     });
+    return commencementDate;
   };
 
   const sessionData = { req, key: sessionKeys.plannedDeliveryDate };
