@@ -234,7 +234,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       req, key: sessionKeys.selectedItemName,
     });
 
-    const { commencementDate } = await getCommencementDate({
+    const commencementDate = await getCommencementDate({
       req,
       sessionManager,
       accessToken,
