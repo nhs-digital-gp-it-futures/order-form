@@ -40,7 +40,7 @@ describe('getCommencementDate', () => {
 
   it('should return the expected result from the API', async () => {
     const date = '2020-12-20';
-    getCommencementDateFromApi.mockResolvedValueOnce(date);
+    getCommencementDateFromApi.mockResolvedValueOnce({ commencementDate: date });
     getFromSessionOrApi.mockImplementation(async ({ apiCall }) => apiCall());
 
     const actualResult = await getCommencementDate({
