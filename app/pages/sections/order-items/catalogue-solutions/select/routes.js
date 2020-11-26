@@ -30,7 +30,7 @@ import {
 } from '../../../../../helpers/api/bapi/getCatalogueItems';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getSupplier } from '../../../../../helpers/api/ordapi/getSupplier';
-import { getCommencementDate } from '../../../../../helpers/api/ordapi/getCommencementDate';
+import { getCommencementDate } from '../../../../../helpers/routes/getCommencementDate';
 import { getServiceRecipients } from '../../../../../helpers/routes/getServiceRecipients';
 import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
@@ -234,13 +234,12 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       req, key: sessionKeys.selectedItemName,
     });
 
-    let commencementDate = sessionManager.getFromSession({
-      req, key: sessionKeys.plannedDeliveryDate,
+    const { commencementDate } = await getCommencementDate({
+      req,
+      sessionManager,
+      accessToken,
+      logger,
     });
-
-    if (!commencementDate) {
-      ({ commencementDate } = await getCommencementDate({ orderId, accessToken }));
-    }
 
     const context = await getDeliveryDateContext({
       orderId, itemName, commencementDate,
