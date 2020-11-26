@@ -22,7 +22,7 @@ import { findSelectedCatalogueItemInSession } from '../../../../../helpers/route
 import { getCatalogueItems } from '../../../../../helpers/api/bapi/getCatalogueItems';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getSupplier } from '../../../../../helpers/api/ordapi/getSupplier';
-import { getCommencementDate } from '../../../../../helpers/api/ordapi/getCommencementDate';
+import { getCommencementDate } from '../../../../../helpers/routes/getCommencementDate';
 import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
@@ -32,7 +32,7 @@ jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItems');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 jest.mock('../../../../../helpers/api/ordapi/getSupplier');
-jest.mock('../../../../../helpers/api/ordapi/getCommencementDate');
+jest.mock('../../../../../helpers/routes/getCommencementDate');
 jest.mock('../../../../../helpers/api/ordapi/putPlannedDeliveryDate');
 
 const mockSessionSolutionsState = JSON.stringify([
