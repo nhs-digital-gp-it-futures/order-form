@@ -17,5 +17,6 @@ export const getCommencementDate = async ({
   };
 
   const sessionData = { req, key: sessionKeys.plannedDeliveryDate };
-  return getFromSessionOrApi({ sessionData, sessionManager, apiCall });
+  const date = getFromSessionOrApi({ sessionData, sessionManager, apiCall });
+  return date.commencementDate ? date.commencementDate : date;
 };

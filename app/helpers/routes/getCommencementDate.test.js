@@ -55,11 +55,14 @@ describe('getCommencementDate', () => {
 
   it('should call getFromSessionOrApi with the correct params', async () => {
     const orgId = '10003';
-    const req = { params: { orgId } };
+    const req = { user: { primaryOrganisationId: orgId } };
     const sessionData = { req, key: sessionKeys.plannedDeliveryDate };
 
+    getCommencementDateFromApi.mockResolvedValueOnce('');
+    getFromSessionOrApi.mockImplementation(async ({ apiCall }) => apiCall());
+
     await getCommencementDate({
-      req,
+      req: { user: { primaryOrganisationId: '10003' } },
       sessionManager: fakeSessionManager,
       accessToken: 'access-token',
       logger,
