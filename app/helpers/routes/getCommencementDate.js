@@ -8,9 +8,9 @@ export const getCommencementDate = async ({
   logger,
 }) => {
   const apiCall = async () => {
-    const orgId = req.user.primaryOrganisationId;
+    const { orderId } = req.params;
     const { commencementDate } = await getCommencementDateFromApi({
-      orgId,
+      orderId,
       accessToken,
       logger,
     });
