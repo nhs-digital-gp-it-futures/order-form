@@ -16,8 +16,8 @@ export const getContext = ({
   selectedRecipients,
   errorMap,
 }) => {
-  const errorMessages = errorMap && (errorMap.practiceSize || errorMap.deliveryDate)
-    ? ((errorMap.practiceSize || {}).errorMessages || [''])
+  const errorMessages = errorMap && (errorMap.quantity || errorMap.deliveryDate)
+    ? ((errorMap.quantity || {}).errorMessages || [''])
       .concat((errorMap.deliveryDate || {}).errorMessages) : undefined;
   return {
     ...commonManifest,
@@ -34,7 +34,7 @@ export const getContext = ({
       recipients: selectedRecipients.map(
         selectedRecipient => recipients.find(recipient => recipient.odsCode === selectedRecipient),
       ),
-      practiceSize: formData.practiceSize,
+      quantity: formData.quantity,
       errorMessages,
     }),
     editButton: {

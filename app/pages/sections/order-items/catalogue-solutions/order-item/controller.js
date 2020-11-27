@@ -18,8 +18,8 @@ export const formatFormData = ({ formData }) => {
 
   return {
     price: formData.price.trim(),
-    practiceSize: Array.isArray(formData.practiceSize)
-      ? formData.practiceSize : formData.practiceSize.split(),
+    quantity: Array.isArray(formData.quantity)
+      ? formData.quantity : formData.quantity.split(),
     deliveryDate,
   };
 };
