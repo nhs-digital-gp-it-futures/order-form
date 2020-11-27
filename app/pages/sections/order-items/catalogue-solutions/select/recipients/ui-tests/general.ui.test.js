@@ -24,13 +24,16 @@ const mocks = () => {
     .reply(200, mockRecipientsData);
 };
 
-const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const defaultPageSetup = {
+  withAuth: true, getRoute: true, postRoute: false, withMocks: true,
+};
+
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
   if (setup.getRoute) {
-    mocks();
+    if (setup.withMocks) mocks();
     await setState(ClientFunction)(sessionKeys.selectedItemName, selectedItemNameInSession);
   }
   if (setup.postRoute) {
@@ -234,7 +237,7 @@ test('should render the "Continue" button', async (t) => {
 });
 
 test('should show the error summary when no service recipients are selected', async (t) => {
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await pageSetup({ ...defaultPageSetup, postRoute: true, withMocks: false });
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');
@@ -250,7 +253,7 @@ test('should show the error summary when no service recipients are selected', as
 });
 
 test('should render select recipients table as errors with error message when no recipients are selected', async (t) => {
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await pageSetup({ ...defaultPageSetup, postRoute: true, withMocks: false });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');
@@ -266,7 +269,7 @@ test('should render select recipients table as errors with error message when no
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await pageSetup({ ...defaultPageSetup, postRoute: true, withMocks: false });
   await t.navigateTo(pageUrl);
 
   const continueButton = Selector('[data-test-id="continue-button"] button');
