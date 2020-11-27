@@ -96,14 +96,15 @@ const mocks = () => {
 };
 
 const defaultPageSetup = {
-  withAuth: true, getRoute: true, postRoute: false,
+  withAuth: true, getRoute: true, postRoute: false, withMocks: true,
 };
+
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
   if (setup.getRoute) {
-    mocks();
+    if (setup.withMocks) mocks();
     await setState(ClientFunction)(sessionKeys.selectedItemName, selectedItemNameInSession);
     await setState(ClientFunction)(sessionKeys.selectedItemId, selectedItemIdInSession);
   }
@@ -257,7 +258,11 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
     .get('/api/v1/prices?catalogueItemId=solution-1')
     .reply(200, mockSinglePriceSolution);
 
-  await pageSetup();
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id/service-recipients')
+    .reply(200, []);
+
+  await pageSetup({ ...defaultPageSetup, withMocks: false });
   await t.navigateTo(pageUrl);
 
   await t

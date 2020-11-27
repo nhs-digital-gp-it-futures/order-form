@@ -7,10 +7,10 @@ describe('generateSolutionTable', () => {
       recipient: {
         dataTestId: 'recipient',
       },
-      practiceSize: {
+      quantity: {
         question: {
           type: 'input',
-          id: 'practiceSize',
+          id: 'quantity',
         },
         classes: 'nhsuk-input--width-10',
       },
@@ -37,9 +37,9 @@ describe('generateSolutionTable', () => {
             classes: 'nhsuk-input--width-10',
             question: {
               data: undefined,
-              dataTestId: 'test-1-practiceSize',
+              dataTestId: 'test-1-quantity',
               error: undefined,
-              id: 'practiceSize',
+              id: 'quantity',
               type: 'input',
             },
           },
@@ -81,9 +81,9 @@ describe('generateSolutionTable', () => {
             classes: 'nhsuk-input--width-10',
             question: {
               data: 'test',
-              dataTestId: 'test-1-practiceSize',
+              dataTestId: 'test-1-quantity',
               error: { message: 'Error message' },
-              id: 'practiceSize',
+              id: 'quantity',
               type: 'input',
             },
           },
@@ -106,7 +106,7 @@ describe('generateSolutionTable', () => {
     };
 
     const errorMap = {
-      practiceSize: {
+      quantity: {
         errorMessages: ['Error message'],
       },
       deliveryDate: {
@@ -115,7 +115,7 @@ describe('generateSolutionTable', () => {
     };
 
     const generatedAddPriceTable = generateSolutionTable({
-      solutionTable, errorMap, recipients, practiceSize: ['test'], deliveryDate: ['test'],
+      solutionTable, errorMap, recipients, quantity: ['test'], deliveryDate: ['test'],
     });
 
     expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);

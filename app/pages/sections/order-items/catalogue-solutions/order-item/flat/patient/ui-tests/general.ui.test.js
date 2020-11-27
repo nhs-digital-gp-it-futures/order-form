@@ -126,7 +126,7 @@ test('should render the solution table content', async (t) => {
   const table = Selector('div[data-test-id="solution-table"]');
   const row = table.find('[data-test-id="table-row-0"]');
   const solutionName = row.find('div[data-test-id="recipient-name-code-recipient"]');
-  const practiceSizeInput = row.find('[data-test-id="question-practiceSize"] input');
+  const quantityInput = row.find('[data-test-id="question-quantity"] input');
   const practiceSizeExpandableSection = row.find('[data-test-id="view-section-input-id-practice"]');
   const dateInput = row.find('[data-test-id="question-deliveryDate"] input');
   const dayInput = dateInput.nth(0);
@@ -139,14 +139,14 @@ test('should render the solution table content', async (t) => {
     .expect(solutionName.exists).ok()
     .expect(await extractInnerText(solutionName)).eql('recipient-name (code)')
 
-    .expect(practiceSizeInput.exists).ok()
+    .expect(quantityInput.exists).ok()
     .expect(practiceSizeExpandableSection.exists).ok()
-    .expect(await extractInnerText(practiceSizeExpandableSection)).eql(content.solutionTable.cellInfo.practiceSize.expandableSection.title)
+    .expect(await extractInnerText(practiceSizeExpandableSection)).eql(content.solutionTable.cellInfo.quantity.expandableSection.title)
     .expect(practiceSizeExpandableSection.find('details[open]').exists).notOk()
     .click(practiceSizeExpandableSection.find('summary'))
     .expect(practiceSizeExpandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(practiceSizeExpandableSection.find('.nhsuk-details__text')))
-    .eql(content.solutionTable.cellInfo.practiceSize.expandableSection.innerComponent.replace('<br><br>', ''))
+    .eql(content.solutionTable.cellInfo.quantity.expandableSection.innerComponent.replace('<br><br>', ''))
 
     .expect(dateInput.exists).ok()
     .expect(dayInput.getAttribute('id')).eql('deliveryDate-day')
@@ -292,7 +292,7 @@ test('should render solution table as errors with error message when no practice
 
   await t
     .expect(solutionTableError.exists).ok()
-    .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.PracticeSizeRequired);
+    .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.QuantityRequired);
 });
 
 test('should anchor to the table when clicking on the error select practice size link in errorSummary', async (t) => {
@@ -308,7 +308,7 @@ test('should anchor to the table when clicking on the error select practice size
 
   await t
     .click(errorSummary.find('li a').nth(0))
-    .expect(getLocation()).eql(`${pageUrl}#practiceSize`);
+    .expect(getLocation()).eql(`${pageUrl}#quantity`);
 });
 
 test('should render solution table as errors with error message when no date is entered', async (t) => {

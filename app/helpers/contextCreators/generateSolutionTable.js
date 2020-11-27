@@ -1,5 +1,5 @@
 export const generateSolutionTable = ({
-  solutionTable, practiceSize, deliveryDate, errorMap, recipients, errorMessages,
+  solutionTable, quantity, deliveryDate, errorMap, recipients, errorMessages,
 }) => {
   const items = recipients.map((recipient, index) => {
     const i = deliveryDate.length === 1 ? 0 : index;
@@ -10,13 +10,13 @@ export const generateSolutionTable = ({
         dataTestId: recipient.name ? `${recipient.name}-${recipient.odsCode}-recipient` : undefined,
       },
       {
-        ...solutionTable.cellInfo.practiceSize,
+        ...solutionTable.cellInfo.quantity,
         question: {
-          ...solutionTable.cellInfo.practiceSize.question,
-          data: practiceSize !== undefined ? practiceSize[i] : undefined,
-          dataTestId: recipient.name ? `${recipient.name}-${recipient.odsCode}-practiceSize` : undefined,
-          error: errorMap && errorMap.practiceSize
-            ? { message: errorMap.practiceSize.errorMessages.join(', ') }
+          ...solutionTable.cellInfo.quantity.question,
+          data: quantity !== undefined ? quantity[i] : undefined,
+          dataTestId: recipient.name ? `${recipient.name}-${recipient.odsCode}-quantity` : undefined,
+          error: errorMap && errorMap.quantity
+            ? { message: errorMap.quantity.errorMessages.join(', ') }
             : undefined,
         },
       },

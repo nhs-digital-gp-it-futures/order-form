@@ -104,7 +104,7 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const quantityInput = Selector('[data-test-id="question-practiceSize"]');
+  const quantityInput = Selector('[data-test-id="question-quantity"]');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
@@ -118,7 +118,7 @@ test('should show text fields as errors with error message when there are BE val
     .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 0 }])
     .reply(400, {
       errors: {
-        '[0].PracticeSize': ['PracticeSizeGreaterThanZero'],
+        '[0].Quantity': ['QuantityGreaterThanZero'],
       },
     });
 
@@ -127,18 +127,18 @@ test('should show text fields as errors with error message when there are BE val
 
   const errorSummary = Selector('[data-test-id="error-summary"]');
   const solutionTableError = Selector('[data-test-id="solution-table-error"]');
-  const practiceSizeInput = Selector('[data-test-id="question-practiceSize"] input');
+  const quantityInput = Selector('[data-test-id="question-quantity"] input');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .typeText(practiceSizeInput, '0', { paste: true })
+    .typeText(quantityInput, '0', { paste: true })
     .click(saveButton);
 
   await t
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.PracticeSizeGreaterThanZero)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
 
     .expect(solutionTableError.exists).ok()
-    .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.PracticeSizeGreaterThanZero);
+    .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.QuantityGreaterThanZero);
 });

@@ -28,10 +28,10 @@ const orderItemType = 'some-order-item-type';
 describe('validateOrderItemFormBulk', () => {
   describe('when there are no validation errors', () => {
     it('should return an empty array', () => {
-      const selectedPriceManifest = { questions: {}, solutionTable: { cellInfo: { practiceSize: 'fakeSize', deliveryDate: 'fakeDate' } } };
+      const selectedPriceManifest = { questions: {}, solutionTable: { cellInfo: { quantity: 'fakeSize', deliveryDate: 'fakeDate' } } };
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
-        practiceSize: '1',
+        quantity: '1',
         price: '1',
         'deliveryDate-day': '09',
         'deliveryDate-month': '02',
@@ -49,7 +49,7 @@ describe('validateOrderItemFormBulk', () => {
       questions: { price: 'test' },
       solutionTable: {
         cellInfo: {
-          practiceSize: { question: 'fakeSize' },
+          quantity: { question: 'fakeSize' },
           deliveryDate: { question: 'fakeDate' },
         },
       },
@@ -70,21 +70,21 @@ describe('validateOrderItemFormBulk', () => {
       field: 'Price',
       id: 'PriceLessThanMax',
     };
-    const practiceSizeRequired = {
-      field: 'PracticeSize',
-      id: 'PracticeSizeRequired',
+    const quantityRequired = {
+      field: 'Quantity',
+      id: 'QuantityRequired',
     };
-    const practiceSizeMustBeANumber = {
-      field: 'PracticeSize',
-      id: 'PracticeSizeMustBeANumber',
+    const quantityMustBeANumber = {
+      field: 'Quantity',
+      id: 'QuantityMustBeANumber',
     };
-    const practiceSizeInvalid = {
-      field: 'PracticeSize',
-      id: 'PracticeSizeInvalid',
+    const quantityInvalid = {
+      field: 'Quantity',
+      id: 'QuantityInvalid',
     };
-    const practiceSizeLessThanMax = {
-      field: 'PracticeSize',
-      id: 'PracticeSizeLessThanMax',
+    const quantityLessThanMax = {
+      field: 'Quantity',
+      id: 'QuantityLessThanMax',
     };
     const deliveryDateRequired = {
       field: 'DeliveryDate',
@@ -96,7 +96,7 @@ describe('validateOrderItemFormBulk', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
         price: '',
-        practiceSize: ['1'],
+        quantity: ['1'],
         deliveryDate,
       };
 
@@ -109,7 +109,7 @@ describe('validateOrderItemFormBulk', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
         price: 'not a number',
-        practiceSize: ['1'],
+        quantity: ['1'],
         deliveryDate,
       };
 
@@ -122,7 +122,7 @@ describe('validateOrderItemFormBulk', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
         price: '1.1234',
-        practiceSize: ['1'],
+        quantity: ['1'],
         deliveryDate,
       };
 
@@ -135,7 +135,7 @@ describe('validateOrderItemFormBulk', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
         price: '1000000000000001.000',
-        practiceSize: ['1'],
+        quantity: ['1'],
         deliveryDate,
       };
 
@@ -148,7 +148,7 @@ describe('validateOrderItemFormBulk', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
         price: '',
-        practiceSize: ['1'],
+        quantity: ['1'],
         deliveryDate,
       };
 
@@ -157,50 +157,50 @@ describe('validateOrderItemFormBulk', () => {
       expect(errors).toEqual([priceRequired]);
     });
 
-    it('should return an array of one validation error if practiceSize is not a number', () => {
+    it('should return an array of one validation error if quantity is not a number', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
         price: '1.5',
-        practiceSize: ['not a number'],
+        quantity: ['not a number'],
         deliveryDate,
       };
 
       const errors = validateOrderItemFormBulk({ orderItemType, data, selectedPrice });
 
-      expect(errors).toEqual([practiceSizeMustBeANumber]);
+      expect(errors).toEqual([quantityMustBeANumber]);
     });
 
-    it('should return an array of one validation error if practiceSize is invalid', () => {
+    it('should return an array of one validation error if quantity is invalid', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
         price: '1.5',
-        practiceSize: ['1.1'],
+        quantity: ['1.1'],
         deliveryDate,
       };
 
       const errors = validateOrderItemFormBulk({ orderItemType, data, selectedPrice });
 
-      expect(errors).toEqual([practiceSizeInvalid]);
+      expect(errors).toEqual([quantityInvalid]);
     });
 
-    it('should return an array of one validation error if practiceSize value is too large', () => {
+    it('should return an array of one validation error if quantity value is too large', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
         price: '1.5',
-        practiceSize: ['2147483647'],
+        quantity: ['2147483647'],
         deliveryDate,
       };
 
       const errors = validateOrderItemFormBulk({ orderItemType, data, selectedPrice });
 
-      expect(errors).toEqual([practiceSizeLessThanMax]);
+      expect(errors).toEqual([quantityLessThanMax]);
     });
 
     it('should return an array of one validation error  if deliveryDate is not valid', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
         price: '1.5',
-        practiceSize: ['1'],
+        quantity: ['1'],
         deliveryDate: [{
           'deliveryDate-day': '',
           'deliveryDate-month': '',
@@ -216,7 +216,7 @@ describe('validateOrderItemFormBulk', () => {
     it('should return a validation error if all values are undefined', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
-        practiceSize: [''],
+        quantity: [''],
         deliveryDate: [{
           'deliveryDate-day': '',
           'deliveryDate-month': '',
@@ -227,7 +227,7 @@ describe('validateOrderItemFormBulk', () => {
       const errors = validateOrderItemFormBulk({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual(
-        [priceRequired, practiceSizeRequired, deliveryDateRequired],
+        [priceRequired, quantityRequired, deliveryDateRequired],
       );
     });
   });
