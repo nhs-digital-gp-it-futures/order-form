@@ -129,8 +129,8 @@ test('should render the solution table content', async (t) => {
   const table = Selector('div[data-test-id="solution-table"]');
   const row = table.find('[data-test-id="table-row-0"]');
   const solutionName = row.find('div[data-test-id="Some service recipient 2-OX3-recipient"]');
-  const practiceSizeInput = row.find('[data-test-id="question-practiceSize"] input');
-  const practiceSizeExpandableSection = row.find('[data-test-id="view-section-input-id-practice"]');
+  const quantityInput = row.find('[data-test-id="question-quantity"] input');
+  const quantityExpandableSection = row.find('[data-test-id="view-section-input-id-practice"]');
   const dateInput = row.find('[data-test-id="question-deliveryDate"] input');
   const dayInput = dateInput.nth(0);
   const monthInput = dateInput.nth(1);
@@ -142,14 +142,14 @@ test('should render the solution table content', async (t) => {
     .expect(solutionName.exists).ok()
     .expect(await extractInnerText(solutionName)).eql('Some service recipient 2 (OX3)')
 
-    .expect(practiceSizeInput.exists).ok()
-    .expect(practiceSizeExpandableSection.exists).ok()
-    .expect(await extractInnerText(practiceSizeExpandableSection)).eql(content.solutionTable.cellInfo.practiceSize.expandableSection.title)
-    .expect(practiceSizeExpandableSection.find('details[open]').exists).notOk()
-    .click(practiceSizeExpandableSection.find('summary'))
-    .expect(practiceSizeExpandableSection.find('details[open]').exists).ok()
-    .expect(await extractInnerText(practiceSizeExpandableSection.find('.nhsuk-details__text')))
-    .eql(content.solutionTable.cellInfo.practiceSize.expandableSection.innerComponent.replace('<br><br>', ''))
+    .expect(quantityInput.exists).ok()
+    .expect(quantityExpandableSection.exists).ok()
+    .expect(await extractInnerText(quantityExpandableSection)).eql(content.solutionTable.cellInfo.quantity.expandableSection.title)
+    .expect(quantityExpandableSection.find('details[open]').exists).notOk()
+    .click(quantityExpandableSection.find('summary'))
+    .expect(quantityExpandableSection.find('details[open]').exists).ok()
+    .expect(await extractInnerText(quantityExpandableSection.find('.nhsuk-details__text')))
+    .eql(content.solutionTable.cellInfo.quantity.expandableSection.innerComponent.replace('<br><br>', ''))
 
     .expect(dateInput.exists).ok()
     .expect(dayInput.getAttribute('id')).eql('deliveryDate-day')
@@ -252,7 +252,7 @@ test('should render the edit button as not disabled', async (t) => {
 //   await pageSetup();
 //   await t.navigateTo(pageUrl);
 
-//   const quantityInput = Selector('[data-test-id="question-practiceSize"]');
+//   const quantityInput = Selector('[data-test-id="question-quantity"]');
 //   const saveButton = Selector('[data-test-id="save-button"] button');
 
 //   await t
