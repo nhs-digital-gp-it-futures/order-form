@@ -35,10 +35,10 @@
         "dataTestId": "recipient",
         "classes": "nhsuk-u-padding-top-5"
       },
-      "practiceSize": {
+      "quantity": {
         "question": {
           "type": "input",
-          "id": "practiceSize"
+          "id": "quantity"
         },
         "expandableSection": {
           "dataTestId": "view-section-input-id-practice",
@@ -66,11 +66,11 @@
     "PriceMoreThan3dp": "Price must be to a maximum of 3 decimal places",
     "PriceGreaterThanOrEqualToZero": "Price cannot be negative",
     "PriceLessThanMax": "Maximum price exceeded, enter a lower price",
-    "PracticeSizeRequired": "Enter a practice list size",
-    "PracticeSizeMustBeANumber": "Practice list size must be a number",
-    "PracticeSizeInvalid": "Practice list size must be a whole number",
-    "PracticeSizeGreaterThanZero": "Practice list size must be greater than zero",
-    "PracticeSizeLessThanMax": "Maximum practice list size exceeded, enter a lower number",
+    "QuantityRequired": "Enter a practice list size",
+    "QuantityMustBeANumber": "Practice list size must be a number",
+    "QuantityInvalid": "Practice list size must be a whole number",
+    "QuantityGreaterThanZero": "Practice list size must be greater than zero",
+    "QuantityLessThanMax": "Maximum practice list size exceeded, enter a lower number",
     "DeliveryDateRequired": "Enter a planned delivery date",
     "DeliveryDateInvalid": "Enter a planned delivery date in a valid format",
     "DeliveryDateOutsideDeliveryWindow": "Planned delivery date must be within 42 months from the commencement date for this Call-off Agreement",

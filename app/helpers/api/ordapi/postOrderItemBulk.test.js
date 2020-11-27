@@ -20,7 +20,7 @@ describe('postOrderItemBulk', () => {
       'deliveryDate-year': '2020',
     },
     price: '500.49',
-    practiceSize: ['1'],
+    quantity: ['1'],
   };
 
   const selectedPrice = {

@@ -107,7 +107,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
       it('should return the solutionTable colummInfo', () => {
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, selectedPrice, formData: { practiceSize: '', deliveryDate: [''] },
+          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, selectedPrice, formData: { quantity: '', deliveryDate: [''] },
         });
 
         expect(context.solutionTable.columnInfo)
@@ -126,11 +126,11 @@ describe('catalogue-solutions order-item contextCreator', () => {
                   dataTestId: 'test-testCode-recipient',
                 },
                 {
-                  ...flatPatientManifest.solutionTable.cellInfo.practiceSize,
+                  ...flatPatientManifest.solutionTable.cellInfo.quantity,
                   question: {
-                    ...flatPatientManifest.solutionTable.cellInfo.practiceSize.question,
+                    ...flatPatientManifest.solutionTable.cellInfo.quantity.question,
                     data: 100,
-                    dataTestId: 'test-testCode-practiceSize',
+                    dataTestId: 'test-testCode-quantity',
                     error: undefined,
                   },
                 },
@@ -154,7 +154,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
         const formData = {
           price: 0.11,
-          practiceSize: [100],
+          quantity: [100],
           deliveryDate: [{
             'deliveryDate-day': 9,
             'deliveryDate-month': 2,
@@ -176,7 +176,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
       it('should only add a recipient to the table if it has been selected', () => {
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, selectedPrice, formData: { practiceSize: '', deliveryDate: [''] },
+          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, selectedPrice, formData: { quantity: '', deliveryDate: [''] },
         });
 
         expect(context.solutionTable.items.length)
@@ -226,12 +226,12 @@ describe('catalogue-solutions order-item contextCreator', () => {
       const expectedContext = {
         errors: [
           {
-            href: '#practiceSize',
-            text: flatPatientManifest.errorMessages.PracticeSizeRequired,
+            href: '#quantity',
+            text: flatPatientManifest.errorMessages.QuantityRequired,
           },
         ],
         solutionTable: {
-          errorMessages: [flatPatientManifest.errorMessages.PracticeSizeRequired, undefined],
+          errorMessages: [flatPatientManifest.errorMessages.QuantityRequired, undefined],
         },
       };
 
@@ -246,8 +246,8 @@ describe('catalogue-solutions order-item contextCreator', () => {
         selectedPrice,
         formData: { price: 1.25, deliveryDate: [''] },
         validationErrors: [{
-          field: 'PracticeSize',
-          id: 'PracticeSizeRequired',
+          field: 'Quantity',
+          id: 'QuantityRequired',
         }],
       });
 
