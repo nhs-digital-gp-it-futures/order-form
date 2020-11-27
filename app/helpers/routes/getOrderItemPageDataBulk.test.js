@@ -1,12 +1,12 @@
 import { getOrderItemPageDataBulk } from './getOrderItemPageDataBulk';
 import { getSelectedPrice } from '../api/bapi/getSelectedPrice';
-import { getOrderItem } from '../api/ordapi/getOrderItem';
+import { getOrderItems } from '../api/ordapi/getOrderItems';
 
 const req = {};
 const fakeSessionManager = {};
 
 jest.mock('../api/bapi/getSelectedPrice');
-jest.mock('../api/ordapi/getOrderItem');
+jest.mock('../api/ordapi/getOrderItems');
 
 describe('getOrderItemPageDataBulk', () => {
   describe('when new order item', () => {
@@ -113,7 +113,7 @@ describe('getOrderItemPageDataBulk', () => {
   });
 
   describe('when existing order item', () => {
-    const mockOrderItemResponse = {
+    const mockOrderItemResponse = [{
       catalogueItemId: 'some-item-id',
       catalogueItemName: 'some item name',
       serviceRecipient: {
@@ -128,87 +128,93 @@ describe('getOrderItemPageDataBulk', () => {
         name: 'some item unit name',
         description: 'some item unit description',
       },
+      deliveryDate: '2020-02-09',
       price: 'some-price',
-    };
+    }];
 
     afterEach(() => {
       jest.resetAllMocks();
     });
 
-    it('should call getOrderItem and return the itemId', async () => {
-      getOrderItem.mockResolvedValue(mockOrderItemResponse);
+    it('should call getOrderItems and return the itemId', async () => {
+      getOrderItems.mockResolvedValue(mockOrderItemResponse);
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
-      expect(pageData.itemId).toEqual(mockOrderItemResponse.catalogueItemId);
+      expect(pageData.itemId).toEqual(mockOrderItemResponse[0].catalogueItemId);
     });
 
-    it('should call getOrderItem and return the itemName', async () => {
-      getOrderItem.mockResolvedValue(mockOrderItemResponse);
+    it('should call getOrderItems and return the itemName', async () => {
+      getOrderItems.mockResolvedValue(mockOrderItemResponse);
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
-      expect(pageData.itemName).toEqual(mockOrderItemResponse.catalogueItemName);
+      expect(pageData.itemName).toEqual(mockOrderItemResponse[0].catalogueItemName);
     });
 
-    it('should call getOrderItem and return the serviceRecipientId', async () => {
-      getOrderItem.mockResolvedValue(mockOrderItemResponse);
+    it('should call getOrderItems and return the serviceRecipientId', async () => {
+      getOrderItems.mockResolvedValue(mockOrderItemResponse);
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
-      expect(pageData.serviceRecipientId).toEqual(mockOrderItemResponse.serviceRecipient.odsCode);
+      expect(pageData.serviceRecipientId).toEqual(
+        mockOrderItemResponse[0].serviceRecipient.odsCode,
+      );
     });
 
-    it('should call getOrderItem and return the serviceRecipientName', async () => {
-      getOrderItem.mockResolvedValue(mockOrderItemResponse);
+    it('should call getOrderItems and return the serviceRecipientName', async () => {
+      getOrderItems.mockResolvedValue(mockOrderItemResponse);
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
-      expect(pageData.serviceRecipientName).toEqual(mockOrderItemResponse.serviceRecipient.name);
+      expect(pageData.serviceRecipientName).toEqual(mockOrderItemResponse[0].serviceRecipient.name);
     });
 
-    it('should call getOrderItem and return the selectedPrice', async () => {
-      getOrderItem.mockResolvedValue(mockOrderItemResponse);
+    it('should call getOrderItems and return the selectedPrice', async () => {
+      getOrderItems.mockResolvedValue(mockOrderItemResponse);
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
       expect(pageData.selectedPrice).toEqual({
-        price: mockOrderItemResponse.price,
-        itemUnit: mockOrderItemResponse.itemUnit,
-        type: mockOrderItemResponse.type,
-        provisioningType: mockOrderItemResponse.provisioningType,
+        price: mockOrderItemResponse[0].price,
+        itemUnit: mockOrderItemResponse[0].itemUnit,
+        type: mockOrderItemResponse[0].type,
+        provisioningType: mockOrderItemResponse[0].provisioningType,
       });
     });
 
-    it('should call getOrderItem and return the formData without deliveryDate', async () => {
-      getOrderItem.mockResolvedValue(mockOrderItemResponse);
+    it('should call getOrderItems and return the formData', async () => {
+      getOrderItems.mockResolvedValue(mockOrderItemResponse);
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
       expect(pageData.formData).toEqual({
-        quantity: mockOrderItemResponse.quantity,
-        selectEstimationPeriod: mockOrderItemResponse.estimationPeriod,
-        price: mockOrderItemResponse.price,
+        deliveryDate: [{
+          'deliveryDate-year': '2020',
+          'deliveryDate-month': '02',
+          'deliveryDate-day': '09',
+        }],
+        practiceSize: [mockOrderItemResponse[0].quantity],
+        price: mockOrderItemResponse[0].price,
       });
     });
 
-    it('should call getOrderItem and return the formData withDeliveryDate', async () => {
-      const mockOrderItemWithDeliveryDate = {
-        ...mockOrderItemResponse,
-        deliveryDate: '2020-02-09T00:00:00',
-      };
-      getOrderItem.mockResolvedValue(mockOrderItemWithDeliveryDate);
+    it('should call getOrderItems and return the recipients', async () => {
+      getOrderItems.mockResolvedValue(mockOrderItemResponse);
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
-      expect(pageData.formData).toEqual({
-        'deliveryDate-year': '2020',
-        'deliveryDate-month': '02',
-        'deliveryDate-day': '09',
-        quantity: mockOrderItemResponse.quantity,
-        selectEstimationPeriod: mockOrderItemResponse.estimationPeriod,
-        price: mockOrderItemResponse.price,
-      });
+      expect(pageData.recipients).toEqual([mockOrderItemResponse[0].serviceRecipient]);
+    });
+
+    it('should call getOrderItems and return the selectedRecipients', async () => {
+      getOrderItems.mockResolvedValue(mockOrderItemResponse);
+
+      const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
+
+      expect(pageData.selectedRecipients).toEqual(
+        [mockOrderItemResponse[0].serviceRecipient.odsCode],
+      );
     });
   });
 });
