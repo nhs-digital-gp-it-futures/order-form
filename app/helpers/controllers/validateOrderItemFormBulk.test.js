@@ -70,6 +70,10 @@ describe('validateOrderItemFormBulk', () => {
       field: 'Price',
       id: 'PriceLessThanMax',
     };
+    const priceGreaterThanListPrice = {
+      field: 'Price',
+      id: 'PriceGreaterThanListPrice',
+    };
     const quantityRequired = {
       field: 'Quantity',
       id: 'QuantityRequired',
@@ -144,6 +148,19 @@ describe('validateOrderItemFormBulk', () => {
       expect(errors).toEqual([priceLessThanMax]);
     });
 
+    it('should return an array of one validation error if price is greater than the list price', () => {
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+      const data = {
+        price: '0.11',
+        quantity: ['1'],
+        deliveryDate,
+      };
+
+      const errors = validateOrderItemFormBulk({ orderItemType, data, selectedPrice });
+
+      expect(errors).toEqual([priceGreaterThanListPrice]);
+    });
+
     it('should return an array of one validation error if an empty string for price is passed in', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
@@ -160,7 +177,7 @@ describe('validateOrderItemFormBulk', () => {
     it('should return an array of one validation error if quantity is not a number', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
-        price: '1.5',
+        price: '0.1',
         quantity: ['not a number'],
         deliveryDate,
       };
@@ -173,7 +190,7 @@ describe('validateOrderItemFormBulk', () => {
     it('should return an array of one validation error if quantity is invalid', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
-        price: '1.5',
+        price: '0.1',
         quantity: ['1.1'],
         deliveryDate,
       };
@@ -186,7 +203,7 @@ describe('validateOrderItemFormBulk', () => {
     it('should return an array of one validation error if quantity value is too large', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
-        price: '1.5',
+        price: '0.1',
         quantity: ['2147483647'],
         deliveryDate,
       };
@@ -199,7 +216,7 @@ describe('validateOrderItemFormBulk', () => {
     it('should return an array of one validation error  if deliveryDate is not valid', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
-        price: '1.5',
+        price: '0.1',
         quantity: ['1'],
         deliveryDate: [{
           'deliveryDate-day': '',
