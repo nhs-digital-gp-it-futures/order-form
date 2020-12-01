@@ -10,6 +10,7 @@ describe('postOrderItemBulk', () => {
     jest.resetAllMocks();
   });
 
+  const orderItemId = 'order-item-id';
   const serviceRecipient = { name: 'Recipient 1', odsCode: 'ods1' };
   const item = { id: 'item-1', name: 'Item One' };
   const formData = {
@@ -47,7 +48,6 @@ describe('postOrderItemBulk', () => {
       try {
         await postOrderItemBulk({
           orderId: 'order1',
-          orderItemId: 'neworderitem',
           orderItemType: 'SomeOrderItemType',
           accessToken: 'access_token',
           itemId: item.id,
@@ -63,12 +63,11 @@ describe('postOrderItemBulk', () => {
   });
 
   describe('with no errors', () => {
-    it('should post correctly formatted data', async () => {
+    it('should post correctly formatted data when new order', async () => {
       postData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
       await postOrderItemBulk({
         orderId: 'order1',
-        orderItemId: 'neworderitem',
         orderItemType: 'SomeOrderItemType',
         accessToken: 'access_token',
         itemId: item.id,
@@ -97,12 +96,46 @@ describe('postOrderItemBulk', () => {
       });
     });
 
+    it('should post correctly formatted data when exisiting order', async () => {
+      postData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
+
+      await postOrderItemBulk({
+        orderItemId,
+        orderId: 'order1',
+        orderItemType: 'SomeOrderItemType',
+        accessToken: 'access_token',
+        itemId: item.id,
+        itemName: item.name,
+        selectedPrice,
+        recipients: [serviceRecipient],
+        formData,
+      });
+
+      expect(postData.mock.calls.length).toEqual(1);
+      expect(postData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/order1/order-items/batch`,
+        body: [{
+          ...selectedPrice,
+          orderItemId,
+          serviceRecipient,
+          catalogueItemId: item.id,
+          catalogueItemName: item.name,
+          catalogueItemType: 'SomeOrderItemType',
+          deliveryDate: '2020-12-25',
+          quantity: 1,
+          estimationPeriod: 'month',
+          price: 500.49,
+        }],
+        accessToken: 'access_token',
+        logger,
+      });
+    });
+
     it('should return success as true if data is saved successfully', async () => {
       postData.mockResolvedValueOnce({ success: true });
 
       const response = await postOrderItemBulk({
         orderId: 'order1',
-        orderItemId: 'neworderitem',
         orderItemType: 'SomeOrderItemType',
         accessToken: 'access_token',
         itemId: item.id,

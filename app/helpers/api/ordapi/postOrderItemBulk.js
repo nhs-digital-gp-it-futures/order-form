@@ -4,6 +4,7 @@ import { extractDate } from '../../controllers/extractDate';
 import { orderApiUrl } from '../../../config';
 
 const formatPostData = ({
+  orderItemId,
   orderItemType,
   itemId,
   itemName,
@@ -12,6 +13,7 @@ const formatPostData = ({
   formData,
 }) => recipients.map((recipient, index) => ({
   ...selectedPrice,
+  orderItemId,
   serviceRecipient: {
     name: recipient.name,
     odsCode: recipient.odsCode,
@@ -28,6 +30,7 @@ const formatPostData = ({
 const getPostOrderItemEndpoint = orderId => `${orderApiUrl}/api/v1/orders/${orderId}/order-items/batch`;
 
 export const postOrderItemBulk = async ({
+  orderItemId,
   accessToken,
   orderId,
   orderItemType,
@@ -39,6 +42,7 @@ export const postOrderItemBulk = async ({
 }) => {
   const endpoint = getPostOrderItemEndpoint(orderId);
   const body = formatPostData({
+    orderItemId,
     orderItemType,
     itemId,
     itemName,
