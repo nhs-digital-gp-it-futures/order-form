@@ -113,6 +113,17 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
       if (apiResponse.success) {
         logger.info('redirecting catalogue solutions main page');
+        sessionManager.saveToSession({ req, key: sessionKeys.solutions, value: undefined });
+        sessionManager.saveToSession({ req, key: sessionKeys.selectedItemId, value: undefined });
+        sessionManager.saveToSession({ req, key: sessionKeys.selectedItemName, value: undefined });
+        sessionManager.saveToSession({ req, key: sessionKeys.solutionPrices, value: undefined });
+        sessionManager.saveToSession({ req, key: sessionKeys.selectedPriceId, value: undefined });
+        sessionManager.saveToSession(
+          { req, key: sessionKeys.selectedRecipients, value: undefined },
+        );
+        sessionManager.saveToSession(
+          { req, key: sessionKeys.plannedDeliveryDate, value: undefined },
+        );
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
       }
 
