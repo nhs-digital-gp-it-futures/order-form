@@ -76,7 +76,7 @@ export const getOrderItemPageDataBulk = async ({
 
   const formData = {
     deliveryDate: [],
-    practiceSize: [],
+    quantity: [],
     price: formatDecimal(selectedPrice.price),
   };
 
@@ -89,7 +89,7 @@ export const getOrderItemPageDataBulk = async ({
       'deliveryDate-month': month,
       'deliveryDate-day': day,
     });
-    formData.practiceSize.push(orderItem.quantity);
+    formData.quantity.push(orderItem.quantity);
 
     const catalogueIds = [];
     if (catalogueIds.includes(orderItem.catalogueItemId)) {

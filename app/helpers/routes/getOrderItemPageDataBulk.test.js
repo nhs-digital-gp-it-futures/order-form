@@ -194,7 +194,7 @@ describe('getOrderItemPageDataBulk', () => {
           'deliveryDate-month': '02',
           'deliveryDate-day': '09',
         }],
-        practiceSize: [mockOrderItemResponse[0].quantity],
+        quantity: [mockOrderItemResponse[0].quantity],
         price: mockOrderItemResponse[0].price,
       });
     });
