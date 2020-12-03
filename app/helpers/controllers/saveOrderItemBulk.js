@@ -1,6 +1,5 @@
 import { logger } from '../../logger';
 import { postOrderItemBulk } from '../api/ordapi/postOrderItemBulk';
-import { putOrderItem } from '../api/ordapi/putOrderItem';
 
 export const saveOrderItemBulk = async ({
   orderId,
@@ -33,10 +32,20 @@ export const saveOrderItemBulk = async ({
         ),
         formData,
       })
-      : await putOrderItem({
+      : await postOrderItemBulk({
+        orderItemId,
         accessToken,
         orderId,
-        orderItemId,
+        orderItemType,
+        serviceRecipientId,
+        serviceRecipientName,
+        itemId,
+        itemName,
+        selectedPrice,
+        recipients: selectedRecipients.map(
+          selectedRecipient => recipients
+            .find(recipient => recipient.odsCode === selectedRecipient),
+        ),
         formData,
       });
     return response;
