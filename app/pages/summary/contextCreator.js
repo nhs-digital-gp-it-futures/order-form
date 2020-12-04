@@ -225,6 +225,12 @@ const generateRecurringCostDetailsTable = ({
     }));
 
     columns.push(({
+      classes: recurringCostTable.cellInfo.serviceItemId.classes,
+      data: item.serviceItemId,
+      dataTestId: 'service-item-id',
+    }));
+
+    columns.push(({
       classes: recurringCostTable.cellInfo.priceUnit.classes,
       data: `${formatPrice(item.price)} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
       dataTestId: 'price-unit',

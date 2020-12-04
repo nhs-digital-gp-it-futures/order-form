@@ -242,15 +242,17 @@ test('should render the recurring cost table with the column headings', async (t
   const recipientNameColumnHeading = recurringCostTable.find('[data-test-id="column-heading-0"]');
   const itemIdColumnHeading = recurringCostTable.find('[data-test-id="column-heading-1"]');
   const itemNameColumnHeading = recurringCostTable.find('[data-test-id="column-heading-2"]');
-  const priceUnitColumnHeading = recurringCostTable.find('[data-test-id="column-heading-3"]');
-  const quantityColumnHeading = recurringCostTable.find('[data-test-id="column-heading-4"]');
-  const plannedDateColumnHeading = recurringCostTable.find('[data-test-id="column-heading-5"]');
-  const itemCostColumnHeading = recurringCostTable.find('[data-test-id="column-heading-6"]');
+  const serviceItemIdColumnHeading = recurringCostTable.find('[data-test-id="column-heading-3"]');
+  const priceUnitColumnHeading = recurringCostTable.find('[data-test-id="column-heading-4"]');
+  const quantityColumnHeading = recurringCostTable.find('[data-test-id="column-heading-5"]');
+  const plannedDateColumnHeading = recurringCostTable.find('[data-test-id="column-heading-6"]');
+  const itemCostColumnHeading = recurringCostTable.find('[data-test-id="column-heading-7"]');
 
   await t
     .expect(await extractInnerText(recipientNameColumnHeading)).eql('Recipient name (ODS code)')
     .expect(await extractInnerText(itemIdColumnHeading)).eql('Item ID')
     .expect(await extractInnerText(itemNameColumnHeading)).eql('Item name')
+    .expect(await extractInnerText(serviceItemIdColumnHeading)).eql('Service Item ID')
     .expect(await extractInnerText(priceUnitColumnHeading)).eql('Price unit of order (£)')
     .expect(await extractInnerText(quantityColumnHeading)).eql('Quantity /period')
     .expect(await extractInnerText(plannedDateColumnHeading)).eql('Planned delivery date')
