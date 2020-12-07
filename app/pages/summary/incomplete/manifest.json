@@ -108,7 +108,7 @@
         "classes": "nhsuk-u-font-size-14"
       },
       {
-        "data": "Service Item ID",
+        "data": "Service Instance ID",
         "width": "23%",
         "classes": "nhsuk-u-font-size-14"
       },
@@ -143,7 +143,7 @@
       "itemName": {
         "classes": "nhsuk-u-font-size-14"
       },
-      "serviceItemId": {
+      "serviceInstanceId": {
         "classes": "nhsuk-u-font-size-14"
       },
       "priceUnit": {

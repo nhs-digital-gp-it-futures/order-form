@@ -225,9 +225,9 @@ const generateRecurringCostDetailsTable = ({
     }));
 
     columns.push(({
-      classes: recurringCostTable.cellInfo.serviceItemId.classes,
-      data: item.serviceItemId,
-      dataTestId: 'service-item-id',
+      classes: recurringCostTable.cellInfo.serviceInstanceId.classes,
+      data: item.serviceInstanceId,
+      dataTestId: 'service-instance-id',
     }));
 
     columns.push(({
