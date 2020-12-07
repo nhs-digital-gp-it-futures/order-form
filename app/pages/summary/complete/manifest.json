@@ -109,6 +109,11 @@
         "classes": "nhsuk-u-font-size-14"
       },
       {
+        "data": "Service Instance ID",
+        "width": "23%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
         "data": "Price unit of order (£)",
         "width": "15%",
         "classes": "nhsuk-u-font-size-14"
@@ -137,6 +142,9 @@
         "classes": "nhsuk-u-font-size-14"
       },
       "itemName": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "serviceInstanceId": {
         "classes": "nhsuk-u-font-size-14"
       },
       "priceUnit": {
