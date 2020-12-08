@@ -410,6 +410,7 @@ describe('summary page', () => {
           { data: 'Recipient name (ODS code)' },
           { data: 'Item ID' },
           { data: 'Item name' },
+          { data: 'Service Instance ID' },
           { data: 'Price unit of order (£)' },
           { data: 'Quantity/period' },
           { data: 'Planned delivery date' },
@@ -420,6 +421,7 @@ describe('summary page', () => {
             { data: 'Some Recipient Name', dataTestId: 'recipient-name' },
             { data: 'item-1', dataTestId: 'item-id' },
             { data: 'Some item name', dataTestId: 'item-name' },
+            { data: 'service-instance-1', dataTestId: 'service-instance-id' },
             { data: '£1.26 per Patient per Year', dataTestId: 'price-unit' },
             { data: '500 per month', dataTestId: 'quantity' },
             { data: '24 February 2020', dataTestId: 'planned-date' },
@@ -436,10 +438,11 @@ describe('summary page', () => {
         expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Recipient name (ODS code)');
         expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Item ID');
         expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual('Item name');
-        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual('Price unit of order (£)');
-        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual('Quantity/period');
-        expect(table.find('[data-test-id="column-heading-5"]').text().trim()).toEqual('Planned delivery date');
-        expect(table.find('[data-test-id="column-heading-6"]').text().trim()).toEqual('Item cost per year(£)');
+        expect(table.find('[data-test-id="column-heading-3"]').text().trim()).toEqual('Service Instance ID');
+        expect(table.find('[data-test-id="column-heading-4"]').text().trim()).toEqual('Price unit of order (£)');
+        expect(table.find('[data-test-id="column-heading-5"]').text().trim()).toEqual('Quantity/period');
+        expect(table.find('[data-test-id="column-heading-6"]').text().trim()).toEqual('Planned delivery date');
+        expect(table.find('[data-test-id="column-heading-7"]').text().trim()).toEqual('Item cost per year(£)');
       });
     }));
 
@@ -450,6 +453,7 @@ describe('summary page', () => {
         const recipientNameDetails = recurringCost1Row.find('div[data-test-id="recipient-name"]');
         const itemId = recurringCost1Row.find('div[data-test-id="item-id"]');
         const itemName = recurringCost1Row.find('div[data-test-id="item-name"]');
+        const serviceInstanceId = recurringCost1Row.find('div[data-test-id="service-instance-id"]');
         const priceUnit = recurringCost1Row.find('div[data-test-id="price-unit"]');
         const quantity = recurringCost1Row.find('div[data-test-id="quantity"]');
         const plannedDate = recurringCost1Row.find('div[data-test-id="planned-date"]');
@@ -465,6 +469,9 @@ describe('summary page', () => {
 
         expect(itemName.length).toEqual(1);
         expect(itemName.text().trim()).toEqual('Some item name');
+
+        expect(serviceInstanceId.length).toEqual(1);
+        expect(serviceInstanceId.text().trim()).toEqual('service-instance-1');
 
         expect(priceUnit.length).toEqual(1);
         expect(priceUnit.text().trim()).toEqual('£1.26 per Patient per Year');
