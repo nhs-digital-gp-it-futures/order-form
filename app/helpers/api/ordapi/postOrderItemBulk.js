@@ -40,7 +40,6 @@ export const postOrderItemBulk = async ({
   recipients,
   formData,
 }) => {
-  console.log(selectedPrice);
   const endpoint = getPostOrderItemEndpoint(orderId);
   const body = formatPostData({
     orderItemId,
