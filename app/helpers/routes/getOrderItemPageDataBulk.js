@@ -72,6 +72,7 @@ export const getOrderItemPageDataBulk = async ({
     timeUnit: orderItems[0].timeUnit,
     type: orderItems[0].type,
     provisioningType: orderItems[0].provisioningType,
+    currencyCode: orderItems[0].currencyCode,
   };
 
   const formData = {
