@@ -115,7 +115,7 @@ describe('saveOrderItemBulk', () => {
 
         const response = await saveOrderItemBulk({
           orderId: 'order1',
-          orderItemId: 'order-id',
+          orderItemId: 'neworderitem',
           accessToken: 'access_token',
           serviceRecipientId: serviceRecipient.odsCode,
           serviceRecipientName: serviceRecipient.name,
@@ -155,7 +155,7 @@ describe('saveOrderItemBulk', () => {
 
         const response = await saveOrderItemBulk({
           orderId: 'order1',
-          orderItemId: 'order-id',
+          orderItemId: '1',
           accessToken: 'access_token',
           serviceRecipientId: serviceRecipient.odsCode,
           serviceRecipientName: serviceRecipient.name,
@@ -176,7 +176,7 @@ describe('saveOrderItemBulk', () => {
         try {
           await saveOrderItemBulk({
             orderId: 'order1',
-            orderItemId: 'order-id',
+            orderItemId: '1',
             accessToken: 'access_token',
             serviceRecipientId: serviceRecipient.odsCode,
             serviceRecipientName: serviceRecipient.name,
@@ -199,7 +199,7 @@ describe('saveOrderItemBulk', () => {
 
         await saveOrderItemBulk({
           orderId: 'order1',
-          orderItemId: 'order-id',
+          orderItemId: '1',
           accessToken: 'access_token',
           orderItemType: 'order-type',
           serviceRecipientId: serviceRecipient.odsCode,
@@ -216,7 +216,7 @@ describe('saveOrderItemBulk', () => {
         expect(postOrderItemBulk).toHaveBeenCalledWith({
           accessToken: 'access_token',
           orderId: 'order1',
-          orderItemId: 'order-id',
+          orderItemId: 1,
           orderItemType: 'order-type',
           serviceRecipientId: serviceRecipient.odsCode,
           serviceRecipientName: serviceRecipient.name,
@@ -233,7 +233,7 @@ describe('saveOrderItemBulk', () => {
 
         const response = await saveOrderItemBulk({
           orderId: 'order1',
-          orderItemId: 'order-id',
+          orderItemId: '1',
           accessToken: 'access_token',
           serviceRecipientId: serviceRecipient.odsCode,
           serviceRecipientName: serviceRecipient.name,
