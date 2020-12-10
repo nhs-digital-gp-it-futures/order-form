@@ -6,7 +6,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/item-1';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/1';
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -59,7 +59,7 @@ const orderItemPageDataInSession = JSON.stringify({
 
 const requestPostBody = {
   ...selectedPrice,
-  orderItemId: 'item-1',
+  orderItemId: 1,
   serviceRecipient: recipients[0],
   catalogueItemId: orderItem.catalogueItemId,
   catalogueItemName: orderItem.catalogueItemName,

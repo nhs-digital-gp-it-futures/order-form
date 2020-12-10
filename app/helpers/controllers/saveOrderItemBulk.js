@@ -33,7 +33,7 @@ export const saveOrderItemBulk = async ({
         formData,
       })
       : await postOrderItemBulk({
-        orderItemId,
+        orderItemId: Number(orderItemId),
         accessToken,
         orderId,
         orderItemType,
