@@ -26,7 +26,7 @@ const mocks = () => {
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, { supplierId: 'supp-1' });
   nock(solutionsApiUrl)
-    .get('/api/v1/catalogue-items?supplierId=supp-1&catalogueItemType=Solution')
+    .get('/api/v1/catalogue-items?publishedStatus=published&supplierId=supp-1&catalogueItemType=Solution')
     .reply(200, mockSolutions);
 };
 
