@@ -25,7 +25,7 @@ const associatedServicesInSession = JSON.stringify(
 
 const mocks = () => {
   nock(bapiUrl)
-    .get('/api/v1/catalogue-items?supplierId=sup-1&catalogueItemType=AssociatedService')
+    .get('/api/v1/catalogue-items?publishedStatus=published&supplierId=sup-1&catalogueItemType=AssociatedService')
     .reply(200, mockAssociatedServices);
 };
 
@@ -134,7 +134,7 @@ test('should render the Continue button', async (t) => {
 test('should render the error page if no associated services are found', async (t) => {
   await setState(ClientFunction)(sessionKeys.selectedSupplier, selectedSupplierInSession);
   nock(bapiUrl)
-    .get('/api/v1/catalogue-items?supplierId=sup-1&catalogueItemType=AssociatedService')
+    .get('/api/v1/catalogue-items?publishedStatus=published&supplierId=sup-1&catalogueItemType=AssociatedService')
     .reply(200, []);
 
   await pageSetup({ ...defaultPageSetup, withAuth: true, getRoute: false });
