@@ -73,7 +73,6 @@ test('should render Catalogue-solutions select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-
 test('should link to /organisation/order-id/catalogue-solutions for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);

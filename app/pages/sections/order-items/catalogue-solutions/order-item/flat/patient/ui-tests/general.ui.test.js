@@ -181,7 +181,6 @@ test('should only render 1 row', async (t) => {
   const row0 = table.find('[data-test-id="table-row-0"]');
   const row1 = table.find('[data-test-id="table-row-1"]');
 
-
   await t
     .expect(row0.exists).ok()
     .expect(row1.exists).notOk();

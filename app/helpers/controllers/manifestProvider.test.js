@@ -30,13 +30,13 @@ describe('getSelectedPriceManifest', () => {
     ${'AdditionalService'}  | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/order-items/additional-services/order-item/flat/declarative/manifest.json'}
     ${'AssociatedService'}  | ${'Declarative'} | ${'Flat'} | ${'../../pages/sections/order-items/associated-services/order-item/flat/declarative/manifest.json'}
   `('should call path.join with the path $expectedPath', ({
-  orderItemType, provisioningType, type, expectedPath,
-}) => {
-  JSON.parse = jest.fn();
-  getSelectedPriceManifest({ orderItemType, provisioningType, type });
-  expect(path.join.mock.calls.length).toEqual(1);
-  expect(path.join).toHaveBeenCalledWith(__dirname, expectedPath);
-});
+    orderItemType, provisioningType, type, expectedPath,
+  }) => {
+    JSON.parse = jest.fn();
+    getSelectedPriceManifest({ orderItemType, provisioningType, type });
+    expect(path.join.mock.calls.length).toEqual(1);
+    expect(path.join).toHaveBeenCalledWith(__dirname, expectedPath);
+  });
 
   it('should call readFileSync with the expected path', () => {
     JSON.parse = jest.fn();

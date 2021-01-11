@@ -195,7 +195,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     if (response.success) {
       const selectedRecipients = Object
         .entries(req.body)
-        .filter(item => item[0] !== '_csrf')
+        .filter((item) => item[0] !== '_csrf')
         .map(([odsCode]) => odsCode);
 
       sessionManager.saveToSession({

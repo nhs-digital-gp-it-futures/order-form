@@ -3,7 +3,7 @@ import { baseUrl } from '../../../../../../config';
 import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
 const generateAssociatedServiceOptions = ({ associatedServices, selectedAssociatedServiceId }) => (
-  associatedServices.map(associatedService => ({
+  associatedServices.map((associatedService) => ({
     value: associatedService.catalogueItemId,
     text: associatedService.name,
     checked: associatedService.catalogueItemId === selectedAssociatedServiceId
@@ -13,7 +13,7 @@ const generateAssociatedServiceOptions = ({ associatedServices, selectedAssociat
 );
 
 const generateQuestionsContext = ({ associatedServices, selectedAssociatedServiceId }) => (
-  manifest.questions.map(question => ({
+  manifest.questions.map((question) => ({
     ...question,
     options: generateAssociatedServiceOptions({ associatedServices, selectedAssociatedServiceId }),
   }))

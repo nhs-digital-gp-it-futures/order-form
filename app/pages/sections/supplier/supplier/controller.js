@@ -3,7 +3,7 @@ import { logger } from '../../../../logger';
 import { getSupplier as getSupplierFromBapi } from '../../../../helpers/api/bapi/getSupplier';
 import { getSupplier as getSupplierFromOrdapi } from '../../../../helpers/api/ordapi/getSupplier';
 
-const formatFormData = data => ({
+const formatFormData = (data) => ({
   supplierId: data.supplierId ? data.supplierId.trim() : undefined,
   name: data.name ? data.name.trim() : undefined,
   address: {

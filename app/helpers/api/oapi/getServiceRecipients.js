@@ -1,4 +1,3 @@
-
 import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { organisationApiUrl } from '../../../config';

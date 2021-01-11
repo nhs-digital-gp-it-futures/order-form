@@ -3,7 +3,7 @@ import { getCallOffOrderingParty } from '../../../helpers/api/ordapi/getCallOffO
 import { logger } from '../../../logger';
 import { getOrganisation } from '../../../helpers/api/oapi/getOrganisation';
 
-const formatFormData = data => ({
+const formatFormData = (data) => ({
   name: data.name ? data.name.trim() : null,
   odsCode: data.odsCode ? data.odsCode.trim() : null,
   address: {

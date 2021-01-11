@@ -37,7 +37,6 @@ describe('header', () => {
     });
   }));
 
-
   describe('login/logout component', () => {
     describe('when username is provided', () => {
       it('should render username', componentTester(setup, (harness) => {

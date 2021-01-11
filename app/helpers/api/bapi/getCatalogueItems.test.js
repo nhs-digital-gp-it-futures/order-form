@@ -25,12 +25,12 @@ describe('getCatalogueItems', () => {
       ${'\t'}       | ${'solution'}     | ${`${catalogueItemsUrl}?publishedStatus=published&catalogueItemType=solution`}
       ${'supplier'} | ${'solution'}     | ${`${catalogueItemsUrl}?publishedStatus=published&supplierId=supplier&catalogueItemType=solution`}
     `('getCatalogueItems calls getData with the correct params for supplier "$supplierId" and catalogue item type "$catalogueItemType"', async ({ supplierId, catalogueItemType, expectedEndpoint }) => {
-  getData.mockResolvedValueOnce([{}]);
-  await getCatalogueItems({ supplierId, catalogueItemType });
+    getData.mockResolvedValueOnce([{}]);
+    await getCatalogueItems({ supplierId, catalogueItemType });
 
-  expect(getData.mock.calls.length).toEqual(1);
-  expect(getData).toHaveBeenCalledWith({ endpoint: expectedEndpoint, logger });
-});
+    expect(getData.mock.calls.length).toEqual(1);
+    expect(getData).toHaveBeenCalledWith({ endpoint: expectedEndpoint, logger });
+  });
 
   it('should return the catalogueItems', async () => {
     const expectedCatalogueItems = [{

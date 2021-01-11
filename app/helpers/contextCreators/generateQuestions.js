@@ -1,5 +1,5 @@
 const populateRadioQuestion = ({ questionManifest, selectedValue = '' }) => {
-  const populatedOptions = questionManifest.options.map(option => ({
+  const populatedOptions = questionManifest.options.map((option) => ({
     ...option,
     checked: option.value.toLowerCase() === selectedValue.toLowerCase()
       ? true : undefined,

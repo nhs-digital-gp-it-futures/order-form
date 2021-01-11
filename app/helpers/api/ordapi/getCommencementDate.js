@@ -2,7 +2,7 @@ import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
-const getCommencementDateEndpoint = orderId => (
+const getCommencementDateEndpoint = (orderId) => (
   `${orderApiUrl}/api/v1/orders/${orderId}/sections/commencement-date`
 );
 

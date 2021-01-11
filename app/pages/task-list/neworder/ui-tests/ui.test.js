@@ -74,7 +74,6 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(neworderPageContent.description);
 });
 
-
 test('should not render the order description details', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);

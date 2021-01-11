@@ -2,7 +2,7 @@ import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
-const getOrderSummaryEndpoint = orderId => `${orderApiUrl}/api/v1/orders/${orderId}/summary`;
+const getOrderSummaryEndpoint = (orderId) => `${orderApiUrl}/api/v1/orders/${orderId}/summary`;
 
 export const getOrderSummary = async ({ orderId, accessToken }) => {
   const endpoint = getOrderSummaryEndpoint(orderId);

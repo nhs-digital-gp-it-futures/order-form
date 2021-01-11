@@ -66,7 +66,6 @@ const contextWithErrors = {
   ...questionsWithErrors,
 };
 
-
 describe('ordering-party page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     harness.request(context, ($) => {

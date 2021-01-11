@@ -7,7 +7,7 @@ const createFakeSectionData = ({
   associatedServiceCount,
   additionalServiceCount,
 }) => {
-  const result = completedSections.map(s => ({ id: s, status: 'complete' }));
+  const result = completedSections.map((s) => ({ id: s, status: 'complete' }));
 
   if (catalogueSolutionCount) {
     result.push({
@@ -63,26 +63,26 @@ describe('taskListManifest', () => {
       ${associatedServices} | ${1}                   | ${1}                   | ${1}                   | ${true}
       ${associatedServices} | ${0}                   | ${0}                   | ${0}                   | ${false}
     `('generateTaskList with $completedSections, $catalogueSolutionCount catalogue solution(s), $associatedServiceCount associated service(s) and $additionalServiceCount additional service(s) is enabled: $expectedEnabled', async ({
-  completedSections,
-  catalogueSolutionCount,
-  associatedServiceCount,
-  additionalServiceCount,
-  expectedEnabled,
-}) => {
-  const sectionsData = createFakeSectionData({
-    completedSections,
-    catalogueSolutionCount,
-    associatedServiceCount,
-    additionalServiceCount,
-  });
+      completedSections,
+      catalogueSolutionCount,
+      associatedServiceCount,
+      additionalServiceCount,
+      expectedEnabled,
+    }) => {
+      const sectionsData = createFakeSectionData({
+        completedSections,
+        catalogueSolutionCount,
+        associatedServiceCount,
+        additionalServiceCount,
+      });
 
-  const taskList = generateTaskList({
-    orderId: 'order-1',
-    taskListManifest,
-    sectionsData,
-  });
+      const taskList = generateTaskList({
+        orderId: 'order-1',
+        taskListManifest,
+        sectionsData,
+      });
 
-  expect(Boolean(taskList[6].items[0].href)).toBe(expectedEnabled);
-});
+      expect(Boolean(taskList[6].items[0].href)).toBe(expectedEnabled);
+    });
   });
 });

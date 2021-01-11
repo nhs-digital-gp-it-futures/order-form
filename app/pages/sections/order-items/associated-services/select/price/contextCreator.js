@@ -34,7 +34,7 @@ const generatePriceList = (
 });
 
 const generateQuestionsContext = (associatedServicePrices, selectedPriceId) => (
-  manifest.questions.map(question => ({
+  manifest.questions.map((question) => ({
     ...question,
     options: generatePriceList(associatedServicePrices.prices, selectedPriceId),
   }))

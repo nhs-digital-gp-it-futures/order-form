@@ -10,7 +10,6 @@ describe('putOrderItem', () => {
     jest.resetAllMocks();
   });
 
-
   describe('with errors', () => {
     it('should throw an error if api request is unsuccessful', async () => {
       const responseData = { errors: [{}] };

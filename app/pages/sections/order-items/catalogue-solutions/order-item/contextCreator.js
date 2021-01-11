@@ -32,7 +32,9 @@ export const getContext = ({
       solutionTable: selectedPriceManifest.solutionTable,
       deliveryDate: formData.deliveryDate,
       recipients: selectedRecipients.map(
-        selectedRecipient => recipients.find(recipient => recipient.odsCode === selectedRecipient),
+        (selectedRecipient) => recipients.find(
+          (recipient) => recipient.odsCode === selectedRecipient,
+        ),
       ),
       quantity: formData.quantity,
       errorMessages,

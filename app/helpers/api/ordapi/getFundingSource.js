@@ -2,7 +2,7 @@ import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
-const getFundingSourceEndpoint = orderId => (
+const getFundingSourceEndpoint = (orderId) => (
   `${orderApiUrl}/api/v1/orders/${orderId}/funding-source`
 );
 

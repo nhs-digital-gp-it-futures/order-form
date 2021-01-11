@@ -73,6 +73,6 @@ export const validateOrderItemFormBulk = ({ data, selectedPrice, orderItemType }
     });
   }
 
-  return [...new Set(errors.map(errorObject => JSON.stringify(errorObject)))]
-    .map(errorString => JSON.parse(errorString));
+  return [...new Set(errors.map((errorObject) => JSON.stringify(errorObject)))]
+    .map((errorString) => JSON.parse(errorString));
 };

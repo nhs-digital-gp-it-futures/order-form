@@ -2,7 +2,7 @@ import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
-const getSupplierEndpoint = orderId => (
+const getSupplierEndpoint = (orderId) => (
   `${orderApiUrl}/api/v1/orders/${orderId}/sections/supplier`
 );
 

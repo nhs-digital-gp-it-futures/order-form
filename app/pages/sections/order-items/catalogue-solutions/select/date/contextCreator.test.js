@@ -22,7 +22,6 @@ describe('delivery-date contextCreator', () => {
       expect(context.title).toEqual('Planned delivery date of Solution One for order-id');
     });
 
-
     it('should construct the backLinkHref when solutionPrices contain not 1', () => {
       const context = getContext({ orderId });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`);
