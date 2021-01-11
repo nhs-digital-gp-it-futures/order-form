@@ -1,4 +1,4 @@
-const transformPropertyName = propertyName => (propertyName.startsWith('[')
+const transformPropertyName = (propertyName) => (propertyName.startsWith('[')
   ? propertyName.substring(4)
   : propertyName);
 
@@ -12,11 +12,11 @@ export const transformApiValidationResponse = (validationResponse) => {
         acc[field] = new Set();
       }
 
-      value.forEach(v => acc[field].add(v));
+      value.forEach((v) => acc[field].add(v));
       return acc;
     }, {});
 
   return Object
     .entries(distinctApiErrors)
-    .flatMap(([key, value]) => [...value].map(v => ({ field: key, id: v })));
+    .flatMap(([key, value]) => [...value].map((v) => ({ field: key, id: v })));
 };

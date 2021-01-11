@@ -53,7 +53,6 @@ describe('getOrder', () => {
     name: 'B Recipient',
   };
 
-
   it('should call getData with the correct params', async () => {
     getData.mockResolvedValueOnce({});
 

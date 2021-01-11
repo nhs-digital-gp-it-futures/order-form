@@ -8,7 +8,7 @@ const getCheckedStatus = ({ selectStatus, serviceRecipient, selectedRecipientIds
   if (selectStatus === 'select') return true;
   if (selectStatus === 'deselect') return false;
   return !!selectedRecipientIdsData
-    .find(checkedRecipient => checkedRecipient === serviceRecipient.odsCode);
+    .find((checkedRecipient) => checkedRecipient === serviceRecipient.odsCode);
 };
 
 const generateItems = ({

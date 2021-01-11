@@ -3,7 +3,7 @@ import { baseUrl } from '../../../../../../config';
 import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
 const generateSolutionOptions = ({ solutions, selectedSolutionId }) => (
-  solutions.map(solution => ({
+  solutions.map((solution) => ({
     value: solution.catalogueItemId,
     text: solution.name,
     checked: solution.catalogueItemId === selectedSolutionId ? true : undefined,
@@ -11,7 +11,7 @@ const generateSolutionOptions = ({ solutions, selectedSolutionId }) => (
 );
 
 const generateQuestionsContext = ({ solutions, selectedSolutionId }) => (
-  manifest.questions.map(question => ({
+  manifest.questions.map((question) => ({
     ...question,
     options: generateSolutionOptions({ solutions, selectedSolutionId }),
   }))

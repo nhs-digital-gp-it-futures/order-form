@@ -1,8 +1,8 @@
 import { getContext, getErrorContext } from './contextCreator';
 
-export const getAdditionalServiceRecipientPageContext = params => getContext(params);
+export const getAdditionalServiceRecipientPageContext = (params) => getContext(params);
 
-export const getAdditionalServiceRecipientErrorPageContext = params => getErrorContext(params);
+export const getAdditionalServiceRecipientErrorPageContext = (params) => getErrorContext(params);
 
 export const validateAdditionalServiceRecipientForm = ({ data }) => {
   if (data.selectRecipient && data.selectRecipient.trim().length > 0) {
@@ -19,5 +19,5 @@ export const validateAdditionalServiceRecipientForm = ({ data }) => {
 };
 
 export const getAdditionalServiceRecipientName = ({ serviceRecipientId, recipients }) => (
-  recipients.find(recipient => serviceRecipientId === recipient.odsCode).name
+  recipients.find((recipient) => serviceRecipientId === recipient.odsCode).name
 );

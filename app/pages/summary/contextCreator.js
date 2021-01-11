@@ -23,7 +23,7 @@ const generateCallOffPartyDetails = ({ orderPartyData }) => {
           orderPartyData.address.county,
           orderPartyData.address.postcode,
           orderPartyData.address.country,
-        ].filter(lineItem => lineItem !== undefined),
+        ].filter((lineItem) => lineItem !== undefined),
         dataTestId: 'call-off-party',
       },
     };
@@ -48,7 +48,7 @@ const generateSupplierDetails = ({ supplierData }) => {
           supplierData.address.county,
           supplierData.address.postcode,
           supplierData.address.country,
-        ].filter(lineItem => lineItem !== undefined),
+        ].filter((lineItem) => lineItem !== undefined),
         dataTestId: 'supplier',
       },
     };

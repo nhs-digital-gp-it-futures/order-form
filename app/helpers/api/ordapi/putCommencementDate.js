@@ -3,11 +3,11 @@ import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 import { extractDate } from '../../controllers/extractDate';
 
-const formatPutData = data => ({
+const formatPutData = (data) => ({
   commencementDate: extractDate('commencementDate', data),
 });
 
-const getPutCommencementDateEndpoint = orderId => (
+const getPutCommencementDateEndpoint = (orderId) => (
   `${orderApiUrl}/api/v1/orders/${orderId}/sections/commencement-date`
 );
 

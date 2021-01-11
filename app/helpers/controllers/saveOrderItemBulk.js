@@ -27,8 +27,8 @@ export const saveOrderItemBulk = async ({
         itemName,
         selectedPrice,
         recipients: selectedRecipients.map(
-          selectedRecipient => recipients
-            .find(recipient => recipient.odsCode === selectedRecipient),
+          (selectedRecipient) => recipients
+            .find((recipient) => recipient.odsCode === selectedRecipient),
         ),
         formData,
       })
@@ -43,8 +43,8 @@ export const saveOrderItemBulk = async ({
         itemName,
         selectedPrice,
         recipients: selectedRecipients.map(
-          selectedRecipient => recipients
-            .find(recipient => recipient.odsCode === selectedRecipient),
+          (selectedRecipient) => recipients
+            .find((recipient) => recipient.odsCode === selectedRecipient),
         ),
         formData,
       });

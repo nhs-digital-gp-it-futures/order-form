@@ -34,4 +34,4 @@ export const validateCommencementDateForm = ({ data }) => {
   return errors;
 };
 
-export const getCommencementDateErrorContext = async params => getErrorContext(params);
+export const getCommencementDateErrorContext = async (params) => getErrorContext(params);

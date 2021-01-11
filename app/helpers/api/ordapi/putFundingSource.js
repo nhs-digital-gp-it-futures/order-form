@@ -6,7 +6,7 @@ const formatPutData = ({ fundingSource }) => ({
   onlyGMS: fundingSource === 'true',
 });
 
-const putFundingSourceEndpoint = orderId => (
+const putFundingSourceEndpoint = (orderId) => (
   `${orderApiUrl}/api/v1/orders/${orderId}/funding-source`
 );
 

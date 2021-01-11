@@ -88,7 +88,7 @@ describe('routes', () => {
   });
 
   describe('GET *', () => {
-    it('should return error page if url cannot be matched', done => request(setUpFakeApp())
+    it('should return error page if url cannot be matched', (done) => request(setUpFakeApp())
       .get('/aaaa')
       .expect(200)
       .then((res) => {

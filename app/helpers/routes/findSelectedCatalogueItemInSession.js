@@ -4,7 +4,7 @@ export const findSelectedCatalogueItemInSession = ({
   req, selectedItemId, sessionManager, catalogueItemsKey,
 }) => {
   const additionalServices = sessionManager.getFromSession({ req, key: catalogueItemsKey });
-  const selectedItem = additionalServices.find(catalogueItem => (
+  const selectedItem = additionalServices.find((catalogueItem) => (
     catalogueItem.catalogueItemId === selectedItemId
   ));
 

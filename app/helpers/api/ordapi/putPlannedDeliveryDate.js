@@ -3,7 +3,7 @@ import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 import { extractDate } from '../../controllers/extractDate';
 
-const formatPutData = data => ({
+const formatPutData = (data) => ({
   deliveryDate: extractDate('deliveryDate', data),
 });
 

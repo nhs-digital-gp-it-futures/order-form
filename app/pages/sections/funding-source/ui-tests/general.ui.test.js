@@ -124,7 +124,6 @@ test('should navigate to task list page if save button is clicked and data is va
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
 });
 
-
 test('should render the title on validation error', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);

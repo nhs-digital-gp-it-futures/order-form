@@ -24,7 +24,7 @@ export const getDescriptionContext = async ({
   return getContext({ orderId, description: descriptionData || '' });
 };
 
-export const getDescriptionErrorContext = async params => getErrorContext(params);
+export const getDescriptionErrorContext = async (params) => getErrorContext(params);
 
 export const postOrPutDescription = async ({
   orgId, orderId, accessToken, data,
