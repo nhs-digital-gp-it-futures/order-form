@@ -24,12 +24,12 @@
     "columnInfo": [
       {
         "data": "Recipient name (ODS code)",
-        "width": "20%",
+        "width": "22%",
         "classes": "nhsuk-u-font-size-14"
       },
       {
         "data": "Item ID",
-        "width": "15%",
+        "width": "10%",
         "classes": "nhsuk-u-font-size-14"
       },
       {
@@ -95,16 +95,21 @@
     "columnInfo": [
       {
         "data": "Recipient name (ODS code)",
-        "width": "21%",
+        "width": "15%",
         "classes": "nhsuk-u-font-size-14"
       },
       {
         "data": "Item ID",
-        "width": "12%",
+        "width": "10%",
         "classes": "nhsuk-u-font-size-14"
       },
       {
         "data": "Item name",
+        "width": "23%",
+        "classes": "nhsuk-u-font-size-14"
+      },
+      {
+        "data": "Service Instance ID",
         "width": "23%",
         "classes": "nhsuk-u-font-size-14"
       },
@@ -137,6 +142,9 @@
         "classes": "nhsuk-u-font-size-14"
       },
       "itemName": {
+        "classes": "nhsuk-u-font-size-14"
+      },
+      "serviceInstanceId": {
         "classes": "nhsuk-u-font-size-14"
       },
       "priceUnit": {
