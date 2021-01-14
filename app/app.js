@@ -41,7 +41,7 @@ class App {
     this.app.use(cookieParser());
     this.app.use(csrfMiddleware);
 
-    this.app.use(helmet());
+    this.app.use(helmet({ referrerPolicy: false }));
 
     // Middleware to serve static assets
     this.app.use(config.baseUrl ? config.baseUrl : '/', express.static(path.join(__dirname, '/../public/')));
