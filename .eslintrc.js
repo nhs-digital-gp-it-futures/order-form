@@ -20,7 +20,8 @@ module.exports = {
       "files": ["**/test-utils/**", "**/*ui.test.js"],
         "rules": {
           "newline-per-chained-call": 0,
-          "max-len": "off"
+          "max-len": "off",
+          "eol-last": 1,
         }
       }
     ]
