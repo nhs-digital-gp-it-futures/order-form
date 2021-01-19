@@ -2,7 +2,7 @@ import { putData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
-const formatFormData = data => ({
+const formatFormData = (data) => ({
   supplierId: data.supplierId ? data.supplierId.trim() : undefined,
   name: data.name ? data.name.trim() : undefined,
   address: {
@@ -24,7 +24,7 @@ const formatFormData = data => ({
   },
 });
 
-const getPutSupplierEndpoint = orderId => (
+const getPutSupplierEndpoint = (orderId) => (
   `${orderApiUrl}/api/v1/orders/${orderId}/sections/supplier`
 );
 

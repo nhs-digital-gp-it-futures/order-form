@@ -8,7 +8,7 @@ const createFakeSectionData = ({
   associatedServiceCount,
   additionalServiceCount,
 }) => {
-  const result = completedSections.map(s => ({ id: s, status: 'complete' }));
+  const result = completedSections.map((s) => ({ id: s, status: 'complete' }));
 
   if (serviceRecipientCount) {
     result.push({
@@ -75,28 +75,28 @@ describe('taskListManifest', () => {
       ${associatedServices} | ${0}                  | ${1}                   | ${1}                   | ${1}                   | ${true}
       ${associatedServices} | ${0}                  | ${0}                   | ${0}                   | ${0}                   | ${false}
     `('generateTaskList with $completedSections, $serviceRecipientCount service recipient(s), $catalogueSolutionCount catalogue solution(s), $associatedServiceCount associated service(s) and $additionalServiceCount additional service(s) is enabled: $expectedEnabled', async ({
-  completedSections,
-  serviceRecipientCount,
-  catalogueSolutionCount,
-  associatedServiceCount,
-  additionalServiceCount,
-  expectedEnabled,
-}) => {
-  const sectionsData = createFakeSectionData({
-    completedSections,
-    serviceRecipientCount,
-    catalogueSolutionCount,
-    associatedServiceCount,
-    additionalServiceCount,
-  });
+      completedSections,
+      serviceRecipientCount,
+      catalogueSolutionCount,
+      associatedServiceCount,
+      additionalServiceCount,
+      expectedEnabled,
+    }) => {
+      const sectionsData = createFakeSectionData({
+        completedSections,
+        serviceRecipientCount,
+        catalogueSolutionCount,
+        associatedServiceCount,
+        additionalServiceCount,
+      });
 
-  const taskList = generateTaskList({
-    orderId: 'order-1',
-    taskListManifest,
-    sectionsData,
-  });
+      const taskList = generateTaskList({
+        orderId: 'order-1',
+        taskListManifest,
+        sectionsData,
+      });
 
-  expect(Boolean(taskList[7].items[0].href)).toBe(expectedEnabled);
-});
+      expect(Boolean(taskList[7].items[0].href)).toBe(expectedEnabled);
+    });
   });
 });

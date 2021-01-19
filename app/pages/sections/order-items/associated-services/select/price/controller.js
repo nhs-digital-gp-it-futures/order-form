@@ -1,7 +1,7 @@
 import { getContext, getErrorContext } from './contextCreator';
 
-export const getAssociatedServicePricePageContext = params => getContext(params);
-export const getAssociatedServicePriceErrorPageContext = params => getErrorContext(params);
+export const getAssociatedServicePricePageContext = (params) => getContext(params);
+export const getAssociatedServicePriceErrorPageContext = (params) => getErrorContext(params);
 
 export const validateAssociatedServicePriceForm = ({ data }) => {
   if (data.selectAssociatedServicePrice && data.selectAssociatedServicePrice.trim().length > 0) {

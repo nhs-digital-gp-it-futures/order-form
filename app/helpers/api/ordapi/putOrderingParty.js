@@ -2,7 +2,7 @@ import { putData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
-const formatFormData = data => ({
+const formatFormData = (data) => ({
   name: data.name ? data.name.trim() : null,
   odsCode: data.odsCode ? data.odsCode.trim() : null,
   address: {
@@ -24,7 +24,7 @@ const formatFormData = data => ({
   },
 });
 
-const getPutOrderingPartyEndpoint = orderId => (
+const getPutOrderingPartyEndpoint = (orderId) => (
   `${orderApiUrl}/api/v1/orders/${orderId}/sections/ordering-party`
 );
 

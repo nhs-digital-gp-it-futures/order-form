@@ -28,7 +28,7 @@ const formatPostData = ({
   price: parseFloat(formData.price),
 });
 
-const getPostOrderItemEndpoint = orderId => `${orderApiUrl}/api/v1/orders/${orderId}/order-items`;
+const getPostOrderItemEndpoint = (orderId) => `${orderApiUrl}/api/v1/orders/${orderId}/order-items`;
 
 export const postOrderItem = async ({
   accessToken,

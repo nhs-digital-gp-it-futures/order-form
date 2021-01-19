@@ -2,8 +2,8 @@ import { logger } from '../../../../../../logger';
 import { getContext, getErrorContext } from './contextCreator';
 import { getOrderItems } from '../../../../../../helpers/api/ordapi/getOrderItems';
 
-export const getAdditionalServicePageContext = params => getContext(params);
-export const getAdditionalServiceErrorPageContext = params => getErrorContext(params);
+export const getAdditionalServicePageContext = (params) => getContext(params);
+export const getAdditionalServiceErrorPageContext = (params) => getErrorContext(params);
 
 export const findAddedCatalogueSolutions = async ({ orderId, accessToken }) => {
   const catalogueSolutions = await getOrderItems({ orderId, catalogueItemType: 'Solution', accessToken });
@@ -12,7 +12,7 @@ export const findAddedCatalogueSolutions = async ({ orderId, accessToken }) => {
   }
 
   logger.info(`Found ${catalogueSolutions.length} catalogue solution(s) for Order with ID '${orderId}'.`);
-  return catalogueSolutions.map(catalogueSolution => catalogueSolution.catalogueItemId);
+  return catalogueSolutions.map((catalogueSolution) => catalogueSolution.catalogueItemId);
 };
 
 export const validateAdditionalServicesForm = ({ data }) => {

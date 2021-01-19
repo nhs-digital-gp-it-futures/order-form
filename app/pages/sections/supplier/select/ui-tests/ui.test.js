@@ -32,7 +32,6 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-
 const orderData = { name: 'a lovely order' };
 
 const getLocation = ClientFunction(() => document.location.href);

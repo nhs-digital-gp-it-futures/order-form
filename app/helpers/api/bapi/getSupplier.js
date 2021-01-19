@@ -2,7 +2,7 @@ import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { solutionsApiUrl } from '../../../config';
 
-const getSupplierEndpoint = supplierId => (
+const getSupplierEndpoint = (supplierId) => (
   `${solutionsApiUrl}/api/v1/suppliers/${supplierId}`
 );
 export const getSupplier = async ({ supplierId, accessToken }) => {

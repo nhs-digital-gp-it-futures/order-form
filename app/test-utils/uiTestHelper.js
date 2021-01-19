@@ -24,7 +24,7 @@ export const nockAndErrorCheck = async (nock, t) => {
   }
 };
 
-export const setState = ClientFunction => ClientFunction((key, value) => {
+export const setState = (ClientFunction) => ClientFunction((key, value) => {
   document.cookie = `${key}=${value}`;
 });
 

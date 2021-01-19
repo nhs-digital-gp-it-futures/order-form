@@ -8,7 +8,7 @@ const {
   printf,
   colorize,
 } = format;
-const logFormat = printf(info => `${info.timestamp} [${info.level}] ${info.label} | message: ${info.message} ${info.message.stack ? `: ${info.message.stack}` : ''}`);
+const logFormat = printf((info) => `${info.timestamp} [${info.level}] ${info.label} | message: ${info.message} ${info.message.stack ? `: ${info.message.stack}` : ''}`);
 
 export const logger = createLogger({
   format: combine(

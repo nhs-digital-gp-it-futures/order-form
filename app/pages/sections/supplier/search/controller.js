@@ -18,4 +18,4 @@ export const validateSupplierSearchForm = ({ data }) => {
   return { success: false, errors };
 };
 
-export const getSupplierSearchPageErrorContext = params => getErrorContext(params);
+export const getSupplierSearchPageErrorContext = (params) => getErrorContext(params);

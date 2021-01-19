@@ -2,10 +2,10 @@ import { putData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
-const formatPutData = data => Object.entries(data).filter(item => item[0] !== '_csrf')
+const formatPutData = (data) => Object.entries(data).filter((item) => item[0] !== '_csrf')
   .map(([odsCode, name]) => ({ name, odsCode }));
 
-const getPutServiceRecipientsEndpoint = orderId => (
+const getPutServiceRecipientsEndpoint = (orderId) => (
   `${orderApiUrl}/api/v1/orders/${orderId}/sections/service-recipients`
 );
 

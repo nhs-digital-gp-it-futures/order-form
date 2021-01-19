@@ -7,34 +7,34 @@ const convertDataToDict = ({ sectionsData }) => (sectionsData && sectionsData.le
 const areAllStatusDepedenciesMet = (dataDict, statusDependencies = []) => (
   statusDependencies.length > 0
     ? statusDependencies
-      .map(statusDependency => (
+      .map((statusDependency) => (
         !!dataDict[statusDependency] && dataDict[statusDependency].status === 'complete'))
-      .every(dependencyMet => dependencyMet === true)
+      .every((dependencyMet) => dependencyMet === true)
     : true
 );
 
 const areAllCountDepedenciesMet = (dataDict, countDependencies = []) => (
   countDependencies.length > 0
     ? countDependencies
-      .map(countDependency => (
+      .map((countDependency) => (
         !!dataDict[countDependency] && dataDict[countDependency].count > 0))
-      .every(dependencyMet => dependencyMet === true)
+      .every((dependencyMet) => dependencyMet === true)
     : true
 );
 
 const areAllZeroCountDepedenciesMet = (dataDict, zeroCountDependencies = []) => (
   zeroCountDependencies.length > 0
     ? zeroCountDependencies
-      .map(zeroCountDependency => (
+      .map((zeroCountDependency) => (
         !!dataDict[zeroCountDependency] && dataDict[zeroCountDependency].count === 0))
-      .every(dependencyMet => dependencyMet === true)
+      .every((dependencyMet) => dependencyMet === true)
     : true
 );
 
 const isSectionEnabled = (dataDict = {}, dependencies = []) => (
   dependencies.length > 0
     ? dependencies
-      .map(dependency => (
+      .map((dependency) => (
         areAllStatusDepedenciesMet(dataDict, dependency.statusDependencies)
           && areAllCountDepedenciesMet(dataDict, dependency.countDependencies)
           && areAllZeroCountDepedenciesMet(dataDict, dependency.zeroCountDependencies)))
@@ -50,9 +50,9 @@ const isSectionComplete = (sectionsDataDict = {}, section = {}) => (
 
 export const generateTaskList = ({ orderId, taskListManifest, sectionsData }) => {
   const sectionsDataDict = convertDataToDict({ sectionsData });
-  const taskLists = taskListManifest.tasks.map(task => ({
+  const taskLists = taskListManifest.tasks.map((task) => ({
     taskName: task.name,
-    items: task.sections.map(section => ({
+    items: task.sections.map((section) => ({
       description: section.title,
       href: isSectionEnabled(
         sectionsDataDict, section.dependencies,

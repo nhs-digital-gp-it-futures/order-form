@@ -104,7 +104,6 @@ describe('catalogue-solutions solution contextCreator', () => {
       expect(context.questions).toEqual(expectedContext.questions);
     });
 
-
     it('should return the continueButtonText', () => {
       const context = getContext({});
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);

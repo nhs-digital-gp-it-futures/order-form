@@ -1,6 +1,6 @@
 import { getContext, getErrorContext } from './contextCreator';
 
-export const getSupplierSelectPageContext = params => getContext(params);
+export const getSupplierSelectPageContext = (params) => getContext(params);
 
 export const validateSupplierSelectForm = ({ data }) => {
   if (data.selectSupplier && data.selectSupplier.trim().length > 0) {
@@ -16,4 +16,4 @@ export const validateSupplierSelectForm = ({ data }) => {
   return { success: false, errors };
 };
 
-export const getSupplierSelectErrorPageContext = params => getErrorContext(params);
+export const getSupplierSelectErrorPageContext = (params) => getErrorContext(params);
