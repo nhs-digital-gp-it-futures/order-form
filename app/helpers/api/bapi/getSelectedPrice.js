@@ -2,7 +2,7 @@ import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { solutionsApiUrl } from '../../../config';
 
-const getSelectedPriceEndpoint = selectedPriceId => (
+const getSelectedPriceEndpoint = (selectedPriceId) => (
   `${solutionsApiUrl}/api/v1/prices/${selectedPriceId}`
 );
 

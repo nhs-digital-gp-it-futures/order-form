@@ -42,7 +42,6 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Catalogue-solutions - recipient page - general')
@@ -137,7 +136,6 @@ test('should render a selectRecipient question as radio button options', async (
     .expect(selectRecipientRadioOptions.find('input').nth(1).getAttribute('value')).eql('recipient-2')
     .expect(await extractInnerText(selectRecipientRadioOptions.find('label').nth(1))).eql('Recipient 2 (recipient-2)');
 });
-
 
 test('should render the Continue button', async (t) => {
   await pageSetup();

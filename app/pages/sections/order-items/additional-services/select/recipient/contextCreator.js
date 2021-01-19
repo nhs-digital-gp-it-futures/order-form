@@ -3,7 +3,7 @@ import { baseUrl } from '../../../../../../config';
 import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
 const generateRecipientOptions = ({ recipients, selectedAdditionalRecipientId }) => {
-  const recipientsMap = recipients.map(recipient => ({
+  const recipientsMap = recipients.map((recipient) => ({
     value: recipient.odsCode,
     text: `${recipient.name} (${recipient.odsCode})`,
     checked: selectedAdditionalRecipientId === recipient.odsCode ? true : undefined,
@@ -12,7 +12,7 @@ const generateRecipientOptions = ({ recipients, selectedAdditionalRecipientId })
 };
 
 const generateQuestionsContext = ({ recipients, selectedAdditionalRecipientId }) => (
-  manifest.questions.map(question => ({
+  manifest.questions.map((question) => ({
     ...question,
     options: generateRecipientOptions({ recipients, selectedAdditionalRecipientId }),
   }))

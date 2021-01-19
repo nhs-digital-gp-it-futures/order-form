@@ -8,7 +8,7 @@ const formatPutData = ({
   description: formData.description.trim(),
 });
 
-const getPutDescriptionEndpoint = orderId => (
+const getPutDescriptionEndpoint = (orderId) => (
   `${orderApiUrl}/api/v1/orders/${orderId}/sections/description`
 );
 

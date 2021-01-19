@@ -2,7 +2,7 @@ import { deleteData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
-const deleteOrderEndpoint = orderId => (
+const deleteOrderEndpoint = (orderId) => (
   `${orderApiUrl}/api/v1/orders/${orderId}`
 );
 

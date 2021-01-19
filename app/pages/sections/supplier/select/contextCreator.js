@@ -3,7 +3,7 @@ import { baseUrl } from '../../../../config';
 import { getSectionErrorContext } from '../../getSectionErrorContext';
 
 const generateSupplierOptions = ({ suppliers, selectedSupplier }) => (
-  suppliers.map(supplier => ({
+  suppliers.map((supplier) => ({
     value: supplier.supplierId,
     text: supplier.name,
     checked: supplier.supplierId === selectedSupplier ? true : undefined,
@@ -11,7 +11,7 @@ const generateSupplierOptions = ({ suppliers, selectedSupplier }) => (
 );
 
 const generateQuestionsContext = ({ suppliers, selectedSupplier }) => (
-  manifest.questions.map(question => ({
+  manifest.questions.map((question) => ({
     ...question,
     options: generateSupplierOptions({ suppliers, selectedSupplier }),
   }))

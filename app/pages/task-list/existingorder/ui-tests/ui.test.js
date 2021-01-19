@@ -38,7 +38,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-const generateMockOrderSummary = sectionData => (
+const generateMockOrderSummary = (sectionData) => (
   {
     ...mockExistingOrderSummary,
     sections: [

@@ -7,7 +7,6 @@ import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../tes
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-id/service-recipients';
 
-
 const mocks = () => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')

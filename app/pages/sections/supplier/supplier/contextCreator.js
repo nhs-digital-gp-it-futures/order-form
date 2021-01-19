@@ -2,7 +2,7 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../../../config';
 import { getSectionErrorContext } from '../../getSectionErrorContext';
 
-const populateQuestionsWithData = primaryContact => (
+const populateQuestionsWithData = (primaryContact) => (
   manifest.questions.map((question) => {
     const modifiedQuestion = { ...question };
     if (primaryContact[question.id]) {

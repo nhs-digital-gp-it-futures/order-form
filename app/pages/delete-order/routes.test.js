@@ -37,7 +37,6 @@ const setUpFakeApp = () => {
   return app;
 };
 
-
 describe('GET /organisation/:orderId/delete-order', () => {
   const path = '/organisation/some-order-id/delete-order';
 

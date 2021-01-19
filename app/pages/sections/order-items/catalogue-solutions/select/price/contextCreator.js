@@ -31,7 +31,7 @@ const generatePriceList = (solutionPrices, selectedPriceId) => solutionPrices.ma
 });
 
 const generateQuestionsContext = (solutionPrices, selectedPriceId) => (
-  manifest.questions.map(question => ({
+  manifest.questions.map((question) => ({
     ...question,
     options: generatePriceList(solutionPrices.prices, selectedPriceId),
   }))

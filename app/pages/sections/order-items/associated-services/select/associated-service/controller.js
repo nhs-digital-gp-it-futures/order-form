@@ -3,8 +3,8 @@ import { getCatalogueItems } from '../../../../../../helpers/api/bapi/getCatalog
 import { getSupplier } from '../../../../../../helpers/api/ordapi/getSupplier';
 import { sessionKeys } from '../../../../../../helpers/routes/sessionHelper';
 
-export const getAssociatedServicePageContext = params => getContext(params);
-export const getAssociatedServiceErrorPageContext = params => getErrorContext(params);
+export const getAssociatedServicePageContext = (params) => getContext(params);
+export const getAssociatedServiceErrorPageContext = (params) => getErrorContext(params);
 
 const getSupplierId = async ({
   req,

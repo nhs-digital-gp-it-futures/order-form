@@ -43,7 +43,6 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-
 const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Catalogue-solutions - solution page - general')
@@ -73,7 +72,6 @@ test('should render Catalogue-solutions select page', async (t) => {
   await t
     .expect(page.exists).ok();
 });
-
 
 test('should link to /organisation/order-id/catalogue-solutions for backlink', async (t) => {
   await pageSetup();

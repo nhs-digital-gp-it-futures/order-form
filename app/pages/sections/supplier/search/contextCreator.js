@@ -8,7 +8,7 @@ export const getContext = ({ orderId }) => ({
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
 });
 
-export const getErrorContext = params => ({
+export const getErrorContext = (params) => ({
   ...getSectionErrorContext({ ...params, manifest }),
   title: `${manifest.title} ${params.orderId}`,
 });

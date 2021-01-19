@@ -2,7 +2,7 @@ import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
 
-const getOrderEndpoint = orderId => `${orderApiUrl}/api/v1/orders/${orderId}`;
+const getOrderEndpoint = (orderId) => `${orderApiUrl}/api/v1/orders/${orderId}`;
 
 const createServiceRecipientsDict = (serviceRecipients = []) => {
   const reducer = (dict, serviceRecipient) => (
@@ -14,12 +14,12 @@ const createServiceRecipientsDict = (serviceRecipients = []) => {
   return serviceRecipients.reduce(reducer, {});
 };
 
-const isOneOff = orderItem => orderItem.catalogueItemType.toLowerCase() === 'AssociatedService'.toLowerCase()
+const isOneOff = (orderItem) => orderItem.catalogueItemType.toLowerCase() === 'AssociatedService'.toLowerCase()
     && orderItem.provisioningType.toLowerCase() === 'Declarative'.toLowerCase();
 
 const transformOrderItems = (orderItems = []) => {
-  const oneOffCostItems = orderItems.filter(o => isOneOff(o));
-  const recurringCostItems = orderItems.filter(o => !isOneOff(o));
+  const oneOffCostItems = orderItems.filter((o) => isOneOff(o));
+  const recurringCostItems = orderItems.filter((o) => !isOneOff(o));
 
   return { oneOffCostItems, recurringCostItems };
 };
@@ -35,11 +35,11 @@ const sortItems = (items, propToSort) => (
   })
 );
 
-export const sortServiceRecipients = serviceRecipients => sortItems(serviceRecipients, 'name');
+export const sortServiceRecipients = (serviceRecipients) => sortItems(serviceRecipients, 'name');
 
-export const sortGroupedOrderItems = groupedOrderItems => sortItems(groupedOrderItems, 'catalogueItemName');
+export const sortGroupedOrderItems = (groupedOrderItems) => sortItems(groupedOrderItems, 'catalogueItemName');
 
-export const groupOrderItemsByOdsCode = orderItems => (
+export const groupOrderItemsByOdsCode = (orderItems) => (
   orderItems.reduce((groupedOrderItems, orderItem) => {
     const odsCode = orderItem.serviceRecipientsOdsCode;
 

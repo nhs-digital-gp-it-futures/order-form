@@ -104,7 +104,6 @@ describe('task-list contextCreator', () => {
       expect(context.orderDescriptionTitle).toEqual(existingOrderManifest.orderDescriptionTitle);
     });
 
-
     it('should return the order description provided', () => {
       const context = getContext({
         orderId: 'order-id',

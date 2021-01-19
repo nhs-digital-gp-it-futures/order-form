@@ -3,7 +3,7 @@ import { baseUrl } from '../../../config';
 import { getSectionErrorContext } from '../getSectionErrorContext';
 
 const generateFundingSourceOptions = ({ question, fundingSource }) => {
-  const fundingMap = question.options.map(option => ({
+  const fundingMap = question.options.map((option) => ({
     ...option,
     checked: option.value === fundingSource ? true : undefined,
   }));
@@ -11,7 +11,7 @@ const generateFundingSourceOptions = ({ question, fundingSource }) => {
 };
 
 const generateQuestionsContext = ({ fundingSource }) => (
-  manifest.questions.map(question => ({
+  manifest.questions.map((question) => ({
     ...question,
     options: generateFundingSourceOptions({ question, fundingSource }),
   }))

@@ -11,4 +11,4 @@ export const getContext = ({ orderId, description }) => {
   return context;
 };
 
-export const getErrorContext = params => getSectionErrorContext({ ...params, manifest });
+export const getErrorContext = (params) => getSectionErrorContext({ ...params, manifest });
