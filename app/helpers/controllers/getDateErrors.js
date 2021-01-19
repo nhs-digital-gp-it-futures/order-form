@@ -1,5 +1,7 @@
-const transformQuestionId = (questionId) => questionId.charAt(0).toUpperCase()
-  + questionId.slice(1);
+const transformQuestionId = (questionId) => {
+  const firstLetter = questionId.charAt(0).toUpperCase();
+  return firstLetter + questionId.slice(1);
+};
 
 const errorsMap = (questionId) => {
   const transformedQuestionId = transformQuestionId(questionId);
