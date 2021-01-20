@@ -286,9 +286,6 @@ describe('summary print page', () => {
         expect(table.length).toEqual(1);
         expect(table.find('th[data-test-id="column-heading-0"]').text().trim()).toEqual('');
         expect(table.find('th[data-test-id="column-heading-1"]').text().trim()).toEqual('');
-
-        expect(table.find('[data-test-id="column-heading-0"]').attr('style')).toEqual('width:75%');
-        expect(table.find('[data-test-id="column-heading-1"]').attr('style')).toEqual('width:25%');
       });
     }));
 
@@ -442,9 +439,6 @@ describe('summary print page', () => {
         expect(table.length).toEqual(1);
         expect(table.find('th[data-test-id="column-heading-0"]').text().trim()).toEqual('');
         expect(table.find('th[data-test-id="column-heading-1"]').text().trim()).toEqual('');
-
-        expect(table.find('[data-test-id="column-heading-0"]').attr('style')).toEqual('width:75%');
-        expect(table.find('[data-test-id="column-heading-1"]').attr('style')).toEqual('width:25%');
       });
     }));
 

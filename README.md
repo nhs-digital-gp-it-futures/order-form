@@ -64,6 +64,14 @@ Application should now be running on <http://localhost:3006/order/>.
 [Identity Server](https://github.com/nhs-digital-gp-it-futures/BuyingCatalogueIdentity).
 [Order Form API](https://github.com/nhs-digital-gp-it-futures/BuyingCatalogueOrdering#running-the-application).
 
+## Unit tests
+Run the jest unit test with `npm run test`.
+
+## UI tests
+Run the UI component tests with `npm run test:ui`.
+
+> To run both unit and UI tests, run `npm run test:all`.
+
 ## Integration tests helpers
 
 Run the integration tests with `npm run test:integration` by default this will run the integration tests in 2 threads.

@@ -21,6 +21,7 @@ module.exports = {
       rules: {
         'newline-per-chained-call': 0,
         'max-len': 'off',
+        'eol-last': 1,
       },
     },
   ],
