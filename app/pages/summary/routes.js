@@ -21,6 +21,7 @@ export const summaryRoutes = (authProvider, addContext) => {
     });
 
     if (print) {
+      res.set('Content-Security-Policy', 'default-src * \'unsafe-inline\' \'unsafe-eval\'; script-src * \'unsafe-inline\' \'unsafe-eval\';');
       return res.render('pages/summary/templatePrint.njk', addContext({ context, user: req.user }));
     }
 
