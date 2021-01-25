@@ -17,9 +17,6 @@ export const getOrderItemPageDataBulk = async ({
     const serviceRecipientId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedRecipientId,
     });
-    const serviceRecipientName = sessionManager.getFromSession({
-      req, key: sessionKeys.selectedRecipientName,
-    });
     const selectedPriceId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedPriceId,
     });
@@ -52,7 +49,7 @@ export const getOrderItemPageDataBulk = async ({
       itemName,
       catalogueSolutionId,
       serviceRecipientId,
-      serviceRecipientName,
+      serviceRecipientName: recipients.find((r) => r.odsCode === selectedRecipients[0]).name,
       selectedPrice,
       formData,
       recipients,

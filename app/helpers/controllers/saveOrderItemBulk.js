@@ -16,20 +16,21 @@ export const saveOrderItemBulk = async ({
   formData,
 }) => {
   try {
+    const recipientsList = selectedRecipients.map(
+      (sr) => recipients.find((recipient) => recipient.odsCode === sr),
+    );
+
     const response = orderItemId === 'neworderitem'
       ? await postOrderItemBulk({
         accessToken,
         orderId,
         orderItemType,
         serviceRecipientId,
-        serviceRecipientName,
+        serviceRecipientName: recipientsList.map((r) => r.name),
         itemId,
         itemName,
         selectedPrice,
-        recipients: selectedRecipients.map(
-          (selectedRecipient) => recipients
-            .find((recipient) => recipient.odsCode === selectedRecipient),
-        ),
+        recipients: recipientsList,
         formData,
       })
       : await postOrderItemBulk({
@@ -38,14 +39,11 @@ export const saveOrderItemBulk = async ({
         orderId,
         orderItemType,
         serviceRecipientId,
-        serviceRecipientName,
+        serviceRecipientName: recipientsList.map((r) => r.name),
         itemId,
         itemName,
         selectedPrice,
-        recipients: selectedRecipients.map(
-          (selectedRecipient) => recipients
-            .find((recipient) => recipient.odsCode === selectedRecipient),
-        ),
+        recipients: recipientsList,
         formData,
       });
     return response;

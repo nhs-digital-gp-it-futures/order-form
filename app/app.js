@@ -66,6 +66,7 @@ class App {
     nunjucks.configure(appViews, {
       autoescape: true,
       express: this.app,
+      watch: true,
       noCache: true,
     });
 
