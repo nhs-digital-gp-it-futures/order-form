@@ -1,4 +1,4 @@
-import { postData } from 'buying-catalogue-library';
+import { postData, getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { extractDate } from '../../controllers/extractDate';
 import { orderApiUrl } from '../../../config';
@@ -11,9 +11,10 @@ const formatPostData = ({
   selectedPrice,
   recipients,
   formData,
-}) => recipients.map((recipient, index) => ({
+}, itemIdMaps) => recipients.map((recipient, index) => ({
   ...selectedPrice,
-  orderItemId,
+  orderItemId: !!(itemIdMaps.filter(i => i.serviceRecipient === recipient.odsCode))
+    ? itemIdMaps.filter(i => i.serviceRecipient === recipient.odsCode)[0].orderItemId : orderItemId,
   serviceRecipient: {
     name: recipient.name,
     odsCode: recipient.odsCode,
@@ -40,6 +41,16 @@ export const postOrderItemBulk = async ({
   recipients,
   formData,
 }) => {
+
+  const results = await getData({
+    endpoint:`${orderApiUrl}/api/v1/orders/${orderId}/order-items`,
+    accessToken,
+    logger
+  });
+
+  // Remaps to get correct item id [{"orderItemId":4,"serviceRecipient":"Y03508"},{"orderItemId":5,"serviceRecipient":"Y00427"}]
+  const idMap = results.map((e) => ({orderItemId: e.orderItemId, serviceRecipient: e.serviceRecipient.odsCode}));
+
   const endpoint = getPostOrderItemEndpoint(orderId);
   const body = formatPostData({
     orderItemId,
@@ -49,11 +60,12 @@ export const postOrderItemBulk = async ({
     selectedPrice,
     recipients,
     formData,
-  });
+  }, idMap);
 
   await postData({
     endpoint, body, accessToken, logger,
   });
+
   logger.info(`Order item for ${itemName} successfully created for order id: ${orderId}`);
   return { success: true };
 };
