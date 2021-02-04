@@ -75,7 +75,7 @@ const returnedPriceArray = [{
     value: 2,
     checked: true,
   }, {
-    html: '<div>1 - 10 consultations £700 per consultation per month</div><div>11+ consultations £400 per consultation per month</div>',
+    html: '<div>1 - 10 consultations £700.00 per consultation per month</div><div>11+ consultations £400.00 per consultation per month</div>',
     value: 3,
   }],
 }];

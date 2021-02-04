@@ -2,6 +2,7 @@ import { postData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { extractDate } from '../../controllers/extractDate';
 import { orderApiUrl } from '../../../config';
+import { formatPrice } from '../../common/priceFormatter';
 
 const formatPostData = ({
   orderItemType,
@@ -25,7 +26,7 @@ const formatPostData = ({
   deliveryDate: extractDate('deliveryDate', formData),
   quantity: parseInt(formData.quantity, 10),
   estimationPeriod: formData.selectEstimationPeriod,
-  price: parseFloat(formData.price),
+  price: formatPrice(formData.price),
 });
 
 const getPostOrderItemEndpoint = (orderId) => `${orderApiUrl}/api/v1/orders/${orderId}/order-items`;

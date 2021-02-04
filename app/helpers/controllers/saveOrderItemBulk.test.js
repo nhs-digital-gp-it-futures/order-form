@@ -26,7 +26,7 @@ describe('saveOrderItemBulk', () => {
     const item = { id: 'item-1', name: 'Item One' };
     const formData = {
       _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-      price: '500.49',
+      price: '500.491234',
       quantity: '1',
       selectEstimationPeriod: 'month',
     };
@@ -143,7 +143,7 @@ describe('saveOrderItemBulk', () => {
     const item = { id: 'item-1', name: 'Item One' };
     const formData = {
       _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
-      price: '500.49',
+      price: '500.4912',
       quantity: '1',
       selectEstimationPeriod: 'month',
     };

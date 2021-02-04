@@ -57,11 +57,11 @@ describe('getOrderItemPageData', () => {
     it('should get the selectedPriceId from session, call  getSelectedPrice and return the selectedPrice', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-price-id';
 
-      getSelectedPrice.mockResolvedValue({ price: 'some-price' });
+      getSelectedPrice.mockResolvedValue({ price: 10.123456789 });
 
       const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
 
-      expect(pageData.selectedPrice).toEqual({ price: 'some-price' });
+      expect(pageData.selectedPrice).toEqual({ price: 10.123456789 });
     });
 
     it('should get the selectedCatalogueSolutionId from session and return this as catalogueSolutionId', async () => {
@@ -77,11 +77,11 @@ describe('getOrderItemPageData', () => {
     it('should return the formData with the price from getSelectedPrice', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-price-id';
 
-      getSelectedPrice.mockResolvedValue({ price: 'some-price' });
+      getSelectedPrice.mockResolvedValue({ price: 10.1 });
 
       const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
 
-      expect(pageData.formData).toEqual({ price: 'some-price' });
+      expect(pageData.formData).toEqual({ price: 10.1 });
     });
   });
 
@@ -101,7 +101,7 @@ describe('getOrderItemPageData', () => {
         name: 'some item unit name',
         description: 'some item unit description',
       },
-      price: 'some-price',
+      price: 1.829,
     };
 
     afterEach(() => {

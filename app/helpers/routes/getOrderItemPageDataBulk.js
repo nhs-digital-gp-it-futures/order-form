@@ -1,5 +1,4 @@
 import { getSelectedPrice } from '../api/bapi/getSelectedPrice';
-import { formatDecimal } from '../common/priceFormatter';
 import { destructureDate } from '../common/dateFormatter';
 import { sessionKeys } from './sessionHelper';
 import { getOrderItems } from '../api/ordapi/getOrderItems';
@@ -44,7 +43,7 @@ export const getOrderItemPageDataBulk = async ({
         'deliveryDate-month': month,
         'deliveryDate-year': year,
       }],
-      price: formatDecimal(selectedPrice.price),
+      price: parseFloat(selectedPrice.price),
     };
 
     return {
@@ -78,7 +77,7 @@ export const getOrderItemPageDataBulk = async ({
   const formData = {
     deliveryDate: [],
     quantity: [],
-    price: formatDecimal(selectedPrice.price),
+    price: parseFloat(selectedPrice.price),
   };
 
   const recipients = [];

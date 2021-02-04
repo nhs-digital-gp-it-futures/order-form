@@ -57,11 +57,11 @@ describe('getOrderItemPageDataBulk', () => {
     it('should get the selectedPriceId from session, call  getSelectedPrice and return the selectedPrice', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-price-id';
 
-      getSelectedPrice.mockResolvedValue({ price: 'some-price' });
+      getSelectedPrice.mockResolvedValue({ price: '1.56789' });
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
 
-      expect(pageData.selectedPrice).toEqual({ price: 'some-price' });
+      expect(pageData.selectedPrice).toEqual({ price: '1.56789' });
     });
 
     it('should get the selectedCatalogueSolutionId from session and return this as catalogueSolutionId', async () => {
@@ -97,12 +97,12 @@ describe('getOrderItemPageDataBulk', () => {
     it('should return the formData', async () => {
       fakeSessionManager.getFromSession = () => '2020-11-10';
 
-      getSelectedPrice.mockResolvedValue({ price: 'some-price' });
+      getSelectedPrice.mockResolvedValue({ price: 92.828 });
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
 
       expect(pageData.formData).toEqual({
-        price: 'some-price',
+        price: 92.828,
         deliveryDate: [{
           'deliveryDate-day': '10',
           'deliveryDate-month': '11',
@@ -129,7 +129,7 @@ describe('getOrderItemPageDataBulk', () => {
         description: 'some item unit description',
       },
       deliveryDate: '2020-02-09',
-      price: 'some-price',
+      price: 1.829,
     }];
 
     afterEach(() => {

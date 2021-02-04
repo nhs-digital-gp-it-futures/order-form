@@ -1,16 +1,8 @@
-export const formatPrice = (priceValue) => {
-  const formattedPrice = priceValue.toLocaleString(undefined, {
-    minimumFractionDigits: 3, maximumFractionDigits: 3,
-  });
+export const formatNumber = ({ value, minimumFractionDigits = 0, maximumFractionDigits = 4 }) => (
+  parseFloat(value)
+    .toLocaleString(
+      undefined, { minimumFractionDigits, maximumFractionDigits },
+    )
+);
 
-  const truncatedTo2dp = formattedPrice.substring(0, formattedPrice.indexOf('.') + 3);
-
-  return truncatedTo2dp;
-};
-
-export const formatDecimal = (priceValue) => {
-  if ((priceValue || {}).toString().includes('.') && priceValue.toString().split('.')[1].length < 3) {
-    return parseFloat(priceValue).toFixed(2);
-  }
-  return priceValue;
-};
+export const formatPrice = (value) => formatNumber({ value, minimumFractionDigits: 2 });

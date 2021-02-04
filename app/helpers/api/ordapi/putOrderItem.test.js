@@ -15,7 +15,7 @@ describe('putOrderItem', () => {
     'deliveryDate-day': '25',
     'deliveryDate-month': '12',
     'deliveryDate-year': '2020',
-    price: '500.49',
+    price: '500.4956789',
     quantity: '1',
     selectEstimationPeriod: 'month',
   };
@@ -56,7 +56,7 @@ describe('putOrderItem', () => {
           deliveryDate: '2020-12-25',
           quantity: 1,
           estimationPeriod: 'month',
-          price: 500.49,
+          price: '500.4957',
         },
         accessToken: 'access_token',
         logger,

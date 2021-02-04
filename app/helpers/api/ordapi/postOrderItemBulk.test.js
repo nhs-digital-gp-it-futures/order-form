@@ -20,7 +20,7 @@ describe('postOrderItemBulk', () => {
       'deliveryDate-month': '12',
       'deliveryDate-year': '2020',
     },
-    price: '500.49',
+    price: '500.4',
     quantity: ['1'],
   };
 
@@ -89,7 +89,7 @@ describe('postOrderItemBulk', () => {
           deliveryDate: '2020-12-25',
           quantity: 1,
           estimationPeriod: 'month',
-          price: 500.49,
+          price: '500.40',
         }],
         accessToken: 'access_token',
         logger,
@@ -124,7 +124,7 @@ describe('postOrderItemBulk', () => {
           deliveryDate: '2020-12-25',
           quantity: 1,
           estimationPeriod: 'month',
-          price: 500.49,
+          price: '500.40',
         }],
         accessToken: 'access_token',
         logger,
