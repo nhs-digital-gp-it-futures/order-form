@@ -371,8 +371,8 @@ test('should render the "Delete order" button', async (t) => {
   await t
     .expect(await extractInnerText(deleteOrderButton)).eql(commonContent.deleteOrderButton.text)
     .expect(deleteOrderButton.getAttribute('aria-label')).eql(commonContent.deleteOrderButton.disabledAltText)
-    .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
-    .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
+    .expect(deleteOrderButton.find('span').hasClass('nhsuk-button--secondary')).eql(true)
+    .expect(deleteOrderButton.find('span').hasClass('nhsuk-button--disabled')).eql(true);
 });
 
 test('should render the "Preview order summary" button', async (t) => {
@@ -384,8 +384,8 @@ test('should render the "Preview order summary" button', async (t) => {
   await t
     .expect(await extractInnerText(previewOrderButton)).eql(commonContent.previewOrderButton.text)
     .expect(previewOrderButton.getAttribute('aria-label')).eql(commonContent.previewOrderButton.disabledAltText)
-    .expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
-    .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
+    .expect(previewOrderButton.find('span').hasClass('nhsuk-button--secondary')).eql(true)
+    .expect(previewOrderButton.find('span').hasClass('nhsuk-button--disabled')).eql(true);
 });
 
 test('should render the "Complete order" button', async (t) => {
@@ -397,6 +397,6 @@ test('should render the "Complete order" button', async (t) => {
   await t
     .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)
     .expect(completeOrderButton.getAttribute('aria-label')).eql(commonContent.completeOrderButton.disabledAltText)
-    .expect(completeOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(false)
-    .expect(completeOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(true);
+    .expect(completeOrderButton.find('span').hasClass('nhsuk-button--secondary')).eql(false)
+    .expect(completeOrderButton.find('span').hasClass('nhsuk-button--disabled')).eql(true);
 });

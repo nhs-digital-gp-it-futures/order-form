@@ -303,8 +303,8 @@ describe('catalogue-solutions order-item page', () => {
       const deleteOrderButton = $('[data-test-id="delete-button"]');
       expect(deleteOrderButton.length).toEqual(1);
       expect(deleteOrderButton.text().trim()).toEqual(commonManifest.deleteButton.text);
-      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
-      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(deleteOrderButton.find('span').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(deleteOrderButton.find('span').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 
