@@ -40,10 +40,20 @@ const generateItems = ({ orderId, orderItems }) => {
   return items;
 };
 
-const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItems }) => ({
-  ...addedOrderItemsTable,
-  items: generateItems({ orderId, orderItems }),
-});
+const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItems }) => {
+  const items = generateItems({ orderId, orderItems });
+
+  items.sort((a, b) => {
+    if (a[0].data < b[0].data) { return -1; }
+    if (a[0].data > b[0].data) { return 1; }
+    return 0;
+  });
+
+  return {
+    ...addedOrderItemsTable,
+    items,
+  };
+};
 
 export const getContext = ({ orderId, orderDescription, orderItems = [] }) => ({
   ...manifest,
