@@ -766,7 +766,7 @@ test('should render the "Complete order" button', async (t) => {
   await t.navigateTo(pageUrl);
 
   const completeOrderButton = Selector('[data-test-id="complete-order-button"]');
-  const submitOrderButtonLink = completeOrderButton.find('a');
+  const submitOrderButtonLink = completeOrderButton.find('span');
 
   await t
     .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)

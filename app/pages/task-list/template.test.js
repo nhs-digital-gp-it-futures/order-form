@@ -104,8 +104,8 @@ describe('neworder task-list page', () => {
       expect(deleteOrderButton.length).toEqual(1);
       expect(deleteOrderButton.text().trim()).toEqual(commonManifest.deleteOrderButton.text);
       expect(deleteOrderButton.attr('aria-label')).toEqual(commonManifest.deleteOrderButton.disabledAltText);
-      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
-      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(deleteOrderButton.find('span').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(deleteOrderButton.find('span').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 
@@ -125,8 +125,8 @@ describe('neworder task-list page', () => {
       expect(previewOrderButton.length).toEqual(1);
       expect(previewOrderButton.text().trim()).toEqual(commonManifest.previewOrderButton.text);
       expect(previewOrderButton.attr('aria-label')).toEqual(commonManifest.previewOrderButton.disabledAltText);
-      expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
-      expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(previewOrderButton.find('span').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(previewOrderButton.find('span').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 
@@ -146,8 +146,8 @@ describe('neworder task-list page', () => {
       expect(completeOrderButton.length).toEqual(1);
       expect(completeOrderButton.text().trim()).toEqual(commonManifest.completeOrderButton.text);
       expect(completeOrderButton.attr('aria-label')).toEqual(commonManifest.completeOrderButton.disabledAltText);
-      expect(completeOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
-      expect(completeOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(completeOrderButton.find('span').hasClass('nhsuk-button--secondary')).toEqual(false);
+      expect(completeOrderButton.find('span').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 });
@@ -290,8 +290,8 @@ describe('existingorder task-list page', () => {
       expect(completeOrderButton.length).toEqual(1);
       expect(completeOrderButton.text().trim()).toEqual(commonManifest.completeOrderButton.text);
       expect(completeOrderButton.attr('aria-label')).toEqual(commonManifest.completeOrderButton.disabledAltText);
-      expect(completeOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
-      expect(completeOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(completeOrderButton.find('span').hasClass('nhsuk-button--secondary')).toEqual(false);
+      expect(completeOrderButton.find('span').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 });
