@@ -1,8 +1,9 @@
 {
   "name": "order-form",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "server.js",
+  "private": true,
   "scripts": {
     "build": "npm run build:css && npm run build:js",
     "build:css": "node-sass --output-style compressed app/styles/main.scss public/css/main.min.css",
@@ -22,7 +23,8 @@
     "test": "jest",
     "test:all": "jest && npm run test:ui",
     "webpack": "webpack",
-    "debug": "babel-node ./app/server --inspect"
+    "debug": "babel-node ./app/server --inspect",
+    "postinstall": "husky install"
   },
   "repository": {
     "type": "git",
@@ -33,7 +35,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
-    "buying-catalogue-components": "^3.3.6",
+    "buying-catalogue-components": "^3.3.8",
     "buying-catalogue-library": "^1.2.7",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
@@ -60,7 +62,7 @@
     "eslint": "^7.18.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
-    "husky": "^4.3.8",
+    "husky": "^5.0.9",
     "jest": "^26.6.3",
     "jest-nunit-reporter": "^1.3.1",
     "nock": "^13.0.6",
@@ -69,7 +71,7 @@
     "supertest": "^6.1.3",
     "testcafe": "^1.10.1",
     "testcafe-reporter-nunit": "^0.1.2",
-    "webpack": "^5.18.0",
+    "webpack": "^5.21.2",
     "webpack-cli": "^4.4.0"
   },
   "jest": {
@@ -81,10 +83,5 @@
   },
   "jestNunitReporter": {
     "outputFilename": "unit-test-report.xml"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run lint"
-    }
   }
 }
