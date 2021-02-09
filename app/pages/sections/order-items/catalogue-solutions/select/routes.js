@@ -23,8 +23,12 @@ import {
   getDeliveryDateErrorPageContext,
 } from './date/controller';
 import {
+  getOnDemandOrderContext,
+} from '../order-item/flat/controller';
+import {
   findSelectedCatalogueItemInSession,
 } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
+import { getOrderItemPageData } from '../../../../../helpers/routes/getOrderItemPageData';
 import {
   getCatalogueItems,
 } from '../../../../../helpers/api/bapi/getCatalogueItems';
@@ -264,7 +268,12 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       const priceId = sessionManager.getFromSession({
         req, key: sessionKeys.selectedPriceId,
       });
-
+      const solutionPrices = sessionManager.getFromSession({
+        req, key: sessionKeys.solutionPrices,
+      });
+      const selectedSolution = solutionPrices.prices.filter(
+        (obj) => obj.priceId === parseInt(priceId, 10),
+      );
       sessionManager.saveToSession({ req, key: sessionKeys.plannedDeliveryDate, value: extractDate('deliveryDate', req.body) });
 
       const apiResponse = await putPlannedDeliveryDate({
@@ -274,8 +283,15 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         data: req.body,
         accessToken: extractAccessToken({ req, tokenType: 'access' }),
       });
-
-      if (apiResponse.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+      if (apiResponse.success) {
+        if (selectedSolution[0].provisioningType === 'Patient') {
+          return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+        }
+        if (selectedSolution[0].provisioningType === 'OnDemand') {
+          return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/ondemandform`);
+        }
+        return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/declarativeform`);
+      }
       validationErrors.push(...apiResponse.errors);
     }
 
@@ -292,6 +308,32 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.get('/solution/price/recipients/ondemandform', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const orderItemId = 'neworderitem';
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const pageData = await getOrderItemPageData({
+      req,
+      sessionManager,
+      accessToken,
+      orderId,
+      orderItemId,
+    });
+    sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
+    const itemName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+    const context = await getOnDemandOrderContext({
+      orderId,
+      orderItemType: 'solution',
+      selectedPrice: pageData.selectedPrice,
+      itemName,
+      orderItemId,
+    });
+    logger.info(`navigating to order ${orderId} catalogue-solutions ondemand form`);
+    return res.render('pages/sections/order-items/catalogue-solutions/order-item/flat/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
