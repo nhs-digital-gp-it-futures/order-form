@@ -20,10 +20,10 @@ export const validateOrderItemFormBulk = ({ data, selectedPrice, orderItemType }
         field: 'Price',
         id: 'PriceMustBeANumber',
       });
-    } else if (data.price.includes('.') && data.price.split('.')[1].length > 3) {
+    } else if (data.price.includes('.') && data.price.split('.')[1].length > 4) {
       errors.push({
         field: 'Price',
-        id: 'PriceMoreThan3dp',
+        id: 'PriceMoreThan4dp',
       });
     } else if (parseFloat(data.price) > 999999999999999.999) {
       errors.push({

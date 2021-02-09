@@ -91,7 +91,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
           questions: {
             price: {
               ...flatPatientManifest.questions.price,
-              data: 1.25,
+              data: '1.25',
               unit: `${selectedPerPatientPrice.itemUnit.description} ${selectedPerPatientPrice.timeUnit.description}`,
               error: undefined,
             },
@@ -200,7 +200,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
           questions: {
             price: {
               ...flatOnDemandManifest.questions.price,
-              data: 1.25,
+              data: '1.25',
               unit: selectedOnDemandPrice.itemUnit.description,
               error: undefined,
             },

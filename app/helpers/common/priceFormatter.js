@@ -1,16 +1,20 @@
-export const formatPrice = (priceValue) => {
-  const formattedPrice = priceValue.toLocaleString(undefined, {
-    minimumFractionDigits: 3, maximumFractionDigits: 3,
-  });
+export const formatNumber = ({
+  value, minimumFractionDigits = 0, maximumFractionDigits = 4,
+}) => (
+  parseFloat(value)
+    .toLocaleString(
+      undefined, { minimumFractionDigits, maximumFractionDigits },
+    )
+);
 
-  const truncatedTo2dp = formattedPrice.substring(0, formattedPrice.indexOf('.') + 3);
-
-  return truncatedTo2dp;
-};
-
-export const formatDecimal = (priceValue) => {
-  if ((priceValue || {}).toString().includes('.') && priceValue.toString().split('.')[1].length < 3) {
-    return parseFloat(priceValue).toFixed(2);
+export const formatPrice = ({ value, minimumFractionDigits = 2, maximumFractionDigits = 4 }) => {
+  if (minimumFractionDigits === 0) {
+    if (Number.isInteger(Number.parseFloat(value))) {
+      return formatNumber({ value, maximumFractionDigits });
+    }
+    return formatNumber({ value, minimumFractionDigits: 2, maximumFractionDigits });
   }
-  return priceValue;
+  return formatNumber({ value, minimumFractionDigits, maximumFractionDigits });
 };
+
+export const removeCommas = (string) => string.replace(/,/g, '');

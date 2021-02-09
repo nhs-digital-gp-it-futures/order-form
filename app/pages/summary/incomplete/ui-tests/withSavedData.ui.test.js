@@ -63,10 +63,10 @@ const mockOrder = {
       serviceInstanceId: 'SI1-A10001',
       provisioningType: 'OnDemand',
       price: 500.261,
-      itemUnitDescription: 'per license',
+      itemUnitDescription: 'per licence',
       quantity: 12,
       deliveryDate: '2020-08-06',
-      costPerYear: 6003.132,
+      costPerYear: 6003.13299,
     },
     {
       itemId: 'C000001-01-A10002-3',
@@ -343,10 +343,10 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(1))).eql('C000001-01-A10001-2')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(2))).eql('Some catalogue name')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(3))).eql('SI1-A10001')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(4))).eql('500.26 per license')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(4))).eql('500.26 per licence')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(5))).eql('12')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(6))).eql('6 August 2020')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(7))).eql('6,003.13')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(7))).eql('6,003.1323')
 
     .expect(await extractInnerText(recurringCostRow2.find('td').nth(0))).eql('Red Mountain Medical Practice (A10002)')
     .expect(await extractInnerText(recurringCostRow2.find('td').nth(1))).eql('C000001-01-A10002-24')
