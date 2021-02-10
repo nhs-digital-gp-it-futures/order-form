@@ -67,6 +67,7 @@ class App {
       autoescape: true,
       express: this.app,
       noCache: true,
+      watch: !!(process.env.NODE_ENV === 'development'),
     });
 
     if (this.authProvider) {
