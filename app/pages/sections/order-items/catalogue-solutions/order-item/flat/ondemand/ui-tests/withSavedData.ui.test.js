@@ -19,21 +19,16 @@ const orderItem = {
   catalogueItemName: 'Some item name',
   catalogueItemId: '10000-001',
   quantity: 3,
-  estimationPeriod: 'year',
+  estimationPeriod: null,
   provisioningType: 'ondemand',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'patient',
-    description: 'per consultation',
-  },
-  timeUnit: {
-    name: 'year',
-    description: 'per annum',
+    name: 'consultationCore',
+    description: 'per consultation core hours',
   },
   price: 0.1,
   deliveryDate: '2020-12-12',
-  unit: 'per consultation per annum',
 };
 
 const recipients = [{ name: 'recipient-name', odsCode: 'code' }, { name: 'recipient-name', odsCode: 'code-not-used' }];
@@ -88,7 +83,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-fixture('Catalogue-solutions - flat ondeman - withSavedData')
+fixture('Catalogue-solutions - flat ondemand - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -105,7 +100,7 @@ test('should render a text field for the price question', async (t) => {
   await t
     .expect(await extractInnerText(priceLabel)).eql(content.questions.price.mainAdvice)
     .expect(price.find('input').count).eql(1)
-    .expect(await extractInnerText(priceSpan)).eql('per consultation per annum');
+    .expect(await extractInnerText(priceSpan)).eql('per consultation core hours');
 });
 
 test('should render the title', async (t) => {

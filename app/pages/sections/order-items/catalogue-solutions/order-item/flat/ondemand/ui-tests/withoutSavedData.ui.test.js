@@ -16,12 +16,8 @@ const selectedPrice = {
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'patient',
-    description: 'per consultation',
-  },
-  timeUnit: {
-    name: 'year',
-    description: 'per annum',
+    name: 'consultationCore',
+    description: 'per consultation core hours',
   },
   price: 1.64,
 };
@@ -56,7 +52,7 @@ const requestPostBody = {
   catalogueItemName: 'Item name',
   catalogueItemType: 'Solution',
   deliveryDate: '2020-10-10',
-  estimationPeriod: 'year',
+  estimationPeriod: null,
 };
 
 const mocks = (mockSelectedPrice) => {

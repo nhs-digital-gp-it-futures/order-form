@@ -16,12 +16,8 @@ const selectedPrice = {
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'patient',
-    description: 'per patient',
-  },
-  timeUnit: {
-    name: 'month',
-    description: 'per month',
+    name: 'consultationCore',
+    description: 'per consultation – core hours',
   },
   price: 1.64,
 };
@@ -92,15 +88,15 @@ test('should render the solution table headings', async (t) => {
 
   const solutionTable = Selector('div[data-test-id="solution-table"]');
   const solutionNameColumnHeading = solutionTable.find('[data-test-id="column-heading-0"]');
-  const practiceSizeColumnHeading = solutionTable.find('[data-test-id="column-heading-1"]');
+  const quantityColumnHeading = solutionTable.find('[data-test-id="column-heading-1"]');
   const dateColumnHeading = solutionTable.find('[data-test-id="column-heading-2"]');
 
   await t
     .expect(solutionTable.exists).ok()
     .expect(solutionNameColumnHeading.exists).ok()
     .expect(await extractInnerText(solutionNameColumnHeading)).eql(content.solutionTable.columnInfo[0].data)
-    .expect(practiceSizeColumnHeading.exists).ok()
-    .expect(await extractInnerText(practiceSizeColumnHeading)).eql(content.solutionTable.columnInfo[1].data)
+    .expect(quantityColumnHeading.exists).ok()
+    .expect(await extractInnerText(quantityColumnHeading)).eql(content.solutionTable.columnInfo[1].data)
     .expect(dateColumnHeading.exists).ok()
     .expect(await extractInnerText(dateColumnHeading)).eql(`${content.solutionTable.columnInfo[2].data}\n${content.solutionTable.columnInfo[2].additionalAdvice}`);
 });
@@ -113,7 +109,7 @@ test('should render the solution table content', async (t) => {
   const row = table.find('[data-test-id="table-row-0"]');
   const solutionName = row.find('div[data-test-id="recipient-name-code-recipient"]');
   const quantityInput = row.find('[data-test-id="question-quantity"] input');
-  const practiceSizeExpandableSection = row.find('[data-test-id="view-section-input-id-practice"]');
+  const quantityExpandableSection = row.find('[data-test-id="view-section-input-id-practice"]');
   const dateInput = row.find('[data-test-id="question-deliveryDate"] input');
   const dayInput = dateInput.nth(0);
   const monthInput = dateInput.nth(1);
@@ -126,12 +122,12 @@ test('should render the solution table content', async (t) => {
     .expect(await extractInnerText(solutionName)).eql('recipient-name (code)')
 
     .expect(quantityInput.exists).ok()
-    .expect(practiceSizeExpandableSection.exists).ok()
-    .expect(await extractInnerText(practiceSizeExpandableSection)).eql(content.solutionTable.cellInfo.quantity.expandableSection.title)
-    .expect(practiceSizeExpandableSection.find('details[open]').exists).notOk()
-    .click(practiceSizeExpandableSection.find('summary'))
-    .expect(practiceSizeExpandableSection.find('details[open]').exists).ok()
-    .expect(await extractInnerText(practiceSizeExpandableSection.find('.nhsuk-details__text')))
+    .expect(quantityExpandableSection.exists).ok()
+    .expect(await extractInnerText(quantityExpandableSection)).eql(content.solutionTable.cellInfo.quantity.expandableSection.title)
+    .expect(quantityExpandableSection.find('details[open]').exists).notOk()
+    .click(quantityExpandableSection.find('summary'))
+    .expect(quantityExpandableSection.find('details[open]').exists).ok()
+    .expect(await extractInnerText(quantityExpandableSection.find('.nhsuk-details__text')))
     .eql(content.solutionTable.cellInfo.quantity.expandableSection.innerComponent.replace('<br><br>', ''))
 
     .expect(dateInput.exists).ok()
@@ -264,7 +260,7 @@ test('should anchor to the price field when clicking on the numerical price erro
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
 
-test('should render solution table as errors with error message when no practice list sizes are entered', async (t) => {
+test('should render solution table as errors with error message when no quantities are entered', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -280,7 +276,7 @@ test('should render solution table as errors with error message when no practice
     .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.QuantityRequired);
 });
 
-test('should anchor to the table when clicking on the error select practice size link in errorSummary', async (t) => {
+test('should anchor to the table when clicking on the error select quantity link in errorSummary', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 

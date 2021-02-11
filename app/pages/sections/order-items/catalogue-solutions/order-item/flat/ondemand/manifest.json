@@ -3,7 +3,7 @@
     "price": {
       "id": "price",
       "mainAdvice": "What price have you agreed? (£)",
-      "unit": "{{ unit | lower }}",
+      "unit": "Unit description",
       "expandableSection": {
         "dataTestId": "view-section-price-id",
         "title": "What price should I enter?",
