@@ -1,8 +1,9 @@
 import { getContext, getErrorContext } from './contextCreator';
 import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from '../../../../../helpers/controllers/manifestProvider';
+import { removeCommas } from '../../../../../helpers/common/priceFormatter';
 
-const formatFormData = ({ formData }) => ({
+export const formatFormData = ({ formData }) => ({
   'deliveryDate-day': formData['deliveryDate-day']
     ? formData['deliveryDate-day'].trim() : undefined,
   'deliveryDate-month': formData['deliveryDate-month']
@@ -12,7 +13,7 @@ const formatFormData = ({ formData }) => ({
   quantity: formData.quantity
     ? formData.quantity.trim() : undefined,
   price: formData.price && formData.price.length > 0
-    ? formData.price.trim() : undefined,
+    ? removeCommas(formData.price.trim()) : undefined,
   selectEstimationPeriod: formData.selectEstimationPeriod
     ? formData.selectEstimationPeriod.trim() : undefined,
 });
