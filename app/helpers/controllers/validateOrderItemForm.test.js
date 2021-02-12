@@ -68,9 +68,9 @@ describe('validateOrderItemForm', () => {
       field: 'Price',
       id: 'PriceMustBeANumber',
     };
-    const priceMoreThan3dp = {
+    const priceMoreThan4dp = {
       field: 'Price',
-      id: 'PriceMoreThan3dp',
+      id: 'PriceMoreThan4dp',
     };
     const priceLessThanMax = {
       field: 'Price',
@@ -200,12 +200,12 @@ describe('validateOrderItemForm', () => {
       expect(errors).toEqual([priceMustBeANumber]);
     });
 
-    it('should return an array of one validation error if price has more than 3dp', () => {
+    it('should return an array of one validation error if price has more than 4dp', () => {
       const selectedPriceManifest = { questions: {}, addPriceTable: { cellInfo: { price: { question: 'test' } } } };
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
         quantity: '1',
-        price: '1.1234',
+        price: '1.12345',
         selectEstimationPeriod: 'month',
         'deliveryDate-day': '09',
         'deliveryDate-month': '02',
@@ -214,7 +214,7 @@ describe('validateOrderItemForm', () => {
 
       const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
-      expect(errors).toEqual([priceMoreThan3dp]);
+      expect(errors).toEqual([priceMoreThan4dp]);
     });
 
     it('should return an array of one validation error if price value is too big', () => {

@@ -609,7 +609,7 @@ describe('order summary contextCreator', () => {
                 hideSeperator: true,
               },
               {
-                data: '1,981.02',
+                data: '1,981.03',
                 classes: incompleteManifest
                   .recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
                 dataTestId: 'total-year-cost-value',
@@ -625,7 +625,7 @@ describe('order summary contextCreator', () => {
                 dataTestId: 'total-monthly-cost-label',
               },
               {
-                data: '191.69',
+                data: '191.00',
                 classes: incompleteManifest
                   .recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.classes,
                 dataTestId: 'total-monthly-cost-value',
@@ -641,7 +641,7 @@ describe('order summary contextCreator', () => {
                 hideSeperator: true,
               },
               {
-                data: '2,345.43',
+                data: '2,345.40',
                 classes: incompleteManifest
                   .recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.classes,
                 dataTestId: 'total-ownership-cost-value',
@@ -669,9 +669,9 @@ describe('order summary contextCreator', () => {
 
       const mockDataWithTotalRecurringCosts = {
         ...mockOrderData,
-        totalRecurringCostPerYear: 1981.028,
-        totalRecurringCostPerMonth: 191.691,
-        totalOwnershipCost: 2345.430,
+        totalRecurringCostPerYear: 1981.02899999,
+        totalRecurringCostPerMonth: 191.00001,
+        totalOwnershipCost: 2345.40009999,
       };
 
       const context = getContext({ orderId: 'order-1', orderData: mockDataWithTotalRecurringCosts });
