@@ -91,7 +91,7 @@ const generateRowForTotal = ({
   if (showValueColumn) {
     columns.push({
       data: valueCellData !== undefined
-        ? formatPrice(valueCellData)
+        ? formatPrice({ value: valueCellData, maximumFractionDigits: 2 })
         : '0.00',
       classes: valueCellClasses,
       dataTestId: valueCellTestId,
@@ -232,7 +232,7 @@ const generateRecurringCostDetailsTable = ({
 
     columns.push(({
       classes: recurringCostTable.cellInfo.priceUnit.classes,
-      data: `${formatPrice(item.price)} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
+      data: `${formatPrice({ value: item.price })} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
       dataTestId: 'price-unit',
     }));
 
@@ -250,7 +250,7 @@ const generateRecurringCostDetailsTable = ({
 
     columns.push(({
       classes: recurringCostTable.cellInfo.itemCost.classes,
-      data: formatPrice(item.costPerYear),
+      data: formatPrice({ value: item.costPerYear, maximumFractionDigits: 2 }),
       dataTestId: 'item-cost',
     }));
 
@@ -296,7 +296,7 @@ const generateOneOffCostDetailsTable = ({
 
     columns.push(({
       classes: oneOffCostTable.cellInfo.priceUnit.classes,
-      data: `${formatPrice(item.price)} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
+      data: `${formatPrice({ value: item.price })} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
       dataTestId: 'price-unit',
     }));
 
@@ -308,7 +308,7 @@ const generateOneOffCostDetailsTable = ({
 
     columns.push(({
       classes: oneOffCostTable.cellInfo.itemCost.classes,
-      data: formatPrice(item.costPerYear),
+      data: formatPrice({ value: item.costPerYear, maximumFractionDigits: 2 }),
       dataTestId: 'item-cost',
     }));
 

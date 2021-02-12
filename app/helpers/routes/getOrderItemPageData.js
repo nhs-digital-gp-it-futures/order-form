@@ -1,6 +1,5 @@
 import { getSelectedPrice } from '../api/bapi/getSelectedPrice';
 import { getOrderItem } from '../api/ordapi/getOrderItem';
-import { formatDecimal } from '../common/priceFormatter';
 import { destructureDate } from '../common/dateFormatter';
 import { sessionKeys } from './sessionHelper';
 
@@ -28,7 +27,6 @@ export const getOrderItemPageData = async ({
     });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
-    const formData = { price: formatDecimal(selectedPrice.price) };
 
     return {
       itemId,
@@ -37,7 +35,9 @@ export const getOrderItemPageData = async ({
       serviceRecipientId,
       serviceRecipientName,
       selectedPrice,
-      formData,
+      formData: {
+        price: selectedPrice.price,
+      },
     };
   }
 
@@ -61,7 +61,7 @@ export const getOrderItemPageData = async ({
     'deliveryDate-day': day,
     quantity: orderItem.quantity,
     selectEstimationPeriod: orderItem.estimationPeriod,
-    price: formatDecimal(orderItem.price),
+    price: orderItem.price,
   };
 
   return {

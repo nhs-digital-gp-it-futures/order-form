@@ -1,3 +1,5 @@
+import { formatPrice } from '../common/priceFormatter';
+
 const populateRadioQuestion = ({ questionManifest, selectedValue = '' }) => {
   const populatedOptions = questionManifest.options.map((option) => ({
     ...option,
@@ -54,6 +56,14 @@ const determineFields = ({ errorMap, questionId, questionType }) => {
 export const generateQuestions = ({ questions, formData, errorMap }) => {
   const { questionsAcc: modifiedQuestions } = Object.entries(questions)
     .reduce(({ questionsAcc }, [questionId, questionManifest]) => {
+      const formattedData = formData && {
+        ...formData,
+        price: formData.price
+          ? formatPrice(
+            { value: formData.price, minimumFractionDigits: 0, maximumFractionDigits: 20 },
+          ) : undefined,
+      };
+
       const questionError = errorMap && errorMap[questionId]
         ? {
           message: errorMap[questionId].errorMessages.join(', '),
@@ -62,7 +72,7 @@ export const generateQuestions = ({ questions, formData, errorMap }) => {
         : undefined;
 
       const questionData = formData
-        ? populateQuestionWithData({ questionManifest, formData, questionId })
+        ? populateQuestionWithData({ questionManifest, formData: formattedData, questionId })
         : undefined;
 
       return ({

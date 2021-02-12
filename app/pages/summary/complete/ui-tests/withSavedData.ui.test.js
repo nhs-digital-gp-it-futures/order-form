@@ -63,10 +63,10 @@ const mockOrder = {
       serviceInstanceId: 'SI1-A10001',
       provisioningType: 'OnDemand',
       price: 500.261,
-      itemUnitDescription: 'per license',
+      itemUnitDescription: 'per licence',
       quantity: 12,
       deliveryDate: '2020-08-06',
-      costPerYear: 6003.132,
+      costPerYear: 6003.1321,
     },
     {
       itemId: 'C000001-01-A10002-3',
@@ -76,7 +76,7 @@ const mockOrder = {
       catalogueItemName: 'Remote Consultation',
       serviceInstanceId: 'SI1-A10002',
       provisioningType: 'Declarative',
-      price: 207.916,
+      price: 207.916999,
       itemUnitDescription: 'per practice',
       timeUnitDescription: 'per month',
       quantityPeriodDescription: 'per year',
@@ -92,7 +92,7 @@ const mockOrder = {
       catalogueItemName: 'Remote Consultation',
       serviceInstanceId: 'SI1-A10001',
       provisioningType: 'Declarative',
-      price: 207.916,
+      price: 207.9161,
       itemUnitDescription: 'per practice',
       timeUnitDescription: 'per month',
       quantityPeriodDescription: 'per year',
@@ -203,7 +203,7 @@ const mockOrder = {
       odsCode: 'A10003',
     },
   ],
-  totalOneOffCost: 101.111,
+  totalOneOffCost: 101.1111999,
   totalRecurringCostPerYear: 1981.028,
   totalRecurringCostPerMonth: 191.691,
   totalOwnershipCost: 2345.430,
@@ -334,7 +334,7 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(1))).eql('C000001-01-A10001-4')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(2))).eql('Remote Consultation')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(3))).eql('SI1-A10001')
-    .expect(await extractInnerText(recurringCostRow0.find('td').nth(4))).eql('207.91 per practice per month')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(4))).eql('207.9161 per practice per month')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(5))).eql('12 per year')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(6))).eql('25 September 2020')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(7))).eql('29,939.90')
@@ -343,7 +343,7 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(1))).eql('C000001-01-A10001-2')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(2))).eql('Some catalogue name')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(3))).eql('SI1-A10001')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(4))).eql('500.26 per license')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(4))).eql('500.261 per licence')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(5))).eql('12')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(6))).eql('6 August 2020')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(7))).eql('6,003.13')
@@ -370,7 +370,7 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(1))).eql('C000001-01-A10002-3')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(2))).eql('Remote Consultation')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(3))).eql('SI1-A10002')
-    .expect(await extractInnerText(recurringCostRow4.find('td').nth(4))).eql('207.91 per practice per month')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(4))).eql('207.917 per practice per month')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(5))).eql('12 per year')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(6))).eql('25 September 2020')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(7))).eql('29,939.90')

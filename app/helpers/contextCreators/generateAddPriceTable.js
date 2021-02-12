@@ -1,3 +1,5 @@
+import { formatPrice } from '../common/priceFormatter';
+
 export const generateAddPriceTable = ({
   addPriceTable, price, itemUnitDescription, timeUnitDescription = '', errorMap,
 }) => {
@@ -7,7 +9,10 @@ export const generateAddPriceTable = ({
     ...addPriceTable.cellInfo.price,
     question: {
       ...addPriceTable.cellInfo.price.question,
-      data: price !== undefined ? `${price}` : undefined,
+      data: price !== undefined
+        ? formatPrice(
+          { value: price, minimumFractionDigits: 0, maximumFractionDigits: 20 },
+        ) : undefined,
       error: errorMap && errorMap.price
         ? { message: errorMap.price.errorMessages.join(', ') }
         : undefined,
