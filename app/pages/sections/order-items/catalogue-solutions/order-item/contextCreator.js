@@ -19,6 +19,7 @@ export const getContext = ({
   const errorMessages = errorMap && (errorMap.quantity || errorMap.deliveryDate)
     ? ((errorMap.quantity || {}).errorMessages || [''])
       .concat((errorMap.deliveryDate || {}).errorMessages) : undefined;
+
   return {
     ...commonManifest,
     title: `${solutionName} ${commonManifest.title} ${orderId}`,
@@ -26,7 +27,9 @@ export const getContext = ({
       questions: selectedPriceManifest.questions,
       formData,
       errorMap,
-      unit: `${selectedPrice.itemUnit.description} ${selectedPrice.timeUnit.description}`,
+      unit: selectedPrice.timeUnit
+        ? `${selectedPrice.itemUnit.description} ${selectedPrice.timeUnit.description}`
+        : selectedPrice.itemUnit.description,
     }),
     solutionTable: selectedPriceManifest && generateSolutionTable({
       solutionTable: selectedPriceManifest.solutionTable,
