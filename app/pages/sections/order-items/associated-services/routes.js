@@ -7,6 +7,7 @@ import {
 } from './dashboard/controller';
 import { associatedServicesSelectRoutes } from './select/routes';
 import {
+  formatFormData,
   getOrderItemContext,
   getOrderItemErrorPageContext,
 } from './order-item/controller';
@@ -87,9 +88,11 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = sessionManager.getFromSession({ req, key: sessionKeys.orderItemPageData });
 
+    const formData = formatFormData({ formData: req.body });
+
     const errors = validateOrderItemForm({
       orderItemType: 'AssociatedService',
-      data: req.body,
+      data: formData,
       selectedPrice: pageData.selectedPrice,
     });
     validationErrors.push(...errors);
@@ -103,7 +106,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
         itemId: pageData.itemId,
         itemName: pageData.itemName,
         selectedPrice: pageData.selectedPrice,
-        formData: req.body,
+        formData,
       });
 
       if (apiResponse.success) {

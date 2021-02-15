@@ -47,7 +47,7 @@ describe('generateAddPriceTable', () => {
             question: {
               type: 'input',
               id: 'price',
-              data: '1892.23',
+              data: '1,892.23',
             },
           },
           {
@@ -74,7 +74,7 @@ describe('generateAddPriceTable', () => {
             question: {
               type: 'input',
               id: 'price',
-              data: '1892.2323',
+              data: '1,892.2323',
               error: { message: 'Too many decimal places' },
             },
           },

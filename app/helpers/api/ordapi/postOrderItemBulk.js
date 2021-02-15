@@ -23,7 +23,7 @@ const formatPostData = ({
   catalogueItemType: orderItemType,
   deliveryDate: extractDate('deliveryDate', formData.deliveryDate, index),
   quantity: parseInt(formData.quantity[index], 10),
-  estimationPeriod: selectedPrice.timeUnit.name,
+  estimationPeriod: selectedPrice.timeUnit ? selectedPrice.timeUnit.name : null,
   price: parseFloat(formData.price),
 }));
 

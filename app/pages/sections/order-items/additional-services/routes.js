@@ -7,6 +7,7 @@ import {
 } from './dashboard/controller';
 import { additionalServicesSelectRoutes } from './select/routes';
 import {
+  formatFormData,
   getOrderItemContext,
   getOrderItemErrorPageContext,
 } from './order-item/controller';
@@ -85,9 +86,11 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = sessionManager.getFromSession({ req, key: sessionKeys.orderItemPageData });
 
+    const formData = formatFormData({ formData: req.body });
+
     const errors = validateOrderItemForm({
       orderItemType: 'AdditionalService',
-      data: req.body,
+      data: formData,
       selectedPrice: pageData.selectedPrice,
     });
     validationErrors.push(...errors);
@@ -104,7 +107,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
         itemName: pageData.itemName,
         catalogueSolutionId: pageData.catalogueSolutionId,
         selectedPrice: pageData.selectedPrice,
-        formData: req.body,
+        formData,
       });
 
       if (apiResponse.success) {

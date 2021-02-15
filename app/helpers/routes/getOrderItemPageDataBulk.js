@@ -1,5 +1,4 @@
 import { getSelectedPrice } from '../api/bapi/getSelectedPrice';
-import { formatDecimal } from '../common/priceFormatter';
 import { destructureDate } from '../common/dateFormatter';
 import { sessionKeys } from './sessionHelper';
 import { getOrderItems } from '../api/ordapi/getOrderItems';
@@ -38,15 +37,22 @@ export const getOrderItemPageDataBulk = async ({
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     const [day, month, year] = destructureDate(deliveryDate);
+    const selectedQuantity = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedQuantity,
+    });
+    const selectEstimationPeriod = sessionManager.getFromSession({
+      req, key: sessionKeys.selectEstimationPeriod,
+    });
     const formData = {
       deliveryDate: [{
         'deliveryDate-day': day,
         'deliveryDate-month': month,
         'deliveryDate-year': year,
       }],
-      price: formatDecimal(selectedPrice.price),
+      price: selectedPrice.price,
+      quantity: selectedQuantity,
+      selectEstimationPeriod,
     };
-
     return {
       itemId,
       itemName,
@@ -78,7 +84,7 @@ export const getOrderItemPageDataBulk = async ({
   const formData = {
     deliveryDate: [],
     quantity: [],
-    price: formatDecimal(selectedPrice.price),
+    price: selectedPrice.price,
   };
 
   const recipients = [];

@@ -32,25 +32,36 @@ describe('catalogue-solutions order-item controller', () => {
     });
 
     it('should call getSelectedPriceManifest with the correct params', async () => {
+      const mockSelectedPrice = {
+        provisioningType: 'Patient',
+        type: 'flat',
+      };
       await getOrderItemContext({
         orderId: 'order-1',
         orderItemType,
         solutionName: 'solution-name',
         selectedRecipientId: 'fake-recipient-id',
         selectedPriceId: 'some-price-id',
-        selectedPrice,
+        selectedPrice: mockSelectedPrice,
+        formData: {
+          selectEstimationPeriod: 'month',
+        },
       });
 
       expect(getSelectedPriceManifest.getSelectedPriceManifest.mock.calls.length).toEqual(1);
       expect(getSelectedPriceManifest.getSelectedPriceManifest).toHaveBeenCalledWith({
         orderItemType,
-        provisioningType: selectedPrice.provisioningType,
-        type: selectedPrice.type,
+        provisioningType: mockSelectedPrice.provisioningType,
+        type: mockSelectedPrice.type,
       });
     });
 
     it('should call getContext with the correct params when formData passed in', async () => {
       const selectedPriceManifest = { description: 'fake manifest' };
+      const mockSelectedPrice = {
+        provisioningType: 'Patient',
+        type: 'flat',
+      };
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
 
       const formData = {
@@ -68,7 +79,7 @@ describe('catalogue-solutions order-item controller', () => {
         solutionName: 'solution-name',
         selectedPriceId: 'some-price-id',
         orderItemId: 'order-item-id',
-        selectedPrice,
+        selectedPrice: mockSelectedPrice,
         formData,
         recipients,
       });
@@ -82,7 +93,7 @@ describe('catalogue-solutions order-item controller', () => {
         orderItemId: 'order-item-id',
         formData,
         recipients,
-        selectedPrice,
+        selectedPrice: mockSelectedPrice,
       });
     });
   });

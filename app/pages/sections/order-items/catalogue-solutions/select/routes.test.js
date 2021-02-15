@@ -16,7 +16,6 @@ import * as catalogueSolutionPriceController from './price/controller';
 import * as selectSolutionController from './solution/controller';
 import * as selectRecipientController from './recipients/controller';
 import * as selectPlannedDateController from './date/controller';
-import * as onDemandFormController from '../order-item/flat/controller';
 import { baseUrl } from '../../../../../config';
 import { getServiceRecipients as getRecipientsFromOapi } from '../../../../../helpers/api/oapi/getServiceRecipients';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
@@ -24,7 +23,6 @@ import { getCatalogueItems } from '../../../../../helpers/api/bapi/getCatalogueI
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getSupplier } from '../../../../../helpers/api/ordapi/getSupplier';
 import { getCommencementDate } from '../../../../../helpers/routes/getCommencementDate';
-import { getOrderItemPageData } from '../../../../../helpers/routes/getOrderItemPageData';
 import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
@@ -617,34 +615,9 @@ describe('catalogue-solutions select routes', () => {
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
-
-    it('should redirect to /organisation/order-1/catalogue-solutions/neworderitem when a recipient is selected', async () => {
-      selectPlannedDateController.validateDeliveryDateForm = jest.fn()
-        .mockReturnValue([]);
-
-      putPlannedDeliveryDate.mockResolvedValue({ success: true });
-
-      const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        getPathCookies: [mockAuthorisedCookie, mockItemNameCookie],
-      });
-
-      return request(setUpFakeApp())
-        .post(path)
-        .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockItemNameCookie])
-        .send({ _csrf: csrfToken })
-        .expect(302)
-        .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/neworderitem`);
-          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-        });
-    });
   });
-  describe('GET /organisation/:orderId/catalogue-solutions/select/solution/price/recipients/ondemandform', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/select/solution/price/recipients/ondemandform';
+  describe('GET /organisation/:orderId/catalogue-solutions/select/solution/price/flat/ondemand', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/select/solution/price/flat/ondemand';
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
@@ -660,30 +633,5 @@ describe('catalogue-solutions select routes', () => {
         expectedPageMessage: 'You are not authorised to view this page',
       })
     ));
-
-    it('should return the catalogue-solutions select planned delivery date if authorised', () => {
-      getOrderItemPageData.mockResolvedValue('');
-      const mockData = {
-        orderId: 'C010000-01',
-        orderItemType: 'neworderitem',
-        selectedPrice: {
-          provisioningType: 'onDemand',
-          type: 'flat',
-        },
-        itemName: 'Write on time',
-        orderItemId: 'neworderitem',
-      };
-      onDemandFormController.getOnDemandOrderContext = jest.fn()
-        .mockResolvedValue(mockData);
-
-      return request(setUpFakeApp())
-        .get(path)
-        .set('Cookie', [mockAuthorisedCookie])
-        .expect(200)
-        .then((res) => {
-          expect(res.text.includes('data-test-id="order-item-provisiontype-page"')).toBeTruthy();
-          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        });
-    });
   });
 });

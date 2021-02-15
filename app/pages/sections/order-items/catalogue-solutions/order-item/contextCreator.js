@@ -19,6 +19,13 @@ export const getContext = ({
   const errorMessages = errorMap && (errorMap.quantity || errorMap.deliveryDate)
     ? ((errorMap.quantity || {}).errorMessages || [''])
       .concat((errorMap.deliveryDate || {}).errorMessages) : undefined;
+  let newbackLinkRef = '';
+  if (selectedPrice.provisioningType === 'Patient') {
+    newbackLinkRef = `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`;
+  } else {
+    newbackLinkRef = `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice.type}/${selectedPrice.provisioningType}`
+      .toLowerCase();
+  }
   return {
     ...commonManifest,
     title: `${solutionName} ${commonManifest.title} ${orderId}`,
@@ -26,7 +33,9 @@ export const getContext = ({
       questions: selectedPriceManifest.questions,
       formData,
       errorMap,
-      unit: `${selectedPrice.itemUnit.description} ${selectedPrice.timeUnit.description}`,
+      unit: selectedPrice.timeUnit
+        ? `${selectedPrice.itemUnit.description} ${selectedPrice.timeUnit.description}`
+        : selectedPrice.itemUnit.description,
     }),
     solutionTable: selectedPriceManifest && generateSolutionTable({
       solutionTable: selectedPriceManifest.solutionTable,
@@ -36,7 +45,7 @@ export const getContext = ({
           (recipient) => recipient.odsCode === selectedRecipient,
         ),
       ),
-      quantity: formData.quantity,
+      quantity: selectedPrice.provisioningType !== 'Patient' ? formData.quantity : '',
       errorMessages,
     }),
     editButton: {
@@ -51,8 +60,7 @@ export const getContext = ({
       href: commonManifest.deleteButton.href,
       disabled: orderItemId === 'neworderitem',
     },
-    backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`
-      : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
+    backLinkHref: orderItemId === 'neworderitem' ? newbackLinkRef : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
   };
 };
 

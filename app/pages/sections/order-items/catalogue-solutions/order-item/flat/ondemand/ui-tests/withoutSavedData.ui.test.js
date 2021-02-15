@@ -12,16 +12,12 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-sol
 
 const selectedPrice = {
   priceId: 2,
-  provisioningType: 'patient',
+  provisioningType: 'ondemand',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'patient',
-    description: 'per patient',
-  },
-  timeUnit: {
-    name: 'year',
-    description: 'per year',
+    name: 'consultationCore',
+    description: 'per consultation core hours',
   },
   price: 1.64,
 };
@@ -56,7 +52,7 @@ const requestPostBody = {
   catalogueItemName: 'Item name',
   catalogueItemType: 'Solution',
   deliveryDate: '2020-10-10',
-  estimationPeriod: 'year',
+  estimationPeriod: null,
 };
 
 const mocks = (mockSelectedPrice) => {
@@ -90,7 +86,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-fixture('Catalogue-solutions - flat patient - withoutSavedData')
+fixture('Catalogue-solutions - flat ondemand - withoutSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);

@@ -23,12 +23,11 @@ import {
   getDeliveryDateErrorPageContext,
 } from './date/controller';
 import {
-  getOnDemandOrderContext,
+  formatFormData, getProvisionTypeOrderContext, getProvisionTypeOrderErrorContext,
 } from '../order-item/flat/controller';
 import {
   findSelectedCatalogueItemInSession,
 } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
-import { getOrderItemPageData } from '../../../../../helpers/routes/getOrderItemPageData';
 import {
   getCatalogueItems,
 } from '../../../../../helpers/api/bapi/getCatalogueItems';
@@ -39,6 +38,7 @@ import { getServiceRecipients } from '../../../../../helpers/routes/getServiceRe
 import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 import { extractDate } from '../../../../../helpers/controllers/extractDate';
+import { validateOrderItemTypeForm } from '../../../../../helpers/controllers/validateOrderItemTypeForm';
 
 const router = express.Router({ mergeParams: true });
 
@@ -271,10 +271,15 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       const solutionPrices = sessionManager.getFromSession({
         req, key: sessionKeys.solutionPrices,
       });
-      const selectedSolution = solutionPrices.prices.filter(
+      const selectedPrice = solutionPrices.prices.filter(
         (obj) => obj.priceId === parseInt(priceId, 10),
       );
-      sessionManager.saveToSession({ req, key: sessionKeys.plannedDeliveryDate, value: extractDate('deliveryDate', req.body) });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedPrice, value: selectedPrice[0],
+      });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.plannedDeliveryDate, value: extractDate('deliveryDate', req.body),
+      });
 
       const apiResponse = await putPlannedDeliveryDate({
         orderId,
@@ -284,13 +289,9 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         accessToken: extractAccessToken({ req, tokenType: 'access' }),
       });
       if (apiResponse.success) {
-        if (selectedSolution[0].provisioningType === 'Patient') {
-          return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
-        }
-        if (selectedSolution[0].provisioningType === 'OnDemand') {
-          return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/ondemandform`);
-        }
-        return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/declarativeform`);
+        return res.redirect(
+          `${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice[0].type}/${selectedPrice[0].provisioningType}`.toLowerCase(),
+        );
       }
       validationErrors.push(...apiResponse.errors);
     }
@@ -310,31 +311,75 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.get('/solution/price/recipients/ondemandform', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    const orderItemId = 'neworderitem';
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const pageData = await getOrderItemPageData({
-      req,
-      sessionManager,
-      accessToken,
-      orderId,
-      orderItemId,
-    });
-    sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
+  router.get('/solution/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, priceType, provisioningType } = req.params;
     const itemName = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemName,
     });
-    const context = await getOnDemandOrderContext({
+    const selectedPrice = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedPrice,
+    });
+    const quantity = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedQuantity,
+    });
+    const estimationPeriod = sessionManager.getFromSession({
+      req, key: sessionKeys.selectEstimationPeriod,
+    });
+    const formData = {
+      quantity,
+      selectEstimationPeriod: estimationPeriod,
+    };
+    const context = await getProvisionTypeOrderContext({
       orderId,
       orderItemType: 'solution',
-      selectedPrice: pageData.selectedPrice,
+      selectedPrice,
       itemName,
-      orderItemId,
+      formData,
     });
-    logger.info(`navigating to order ${orderId} catalogue-solutions ondemand form`);
-    return res.render('pages/sections/order-items/catalogue-solutions/order-item/flat/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    logger.info(`navigating to order ${orderId} catalogue-solutions ${provisioningType} form`);
+    if (priceType === 'flat' && provisioningType === 'patient') {
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+    }
+    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
+  router.post('/solution/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, orderItemId, priceType } = req.params;
+    const validationErrors = [];
+    const formData = formatFormData({ formData: req.body });
+    const itemName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+    const selectedPrice = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedPrice,
+    });
 
+    const errors = validateOrderItemTypeForm({
+      orderItemType: 'solution',
+      data: req.body,
+      selectedPrice,
+    });
+    validationErrors.push(...errors);
+    if (validationErrors.length === 0) {
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedQuantity, value: formData.quantity,
+      });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectEstimationPeriod, value: formData.selectEstimationPeriod,
+      });
+      logger.info('Redirecting to the catalogue solution order item page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+    }
+
+    const context = await getProvisionTypeOrderErrorContext({
+      orderId,
+      orderItemId,
+      orderItemType: 'solution',
+      itemName,
+      selectedPrice,
+      formData,
+      validationErrors,
+    });
+    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
   return router;
 };
