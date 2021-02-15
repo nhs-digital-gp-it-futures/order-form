@@ -1,4 +1,7 @@
-FROM node:12
+
+
+
+FROM node:12-slim as builder
 
 # Create app directory
 WORKDIR /usr/src
@@ -16,9 +19,17 @@ RUN npm run build:docker
 
 # Install prod dependencies inside the dist directory
 RUN cp package.json dist && cd dist && npm install --only=prod
+# RUN cp -R dist/node_modules prod_node_modules
 
 # Remove all files apart from the dist sub-directory
-RUN find ./ -mindepth 1 ! -regex '^./dist\(/.*\)?' -delete
+# RUN find ./ -mindepth 1 ! -regex '^./dist\(/.*\)?' -delete
+
+
+FROM builder as production
+
+# COPY /usr/src/prod_node_modules ./node_modules
+# copy app sources
+COPY . .
 
 EXPOSE 3006
 
