@@ -37,7 +37,7 @@ const catalogueSolutionIdInSession = 'solution-1';
 const deliveryDateInSession = '2020-10-10';
 const recipientsInSession = JSON.stringify(recipients);
 const selectedRecipientsInSession = JSON.stringify(selectedRecipients);
-
+const selectEstimationPeriodInSession = undefined;
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
   itemName: itemNameInSession,
@@ -114,7 +114,7 @@ test('should render the solution table headings', async (t) => {
     .expect(solutionNameColumnHeading.exists).ok()
     .expect(await extractInnerText(solutionNameColumnHeading)).eql(content.solutionTable.columnInfo[0].data)
     .expect(practiceSizeColumnHeading.exists).ok()
-    .expect(await extractInnerText(practiceSizeColumnHeading)).eql(content.solutionTable.columnInfo[1].data)
+    .expect(await extractInnerText(practiceSizeColumnHeading)).eql(`${content.solutionTable.columnInfo[1].data} ${selectEstimationPeriodInSession}`)
     .expect(dateColumnHeading.exists).ok()
     .expect(await extractInnerText(dateColumnHeading)).eql(`${content.solutionTable.columnInfo[2].data}\n${content.solutionTable.columnInfo[2].additionalAdvice}`);
 });

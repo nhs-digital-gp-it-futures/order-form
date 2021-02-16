@@ -1,4 +1,5 @@
 {
+  "description": "Enter the quantity you think you'll need and over what period.",
   "questions": {
     "price": {
       "id": "price",
@@ -12,7 +13,7 @@
     },
     "quantity": {
       "id": "quantity",
-      "mainAdvice": "Enter the quantity you think you'll need and over what period.",
+      "mainAdvice": "How many do you think you’ll need?",
       "rows": 3,
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",
