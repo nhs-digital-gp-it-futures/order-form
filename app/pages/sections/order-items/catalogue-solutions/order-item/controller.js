@@ -46,7 +46,7 @@ export const getOrderItemContext = async ({
     provisioningType: selectedPrice.provisioningType,
     type: selectedPrice.type,
   });
-  if (selectedPrice.provisioningType !== 'Patient') {
+  if (selectedPrice.provisioningType === 'OnDemand') {
     modifyManifest(selectedPriceManifest, formData.selectEstimationPeriod);
   }
   return getContext({

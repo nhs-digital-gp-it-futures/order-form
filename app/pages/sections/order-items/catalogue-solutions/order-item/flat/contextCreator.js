@@ -9,6 +9,7 @@ export const getContext = ({
   orderId,
   formData,
   itemName,
+  selectedPrice,
 }) => ({
   ...commonManifest,
   title: `${commonManifest.title} ${itemName} for ${orderId}`,
@@ -16,7 +17,7 @@ export const getContext = ({
     questions: selectedPriceManifest.questions,
     formData,
   }),
-  description: selectedPriceManifest.description,
+  description: selectedPrice.provisioningType === 'Declarative' ? selectedPriceManifest.description.replace('[price]', selectedPrice.price) : selectedPriceManifest.description,
   backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`,
 });
 
@@ -35,7 +36,6 @@ export const getErrorContext = (params) => {
     formData: params.formData,
     errorMap,
   });
-
   const errorSummary = generateErrorSummary({ errorMap });
   return ({
     errors: errorSummary,

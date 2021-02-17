@@ -101,7 +101,7 @@ test('should render the solution table headings', async (t) => {
     .expect(solutionNameColumnHeading.exists).ok()
     .expect(await extractInnerText(solutionNameColumnHeading)).eql(content.solutionTable.columnInfo[0].data)
     .expect(quantityColumnHeading.exists).ok()
-    .expect(await extractInnerText(quantityColumnHeading)).eql(`${content.solutionTable.columnInfo[1].data} ${selectEstimationPeriodInSession}`)
+    .expect(await extractInnerText(quantityColumnHeading)).eql(content.solutionTable.columnInfo[1].data)
     .expect(dateColumnHeading.exists).ok()
     .expect(await extractInnerText(dateColumnHeading)).eql(`${content.solutionTable.columnInfo[2].data}\n${content.solutionTable.columnInfo[2].additionalAdvice}`);
 });

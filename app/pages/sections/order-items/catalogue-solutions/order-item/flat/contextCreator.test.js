@@ -8,6 +8,7 @@ describe('quantity and estimation ondemand form contextCreator', () => {
       const context = getContext({
         commonManifest,
         selectedPriceManifest: flatOnDemandManifest,
+        selectedPrice: { price: '100.1', provisioningType: 'Patient', type: 'flat' },
       });
       expect(context.backLinkText).toEqual(commonManifest.backLinkText);
     });
@@ -17,6 +18,7 @@ describe('quantity and estimation ondemand form contextCreator', () => {
         commonManifest,
         selectedPriceManifest: flatOnDemandManifest,
         orderId: 'order-1',
+        selectedPrice: { price: '100.1', provisioningType: 'Patient', type: 'flat' },
       });
       expect(context.backLinkHref).toEqual('/order/organisation/order-1/catalogue-solutions/select/solution/price/recipients/date');
     });
@@ -27,7 +29,7 @@ describe('quantity and estimation ondemand form contextCreator', () => {
         selectedPriceManifest: flatOnDemandManifest,
         orderId: 'order-1',
         orderItemId: 'neworderitem',
-
+        selectedPrice: { price: '100.1', provisioningType: 'Patient', type: 'flat' },
       });
       expect(context.backLinkHref).toEqual('/order/organisation/order-1/catalogue-solutions/select/solution/price/recipients/date');
     });
@@ -36,7 +38,11 @@ describe('quantity and estimation ondemand form contextCreator', () => {
       const orderId = 'order-id';
       const itemName = 'item-name';
       const context = getContext({
-        commonManifest, orderId, itemName, selectedPriceManifest: flatOnDemandManifest,
+        commonManifest,
+        orderId,
+        itemName,
+        selectedPriceManifest: flatOnDemandManifest,
+        selectedPrice: { price: '100.1', provisioningType: 'Patient', type: 'flat' },
       });
       expect(context.title).toEqual(`${commonManifest.title} ${itemName} for ${orderId}`);
     });
@@ -45,12 +51,13 @@ describe('quantity and estimation ondemand form contextCreator', () => {
       const context = getContext({
         commonManifest,
         selectedPriceManifest: flatOnDemandManifest,
+        selectedPrice: { price: '100.1', provisioningType: 'Patient', type: 'flat' },
       });
       expect(context.description).toEqual(flatOnDemandManifest.description);
     });
     it('should return the continue button', () => {
       const context = getContext({
-        commonManifest, selectedPriceManifest: flatOnDemandManifest,
+        commonManifest, selectedPriceManifest: flatOnDemandManifest, selectedPrice: { price: '100.1', provisioningType: 'Patient', type: 'flat' },
       });
       expect(context.continueButtonText).toEqual(commonManifest.continueButtonText);
     });
