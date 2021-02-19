@@ -20,6 +20,10 @@ const selectedPrice = {
 const orderItemType = 'some-order-item-type';
 
 describe('validateOrderItemForm', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('when there are no validation errors', () => {
     it('should return an empty array', () => {
       const selectedPriceManifest = { questions: {} };

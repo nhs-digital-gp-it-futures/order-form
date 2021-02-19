@@ -616,6 +616,7 @@ describe('catalogue-solutions select routes', () => {
         });
     });
   });
+
   describe('GET /organisation/:orderId/catalogue-solutions/select/solution/price/flat/ondemand', () => {
     const path = '/organisation/some-order-id/catalogue-solutions/select/solution/price/flat/ondemand';
     it('should redirect to the login page if the user is not logged in', () => (

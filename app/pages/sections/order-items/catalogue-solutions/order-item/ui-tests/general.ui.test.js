@@ -11,7 +11,7 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-sol
 
 const selectedPrice = {
   priceId: 2,
-  provisioningType: 'patient',
+  provisioningType: 'Patient',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {

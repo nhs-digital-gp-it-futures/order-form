@@ -37,6 +37,7 @@ const catalogueSolutionIdInSession = 'solution-1';
 const deliveryDateInSession = '2020-10-10';
 const recipientsInSession = JSON.stringify(recipients);
 const selectedRecipientsInSession = JSON.stringify(selectedRecipients);
+
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
   itemName: itemNameInSession,

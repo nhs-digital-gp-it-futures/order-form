@@ -19,13 +19,10 @@ export const getContext = ({
   const errorMessages = errorMap && (errorMap.quantity || errorMap.deliveryDate)
     ? ((errorMap.quantity || {}).errorMessages || [''])
       .concat((errorMap.deliveryDate || {}).errorMessages) : undefined;
-  let newbackLinkRef = '';
-  if (selectedPrice.provisioningType === 'Patient') {
-    newbackLinkRef = `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`;
-  } else {
-    newbackLinkRef = `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice.type}/${selectedPrice.provisioningType}`
-      .toLowerCase();
-  }
+  const newbackLinkRef = selectedPrice.provisioningType === 'Patient'
+    ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`
+    : `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
+
   return {
     ...commonManifest,
     title: `${solutionName} ${commonManifest.title} ${orderId}`,
@@ -45,7 +42,7 @@ export const getContext = ({
           (recipient) => recipient.odsCode === selectedRecipient,
         ),
       ),
-      quantity: selectedPrice.provisioningType !== 'Patient' ? formData.quantity : '',
+      quantity: formData.quantity,
       errorMessages,
     }),
     editButton: {

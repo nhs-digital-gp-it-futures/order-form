@@ -290,7 +290,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       });
       if (apiResponse.success) {
         return res.redirect(
-          `${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice[0].type}/${selectedPrice[0].provisioningType}`.toLowerCase(),
+          `${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice[0].type.toLowerCase()}/${selectedPrice[0].provisioningType.toLowerCase()}`,
         );
       }
       validationErrors.push(...apiResponse.errors);
@@ -342,6 +342,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     }
     return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
+
   router.post('/solution/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, orderItemId, priceType } = req.params;
     const validationErrors = [];

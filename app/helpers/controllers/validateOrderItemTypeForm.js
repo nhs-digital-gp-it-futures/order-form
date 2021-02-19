@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 import { getSelectedPriceManifest } from './manifestProvider';
 
 export const validateOrderItemTypeForm = ({ data, selectedPrice, orderItemType }) => {
@@ -15,7 +14,7 @@ export const validateOrderItemTypeForm = ({ data, selectedPrice, orderItemType }
         field: 'Quantity',
         id: 'QuantityRequired',
       });
-    } else if (isNaN(data.quantity)) {
+    } else if (Number.isNaN(Number(data.quantity))) {
       errors.push({
         field: 'Quantity',
         id: 'QuantityMustBeANumber',

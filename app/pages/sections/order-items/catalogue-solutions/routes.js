@@ -53,6 +53,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
+
     const pageData = await getOrderItemPageDataBulk({
       req,
       sessionManager,
@@ -60,6 +61,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       orderId,
       orderItemId,
     });
+
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
     const context = await getOrderItemContext({
       orderId,

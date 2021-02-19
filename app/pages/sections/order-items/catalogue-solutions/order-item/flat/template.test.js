@@ -22,6 +22,7 @@ describe('catalogue-solution order-item - quantity and estimation page', () => {
         .toEqual('/organisation/order-1/catalogue-solutions/select/solution/price/recipients/date');
     });
   }));
+
   it('should render the "Continue" button', componentTester(setup, (harness) => {
     const context = {
       continueButtonText: 'Continue',
@@ -33,6 +34,7 @@ describe('catalogue-solution order-item - quantity and estimation page', () => {
       expect(button.text().trim()).toEqual(context.continueButtonText);
     });
   }));
+
   it('should render error summary with correct error text and hrefs if there are errors', componentTester(setup, (harness) => {
     const context = {
       errors: [

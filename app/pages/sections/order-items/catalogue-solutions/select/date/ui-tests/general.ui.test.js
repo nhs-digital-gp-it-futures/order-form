@@ -10,8 +10,13 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-sol
 
 const catalogueId = 'catalogue-id';
 const itemName = 'One Solution';
-const priceId = 'price-id';
-
+const priceId = 1;
+const mockPrices = [{
+  priceId: 1,
+  type: 'flat',
+  provisioningType: 'patient',
+  price: 99.99,
+}];
 const putPlannedDeliveryDateErrorResponse = {
   errors: [{
     field: 'DeliveryDate',
@@ -38,6 +43,10 @@ const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.selectedItemId, catalogueId);
     await setState(ClientFunction)(sessionKeys.selectedPriceId, priceId);
+    await setState(ClientFunction)(sessionKeys.solutionPrices, JSON.stringify({ prices: mockPrices }));
+    await setState(ClientFunction)(sessionKeys.selectedPrice, JSON.stringify(mockPrices[0]));
+    await setState(ClientFunction)(sessionKeys.selectedQuantity, '20');
+    await setState(ClientFunction)(sessionKeys.selectEstimationPeriod, 'month');
   }
 };
 

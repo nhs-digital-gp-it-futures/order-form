@@ -13,7 +13,7 @@
     },
     "quantity": {
       "id": "quantity",
-      "mainAdvice": "How many do you think you’ll need?",
+      "mainAdvice": "How many do you think you'll need?",
       "rows": 3,
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",

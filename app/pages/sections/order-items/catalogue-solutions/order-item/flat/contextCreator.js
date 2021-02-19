@@ -34,6 +34,7 @@ export const getErrorContext = (params) => {
     orderItemId: params.orderItemId,
     solutionName: params.solutionName,
     formData: params.formData,
+    selectedPrice: params.selectedPrice,
     errorMap,
   });
   const errorSummary = generateErrorSummary({ errorMap });
