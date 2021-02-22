@@ -1,4 +1,5 @@
 {
+  "description": "Enter the quantity you think you'll need and over what period.",
   "questions": {
     "price": {
       "id": "price",
@@ -80,7 +81,7 @@
         "classes": " nhsuk-u-padding-bottom-5 nhsuk-u-font-size-20"
       },
       {
-        "data": "Quantity {{ estimationPeriod }}",
+        "data": "Quantity per",
         "width": "33%",
         "classes": "nhsuk-u-padding-bottom-5 nhsuk-u-font-size-20"
       },

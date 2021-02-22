@@ -7,33 +7,45 @@ describe('catalogue-solutions order-item contextCreator', () => {
   const selectedPerPatientPrice = {
     itemUnit: { description: 'per patient' },
     timeUnit: { description: 'per year' },
+    type: 'flat',
+    provisioningType: 'Patient',
   };
 
   const selectedOnDemandPrice = {
-    itemUnit: { description: 'per consultation – core hours' },
+    itemUnit: { description: 'per consultation – core hours' }, type: 'flat', provisioningType: 'ondemand',
   };
 
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({
-        commonManifest,
+        commonManifest, selectedPrice: { type: 'flat', provisioningType: 'patient' },
       });
       expect(context.backLinkText).toEqual(commonManifest.backLinkText);
     });
 
     it('should return the backLinkHref to catalogue solutions when order item id is not neworderitem', () => {
       const context = getContext({
-        commonManifest,
+        commonManifest, selectedPrice: { type: 'flat', provisioningType: 'patient' },
       });
       expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions');
     });
 
-    it('should return the backLinkHref to recipient when order item id is neworderitem', () => {
+    it('should return the backLinkHref to recipient when order item id is neworderitem and order type is Patient', () => {
       const context = getContext({
         commonManifest,
         orderItemId: 'neworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'Patient' },
       });
       expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/price/recipients/date');
+    });
+
+    it('should return the backLinkHref to recipient when order item id is neworderitem and order type is OnDemand', () => {
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'neworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'ondemand' },
+      });
+      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/price/flat/ondemand');
     });
 
     it('should return the title', () => {
@@ -41,44 +53,63 @@ describe('catalogue-solutions order-item contextCreator', () => {
       const orderId = 'order-id';
 
       const context = getContext({
-        commonManifest, solutionName, orderId,
+        commonManifest, solutionName, orderId, selectedPrice: { type: 'flat', provisioningType: 'patient' },
       });
       expect(context.title).toEqual(`${solutionName} ${commonManifest.title} ${orderId}`);
     });
 
     it('should return the description', () => {
-      const context = getContext({ commonManifest });
+      const context = getContext({ commonManifest, selectedPrice: { type: 'flat', provisioningType: 'patient' } });
       expect(context.description).toEqual(commonManifest.description);
     });
 
     it('should return the delete button disabled when neworderitem', () => {
-      const context = getContext({ commonManifest, orderItemId: 'neworderitem' });
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'neworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
       expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
       expect(context.deleteButton.disabled).toEqual(true);
       expect(context.deleteButton.altText).toEqual('The Delete Catalogue Solution button will be disabled until you save for the first time');
     });
 
     it('should return the delete button when not neworderitem', () => {
-      const context = getContext({ commonManifest, orderItemId: 'notneworderitem' });
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'notneworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
       expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
       expect(context.deleteButton.disabled).toEqual(false);
     });
 
     it('should return the edit button disabled when neworderitem', () => {
-      const context = getContext({ commonManifest, orderItemId: 'neworderitem' });
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'neworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
       expect(context.editButton.text).toEqual(commonManifest.editButton.text);
       expect(context.editButton.disabled).toEqual(true);
       expect(context.editButton.altText).toEqual('The Edit Service Recipients button will be disabled until you save for the first time');
     });
 
     it('should return the edit button when not neworderitem', () => {
-      const context = getContext({ commonManifest, orderItemId: 'notneworderitem' });
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'notneworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
       expect(context.editButton.text).toEqual(commonManifest.editButton.text);
       expect(context.editButton.disabled).toEqual(false);
     });
 
     it('should return the save button', () => {
-      const context = getContext({ commonManifest });
+      const context = getContext({
+        commonManifest,
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
       expect(context.saveButtonText).toEqual(commonManifest.saveButtonText);
     });
 

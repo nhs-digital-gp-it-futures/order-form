@@ -1,13 +1,12 @@
 import {
-  getOrderItemContext, getOrderItemErrorContext,
+  getProvisionTypeOrderContext, getProvisionTypeOrderErrorContext,
 } from './controller';
 import * as contextCreator from './contextCreator';
-import * as getSelectedPriceManifest from '../../../../../helpers/controllers/manifestProvider';
+import * as getSelectedPriceManifest from '../../../../../../helpers/controllers/manifestProvider';
 
 jest.mock('./contextCreator', () => ({ getContext: jest.fn(), getErrorContext: jest.fn() }));
 jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
-
-jest.mock('../../../../../helpers/controllers/manifestProvider', () => ({
+jest.mock('../../../../../../helpers/controllers/manifestProvider', () => ({
   getSelectedPriceManifest: jest.fn(),
 }));
 
@@ -22,11 +21,10 @@ const selectedPrice = {
   },
   price: 0.1,
 };
-
 const orderItemType = 'catalogue-solutions';
 
-describe('catalogue-solutions order-item controller', () => {
-  describe('getOrderItemContext', () => {
+describe('catalogue-solutions order-item quantity and estimation page controller', () => {
+  describe('getProvisionTypeOrderContext', () => {
     afterEach(() => {
       jest.resetAllMocks();
     });
@@ -36,14 +34,13 @@ describe('catalogue-solutions order-item controller', () => {
         provisioningType: 'Patient',
         type: 'flat',
       };
-      await getOrderItemContext({
+      await getProvisionTypeOrderContext({
         orderId: 'order-1',
         orderItemType,
-        solutionName: 'solution-name',
-        selectedRecipientId: 'fake-recipient-id',
-        selectedPriceId: 'some-price-id',
+        itemName: 'order item name',
         selectedPrice: mockSelectedPrice,
         formData: {
+          quantity: 1,
           selectEstimationPeriod: 'month',
         },
       });
@@ -70,18 +67,16 @@ describe('catalogue-solutions order-item controller', () => {
           month: 2,
           year: 2021,
         },
-        price: 0.1,
+        quantity: 1,
+        selectEstimationPeriod: 'month',
       };
-      const recipients = [{}];
 
-      await getOrderItemContext({
+      await getProvisionTypeOrderContext({
         orderId: 'order-1',
-        solutionName: 'solution-name',
-        selectedPriceId: 'some-price-id',
-        orderItemId: 'order-item-id',
+        orderItemType,
+        itemName: 'order item name',
         selectedPrice: mockSelectedPrice,
         formData,
-        recipients,
       });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
@@ -89,16 +84,14 @@ describe('catalogue-solutions order-item controller', () => {
         commonManifest: { title: 'fake manifest' },
         selectedPriceManifest,
         orderId: 'order-1',
-        solutionName: 'solution-name',
-        orderItemId: 'order-item-id',
         formData,
-        recipients,
+        itemName: 'order item name',
         selectedPrice: mockSelectedPrice,
       });
     });
   });
 
-  describe('getOrderItemErrorContext', () => {
+  describe('getProvisionTypeOrderErrorContext', () => {
     afterEach(() => {
       jest.resetAllMocks();
     });
@@ -109,7 +102,7 @@ describe('catalogue-solutions order-item controller', () => {
         selectedPrice,
       };
 
-      await getOrderItemErrorContext(params);
+      await getProvisionTypeOrderErrorContext(params);
 
       expect(getSelectedPriceManifest.getSelectedPriceManifest.mock.calls.length).toEqual(1);
       expect(getSelectedPriceManifest.getSelectedPriceManifest).toHaveBeenCalledWith({
@@ -129,7 +122,8 @@ describe('catalogue-solutions order-item controller', () => {
           month: 2,
           year: 2021,
         },
-        price: 0.1,
+        quantity: 1,
+        selectEstimationPeriod: 'month',
       };
 
       const params = {
@@ -138,7 +132,7 @@ describe('catalogue-solutions order-item controller', () => {
         formData,
       };
 
-      await getOrderItemErrorContext(params);
+      await getProvisionTypeOrderErrorContext(params);
 
       expect(contextCreator.getErrorContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getErrorContext).toHaveBeenCalledWith({

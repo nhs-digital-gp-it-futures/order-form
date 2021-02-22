@@ -37,7 +37,12 @@ export const getOrderItemPageDataBulk = async ({
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
     const [day, month, year] = destructureDate(deliveryDate);
-
+    const selectedQuantity = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedQuantity,
+    });
+    const selectEstimationPeriod = sessionManager.getFromSession({
+      req, key: sessionKeys.selectEstimationPeriod,
+    });
     const formData = {
       deliveryDate: [{
         'deliveryDate-day': day,
@@ -45,8 +50,9 @@ export const getOrderItemPageDataBulk = async ({
         'deliveryDate-year': year,
       }],
       price: selectedPrice.price,
+      quantity: selectedQuantity,
+      selectEstimationPeriod,
     };
-
     return {
       itemId,
       itemName,

@@ -33,6 +33,7 @@ jest.mock('../../../../../helpers/api/bapi/getCatalogueItems');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 jest.mock('../../../../../helpers/api/ordapi/getSupplier');
 jest.mock('../../../../../helpers/routes/getCommencementDate');
+jest.mock('../../../../../helpers/routes/getOrderItemPageData');
 jest.mock('../../../../../helpers/api/ordapi/putPlannedDeliveryDate');
 
 const mockSessionSolutionsState = JSON.stringify([
@@ -614,30 +615,24 @@ describe('catalogue-solutions select routes', () => {
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
+  });
 
-    it('should redirect to /organisation/order-1/catalogue-solutions/neworderitem when a recipient is selected', async () => {
-      selectPlannedDateController.validateDeliveryDateForm = jest.fn()
-        .mockReturnValue([]);
+  describe('GET /organisation/:orderId/catalogue-solutions/select/solution/price/flat/ondemand', () => {
+    const path = '/organisation/some-order-id/catalogue-solutions/select/solution/price/flat/ondemand';
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
 
-      putPlannedDeliveryDate.mockResolvedValue({ success: true });
-
-      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
         app: request(setUpFakeApp()),
         getPath: path,
-        getPathCookies: [mockAuthorisedCookie, mockItemNameCookie],
-      });
-
-      return request(setUpFakeApp())
-        .post(path)
-        .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockItemNameCookie])
-        .send({ _csrf: csrfToken })
-        .expect(302)
-        .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/neworderitem`);
-          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-        });
-    });
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
   });
 });

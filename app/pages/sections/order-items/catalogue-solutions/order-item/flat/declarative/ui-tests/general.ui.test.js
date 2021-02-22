@@ -12,12 +12,12 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-sol
 
 const selectedPrice = {
   priceId: 2,
-  provisioningType: 'ondemand',
+  provisioningType: 'declarative',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
     name: 'consultationCore',
-    description: 'per consultation – core hours',
+    description: 'per licence per month',
   },
   price: 1.64,
 };
@@ -34,7 +34,6 @@ const deliveryDateInSession = '2020-10-10';
 const recipientsInSession = JSON.stringify(recipients);
 const selectedRecipientsInSession = JSON.stringify(selectedRecipients);
 const selectedQuantityInSession = 20;
-const selectEstimationPeriodInSession = 'month';
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
   itemName: itemNameInSession,
@@ -45,7 +44,6 @@ const orderItemPageDataInSession = JSON.stringify({
   deliveryDate: deliveryDateInSession,
   selectedRecipients,
   selectedQuantity: selectedQuantityInSession,
-  selectEstimationPeriod: selectEstimationPeriodInSession,
 });
 
 const mocks = (mockSelectedPrice) => {
@@ -74,14 +72,13 @@ const pageSetup = async (setup = defaultPageSetup) => {
     await setState(ClientFunction)(sessionKeys.recipients, recipientsInSession);
     await setState(ClientFunction)(sessionKeys.selectedRecipients, selectedRecipientsInSession);
     await setState(ClientFunction)(sessionKeys.selectedQuantity, selectedQuantityInSession);
-    await setState(ClientFunction)(sessionKeys.selectEstimationPeriod, selectEstimationPeriodInSession);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
   }
 };
 
-fixture('Catalogue-solutions - flat ondemand - general')
+fixture('Catalogue-solutions - flat declarative - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);

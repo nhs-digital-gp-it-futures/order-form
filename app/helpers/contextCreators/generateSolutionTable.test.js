@@ -2,7 +2,20 @@ import { generateSolutionTable } from './generateSolutionTable';
 
 describe('generateSolutionTable', () => {
   const recipients = [{ name: 'test', odsCode: '1' }];
+  const selectedEstimationPeriod = 'year';
   const solutionTable = {
+    columnInfo: [
+      {
+        data: 'Recipient name (ODS code)',
+        width: '33%',
+        classes: 'nhsuk-u-padding-bottom-5 nhsuk-u-font-size-20',
+      },
+      {
+        data: 'Quantity per',
+        width: '33%',
+        classes: 'nhsuk-u-padding-bottom-5 nhsuk-u-font-size-20',
+      },
+    ],
     cellInfo: {
       recipient: {
         dataTestId: 'recipient',
@@ -62,7 +75,7 @@ describe('generateSolutionTable', () => {
     };
 
     const generatedAddPriceTable = generateSolutionTable({
-      solutionTable, recipients, deliveryDate: [{}],
+      solutionTable, recipients, deliveryDate: [{}], quantity: [], selectedEstimationPeriod,
     });
 
     expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);
@@ -115,7 +128,7 @@ describe('generateSolutionTable', () => {
     };
 
     const generatedAddPriceTable = generateSolutionTable({
-      solutionTable, errorMap, recipients, quantity: ['test'], deliveryDate: ['test'],
+      solutionTable, errorMap, recipients, quantity: ['test'], deliveryDate: ['test'], selectedEstimationPeriod,
     });
 
     expect(generatedAddPriceTable).toEqual(expectedGeneratedTable);

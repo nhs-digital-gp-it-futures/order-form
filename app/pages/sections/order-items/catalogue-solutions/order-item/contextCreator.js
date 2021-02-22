@@ -19,6 +19,9 @@ export const getContext = ({
   const errorMessages = errorMap && (errorMap.quantity || errorMap.deliveryDate)
     ? ((errorMap.quantity || {}).errorMessages || [''])
       .concat((errorMap.deliveryDate || {}).errorMessages) : undefined;
+  const newbackLinkRef = selectedPrice.provisioningType === 'Patient'
+    ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`
+    : `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
 
   return {
     ...commonManifest,
@@ -54,8 +57,7 @@ export const getContext = ({
       href: commonManifest.deleteButton.href,
       disabled: orderItemId === 'neworderitem',
     },
-    backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`
-      : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
+    backLinkHref: orderItemId === 'neworderitem' ? newbackLinkRef : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
   };
 };
 

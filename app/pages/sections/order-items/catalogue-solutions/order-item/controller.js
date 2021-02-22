@@ -26,6 +26,11 @@ export const formatFormData = ({ formData }) => {
   };
 };
 
+const modifyManifest = (selectedPriceManifest, selectedEstimationPeriod) => {
+  const copy = { ...selectedPriceManifest };
+  copy.solutionTable.columnInfo[1].data = `${copy.solutionTable.columnInfo[1].data} ${selectedEstimationPeriod}`;
+};
+
 export const getOrderItemContext = async ({
   orderId,
   orderItemId,
@@ -41,7 +46,9 @@ export const getOrderItemContext = async ({
     provisioningType: selectedPrice.provisioningType,
     type: selectedPrice.type,
   });
-
+  if (selectedPrice.provisioningType === 'OnDemand') {
+    modifyManifest(selectedPriceManifest, formData.selectEstimationPeriod);
+  }
   return getContext({
     commonManifest,
     selectedPriceManifest,

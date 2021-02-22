@@ -95,12 +95,10 @@ describe('getOrderItemPageDataBulk', () => {
     });
 
     it('should return the formData', async () => {
-      fakeSessionManager.getFromSession = () => '2020-11-10';
-
+      fakeSessionManager.getFromSession = () => '11-10-2020';
       getSelectedPrice.mockResolvedValue({ price: '10' });
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
-
       expect(pageData.formData).toEqual({
         price: '10',
         deliveryDate: [{
@@ -108,6 +106,8 @@ describe('getOrderItemPageDataBulk', () => {
           'deliveryDate-month': '11',
           'deliveryDate-year': '2020',
         }],
+        quantity: '11-10-2020',
+        selectEstimationPeriod: '11-10-2020',
       });
     });
   });
