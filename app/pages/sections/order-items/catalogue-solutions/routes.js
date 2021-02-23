@@ -75,6 +75,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       selectedRecipients: pageData.selectedRecipients,
     });
 
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.selectedRecipients, value: pageData.selectedRecipients },
+    );
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

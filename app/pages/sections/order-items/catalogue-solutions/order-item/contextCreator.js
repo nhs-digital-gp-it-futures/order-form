@@ -48,7 +48,7 @@ export const getContext = ({
     editButton: {
       text: commonManifest.editButton.text,
       altText: orderItemId === 'neworderitem' ? commonManifest.editButton.altText : '',
-      href: commonManifest.editButton.href,
+      href: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`,
       disabled: orderItemId === 'neworderitem',
     },
     deleteButton: {
