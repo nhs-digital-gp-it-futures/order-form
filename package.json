@@ -35,7 +35,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
-    "buying-catalogue-components": "^3.3.10",
+    "buying-catalogue-components": "^3.3.12",
     "buying-catalogue-library": "^1.2.9",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
