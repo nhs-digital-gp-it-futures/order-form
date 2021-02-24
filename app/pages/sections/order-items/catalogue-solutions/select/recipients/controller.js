@@ -43,7 +43,7 @@ export const setContextIfBackFromCatalogueSolutionEdit = (req, context, orderId)
 };
 
 export const validateSolutionRecipientsForm = ({ data }) => {
-  if (Object.keys(data).length > 1) {
+  if (data.length > 0) {
     return { success: true };
   }
 

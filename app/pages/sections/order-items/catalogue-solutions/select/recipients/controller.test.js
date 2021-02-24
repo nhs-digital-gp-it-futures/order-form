@@ -132,10 +132,7 @@ describe('service-recipients controller', () => {
   describe('validateSolutionRecipientsForm', () => {
     describe('when there are no validation errors', () => {
       it('should return success as true', () => {
-        const data = {
-          _csrf: 'nbU52r5S-xUzcID3fXzt3ZBiwIxgvQCF5K2o',
-          B81032: 'WILBERFORCE SURGERY',
-        };
+        const data = ['B81032'];
 
         const response = validateSolutionRecipientsForm({ data });
 
@@ -151,10 +148,8 @@ describe('service-recipients controller', () => {
         },
       ];
 
-      it('should return an array of one validation error and success as false if only the csrf is passed in', () => {
-        const data = {
-          _csrf: 'nbU52r5S-xUzcID3fXzt3ZBiwIxgvQCF5K2o',
-        };
+      it('should return an array of one validation error and success as false if no key passed in', () => {
+        const data = [];
 
         const response = validateSolutionRecipientsForm({ data });
 
