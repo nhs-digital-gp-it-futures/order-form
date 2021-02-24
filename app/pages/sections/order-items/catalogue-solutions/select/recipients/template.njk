@@ -39,6 +39,7 @@
 
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          <input type="hidden" name="orderItemId" value="{{ orderItemId }}" />
           {{ bcErrorWrapper({
             id: question.selectSolutionRecipients.id,
             dataTestId: 'recipients-table',

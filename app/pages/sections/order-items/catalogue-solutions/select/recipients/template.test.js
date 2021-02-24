@@ -12,6 +12,7 @@ const context = {
   title: 'Service Recipients for Solution One for order-id',
   backLinkHref: '/organisation/order-1',
   csrfToken: 'mockCsrfToken',
+  orderItemId: 'H489000-1C',
   selectDeselectButtonAction: '/organisation/order-1/service-recipients',
   selectStatus: 'select',
   selectDeselectButtonText: 'Select all',
@@ -162,6 +163,15 @@ describe('recipients page', () => {
       expect(formElement.length).toEqual(1);
       expect(formElement.attr('type')).toEqual('hidden');
       expect(formElement.attr('value')).toEqual(context.csrfToken);
+    });
+  }));
+
+  it('should render hidden input with orderItemId', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const formElement = $('input[name=orderItemId]');
+      expect(formElement.length).toEqual(1);
+      expect(formElement.attr('type')).toEqual('hidden');
+      expect(formElement.attr('value')).toEqual(context.orderItemId);
     });
   }));
 
