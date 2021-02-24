@@ -199,12 +199,14 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const { orderId } = req.params;
     const { selectStatus } = req.query;
 
-    const response = validateSolutionRecipientsForm({ data: req.body });
+    const selected = Object
+      .entries(req.body)
+      .filter((item) => item[0] !== '_csrf' && item[0] !== 'orderItemId');
+
+    const response = validateSolutionRecipientsForm({ data: selected });
+
     if (response.success) {
-      const selectedRecipients = Object
-        .entries(req.body)
-        .filter((item) => item[0] !== '_csrf' && item[0] !== 'orderItemId')
-        .map(([odsCode]) => odsCode);
+      const selectedRecipients = selected.map(([odsCode]) => odsCode);
 
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
