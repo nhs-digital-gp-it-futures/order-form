@@ -176,7 +176,7 @@ test('should render the edit button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="edit-button"] button');
+  const button = Selector('[data-test-id="edit-button"] span');
 
   await t
     .expect(await extractInnerText(button)).eql(commonContent.editButton.text)

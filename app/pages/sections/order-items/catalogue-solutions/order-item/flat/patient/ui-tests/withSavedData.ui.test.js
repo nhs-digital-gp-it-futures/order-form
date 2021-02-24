@@ -193,12 +193,11 @@ test('should render the edit button as not disabled', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="edit-button"] button');
+  const button = Selector('[data-test-id="edit-button"] a');
 
   await t
     .expect(await extractInnerText(button)).eql('Edit Service Recipients')
-    .expect(button.hasClass('nhsuk-button--secondary')).eql(true)
-    .expect(button.hasClass('nhsuk-button--disabled')).eql(false);
+    .expect(button.hasClass('nhsuk-button--secondary')).eql(true);
 });
 
 test('should show the correct error summary and input error when the price is removed and save is clicked', async (t) => {
