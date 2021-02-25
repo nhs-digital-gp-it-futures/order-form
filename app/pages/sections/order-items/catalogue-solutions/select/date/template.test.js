@@ -53,7 +53,7 @@ describe('delivery date page', () => {
 
   it('should render the page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="planned-delivery-date-page-description"]');
+      const description = $('[data-test-id="planned-delivery-date-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });

@@ -29,7 +29,7 @@ describe('dashboard page', () => {
 
   it('should render the dashboard page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="dashboard-page-description"]');
+      const description = $('[data-test-id="dashboard-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
