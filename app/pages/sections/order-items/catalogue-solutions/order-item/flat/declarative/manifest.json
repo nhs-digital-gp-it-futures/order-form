@@ -85,7 +85,7 @@
           "expandableSection": {
             "dataTestId": "view-section-input-id-practice",
             "title": "What quantity should I enter?",
-            "innerComponent": "Enter the estimated quantity you think you'll need over the period you previously selected (per month or per year)."
+            "innerComponent": "Enter the total amount you think you'll need for the entire duration of the order."
           },
           "classes": "nhsuk-u-margin-top-5 nhsuk-input--width-10"
         },
