@@ -1,7 +1,65 @@
 import { getSelectedPrice } from '../api/bapi/getSelectedPrice';
 import { destructureDate } from '../common/dateFormatter';
+import { getCommencementDate } from './getCommencementDate';
 import { sessionKeys } from './sessionHelper';
 import { getOrderItems } from '../api/ordapi/getOrderItems';
+
+const updateOrderItemsList = async ({
+  req, sessionManager, accessToken, orderItems, newSelectedRecipients, recipientsUpdated,
+}) => {
+  const newRecipientsOrderItems = [];
+  if (newSelectedRecipients && newSelectedRecipients.length > 0) {
+    const commencementDate = await getCommencementDate({
+      req,
+      sessionManager,
+      accessToken,
+    });
+    newSelectedRecipients.forEach((recipient) => {
+      const orderItemNew = {
+        deliveryDate: commencementDate,
+        serviceRecipient: {
+          name: recipient.name,
+          odsCode: recipient.odsCode,
+        },
+      };
+      newRecipientsOrderItems.push(orderItemNew);
+    });
+  }
+  recipientsUpdated.forEach((recipient) => {
+    orderItems.forEach((orderItem) => {
+      if (orderItem && recipient.odsCode === orderItem.serviceRecipient.odsCode) {
+        newRecipientsOrderItems.push(orderItem);
+      }
+    });
+  });
+  return newRecipientsOrderItems;
+};
+
+const checkAndUpdateNewOrderItems = async ({
+  req, sessionManager, accessToken, orderItems,
+}) => {
+  const selectedRecipientsUpdated = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedRecipients,
+  });
+  if (selectedRecipientsUpdated && selectedRecipientsUpdated.length > 0) {
+    const recipientsList = sessionManager.getFromSession({
+      req, key: sessionKeys.recipients,
+    });
+    const recipientsUpdated = selectedRecipientsUpdated.map(
+      (selectedRecipient) => recipientsList
+        .find((recipient) => recipient.odsCode === selectedRecipient),
+    );
+    const newSelectedRecipients = recipientsUpdated
+      .filter(({ odsCode: code1 }) => !orderItems
+        .some(({ serviceRecipient: { odsCode: code2 } }) => code2 === code1));
+
+    const newRecipientsOrderItems = await updateOrderItemsList({
+      req, sessionManager, accessToken, orderItems, newSelectedRecipients, recipientsUpdated,
+    });
+    return newRecipientsOrderItems;
+  }
+  return [];
+};
 
 export const getOrderItemPageDataBulk = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
@@ -89,7 +147,16 @@ export const getOrderItemPageDataBulk = async ({
 
   const recipients = [];
   const selectedRecipients = [];
-  orderItems.forEach((orderItem) => {
+
+  const newRecipientsOrderItems = await checkAndUpdateNewOrderItems({
+    req, sessionManager, accessToken, orderItems,
+  });
+
+  const updatedOrderItems = newRecipientsOrderItems && newRecipientsOrderItems.length > 0
+    ? newRecipientsOrderItems
+    : orderItems;
+
+  updatedOrderItems.forEach((orderItem) => {
     const [day, month, year] = destructureDate(orderItem.deliveryDate);
     formData.deliveryDate.push({
       'deliveryDate-year': year,
