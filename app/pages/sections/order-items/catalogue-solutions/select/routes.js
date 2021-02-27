@@ -238,6 +238,8 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       validationErrors: response.errors,
     });
 
+    setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);
+
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 

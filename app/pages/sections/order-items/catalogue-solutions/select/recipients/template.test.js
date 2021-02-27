@@ -166,12 +166,12 @@ describe('recipients page', () => {
     });
   }));
 
-  it('should render hidden input with orderItemId', componentTester(setup, (harness) => {
+  it('should render hidden inputs with orderItemId', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const formElement = $('input[name=orderItemId]');
-      expect(formElement.length).toEqual(1);
-      expect(formElement.attr('type')).toEqual('hidden');
-      expect(formElement.attr('value')).toEqual(context.orderItemId);
+      const formElements = $('input[name=orderItemId]').toArray();
+      expect(formElements.length).toEqual(2);
+      formElements.forEach((x) => expect(x.attribs.type).toEqual('hidden'));
+      formElements.forEach((x) => expect(x.attribs.value).toEqual(context.orderItemId));
     });
   }));
 
