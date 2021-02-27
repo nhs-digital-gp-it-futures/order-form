@@ -6,6 +6,7 @@ import {
   validateSolutionRecipientsForm,
 } from './controller';
 import * as contextCreator from './contextCreator';
+import { baseUrl } from '../../../../../../config';
 
 jest.mock('../../../../../../logger');
 jest.mock('./contextCreator', () => ({
@@ -104,9 +105,23 @@ describe('service-recipients controller', () => {
     const orderId = 'K2738473-724';
     const orderItemId = 73984;
 
+    describe('sets context values if request query has orderItemId', () => {
+      const context = { backLinkHref: 'some-value' };
+      const request = {
+        query: { orderItemId },
+        headers: {},
+      };
+
+      setContextIfBackFromCatalogueSolutionEdit(request, context, orderId);
+
+      expect(context.backLinkHref).toEqual(`${baseUrl}${getSelectSolutionPriceEndpoint(orderId, orderItemId)}`);
+      expect(context.orderItemId).toEqual(orderItemId);
+    });
+
     describe('sets context values if referer ends with Select Solution Price endpoint', () => {
       const context = { backLinkHref: 'some-value' };
       const request = {
+        query: {},
         headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${orderId}/catalogue-solutions/${orderItemId}` },
       };
 
@@ -116,9 +131,10 @@ describe('service-recipients controller', () => {
       expect(context.orderItemId).toEqual(orderItemId.toString());
     });
 
-    describe('does not set context values if referer does not end with Select Solution Price endpoint', () => {
+    describe('does not set context values if request query has no orderItemId and referer does not end with Select Solution Price endpoint', () => {
       const context = { backLinkHref: 'some-value' };
       const request = {
+        query: {},
         headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${orderId}/some-URL` },
       };
 

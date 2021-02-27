@@ -1,3 +1,4 @@
+import { baseUrl } from '../../../../../../config';
 import { getContext, getErrorContext } from './contextCreator';
 
 export const getSelectSolutionPriceEndpoint = (orderId, orderItemId) => `/organisation/${orderId}/catalogue-solutions/${orderItemId}`;
@@ -32,11 +33,18 @@ export const getServiceRecipientsErrorPageContext = async ({
 });
 
 export const setContextIfBackFromCatalogueSolutionEdit = (req, context, orderId) => {
+  if (req.query.orderItemId) {
+    const { orderItemId } = req.query;
+    context.backLinkHref = `${baseUrl}${getSelectSolutionPriceEndpoint(orderId, orderItemId)}`;
+    context.orderItemId = orderItemId;
+
+    return;
+  }
+
   const { referer } = req.headers;
   const orderItemId = referer.split('/').pop();
 
-  const endpoint = getSelectSolutionPriceEndpoint(orderId, orderItemId);
-  if (referer.endsWith(endpoint)) {
+  if (referer.endsWith(getSelectSolutionPriceEndpoint(orderId, orderItemId))) {
     context.backLinkHref = referer;
     context.orderItemId = orderItemId;
   }

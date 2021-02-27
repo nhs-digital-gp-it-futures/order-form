@@ -402,6 +402,7 @@ describe('catalogue-solutions select routes', () => {
       .then((res) => {
         expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        expect(mockSetContext).toHaveBeenCalled();
       }));
 
     it('should set context if authorised and back from catalogue solution edit', () => request(setUpFakeApp())
@@ -411,11 +412,16 @@ describe('catalogue-solutions select routes', () => {
       .then((res) => {
         expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        expect(mockSetContext).toHaveBeenCalled();
       }));
   });
 
   describe('POST /organisation/:orderId/catalogue-solutions/select/solution/price/recipients', () => {
     const path = '/organisation/order-1/catalogue-solutions/select/solution/price/recipients';
+    const mockSetContext = jest.fn();
+    beforeEach(() => {
+      selectRecipientController.setContextIfBackFromCatalogueSolutionEdit = mockSetContext;
+    });
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -473,6 +479,7 @@ describe('catalogue-solutions select routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
+          expect(mockSetContext).toHaveBeenCalled();
           expect(res.text.includes('data-test-id="solution-recipients-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
