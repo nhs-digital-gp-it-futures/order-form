@@ -41,7 +41,7 @@ describe('Catalogue-solutions - Dashboard page', () => {
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="catalogue-solutions-page-description"]');
+      const description = $('[data-test-id="catalogue-solutions-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });

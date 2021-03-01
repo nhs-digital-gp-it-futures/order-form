@@ -77,7 +77,7 @@ test('should render the page description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="complete-order-page-description"]');
+  const description = Selector('[data-test-id="complete-order-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);

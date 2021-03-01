@@ -99,7 +99,7 @@ describe('ordering-party page', () => {
 
   it('should render the page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="ordering-party-page-description"]');
+      const description = $('[data-test-id="ordering-party-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -107,7 +107,7 @@ describe('ordering-party page', () => {
 
   it('should render organisation name', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const heading = $('h3[data-test-id="organisation-name-heading"]');
+      const heading = $('[data-test-id="organisation-name-heading"]');
       const text = $('div[data-test-id="organisation-name"]');
       expect(heading.length).toEqual(1);
       expect(heading.text().trim()).toEqual(context.orgNameHeading);
@@ -118,7 +118,7 @@ describe('ordering-party page', () => {
 
   it('should render organisation ods code', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const heading = $('h3[data-test-id="organisation-ods-code-heading"]');
+      const heading = $('[data-test-id="organisation-ods-code-heading"]');
       const text = $('div[data-test-id="organisation-ods-code"]');
       expect(heading.length).toEqual(1);
       expect(heading.text().trim()).toEqual(context.odsCodeHeading);
@@ -129,7 +129,7 @@ describe('ordering-party page', () => {
 
   it('should render organisation address', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const heading = $('h3[data-test-id="organisation-address-heading"]');
+      const heading = $('[data-test-id="organisation-address-heading"]');
       const line1 = $('div[data-test-id="organisation-address-1"]');
       const line2 = $('div[data-test-id="organisation-address-2"]');
       const line3 = $('div[data-test-id="organisation-address-3"]');
@@ -225,7 +225,7 @@ describe('ordering-party page', () => {
 
   it('should render primary contact details heading', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const heading = $('h2[data-test-id="primary-contact-details-heading"]');
+      const heading = $('[data-test-id="primary-contact-details-heading"]');
       expect(heading.length).toEqual(1);
       expect(heading.text().trim()).toEqual(context.primartContactHeading);
     });
