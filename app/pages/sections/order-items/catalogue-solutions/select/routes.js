@@ -16,6 +16,8 @@ import {
   getServiceRecipientsContext,
   validateSolutionRecipientsForm,
   getServiceRecipientsErrorPageContext,
+  getSelectSolutionPriceEndpoint,
+  setContextIfBackFromCatalogueSolutionEdit,
 } from './recipients/controller';
 import {
   getDeliveryDateContext,
@@ -187,6 +189,8 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices,
     });
 
+    setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);
+
     logger.info(`navigating to order ${orderId} catalogue-solutions select recipient page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -195,16 +199,23 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const { orderId } = req.params;
     const { selectStatus } = req.query;
 
-    const response = validateSolutionRecipientsForm({ data: req.body });
+    const selected = Object
+      .entries(req.body)
+      .filter((item) => item[0] !== '_csrf' && item[0] !== 'orderItemId');
+
+    const response = validateSolutionRecipientsForm({ data: selected });
+
     if (response.success) {
-      const selectedRecipients = Object
-        .entries(req.body)
-        .filter((item) => item[0] !== '_csrf')
-        .map(([odsCode]) => odsCode);
+      const selectedRecipients = selected.map(([odsCode]) => odsCode);
 
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
       });
+
+      if (req.body.orderItemId) {
+        logger.info('Back to catalogue solution page');
+        return res.redirect(`${config.baseUrl}${getSelectSolutionPriceEndpoint(orderId, req.body.orderItemId)}`);
+      }
 
       logger.info('Redirect to planned delivery date page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`);
@@ -226,6 +237,8 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       solutionPrices,
       validationErrors: response.errors,
     });
+
+    setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
