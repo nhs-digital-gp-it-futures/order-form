@@ -1,5 +1,5 @@
 {
-    "description": "You've selected the list price of [price]. Enter the total amount you think you'll need.",
+    "description": "Enter the total amount you think you'll need.",
     "questions": {
       "price": {
         "id": "price",
@@ -110,7 +110,7 @@
       "PriceGreaterThanOrEqualToZero": "Price cannot be negative",
       "PriceLessThanMax": "Maximum price exceeded, enter a lower price",
       "PriceGreaterThanListPrice": "You’ve entered a price that is more than the list price, enter a lower price",
-      "QuantityRequired": "Enter an estimated quantity",
+      "QuantityRequired": "Enter a quantity",
       "QuantityMustBeANumber": "Estimated quantity must be a number",
       "QuantityInvalid": "Estimated quantity must be a whole number",
       "QuantityGreaterThanZero": "Estimated quantity must be greater than zero",
