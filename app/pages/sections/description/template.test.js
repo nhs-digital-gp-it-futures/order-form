@@ -66,9 +66,16 @@ describe('description page', () => {
 
   it('should render the description page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="description-page-description"]');
+      const description = $('label[data-test-id="description-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
+    });
+  }));
+
+  it('should render the description as a label with the "for" as the textbox id', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const description = $('label[data-test-id="description-page-description"]');
+      expect(description[0].attribs.for).toEqual(context.questions[0].id);
     });
   }));
 
