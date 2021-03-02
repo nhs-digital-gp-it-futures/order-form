@@ -105,9 +105,24 @@ describe('service-recipients controller', () => {
     const orderId = 'K2738473-724';
     const orderItemId = 73984;
 
+    describe('sets context values if request body has orderItemId', () => {
+      const context = { backLinkHref: 'some-value' };
+      const request = {
+        body: { orderItemId },
+        query: {},
+        headers: {},
+      };
+
+      setContextIfBackFromCatalogueSolutionEdit(request, context, orderId);
+
+      expect(context.backLinkHref).toEqual(`${baseUrl}${getSelectSolutionPriceEndpoint(orderId, orderItemId)}`);
+      expect(context.orderItemId).toEqual(orderItemId);
+    });
+
     describe('sets context values if request query has orderItemId', () => {
       const context = { backLinkHref: 'some-value' };
       const request = {
+        body: {},
         query: { orderItemId },
         headers: {},
       };
@@ -121,6 +136,7 @@ describe('service-recipients controller', () => {
     describe('sets context values if referer ends with Select Solution Price endpoint', () => {
       const context = { backLinkHref: 'some-value' };
       const request = {
+        body: {},
         query: {},
         headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${orderId}/catalogue-solutions/${orderItemId}` },
       };
@@ -134,6 +150,7 @@ describe('service-recipients controller', () => {
     describe('does not set context values if request query has no orderItemId and referer does not end with Select Solution Price endpoint', () => {
       const context = { backLinkHref: 'some-value' };
       const request = {
+        body: {},
         query: {},
         headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${orderId}/some-URL` },
       };
