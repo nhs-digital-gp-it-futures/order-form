@@ -122,17 +122,17 @@
         </div>
       </div>
 
-      <div class="bc-u-float-right nhsuk-grid-column-one-third">
+      <div class="nhsuk-grid-column-one-third">
         {% if (orderSummaryButtonText) %}
           {{ bcButton({
               dataTestId: "summary-page-orderSummaryButton-bottom",
               text: orderSummaryButtonText,
               href: orderSummaryButtonHref,
-              classes: "nhsuk-button--secondary nhsuk-u-margin-bottom-2 nhsuk-u-margin-left-4",
+              classes: "nhsuk-button--secondary nhsuk-u-margin-bottom-2",
               attributes: { "target": "_blank", "style": "width: 100%" }
             })
           }}         
-          <div data-test-id="summary-page-orderSummaryButtonInfo-bottom" class="nhsuk-u-margin-bottom-6 nhsuk-u-margin-left-4">
+          <div data-test-id="summary-page-orderSummaryButtonInfo-bottom" class="nhsuk-u-margin-bottom-6">
             <span>{{ orderSummaryButtonInfoText }}</span>
           </div>    
         {% endif %}
