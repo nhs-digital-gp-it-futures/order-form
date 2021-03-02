@@ -28,7 +28,9 @@
       <div class="nhsuk-grid-column-full">
         <div data-test-id="incomplete-orders-table">
           {{ bcTable({
-            caption: incompleteOrdersTableTitle,
+            caption: {
+              text: incompleteOrdersTableTitle
+            },
             columnInfo: incompleteOrdersTable.columnInfo,
             data: incompleteOrders.items
           }) }}
@@ -36,7 +38,9 @@
 
         <div data-test-id="complete-orders-table">
           {{ bcTable({
-            caption: completeOrdersTableTitle,
+            caption: {
+              text: completeOrdersTableTitle
+            },
             columnInfo: completeOrdersTable.columnInfo,
             data: completeOrders.items
           }) }}
