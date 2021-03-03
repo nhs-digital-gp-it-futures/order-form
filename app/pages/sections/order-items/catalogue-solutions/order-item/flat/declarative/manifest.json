@@ -8,7 +8,7 @@
         "expandableSection": {
             "dataTestId": "view-section-price-id",
             "title": "What price should I enter?",
-            "innerComponent": "Enter the price you've agreed with the supplier. We've included the list price, but this can be changed if required."
+            "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
         }
       },
       "quantity": {
