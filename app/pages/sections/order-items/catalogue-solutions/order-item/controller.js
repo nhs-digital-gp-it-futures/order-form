@@ -2,6 +2,7 @@ import { getContext, getErrorContext } from './contextCreator';
 import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from '../../../../../helpers/controllers/manifestProvider';
 import { removeCommas } from '../../../../../helpers/common/priceFormatter';
+import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 export const formatFormData = ({ formData }) => {
   const day = Array.isArray(formData['deliveryDate-day']) ? formData['deliveryDate-day'] : formData['deliveryDate-day'].split();
@@ -77,4 +78,18 @@ export const getOrderItemErrorContext = (params) => {
   };
 
   return getErrorContext(updatedParams);
+};
+
+export const getPageData = (req, sessionManager) => {
+  const pageData = sessionManager.getFromSession({ req, key: sessionKeys.orderItemPageData });
+
+  const estimationPeriod = sessionManager.getFromSession({
+    req, key: sessionKeys.selectEstimationPeriod,
+  });
+
+  if (estimationPeriod) {
+    pageData.selectedPrice.timeUnit = { name: estimationPeriod, description: `per ${estimationPeriod}` };
+  }
+
+  return pageData;
 };
