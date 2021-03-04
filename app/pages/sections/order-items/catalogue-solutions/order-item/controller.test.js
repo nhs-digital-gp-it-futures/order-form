@@ -1,8 +1,9 @@
 import {
-  getOrderItemContext, getOrderItemErrorContext,
+  getOrderItemContext, getOrderItemErrorContext, getPageData,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from '../../../../../helpers/controllers/manifestProvider';
+import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 jest.mock('./contextCreator', () => ({ getContext: jest.fn(), getErrorContext: jest.fn() }));
 jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
@@ -147,6 +148,43 @@ describe('catalogue-solutions order-item controller', () => {
         selectedPriceManifest,
         formData,
       });
+    });
+  });
+
+  describe('Name of the group', () => {
+    const estimationPeriod = 'some-time-period';
+    const req = {};
+    const sessionManager = {};
+
+    it('should set timeUnit on selectedPrice if estimationPeriod in session data', async () => {
+      const pageData = { selectedPrice: {} };
+      // eslint-disable-next-line no-unused-vars
+      sessionManager.getFromSession = jest.fn(({ _, key }) => {
+        if (key === sessionKeys.orderItemPageData) {
+          return pageData;
+        }
+        return estimationPeriod;
+      });
+
+      const actual = getPageData(req, sessionManager);
+
+      expect(actual.selectedPrice.timeUnit.name).toEqual(estimationPeriod);
+      expect(actual.selectedPrice.timeUnit.description).toEqual(`per ${estimationPeriod}`);
+    });
+
+    it('should not set timeUnit on selectedPrice if estimationPeriod not in session data', async () => {
+      const pageData = { selectedPrice: {} };
+      // eslint-disable-next-line no-unused-vars
+      sessionManager.getFromSession = jest.fn(({ _, key }) => {
+        if (key === sessionKeys.orderItemPageData) {
+          return pageData;
+        }
+        return null;
+      });
+
+      const actual = getPageData(req, sessionManager);
+
+      expect(actual.selectedPrice.timeUnit).toEqual(undefined);
     });
   });
 });
