@@ -10,6 +10,7 @@ import {
   formatFormData,
   getOrderItemContext,
   getOrderItemErrorContext,
+  getPageData,
 } from './order-item/controller';
 import { validateOrderItemFormBulk } from '../../../../helpers/controllers/validateOrderItemFormBulk';
 import { getOrderItemPageDataBulk } from '../../../../helpers/routes/getOrderItemPageDataBulk';
@@ -87,19 +88,15 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, orderItemId } = req.params;
-    const validationErrors = [];
 
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const pageData = sessionManager.getFromSession({ req, key: sessionKeys.orderItemPageData });
-
+    const pageData = getPageData(req, sessionManager);
     const formData = formatFormData({ formData: req.body });
-
-    const errors = validateOrderItemFormBulk({
+    const validationErrors = validateOrderItemFormBulk({
       orderItemType: 'Solution',
       data: formData,
       selectedPrice: pageData.selectedPrice,
     });
-    validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
       const apiResponse = await saveOrderItemBulk({

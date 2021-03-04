@@ -288,6 +288,7 @@ describe('catalogue-solutions section routes', () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
+      orderItemController.getPageData = jest.fn().mockResolvedValue({});
       validateOrderItemFormBulk.mockReturnValue([]);
       saveOrderItemBulk.mockResolvedValue({ success: true });
 
@@ -307,6 +308,7 @@ describe('catalogue-solutions section routes', () => {
         })
         .expect(302)
         .then((res) => {
+          expect(orderItemController.getPageData).toHaveBeenCalled();
           expect(res.redirect).toEqual(true);
           expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/catalogue-solutions`);
         });
