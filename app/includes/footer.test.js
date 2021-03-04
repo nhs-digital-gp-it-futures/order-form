@@ -54,9 +54,9 @@ describe('footer', () => {
       const legalPanel = footer.find('[data-test-id="legal-panel"]');
       expect(footer.length).toEqual(1);
       expect(legalPanel.length).toEqual(1);
-      expect(legalPanel.find('span:nth-child(1)').text().trim()).toEqual('Legal');
-      expect(legalPanel.find('span:nth-child(2)').text().trim()).toEqual('Privacy and Cookies');
-      expect(legalPanel.find('span:nth-child(2) > a').attr('href')).toEqual('https://digital.nhs.uk/about-nhs-digital/privacy-and-cookies');
+      expect(legalPanel.find('li:nth-child(1)').text().trim()).toEqual('Legal');
+      expect(legalPanel.find('li:nth-child(2)').text().trim()).toEqual('Privacy and Cookies');
+      expect(legalPanel.find('li:nth-child(2) > a').attr('href')).toEqual('https://digital.nhs.uk/about-nhs-digital/privacy-and-cookies');
     });
   }));
 });

@@ -74,7 +74,7 @@
       }
     }
   },
-  "oneOffCostTotalsTable": {
+  "oneOffCostTableFooter": {
     "columnInfo": [
       { "data": "", "width": 5 },
       { "data": "", "width": 1 }
@@ -161,7 +161,7 @@
       }
     }
   },
-  "recurringCostTotalsTable": {
+  "recurringCostTableFooter": {
     "columnInfo": [
       { "data": "", "width": 7 },
       { "data": "", "width": 1 }

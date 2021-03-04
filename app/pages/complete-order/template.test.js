@@ -73,7 +73,7 @@ describe('complete order page', () => {
 
   it('should render the complete order page order description title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const orderDescriptionTitle = $('h3[data-test-id="order-description-title"]');
+      const orderDescriptionTitle = $('h2[data-test-id="order-description-title"]');
       expect(orderDescriptionTitle.length).toEqual(1);
       expect(orderDescriptionTitle.text().trim()).toEqual(context.orderDescriptionTitle);
     });

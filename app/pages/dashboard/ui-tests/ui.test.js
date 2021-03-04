@@ -109,7 +109,7 @@ test('should render the incomplete orders table', async (t) => {
   await t.navigateTo(pageUrl);
 
   const incompleteTable = Selector('div[data-test-id="incomplete-orders-table"]');
-  const incompleteTableTitle = Selector('h3[data-test-id="incomplete-orders-table-title"]');
+  const incompleteTableTitle = incompleteTable.find('caption');
   const incompleteColumnHeading1 = incompleteTable.find('[data-test-id="column-heading-0"]');
   const incompleteColumnHeading2 = incompleteTable.find('[data-test-id="column-heading-1"]');
   const incompleteColumnHeading3 = incompleteTable.find('[data-test-id="column-heading-2"]');
@@ -180,7 +180,7 @@ test('should render the complete orders table', async (t) => {
   await t.navigateTo(pageUrl);
 
   const completeTable = Selector('div[data-test-id="complete-orders-table"]');
-  const completeTableTitle = Selector('h3[data-test-id="complete-orders-table-title"]');
+  const completeTableTitle = completeTable.find('caption');
   const completeColumnHeading1 = completeTable.find('[data-test-id="column-heading-0"]');
   const completeColumnHeading2 = completeTable.find('[data-test-id="column-heading-1"]');
   const completeColumnHeading3 = completeTable.find('[data-test-id="column-heading-2"]');

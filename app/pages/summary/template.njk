@@ -21,8 +21,8 @@
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-two-thirds">
-        <h3 data-test-id="order-description-heading" class="nhsuk-u-margin-bottom-3">{{ orderDescriptionHeading }}</h3>
-        <h4 data-test-id="order-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ orderDescription }}</h4>
+        <h2 data-test-id="order-description-heading" class="nhsuk-u-margin-bottom-3">{{ orderDescriptionHeading }}</h2>
+        <p data-test-id="order-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ orderDescription }}</p>
       </div>
 
        <div class="nhsuk-grid-column-one-third">
@@ -82,8 +82,8 @@
     <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
       <div class="nhsuk-grid-column-full">
         <div data-test-id="order-items-one-off-costs">
-          <h3 data-test-id="one-off-cost-heading" class="nhsuk-u-margin-bottom-3">{{ oneOffCostHeading }}</h3>
-          <h4 data-test-id="one-off-cost-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ oneOffCostDescription }}</h4>
+          <h2 data-test-id="one-off-cost-heading" class="nhsuk-u-margin-bottom-3">{{ oneOffCostHeading }}</h2>
+          <p data-test-id="one-off-cost-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ oneOffCostDescription }}</p>
           <div data-test-id="one-off-cost-table">
             {{ bcTable({
               caption: {
@@ -93,8 +93,8 @@
               columnInfo: oneOffCostTable.columnInfo,
               classes: oneOffCostTable.classes,
               data: oneOffCostTable.items,
-              footerColumnInfo: oneOffCostTotalsTable.columnInfo,
-              footerColumnData: oneOffCostTotalsTable.items
+              footerColumnInfo: oneOffCostTableFooter.columnInfo,
+              footerColumnData: oneOffCostTableFooter.items
             }) }}
           </div>
         </div>
@@ -104,9 +104,9 @@
     <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
       <div class="nhsuk-grid-column-full">
         <div data-test-id="order-items-recurring-costs">
-          <h3 data-test-id="recurring-cost-heading" class="nhsuk-u-margin-bottom-3">{{ recurringCostHeading }}</h3>
-          <h4 data-test-id="recurring-cost-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ recurringCostDescription }}</h4>
-          <div data-test-id="recurring-cost-table" >
+          <h2 data-test-id="recurring-cost-heading" class="nhsuk-u-margin-bottom-3">{{ recurringCostHeading }}</h2>
+          <p data-test-id="recurring-cost-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ recurringCostDescription }}</p>
+          <div data-test-id="recurring-cost-table">
             {{ bcTable({
               caption: {
                 text: recurringCostHeading,
@@ -115,8 +115,8 @@
               columnInfo: recurringCostTable.columnInfo,
               classes: recurringCostTable.classes,
               data: recurringCostTable.items,
-              footerColumnInfo: recurringCostTotalsTable.columnInfo,
-              footerColumnData: recurringCostTotalsTable.items
+              footerColumnInfo: recurringCostTableFooter.columnInfo,
+              footerColumnData: recurringCostTableFooter.items
             }) }}
           </div>
         </div>

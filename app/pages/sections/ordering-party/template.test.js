@@ -107,7 +107,7 @@ describe('ordering-party page', () => {
 
   it('should render organisation name', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const heading = $('[data-test-id="organisation-name-heading"]');
+      const heading = $('h2[data-test-id="organisation-name-heading"]');
       const text = $('div[data-test-id="organisation-name"]');
       expect(heading.length).toEqual(1);
       expect(heading.text().trim()).toEqual(context.orgNameHeading);
@@ -118,7 +118,7 @@ describe('ordering-party page', () => {
 
   it('should render organisation ods code', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const heading = $('[data-test-id="organisation-ods-code-heading"]');
+      const heading = $('h2[data-test-id="organisation-ods-code-heading"]');
       const text = $('div[data-test-id="organisation-ods-code"]');
       expect(heading.length).toEqual(1);
       expect(heading.text().trim()).toEqual(context.odsCodeHeading);
