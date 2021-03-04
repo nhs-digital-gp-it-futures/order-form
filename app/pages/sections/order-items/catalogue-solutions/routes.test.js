@@ -158,7 +158,9 @@ describe('catalogue-solutions section routes', () => {
 
     it('should return the catalogue-solutions order item page if authorised', () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({
+        questions: { price: { data: '12' } },
+      });
 
       return request(setUpFakeApp())
         .get(path)
@@ -182,7 +184,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should redirect to the login page if the user is not logged in', () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '' } } });
 
       return testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
@@ -200,7 +202,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '' } } });
 
       return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
@@ -221,7 +223,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should show the catalogue-solutions order item page with errors if there are FE caught validation errors', async () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
       validateOrderItemFormBulk.mockReturnValue([{}]);
       orderItemController.getOrderItemErrorContext = jest.fn()
@@ -252,7 +254,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should show the catalogue-solutions order item page with errors if the api response is unsuccessful', async () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
       validateOrderItemFormBulk.mockReturnValue([]);
       saveOrderItemBulk.mockResolvedValue({ success: false, errors: {} });
@@ -284,7 +286,7 @@ describe('catalogue-solutions section routes', () => {
 
     it('should redirect to /organisation/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
       validateOrderItemFormBulk.mockReturnValue([]);
       saveOrderItemBulk.mockResolvedValue({ success: true });

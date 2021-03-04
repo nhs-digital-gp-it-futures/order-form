@@ -74,6 +74,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients,
     });
+    if (context.questions.price && !context.questions.price.data) {
+      context.questions.price.data = ['0'];
+    }
 
     sessionManager.saveToSession(
       { req, key: sessionKeys.selectedRecipients, value: pageData.selectedRecipients },
