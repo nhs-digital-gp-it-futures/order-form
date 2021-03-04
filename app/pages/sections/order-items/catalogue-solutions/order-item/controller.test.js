@@ -151,7 +151,7 @@ describe('catalogue-solutions order-item controller', () => {
     });
   });
 
-  describe('Name of the group', () => {
+  describe('getPageData', () => {
     const estimationPeriod = 'some-time-period';
     const req = {};
     const sessionManager = {};
