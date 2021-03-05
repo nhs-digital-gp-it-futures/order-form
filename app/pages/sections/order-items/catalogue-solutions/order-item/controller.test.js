@@ -1,5 +1,6 @@
+import { sessionManager } from 'buying-catalogue-library/lib/middleware/sessionManager';
 import {
-  getOrderItemContext, getOrderItemErrorContext, getPageData,
+  getOrderItemContext, getOrderItemErrorContext, getPageData, setEstimationPeriod,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from '../../../../../helpers/controllers/manifestProvider';
@@ -10,6 +11,7 @@ jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
 
 jest.mock('../../../../../helpers/controllers/manifestProvider', () => ({
   getSelectedPriceManifest: jest.fn(),
+  modifyManifestIfOnDemand: jest.fn(),
 }));
 
 const selectedPrice = {
@@ -105,7 +107,9 @@ describe('catalogue-solutions order-item controller', () => {
     });
 
     it('should call getSelectedPriceManifest with the correct params', async () => {
+      const formData = { selectEstimationPeriod: 'year' };
       const params = {
+        formData,
         orderItemType,
         selectedPrice,
       };
@@ -118,6 +122,26 @@ describe('catalogue-solutions order-item controller', () => {
         provisioningType: selectedPrice.provisioningType,
         type: selectedPrice.type,
       });
+    });
+
+    it('should call modifyManifestIfOnDemand with the correct params', async () => {
+      const formData = { selectEstimationPeriod: 'year' };
+      const params = {
+        formData,
+        orderItemType,
+        selectedPrice,
+      };
+      const mockSelectedPriceManifest = jest.fn();
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(mockSelectedPriceManifest);
+
+      await getOrderItemErrorContext(params);
+
+      expect(getSelectedPriceManifest.modifyManifestIfOnDemand.mock.calls.length).toEqual(1);
+      expect(getSelectedPriceManifest.modifyManifestIfOnDemand).toHaveBeenCalledWith(
+        params.selectedPrice,
+        mockSelectedPriceManifest,
+        params.formData.selectEstimationPeriod,
+      );
     });
 
     it('should call getContext with the correct params when formData passed in', async () => {
@@ -154,7 +178,6 @@ describe('catalogue-solutions order-item controller', () => {
   describe('getPageData', () => {
     const estimationPeriod = 'some-time-period';
     const req = {};
-    const sessionManager = {};
 
     it('should set timeUnit on selectedPrice if estimationPeriod in session data', async () => {
       const pageData = { selectedPrice: {} };
@@ -186,5 +209,35 @@ describe('catalogue-solutions order-item controller', () => {
 
       expect(actual.selectedPrice.timeUnit).toEqual(undefined);
     });
+  });
+});
+
+describe('setEstimationPeriod', () => {
+  const estimationPeriod = 'some-time-period';
+  const req = {};
+  const formData = {};
+
+  it('should set estimation period on formData if in session data', () => {
+    // eslint-disable-next-line no-unused-vars
+    sessionManager.getFromSession = () => estimationPeriod;
+
+    setEstimationPeriod(req, formData, sessionManager);
+
+    expect(formData.selectEstimationPeriod).toEqual(estimationPeriod);
+  });
+
+  it('should not set estimation period on formData if in session data', () => {
+    // eslint-disable-next-line no-unused-vars
+    sessionManager.getFromSession = jest.fn();
+    const otherValue = 'other-time-frame';
+    formData.selectEstimationPeriod = otherValue;
+
+    setEstimationPeriod(req, formData, sessionManager);
+
+    expect(sessionManager.getFromSession).toHaveBeenCalledWith({
+      req,
+      key: sessionKeys.selectEstimationPeriod,
+    });
+    expect(formData.selectEstimationPeriod).toEqual(otherValue);
   });
 });

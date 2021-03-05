@@ -11,6 +11,7 @@ import {
   getOrderItemContext,
   getOrderItemErrorContext,
   getPageData,
+  setEstimationPeriod,
 } from './order-item/controller';
 import { validateOrderItemFormBulk } from '../../../../helpers/controllers/validateOrderItemFormBulk';
 import { getOrderItemPageDataBulk } from '../../../../helpers/routes/getOrderItemPageDataBulk';
@@ -75,6 +76,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients,
     });
+
     if (context.questions.price && !context.questions.price.data) {
       context.questions.price.data = ['0'];
     }
@@ -133,6 +135,8 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       const apiErrors = transformApiValidationResponse(apiResponse.errors);
       validationErrors.push(...apiErrors);
     }
+
+    setEstimationPeriod(req, formData, sessionManager);
 
     const context = await getOrderItemErrorContext({
       orderId,
