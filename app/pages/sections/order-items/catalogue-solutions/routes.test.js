@@ -225,6 +225,7 @@ describe('catalogue-solutions section routes', () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
+      orderItemController.setEstimationPeriod = jest.fn();
       validateOrderItemFormBulk.mockReturnValue([{}]);
       orderItemController.getOrderItemErrorContext = jest.fn()
         .mockResolvedValue({
@@ -246,6 +247,7 @@ describe('catalogue-solutions section routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
+          expect(orderItemController.setEstimationPeriod).toHaveBeenCalled();
           expect(res.text.includes('data-test-id="order-item-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
