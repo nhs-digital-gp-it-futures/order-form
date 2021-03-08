@@ -306,10 +306,10 @@ describe('order summary contextCreator', () => {
         .toEqual(incompleteManifest.oneOffCostTable.columnInfo);
     });
 
-    it('should return the oneOffCostTotalsTable colummInfo', () => {
+    it('should return the oneOffCostTableFooter colummInfo', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
-      expect(context.oneOffCostTotalsTable.columnInfo)
-        .toEqual(incompleteManifest.oneOffCostTotalsTable.columnInfo);
+      expect(context.oneOffCostTableFooter.columnInfo)
+        .toEqual(incompleteManifest.oneOffCostTableFooter.columnInfo);
     });
 
     it('should return the oneOff cost table with items when order items are provided', () => {
@@ -371,22 +371,22 @@ describe('order summary contextCreator', () => {
       expect(context.oneOffCostTable).toEqual(expectedContext.oneOffCostTable);
     });
 
-    it('should return the oneOffCostTotalsTable with items and the total cost value set to 0.00 when not provided', () => {
+    it('should return the oneOffCostTableFooter with items and the total cost value set to 0.00 when not provided', () => {
       const expectedContext = {
-        oneOffCostTotalsTable: {
-          ...incompleteManifest.oneOffCostTotalsTable,
+        oneOffCostTableFooter: {
+          ...incompleteManifest.oneOffCostTableFooter,
           items: [
             [
               {
-                data: incompleteManifest.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data,
+                data: incompleteManifest.oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.data,
                 classes: incompleteManifest
-                  .oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.classes,
+                  .oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.classes,
                 dataTestId: 'total-cost-label',
               },
               {
                 data: '0.00',
                 classes: incompleteManifest
-                  .oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.classes,
+                  .oneOffCostTableFooter.cellInfo.totalOneOffCostValue.classes,
                 dataTestId: 'total-cost-value',
               },
             ],
@@ -395,25 +395,25 @@ describe('order summary contextCreator', () => {
       };
 
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
-      expect(context.oneOffCostTotalsTable).toEqual(expectedContext.oneOffCostTotalsTable);
+      expect(context.oneOffCostTableFooter).toEqual(expectedContext.oneOffCostTableFooter);
     });
 
-    it('should return the oneOffCostTotalsTable with items and the total cost value when provided', () => {
+    it('should return the oneOffCostTableFooter with items and the total cost value when provided', () => {
       const expectedContext = {
-        oneOffCostTotalsTable: {
-          ...incompleteManifest.oneOffCostTotalsTable,
+        oneOffCostTableFooter: {
+          ...incompleteManifest.oneOffCostTableFooter,
           items: [
             [
               {
-                data: incompleteManifest.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data,
+                data: incompleteManifest.oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.data,
                 classes: incompleteManifest
-                  .oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.classes,
+                  .oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.classes,
                 dataTestId: 'total-cost-label',
               },
               {
                 data: '1,981.02',
                 classes: incompleteManifest
-                  .oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.classes,
+                  .oneOffCostTableFooter.cellInfo.totalOneOffCostValue.classes,
                 dataTestId: 'total-cost-value',
               },
             ],
@@ -427,7 +427,7 @@ describe('order summary contextCreator', () => {
       };
 
       const context = getContext({ orderId: 'order-1', orderData: mockDataWithTotalOneOffCost });
-      expect(context.oneOffCostTotalsTable).toEqual(expectedContext.oneOffCostTotalsTable);
+      expect(context.oneOffCostTableFooter).toEqual(expectedContext.oneOffCostTableFooter);
     });
 
     it('should return the recurringCostTable colummInfo', () => {
@@ -516,24 +516,24 @@ describe('order summary contextCreator', () => {
       expect(() => getContext(contextData)).toThrow(Error);
     });
 
-    it('should return the recurringCostTotalsTable with items and the total costs set to 0.00 when not provided', () => {
+    it('should return the recurringCostTableFooter with items and the total costs set to 0.00 when not provided', () => {
       const expectedContext = {
-        recurringCostTotalsTable: {
-          ...incompleteManifest.recurringCostTotalsTable,
+        recurringCostTableFooter: {
+          ...incompleteManifest.recurringCostTableFooter,
           items: [
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostLabel.classes,
                 dataTestId: 'total-year-cost-label',
                 hideSeperator: true,
               },
               {
                 data: '0.00',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostValue.classes,
                 dataTestId: 'total-year-cost-value',
                 hideSeperator: true,
               },
@@ -541,31 +541,31 @@ describe('order summary contextCreator', () => {
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.classes,
                 dataTestId: 'total-monthly-cost-label',
               },
               {
                 data: '0.00',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostValue.classes,
                 dataTestId: 'total-monthly-cost-value',
               },
             ],
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.classes,
                 dataTestId: 'total-ownership-cost-label',
                 hideSeperator: true,
               },
               {
                 data: '0.00',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostValue.classes,
                 dataTestId: 'total-ownership-cost-value',
                 hideSeperator: true,
               },
@@ -573,9 +573,9 @@ describe('order summary contextCreator', () => {
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipTerms.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipTerms.classes,
                 dataTestId: 'total-ownership-terms',
                 hideSeperator: true,
               },
@@ -591,27 +591,27 @@ describe('order summary contextCreator', () => {
 
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
 
-      expect(context.recurringCostTotalsTable).toEqual(expectedContext.recurringCostTotalsTable);
+      expect(context.recurringCostTableFooter).toEqual(expectedContext.recurringCostTableFooter);
     });
 
-    it('should return the recurringCostTotalsTable with items and the total cost value when provided', () => {
+    it('should return the recurringCostTableFooter with items and the total cost value when provided', () => {
       const expectedContext = {
-        recurringCostTotalsTable: {
-          ...incompleteManifest.recurringCostTotalsTable,
+        recurringCostTableFooter: {
+          ...incompleteManifest.recurringCostTableFooter,
           items: [
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostLabel.classes,
                 dataTestId: 'total-year-cost-label',
                 hideSeperator: true,
               },
               {
                 data: '1,981.03',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostValue.classes,
                 dataTestId: 'total-year-cost-value',
                 hideSeperator: true,
               },
@@ -619,31 +619,31 @@ describe('order summary contextCreator', () => {
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.classes,
                 dataTestId: 'total-monthly-cost-label',
               },
               {
                 data: '191.00',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostValue.classes,
                 dataTestId: 'total-monthly-cost-value',
               },
             ],
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.classes,
                 dataTestId: 'total-ownership-cost-label',
                 hideSeperator: true,
               },
               {
                 data: '2,345.40',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostValue.classes,
                 dataTestId: 'total-ownership-cost-value',
                 hideSeperator: true,
               },
@@ -651,9 +651,9 @@ describe('order summary contextCreator', () => {
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipTerms.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipTerms.classes,
                 dataTestId: 'total-ownership-terms',
                 hideSeperator: true,
               },
@@ -675,7 +675,7 @@ describe('order summary contextCreator', () => {
       };
 
       const context = getContext({ orderId: 'order-1', orderData: mockDataWithTotalRecurringCosts });
-      expect(context.recurringCostTotalsTable).toEqual(expectedContext.recurringCostTotalsTable);
+      expect(context.recurringCostTableFooter).toEqual(expectedContext.recurringCostTableFooter);
     });
   });
 });

@@ -110,8 +110,8 @@ test('should render the order description details', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const orderDescriptionTitle = Selector('h3[data-test-id="order-id-order-description-title"]');
-  const orderDescription = Selector('h4[data-test-id="order-id-order-description"]');
+  const orderDescriptionTitle = Selector('h2[data-test-id="order-id-order-description-title"]');
+  const orderDescription = Selector('p[data-test-id="order-id-order-description"]');
 
   await t
     .expect(await extractInnerText(orderDescriptionTitle)).eql(existingorderPageContent.orderDescriptionTitle)
