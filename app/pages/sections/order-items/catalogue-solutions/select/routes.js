@@ -297,7 +297,6 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       const apiResponse = await putPlannedDeliveryDate({
         orderId,
         catalogueItemId,
-        priceId,
         data: req.body,
         accessToken: extractAccessToken({ req, tokenType: 'access' }),
       });
