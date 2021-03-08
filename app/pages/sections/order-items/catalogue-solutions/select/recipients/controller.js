@@ -33,8 +33,12 @@ export const getServiceRecipientsErrorPageContext = async ({
 });
 
 export const setContextIfBackFromCatalogueSolutionEdit = (req, context, orderId) => {
-  if (req.query.orderItemId) {
-    const { orderItemId } = req.query;
+  if (req.body.orderItemId || req.query.orderItemId) {
+    let { orderItemId } = req.body;
+    if (!orderItemId) {
+      orderItemId = req.query.orderItemId;
+    }
+
     context.backLinkHref = `${baseUrl}${getSelectSolutionPriceEndpoint(orderId, orderItemId)}`;
     context.orderItemId = orderItemId;
 

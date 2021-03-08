@@ -65,7 +65,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="description-page-description"]');
+  const description = Selector('label[data-test-id="description-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
