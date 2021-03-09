@@ -135,17 +135,14 @@ test('should render the solution table content', async (t) => {
     .expect(dateInput.exists).ok()
     .expect(dayInput.getAttribute('id')).eql('deliveryDate-day')
     .expect(dayInput.getAttribute('name')).eql('deliveryDate-day')
-    .expect(dayInput.getAttribute('type')).eql('number')
     .expect(dayInput.getAttribute('value')).eql('10')
 
     .expect(monthInput.getAttribute('id')).eql('deliveryDate-month')
     .expect(monthInput.getAttribute('name')).eql('deliveryDate-month')
-    .expect(monthInput.getAttribute('type')).eql('number')
     .expect(monthInput.getAttribute('value')).eql('10')
 
     .expect(yearInput.getAttribute('id')).eql('deliveryDate-year')
     .expect(yearInput.getAttribute('name')).eql('deliveryDate-year')
-    .expect(yearInput.getAttribute('type')).eql('number')
     .expect(yearInput.getAttribute('value')).eql('2020')
 
     .expect(dateExpandableSection.exists).ok()
