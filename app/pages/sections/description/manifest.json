@@ -8,8 +8,8 @@
       "rows": 3
     }],
   "errorMessages": {
-    "OrderDescriptionRequired": "Enter a description",
-    "OrderDescriptionTooLong": "Description must be 100 characters or fewer"
+    "DescriptionRequired": "Enter a description",
+    "DescriptionTooLong": "Description must be 100 characters or fewer"
   },
   "saveButtonText": "Save and return"
 }

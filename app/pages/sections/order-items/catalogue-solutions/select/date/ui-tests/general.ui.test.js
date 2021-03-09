@@ -180,7 +180,7 @@ test('should render the "Continue" button', async (t) => {
 
 test('should navigate to task list page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .put(`/api/v1/orders/order-id/default-delivery-date/${catalogueId}/${priceId}/`, { deliveryDate: '2020-10-10' })
+    .put(`/api/v1/orders/order-id/default-delivery-date/${catalogueId}/`, { deliveryDate: '2020-10-10' })
     .reply(200, { success: true });
 
   await pageSetup({ ...defaultPageSetup, postRoute: true });
@@ -532,7 +532,7 @@ test('should show the correct error summary and input error when incorrect day/m
 // BE Validation tests
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .put(`/api/v1/orders/order-id/default-delivery-date/${catalogueId}/${priceId}/`, { deliveryDate: '2000-01-01' })
+    .put(`/api/v1/orders/order-id/default-delivery-date/${catalogueId}/`, { deliveryDate: '2000-01-01' })
     .reply(400, putPlannedDeliveryDateErrorResponse);
 
   await pageSetup({ ...defaultPageSetup, postRoute: true });
@@ -572,7 +572,7 @@ test('should show text fields as errors with error message when there are BE val
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {
   nock(orderApiUrl)
-    .put(`/api/v1/orders/order-id/default-delivery-date/${catalogueId}/${priceId}/`, { deliveryDate: '2000-01-01' })
+    .put(`/api/v1/orders/order-id/default-delivery-date/${catalogueId}/`, { deliveryDate: '2000-01-01' })
     .reply(400, putPlannedDeliveryDateErrorResponse);
 
   await pageSetup({ ...defaultPageSetup, postRoute: true });

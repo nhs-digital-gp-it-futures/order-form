@@ -1,9 +1,12 @@
 import {
+  getSelectSolutionPriceEndpoint,
   getServiceRecipientsContext,
-  validateSolutionRecipientsForm,
   getServiceRecipientsErrorPageContext,
+  setContextIfBackFromCatalogueSolutionEdit,
+  validateSolutionRecipientsForm,
 } from './controller';
 import * as contextCreator from './contextCreator';
+import { baseUrl } from '../../../../../../config';
 
 jest.mock('../../../../../../logger');
 jest.mock('./contextCreator', () => ({
@@ -20,6 +23,16 @@ const dataFromOapi = [{
 }];
 
 describe('service-recipients controller', () => {
+  describe('getSelectSolutionPriceEndpoint', () => {
+    it('returns expected string when orderId and orderItemId input', () => {
+      const orderId = 'C010000-01';
+      const orderItemId = 421;
+      const expected = `/organisation/${orderId}/catalogue-solutions/${orderItemId}`;
+
+      expect(getSelectSolutionPriceEndpoint(orderId, orderItemId)).toEqual(expected);
+    });
+  });
+
   describe('getServiceRecipientsContext', () => {
     afterEach(() => {
       jest.resetAllMocks();
@@ -48,41 +61,6 @@ describe('service-recipients controller', () => {
         serviceRecipientsData: dataFromOapi,
         selectedRecipientIdsData: selectedRecipients,
         selectStatus,
-      });
-    });
-  });
-
-  describe('validateSolutionRecipientsForm', () => {
-    describe('when there are no validation errors', () => {
-      it('should return success as true', () => {
-        const data = {
-          _csrf: 'nbU52r5S-xUzcID3fXzt3ZBiwIxgvQCF5K2o',
-          B81032: 'WILBERFORCE SURGERY',
-        };
-
-        const response = validateSolutionRecipientsForm({ data });
-
-        expect(response.success).toEqual(true);
-      });
-    });
-
-    describe('when there are validation errors', () => {
-      const expectedValidationErrors = [
-        {
-          field: 'selectSolutionRecipients',
-          id: 'SelectSolutionRecipientsRequired',
-        },
-      ];
-
-      it('should return an array of one validation error and success as false if only the csrf is passed in', () => {
-        const data = {
-          _csrf: 'nbU52r5S-xUzcID3fXzt3ZBiwIxgvQCF5K2o',
-        };
-
-        const response = validateSolutionRecipientsForm({ data });
-
-        expect(response.success).toEqual(false);
-        expect(response.errors).toEqual(expectedValidationErrors);
       });
     });
   });
@@ -119,6 +97,97 @@ describe('service-recipients controller', () => {
         selectStatus,
         solutionPrices: [{}],
         validationErrors: [],
+      });
+    });
+  });
+
+  describe('setContextIfBackFromCatalogueSolutionEdit', () => {
+    const orderId = 'K2738473-724';
+    const orderItemId = 73984;
+
+    describe('sets context values if request body has orderItemId', () => {
+      const context = { backLinkHref: 'some-value' };
+      const request = {
+        body: { orderItemId },
+        query: {},
+        headers: {},
+      };
+
+      setContextIfBackFromCatalogueSolutionEdit(request, context, orderId);
+
+      expect(context.backLinkHref).toEqual(`${baseUrl}${getSelectSolutionPriceEndpoint(orderId, orderItemId)}`);
+      expect(context.orderItemId).toEqual(orderItemId);
+    });
+
+    describe('sets context values if request query has orderItemId', () => {
+      const context = { backLinkHref: 'some-value' };
+      const request = {
+        body: {},
+        query: { orderItemId },
+        headers: {},
+      };
+
+      setContextIfBackFromCatalogueSolutionEdit(request, context, orderId);
+
+      expect(context.backLinkHref).toEqual(`${baseUrl}${getSelectSolutionPriceEndpoint(orderId, orderItemId)}`);
+      expect(context.orderItemId).toEqual(orderItemId);
+    });
+
+    describe('sets context values if referer ends with Select Solution Price endpoint', () => {
+      const context = { backLinkHref: 'some-value' };
+      const request = {
+        body: {},
+        query: {},
+        headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${orderId}/catalogue-solutions/${orderItemId}` },
+      };
+
+      setContextIfBackFromCatalogueSolutionEdit(request, context, orderId);
+
+      expect(context.backLinkHref).toEqual(request.headers.referer);
+      expect(context.orderItemId).toEqual(orderItemId.toString());
+    });
+
+    describe('does not set context values if request query has no orderItemId and referer does not end with Select Solution Price endpoint', () => {
+      const context = { backLinkHref: 'some-value' };
+      const request = {
+        body: {},
+        query: {},
+        headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${orderId}/some-URL` },
+      };
+
+      setContextIfBackFromCatalogueSolutionEdit(request, context, orderId);
+
+      expect(context.backLinkHref).toEqual('some-value');
+      expect(context.orderItemId).toEqual(undefined);
+    });
+  });
+
+  describe('validateSolutionRecipientsForm', () => {
+    describe('when there are no validation errors', () => {
+      it('should return success as true', () => {
+        const data = ['B81032'];
+
+        const response = validateSolutionRecipientsForm({ data });
+
+        expect(response.success).toEqual(true);
+      });
+    });
+
+    describe('when there are validation errors', () => {
+      const expectedValidationErrors = [
+        {
+          field: 'selectSolutionRecipients',
+          id: 'SelectSolutionRecipientsRequired',
+        },
+      ];
+
+      it('should return an array of one validation error and success as false if no key passed in', () => {
+        const data = [];
+
+        const response = validateSolutionRecipientsForm({ data });
+
+        expect(response.success).toEqual(false);
+        expect(response.errors).toEqual(expectedValidationErrors);
       });
     });
   });

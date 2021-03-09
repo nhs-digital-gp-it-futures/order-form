@@ -8,7 +8,7 @@
       "expandableSection": {
         "dataTestId": "view-section-price-id",
         "title": "What price should I enter?",
-        "innerComponent": "Enter the price you've agreed with the supplier. We've included the list price, but this can be changed if required."
+        "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
       }
     },
     "quantity": {
@@ -105,7 +105,7 @@
         "expandableSection": {
           "dataTestId": "view-section-input-id-practice",
           "title": "What quantity should I enter?",
-          "innerComponent": "Enter the estimated quantity you think you'll need over the period you previously selected (per month or per year)."
+          "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
         },
         "classes": "nhsuk-u-margin-top-5 nhsuk-input--width-10"
       },
