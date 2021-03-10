@@ -20,6 +20,7 @@ import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
+import { deleteCatalogueSolutionsRoutes } from './order-items/catalogue-solutions/delete/routes';
 
 const router = express.Router({ mergeParams: true });
 
@@ -88,6 +89,8 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.use('/supplier', supplierRoutes(authProvider, addContext, sessionManager));
 
   router.use('/catalogue-solutions', catalogueSolutionsRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/catalogue-solutions/delete', deleteCatalogueSolutionsRoutes(authProvider, addContext));
 
   router.use('/additional-services', additionalServicesRoutes(authProvider, addContext, sessionManager));
 
