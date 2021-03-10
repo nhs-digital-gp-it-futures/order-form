@@ -102,7 +102,7 @@ test('should render additionalAdvice', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const additionalAdvice = Selector('[data-test-id="date-field-input"] span.nhsuk-hint');
+  const additionalAdvice = Selector('[data-test-id="date-field-input"] .nhsuk-hint');
 
   await t
     .expect(await extractInnerText(additionalAdvice)).eql(content.questions.commencementDate.additionalAdvice);
@@ -135,15 +135,12 @@ test('should render input fields for day, month and year', async (t) => {
   await t
     .expect(dayInput.getAttribute('id')).eql('commencementDate-day')
     .expect(dayInput.getAttribute('name')).eql('commencementDate-day')
-    .expect(dayInput.getAttribute('type')).eql('number')
 
     .expect(monthInput.getAttribute('id')).eql('commencementDate-month')
     .expect(monthInput.getAttribute('name')).eql('commencementDate-month')
-    .expect(monthInput.getAttribute('type')).eql('number')
 
     .expect(yearInput.getAttribute('id')).eql('commencementDate-year')
-    .expect(yearInput.getAttribute('name')).eql('commencementDate-year')
-    .expect(yearInput.getAttribute('type')).eql('number');
+    .expect(yearInput.getAttribute('name')).eql('commencementDate-year');
 });
 
 test('should render save button', async (t) => {
