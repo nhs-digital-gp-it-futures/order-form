@@ -9,11 +9,11 @@ jest.mock('../getSectionErrorContext', () => ({
 
 const mockValidationErrors = [{
   field: 'Description',
-  id: 'OrderDescriptionRequired',
+  id: 'DescriptionRequired',
 },
 {
   field: 'Description',
-  id: 'OrderDescriptionTooLong',
+  id: 'DescriptionTooLong',
 }];
 
 describe('decription contextCreator', () => {

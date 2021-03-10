@@ -108,10 +108,10 @@ describe('catalogue-solutions contextCreator', () => {
           orderItemId: 'orderItem1',
           catalogueItemName: 'Solution One',
           catalogueItemId: '1',
-          serviceRecipient: {
+          serviceRecipients: [{
             name: 'Recipient One',
             odsCode: 'recipient-1',
-          },
+          }],
           itemUnit: {
             name: 'patient',
             description: 'per patient',
@@ -125,10 +125,10 @@ describe('catalogue-solutions contextCreator', () => {
           orderItemId: 'orderItem2',
           catalogueItemName: 'Solution One',
           catalogueItemId: '1',
-          serviceRecipient: {
+          serviceRecipients: [{
             name: 'Recipient Two',
             odsCode: 'recipient-2',
-          },
+          }],
           itemUnit: {
             name: 'patient',
             description: 'per patient',
@@ -142,10 +142,10 @@ describe('catalogue-solutions contextCreator', () => {
           orderItemId: 'orderItem3',
           catalogueItemName: 'Solution Two',
           catalogueItemId: '2',
-          serviceRecipient: {
+          serviceRecipients: [{
             name: 'Recipient Three',
             odsCode: 'recipient-3',
-          },
+          }],
           itemUnit: {
             name: 'patient',
             description: 'per patient',
