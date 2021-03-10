@@ -24,11 +24,11 @@ const generateItems = ({ orderId, orderItems }) => {
     orderItems.forEach(
       (orderItemFiltered) => {
         if (orderItemFiltered.catalogueItemId === orderItem.catalogueItemId) {
-          const filteredServiceRecipients =  orderItemFiltered.serviceRecipients;
+          const filteredServiceRecipients = orderItemFiltered.serviceRecipients;
           filteredServiceRecipients.forEach(
             (serviceRecipient) => {
-              serviceRecipients.push(`${serviceRecipient.name} (${serviceRecipient.odsCode})`)
-            }
+              serviceRecipients.push(`${serviceRecipient.name} (${serviceRecipient.odsCode})`);
+            },
           );
         }
       },
