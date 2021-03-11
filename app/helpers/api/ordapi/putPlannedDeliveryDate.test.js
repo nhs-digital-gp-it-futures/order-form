@@ -20,7 +20,7 @@ describe('putPlannedDeliveryDate', () => {
         .mockRejectedValueOnce({ response: { status: 400, data: responseData } });
 
       const response = await putPlannedDeliveryDate({
-        orderId: 'order-id', catalogueItemId: 'catalogue-id', priceId: 'price-id', data: mockData, accessToken: 'access_token',
+        orderId: 'order-id', catalogueItemId: 'catalogue-id', data: mockData, accessToken: 'access_token',
       });
 
       expect(response).toEqual(responseData);
@@ -32,7 +32,7 @@ describe('putPlannedDeliveryDate', () => {
 
       try {
         await putPlannedDeliveryDate({
-          orderId: 'order-id', catalogueItemId: 'catalogue-id', priceId: 'price-id', data: mockData, accessToken: 'access_token',
+          orderId: 'order-id', catalogueItemId: 'catalogue-id', data: mockData, accessToken: 'access_token',
         });
       } catch (err) {
         expect(err).toEqual(new Error());
@@ -49,11 +49,11 @@ describe('putPlannedDeliveryDate', () => {
       putData.mockResolvedValueOnce({});
 
       await putPlannedDeliveryDate({
-        orderId: 'order-id', catalogueItemId: 'catalogue-id', priceId: 'price-id', data: mockData, accessToken: 'access_token',
+        orderId: 'order-id', catalogueItemId: 'catalogue-id', data: mockData, accessToken: 'access_token',
       });
       expect(putData.mock.calls.length).toEqual(1);
       expect(putData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/default-delivery-date/catalogue-id/price-id/`,
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/default-delivery-date/catalogue-id/`,
         body: { deliveryDate: '2020-12-21' },
         accessToken: 'access_token',
         logger,
@@ -71,11 +71,11 @@ describe('putPlannedDeliveryDate', () => {
       };
 
       await putPlannedDeliveryDate({
-        orderId: 'order-id', catalogueItemId: 'catalogue-id', priceId: 'price-id', data, accessToken: 'access_token',
+        orderId: 'order-id', catalogueItemId: 'catalogue-id', data, accessToken: 'access_token',
       });
       expect(putData.mock.calls.length).toEqual(1);
       expect(putData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order-id/default-delivery-date/catalogue-id/price-id/`,
+        endpoint: `${orderApiUrl}/api/v1/orders/order-id/default-delivery-date/catalogue-id/`,
         body: { deliveryDate: '2020-02-01' },
         accessToken: 'access_token',
         logger,
@@ -86,7 +86,7 @@ describe('putPlannedDeliveryDate', () => {
       putData
         .mockResolvedValueOnce({});
       const response = await putPlannedDeliveryDate({
-        orderId: 'order-id', catalogueItemId: 'catalogue-id', priceId: 'price-id', data: mockData, accessToken: 'access_token',
+        orderId: 'order-id', catalogueItemId: 'catalogue-id', data: mockData, accessToken: 'access_token',
       });
       expect(response.success).toEqual(true);
       expect(response.errors).toEqual(undefined);

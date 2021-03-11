@@ -7,14 +7,14 @@ const formatPutData = (data) => ({
   deliveryDate: extractDate('deliveryDate', data),
 });
 
-const getPlannedDeliveryDateEndpoint = (orderId, catalogueItemId, priceId) => (
-  `${orderApiUrl}/api/v1/orders/${orderId}/default-delivery-date/${catalogueItemId}/${priceId}/`
+const getPlannedDeliveryDateEndpoint = (orderId, catalogueItemId) => (
+  `${orderApiUrl}/api/v1/orders/${orderId}/default-delivery-date/${catalogueItemId}/`
 );
 
 export const putPlannedDeliveryDate = async ({
-  orderId, catalogueItemId, priceId, data, accessToken,
+  orderId, catalogueItemId, data, accessToken,
 }) => {
-  const endpoint = getPlannedDeliveryDateEndpoint(orderId, catalogueItemId, priceId);
+  const endpoint = getPlannedDeliveryDateEndpoint(orderId, catalogueItemId);
   try {
     await putData({
       endpoint,

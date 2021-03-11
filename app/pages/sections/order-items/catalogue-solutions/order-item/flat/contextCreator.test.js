@@ -1,6 +1,6 @@
 import commonManifest from './commonManifest.json';
 import flatOnDemandManifest from './ondemand/manifest.json';
-import { getContext } from './contextCreator';
+import { getContext, getErrorContext } from './contextCreator';
 
 describe('quantity and estimation ondemand form contextCreator', () => {
   describe('getContext', () => {
@@ -99,6 +99,24 @@ describe('quantity and estimation ondemand form contextCreator', () => {
       });
       expect(context.questions.quantity.error.message).toEqual('Enter an estimated quantity');
       expect(context.questions.selectEstimationPeriod.error).toEqual(undefined);
+    });
+  });
+
+  describe('getErrorContext', () => {
+    const selectedPrice = { price: '100.1', provisioningType: 'Patient', type: 'flat' };
+
+    it('should return the title', () => {
+      const orderId = 'order-id';
+      const itemName = 'item-name';
+      const context = getErrorContext({
+        commonManifest,
+        orderId,
+        itemName,
+        selectedPriceManifest: flatOnDemandManifest,
+        selectedPrice,
+        validationErrors: [{ field: 'Quantity', id: 'QuantityRequired' }],
+      });
+      expect(context.title).toEqual(`${commonManifest.title} ${itemName} for ${orderId}`);
     });
   });
 });

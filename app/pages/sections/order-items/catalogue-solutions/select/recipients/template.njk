@@ -29,6 +29,7 @@
 
       <div class="nhsuk-grid-column-full">
         <form method="get" action="{{selectDeselectButtonAction}}">
+          <input type="hidden" name="orderItemId" value="{{ orderItemId }}" />
           <input type="hidden" name="selectStatus" value="{{selectStatus}}" />
           {{ bcButton({
               dataTestId: "select-deselect-button",
@@ -39,6 +40,7 @@
 
         <form method="post">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          <input type="hidden" name="orderItemId" value="{{ orderItemId }}" />
           {{ bcErrorWrapper({
             id: question.selectSolutionRecipients.id,
             dataTestId: 'recipients-table',

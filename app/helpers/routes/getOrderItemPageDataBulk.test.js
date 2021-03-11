@@ -137,9 +137,14 @@ describe('getOrderItemPageDataBulk', () => {
     });
 
     it('should call getOrderItems and return the itemId', async () => {
+      fakeSessionManager.getFromSession = () => [];
       getOrderItems.mockResolvedValue(mockOrderItemResponse);
 
-      const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
+      const pageData = await getOrderItemPageDataBulk({
+        req,
+        sessionManager: fakeSessionManager,
+        orderItemId: 'existingsolution',
+      });
 
       expect(pageData.itemId).toEqual(mockOrderItemResponse[0].catalogueItemId);
     });
@@ -201,7 +206,7 @@ describe('getOrderItemPageDataBulk', () => {
 
     it('should call getOrderItems and return the recipients', async () => {
       getOrderItems.mockResolvedValue(mockOrderItemResponse);
-
+      fakeSessionManager.getFromSession = () => {};
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
       expect(pageData.recipients).toEqual([mockOrderItemResponse[0].serviceRecipient]);
