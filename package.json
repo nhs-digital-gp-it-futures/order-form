@@ -50,11 +50,11 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.13.0",
+    "@babel/cli": "^7.13.10",
     "@babel/core": "^7.13.1",
     "@babel/node": "^7.12.16",
     "@babel/preset-env": "^7.12.16",
-    "@babel/register": "^7.12.13",
+    "@babel/register": "^7.13.8",
     "babel-loader": "^8.2.2",
     "babel-watch": "^7.4.0",
     "cheerio": "^1.0.0-rc.5",
