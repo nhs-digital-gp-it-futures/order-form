@@ -1,6 +1,6 @@
 import { getContext, getErrorContext } from './contextCreator';
 import commonManifest from './commonManifest.json';
-import { getSelectedPriceManifest } from '../../../../../helpers/controllers/manifestProvider';
+import { getSelectedPriceManifest, modifyManifestIfOnDemand } from '../../../../../helpers/controllers/manifestProvider';
 import { removeCommas } from '../../../../../helpers/common/priceFormatter';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
@@ -27,11 +27,6 @@ export const formatFormData = ({ formData }) => {
   };
 };
 
-const modifyManifest = (selectedPriceManifest, selectedEstimationPeriod) => {
-  const copy = { ...selectedPriceManifest };
-  copy.solutionTable.columnInfo[1].data = `${copy.solutionTable.columnInfo[1].data} ${selectedEstimationPeriod}`;
-};
-
 export const getOrderItemContext = async ({
   orderId,
   orderItemId,
@@ -47,9 +42,9 @@ export const getOrderItemContext = async ({
     provisioningType: selectedPrice.provisioningType,
     type: selectedPrice.type,
   });
-  if (selectedPrice.provisioningType === 'OnDemand') {
-    modifyManifest(selectedPriceManifest, formData.selectEstimationPeriod);
-  }
+
+  modifyManifestIfOnDemand(selectedPrice, selectedPriceManifest, formData.selectEstimationPeriod);
+
   return getContext({
     commonManifest,
     selectedPriceManifest,
@@ -69,6 +64,9 @@ export const getOrderItemErrorContext = (params) => {
     provisioningType: params.selectedPrice.provisioningType,
     type: params.selectedPrice.type,
   });
+
+  modifyManifestIfOnDemand(params.selectedPrice, selectedPriceManifest,
+    params.formData.selectEstimationPeriod);
 
   const updatedParams = {
     ...params,
@@ -92,4 +90,15 @@ export const getPageData = (req, sessionManager) => {
   }
 
   return pageData;
+};
+
+export const setEstimationPeriod = (req, formData, sessionManager) => {
+  const estimationPeriod = sessionManager.getFromSession({
+    req, key: sessionKeys.selectEstimationPeriod,
+  });
+
+  if (estimationPeriod) {
+    // eslint-disable-next-line no-param-reassign
+    formData.selectEstimationPeriod = estimationPeriod;
+  }
 };

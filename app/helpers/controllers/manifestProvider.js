@@ -20,3 +20,11 @@ export const getSelectedPriceManifest = ({ orderItemType, provisioningType, type
 
   return JSON.parse(rawManifest);
 };
+
+export const modifyManifestIfOnDemand = (selectedPrice, selectedPriceManifest,
+  selectedEstimationPeriod) => {
+  if (selectedPrice.provisioningType === 'OnDemand') {
+    const copy = { ...selectedPriceManifest };
+    copy.solutionTable.columnInfo[1].data = `${copy.solutionTable.columnInfo[1].data} ${selectedEstimationPeriod}`;
+  }
+};

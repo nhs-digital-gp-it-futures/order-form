@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { getSelectedPriceManifest } from './manifestProvider';
+import { getSelectedPriceManifest, modifyManifestIfOnDemand } from './manifestProvider';
 
 jest.mock('fs');
 jest.mock('path');
@@ -47,5 +47,36 @@ describe('getSelectedPriceManifest', () => {
     getSelectedPriceManifest({ orderItemType: 'Solution', provisioningType: 'Patient', type: 'Flat' });
     expect(fs.readFileSync.mock.calls.length).toEqual(1);
     expect(fs.readFileSync).toHaveBeenCalledWith(expectedPath);
+  });
+});
+
+describe('modifyManifestIfOnDemand', () => {
+  const selectedPrice = { provisioningType: 'OnDemand' };
+  const selectedEstimationPeriod = 'month';
+
+  it('should set data for provisioning type of on demand', () => {
+    const selectedPriceManifest = {
+      solutionTable: {
+        columnInfo: [{}, { data: 'Quantity per' }],
+      },
+    };
+
+    modifyManifestIfOnDemand(selectedPrice, selectedPriceManifest, selectedEstimationPeriod);
+
+    expect(selectedPriceManifest.solutionTable.columnInfo[1].data).toEqual('Quantity per month');
+  });
+
+  it('should not change data for provisioning type is not on demand', () => {
+    const selectedPriceManifest = {
+      solutionTable: {
+        columnInfo: [{}, { data: 'Quantity per' }],
+      },
+    };
+
+    selectedPrice.provisioningType = 'Per Patient';
+
+    modifyManifestIfOnDemand(selectedPrice, selectedPriceManifest, selectedEstimationPeriod);
+
+    expect(selectedPriceManifest.solutionTable.columnInfo[1].data).toEqual('Quantity per');
   });
 });

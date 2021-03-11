@@ -10,7 +10,7 @@ const postDescriptionErrorResponse = {
   errors: [
     {
       field: 'Description',
-      id: 'OrderDescriptionTooLong',
+      id: 'DescriptionTooLong',
     },
   ],
 };
