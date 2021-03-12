@@ -11,7 +11,9 @@ describe('postOrderItemBulk', () => {
   });
 
   const orderItemId = 'order-item-id';
-  const serviceRecipient = [{ name: 'Recipient 1', odsCode: 'ods1', quantity: 1, deliveryDate: "2020-12-25"}];
+  const serviceRecipient = [{
+    name: 'Recipient 1', odsCode: 'ods1', quantity: 1, deliveryDate: '2020-12-25',
+  }];
   const item = { id: 'item-1', name: 'Item One' };
   const formData = {
     _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',

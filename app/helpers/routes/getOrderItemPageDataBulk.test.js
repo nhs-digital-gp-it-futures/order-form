@@ -34,26 +34,6 @@ describe('getOrderItemPageDataBulk', () => {
       expect(pageData.itemName).toEqual('some item name');
     });
 
-    it('should get the selectedRecipientId from session and return this as serviceRecipientId', async () => {
-      fakeSessionManager.getFromSession = () => 'some-selected-recipient-id';
-
-      getSelectedPrice.mockResolvedValue({});
-
-      const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
-
-      expect(pageData.serviceRecipientId).toEqual('some-selected-recipient-id');
-    });
-
-    it('should get the selectedRecipientName from session and return this as serviceRecipientName', async () => {
-      fakeSessionManager.getFromSession = () => 'some recipient name';
-
-      getSelectedPrice.mockResolvedValue({});
-
-      const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
-
-      expect(pageData.serviceRecipientName).toEqual('some recipient name');
-    });
-
     it('should get the selectedPriceId from session, call  getSelectedPrice and return the selectedPrice', async () => {
       fakeSessionManager.getFromSession = () => 'some-selected-price-id';
 
@@ -116,11 +96,12 @@ describe('getOrderItemPageDataBulk', () => {
     const mockOrderItemResponse = [{
       catalogueItemId: 'some-item-id',
       catalogueItemName: 'some item name',
-      serviceRecipient: {
+      serviceRecipients: [{
         odsCode: 'some-recipient-id',
         name: 'some recipient id',
-      },
-      quantity: 1,
+        quantity: 1,
+        deliveryDate: '2020-02-09',
+      }],
       estimationPeriod: 'some-estimation-period',
       type: 'some-type',
       provisioningType: 'some-provisioningType',
@@ -128,7 +109,6 @@ describe('getOrderItemPageDataBulk', () => {
         name: 'some item unit name',
         description: 'some item unit description',
       },
-      deliveryDate: '2020-02-09',
       price: '11.2598203',
     }];
 
@@ -157,24 +137,6 @@ describe('getOrderItemPageDataBulk', () => {
       expect(pageData.itemName).toEqual(mockOrderItemResponse[0].catalogueItemName);
     });
 
-    it('should call getOrderItems and return the serviceRecipientId', async () => {
-      getOrderItems.mockResolvedValue(mockOrderItemResponse);
-
-      const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
-
-      expect(pageData.serviceRecipientId).toEqual(
-        mockOrderItemResponse[0].serviceRecipient.odsCode,
-      );
-    });
-
-    it('should call getOrderItems and return the serviceRecipientName', async () => {
-      getOrderItems.mockResolvedValue(mockOrderItemResponse);
-
-      const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
-
-      expect(pageData.serviceRecipientName).toEqual(mockOrderItemResponse[0].serviceRecipient.name);
-    });
-
     it('should call getOrderItems and return the selectedPrice', async () => {
       getOrderItems.mockResolvedValue(mockOrderItemResponse);
 
@@ -190,7 +152,7 @@ describe('getOrderItemPageDataBulk', () => {
 
     it('should call getOrderItems and return the formData', async () => {
       getOrderItems.mockResolvedValue(mockOrderItemResponse);
-
+      fakeSessionManager.getFromSession = () => {};
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
       expect(pageData.formData).toEqual({
@@ -199,7 +161,7 @@ describe('getOrderItemPageDataBulk', () => {
           'deliveryDate-month': '02',
           'deliveryDate-day': '09',
         }],
-        quantity: [mockOrderItemResponse[0].quantity],
+        quantity: [mockOrderItemResponse[0].serviceRecipients[0].quantity],
         price: '11.2598203',
       });
     });
@@ -209,16 +171,15 @@ describe('getOrderItemPageDataBulk', () => {
       fakeSessionManager.getFromSession = () => {};
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
-      expect(pageData.recipients).toEqual([mockOrderItemResponse[0].serviceRecipient]);
+      expect(pageData.recipients).toEqual([mockOrderItemResponse[0].serviceRecipients[0]]);
     });
 
     it('should call getOrderItems and return the selectedRecipients', async () => {
       getOrderItems.mockResolvedValue(mockOrderItemResponse);
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
-
       expect(pageData.selectedRecipients).toEqual(
-        [mockOrderItemResponse[0].serviceRecipient.odsCode],
+        [mockOrderItemResponse[0].serviceRecipients[0].odsCode],
       );
     });
   });
