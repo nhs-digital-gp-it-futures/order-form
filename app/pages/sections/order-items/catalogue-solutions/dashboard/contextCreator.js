@@ -12,12 +12,12 @@ const generateItems = ({ orderId, orderItems }) => {
     const columns = [];
     columns.push(({
       data: orderItem.catalogueItemName,
-      href: `${baseUrl}/organisation/${orderId}/catalogue-solutions/${orderItem.orderItemId}`,
-      dataTestId: `${orderItem.orderItemId}-catalogueItemName`,
+      href: `${baseUrl}/organisation/${orderId}/catalogue-solutions/${orderItem.catalogueItemId}`,
+      dataTestId: `${orderItem.catalogueItemId}-catalogueItemName`,
     }));
     columns.push(({
       data: `${orderItem.itemUnit.description} ${orderItem.timeUnit.description}`,
-      dataTestId: `${orderItem.orderItemId}-unitOfOrder`,
+      dataTestId: `${orderItem.catalogueItemId}-unitOfOrder`,
     }));
 
     const serviceRecipients = [];
@@ -35,7 +35,7 @@ const generateItems = ({ orderId, orderItems }) => {
     );
     columns.push(({
       expandableSection: {
-        dataTestId: `${orderItem.orderItemId}-serviceRecipients`,
+        dataTestId: `${orderItem.catalogueItemId}-serviceRecipients`,
         title: 'Service recipients (ODS code)',
         innerComponent: serviceRecipients.join('<br><br>'),
       },

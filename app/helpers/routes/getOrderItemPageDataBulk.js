@@ -5,9 +5,11 @@ import { sessionKeys } from './sessionHelper';
 import { getOrderItems } from '../api/ordapi/getOrderItems';
 
 const updateOrderItemsList = async ({
-  req, sessionManager, accessToken, orderItems, newSelectedRecipients, recipientsUpdated,
+  req, sessionManager, accessToken, newSelectedRecipients, recipientsUpdated, serviceRecipients,
 }) => {
-  const newRecipientsOrderItems = [];
+  const newRecipientsOrderItems = [{
+    serviceRecipients: [],
+  }];
   if (newSelectedRecipients && newSelectedRecipients.length > 0) {
     const commencementDate = await getCommencementDate({
       req,
@@ -15,20 +17,18 @@ const updateOrderItemsList = async ({
       accessToken,
     });
     newSelectedRecipients.forEach((recipient) => {
-      const orderItemNew = {
+      const serviceRecipientNew = {
+        name: recipient.name,
+        odsCode: recipient.odsCode,
         deliveryDate: commencementDate,
-        serviceRecipient: {
-          name: recipient.name,
-          odsCode: recipient.odsCode,
-        },
       };
-      newRecipientsOrderItems.push(orderItemNew);
+      newRecipientsOrderItems[0].serviceRecipients.push(serviceRecipientNew);
     });
   }
   recipientsUpdated.forEach((recipient) => {
-    orderItems.forEach((orderItem) => {
-      if (orderItem && recipient.odsCode === orderItem.serviceRecipient.odsCode) {
-        newRecipientsOrderItems.push(orderItem);
+    serviceRecipients.forEach((serviceRecipient) => {
+      if (serviceRecipient && recipient.odsCode === serviceRecipient.odsCode) {
+        newRecipientsOrderItems[0].serviceRecipients.push(serviceRecipient);
       }
     });
   });
@@ -49,12 +49,19 @@ const checkAndUpdateNewOrderItems = async ({
       (selectedRecipient) => recipientsList
         .find((recipient) => recipient.odsCode === selectedRecipient),
     );
+    const { serviceRecipients } = orderItems[0];
     const newSelectedRecipients = recipientsUpdated
-      .filter(({ odsCode: code1 }) => !orderItems
-        .some(({ serviceRecipient: { odsCode: code2 } }) => code2 === code1));
+      .filter(({ odsCode: code1 }) => !serviceRecipients
+        .some(({ odsCode: code2 }) => code2 === code1));
 
     const newRecipientsOrderItems = await updateOrderItemsList({
-      req, sessionManager, accessToken, orderItems, newSelectedRecipients, recipientsUpdated,
+      req,
+      sessionManager,
+      accessToken,
+      orderItems,
+      newSelectedRecipients,
+      recipientsUpdated,
+      serviceRecipients,
     });
     return newRecipientsOrderItems;
   }
@@ -70,12 +77,6 @@ export const getOrderItemPageDataBulk = async ({
     });
     const itemName = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemName,
-    });
-    const serviceRecipientId = sessionManager.getFromSession({
-      req, key: sessionKeys.selectedRecipientId,
-    });
-    const serviceRecipientName = sessionManager.getFromSession({
-      req, key: sessionKeys.selectedRecipientName,
     });
     const selectedPriceId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedPriceId,
@@ -115,8 +116,6 @@ export const getOrderItemPageDataBulk = async ({
       itemId,
       itemName,
       catalogueSolutionId,
-      serviceRecipientId,
-      serviceRecipientName,
       selectedPrice,
       formData,
       recipients,
@@ -125,11 +124,17 @@ export const getOrderItemPageDataBulk = async ({
   }
 
   const orderItems = await getOrderItems({ orderId, orderItemId, accessToken });
+  const serviceRecipients = [];
+  const filteredServiceRecipients = orderItems[0].serviceRecipients;
+  filteredServiceRecipients.forEach(
+    (serviceRecipient) => {
+      serviceRecipients.push(`${serviceRecipient.name} (${serviceRecipient.odsCode})`);
+    },
+  );
+
   const itemId = orderItems[0].catalogueItemId;
   const itemName = orderItems[0].catalogueItemName;
   const catalogueSolutionId = orderItems[0].catalogueItemId;
-  const serviceRecipientId = orderItems[0].serviceRecipient.odsCode;
-  const serviceRecipientName = orderItems[0].serviceRecipient.name;
   const selectedPrice = {
     price: orderItems[0].price,
     itemUnit: orderItems[0].itemUnit,
@@ -149,7 +154,7 @@ export const getOrderItemPageDataBulk = async ({
   const selectedRecipients = [];
 
   const newRecipientsOrderItems = await checkAndUpdateNewOrderItems({
-    req, sessionManager, accessToken, orderItems,
+    req, sessionManager, accessToken, orderItems, serviceRecipients,
   });
 
   const updatedOrderItems = newRecipientsOrderItems && newRecipientsOrderItems.length > 0
@@ -157,29 +162,28 @@ export const getOrderItemPageDataBulk = async ({
     : orderItems;
 
   updatedOrderItems.forEach((orderItem) => {
-    const [day, month, year] = destructureDate(orderItem.deliveryDate);
-    formData.deliveryDate.push({
-      'deliveryDate-year': year,
-      'deliveryDate-month': month,
-      'deliveryDate-day': day,
+    orderItem.serviceRecipients.forEach((serviceRecipient) => {
+      const [day, month, year] = destructureDate(serviceRecipient.deliveryDate);
+      formData.deliveryDate.push({
+        'deliveryDate-year': year,
+        'deliveryDate-month': month,
+        'deliveryDate-day': day,
+      });
+      formData.quantity.push(serviceRecipient.quantity);
+
+      const catalogueIds = [];
+      if (catalogueIds.includes(orderItem.catalogueItemId)) {
+        return;
+      }
+      recipients.push(serviceRecipient);
+      selectedRecipients.push(serviceRecipient.odsCode);
     });
-    formData.quantity.push(orderItem.quantity);
-
-    const catalogueIds = [];
-    if (catalogueIds.includes(orderItem.catalogueItemId)) {
-      return;
-    }
-
-    recipients.push(orderItem.serviceRecipient);
-    selectedRecipients.push(orderItem.serviceRecipient.odsCode);
   });
 
   return {
     itemId,
     itemName,
     catalogueSolutionId,
-    serviceRecipientId,
-    serviceRecipientName,
     selectedPrice,
     formData,
     recipients,

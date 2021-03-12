@@ -11,14 +11,15 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-sol
 const getLocation = ClientFunction(() => document.location.href);
 
 const orderItem = {
-  serviceRecipient: {
+  serviceRecipients: [{
     odsCode: 'OX3',
     name: 'Some service recipient 2',
-  },
+    deliveryDate: '2020-12-12',
+    quantity: 3,
+  }],
   catalogueItemType: 'Solution',
   catalogueItemName: 'Some item name',
   catalogueItemId: '10000-001',
-  quantity: 3,
   estimationPeriod: 'year',
   provisioningType: 'Patient',
   type: 'flat',
@@ -32,7 +33,6 @@ const orderItem = {
     description: 'per year',
   },
   price: 0.1,
-  deliveryDate: '2020-12-12',
 };
 
 const recipients = [{ name: 'recipient-name', odsCode: 'code' }, { name: 'recipient-name', odsCode: 'code-not-used' }];
@@ -49,11 +49,11 @@ const selectedPrice = {
 const orderItemPageDataInSession = JSON.stringify({
   itemId: orderItem.catalogueItemId,
   itemName: orderItem.catalogueItemName,
-  serviceRecipientId: orderItem.serviceRecipient.odsCode,
-  serviceRecipientName: orderItem.serviceRecipient.name,
+  serviceRecipientId: orderItem.serviceRecipients[0].odsCode,
+  serviceRecipientName: orderItem.serviceRecipients[0].name,
   selectedPrice,
   recipients,
-  deliveryDate: orderItem.deliveryDate,
+  deliveryDate: orderItem.serviceRecipients[0].deliveryDate,
   selectedRecipients,
 });
 
@@ -239,29 +239,29 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
 
 // test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
 //   nock(orderApiUrl)
-//     .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 3 }])
+//     .post('/api/v1/orders/order-id/order-items/10000-001', [{ ...requestPostBody, quantity: 3 }])
 //     .reply(400, {
 //       errors: {
 //         '[0].Quantity': ['QuantityGreaterThanZero'],
 //       },
 //     });
-//
+
 //   await pageSetup({ ...defaultPageSetup, postRoute: true });
 //   await t.navigateTo(pageUrl);
-//
+
 //   const errorSummary = Selector('[data-test-id="error-summary"]');
 //   const errorMessage = Selector('[data-test-id="solution-table-error"]');
 //   const quantityInput = Selector('[data-test-id="question-quantity"] input');
 //   const saveButton = Selector('[data-test-id="save-button"] button');
-//
+
 //   await t
 //     .click(saveButton);
-//
+
 //   await t
 //     .expect(errorSummary.find('li a').count).eql(1)
 //     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-//
+
 //     .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
-//
+
 //     .expect(quantityInput.getAttribute('value')).eql('3');
 // });
