@@ -37,12 +37,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     sessionManager.saveToSession(
       { req, key: sessionKeys.selectedRecipients, value: undefined },
     );
-<<<<<<< HEAD
     sessionManager.saveToSession(
       { req, key: sessionKeys.recipients, value: undefined },
     );
-=======
->>>>>>> a42140f06ad7c7d185922795be29d0ea8cf5d82a
     logger.info(`navigating to order ${orderId} catalogue-solutions dashboard page`);
     return res.render('pages/sections/order-items/catalogue-solutions/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
