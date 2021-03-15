@@ -19,7 +19,7 @@ const orderItem = {
   }],
   catalogueItemType: 'Solution',
   catalogueItemName: 'Some item name',
-  catalogueItemId: '10000-001',
+  catalogueItemId: '1',
   estimationPeriod: null,
   provisioningType: 'ondemand',
   type: 'flat',
