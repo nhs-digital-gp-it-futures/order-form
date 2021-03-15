@@ -36,20 +36,21 @@ const updateOrderItemsList = async ({
 };
 
 const checkAndUpdateNewOrderItems = async ({
-  req, sessionManager, accessToken, orderItems,
+  req, sessionManager, accessToken, selectedCatalogueSolution,
 }) => {
   const selectedRecipientsUpdated = sessionManager.getFromSession({
     req, key: sessionKeys.selectedRecipients,
   });
-  if (selectedRecipientsUpdated && selectedRecipientsUpdated.length > 0) {
-    const recipientsList = sessionManager.getFromSession({
-      req, key: sessionKeys.recipients,
-    });
+  const recipientsList = sessionManager.getFromSession({
+    req, key: sessionKeys.recipients,
+  });
+  if ((selectedRecipientsUpdated && recipientsList)
+  && (selectedRecipientsUpdated.length > 0 && recipientsList.length > 0)) {
     const recipientsUpdated = selectedRecipientsUpdated.map(
       (selectedRecipient) => recipientsList
         .find((recipient) => recipient.odsCode === selectedRecipient),
     );
-    const { serviceRecipients } = orderItems[0];
+    const { serviceRecipients } = selectedCatalogueSolution[0];
     const newSelectedRecipients = recipientsUpdated
       .filter(({ odsCode: code1 }) => !serviceRecipients
         .some(({ odsCode: code2 }) => code2 === code1));
@@ -58,7 +59,6 @@ const checkAndUpdateNewOrderItems = async ({
       req,
       sessionManager,
       accessToken,
-      orderItems,
       newSelectedRecipients,
       recipientsUpdated,
       serviceRecipients,
@@ -124,24 +124,26 @@ export const getOrderItemPageDataBulk = async ({
   }
 
   const orderItems = await getOrderItems({ orderId, orderItemId, accessToken });
+  const selectedCatalogueSolution = orderItems
+    .filter((orderItemFiltered) => orderItemFiltered.catalogueItemId === orderItemId);
   const serviceRecipients = [];
-  const filteredServiceRecipients = orderItems[0].serviceRecipients;
+  const filteredServiceRecipients = selectedCatalogueSolution[0].serviceRecipients;
   filteredServiceRecipients.forEach(
     (serviceRecipient) => {
       serviceRecipients.push(`${serviceRecipient.name} (${serviceRecipient.odsCode})`);
     },
   );
 
-  const itemId = orderItems[0].catalogueItemId;
-  const itemName = orderItems[0].catalogueItemName;
-  const catalogueSolutionId = orderItems[0].catalogueItemId;
+  const itemId = selectedCatalogueSolution[0].catalogueItemId;
+  const itemName = selectedCatalogueSolution[0].catalogueItemName;
+  const catalogueSolutionId = selectedCatalogueSolution[0].catalogueItemId;
   const selectedPrice = {
-    price: orderItems[0].price,
-    itemUnit: orderItems[0].itemUnit,
-    timeUnit: orderItems[0].timeUnit,
-    type: orderItems[0].type,
-    provisioningType: orderItems[0].provisioningType,
-    currencyCode: orderItems[0].currencyCode,
+    price: selectedCatalogueSolution[0].price,
+    itemUnit: selectedCatalogueSolution[0].itemUnit,
+    timeUnit: selectedCatalogueSolution[0].timeUnit,
+    type: selectedCatalogueSolution[0].type,
+    provisioningType: selectedCatalogueSolution[0].provisioningType,
+    currencyCode: selectedCatalogueSolution[0].currencyCode,
   };
 
   const formData = {
@@ -154,12 +156,12 @@ export const getOrderItemPageDataBulk = async ({
   const selectedRecipients = [];
 
   const newRecipientsOrderItems = await checkAndUpdateNewOrderItems({
-    req, sessionManager, accessToken, orderItems, serviceRecipients,
+    req, sessionManager, accessToken, selectedCatalogueSolution, serviceRecipients,
   });
 
   const updatedOrderItems = newRecipientsOrderItems && newRecipientsOrderItems.length > 0
     ? newRecipientsOrderItems
-    : orderItems;
+    : selectedCatalogueSolution;
 
   updatedOrderItems.forEach((orderItem) => {
     orderItem.serviceRecipients.forEach((serviceRecipient) => {
