@@ -62,6 +62,10 @@ describe('validateOrderItemFormBulk', () => {
       field: 'Price',
       id: 'PriceMustBeANumber',
     };
+    const priceGreaterThanOrEqualToZero = {
+      field: 'Price',
+      id: 'PriceGreaterThanOrEqualToZero',
+    };
     const priceMoreThan4dp = {
       field: 'Price',
       id: 'PriceMoreThan4dp',
@@ -120,6 +124,19 @@ describe('validateOrderItemFormBulk', () => {
       const errors = validateOrderItemFormBulk({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([priceMustBeANumber]);
+    });
+
+    it('should return an array of one validation error if price is less than zero', () => {
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+      const data = {
+        price: '-1',
+        quantity: ['1'],
+        deliveryDate,
+      };
+
+      const errors = validateOrderItemFormBulk({ orderItemType, data, selectedPrice });
+
+      expect(errors).toEqual([priceGreaterThanOrEqualToZero]);
     });
 
     it('should return an array of one validation error if price has more than 4dp', () => {
