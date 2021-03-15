@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { sessionManager } = require('buying-catalogue-library');
+const { ConfigHelper, sessionManager } = require('buying-catalogue-library');
 const config = require('./config');
 const { App } = require('./app');
 const { routes } = require('./routes');
@@ -9,7 +9,8 @@ const { createAuthProvider } = require('./helpers/app/createAuthProvider');
 
 Object.keys(config).map((configKey) => {
   if (config[configKey]) {
-    logger.info(`${configKey} set to ${config[configKey]}`);
+    const value = ConfigHelper.getConfigKeyValue(configKey, config[configKey]);
+    logger.info(`${configKey} set to ${value}`);
   } else {
     logger.error(`${configKey} not set`);
   }
