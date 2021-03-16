@@ -51,7 +51,12 @@ describe('getSelectedPriceManifest', () => {
 });
 
 describe('modifyManifestIfOnDemand', () => {
-  const selectedPrice = { provisioningType: 'OnDemand' };
+  const selectedPrice = { 
+    provisioningType: 'OnDemand',
+    timeUnit: {
+      name: 'year',
+    },
+  };
   const selectedEstimationPeriod = 'month';
 
   it('should set data for provisioning type of on demand', () => {
@@ -64,6 +69,18 @@ describe('modifyManifestIfOnDemand', () => {
     modifyManifestIfOnDemand(selectedPrice, selectedPriceManifest, selectedEstimationPeriod);
 
     expect(selectedPriceManifest.solutionTable.columnInfo[1].data).toEqual('Quantity per month');
+  });
+  
+  it('should set data from selectedPrice timeUnit if no estimation period for provisioning type of on demand', () => {
+    const selectedPriceManifest = {
+      solutionTable: {
+        columnInfo: [{}, { data: 'Quantity per' }],
+      },
+    };
+
+    modifyManifestIfOnDemand(selectedPrice, selectedPriceManifest, '');
+
+    expect(selectedPriceManifest.solutionTable.columnInfo[1].data).toEqual('Quantity per year');
   });
 
   it('should not change data for provisioning type is not on demand', () => {
