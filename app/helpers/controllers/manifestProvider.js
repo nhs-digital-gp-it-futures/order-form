@@ -24,11 +24,12 @@ export const getSelectedPriceManifest = ({ orderItemType, provisioningType, type
 export const modifyManifestIfOnDemand = (selectedPrice, selectedPriceManifest,
   selectedEstimationPeriod) => {
   if (selectedPrice.provisioningType === 'OnDemand') {
-    if (!selectedEstimationPeriod) {
-      selectedEstimationPeriod = selectedPrice.timeUnit ? selectedPrice.timeUnit.name : '';
+    let period = selectedEstimationPeriod;
+    if (!period) {
+      period = selectedPrice.timeUnit ? selectedPrice.timeUnit.name : '';
     }
 
     const copy = { ...selectedPriceManifest };
-    copy.solutionTable.columnInfo[1].data = `${copy.solutionTable.columnInfo[1].data} ${selectedEstimationPeriod}`;
+    copy.solutionTable.columnInfo[1].data = `${copy.solutionTable.columnInfo[1].data} ${period}`;
   }
 };
