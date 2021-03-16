@@ -17,7 +17,6 @@ const formatPostData = ({
   catalogueItemType: orderItemType,
   currencyCode: 'GBP',
   estimationPeriod: selectedPrice.timeUnit ? selectedPrice.timeUnit.name : null,
-  price: parseFloat(formData.price),
   ...selectedPrice,
   orderItemId,
   serviceRecipients: recipients.map((recipient, index) => ({
@@ -26,6 +25,7 @@ const formatPostData = ({
     quantity: parseInt(formData.quantity[index], 10),
     deliveryDate: extractDate('deliveryDate', formData.deliveryDate, index),
   })),
+  price: parseFloat(formData.price),
 });
 
 export const postOrderItemBulk = async ({
