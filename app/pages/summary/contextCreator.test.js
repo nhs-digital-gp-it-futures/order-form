@@ -332,27 +332,24 @@ describe('order summary contextCreator', () => {
 
       const mockOneOffCosts = [{
         catalogueItemType: 'AssociatedService',
-        itemId: 'item-1',
         provisioningType: 'Declarative',
-        serviceRecipientsOdsCode: 'A10001',
         cataloguePriceType: 'Flat',
         catalogueItemName: 'Some item name',
         price: 585.00,
         itemUnitDescription: 'per Day',
-        quantity: 70,
         costPerYear: 40850.00,
+        serviceRecipients: [{
+          name: 'Some Recipient Name',
+          odsCode: 'A10001',
+          itemId: 'item-1',
+          quantity: 70,
+        }],
       }];
 
       const contextData = {
         orderId: 'order-1',
         orderData: mockOrderData,
         oneOffCostItems: mockOneOffCosts,
-        serviceRecipients: {
-          A10001: {
-            name: 'Some Recipient Name',
-            odsCode: 'A10001',
-          },
-        },
       };
 
       const context = getContext(contextData);
@@ -448,7 +445,7 @@ describe('order summary contextCreator', () => {
               { classes, data: 'Some item name', dataTestId: 'item-name' },
               { classes, data: 'service-instance-id', dataTestId: 'service-instance-id' },
               { classes, data: '1.26 per patient per year', dataTestId: 'price-unit' },
-              { classes, data: '500 per month', dataTestId: 'quantity' },
+              { classes, data: '85 per month', dataTestId: 'quantity' },
               { classes, data: '24 February 2020', dataTestId: 'planned-date' },
               { classes: `${classes} nhsuk-table__cell--numeric`, data: '5,000.00', dataTestId: 'item-cost' },
             ],
@@ -458,31 +455,30 @@ describe('order summary contextCreator', () => {
 
       const mockRecurringCosts = [{
         catalogueItemType: 'Solution',
-        itemId: 'item-1',
         provisioningType: 'Declarative',
-        serviceRecipientsOdsCode: 'A10001',
         cataloguePriceType: 'Flat',
         catalogueItemName: 'Some item name',
-        serviceInstanceId: 'service-instance-id',
         price: 1.260,
         itemUnitDescription: 'per patient',
         timeUnitDescription: 'per year',
-        quantity: 500,
         quantityPeriodDescription: 'per month',
-        deliveryDate: '2020-02-24',
         costPerYear: 5000.000,
+        serviceRecipients: [
+          {
+            itemId: 'item-1',
+            deliveryDate: '2020-02-24',
+            name: 'Some Recipient Name',
+            odsCode: 'A10001',
+            quantity: 85,
+            serviceInstanceId: 'service-instance-id',
+          },
+        ],
       }];
 
       const contextData = {
         orderId: 'order-1',
         orderData: mockOrderData,
         recurringCostItems: mockRecurringCosts,
-        serviceRecipients: {
-          A10001: {
-            name: 'Some Recipient Name',
-            odsCode: 'A10001',
-          },
-        },
       };
 
       const context = getContext(contextData);
@@ -503,7 +499,6 @@ describe('order summary contextCreator', () => {
 
     it('should throw an error when a service recipient cannot be found', () => {
       const mockRecurringCosts = [{
-        serviceRecipientsOdsCode: 'A10001',
       }];
 
       const contextData = {
