@@ -284,7 +284,7 @@ const generateOneOffCostDetailsTable = ({
 
       columns.push(({
         classes: oneOffCostTable.cellInfo.itemId.classes,
-        data: item.itemId,
+        data: serviceRecipient.itemId,
         dataTestId: 'item-id',
       }));
 
@@ -302,7 +302,7 @@ const generateOneOffCostDetailsTable = ({
 
       columns.push(({
         classes: oneOffCostTable.cellInfo.quantity.classes,
-        data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription ? item.quantityPeriodDescription : ''}`,
+        data: `${serviceRecipient.quantity.toLocaleString()} ${item.quantityPeriodDescription ? item.quantityPeriodDescription : ''}`,
         dataTestId: 'quantity',
       }));
 
