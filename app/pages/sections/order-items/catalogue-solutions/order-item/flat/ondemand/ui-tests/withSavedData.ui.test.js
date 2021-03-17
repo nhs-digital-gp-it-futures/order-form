@@ -35,6 +35,7 @@ const recipients = [{ name: 'recipient-name', odsCode: 'code' }, { name: 'recipi
 const selectedRecipients = ['code'];
 
 const selectedPrice = {
+  priceId: 3,
   price: orderItem.price,
   itemUnit: orderItem.itemUnit,
   timeUnit: orderItem.timeUnit,
@@ -52,17 +53,6 @@ const orderItemPageDataInSession = JSON.stringify({
   deliveryDate: orderItem.serviceRecipients[0].deliveryDate,
   selectedRecipients,
 });
-
-const requestPostBody = {
-  ...selectedPrice,
-  orderItemId: 1,
-  serviceRecipient: recipients[0],
-  catalogueItemId: orderItem.catalogueItemId,
-  catalogueItemName: orderItem.catalogueItemName,
-  catalogueItemType: orderItem.catalogueItemType,
-  deliveryDate: orderItem.deliveryDate,
-  estimationPeriod: orderItem.estimationPeriod,
-};
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -233,10 +223,6 @@ test('should show the correct error summary and input error when the price is re
 });
 
 test('should navigate to catalogue-solutions dashboard page if save button is clicked and data is valid', async (t) => {
-  nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 3 }])
-    .reply(200, {});
-
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -247,31 +233,22 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/1');
 });
 
-// test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-//   nock(orderApiUrl)
-//     .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 3 }])
-//     .reply(400, {
-//       errors: {
-//         '[0].Quantity': ['QuantityGreaterThanZero'],
-//       },
-//     });
+test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
 
-//   await pageSetup({ ...defaultPageSetup, postRoute: true });
-//   await t.navigateTo(pageUrl);
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('[data-test-id="solution-table-error"]');
+  const quantityInput = Selector('[data-test-id="question-quantity"] input');
+  const saveButton = Selector('[data-test-id="save-button"] button');
 
-//   const errorSummary = Selector('[data-test-id="error-summary"]');
-//   const errorMessage = Selector('[data-test-id="solution-table-error"]');
-//   const quantityInput = Selector('[data-test-id="question-quantity"] input');
-//   const saveButton = Selector('[data-test-id="save-button"] button');
+  await t
+    .typeText(quantityInput, 'H')
+    .click(saveButton);
 
-//   await t
-//     .click(saveButton);
+  await t
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityMustBeANumber)
 
-//   await t
-//     .expect(errorSummary.find('li a').count).eql(1)
-//     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-
-//     .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
-
-//     .expect(quantityInput.getAttribute('value')).eql('3');
-// });
+    .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityMustBeANumber);
+});
