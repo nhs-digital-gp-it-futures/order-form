@@ -332,17 +332,17 @@ describe('order summary contextCreator', () => {
 
       const mockOneOffCosts = [{
         catalogueItemType: 'AssociatedService',
-        itemId: 'item-1',
         provisioningType: 'Declarative',
         cataloguePriceType: 'Flat',
         catalogueItemName: 'Some item name',
         price: 585.00,
         itemUnitDescription: 'per Day',
-        quantity: 70,
         costPerYear: 40850.00,
         serviceRecipients: [{
           name: 'Some Recipient Name',
           odsCode: 'A10001',
+          itemId: 'item-1',
+          quantity: 70,
         }],
       }];
 
