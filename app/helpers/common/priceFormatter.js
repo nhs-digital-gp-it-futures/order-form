@@ -9,10 +9,13 @@ export const formatNumber = ({
 
 export const formatPrice = ({ value, minimumFractionDigits = 2, maximumFractionDigits = 4 }) => {
   if (minimumFractionDigits === 0) {
-    if (Number.isInteger(Number.parseFloat(value))) {
-      return formatNumber({ value, maximumFractionDigits });
+    if (!Number.isNaN(Number(value)) && !Number.isNaN(parseFloat(value))) {
+      if (Number.isInteger(Number.parseFloat(value))) {
+        return formatNumber({ value, maximumFractionDigits });
+      }
+      return formatNumber({ value, minimumFractionDigits: 2, maximumFractionDigits });
     }
-    return formatNumber({ value, minimumFractionDigits: 2, maximumFractionDigits });
+    return value;
   }
   return formatNumber({ value, minimumFractionDigits, maximumFractionDigits });
 };
