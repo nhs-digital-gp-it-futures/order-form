@@ -8,47 +8,48 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solu
 
 const mockAddedOrderItems = [
   {
-    orderItemId: 'orderItem1',
     catalogueItemName: 'Solution One',
-    catalogueItemId: '1',
-    serviceRecipient: {
+    catalogueItemId: 'orderItem1',
+    serviceRecipients: [{
       name: 'Recipient One',
       odsCode: 'recipient-1',
     },
-    itemUnit: {
-      name: 'patient',
-      description: 'per patient',
-    },
-    timeUnit: {
-      name: 'year',
-      description: 'per year',
-    },
-  },
-  {
-    orderItemId: 'orderItem2',
-    catalogueItemName: 'Solution Two',
-    catalogueItemId: '2',
-    serviceRecipient: {
-      name: 'Recipient Two',
-      odsCode: 'recipient-2',
-    },
-    itemUnit: {
-      name: 'patient',
-      description: 'per patient',
-    },
-    timeUnit: {
-      name: 'year',
-      description: 'per year',
-    },
-  },
-  {
-    orderItemId: 'orderItem3',
-    catalogueItemName: 'Solution One',
-    catalogueItemId: '1',
-    serviceRecipient: {
+    {
       name: 'Recipient Three',
       odsCode: 'recipient-3',
+    }],
+    itemUnit: {
+      name: 'patient',
+      description: 'per patient',
     },
+    timeUnit: {
+      name: 'year',
+      description: 'per year',
+    },
+  },
+  {
+    catalogueItemName: 'Solution Two',
+    catalogueItemId: 'orderItem2',
+    serviceRecipients: [{
+      name: 'Recipient Two',
+      odsCode: 'recipient-2',
+    }],
+    itemUnit: {
+      name: 'patient',
+      description: 'per patient',
+    },
+    timeUnit: {
+      name: 'year',
+      description: 'per year',
+    },
+  },
+  {
+    catalogueItemName: 'Solution Two',
+    catalogueItemId: 'orderItem3',
+    serviceRecipients: [{
+      name: 'Recipient Three',
+      odsCode: 'recipient-3',
+    }],
     itemUnit: {
       name: 'patient',
       description: 'per patient',

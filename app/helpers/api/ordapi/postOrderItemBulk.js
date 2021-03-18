@@ -1,4 +1,4 @@
-import { postData } from 'buying-catalogue-library';
+import { putData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { extractDate } from '../../controllers/extractDate';
 import { orderApiUrl } from '../../../config';
@@ -6,28 +6,27 @@ import { orderApiUrl } from '../../../config';
 const formatPostData = ({
   orderItemId,
   orderItemType,
-  itemId,
+  catalogueItemId,
   itemName,
   selectedPrice,
   recipients,
   formData,
-}) => recipients.map((recipient, index) => ({
-  ...selectedPrice,
-  orderItemId,
-  serviceRecipient: {
-    name: recipient.name,
-    odsCode: recipient.odsCode,
-  },
-  catalogueItemId: itemId,
+}) => ({
+  catalogueItemId,
   catalogueItemName: itemName,
   catalogueItemType: orderItemType,
-  deliveryDate: extractDate('deliveryDate', formData.deliveryDate, index),
-  quantity: parseInt(formData.quantity[index], 10),
+  currencyCode: 'GBP',
   estimationPeriod: selectedPrice.timeUnit ? selectedPrice.timeUnit.name : null,
+  ...selectedPrice,
+  orderItemId,
+  serviceRecipients: recipients.map((recipient, index) => ({
+    name: recipient.name,
+    odsCode: recipient.odsCode,
+    quantity: parseInt(formData.quantity[index], 10),
+    deliveryDate: extractDate('deliveryDate', formData.deliveryDate, index),
+  })),
   price: parseFloat(formData.price),
-}));
-
-const getPostOrderItemEndpoint = (orderId) => `${orderApiUrl}/api/v1/orders/${orderId}/order-items/batch`;
+});
 
 export const postOrderItemBulk = async ({
   orderItemId,
@@ -40,20 +39,22 @@ export const postOrderItemBulk = async ({
   recipients,
   formData,
 }) => {
-  const endpoint = getPostOrderItemEndpoint(orderId);
+  const endpoint = `${orderApiUrl}/api/v1/orders/${orderId}/order-items/${itemId}`;
+
   const body = formatPostData({
     orderItemId,
     orderItemType,
-    itemId,
+    catalogueItemId: itemId,
     itemName,
     selectedPrice,
     recipients,
     formData,
   });
 
-  await postData({
+  await putData({
     endpoint, body, accessToken, logger,
   });
-  logger.info(`Order item for ${itemName} successfully created for order id: ${orderId}`);
+
+  logger.info(`Order item for ${itemName} successfully created for order id: ${orderId}, Catelogue item id: ${itemId}`);
   return { success: true };
 };

@@ -34,6 +34,12 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       logger,
     });
 
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.selectedRecipients, value: undefined },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.recipients, value: undefined },
+    );
     logger.info(`navigating to order ${orderId} catalogue-solutions dashboard page`);
     return res.render('pages/sections/order-items/catalogue-solutions/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -82,6 +88,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     }
 
     sessionManager.saveToSession(
+      { req, key: sessionKeys.selectedItemName, value: pageData.itemName },
+    );
+    sessionManager.saveToSession(
       { req, key: sessionKeys.selectedRecipients, value: pageData.selectedRecipients },
     );
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
@@ -120,7 +129,6 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
         logger.info('redirecting catalogue solutions main page');
         sessionManager.saveToSession({ req, key: sessionKeys.solutions, value: undefined });
         sessionManager.saveToSession({ req, key: sessionKeys.selectedItemId, value: undefined });
-        sessionManager.saveToSession({ req, key: sessionKeys.selectedItemName, value: undefined });
         sessionManager.saveToSession({ req, key: sessionKeys.solutionPrices, value: undefined });
         sessionManager.saveToSession({ req, key: sessionKeys.selectedPriceId, value: undefined });
         sessionManager.saveToSession(

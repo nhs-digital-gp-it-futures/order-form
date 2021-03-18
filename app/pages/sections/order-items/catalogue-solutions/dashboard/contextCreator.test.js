@@ -105,30 +105,16 @@ describe('catalogue-solutions contextCreator', () => {
 
       const mockOrderItems = [
         {
-          orderItemId: 'orderItem1',
           catalogueItemName: 'Solution One',
-          catalogueItemId: '1',
-          serviceRecipient: {
+          catalogueItemId: 'orderItem1',
+          serviceRecipients: [{
             name: 'Recipient One',
             odsCode: 'recipient-1',
           },
-          itemUnit: {
-            name: 'patient',
-            description: 'per patient',
-          },
-          timeUnit: {
-            name: 'year',
-            description: 'per year',
-          },
-        },
-        {
-          orderItemId: 'orderItem2',
-          catalogueItemName: 'Solution One',
-          catalogueItemId: '1',
-          serviceRecipient: {
+          {
             name: 'Recipient Two',
             odsCode: 'recipient-2',
-          },
+          }],
           itemUnit: {
             name: 'patient',
             description: 'per patient',
@@ -141,11 +127,11 @@ describe('catalogue-solutions contextCreator', () => {
         {
           orderItemId: 'orderItem3',
           catalogueItemName: 'Solution Two',
-          catalogueItemId: '2',
-          serviceRecipient: {
+          catalogueItemId: 'orderItem3',
+          serviceRecipients: [{
             name: 'Recipient Three',
             odsCode: 'recipient-3',
-          },
+          }],
           itemUnit: {
             name: 'patient',
             description: 'per patient',

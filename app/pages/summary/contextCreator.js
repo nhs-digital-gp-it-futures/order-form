@@ -194,67 +194,67 @@ const generaterecurringCostTableFooter = ({
 const getCurrentDate = () => formatDate(new Date(Date.now()));
 
 const generateRecurringCostDetailsTable = ({
-  recurringCostTable, recurringCostItems = [], serviceRecipients = {},
+  recurringCostTable, recurringCostItems = [],
 }) => {
-  const items = recurringCostItems.map((item) => {
-    const columns = [];
-
-    if (!serviceRecipients[item.serviceRecipientsOdsCode]) {
-      logger.error(`service recipient ${item.serviceRecipientsOdsCode} not found`);
+  const items = [];
+  recurringCostItems.forEach((item) => {
+    if (!item.serviceRecipients || item.serviceRecipients.length < 1) {
+      logger.error(`no service recipient found for ${item.catalogueItemName}`);
       throw new Error();
     }
 
-    const serviceRecipient = serviceRecipients[item.serviceRecipientsOdsCode];
+    item.serviceRecipients.forEach((serviceRecipient) => {
+      const columns = [];
+      columns.push(({
+        classes: recurringCostTable.cellInfo.recipientName.classes,
+        data: `${serviceRecipient.name} (${serviceRecipient.odsCode})`,
+        dataTestId: 'recipient-name',
+      }));
 
-    columns.push(({
-      classes: recurringCostTable.cellInfo.recipientName.classes,
-      data: `${serviceRecipient.name} (${serviceRecipient.odsCode})`,
-      dataTestId: 'recipient-name',
-    }));
+      columns.push(({
+        classes: recurringCostTable.cellInfo.itemId.classes,
+        data: serviceRecipient.itemId,
+        dataTestId: 'item-id',
+      }));
 
-    columns.push(({
-      classes: recurringCostTable.cellInfo.itemId.classes,
-      data: item.itemId,
-      dataTestId: 'item-id',
-    }));
+      columns.push(({
+        classes: recurringCostTable.cellInfo.itemName.classes,
+        data: item.catalogueItemName,
+        dataTestId: 'item-name',
+      }));
 
-    columns.push(({
-      classes: recurringCostTable.cellInfo.itemName.classes,
-      data: item.catalogueItemName,
-      dataTestId: 'item-name',
-    }));
+      columns.push(({
+        classes: recurringCostTable.cellInfo.serviceInstanceId.classes,
+        data: serviceRecipient.serviceInstanceId,
+        dataTestId: 'service-instance-id',
+      }));
 
-    columns.push(({
-      classes: recurringCostTable.cellInfo.serviceInstanceId.classes,
-      data: item.serviceInstanceId,
-      dataTestId: 'service-instance-id',
-    }));
+      columns.push(({
+        classes: recurringCostTable.cellInfo.priceUnit.classes,
+        data: `${formatPrice({ value: item.price })} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
+        dataTestId: 'price-unit',
+      }));
 
-    columns.push(({
-      classes: recurringCostTable.cellInfo.priceUnit.classes,
-      data: `${formatPrice({ value: item.price })} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
-      dataTestId: 'price-unit',
-    }));
+      columns.push(({
+        classes: recurringCostTable.cellInfo.quantity.classes,
+        data: `${serviceRecipient.quantity.toLocaleString()} ${item.quantityPeriodDescription ? item.quantityPeriodDescription : ''}`,
+        dataTestId: 'quantity',
+      }));
 
-    columns.push(({
-      classes: recurringCostTable.cellInfo.quantity.classes,
-      data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription ? item.quantityPeriodDescription : ''}`,
-      dataTestId: 'quantity',
-    }));
+      columns.push(({
+        classes: recurringCostTable.cellInfo.plannedDeliveryDate.classes,
+        data: formatDate(serviceRecipient.deliveryDate),
+        dataTestId: 'planned-date',
+      }));
 
-    columns.push(({
-      classes: recurringCostTable.cellInfo.plannedDeliveryDate.classes,
-      data: formatDate(item.deliveryDate),
-      dataTestId: 'planned-date',
-    }));
+      columns.push(({
+        classes: recurringCostTable.cellInfo.itemCost.classes,
+        data: formatPrice({ value: item.costPerYear, maximumFractionDigits: 2 }),
+        dataTestId: 'item-cost',
+      }));
 
-    columns.push(({
-      classes: recurringCostTable.cellInfo.itemCost.classes,
-      data: formatPrice({ value: item.costPerYear, maximumFractionDigits: 2 }),
-      dataTestId: 'item-cost',
-    }));
-
-    return columns;
+      items.push(columns);
+    });
   });
 
   return ({
@@ -264,55 +264,56 @@ const generateRecurringCostDetailsTable = ({
 };
 
 const generateOneOffCostDetailsTable = ({
-  oneOffCostTable, oneOffCostItems = [], serviceRecipients = {},
+  oneOffCostTable, oneOffCostItems = [],
 }) => {
-  const items = oneOffCostItems.map((item) => {
-    const columns = [];
-
-    if (!serviceRecipients[item.serviceRecipientsOdsCode]) {
-      logger.error(`service recipient ${item.serviceRecipientsOdsCode} not found`);
+  const items = [];
+  oneOffCostItems.map((item) => {
+    if (!item.serviceRecipients || item.serviceRecipients.length < 1) {
+      logger.error(`no service recipient found for ${item.itemId}`);
       throw new Error();
     }
 
-    const serviceRecipient = serviceRecipients[item.serviceRecipientsOdsCode];
+    item.serviceRecipients.forEach((serviceRecipient) => {
+      const columns = [];
 
-    columns.push(({
-      classes: oneOffCostTable.cellInfo.recipientName.classes,
-      data: `${serviceRecipient.name} (${serviceRecipient.odsCode})`,
-      dataTestId: 'recipient-name',
-    }));
+      columns.push(({
+        classes: oneOffCostTable.cellInfo.recipientName.classes,
+        data: `${serviceRecipient.name} (${serviceRecipient.odsCode})`,
+        dataTestId: 'recipient-name',
+      }));
 
-    columns.push(({
-      classes: oneOffCostTable.cellInfo.itemId.classes,
-      data: item.itemId,
-      dataTestId: 'item-id',
-    }));
+      columns.push(({
+        classes: oneOffCostTable.cellInfo.itemId.classes,
+        data: serviceRecipient.itemId,
+        dataTestId: 'item-id',
+      }));
 
-    columns.push(({
-      classes: oneOffCostTable.cellInfo.itemName.classes,
-      data: item.catalogueItemName,
-      dataTestId: 'item-name',
-    }));
+      columns.push(({
+        classes: oneOffCostTable.cellInfo.itemName.classes,
+        data: item.catalogueItemName,
+        dataTestId: 'item-name',
+      }));
 
-    columns.push(({
-      classes: oneOffCostTable.cellInfo.priceUnit.classes,
-      data: `${formatPrice({ value: item.price })} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
-      dataTestId: 'price-unit',
-    }));
+      columns.push(({
+        classes: oneOffCostTable.cellInfo.priceUnit.classes,
+        data: `${formatPrice({ value: item.price })} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
+        dataTestId: 'price-unit',
+      }));
 
-    columns.push(({
-      classes: oneOffCostTable.cellInfo.quantity.classes,
-      data: `${item.quantity.toLocaleString()} ${item.quantityPeriodDescription ? item.quantityPeriodDescription : ''}`,
-      dataTestId: 'quantity',
-    }));
+      columns.push(({
+        classes: oneOffCostTable.cellInfo.quantity.classes,
+        data: `${serviceRecipient.quantity.toLocaleString()} ${item.quantityPeriodDescription ? item.quantityPeriodDescription : ''}`,
+        dataTestId: 'quantity',
+      }));
 
-    columns.push(({
-      classes: oneOffCostTable.cellInfo.itemCost.classes,
-      data: formatPrice({ value: item.costPerYear, maximumFractionDigits: 2 }),
-      dataTestId: 'item-cost',
-    }));
+      columns.push(({
+        classes: oneOffCostTable.cellInfo.itemCost.classes,
+        data: formatPrice({ value: item.costPerYear, maximumFractionDigits: 2 }),
+        dataTestId: 'item-cost',
+      }));
 
-    return columns;
+      items.push(columns);
+    });
   });
 
   return ({
@@ -322,7 +323,7 @@ const generateOneOffCostDetailsTable = ({
 };
 
 export const getContext = ({
-  orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
+  orderId, orderData, oneOffCostItems, recurringCostItems,
 }) => {
   const manifest = orderData.status === 'Complete' ? completeManifest : incompleteManifest;
 
@@ -340,7 +341,6 @@ export const getContext = ({
     oneOffCostTable: generateOneOffCostDetailsTable({
       oneOffCostTable: manifest.oneOffCostTable,
       oneOffCostItems,
-      serviceRecipients,
     }),
     oneOffCostTableFooter: generateoneOffCostTableFooter({
       oneOffCostTableFooter: manifest.oneOffCostTableFooter,
@@ -349,7 +349,6 @@ export const getContext = ({
     recurringCostTable: generateRecurringCostDetailsTable({
       recurringCostTable: manifest.recurringCostTable,
       recurringCostItems,
-      serviceRecipients,
     }),
     recurringCostTableFooter: generaterecurringCostTableFooter({
       recurringCostTableFooter: manifest.recurringCostTableFooter,
