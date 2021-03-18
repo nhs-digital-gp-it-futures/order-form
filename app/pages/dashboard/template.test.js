@@ -29,7 +29,7 @@ describe('dashboard page', () => {
 
   it('should render the dashboard page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="dashboard-page-description"]');
+      const description = $('[data-test-id="dashboard-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -47,9 +47,9 @@ describe('dashboard page', () => {
   describe('incomplete orders table', () => {
     it('should render the table title', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const tableTitle = $('h3[data-test-id="incomplete-orders-table-title"]');
-        expect(tableTitle.length).toEqual(1);
-        expect(tableTitle.text().trim()).toEqual(context.incompleteOrdersTableTitle);
+        const tableCaption = $('[data-test-id="incomplete-orders-table"] caption');
+        expect(tableCaption.length).toEqual(1);
+        expect(tableCaption.text().trim()).toEqual(context.incompleteOrdersTableTitle);
       });
     }));
 
@@ -116,9 +116,9 @@ describe('dashboard page', () => {
   describe('complete orders table', () => {
     it('should render the table title', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const tableTitle = $('h3[data-test-id="complete-orders-table-title"]');
-        expect(tableTitle.length).toEqual(1);
-        expect(tableTitle.text().trim()).toEqual(context.completeOrdersTableTitle);
+        const tableCaption = $('[data-test-id="complete-orders-table"] caption');
+        expect(tableCaption.length).toEqual(1);
+        expect(tableCaption.text().trim()).toEqual(context.completeOrdersTableTitle);
       });
     }));
 

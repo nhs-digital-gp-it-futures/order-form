@@ -48,7 +48,7 @@ describe('funding source page', () => {
 
   it('should render the funding source page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="funding-source-page-description"]');
+      const description = $('[data-test-id="funding-source-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });

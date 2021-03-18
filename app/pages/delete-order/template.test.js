@@ -33,7 +33,7 @@ describe('delete order page', () => {
 
   it('should render the delete order page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="delete-order-page-description"]');
+      const description = $('[data-test-id="delete-order-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -41,7 +41,7 @@ describe('delete order page', () => {
 
   it('should render the delete order description title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const orderDescriptionTitle = $('h3[data-test-id="order-description-title"]');
+      const orderDescriptionTitle = $('h2[data-test-id="order-description-title"]');
       expect(orderDescriptionTitle.length).toEqual(1);
       expect(orderDescriptionTitle.text().trim()).toEqual(context.orderDescriptionTitle);
     });
@@ -49,7 +49,7 @@ describe('delete order page', () => {
 
   it('should render the delete order description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const orderDescription = $('h4[data-test-id="order-description"]');
+      const orderDescription = $('[data-test-id="order-description"]');
       expect(orderDescription.length).toEqual(1);
       expect(orderDescription.text().trim()).toEqual(context.orderDescription);
     });

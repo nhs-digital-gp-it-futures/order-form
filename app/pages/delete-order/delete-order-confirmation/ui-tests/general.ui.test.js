@@ -80,7 +80,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="delete-order-confirmation-page-description"]');
+  const description = Selector('[data-test-id="delete-order-confirmation-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -90,7 +90,7 @@ test('should render the order description title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const orderDescriptionTitle = Selector('h3[data-test-id="order-description-title"]');
+  const orderDescriptionTitle = Selector('h2[data-test-id="order-description-title"]');
 
   await t
     .expect(await extractInnerText(orderDescriptionTitle)).eql(content.orderDescriptionTitle);
@@ -100,7 +100,7 @@ test('should render the order description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const orderDescription = Selector('h4[data-test-id="order-description"]');
+  const orderDescription = Selector('p[data-test-id="order-description"]');
 
   await t
     .expect(await extractInnerText(orderDescription)).eql(orderDescriptionMock);

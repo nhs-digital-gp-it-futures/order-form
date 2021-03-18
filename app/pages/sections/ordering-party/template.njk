@@ -24,17 +24,17 @@
           {% endif %}
 
           <h1 data-test-id="ordering-party-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
-          <h2 data-test-id="ordering-party-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-9">{{ description }}</h2>
+          <p data-test-id="ordering-party-page-description" class="nhsuk-heading-l nhsuk-u-font-size-24 nhsuk-u-margin-bottom-9">{{ description }}</p>
 
-          <h3 data-test-id="organisation-name-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ orgNameHeading }}</h3>
+          <h2 data-test-id="organisation-name-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ orgNameHeading }}</h2>
           <div data-test-id="organisation-name" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ orgData.name }}</div>
           <input type="hidden" name="name" value="{{ orgData.name }}" />
 
-          <h3 data-test-id="organisation-ods-code-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ odsCodeHeading }}</h3>
+          <h2 data-test-id="organisation-ods-code-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ odsCodeHeading }}</h2>
           <div data-test-id="organisation-ods-code" class="nhsuk-u-font-size-19 nhsuk-u-margin-bottom-5">{{ orgData.odsCode }}</div>
           <input type="hidden" name="odsCode" value="{{ orgData.odsCode }}" />
 
-          <h3 data-test-id="organisation-address-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ orgAddressHeading }}</h3>
+          <h2 data-test-id="organisation-address-heading" class="nhsuk-heading-s nhsuk-u-margin-bottom-3">{{ orgAddressHeading }}</h2>
           <div data-test-id="organisation-address-1" class="nhsuk-u-font-size-19">{{ orgData.address.line1 }}</div>
           <input type="hidden" name="line1" value="{{ orgData.address.line1 }}" />
           <div data-test-id="organisation-address-2" class="nhsuk-u-font-size-19">{{ orgData.address.line2 }}</div>
