@@ -2,6 +2,7 @@
   "backLinkText": "Go back",
   "title": "Order summary for",
   "description": "This order is complete and can no longer be changed. You can use the button below to get a copy of the order summary.",
+  "orderAddressesTableCaption": "Order addresses",
   "orderDescriptionHeading": "Order description",
   "dateSummaryCreatedLabel": "Date order summary created:",
   "dateCompletedLabel": "Date order completed:",
@@ -74,18 +75,18 @@
       }
     }
   },
-  "oneOffCostTotalsTable": {
+  "oneOffCostTableFooter": {
     "columnInfo": [
-      { "data": "", "width": "80%" },
-      { "data": "", "width": "20%" }
+      { "data": "", "width": 5 },
+      { "data": "", "width": 1 }
     ],
     "cellInfo": {
       "totalOneOffCostLabel": {
         "data": "Total one-off cost (indicative)",
-        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19"
+        "classes": "nhsuk-u-margin-bottom-1 nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19"
       },
       "totalOneOffCostValue": {
-        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19"
+        "classes": "nhsuk-u-margin-bottom-1 nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19"
       }
     }
   },
@@ -161,27 +162,27 @@
       }
     }
   },
-  "recurringCostTotalsTable": {
+  "recurringCostTableFooter": {
     "columnInfo": [
-      { "data": "", "width": "80%" },
-      { "data": "", "width": "20%" }
+      { "data": "", "width": 7 },
+      { "data": "", "width": 1 }
     ],
     "cellInfo": {
       "totalOneYearCostLabel": {
         "data": "Total cost for one year (indicative)",
-        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19",
+        "classes": "nhsuk-u-margin-bottom-1 nhsuk-u-fontnhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-16-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19",
         "hideSeperator": true
       },
       "totalOneYearCostValue": {
-        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19",
+        "classes": "nhsuk-u-margin-bottom-1 nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-19",
         "hideSeperator": true
       },
       "totalMonthlyCostLabel": {
         "data": "Total monthly cost (indicative)",
-        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-16"
+        "classes": "nhsuk-u-margin-bottom-1 nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-16"
       },
       "totalMonthlyCostValue": {
-        "classes": "nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-16"
+        "classes": "nhsuk-u-margin-bottom-1 nhsuk-u-font-weight-bold nhsuk-table__cell--numeric nhsuk-u-font-size-16"
       },
       "totalOwnershipCostLabel": {
         "data": "Total cost of contract (indicative)",

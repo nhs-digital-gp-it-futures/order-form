@@ -33,7 +33,7 @@ describe('order confirmation page', () => {
 
   it('should render the order confirmation page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="order-confirmation-page-description"]');
+      const description = $('[data-test-id="order-confirmation-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });

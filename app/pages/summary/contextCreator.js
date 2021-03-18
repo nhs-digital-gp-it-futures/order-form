@@ -108,85 +108,85 @@ const generateRowForTotal = ({
   return columns;
 };
 
-const generateOneOffCostTotalsTable = ({
-  oneOffCostTotalsTable, oneOffCostTotalValue,
+const generateoneOffCostTableFooter = ({
+  oneOffCostTableFooter, oneOffCostTotalValue,
 }) => {
   const items = [];
   items.push(
     generateRowForTotal({
-      labelCellData: oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data,
-      labelCellClasses: oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.classes,
+      labelCellData: oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.data,
+      labelCellClasses: oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.classes,
       labelCellTestId: 'total-cost-label',
-      labelHideSeperator: oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.hideSeperator,
+      labelHideSeperator: oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.hideSeperator,
       valueCellData: oneOffCostTotalValue,
-      valueCellClasses: oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.classes,
+      valueCellClasses: oneOffCostTableFooter.cellInfo.totalOneOffCostValue.classes,
       valueCellTestId: 'total-cost-value',
-      valueHideSeperator: oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.hideSeperator,
+      valueHideSeperator: oneOffCostTableFooter.cellInfo.totalOneOffCostValue.hideSeperator,
     }),
   );
 
   return ({
-    ...oneOffCostTotalsTable,
+    ...oneOffCostTableFooter,
     items,
   });
 };
 
-const generateRecurringCostTotalsTable = ({
-  recurringCostTotalsTable, recurringYearCost, recurringMonthCost, ownershipCost,
+const generaterecurringCostTableFooter = ({
+  recurringCostTableFooter, recurringYearCost, recurringMonthCost, ownershipCost,
 }) => {
   const items = [];
   items.push(
     generateRowForTotal({
-      labelCellData: recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
-      labelCellClasses: recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
+      labelCellData: recurringCostTableFooter.cellInfo.totalOneYearCostLabel.data,
+      labelCellClasses: recurringCostTableFooter.cellInfo.totalOneYearCostLabel.classes,
       labelCellTestId: 'total-year-cost-label',
-      labelHideSeperator: recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.hideSeperator,
+      labelHideSeperator: recurringCostTableFooter.cellInfo.totalOneYearCostLabel.hideSeperator,
       valueCellData: recurringYearCost,
-      valueCellClasses: recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
+      valueCellClasses: recurringCostTableFooter.cellInfo.totalOneYearCostValue.classes,
       valueCellTestId: 'total-year-cost-value',
-      valueHideSeperator: recurringCostTotalsTable.cellInfo.totalOneYearCostValue.hideSeperator,
+      valueHideSeperator: recurringCostTableFooter.cellInfo.totalOneYearCostValue.hideSeperator,
     }),
   );
 
   items.push(
     generateRowForTotal({
-      labelCellData: recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
-      labelCellClasses: recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
+      labelCellData: recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.data,
+      labelCellClasses: recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.classes,
       labelCellTestId: 'total-monthly-cost-label',
-      labelHideSeperator: recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.hideSeperator,
+      labelHideSeperator: recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.hideSeperator,
       valueCellData: recurringMonthCost,
-      valueCellClasses: recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.classes,
+      valueCellClasses: recurringCostTableFooter.cellInfo.totalMonthlyCostValue.classes,
       valueCellTestId: 'total-monthly-cost-value',
-      valueHideSeperator: recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.hideSeperator,
+      valueHideSeperator: recurringCostTableFooter.cellInfo.totalMonthlyCostValue.hideSeperator,
     }),
   );
 
   items.push(
     generateRowForTotal({
-      labelCellData: recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
-      labelCellClasses: recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
+      labelCellData: recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.data,
+      labelCellClasses: recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.classes,
       labelCellTestId: 'total-ownership-cost-label',
-      labelHideSeperator: recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.hideSeperator,
+      labelHideSeperator: recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.hideSeperator,
       valueCellData: ownershipCost,
-      valueCellClasses: recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.classes,
+      valueCellClasses: recurringCostTableFooter.cellInfo.totalOwnershipCostValue.classes,
       valueCellTestId: 'total-ownership-cost-value',
-      valueHideSeperator: recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.hideSeperator,
+      valueHideSeperator: recurringCostTableFooter.cellInfo.totalOwnershipCostValue.hideSeperator,
     }),
   );
 
   items.push(
     generateRowForTotal({
-      labelCellData: recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
-      labelCellClasses: recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
+      labelCellData: recurringCostTableFooter.cellInfo.totalOwnershipTerms.data,
+      labelCellClasses: recurringCostTableFooter.cellInfo.totalOwnershipTerms.classes,
       labelCellTestId: 'total-ownership-terms',
-      labelHideSeperator: recurringCostTotalsTable.cellInfo.totalOwnershipTerms.hideSeperator,
-      valueHideSeperator: recurringCostTotalsTable.cellInfo.totalOwnershipTerms.hideSeperator,
+      labelHideSeperator: recurringCostTableFooter.cellInfo.totalOwnershipTerms.hideSeperator,
+      valueHideSeperator: recurringCostTableFooter.cellInfo.totalOwnershipTerms.hideSeperator,
       showValueColumn: false,
     }),
   );
 
   return ({
-    ...recurringCostTotalsTable,
+    ...recurringCostTableFooter,
     items,
   });
 };
@@ -342,16 +342,16 @@ export const getContext = ({
       oneOffCostTable: manifest.oneOffCostTable,
       oneOffCostItems,
     }),
-    oneOffCostTotalsTable: generateOneOffCostTotalsTable({
-      oneOffCostTotalsTable: manifest.oneOffCostTotalsTable,
+    oneOffCostTableFooter: generateoneOffCostTableFooter({
+      oneOffCostTableFooter: manifest.oneOffCostTableFooter,
       oneOffCostTotalValue: orderData.totalOneOffCost,
     }),
     recurringCostTable: generateRecurringCostDetailsTable({
       recurringCostTable: manifest.recurringCostTable,
       recurringCostItems,
     }),
-    recurringCostTotalsTable: generateRecurringCostTotalsTable({
-      recurringCostTotalsTable: manifest.recurringCostTotalsTable,
+    recurringCostTableFooter: generaterecurringCostTableFooter({
+      recurringCostTableFooter: manifest.recurringCostTableFooter,
       recurringYearCost: orderData.totalRecurringCostPerYear,
       recurringMonthCost: orderData.totalRecurringCostPerMonth,
       ownershipCost: orderData.totalOwnershipCost,

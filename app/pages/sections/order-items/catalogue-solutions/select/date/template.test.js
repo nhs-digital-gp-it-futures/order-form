@@ -53,7 +53,7 @@ describe('delivery date page', () => {
 
   it('should render the page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="planned-delivery-date-page-description"]');
+      const description = $('[data-test-id="planned-delivery-date-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -87,7 +87,7 @@ describe('delivery date page', () => {
 
     it('should render additionalAdvice', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const addAdvice = $('[data-test-id="date-field-input"] span.nhsuk-hint');
+        const addAdvice = $('[data-test-id="date-field-input"] .nhsuk-hint');
         expect(addAdvice.length).toEqual(1);
         expect(addAdvice.text().trim())
           .toEqual(context.questions.deliveryDate.additionalAdvice);
@@ -113,13 +113,10 @@ describe('delivery date page', () => {
         expect(inputs.length).toEqual(3);
         expect(inputs[0].attribs.id).toEqual('deliveryDate-day');
         expect(inputs[0].attribs.name).toEqual('deliveryDate-day');
-        expect(inputs[0].attribs.type).toEqual('number');
         expect(inputs[1].attribs.id).toEqual('deliveryDate-month');
         expect(inputs[1].attribs.name).toEqual('deliveryDate-month');
-        expect(inputs[1].attribs.type).toEqual('number');
         expect(inputs[2].attribs.id).toEqual('deliveryDate-year');
         expect(inputs[2].attribs.name).toEqual('deliveryDate-year');
-        expect(inputs[2].attribs.type).toEqual('number');
       });
     }));
 

@@ -68,7 +68,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="neworder-page-description"]');
+  const description = Selector('[data-test-id="neworder-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(neworderPageContent.description);
@@ -78,8 +78,8 @@ test('should not render the order description details', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const orderDescriptionTitle = Selector('h3[data-test-id="neworder-order-description-title"]');
-  const orderDescription = Selector('h4[data-test-id="neworder-order-description"]');
+  const orderDescriptionTitle = Selector('h2[data-test-id="neworder-order-description-title"]');
+  const orderDescription = Selector('p[data-test-id="neworder-order-description"]');
 
   await t
     .expect(orderDescriptionTitle.exists).notOk()

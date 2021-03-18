@@ -72,7 +72,7 @@ describe('catalogue-solution order-item - quantity and estimation page', () => {
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="order-item-page-description"]');
+      const description = $('[data-test-id="order-item-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });

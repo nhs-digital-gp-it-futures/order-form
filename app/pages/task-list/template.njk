@@ -15,12 +15,12 @@
 	  <div class="nhsuk-grid-row nhsuk-u-margin-bottom-6">
       <div class="nhsuk-grid-column-two-thirds">
         <h1 data-test-id="{{orderId}}-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
-        <h2 data-test-id="{{orderId}}-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
+        <p data-test-id="{{orderId}}-page-description" class="nhsuk-heading-l nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</p>
 
         {% if orderId !== 'neworder' %}
           <div>
-            <h3 data-test-id="{{orderId}}-order-description-title" class="nhsuk-u-margin-bottom-3">{{ orderDescriptionTitle }}</h3>
-            <h4 data-test-id="{{orderId}}-order-description" class="nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ orderDescription }}</h4>
+            <h2 data-test-id="{{orderId}}-order-description-title" class="nhsuk-u-margin-bottom-3">{{ orderDescriptionTitle }}</h2>
+            <p data-test-id="{{orderId}}-order-description" class="nhsuk-heading-s nhsuk-u-font-size-19 nhsuk-u-font-weight-normal">{{ orderDescription }}</p>
           </div>
         {% endif %}
       </div>

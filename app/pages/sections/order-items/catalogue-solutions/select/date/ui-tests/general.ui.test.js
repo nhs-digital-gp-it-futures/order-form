@@ -104,7 +104,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="planned-delivery-date-page-description"]');
+  const description = Selector('[data-test-id="planned-delivery-date-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -124,7 +124,7 @@ test('should render additionalAdvice', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const additionalAdvice = Selector('[data-test-id="date-field-input"] span.nhsuk-hint');
+  const additionalAdvice = Selector('[data-test-id="date-field-input"] .nhsuk-hint');
 
   await t
     .expect(await extractInnerText(additionalAdvice)).eql(content.questions.deliveryDate.additionalAdvice);
@@ -157,15 +157,12 @@ test('should render input fields for day, month and year', async (t) => {
   await t
     .expect(dayInput.getAttribute('id')).eql('deliveryDate-day')
     .expect(dayInput.getAttribute('name')).eql('deliveryDate-day')
-    .expect(dayInput.getAttribute('type')).eql('number')
 
     .expect(monthInput.getAttribute('id')).eql('deliveryDate-month')
     .expect(monthInput.getAttribute('name')).eql('deliveryDate-month')
-    .expect(monthInput.getAttribute('type')).eql('number')
 
     .expect(yearInput.getAttribute('id')).eql('deliveryDate-year')
-    .expect(yearInput.getAttribute('name')).eql('deliveryDate-year')
-    .expect(yearInput.getAttribute('type')).eql('number');
+    .expect(yearInput.getAttribute('name')).eql('deliveryDate-year');
 });
 
 test('should render the "Continue" button', async (t) => {

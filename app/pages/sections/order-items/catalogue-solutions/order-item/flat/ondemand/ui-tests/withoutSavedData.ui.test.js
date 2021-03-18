@@ -1,6 +1,8 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
-import { solutionsApiUrl, orderApiUrl } from '../../../../../../../../config';
+import { extractInnerText } from 'buying-catalogue-library';
+import content from '../manifest.json';
+import { solutionsApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
@@ -43,16 +45,6 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedRecipients,
 });
 
-const requestPostBody = {
-  ...selectedPrice,
-  serviceRecipient: { name: 'recipient-name', odsCode: 'code' },
-  catalogueItemId: 'item-1',
-  catalogueItemName: 'Item name',
-  catalogueItemType: 'Solution',
-  deliveryDate: '2020-10-10',
-  estimationPeriod: null,
-};
-
 const mocks = (mockSelectedPrice) => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
@@ -91,10 +83,6 @@ fixture('Catalogue-solutions - flat ondemand - withoutSavedData')
   });
 
 test('should navigate to catalogue-solutions dashboard page if save button is clicked and data is valid', async (t) => {
-  nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 10 }])
-    .reply(200, {});
-
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -107,32 +95,22 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem');
 });
 
-// test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-//   nock(orderApiUrl)
-//     .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 0 }])
-//     .reply(400, {
-//       errors: {
-//         '[0].Quantity': ['QuantityGreaterThanZero'],
-//       },
-//     });
-//
-//   await pageSetup();
-//   await t.navigateTo(pageUrl);
-//
-//   const errorSummary = Selector('[data-test-id="error-summary"]');
-//   const solutionTableError = Selector('[data-test-id="solution-table-error"]');
-//   const quantityInput = Selector('[data-test-id="question-quantity"] input');
-//   const saveButton = Selector('[data-test-id="save-button"] button');
-//
-//   await t
-//     .typeText(quantityInput, '0', { paste: true })
-//     .click(saveButton);
-//
-//   await t
-//     .expect(errorSummary.exists).ok()
-//     .expect(errorSummary.find('li a').count).eql(1)
-//     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-//
-//     .expect(solutionTableError.exists).ok()
-//     .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.QuantityGreaterThanZero);
-// });
+test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const errorMessage = Selector('[data-test-id="solution-table-error"]');
+  const quantityInput = Selector('[data-test-id="question-quantity"] input');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .typeText(quantityInput, 'H')
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityMustBeANumber)
+
+    .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityMustBeANumber);
+});
