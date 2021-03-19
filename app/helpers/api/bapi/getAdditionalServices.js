@@ -1,6 +1,7 @@
 import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { solutionsApiUrl } from '../../../config';
+import { sortItems } from '../../common/sortItems';
 
 const getAdditionalServicesEndpoint = (addedCatalogueSolutions) => {
   const queryString = `solutionIds=${addedCatalogueSolutions.join('&solutionIds=')}`;
@@ -13,6 +14,8 @@ export const getAdditionalServices = async ({ addedCatalogueSolutions, accessTok
   if (!additionalServices) {
     return [];
   }
+
+  sortItems(additionalServices, 'name');
 
   logger.info(`Found ${additionalServices.length} additional service(s).`);
   return additionalServices;

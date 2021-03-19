@@ -39,7 +39,23 @@ describe('getAdditionalServices', () => {
     const additionalServices = [
       {
         additionalServiceId: 'additional-service-1',
+        name: 'Big Auto Additional Service',
+      },
+      {
+        additionalServiceId: 'additional-service-1',
+        name: 'That Additional Service',
+      },
+      {
+        additionalServiceId: 'additional-service-1',
         name: 'Additional Service 1',
+      },
+      {
+        additionalServiceId: 'additional-service-2',
+        name: 'Additional Service 2',
+      },
+      {
+        additionalServiceId: 'big-additional-service-1',
+        name: 'Big Additional Service',
       },
     ];
 
@@ -49,5 +65,10 @@ describe('getAdditionalServices', () => {
     const addedCatalogueSolutions = [];
     const expected = await getAdditionalServices({ addedCatalogueSolutions, accessToken });
     expect(expected).toEqual(additionalServices);
+    expect(expected[0].name).toEqual('Additional Service 1');
+    expect(expected[1].name).toEqual('Additional Service 2');
+    expect(expected[2].name).toEqual('Big Additional Service');
+    expect(expected[3].name).toEqual('Big Auto Additional Service');
+    expect(expected[4].name).toEqual('That Additional Service');
   });
 });
