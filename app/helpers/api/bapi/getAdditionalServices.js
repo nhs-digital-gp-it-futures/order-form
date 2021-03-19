@@ -15,8 +15,8 @@ export const getAdditionalServices = async ({ addedCatalogueSolutions, accessTok
     return [];
   }
 
-  sortItems(additionalServices, 'name');
+  const sortedAdditionalServices = sortItems(additionalServices, 'name');
 
   logger.info(`Found ${additionalServices.length} additional service(s).`);
-  return additionalServices;
+  return sortedAdditionalServices;
 };
