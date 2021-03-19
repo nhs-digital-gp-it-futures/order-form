@@ -23,6 +23,7 @@ export const sessionKeys = {
   selectedPrice: 'selectedPrice',
   selectEstimationPeriod: 'selectEstimationPeriod',
   selectedQuantity: 'selectedQuantity',
+  orderItems: 'orderItems',
 };
 
 export const getFromSessionOrApi = async ({

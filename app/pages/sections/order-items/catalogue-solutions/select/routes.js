@@ -80,6 +80,14 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         catalogueItemsKey: 'solutions',
       });
 
+      const orderItems = sessionManager.getFromSession({ req, key: sessionKeys.orderItems });
+      const alreadySelectedItem = orderItems
+        .filter((orderItem) => orderItem.catalogueItemId === selectedItem.catalogueItemId);
+      if (alreadySelectedItem.length > 0 && alreadySelectedItem[0].catalogueItemId) {
+        return res.redirect(
+          `${config.baseUrl}/organisation/${orderId}/catalogue-solutions/${alreadySelectedItem[0].catalogueItemId}`,
+        );
+      }
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedItemId, value: selectedItemId,
       });
