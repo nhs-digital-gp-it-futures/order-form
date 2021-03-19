@@ -38,11 +38,11 @@ describe('getAdditionalServices', () => {
   it('should return expected list when addedCatalogueSolutions is an empty array', async () => {
     const additionalServices = [
       {
-        additionalServiceId: 'additional-service-1',
+        additionalServiceId: 'big-auto-additional-service-1',
         name: 'Big Auto Additional Service',
       },
       {
-        additionalServiceId: 'additional-service-1',
+        additionalServiceId: 'that-additional-service-1',
         name: 'That Additional Service',
       },
       {
