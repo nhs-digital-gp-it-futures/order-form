@@ -21,6 +21,19 @@ describe('formatPrice', () => {
   });
 });
 
+describe('Do not format price if its not a number', () => {
+  it.each`
+    value          | minimumFractionDigits    | maximumFractionDigits | expected
+    ${'ikah123'}   | ${0}                     | ${2}                  | ${'ikah123'}
+    ${'123jks'}    | ${0}                     | ${4}                  | ${'123jks'}
+    ${'-1jafsj'}   | ${0}                     | ${2}                  | ${'-1jafsj'}
+  `('formatPrice $value should return $expected', ({
+    value, minimumFractionDigits, maximumFractionDigits, expected,
+  }) => {
+    expect(formatPrice({ value, minimumFractionDigits, maximumFractionDigits })).toEqual(expected);
+  });
+});
+
 describe('formatNumber', () => {
   it.each`
   value        | expected

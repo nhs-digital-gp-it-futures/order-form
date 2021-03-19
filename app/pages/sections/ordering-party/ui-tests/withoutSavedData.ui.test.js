@@ -57,7 +57,7 @@ test('should render organisation name with data from OAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const heading = Selector('h3[data-test-id="organisation-name-heading"]');
+  const heading = Selector('h2[data-test-id="organisation-name-heading"]');
   const text = Selector('div[data-test-id="organisation-name"]');
 
   await t
@@ -69,7 +69,7 @@ test('should render organisation ods code with data from OAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const heading = Selector('h3[data-test-id="organisation-ods-code-heading"]');
+  const heading = Selector('h2[data-test-id="organisation-ods-code-heading"]');
   const text = Selector('div[data-test-id="organisation-ods-code"]');
 
   await t
@@ -81,7 +81,7 @@ test('should render organisation address with data from OAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const heading = Selector('h3[data-test-id="organisation-address-heading"]');
+  const heading = Selector('h2[data-test-id="organisation-address-heading"]');
   const addressTextLine1 = Selector('[data-test-id="organisation-address-1"]');
   const addressTextLine2 = Selector('[data-test-id="organisation-address-2"]');
   const addressTextLine3 = Selector('[data-test-id="organisation-address-3"]');

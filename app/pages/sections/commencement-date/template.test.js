@@ -58,7 +58,7 @@ describe('commencement-date page', () => {
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="commencement-date-page-description"]');
+      const description = $('[data-test-id="commencement-date-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -98,7 +98,7 @@ describe('commencement-date page', () => {
 
     it('should render additionalAdvice', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const addAdvice = $('[data-test-id="date-field-input"] span.nhsuk-hint');
+        const addAdvice = $('[data-test-id="date-field-input"] .nhsuk-hint');
         expect(addAdvice.length).toEqual(1);
         expect(addAdvice.text().trim())
           .toEqual(context.questions.commencementDate.additionalAdvice);
@@ -124,13 +124,10 @@ describe('commencement-date page', () => {
         expect(inputs.length).toEqual(3);
         expect(inputs[0].attribs.id).toEqual('commencementDate-day');
         expect(inputs[0].attribs.name).toEqual('commencementDate-day');
-        expect(inputs[0].attribs.type).toEqual('number');
         expect(inputs[1].attribs.id).toEqual('commencementDate-month');
         expect(inputs[1].attribs.name).toEqual('commencementDate-month');
-        expect(inputs[1].attribs.type).toEqual('number');
         expect(inputs[2].attribs.id).toEqual('commencementDate-year');
         expect(inputs[2].attribs.name).toEqual('commencementDate-year');
-        expect(inputs[2].attribs.type).toEqual('number');
       });
     }));
 

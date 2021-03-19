@@ -8,12 +8,15 @@ const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solu
 
 const mockAddedOrderItems = [
   {
-    orderItemId: 'orderItem1',
     catalogueItemName: 'Solution One',
-    catalogueItemId: '1',
+    catalogueItemId: 'orderItem1',
     serviceRecipients: [{
       name: 'Recipient One',
       odsCode: 'recipient-1',
+    },
+    {
+      name: 'Recipient Three',
+      odsCode: 'recipient-3',
     }],
     itemUnit: {
       name: 'patient',
@@ -25,9 +28,8 @@ const mockAddedOrderItems = [
     },
   },
   {
-    orderItemId: 'orderItem2',
     catalogueItemName: 'Solution Two',
-    catalogueItemId: '2',
+    catalogueItemId: 'orderItem2',
     serviceRecipients: [{
       name: 'Recipient Two',
       odsCode: 'recipient-2',
@@ -42,9 +44,8 @@ const mockAddedOrderItems = [
     },
   },
   {
-    orderItemId: 'orderItem3',
-    catalogueItemName: 'Solution One',
-    catalogueItemId: '1',
+    catalogueItemName: 'Solution Two',
+    catalogueItemId: 'orderItem3',
     serviceRecipients: [{
       name: 'Recipient Three',
       odsCode: 'recipient-3',

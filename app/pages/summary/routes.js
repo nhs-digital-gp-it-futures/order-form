@@ -13,11 +13,11 @@ export const summaryRoutes = (authProvider, addContext) => {
     const { print } = req.query;
 
     const {
-      orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
+      orderData, oneOffCostItems, recurringCostItems,
     } = await getOrder({ orderId, accessToken });
 
     const context = await getSummaryPageContext({
-      orderId, orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
+      orderId, orderData, oneOffCostItems, recurringCostItems,
     });
 
     if (print) {

@@ -41,7 +41,7 @@ describe('Additional-services - Dashboard page', () => {
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="additional-services-page-description"]');
+      const description = $('[data-test-id="additional-services-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -66,8 +66,8 @@ describe('Additional-services - Dashboard page', () => {
     };
 
     harness.request(context, ($) => {
-      const orderDescriptionHeading = $('h3[data-test-id="order-description-heading"]');
-      const orderDescription = $('h4[data-test-id="order-description"]');
+      const orderDescriptionHeading = $('h2[data-test-id="order-description-heading"]');
+      const orderDescription = $('p[data-test-id="order-description"]');
 
       expect(orderDescriptionHeading.length).toEqual(1);
       expect(orderDescriptionHeading.text().trim()).toContain(context.orderDescriptionHeading);

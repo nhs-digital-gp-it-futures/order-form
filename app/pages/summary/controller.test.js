@@ -16,8 +16,7 @@ describe('order summary controller', () => {
       const fakeRecurringCostItem = { catalogueItemType: 'AdditionalService', provisioningType: 'Declarative' };
       const orderId = 'order-1';
       const orderItems = [fakeRecurringCostItem, fakeOneOffCostItem];
-      const serviceRecipients = { fakeRecipient: { odsCode: 'fakeRecipient' } };
-      const orderData = { description: 'fake order', orderItems, serviceRecipients };
+      const orderData = { description: 'fake order', orderItems };
 
       contextCreator.getContext.mockResolvedValueOnce();
 
@@ -26,7 +25,6 @@ describe('order summary controller', () => {
         orderData,
         oneOffCostItems: [fakeOneOffCostItem],
         recurringCostItems: [fakeRecurringCostItem],
-        serviceRecipients,
       };
 
       getSummaryPageContext({
@@ -34,7 +32,6 @@ describe('order summary controller', () => {
         orderData,
         oneOffCostItems: [fakeOneOffCostItem],
         recurringCostItems: [fakeRecurringCostItem],
-        serviceRecipients,
       });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);

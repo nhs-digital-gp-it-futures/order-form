@@ -12,21 +12,21 @@ const formatPostData = ({
   recipients,
   formData,
 }) => ({
-    catalogueItemId,
-    catalogueItemName: itemName,
-    catalogueItemType: orderItemType,
-    currencyCode: "GBP",
-    estimationPeriod: selectedPrice.timeUnit ? selectedPrice.timeUnit.name : null,
-    price: parseFloat(formData.price),
-    ...selectedPrice,
-    orderItemId,
-    serviceRecipients: recipients.map((recipient, index) => ({
-      name: recipient.name,
-      odsCode: recipient.odsCode,
-      quantity: parseInt(formData.quantity[index], 10),
-      deliveryDate: extractDate('deliveryDate', formData.deliveryDate, index)
-    }))
-  });
+  catalogueItemId,
+  catalogueItemName: itemName,
+  catalogueItemType: orderItemType,
+  currencyCode: 'GBP',
+  estimationPeriod: selectedPrice.timeUnit ? selectedPrice.timeUnit.name : null,
+  ...selectedPrice,
+  orderItemId,
+  serviceRecipients: recipients.map((recipient, index) => ({
+    name: recipient.name,
+    odsCode: recipient.odsCode,
+    quantity: parseInt(formData.quantity[index], 10),
+    deliveryDate: extractDate('deliveryDate', formData.deliveryDate, index),
+  })),
+  price: parseFloat(formData.price),
+});
 
 export const postOrderItemBulk = async ({
   orderItemId,
@@ -39,7 +39,6 @@ export const postOrderItemBulk = async ({
   recipients,
   formData,
 }) => {
-
   const endpoint = `${orderApiUrl}/api/v1/orders/${orderId}/order-items/${itemId}`;
 
   const body = formatPostData({
