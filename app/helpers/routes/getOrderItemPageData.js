@@ -47,6 +47,7 @@ export const getOrderItemPageData = async ({
   const serviceRecipientId = orderItem.serviceRecipient.odsCode;
   const serviceRecipientName = orderItem.serviceRecipient.name;
   const selectedPrice = {
+    currencyCode: orderItem.currencyCode,
     price: orderItem.price,
     itemUnit: orderItem.itemUnit,
     timeUnit: orderItem.timeUnit,
