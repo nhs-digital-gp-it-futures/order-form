@@ -6,20 +6,26 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/1';
+const organisation = 'organisation';
+const callOffId = 'order-1';
+const catalogueItemId = '10000-001';
+
+const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/catalogue-solutions/${catalogueItemId}`;
 
 const getLocation = ClientFunction(() => document.location.href);
+
+const deliveryDate = '2020-12-12';
 
 const orderItem = {
   serviceRecipients: [{
     odsCode: 'OX3',
     name: 'Some service recipient 2',
-    deliveryDate: '2020-12-12',
-    quantity: 3,
+    deliveryDate,
+    quantity: 10,
   }],
   catalogueItemType: 'Solution',
   catalogueItemName: 'Some item name',
-  catalogueItemId: '1',
+  catalogueItemId,
   estimationPeriod: 'year',
   provisioningType: 'Patient',
   type: 'flat',
@@ -35,15 +41,19 @@ const orderItem = {
   price: 0.1,
 };
 
-const recipients = [{ name: 'recipient-name', odsCode: 'code' }, { name: 'recipient-name', odsCode: 'code-not-used' }];
+const recipient1 = { name: 'recipient-name', odsCode: 'code' };
+const recipient2 = { name: 'recipient-name', odsCode: 'code-not-used' };
+const recipients = [recipient1, recipient2];
 const selectedRecipients = ['code'];
 
 const selectedPrice = {
+  currencyCode: 'GBP',
   price: orderItem.price,
   itemUnit: orderItem.itemUnit,
   timeUnit: orderItem.timeUnit,
   type: orderItem.type,
   provisioningType: orderItem.provisioningType,
+  estimationPeriod: orderItem.estimationPeriod,
 };
 
 const orderItemPageDataInSession = JSON.stringify({
@@ -53,24 +63,35 @@ const orderItemPageDataInSession = JSON.stringify({
   serviceRecipientName: orderItem.serviceRecipients[0].name,
   selectedPrice,
   recipients,
-  deliveryDate: orderItem.serviceRecipients[0].deliveryDate,
+  deliveryDate,
   selectedRecipients,
 });
 
-const requestPostBody = {
+const baseServiceRecipient = { ...recipient1, deliveryDate };
+const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
+const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
+
+const baseRequestBody = {
   ...selectedPrice,
-  orderItemId: 1,
-  serviceRecipient: recipients[0],
   catalogueItemId: orderItem.catalogueItemId,
   catalogueItemName: orderItem.catalogueItemName,
   catalogueItemType: orderItem.catalogueItemType,
-  deliveryDate: orderItem.deliveryDate,
-  estimationPeriod: orderItem.estimationPeriod,
+  orderItemId: null,
+};
+
+const validRequestBody = {
+  ...baseRequestBody,
+  serviceRecipients: [validServiceRecipient],
+};
+
+const invalidRequestBody = {
+  ...baseRequestBody,
+  serviceRecipients: [invalidServiceRecipient],
 };
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/order-items')
+    .get(`/api/v1/orders/${callOffId}/order-items`)
     .reply(200, [orderItem]);
 };
 
@@ -100,17 +121,17 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="order-item-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql('Some item name information for order-id');
+    .expect(await extractInnerText(title)).eql(`Some item name information for ${callOffId}`);
 });
 
-test('should link to /order/organisation/order-id/catalogue-solutions for backlink', async (t) => {
+test(`should link to /order/${organisation}/${callOffId}/catalogue-solutions for backlink`, async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions');
+    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${callOffId}/catalogue-solutions`);
 });
 
 test('should populate text field for the price question', async (t) => {
@@ -221,7 +242,7 @@ test('should show the correct error summary and input error when the price is re
 
 test('should navigate to catalogue-solutions dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 3 }])
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
     .reply(200, {});
 
   await pageSetup({ ...defaultPageSetup, postRoute: true });
@@ -231,34 +252,36 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
 
   await t
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/1');
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/catalogue-solutions`);
 });
 
-// test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-//   nock(orderApiUrl)
-//     .post('/api/v1/orders/order-id/order-items/10000-001', [{ ...requestPostBody, quantity: 3 }])
-//     .reply(400, {
-//       errors: {
-//         '[0].Quantity': ['QuantityGreaterThanZero'],
-//       },
-//     });
+test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, invalidRequestBody)
+    .reply(400, {
+      errors: {
+        'ServiceRecipients[0].Quantity': ['QuantityGreaterThanZero'],
+      },
+    });
 
-//   await pageSetup({ ...defaultPageSetup, postRoute: true });
-//   await t.navigateTo(pageUrl);
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
 
-//   const errorSummary = Selector('[data-test-id="error-summary"]');
-//   const errorMessage = Selector('[data-test-id="solution-table-error"]');
-//   const quantityInput = Selector('[data-test-id="question-quantity"] input');
-//   const saveButton = Selector('[data-test-id="save-button"] button');
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  // const errorMessage = Selector('[data-test-id="solution-table-error"]');
+  const quantityInput = Selector('[data-test-id="question-quantity"] input');
+  const saveButton = Selector('[data-test-id="save-button"] button');
 
-//   await t
-//     .click(saveButton);
+  await t
+    .typeText(quantityInput, '0', { replace: true })
+    .click(saveButton);
 
-//   await t
-//     .expect(errorSummary.find('li a').count).eql(1)
-//     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
+  await t
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
 
-//     .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
+  // Currently broken
+  // .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
 
-//     .expect(quantityInput.getAttribute('value')).eql('3');
-// });
+    .expect(quantityInput.getAttribute('value')).eql('0');
+});
