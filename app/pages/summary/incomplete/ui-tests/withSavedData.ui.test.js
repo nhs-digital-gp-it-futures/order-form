@@ -334,7 +334,7 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(1))).eql('C000001-01-A10001-4')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(2))).eql('Remote Consultation')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(3))).eql('SI1-A10001')
-    .expect(await extractInnerText(recurringCostRow0.find('td').nth(4))).eql('207.91 per practice per month')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(4))).eql('207.916 per practice per month')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(5))).eql('12 per year')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(6))).eql('25 September 2020')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(7))).eql('29,939.90')
@@ -343,10 +343,10 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(1))).eql('C000001-01-A10001-2')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(2))).eql('Some catalogue name')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(3))).eql('SI1-A10001')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(4))).eql('500.26 per licence')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(4))).eql('500.261 per licence')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(5))).eql('12')
     .expect(await extractInnerText(recurringCostRow1.find('td').nth(6))).eql('6 August 2020')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(7))).eql('6,003.1323')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(7))).eql('6,003.13')
 
     .expect(await extractInnerText(recurringCostRow2.find('td').nth(0))).eql('Red Mountain Medical Practice (A10002)')
     .expect(await extractInnerText(recurringCostRow2.find('td').nth(1))).eql('C000001-01-A10002-24')
@@ -370,7 +370,7 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(1))).eql('C000001-01-A10002-3')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(2))).eql('Remote Consultation')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(3))).eql('SI1-A10002')
-    .expect(await extractInnerText(recurringCostRow4.find('td').nth(4))).eql('207.91 per practice per month')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(4))).eql('207.916 per practice per month')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(5))).eql('12 per year')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(6))).eql('25 September 2020')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(7))).eql('29,939.90')
@@ -379,7 +379,7 @@ test('should render the recurring cost item details in the table', async (t) => 
     .expect(await extractInnerText(recurringCostRow5.find('td').nth(1))).eql('C000001-01-A10003-5')
     .expect(await extractInnerText(recurringCostRow5.find('td').nth(2))).eql('Patient Consultation')
     .expect(await extractInnerText(recurringCostRow5.find('td').nth(3))).eql('SI1-A10003')
-    .expect(await extractInnerText(recurringCostRow5.find('td').nth(4))).eql('106.02 per patient per month')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(4))).eql('106.025 per patient per month')
     .expect(await extractInnerText(recurringCostRow5.find('td').nth(5))).eql('12 per year')
     .expect(await extractInnerText(recurringCostRow5.find('td').nth(6))).eql('25 September 2020')
     .expect(await extractInnerText(recurringCostRow5.find('td').nth(7))).eql('15,267.60')
@@ -417,7 +417,7 @@ test('should render the recurring cost totals table with the totals provided', a
 
   await t
     .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data)
-    .expect(await extractInnerText(totalYearCostValueCell)).eql('1,981.02')
+    .expect(await extractInnerText(totalYearCostValueCell)).eql('1,981.03')
 
     .expect(await extractInnerText(totalMonthlyCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data)
     .expect(await extractInnerText(totalMonthlyCostValueCell)).eql('191.69')

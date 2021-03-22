@@ -100,4 +100,5 @@ createTestcafe('localhost')
   .then(() => {
     server.close();
     testcafe.close();
+    process.exit();
   });
