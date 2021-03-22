@@ -107,12 +107,13 @@ describe('catalogue-solutions order-item page', () => {
       harness.request(context, ($) => {
         const span = $('[data-test-id="question-price"] span');
         const input = span.find('input');
+        const label = span.find('label');
 
         expect(input.length).toEqual(1);
         expect(input.attr('id')).toEqual(context.questions.price.id);
         expect(input.attr('type')).toEqual('text');
         expect(input.hasClass('nhsuk-input--width-10')).toEqual(true);
-        expect(span.text().trim()).toEqual('per patient per year');
+        expect(label.text().trim()).toEqual('per patient per year');
       });
     }));
 
