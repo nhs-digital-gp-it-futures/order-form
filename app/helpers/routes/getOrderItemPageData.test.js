@@ -102,6 +102,7 @@ describe('getOrderItemPageData', () => {
         description: 'some item unit description',
       },
       price: '12.2306',
+      currencyCode: 'GBP',
     };
 
     afterEach(() => {
@@ -146,6 +147,7 @@ describe('getOrderItemPageData', () => {
       const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
 
       expect(pageData.selectedPrice).toEqual({
+        currencyCode: mockOrderItemResponse.currencyCode,
         price: mockOrderItemResponse.price,
         itemUnit: mockOrderItemResponse.itemUnit,
         type: mockOrderItemResponse.type,

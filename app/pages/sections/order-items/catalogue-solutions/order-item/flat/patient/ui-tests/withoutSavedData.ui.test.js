@@ -1,12 +1,16 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
+import { extractInnerText } from 'buying-catalogue-library';
+import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
 const getLocation = ClientFunction(() => document.location.href);
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
+const organisation = 'organisation';
+const callOffId = 'order-id';
+const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/catalogue-solutions/neworderitem`;
 
 const selectedPrice = {
   priceId: 2,
@@ -23,7 +27,10 @@ const selectedPrice = {
   },
   price: 1.64,
 };
-const recipients = [{ name: 'recipient-name', odsCode: 'code' }, { name: 'recipient-name', odsCode: 'code-not-used' }];
+
+const recipient1 = { name: 'recipient-name', odsCode: 'code' };
+const recipient2 = { name: 'recipient-name', odsCode: 'code-not-used' };
+const recipients = [recipient1, recipient2];
 const selectedRecipients = ['code'];
 
 const itemIdInSession = 'item-1';
@@ -47,14 +54,26 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedRecipients,
 });
 
-const requestPostBody = {
+const baseServiceRecipient = { ...recipient1, deliveryDate: '2020-10-10' };
+const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
+const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
+
+const baseRequestBody = {
   ...selectedPrice,
-  serviceRecipient: { name: 'recipient-name', odsCode: 'code' },
-  catalogueItemId: 'item-1',
+  catalogueItemId: itemIdInSession,
   catalogueItemName: 'Item name',
   catalogueItemType: 'Solution',
-  deliveryDate: '2020-10-10',
   estimationPeriod: 'year',
+};
+
+const validRequestBody = {
+  ...baseRequestBody,
+  serviceRecipients: [validServiceRecipient],
+};
+
+const invalidRequestBody = {
+  ...baseRequestBody,
+  serviceRecipients: [invalidServiceRecipient],
 };
 
 const mocks = (mockSelectedPrice) => {
@@ -96,7 +115,7 @@ fixture('Catalogue-solutions - flat patient - withoutSavedData')
 
 test('should navigate to catalogue-solutions dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 10 }])
+    .put(`/api/v1/orders/${callOffId}/order-items/${itemIdInSession}`, validRequestBody)
     .reply(200, {});
 
   await pageSetup();
@@ -108,35 +127,36 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
   await t
     .typeText(quantityInput, '10', { paste: true })
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem');
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/catalogue-solutions`);
 });
 
-// test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-//   nock(orderApiUrl)
-//     .post('/api/v1/orders/order-id/order-items/batch', [{ ...requestPostBody, quantity: 0 }])
-//     .reply(400, {
-//       errors: {
-//         '[0].Quantity': ['QuantityGreaterThanZero'],
-//       },
-//     });
-//
-//   await pageSetup();
-//   await t.navigateTo(pageUrl);
-//
-//   const errorSummary = Selector('[data-test-id="error-summary"]');
-//   const solutionTableError = Selector('[data-test-id="solution-table-error"]');
-//   const quantityInput = Selector('[data-test-id="question-quantity"] input');
-//   const saveButton = Selector('[data-test-id="save-button"] button');
-//
-//   await t
-//     .typeText(quantityInput, '0', { paste: true })
-//     .click(saveButton);
-//
-//   await t
-//     .expect(errorSummary.exists).ok()
-//     .expect(errorSummary.find('li a').count).eql(1)
-//     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-//
-//     .expect(solutionTableError.exists).ok()
-//     .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.QuantityGreaterThanZero);
-// });
+test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
+  nock(orderApiUrl)
+    .put(`/api/v1/orders/${callOffId}/order-items/${itemIdInSession}`, invalidRequestBody)
+    .reply(400, {
+      errors: {
+        'ServiceRecipients[0].Quantity': ['QuantityGreaterThanZero'],
+      },
+    });
+
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  // const solutionTableError = Selector('[data-test-id="solution-table-error"]');
+  const quantityInput = Selector('[data-test-id="question-quantity"] input');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .typeText(quantityInput, '0', { paste: true })
+    .click(saveButton);
+
+  await t
+    .expect(errorSummary.exists).ok()
+    .expect(errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero);
+
+  // Currently broken
+  // .expect(solutionTableError.exists).ok()
+  // .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.QuantityGreaterThanZero);
+});

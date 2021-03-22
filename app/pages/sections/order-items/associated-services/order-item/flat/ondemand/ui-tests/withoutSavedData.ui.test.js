@@ -6,7 +6,9 @@ import { solutionsApiUrl, orderApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services/neworderitem';
+const organisation = 'organisation';
+const callOffId = 'order-1';
+const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/associated-services/neworderitem`;
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -20,6 +22,7 @@ const selectedPrice = {
     description: 'per consultation',
   },
   price: 0.1,
+  estimationPeriod: 'month',
 };
 
 const itemIdInSession = 'item-1';
@@ -34,7 +37,6 @@ const orderItemPageDataInSession = JSON.stringify({
 
 const requestPostBody = {
   ...selectedPrice,
-  catalogueItemId: 'item-1',
   catalogueItemName: 'Item One',
   catalogueItemType: 'AssociatedService',
 };
@@ -70,7 +72,7 @@ fixture('Associated-services - flat ondemand - withoutSavedData')
 
 test('should navigate to assoicated-services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 10, estimationPeriod: 'month' })
+    .put(`/api/v1/orders/${callOffId}/order-items/${itemIdInSession}`, { ...requestPostBody, serviceRecipients: [{ quantity: 10 }] })
     .reply(200, {});
 
   await pageSetup();
@@ -84,12 +86,12 @@ test('should navigate to assoicated-services dashboard page if save button is cl
     .typeText(quantityInput, '10', { paste: true })
     .click(estimatiodPeriodInputs.nth(0))
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/associated-services');
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/associated-services`);
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 0, estimationPeriod: 'month' })
+    .put(`/api/v1/orders/${callOffId}/order-items/${itemIdInSession}`, { ...requestPostBody, serviceRecipients: [{ quantity: 0 }] })
     .reply(400, {
       errors: [{
         field: 'Quantity',

@@ -1,10 +1,8 @@
 import { logger } from '../../logger';
-import { postOrderItem } from '../api/ordapi/postOrderItem';
 import { putOrderItem } from '../api/ordapi/putOrderItem';
 
 export const saveOrderItem = async ({
   orderId,
-  orderItemId,
   orderItemType,
   accessToken,
   serviceRecipientId,
@@ -16,25 +14,19 @@ export const saveOrderItem = async ({
   formData,
 }) => {
   try {
-    const response = orderItemId === 'neworderitem'
-      ? await postOrderItem({
-        accessToken,
-        orderId,
-        orderItemType,
-        serviceRecipientId,
-        serviceRecipientName,
-        itemId,
-        itemName,
-        catalogueSolutionId,
-        selectedPrice,
-        formData,
-      })
-      : await putOrderItem({
-        accessToken,
-        orderId,
-        orderItemId,
-        formData,
-      });
+    const response = await putOrderItem({
+      accessToken,
+      orderId,
+      orderItemType,
+      serviceRecipientId,
+      serviceRecipientName,
+      itemId,
+      itemName,
+      catalogueSolutionId,
+      selectedPrice,
+      formData,
+    });
+
     return response;
   } catch (err) {
     if (err.response.status === 400 && err.response.data && err.response.data.errors) {

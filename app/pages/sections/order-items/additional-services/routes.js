@@ -99,7 +99,6 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       const apiResponse = await saveOrderItem({
         accessToken,
         orderId,
-        orderItemId,
         orderItemType: 'AdditionalService',
         serviceRecipientId: pageData.serviceRecipientId,
         serviceRecipientName: pageData.serviceRecipientName,
