@@ -24,9 +24,9 @@ export const getContext = ({
   ...manifest,
   title: `${manifest.title} ${itemName}`,
   questions: recipients && generateQuestionsContext({ recipients, selectedAdditionalRecipientId }),
-  backLinkHref: ((additionalServicePrices || {}).prices || {}).length === 1 
-  ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service` 
-  : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`,
+  backLinkHref: ((additionalServicePrices || {}).prices || {}).length === 1
+    ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
+    : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`,
 });
 
 export const getErrorContext = (params) => {

@@ -19,25 +19,25 @@ describe('additional-services select-recipient contextCreator', () => {
       const context = getContext({ orderId });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);
     });
-    
+
     it('should construct the backLinkHref to additional service page if one additional services price input', () => {
       const additionalServicePrices = {
-        prices : [
-          { priceId: 42, },
-        ]
+        prices: [
+          { priceId: 42 },
+        ],
       };
       const orderId = 'order-1';
       const context = getContext({ orderId, additionalServicePrices });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`);
     });
-    
+
     it('should construct the backLinkHref to price page if more than one additional services prices input', () => {
       const additionalServicePrices = {
-        prices : [
-          { priceId: 42, },
-          { priceId: 5, },
-          { priceId: 55, },
-        ]
+        prices: [
+          { priceId: 42 },
+          { priceId: 5 },
+          { priceId: 55 },
+        ],
       };
       const orderId = 'order-1';
       const context = getContext({ orderId, additionalServicePrices });

@@ -302,12 +302,12 @@ describe('additional-services select routes', () => {
         loggerText: 'Additional service',
       });
     });
-    
+
     it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipient when pricing has one value', async () => {
       getCatalogueItemPricing.mockResolvedValue({
-        prices : [
-          { priceId: 42, },
-        ]
+        prices: [
+          { priceId: 42 },
+        ],
       });
       routerHelper.extractAccessToken = jest.fn().mockReturnValue('access_token');
 
@@ -323,12 +323,12 @@ describe('additional-services select routes', () => {
       additionalServicePriceController.getAdditionalServicePricePageContext = jest.fn()
         .mockResolvedValue({});
 
-        getCatalogueItemPricing.mockResolvedValue({
-          prices : [
-            { priceId: 42, },
-            { priceId: 29, },
-          ]
-        });;
+      getCatalogueItemPricing.mockResolvedValue({
+        prices: [
+          { priceId: 42 },
+          { priceId: 29 },
+        ],
+      });
 
       const res = await request(setUpFakeApp())
         .get(path)
@@ -471,25 +471,26 @@ describe('additional-services select routes', () => {
       const recipients = jest.fn();
       const selectedAdditionalRecipientId = 121;
       getRecipients.mockResolvedValue(recipients);
-      selectAdditionalServiceRecipientController.getAdditionalServiceRecipientPageContext = jest.fn();
-      const res = await request(setUpFakeApp())
+      selectAdditionalServiceRecipientController
+        .getAdditionalServiceRecipientPageContext = jest.fn();
+      await request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie, `${sessionKeys.additionalServicePrices}=42`, 
+        .set('Cookie', [mockAuthorisedCookie, `${sessionKeys.additionalServicePrices}=42`,
           `${sessionKeys.selectedItemName}=item-name`,
           `${sessionKeys.selectedRecipientId}=${selectedAdditionalRecipientId}`,
         ])
         .expect(200);
 
-        expect(selectAdditionalServiceRecipientController.getAdditionalServiceRecipientPageContext)
+      expect(selectAdditionalServiceRecipientController.getAdditionalServiceRecipientPageContext)
         .toHaveBeenCalledWith({
           orderId: 'some-order-id',
-         itemName: 'item-name',
-         recipients,
-         selectedAdditionalRecipientId,
-         additionalServicePrices
-        })
+          itemName: 'item-name',
+          recipients,
+          selectedAdditionalRecipientId,
+          additionalServicePrices,
+        });
     });
-    
+
     it('should return the additional-services select recipient page if authorised', async () => {
       getRecipients.mockResolvedValue([]);
 
