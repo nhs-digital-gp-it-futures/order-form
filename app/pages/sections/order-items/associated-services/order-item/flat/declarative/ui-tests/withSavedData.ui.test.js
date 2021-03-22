@@ -6,22 +6,17 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services/item-1';
+const organisation = 'organisation';
+const callOffId = 'order-1';
+const catalogueItemId = '10000-001';
+
+const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/associated-services/${catalogueItemId}`;
 
 const getLocation = ClientFunction(() => document.location.href);
 
-const orderItem = {
-  serviceRecipient: {
-    odsCode: 'OX3',
-    name: 'Some service recipient 2',
-  },
-  catalogueItemType: 'AssociatedService',
-  catalogueItemName: 'Some item name',
-  catalogueItemId: '10000-001',
-  quantity: 3,
-  estimationPeriod: 'month',
+const selectedPrice = {
   provisioningType: 'Declarative',
-  type: 'flat',
+  type: 'Flat',
   currencyCode: 'GBP',
   itemUnit: {
     name: 'consultation',
@@ -30,21 +25,27 @@ const orderItem = {
   price: 0.1,
 };
 
+const baseServiceRecipient = { name: 'Some service recipient 2', odsCode: 'OX3' };
+const catalogueItem = {
+  catalogueItemType: 'AssociatedService',
+  catalogueItemName: 'Some item name',
+};
+
+const orderItem = {
+  ...catalogueItem,
+  ...selectedPrice,
+};
+
 const orderItemPageDataInSession = JSON.stringify({
-  itemId: orderItem.catalogueItemId,
+  itemId: catalogueItemId,
   itemName: orderItem.catalogueItemName,
-  selectedPrice: {
-    price: orderItem.price,
-    itemUnit: orderItem.itemUnit,
-    type: orderItem.type,
-    provisioningType: orderItem.provisioningType,
-  },
+  selectedPrice,
 });
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-1/order-items/item-1')
-    .reply(200, orderItem);
+    .get(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`)
+    .reply(200, { ...orderItem, serviceRecipient: baseServiceRecipient, quantity: 3 });
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
@@ -76,14 +77,14 @@ test('should render the title', async (t) => {
     .expect(await extractInnerText(title)).eql('Some item name information for order-1');
 });
 
-test('should link to /order/organisation/order-1/associated-services for backlink', async (t) => {
+test(`should link to /order/${organisation}/${callOffId}/associated-services for backlink`, async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/associated-services');
+    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${callOffId}/associated-services`);
 });
 
 test('should populate text field for the quantity question', async (t) => {
@@ -169,7 +170,7 @@ test('should show the correct error summary and input error when the price is re
 
 test('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/order-items/item-1', { quantity: 310, price: 0.1 })
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, { ...orderItem, serviceRecipients: [{ quantity: 310 }] })
     .reply(200, {});
 
   await pageSetup({ ...defaultPageSetup, postRoute: true });
@@ -181,12 +182,12 @@ test('should navigate to associated services dashboard page if save button is cl
   await t
     .typeText(quantityInput, '10', { paste: true })
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/associated-services');
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/associated-services`);
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/order-items/item-1', { quantity: 3, price: 0.1 })
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, { ...orderItem, serviceRecipients: [{ quantity: 0 }] })
     .reply(400, {
       errors: [{
         field: 'Quantity',
@@ -203,6 +204,7 @@ test('should show text fields as errors with error message when there are BE val
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
+    .typeText(quantityInput, '0', { replace: true })
     .click(saveButton);
 
   await t
@@ -211,6 +213,6 @@ test('should show text fields as errors with error message when there are BE val
 
     .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
 
-    .expect(quantityInput.getAttribute('value')).eql('3')
+    .expect(quantityInput.getAttribute('value')).eql('0')
     .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
 });

@@ -20,7 +20,9 @@ const mockSolutions = [
   },
 ];
 const solutionsInSession = JSON.stringify(mockSolutions);
-
+const mockSessionOrderItemsState = JSON.stringify([
+  { catalogueItemId: 'solution-A', catalogueItemType: 'Solution', catalogueItemName: 'A - Solution A' },
+]);
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
@@ -40,6 +42,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.solutions, solutionsInSession);
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
 };
 
@@ -162,7 +165,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price when a solution is selected', async (t) => {
+test('should redirect to /organisation/order-id/catalogue-solutions/solution-A when a existing solution is selected', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -173,9 +176,22 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
   await t
     .click(firstSolution)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution-A');
 });
 
+test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price when new solution is selected', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolution"]');
+  const selectedSolution = selectSolutionRadioOptions.find('input').nth(1);
+  const button = Selector('[data-test-id="continue-button"] button');
+
+  await t
+    .click(selectedSolution)
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price');
+});
 test('should show the error summary when no solution selected causing validation error', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);

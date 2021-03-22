@@ -742,7 +742,6 @@ test('should render the "Delete order" button', async (t) => {
 
   await t
     .expect(await extractInnerText(deleteOrderButton)).eql(commonContent.deleteOrderButton.text)
-    .expect(deleteOrderButton.getAttribute('aria-label')).eql(commonContent.deleteOrderButton.text)
     .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
     .expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(false);
 });
@@ -755,7 +754,6 @@ test('should render the "Preview order summary" button', async (t) => {
 
   await t
     .expect(await extractInnerText(previewOrderButton)).eql(commonContent.previewOrderButton.text)
-    .expect(previewOrderButton.getAttribute('aria-label')).eql(commonContent.previewOrderButton.text)
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(false)
     .expect(previewOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/summary`);
@@ -770,7 +768,6 @@ test('should render the "Complete order" button', async (t) => {
 
   await t
     .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)
-    .expect(completeOrderButton.getAttribute('aria-label')).eql(commonContent.completeOrderButton.disabledAltText)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--disabled')).eql(true);
 });
@@ -788,7 +785,6 @@ test('should enable the "Complete order" button when sectionStatus is "complete"
 
   await t
     .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)
-    .expect(completeOrderButton.getAttribute('aria-label')).eql(commonContent.completeOrderButton.disabledAltText)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--disabled')).eql(false)
     .expect(completeOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/complete-order`);

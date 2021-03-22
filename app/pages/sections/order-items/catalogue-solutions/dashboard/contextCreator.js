@@ -69,4 +69,5 @@ export const getContext = ({ orderId, orderDescription, orderItems = [] }) => ({
   }),
   addOrderItemButtonHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`,
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
+  orderItems,
 });
