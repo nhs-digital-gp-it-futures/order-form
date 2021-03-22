@@ -4,30 +4,61 @@ import { extractDate } from '../../controllers/extractDate';
 import { orderApiUrl } from '../../../config';
 
 const formatPutData = ({
+  orderItemType,
+  serviceRecipientId,
+  serviceRecipientName,
+  itemName,
+  catalogueSolutionId,
+  selectedPrice,
   formData,
 }) => ({
-  deliveryDate: extractDate('deliveryDate', formData),
-  quantity: parseInt(formData.quantity, 10),
+  ...selectedPrice,
+  serviceRecipients: [serviceRecipientName || serviceRecipientId
+    ? {
+      deliveryDate: extractDate('deliveryDate', formData),
+      name: serviceRecipientName,
+      odsCode: serviceRecipientId,
+      quantity: parseInt(formData.quantity, 10),
+    }
+    : {
+      quantity: parseInt(formData.quantity, 10),
+    }],
+  catalogueItemName: itemName,
+  catalogueItemType: orderItemType,
+  catalogueSolutionId,
   estimationPeriod: formData.selectEstimationPeriod,
   price: parseFloat(formData.price),
 });
 
-const getPutOrderItemEndpoint = (orderId, orderItemId) => `${orderApiUrl}/api/v1/orders/${orderId}/order-items/${orderItemId}`;
+const getPutOrderItemEndpoint = (callOffId, catalogueItemId) => `${orderApiUrl}/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`;
 
 export const putOrderItem = async ({
   accessToken,
   orderId,
-  orderItemId,
+  orderItemType,
+  serviceRecipientId,
+  serviceRecipientName,
+  itemId,
+  itemName,
+  catalogueSolutionId,
+  selectedPrice,
   formData,
 }) => {
-  const endpoint = getPutOrderItemEndpoint(orderId, orderItemId);
+  const endpoint = getPutOrderItemEndpoint(orderId, itemId);
+
   const body = formatPutData({
+    orderItemType,
+    serviceRecipientId,
+    serviceRecipientName,
+    itemName,
+    catalogueSolutionId,
+    selectedPrice,
     formData,
   });
 
   await putData({
     endpoint, body, accessToken, logger,
   });
-  logger.info(`Order item successfully updated for order id: ${orderId} and order item id: ${orderItemId}`);
+  logger.info(`Order item for ${itemName} and ${serviceRecipientName} successfully created for order with call-off ID: ${orderId}`);
   return { success: true };
 };
