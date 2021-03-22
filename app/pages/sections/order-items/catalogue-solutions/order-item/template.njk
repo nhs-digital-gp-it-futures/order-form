@@ -35,7 +35,7 @@
 
           <div class="nhsuk-u-margin-bottom-5">
             <div class="">
-              {{ textFieldWithUnits({ 
+              {{ textFieldWithUnits({
                 question: questions.price,
                 classes: "nhsuk-input--width-10"
               }) }}
@@ -51,7 +51,7 @@
               id: 'solution-table',
               dataTestId: 'solution-table',
               classes: 'nhsuk-u-margin-top-0',
-              errorMessages: solutionTable.errorMessages,
+              errorMessages: errors,
               innerComponent: bcTable({
                   columnInfo: solutionTable.columnInfo,
                   classes: solutionTable.classes,
