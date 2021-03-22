@@ -90,7 +90,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
 
   router.use('/catalogue-solutions', catalogueSolutionsRoutes(authProvider, addContext, sessionManager));
 
-  router.use('/catalogue-solutions/delete', deleteCatalogueSolutionsRoutes(authProvider, addContext));
+  router.use('/catalogue-solutions/delete', deleteCatalogueSolutionsRoutes(authProvider, addContext, sessionManager));
 
   router.use('/additional-services', additionalServicesRoutes(authProvider, addContext, sessionManager));
 

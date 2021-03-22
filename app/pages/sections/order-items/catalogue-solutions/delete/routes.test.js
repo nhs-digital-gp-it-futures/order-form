@@ -62,7 +62,7 @@ describe('catalogue-solutions delete routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-42/catalogue-solutions/delete/order-Item-5/confirmation`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-42/catalogue-solutions/delete/order-Item-5/delete-confirmation`);
         });
     });
   });
