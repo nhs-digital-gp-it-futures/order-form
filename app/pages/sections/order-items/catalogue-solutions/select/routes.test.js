@@ -40,8 +40,13 @@ const mockSessionSolutionsState = JSON.stringify([
   { catalogueItemId: 'solution-1', name: 'Solution 1' },
   { catalogueItemId: 'solution-2', name: 'Solution 2' },
 ]);
+const mockSessionOrderItemsState = JSON.stringify([
+  { catalogueItemId: 'solution-1', catalogueItemType: 'Solution', catalogueItemName: 'Solution 1' },
+  { catalogueItemId: 'solution-2', catalogueItemType: 'Solution', catalogueItemName: 'Solution 2' },
+  { catalogueItemId: 'solution-3', catalogueItemType: 'Solution', catalogueItemName: 'Solution 3' },
+]);
 const mockSolutionsCookie = `${sessionKeys.suppliersFound}=${mockSessionSolutionsState}`;
-
+const mockOrderItemsCookie = `${sessionKeys.orderItems}=${mockSessionOrderItemsState}`;
 const mockSolutionPrices = JSON.stringify({
   id: 'sol-1',
   name: 'Solution name',
@@ -197,24 +202,51 @@ describe('catalogue-solutions select routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/catalogue-solutions/select/solution/price if a solution is selected', async () => {
+    it('should redirect to /organisation/some-order-id/catalogue-solutions/catalogueItemId if a existing solution is selected', async () => {
       selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: true });
 
-      findSelectedCatalogueItemInSession.mockResolvedValue({ name: 'Solution One' });
+      findSelectedCatalogueItemInSession.mockReturnValue({ catalogueItemId: 'solution-1', name: 'Solution 1' });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
-        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
+        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie, mockOrderItemsCookie],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsCookie, mockOrderItemsCookie])
         .send({
-          selectSolution: 'solution-1',
+          selectedItem: { catalogueItemId: 'solution-1' },
+          _csrf: csrfToken,
+        })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/solution-1`);
+        });
+    });
+
+    it('should redirect to /organisation/some-order-id/catalogue-solutions/select/solution/price if a new solution is selected', async () => {
+      selectSolutionController.validateSolutionForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      findSelectedCatalogueItemInSession.mockReturnValue({ catalogueItemId: 'solution-4', name: 'Solution 4' });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie, mockOrderItemsCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsCookie, mockOrderItemsCookie])
+        .send({
+          selectedItem: { catalogueItemId: 'solution-4' },
           _csrf: csrfToken,
         })
         .expect(302)
