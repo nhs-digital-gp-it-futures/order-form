@@ -458,7 +458,7 @@ test('should render the recurring cost table footer with the totals provided', a
 
   await t
     .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTableFooter.cellInfo.totalOneYearCostLabel.data)
-    .expect(await extractInnerText(totalYearCostValueCell)).eql('1,981.02')
+    .expect(await extractInnerText(totalYearCostValueCell)).eql('1,981.03')
 
     .expect(await extractInnerText(totalMonthlyCostLabelCell)).eql(content.recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.data)
     .expect(await extractInnerText(totalMonthlyCostValueCell)).eql('191.69')

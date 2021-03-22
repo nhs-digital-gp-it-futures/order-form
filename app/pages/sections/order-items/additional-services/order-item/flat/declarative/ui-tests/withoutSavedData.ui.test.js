@@ -6,7 +6,9 @@ import { solutionsApiUrl, orderApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
+const organisation = 'organisation';
+const callOffId = 'order-1';
+const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/additional-services/neworderitem`;
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -38,13 +40,25 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const requestPostBody = {
+const baseServiceRecipient = { name: 'recipient-name', odsCode: 'recipient-1' };
+const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
+const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
+
+const baseRequestBody = {
   ...selectedPrice,
-  serviceRecipient: { name: 'recipient-name', odsCode: 'recipient-1' },
-  catalogueItemId: 'item-1',
   catalogueItemName: 'Item One',
   catalogueItemType: 'AdditionalService',
   catalogueSolutionId: 'solution-1',
+};
+
+const validRequestBody = {
+  ...baseRequestBody,
+  serviceRecipients: [validServiceRecipient],
+};
+
+const invalidRequestBody = {
+  ...baseRequestBody,
+  serviceRecipients: [invalidServiceRecipient],
 };
 
 const mocks = () => {
@@ -81,7 +95,7 @@ fixture('Additional-services - flat declarative - withoutSavedData')
 
 test('should navigate to additional-services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 10 })
+    .put(`/api/v1/orders/${callOffId}/order-items/${itemIdInSession}`, validRequestBody)
     .reply(200, {});
 
   await pageSetup();
@@ -93,12 +107,12 @@ test('should navigate to additional-services dashboard page if save button is cl
   await t
     .typeText(quantityInput, '10', { paste: true })
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/additional-services');
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/additional-services`);
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
   nock(orderApiUrl)
-    .post('/api/v1/orders/order-1/order-items', { ...requestPostBody, quantity: 0 })
+    .put(`/api/v1/orders/${callOffId}/order-items/${itemIdInSession}`, invalidRequestBody)
     .reply(400, {
       errors: [{
         field: 'Quantity',
