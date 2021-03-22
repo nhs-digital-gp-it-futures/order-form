@@ -15,7 +15,7 @@ pr:
 pool:
   vmImage: 'ubuntu-latest'
 
-jobs: 
+jobs:
 - job: version
   displayName: Work out Version
   steps:
@@ -35,8 +35,11 @@ jobs:
   steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '12.x'
+      versionSpec: '14.x'
     displayName: 'Install Node.js'
+
+  - script: npm install npm@latest -g
+    displayName: 'Update NPM'
 
   - script: |
       npm install
@@ -75,7 +78,7 @@ jobs:
   variables:
     semVer: $[ dependencies.version.outputs['setVersionStep.semVer'] ]
   condition: and(succeeded(), not(eq(variables['build.reason'], 'PullRequest')))
-  dependsOn: 
+  dependsOn:
     - version
     - buildAndTest
   steps:
@@ -126,7 +129,7 @@ jobs:
           -n "gpitfuturesdevacr" \
           -u "gpitfuturesdevacr" \
           -p $(gpitfuturesdevacr-pass) \
-          $chartPackage      
+          $chartPackage
     failOnStderr: false
     name: helmPush
     displayName: 'Push helm to az acr'
