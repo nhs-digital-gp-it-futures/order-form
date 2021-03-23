@@ -303,11 +303,32 @@ describe('additional-services select routes', () => {
       });
     });
 
-    it('should return the additional-services select price page if authorised', async () => {
+    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipient when pricing has one value', async () => {
+      getCatalogueItemPricing.mockResolvedValue({
+        prices: [
+          { priceId: 42 },
+        ],
+      });
+      routerHelper.extractAccessToken = jest.fn().mockReturnValue('access_token');
+
+      const res = await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie, `${sessionKeys.selectedItemId}=12`]);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipient`);
+    });
+
+    it('should return the additional-services select price page if authorised and pricing has multiple values', async () => {
       additionalServicePriceController.getAdditionalServicePricePageContext = jest.fn()
         .mockResolvedValue({});
 
-      getCatalogueItemPricing.mockResolvedValue([]);
+      getCatalogueItemPricing.mockResolvedValue({
+        prices: [
+          { priceId: 42 },
+          { priceId: 29 },
+        ],
+      });
 
       const res = await request(setUpFakeApp())
         .get(path)
@@ -444,6 +465,31 @@ describe('additional-services select routes', () => {
         expectedPageMessage: 'You are not authorised to view this page',
       })
     ));
+
+    it('should get context with correct params if authorised', async () => {
+      const additionalServicePrices = 42;
+      const recipients = jest.fn();
+      const selectedAdditionalRecipientId = 121;
+      getRecipients.mockResolvedValue(recipients);
+      selectAdditionalServiceRecipientController
+        .getAdditionalServiceRecipientPageContext = jest.fn();
+      await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie, `${sessionKeys.additionalServicePrices}=42`,
+          `${sessionKeys.selectedItemName}=item-name`,
+          `${sessionKeys.selectedRecipientId}=${selectedAdditionalRecipientId}`,
+        ])
+        .expect(200);
+
+      expect(selectAdditionalServiceRecipientController.getAdditionalServiceRecipientPageContext)
+        .toHaveBeenCalledWith({
+          orderId: 'some-order-id',
+          itemName: 'item-name',
+          recipients,
+          selectedAdditionalRecipientId,
+          additionalServicePrices,
+        });
+    });
 
     it('should return the additional-services select recipient page if authorised', async () => {
       getRecipients.mockResolvedValue([]);

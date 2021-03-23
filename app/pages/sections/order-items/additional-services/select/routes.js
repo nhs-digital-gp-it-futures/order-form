@@ -141,6 +141,14 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       req, key: sessionKeys.additionalServicePrices, value: additionalServicePrices,
     });
 
+    if (((additionalServicePrices || {}).prices || {}).length === 1) {
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedPriceId, value: additionalServicePrices.prices[0].priceId,
+      });
+      logger.info('redirecting to additional services select recipient page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`);
+    }
+
     const context = getAdditionalServicePricePageContext({
       orderId,
       additionalServicePrices,
@@ -191,11 +199,16 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       req, key: sessionKeys.selectedRecipientId,
     });
 
+    const additionalServicePrices = sessionManager.getFromSession({
+      req, key: sessionKeys.additionalServicePrices,
+    });
+
     const context = await getAdditionalServiceRecipientPageContext({
       orderId,
       itemName,
       recipients,
       selectedAdditionalRecipientId,
+      additionalServicePrices,
     });
 
     logger.info(`navigating to order ${orderId} additional-services select recipient page`);

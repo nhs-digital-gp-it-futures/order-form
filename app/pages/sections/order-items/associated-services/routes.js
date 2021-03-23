@@ -101,7 +101,6 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       const apiResponse = await saveOrderItem({
         accessToken,
         orderId,
-        orderItemId,
         orderItemType: 'AssociatedService',
         itemId: pageData.itemId,
         itemName: pageData.itemName,

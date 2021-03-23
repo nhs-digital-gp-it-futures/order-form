@@ -10,6 +10,8 @@ describe('putOrderItem', () => {
     jest.resetAllMocks();
   });
 
+  const serviceRecipient = { name: 'Recipient 1', odsCode: 'ods1' };
+  const item = { id: 'item-1', name: 'Item One' };
   const formData = {
     _csrf: 'E4xB4klq-hLgMvQGHZxQhrHUhh6gSaLz5su8',
     'deliveryDate-day': '25',
@@ -20,6 +22,18 @@ describe('putOrderItem', () => {
     selectEstimationPeriod: 'month',
   };
 
+  const selectedPrice = {
+    priceId: 1,
+    provisioningType: 'OnDemand',
+    type: 'flat',
+    currencyCode: 'GBP',
+    itemUnit: {
+      name: 'consultation',
+      description: 'per consultation',
+    },
+    price: 0.1,
+  };
+
   describe('with errors', () => {
     it('should throw an error if api request is unsuccessful', async () => {
       const responseData = { errors: [{}] };
@@ -28,8 +42,13 @@ describe('putOrderItem', () => {
       try {
         await putOrderItem({
           orderId: 'order1',
-          orderItemId: 'orderItemId-1',
+          orderItemType: 'SomeOrderItemType',
           accessToken: 'access_token',
+          serviceRecipientId: serviceRecipient.odsCode,
+          serviceRecipientName: serviceRecipient.name,
+          itemId: item.id,
+          itemName: item.name,
+          selectedPrice,
           formData,
         });
       } catch (err) {
@@ -39,22 +58,35 @@ describe('putOrderItem', () => {
   });
 
   describe('with no errors', () => {
-    it('should post correctly formatted data', async () => {
+    it('should put correctly formatted data', async () => {
       putData.mockResolvedValueOnce({ data: { orderId: 'order1' } });
 
       await putOrderItem({
         orderId: 'order1',
-        orderItemId: 'orderItemId-1',
+        orderItemType: 'SomeOrderItemType',
         accessToken: 'access_token',
+        serviceRecipientId: serviceRecipient.odsCode,
+        serviceRecipientName: serviceRecipient.name,
+        itemId: item.id,
+        itemName: item.name,
+        catalogueSolutionId: 'some-solution-id',
+        selectedPrice,
         formData,
       });
 
       expect(putData.mock.calls.length).toEqual(1);
       expect(putData).toHaveBeenCalledWith({
-        endpoint: `${orderApiUrl}/api/v1/orders/order1/order-items/orderItemId-1`,
+        endpoint: `${orderApiUrl}/api/v1/orders/order1/order-items/${item.id}`,
         body: {
-          deliveryDate: '2020-12-25',
-          quantity: 1,
+          ...selectedPrice,
+          serviceRecipients: [{
+            ...serviceRecipient,
+            deliveryDate: '2020-12-25',
+            quantity: 1,
+          }],
+          catalogueItemName: item.name,
+          catalogueItemType: 'SomeOrderItemType',
+          catalogueSolutionId: 'some-solution-id',
           estimationPeriod: 'month',
           price: 500.49,
         },
@@ -63,11 +95,59 @@ describe('putOrderItem', () => {
       });
     });
 
+    it('should put correctly formatted data when there is no service recipient data', async () => {
+      const orderId = 'order1';
+
+      putData.mockResolvedValueOnce({ data: { orderId } });
+
+      const accessToken = 'access_token';
+      const catalogueSolutionId = 'some-solution-id';
+      const orderItemType = 'AssociatedService';
+
+      await putOrderItem({
+        orderId,
+        orderItemType,
+        accessToken,
+        serviceRecipientId: null,
+        serviceRecipientName: undefined,
+        itemId: item.id,
+        itemName: item.name,
+        catalogueSolutionId,
+        selectedPrice,
+        formData,
+      });
+
+      expect(putData.mock.calls.length).toEqual(1);
+      expect(putData).toHaveBeenCalledWith({
+        endpoint: `${orderApiUrl}/api/v1/orders/${orderId}/order-items/${item.id}`,
+        body: {
+          ...selectedPrice,
+          serviceRecipients: [{
+            quantity: 1,
+          }],
+          catalogueItemName: item.name,
+          catalogueItemType: orderItemType,
+          catalogueSolutionId,
+          estimationPeriod: 'month',
+          price: 500.49,
+        },
+        accessToken,
+        logger,
+      });
+    });
+
     it('should return success as true if data is saved successfully', async () => {
+      putData.mockResolvedValueOnce({ success: true });
+
       const response = await putOrderItem({
         orderId: 'order1',
-        orderItemId: 'orderItemId-1',
+        orderItemType: 'SomeOrderItemType',
         accessToken: 'access_token',
+        serviceRecipientId: serviceRecipient.odsCode,
+        serviceRecipientName: serviceRecipient.name,
+        itemId: item.id,
+        itemName: item.name,
+        selectedPrice,
         formData,
       });
 
