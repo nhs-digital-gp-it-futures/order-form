@@ -75,6 +75,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     });
 
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
+
     const context = await getOrderItemContext({
       orderId,
       orderItemId,
