@@ -1,4 +1,4 @@
-import manifest from './manifest.json';
+// import manifest from './manifest.json';
 import { baseUrl } from '../../../../../../config';
 import { addParamsToManifest } from '../../../../../../helpers/contextCreators/addParamsToManifest';
 import { generateErrorMap } from '../../../../../../helpers/contextCreators/generateErrorMap';
@@ -63,6 +63,7 @@ export const getContext = ({
   selectedRecipientIdsData = [],
   selectStatus,
   solutionPrices,
+  manifest,
   errorMap,
 }) => {
   const toggledStatus = selectStatus === 'select' ? 'deselect' : 'select';
@@ -97,6 +98,7 @@ export const getErrorContext = ({
   selectStatus,
   solutionPrices,
   validationErrors,
+  manifest,
 }) => {
   const errorMap = generateErrorMap({
     validationErrors,

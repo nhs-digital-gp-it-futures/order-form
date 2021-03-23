@@ -41,6 +41,7 @@ import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPla
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 import { extractDate } from '../../../../../helpers/controllers/extractDate';
 import { validateOrderItemTypeForm } from '../../../../../helpers/controllers/validateOrderItemTypeForm';
+import manifest from './recipients/manifest.json';
 
 const router = express.Router({ mergeParams: true });
 
@@ -194,7 +195,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
 
     const context = await getServiceRecipientsContext({
-      orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices,
+      orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices, manifest,
     });
 
     setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);
@@ -244,6 +245,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       selectedRecipients,
       solutionPrices,
       validationErrors: response.errors,
+      manifest,
     });
 
     setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);
