@@ -6,6 +6,10 @@ import { sessionKeys } from './sessionHelper';
 export const getOrderItemPageData = async ({
   req, sessionManager, accessToken, orderId, orderItemId,
 }) => {
+  const catalogueSolutionId = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedCatalogueSolutionId,
+  });
+
   if (orderItemId === 'neworderitem') {
     const itemId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemId,
@@ -21,9 +25,6 @@ export const getOrderItemPageData = async ({
     });
     const selectedPriceId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedPriceId,
-    });
-    const catalogueSolutionId = sessionManager.getFromSession({
-      req, key: sessionKeys.selectedCatalogueSolutionId,
     });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
@@ -41,11 +42,10 @@ export const getOrderItemPageData = async ({
     };
   }
 
-  const orderItem = await getOrderItem({ orderId, orderItemId, accessToken });
+  const orderItem = await getOrderItem({ orderId, catalogueSolutionId, accessToken });
   const itemId = orderItem.catalogueItemId;
   const itemName = orderItem.catalogueItemName;
-  const serviceRecipientId = orderItem.serviceRecipient.odsCode;
-  const serviceRecipientName = orderItem.serviceRecipient.name;
+
   const selectedPrice = {
     currencyCode: orderItem.currencyCode,
     price: orderItem.price,
@@ -66,6 +66,6 @@ export const getOrderItemPageData = async ({
   };
 
   return {
-    itemId, itemName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
+    itemId, itemName, selectedPrice, formData,
   };
 };

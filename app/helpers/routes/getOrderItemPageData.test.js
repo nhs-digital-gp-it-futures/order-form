@@ -125,22 +125,6 @@ describe('getOrderItemPageData', () => {
       expect(pageData.itemName).toEqual(mockOrderItemResponse.catalogueItemName);
     });
 
-    it('should call getOrderItem and return the serviceRecipientId', async () => {
-      getOrderItem.mockResolvedValue(mockOrderItemResponse);
-
-      const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
-
-      expect(pageData.serviceRecipientId).toEqual(mockOrderItemResponse.serviceRecipient.odsCode);
-    });
-
-    it('should call getOrderItem and return the serviceRecipientName', async () => {
-      getOrderItem.mockResolvedValue(mockOrderItemResponse);
-
-      const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, orderItemId: 'existingsolution' });
-
-      expect(pageData.serviceRecipientName).toEqual(mockOrderItemResponse.serviceRecipient.name);
-    });
-
     it('should call getOrderItem and return the selectedPrice', async () => {
       getOrderItem.mockResolvedValue(mockOrderItemResponse);
 
