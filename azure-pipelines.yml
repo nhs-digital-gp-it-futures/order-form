@@ -15,7 +15,7 @@ pr:
 pool:
   vmImage: 'ubuntu-latest'
 
-jobs: 
+jobs:
 - job: version
   displayName: Work out Version
   steps:
@@ -37,6 +37,9 @@ jobs:
     inputs:
       versionSpec: '14.x'
     displayName: 'Install Node.js'
+
+  - script: npm install npm@latest -g
+    displayName: 'Update NPM'
 
   - script: |
       npm install
@@ -126,7 +129,7 @@ jobs:
           -n "gpitfuturesdevacr" \
           -u "gpitfuturesdevacr" \
           -p $(gpitfuturesdevacr-pass) \
-          $chartPackage      
+          $chartPackage
     failOnStderr: false
     name: helmPush
     displayName: 'Push helm to az acr'
