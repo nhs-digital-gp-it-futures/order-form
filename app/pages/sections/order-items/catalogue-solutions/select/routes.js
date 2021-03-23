@@ -195,7 +195,13 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
 
     const context = await getServiceRecipientsContext({
-      orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices, manifest,
+      orderId,
+      itemName,
+      selectStatus,
+      serviceRecipients,
+      selectedRecipients,
+      solutionPrices,
+      manifest,
     });
 
     setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);

@@ -246,13 +246,18 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     });
 
     const context = await getServiceRecipientsContext({
-      orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, 
-      additionalServicePrices, manifest,
+      orderId,
+      itemName,
+      selectStatus,
+      serviceRecipients,
+      selectedRecipients,
+      additionalServicePrices,
+      manifest,
     });
 
     context.backLinkHref = ((additionalServicePrices || {}).prices || {}).length === 1
-    ? `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
-    : `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`;
+      ? `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
+      : `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`;
 
     logger.info(`navigating to order ${orderId} additional-services select recipients page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
