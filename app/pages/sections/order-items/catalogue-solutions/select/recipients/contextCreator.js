@@ -112,6 +112,7 @@ export const getErrorContext = ({
     selectedRecipientIdsData,
     selectStatus,
     solutionPrices,
+    manifest,
     errorMap,
   });
 

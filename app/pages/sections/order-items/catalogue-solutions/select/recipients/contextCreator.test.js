@@ -17,7 +17,7 @@ const selectedRecipientIdsData = ['ods2'];
 describe('service-recipients contextCreator', () => {
   describe('getContext', () => {
     it('should return the contents of manifest', () => {
-      const context = getContext({});
+      const context = getContext({ manifest });
       expect(context.backLinkText).toEqual(manifest.backLinkText);
       expect(context.description).toEqual(manifest.description);
       expect(context.organisationHeading).toEqual(manifest.organisationHeading);
@@ -26,27 +26,27 @@ describe('service-recipients contextCreator', () => {
     });
 
     it('should construct the title', () => {
-      const context = getContext({ orderId, itemName });
+      const context = getContext({ orderId, itemName, manifest });
       expect(context.title).toEqual('Service Recipients for Solution One for order-id');
     });
 
     it('should construct the backLinkHref when solutionPrices contain 1', () => {
-      const context = getContext({ orderId, solutionPrices: { prices: [{}] } });
+      const context = getContext({ orderId, solutionPrices: { prices: [{}] }, manifest });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`);
     });
 
     it('should construct the backLinkHref when solutionPrices contain not 1', () => {
-      const context = getContext({ orderId, solutionPrices: [{}, {}] });
+      const context = getContext({ orderId, solutionPrices: [{}, {}], manifest });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`);
     });
 
     it('should construct the description', () => {
-      const context = getContext({ orderId, itemName });
+      const context = getContext({ orderId, itemName, manifest });
       expect(context.description).toEqual('These are all the possible Service Recipients for this Call-off Ordering Party. Select those you’ll be ordering this Catalogue Solution for.');
     });
 
     it('should construct the tableData whenever serviceRecipientsData is provided with no selected recipients', () => {
-      const context = getContext({ orderId, serviceRecipientsData });
+      const context = getContext({ orderId, serviceRecipientsData, manifest });
 
       const { recipientsTable } = context.question.selectSolutionRecipients;
       expect(recipientsTable.items.length).toEqual(serviceRecipientsData.length);
@@ -66,7 +66,9 @@ describe('service-recipients contextCreator', () => {
     });
 
     it('should construct the correct checked value when selected recipients data is available and selectStatus is undefined', () => {
-      const context = getContext({ orderId, serviceRecipientsData, selectedRecipientIdsData });
+      const context = getContext({
+        orderId, serviceRecipientsData, selectedRecipientIdsData, manifest,
+      });
 
       const { recipientsTable } = context.question.selectSolutionRecipients;
       expect(recipientsTable.items.length).toEqual(serviceRecipientsData.length);
@@ -76,7 +78,7 @@ describe('service-recipients contextCreator', () => {
 
     it('should mark all checked as true when selectStatus = select', () => {
       const context = getContext({
-        orderId, serviceRecipientsData, selectStatus: 'select',
+        orderId, serviceRecipientsData, selectStatus: 'select', manifest,
       });
 
       const { recipientsTable } = context.question.selectSolutionRecipients;
@@ -87,7 +89,7 @@ describe('service-recipients contextCreator', () => {
 
     it('should mark all checked as true when selectStatus = select and data is found in ORDAPI', () => {
       const context = getContext({
-        orderId, serviceRecipientsData, selectedRecipientIdsData, selectStatus: 'select',
+        orderId, serviceRecipientsData, selectedRecipientIdsData, selectStatus: 'select', manifest,
       });
 
       const { recipientsTable } = context.question.selectSolutionRecipients;
@@ -98,7 +100,7 @@ describe('service-recipients contextCreator', () => {
 
     it('should mark all checked as false when selectStatus = deselect', () => {
       const context = getContext({
-        orderId, serviceRecipientsData, selectStatus: 'deselect',
+        orderId, serviceRecipientsData, selectStatus: 'deselect', manifest,
       });
 
       const { recipientsTable } = context.question.selectSolutionRecipients;
@@ -109,7 +111,7 @@ describe('service-recipients contextCreator', () => {
 
     it('should mark all checked as true when selectStatus = deselect and data is found in ORDAPI', () => {
       const context = getContext({
-        orderId, serviceRecipientsData, selectedRecipientIdsData, selectStatus: 'deselect',
+        orderId, serviceRecipientsData, selectedRecipientIdsData, selectStatus: 'deselect', manifest,
       });
 
       const { recipientsTable } = context.question.selectSolutionRecipients;
@@ -121,6 +123,7 @@ describe('service-recipients contextCreator', () => {
 
   describe('getErrorContext', () => {
     it('should return the context with Errors', () => {
+      // console.log(JSON.stringify(manifest));
       const expectedContext = {
         errors: [
           {
@@ -136,7 +139,10 @@ describe('service-recipients contextCreator', () => {
       };
 
       const context = getErrorContext({
-        orderId, serviceRecipientsData, validationErrors: [{ field: 'selectSolutionRecipients', id: 'SelectSolutionRecipientsRequired' }],
+        orderId,
+        serviceRecipientsData,
+        validationErrors: [{ field: 'selectSolutionRecipients', id: 'SelectSolutionRecipientsRequired' }],
+        manifest,
       });
 
       expect(context.errors).toEqual(expectedContext.errors);

@@ -17,6 +17,7 @@ import {
   validateAdditionalServicePriceForm,
 } from './price/controller';
 import {
+  getBackLinkHref,
   getAdditionalServiceRecipientPageContext,
   getAdditionalServiceRecipientErrorPageContext,
   validateAdditionalServiceRecipientForm,
@@ -255,9 +256,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       manifest,
     });
 
-    context.backLinkHref = ((additionalServicePrices || {}).prices || {}).length === 1
-      ? `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
-      : `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`;
+    context.backLinkHref = getBackLinkHref(additionalServicePrices, orderId);
 
     logger.info(`navigating to order ${orderId} additional-services select recipients page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
