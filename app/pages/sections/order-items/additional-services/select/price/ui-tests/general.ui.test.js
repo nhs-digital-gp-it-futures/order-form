@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
+import config, { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
@@ -199,6 +199,8 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/service-recipients')
     .reply(200, {});
+
+  config.additionalServicesRecipients = 'false';
 
   await pageSetup();
   await t.navigateTo(pageUrl);
