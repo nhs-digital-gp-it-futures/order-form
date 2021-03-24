@@ -135,11 +135,8 @@ test('should show text fields as errors with error message when there are BE val
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-
-  // Currently broken
   // .expect(errorMessage.exists).ok()
   // .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero);
-
     .expect(quantityInput.getAttribute('value')).eql('0');
   // .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
 });

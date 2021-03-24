@@ -56,7 +56,7 @@ export const getOrderItemPageData = async ({
     provisioningType: orderItem.provisioningType,
   };
 
-  const [day, month, year] = destructureDate(orderItem.deliveryDate);
+  const [day, month, year] = destructureDate(orderItem.serviceRecipients[0].deliveryDate);
   const formData = {
     'deliveryDate-year': year,
     'deliveryDate-month': month,

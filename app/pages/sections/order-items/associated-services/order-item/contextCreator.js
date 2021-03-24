@@ -8,7 +8,7 @@ export const getContext = ({
   commonManifest,
   selectedPriceManifest,
   orderId,
-  orderItemId,
+  catalogueItemId,
   itemName,
   selectedPrice,
   formData,
@@ -35,9 +35,9 @@ export const getContext = ({
   deleteButton: {
     text: commonManifest.deleteButton.text,
     href: commonManifest.deleteButton.href,
-    disabled: orderItemId === 'neworderitem',
+    disabled: catalogueItemId === 'neworderitem',
   },
-  backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`
+  backLinkHref: catalogueItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`
     : `${baseUrl}/organisation/${orderId}/associated-services`,
 });
 
@@ -51,7 +51,7 @@ export const getErrorContext = (params) => {
     commonManifest: params.commonManifest,
     selectedPriceManifest: params.selectedPriceManifest,
     orderId: params.orderId,
-    orderItemId: params.orderItemId,
+    catalogueItemId: params.catalogueItemId,
     itemName: params.itemName,
     selectedPrice: params.selectedPrice,
     formData: params.formData,
