@@ -47,36 +47,36 @@ jobs:
   - script: npx webpack --config webpack.config.js
     displayName: 'NPX Webpack'
 
-  - script: npm run test
-    displayName: 'Unit test'
+  # - script: npm run test
+  #   displayName: 'Unit test'
 
-  - task: PublishTestResults@2
-    displayName: Publish unit test results
-    inputs:
-      testResultsFormat: NUnit
-      testResultsFiles: '$(System.DefaultWorkingDirectory)/unit-test-report.xml'
-      testRunTitle: Unit test results
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
+  # - task: PublishTestResults@2
+  #   displayName: Publish unit test results
+  #   inputs:
+  #     testResultsFormat: NUnit
+  #     testResultsFiles: '$(System.DefaultWorkingDirectory)/unit-test-report.xml'
+  #     testRunTitle: Unit test results
+  #     failTaskOnFailedTests: true
+  #   condition: succeededOrFailed()
 
-  - script: npm run test:integration
-    displayName: 'Integration test'
+  # - script: npm run test:integration
+  #   displayName: 'Integration test'
 
-  - task: PublishTestResults@2
-    displayName: Publish integration test results
-    inputs:
-      testResultsFormat: NUnit
-      testResultsFiles: '$(System.DefaultWorkingDirectory)/integration-test-report.xml'
-      testRunTitle: Integration test results
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
+  # - task: PublishTestResults@2
+  #   displayName: Publish integration test results
+  #   inputs:
+  #     testResultsFormat: NUnit
+  #     testResultsFiles: '$(System.DefaultWorkingDirectory)/integration-test-report.xml'
+  #     testRunTitle: Integration test results
+  #     failTaskOnFailedTests: true
+  #   condition: succeededOrFailed()
 
 - job: dockerBuildAndPush
   displayName: Build and push docker containers to the acr
   variables:
     semVer: $[ dependencies.version.outputs['setVersionStep.semVer'] ]
   condition: succeeded()
-  dependsOn: 
+  dependsOn:
     - version
     - buildAndTest
   steps:
