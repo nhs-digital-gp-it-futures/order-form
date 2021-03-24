@@ -16,6 +16,7 @@ import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPag
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
+import { transformApiValidationResponse } from '../../../../helpers/common/transformApiValidationResponse';
 
 const router = express.Router({ mergeParams: true });
 
@@ -50,8 +51,8 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
 
   router.use('/select', additionalServicesSelectRoutes(authProvider, addContext, sessionManager));
 
-  router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
+  router.get('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, catalogueItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     const pageData = await getOrderItemPageData({
@@ -59,14 +60,14 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       sessionManager,
       accessToken,
       orderId,
-      orderItemId,
+      catalogueItemId,
     });
 
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
 
     const context = await getOrderItemContext({
       orderId,
-      orderItemId,
+      catalogueItemId,
       orderItemType: 'AdditionalService',
       itemName: pageData.itemName,
       odsCode: pageData.serviceRecipientId,
@@ -79,8 +80,8 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     return res.render('pages/sections/order-items/additional-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
+  router.post('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, catalogueItemId } = req.params;
     const validationErrors = [];
 
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
@@ -113,12 +114,14 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
         logger.info('Redirecting to the additional-services main page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services`);
       }
-      validationErrors.push(...apiResponse.errors);
+
+      const apiErrors = transformApiValidationResponse(apiResponse.errors);
+      validationErrors.push(...apiErrors);
     }
 
     const context = await getOrderItemErrorPageContext({
       orderId,
-      orderItemId,
+      catalogueItemId,
       orderItemType: 'AdditionalService',
       itemName: pageData.itemName,
       serviceRecipientId: pageData.serviceRecipientId,
