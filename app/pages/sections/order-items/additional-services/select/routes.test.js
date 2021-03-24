@@ -24,6 +24,7 @@ import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCata
 import { getAdditionalServices } from '../../../../../helpers/api/bapi/getAdditionalServices';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 import * as getRecipientsFromOapi from '../../../../../helpers/api/oapi/getServiceRecipients';
+import * as getAdditionalServicesContextItems from '../../../../../helpers/routes/getAdditionalServicesContextItems';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
@@ -553,6 +554,21 @@ describe('additional-services select routes', () => {
 
   describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipients', () => {
     const path = '/organisation/some-order-id/additional-services/select/additional-service/price/recipients';
+    beforeEach(() => {
+      getAdditionalServicesContextItems.getAdditionalServicesContextItems = jest.fn()
+        .mockResolvedValue({
+          serviceRecipients: [], selectedRecipients: [], additionalServicePrices: [], itemName: 'SystemOne Admin',
+        });
+
+      getRecipientsFromOapi.getServiceRecipients = jest.fn()
+        .mockReturnValue([]);
+
+      selectAdditionalServiceRecipientController.getServiceRecipientsContext = jest.fn()
+        .mockResolvedValue({});
+
+      selectAdditionalServiceRecipientController.getBackLinkHref = jest.fn()
+        .mockReturnValue('http://returnurl.com');
+    });
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -570,17 +586,17 @@ describe('additional-services select routes', () => {
       })
     ));
 
-    it('should return the additional-services select recipients page if authorised', async () => {
-      getRecipientsFromOapi.getServiceRecipients = jest.fn()
-        .mockReturnValue([]);
-
-      selectAdditionalServiceRecipientController.getServiceRecipientsContext = jest.fn()
-        .mockResolvedValue({});
-
-      const res = await request(setUpFakeApp())
+    it('should clear recipients from session if authorised', async () => {
+      await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200);
+    });
+
+    it('should return the additional-services select recipients page if authorised', async () => {
+      const res = await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie]);
 
       expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();

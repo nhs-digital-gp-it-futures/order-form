@@ -30,7 +30,7 @@ import {
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getAdditionalServices } from '../../../../../helpers/api/bapi/getAdditionalServices';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
-import { getServiceRecipients } from '../../../../../helpers/routes/getServiceRecipients';
+import { getAdditionalServicesContextItems } from '../../../../../helpers/routes/getAdditionalServicesContextItems';
 
 const router = express.Router({ mergeParams: true });
 
@@ -225,25 +225,13 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     const { orderId } = req.params;
     const { selectStatus } = req.query;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
     const recipients = await getRecipients({ orderId, accessToken });
     sessionManager.saveToSession({ req, key: sessionKeys.recipients, value: recipients });
 
-    const selectedRecipients = sessionManager.getFromSession({
-      req, key: sessionKeys.selectedRecipients,
-    });
-
-    const additionalServicePrices = sessionManager.getFromSession({
-      req, key: sessionKeys.additionalServicePrices,
-    });
-
-    sessionManager.clearFromSession({ req, keys: [sessionKeys.recipients] });
-
-    const serviceRecipients = await getServiceRecipients({
-      req,
-      accessToken: extractAccessToken({ req, tokenType: 'access' }),
-      sessionManager,
-      logger,
+    const {
+      serviceRecipients, selectedRecipients, additionalServicePrices, itemName,
+    } = await getAdditionalServicesContextItems({
+      req, sessionManager, accessToken, logger,
     });
 
     const context = await getServiceRecipientsContext({
