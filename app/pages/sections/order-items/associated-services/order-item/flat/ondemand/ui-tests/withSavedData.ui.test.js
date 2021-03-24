@@ -26,7 +26,7 @@ const selectedPrice = {
   estimationPeriod: 'month',
 };
 
-const baseServiceRecipient = { name: 'Some service recipient 2', odsCode: 'OX3' };
+const recipient = { name: 'Some service recipient 2', odsCode: 'OX3', quantity: 3 };
 const catalogueItem = {
   catalogueItemType: 'AssociatedService',
   catalogueItemName: 'Some item name',
@@ -35,6 +35,7 @@ const catalogueItem = {
 const orderItem = {
   ...catalogueItem,
   ...selectedPrice,
+  serviceRecipients: [recipient],
 };
 
 const orderItemPageDataInSession = JSON.stringify({
@@ -46,7 +47,7 @@ const orderItemPageDataInSession = JSON.stringify({
 const mocks = () => {
   nock(orderApiUrl)
     .get(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`)
-    .reply(200, { ...orderItem, serviceRecipient: baseServiceRecipient, quantity: 3 });
+    .reply(200, orderItem);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
