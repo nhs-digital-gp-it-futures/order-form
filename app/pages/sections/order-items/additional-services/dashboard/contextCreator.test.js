@@ -91,20 +91,20 @@ describe('additional-services contextCreator', () => {
 
       const mockOrderItems = [
         {
-          orderItemId: 'orderItem1',
+          catalogueItemId: 'orderItem1',
           catalogueItemName: 'Additional Service One',
-          serviceRecipient: {
+          serviceRecipients: [{
             name: 'Recipient One',
             odsCode: 'recipient-1',
-          },
+          }],
         },
         {
-          orderItemId: 'orderItem2',
+          catalogueItemId: 'orderItem2',
           catalogueItemName: 'Additional Service Two',
-          serviceRecipient: {
+          serviceRecipients: [{
             name: 'Recipient Two',
             odsCode: 'recipient-2',
-          },
+          }],
         },
       ];
       const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });

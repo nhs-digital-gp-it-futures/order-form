@@ -52,8 +52,8 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
 
   router.use('/select', associatedServicesSelectRoutes(authProvider, addContext));
 
-  router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
+  router.get('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, catalogueItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     const pageData = await getOrderItemPageData({
@@ -61,7 +61,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       sessionManager,
       accessToken,
       orderId,
-      orderItemId,
+      catalogueItemId,
     });
 
     sessionManager.saveToSession({
@@ -70,7 +70,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
 
     const context = await getOrderItemContext({
       orderId,
-      orderItemId,
+      catalogueItemId,
       orderItemType: 'AssociatedService',
       itemName: pageData.itemName,
       selectedPrice: pageData.selectedPrice,
@@ -81,8 +81,8 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
+  router.post('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, catalogueItemId } = req.params;
     const validationErrors = [];
 
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
@@ -117,7 +117,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
 
     const context = await getOrderItemErrorPageContext({
       orderId,
-      orderItemId,
+      catalogueItemId,
       orderItemType: 'AssociatedService',
       itemName: pageData.itemName,
       selectedPrice: pageData.selectedPrice,
