@@ -123,7 +123,7 @@ describe('catalogue-solutions select routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select-solution page if authorised', () => {
+    it('should return the catalogue-solutions select-solution page if authorised', async () => {
       selectSolutionController.getSolutionsPageContext = jest.fn()
         .mockResolvedValue({});
 
@@ -133,7 +133,7 @@ describe('catalogue-solutions select routes', () => {
 
       return request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie])
+        .set('Cookie', [mockAuthorisedCookie, mockOrderItemsCookie])
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="solution-select-page"')).toBeTruthy();
@@ -156,8 +156,8 @@ describe('catalogue-solutions select routes', () => {
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
-        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
-        postPathCookies: [mockSolutionsCookie],
+        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie, mockOrderItemsCookie],
+        postPathCookies: [mockSolutionsCookie, mockOrderItemsCookie],
         expectedRedirectPath: 'http://identity-server/login',
       })
     ));
@@ -167,7 +167,7 @@ describe('catalogue-solutions select routes', () => {
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
-        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
+        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie, mockOrderItemsCookie],
         postPathCookies: [mockUnauthorisedCookie],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
@@ -186,13 +186,13 @@ describe('catalogue-solutions select routes', () => {
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
-        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
+        getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie, mockOrderItemsCookie],
       });
 
       return request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockSolutionsCookie, mockOrderItemsCookie])
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
@@ -225,7 +225,7 @@ describe('catalogue-solutions select routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/solution-1`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/solution-1?solutionAlreadySelected=true`);
         });
     });
 

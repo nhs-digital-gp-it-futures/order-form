@@ -64,8 +64,8 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, orderItemId } = req.params;
+    const { solutionAlreadySelected } = req.query;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-
     const pageData = await getOrderItemPageDataBulk({
       req,
       sessionManager,
@@ -86,6 +86,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       deliveryDate: pageData.deliveryDate,
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients,
+      solutionAlreadySelected,
     });
 
     if (context.questions.price && !context.questions.price.data) {
@@ -104,7 +105,6 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, orderItemId } = req.params;
-
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = getPageData(req, sessionManager);
     const formData = formatFormData({ formData: req.body });

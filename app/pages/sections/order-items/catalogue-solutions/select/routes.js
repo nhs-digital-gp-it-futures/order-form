@@ -62,6 +62,15 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
 
     const context = await getSolutionsPageContext({ orderId, solutions, selectedSolutionId });
 
+    const orderItems = sessionManager.getFromSession({ req, key: sessionKeys.orderItems });
+    if (orderItems.length > 0) {
+      sessionManager.saveToSession(
+        { req, key: sessionKeys.selectedRecipients, value: undefined },
+      );
+      sessionManager.saveToSession(
+        { req, key: sessionKeys.selectedQuantity, value: undefined },
+      );
+    }
     logger.info(`navigating to order ${orderId} catalogue-solutions select solution page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -83,17 +92,19 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       const orderItems = sessionManager.getFromSession({ req, key: sessionKeys.orderItems });
       const alreadySelectedItem = orderItems
         .filter((orderItem) => orderItem.catalogueItemId === selectedItem.catalogueItemId);
-      if (alreadySelectedItem.length > 0 && alreadySelectedItem[0].catalogueItemId) {
-        return res.redirect(
-          `${config.baseUrl}/organisation/${orderId}/catalogue-solutions/${alreadySelectedItem[0].catalogueItemId}`,
-        );
-      }
+
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedItemId, value: selectedItemId,
       });
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedItemName, value: selectedItem.name,
       });
+
+      if (alreadySelectedItem.length > 0 && alreadySelectedItem[0].catalogueItemId) {
+        return res.redirect(
+          `${config.baseUrl}/organisation/${orderId}/catalogue-solutions/${alreadySelectedItem[0].catalogueItemId}?solutionAlreadySelected=true`,
+        );
+      }
       logger.info('redirecting catalogue solutions select price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`);
     }
@@ -219,7 +230,6 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
       });
-
       if (req.body.orderItemId) {
         logger.info('Back to catalogue solution page');
         return res.redirect(`${config.baseUrl}${getSelectSolutionPriceEndpoint(orderId, req.body.orderItemId)}`);
@@ -235,7 +245,6 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       req,
       key: sessionKeys.selectedRecipients,
     });
-
     const context = await getServiceRecipientsErrorPageContext({
       orderId,
       itemName,
