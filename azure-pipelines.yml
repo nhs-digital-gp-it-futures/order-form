@@ -41,9 +41,7 @@ jobs:
   - script: npm install npm@latest -g
     displayName: 'Update NPM'
 
-  - script: |
-      npm install
-      npm build
+  - script: npm install
     displayName: 'NPM install'
 
   - script: npx webpack --config webpack.config.js
