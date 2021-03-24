@@ -43,7 +43,7 @@ jobs:
 
   - script: |
       npm install
-      npm build
+      npm run build
     displayName: 'NPM install'
 
   - script: npx webpack --config webpack.config.js
