@@ -30,6 +30,7 @@ const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
   itemName: itemNameInSession,
   selectedPrice,
+  serviceRecipients: [{ quantity: 1 }],
 });
 
 const mocks = (mockSelectedPrice) => {

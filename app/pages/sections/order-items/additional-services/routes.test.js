@@ -132,7 +132,7 @@ describe('additional-services section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/additional-services/:orderItemId', () => {
+  describe('GET /organisation/:orderId/additional-services/:catalogueItemId', () => {
     const path = '/organisation/some-order-id/additional-services/neworderitem';
 
     it('should redirect to the login page if the user is not logged in', () => (
@@ -166,7 +166,7 @@ describe('additional-services section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/additional-services/:orderItemId', () => {
+  describe('POST /organisation/:orderId/additional-services/:catalogueItemId', () => {
     const path = '/organisation/some-order-id/additional-services/neworderitem';
 
     it('should return 403 forbidden if no csrf token is available', () => (
@@ -250,7 +250,7 @@ describe('additional-services section routes', () => {
       getOrderItemPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       validateOrderItemForm.mockReturnValue([]);
-      saveOrderItem.mockResolvedValue({ success: false, errors: [{}] });
+      saveOrderItem.mockResolvedValue({ success: false, errors: {} });
       orderItemController.getOrderItemErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
