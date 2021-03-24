@@ -4,9 +4,13 @@ import { destructureDate } from '../common/dateFormatter';
 import { sessionKeys } from './sessionHelper';
 
 export const getOrderItemPageData = async ({
-  req, sessionManager, accessToken, orderId, orderItemId,
+  req, sessionManager, accessToken, orderId, catalogueItemId,
 }) => {
-  if (orderItemId === 'neworderitem') {
+  const catalogueSolutionId = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedCatalogueSolutionId,
+  });
+
+  if (catalogueItemId === 'neworderitem') {
     const itemId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemId,
     });
@@ -21,9 +25,6 @@ export const getOrderItemPageData = async ({
     });
     const selectedPriceId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedPriceId,
-    });
-    const catalogueSolutionId = sessionManager.getFromSession({
-      req, key: sessionKeys.selectedCatalogueSolutionId,
     });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
@@ -41,11 +42,11 @@ export const getOrderItemPageData = async ({
     };
   }
 
-  const orderItem = await getOrderItem({ orderId, orderItemId, accessToken });
+  const orderItem = await getOrderItem({ orderId, catalogueItemId, accessToken });
   const itemId = orderItem.catalogueItemId;
   const itemName = orderItem.catalogueItemName;
-  const serviceRecipientId = orderItem.serviceRecipient.odsCode;
-  const serviceRecipientName = orderItem.serviceRecipient.name;
+  const serviceRecipientId = orderItem.serviceRecipients[0].odsCode;
+  const serviceRecipientName = orderItem.serviceRecipients[0].name;
   const selectedPrice = {
     currencyCode: orderItem.currencyCode,
     price: orderItem.price,
@@ -60,12 +61,18 @@ export const getOrderItemPageData = async ({
     'deliveryDate-year': year,
     'deliveryDate-month': month,
     'deliveryDate-day': day,
-    quantity: orderItem.quantity,
+    quantity: orderItem.serviceRecipients[0].quantity,
     selectEstimationPeriod: orderItem.estimationPeriod,
     price: orderItem.price,
   };
 
   return {
-    itemId, itemName, serviceRecipientId, serviceRecipientName, selectedPrice, formData,
+    itemId,
+    itemName,
+    serviceRecipientId,
+    serviceRecipientName,
+    selectedPrice,
+    formData,
+    catalogueSolutionId,
   };
 };
