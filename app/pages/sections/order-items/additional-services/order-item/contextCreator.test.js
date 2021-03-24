@@ -27,7 +27,7 @@ describe('additional-services order-item contextCreator', () => {
       const context = getContext({
         commonManifest,
         orderId: 'order-1',
-        orderItemId: 'neworderitem',
+        catalogueItemId: 'neworderitem',
       });
       expect(context.backLinkHref).toEqual(`/order/organisation/order-1/additional-services/select/additional-service/price/${resource}`);
     });
@@ -49,13 +49,13 @@ describe('additional-services order-item contextCreator', () => {
     });
 
     it('should return the delete button disabled when neworderitem', () => {
-      const context = getContext({ commonManifest, orderItemId: 'neworderitem' });
+      const context = getContext({ commonManifest, catalogueItemId: 'neworderitem' });
       expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
       expect(context.deleteButton.disabled).toEqual(true);
     });
 
     it('should return the delete button when not neworderitem', () => {
-      const context = getContext({ commonManifest, orderItemId: 'notneworderitem' });
+      const context = getContext({ commonManifest, catalogueItemId: 'notneworderitem' });
       expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
       expect(context.deleteButton.disabled).toEqual(false);
     });
