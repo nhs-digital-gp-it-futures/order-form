@@ -18,11 +18,9 @@ export const getDeleteCatalogueSolutionContext = async ({
     logger,
   });
 
-  return getContext(
-    {
-      orderId, orderItemId, solutionName, orderDescription,
-    }
-    );
+  return getContext({
+    orderId, orderItemId, solutionName, orderDescription,
+  });
 };
 
 export const deleteCatalogueSolution = async ({

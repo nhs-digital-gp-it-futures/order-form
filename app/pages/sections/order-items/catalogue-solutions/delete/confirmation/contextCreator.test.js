@@ -3,7 +3,7 @@ import { getContext } from './contextCreator';
 
 describe('delete-catalogue-confirmation contextCreator', () => {
   describe('getContext', () => {
-      it('should return the title', () => {
+    it('should return the title', () => {
       const orderId = 'order-1';
       const solutionName = 'solution-1';
       const context = getContext({ orderId, solutionName });
