@@ -9,17 +9,16 @@ const setup = {
 
 const context = {
   ...manifest,
-  backLinkHref: '/organisation/catalogue-1',
+  backLinkHref: '/organisation/order-1/catalogue-solutions/order-item-id',
   catalogueDescription: 'some description',
 };
 
 describe('delete catalogue page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const backLink = $('[data-test-id="go-back-link"]');
-      expect(backLink.length).toEqual(1);
-      expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
+      const backLinkText = $('[data-test-id="go-back-link"]');
+      expect(backLinkText.length).toEqual(2);
+      expect($(backLinkText).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 
@@ -41,26 +40,25 @@ describe('delete catalogue page', () => {
 
   it('should render the delete catalogue description title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const catalogueDescriptionTitle = $('h3[data-test-id="catalogue-description-title"]');
-      expect(catalogueDescriptionTitle.length).toEqual(1);
-      expect(catalogueDescriptionTitle.text().trim()).toEqual(context.catalogueDescription);
+      const orderDescriptionTitle = $('h3[data-test-id="catalogue-description-title"]');
+      expect(orderDescriptionTitle.length).toEqual(1);
+      expect(orderDescriptionTitle.text().trim()).toEqual(context.orderDescriptionTitle);
     });
   }));
 
-  it('should render the delete catalogue description', componentTester(setup, (harness) => {
+  it('should render the delete catalogue order description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const catalogueDescription = $('h4[data-test-id="catalogue-description"]');
-      expect(catalogueDescription.length).toEqual(1);
-      expect(catalogueDescription.text().trim()).toEqual(context.catalogueDescription);
+      const orderDescription = $('h4[data-test-id="catalogue-description"]');
+      expect(orderDescription.length).toEqual(1);
+      expect(orderDescription.text().trim()).toEqual(context.orderDescription);
     });
   }));
 
-  it('should render the no button', componentTester(setup, (harness) => {
+  it('should render the cancel link', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const button = $('[data-test-id="no-button"]');
-      expect(button.length).toEqual(1);
-      expect(button.text().trim()).toEqual(context.noButton.text);
-      expect(button.find('a').attr('href')).toEqual(context.backLinkHref);
+      const noButton = $('[data-test-id="go-back-link"]');
+      expect(noButton.length).toEqual(2);
+      expect($(noButton).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 

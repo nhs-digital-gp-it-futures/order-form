@@ -1,23 +1,23 @@
 import manifest from './manifest.json';
 import { getContext } from './contextCreator';
-import { baseUrl } from '../../../../../../config';
 
 describe('delete-catalogue-confirmation contextCreator', () => {
   describe('getContext', () => {
       it('should return the title', () => {
       const orderId = 'order-1';
-      const context = getContext({ orderId });
-      expect(context.title).toEqual('Catalogue order-1 deleted');
+      const solutionName = 'solution-1';
+      const context = getContext({ orderId, solutionName });
+      expect(context.title).toEqual('solution-1 deleted from order-1');
     });
 
     it('should return the order description title', () => {
       const context = getContext({});
-      expect(context.orderDescriptionTitle).toEqual(`${manifest.orderDescriptionTitle}`);
+      expect(context.description).toEqual(`${manifest.description}`);
     });
 
-    it('should return the description', () => {
+    it('should return the continue button', () => {
       const context = getContext({});
-      expect(context.description).toEqual(manifest.description);
+      expect(context.continueButtonText).toEqual(manifest.continueButtonText);
     });
   });
 });

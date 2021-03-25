@@ -11,14 +11,16 @@ describe('delete-order contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-1';
-      const context = getContext({ orderId });
+      const orderItemId = 'order-item-1';
+      const context = getContext({ orderId, orderItemId });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/${orderItemId}`);
     });
 
     it('should return the title', () => {
       const orderId = 'order-1';
-      const context = getContext({ orderId });
-      expect(context.title).toEqual('Delete order order-1?');
+      const solutionName = 'solution-name';
+      const context = getContext({ orderId, solutionName });
+      expect(context.title).toEqual('Delete solution-name from order-1?');
     });
 
     it('should return the order description title', () => {
@@ -39,7 +41,8 @@ describe('delete-order contextCreator', () => {
 
     it('should return the no button', () => {
       const orderId = 'order-1';
-      const context = getContext({ orderId });
+      const orderItemId = 'order-item-1';
+      const context = getContext({ orderId, orderItemId });
       expect(context.noButtonText).toEqual(manifest.noButtonText);
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/${orderItemId}`);
     });

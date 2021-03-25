@@ -1,27 +1,15 @@
 import express from 'express';
 import { logger } from '../../../../../logger';
-import { getDeleteCatalogueSolutionContext } from './controller';
+import { getDeleteCatalogueSolutionContext, deleteCatalogueSolution } from './controller';
 import { getDeleteCatalogueSolutionConfirmationContext } from './confirmation/controller';
 import { withCatch, extractAccessToken } from '../../../../../helpers/routes/routerHelper';
-import { deleteCatalogueSolution } from './controller';
 import config from '../../../../../config';
-import {
-  formatFormData,
-  getOrderItemContext,
-  getOrderItemErrorContext,
-  getPageData,
-  setEstimationPeriod,
-} from '../order-item/controller';
-import { validateOrderItemFormBulk } from '../../../../../helpers/controllers/validateOrderItemFormBulk';
-import { saveOrderItemBulk } from '../../../../../helpers/controllers/saveOrderItemBulk';
-import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
-import { transformApiValidationResponse } from '../../../../../helpers/common/transformApiValidationResponse';
 
 const router = express.Router({ mergeParams: true });
 
 export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/:orderItemId/confirmation/:solutionName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId, solutionName } = req.params;
+    const { orderId, orderItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     const context = await getDeleteCatalogueSolutionContext({
@@ -46,7 +34,7 @@ export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, session
   }));
 
   router.get('/:orderItemId/confirmation/:solutionName/continue', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId,  orderItemId, solutionName} = req.params;
+    const { solutionName } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     const context = await getDeleteCatalogueSolutionConfirmationContext({
@@ -62,7 +50,6 @@ export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, session
 
   router.post('/:orderItemId/confirmation/:solutionName/continue', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
-    
     return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
   }));
 
