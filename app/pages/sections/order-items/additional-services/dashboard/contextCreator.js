@@ -6,12 +6,12 @@ const generateItems = ({ orderId, orderItems }) => {
     const columns = [];
     columns.push(({
       data: orderItem.catalogueItemName,
-      href: `${baseUrl}/organisation/${orderId}/additional-services/${orderItem.orderItemId}`,
-      dataTestId: `${orderItem.orderItemId}-catalogueItemName`,
+      href: `${baseUrl}/organisation/${orderId}/additional-services/${orderItem.catalogueItemId}`,
+      dataTestId: `${orderItem.catalogueItemId}-catalogueItemName`,
     }));
     columns.push(({
-      data: `${orderItem.serviceRecipient.name} (${orderItem.serviceRecipient.odsCode})`,
-      dataTestId: `${orderItem.orderItemId}-serviceRecipient`,
+      data: `${orderItem.serviceRecipients[0].name} (${orderItem.serviceRecipients[0].odsCode})`,
+      dataTestId: `${orderItem.catalogueItemId}-serviceRecipient`,
     }));
     return columns;
   });

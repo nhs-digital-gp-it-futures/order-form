@@ -14,7 +14,7 @@ export const formatFormData = ({ formData }) => ({
 
 export const getOrderItemContext = async ({
   orderId,
-  orderItemId,
+  catalogueItemId,
   orderItemType,
   itemName,
   selectedPrice,
@@ -30,7 +30,7 @@ export const getOrderItemContext = async ({
     commonManifest,
     selectedPriceManifest,
     orderId,
-    orderItemId,
+    catalogueItemId,
     itemName,
     selectedPrice,
     formData,
