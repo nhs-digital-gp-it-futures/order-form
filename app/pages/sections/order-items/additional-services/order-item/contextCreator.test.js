@@ -3,6 +3,7 @@ import flatOndemandManifest from './flat/ondemand/manifest.json';
 import flatPatientManifest from './flat/patient/manifest.json';
 import flatDeclarativeManifest from './flat/declarative/manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
+import config from '../../../../../config';
 
 describe('additional-services order-item contextCreator', () => {
   describe('getContext', () => {
@@ -21,13 +22,14 @@ describe('additional-services order-item contextCreator', () => {
       expect(context.backLinkHref).toEqual('/order/organisation/order-1/additional-services');
     });
 
-    it('should return the backLinkHref to recipient when order item id is neworderitem', () => {
+    it('should return the backLinkHref to recipient when order item id is neworderitem and additionalServicesRecipients feature is on', () => {
+      const resource = config.additionalServicesRecipients === 'true' ? 'recipients' : 'recipient';
       const context = getContext({
         commonManifest,
         orderId: 'order-1',
         catalogueItemId: 'neworderitem',
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
+      expect(context.backLinkHref).toEqual(`/order/organisation/order-1/additional-services/select/additional-service/price/${resource}`);
     });
 
     it('should return the title', () => {

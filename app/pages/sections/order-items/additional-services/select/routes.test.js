@@ -16,13 +16,15 @@ import {
 import * as selectAdditionalServiceController from './additional-service/controller';
 import * as additionalServicePriceController from './price/controller';
 import * as selectAdditionalServiceRecipientController from './recipient/controller';
-import { baseUrl } from '../../../../../config';
+import config from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import * as routerHelper from '../../../../../helpers/routes/routerHelper';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getAdditionalServices } from '../../../../../helpers/api/bapi/getAdditionalServices';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
+import * as getRecipientsFromOapi from '../../../../../helpers/api/oapi/getServiceRecipients';
+import * as getAdditionalServicesContextItems from '../../../../../helpers/routes/getAdditionalServicesContextItems';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
@@ -70,7 +72,7 @@ describe('additional-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service`);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service`);
     });
   });
 
@@ -257,7 +259,7 @@ describe('additional-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service/price`);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price`);
     });
   });
 
@@ -303,20 +305,38 @@ describe('additional-services select routes', () => {
       });
     });
 
-    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipient when pricing has one value', async () => {
+    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipient when pricing has one value and additionalServicesRecipients feature is off', async () => {
       getCatalogueItemPricing.mockResolvedValue({
         prices: [
           { priceId: 42 },
         ],
       });
       routerHelper.extractAccessToken = jest.fn().mockReturnValue('access_token');
+      config.additionalServicesRecipients = 'false';
 
       const res = await request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie, `${sessionKeys.selectedItemId}=12`]);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipient`);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipient`);
+    });
+
+    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipients when pricing has one value and additionalServicesRecipients feature is on', async () => {
+      getCatalogueItemPricing.mockResolvedValue({
+        prices: [
+          { priceId: 42 },
+        ],
+      });
+      routerHelper.extractAccessToken = jest.fn().mockReturnValue('access_token');
+      config.additionalServicesRecipients = 'true';
+
+      const res = await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie, `${sessionKeys.selectedItemId}=12`]);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipients`);
     });
 
     it('should return the additional-services select price page if authorised and pricing has multiple values', async () => {
@@ -422,7 +442,7 @@ describe('additional-services select routes', () => {
       expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
 
-    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipient if a price is selected', async () => {
+    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipient if a price is selected if additionalServicesRecipients feature is off', async () => {
       additionalServicePriceController.validateAdditionalServicePriceForm = jest.fn()
         .mockReturnValue({ success: true });
 
@@ -431,6 +451,8 @@ describe('additional-services select routes', () => {
         getPath: path,
         getPathCookies: [mockAuthorisedCookie],
       });
+
+      config.additionalServicesRecipients = 'false';
 
       const res = await request(setUpFakeApp())
         .post(path)
@@ -443,7 +465,33 @@ describe('additional-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipient`);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipient`);
+    });
+
+    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipients if a price is selected if additionalServicesRecipients feature is on', async () => {
+      additionalServicePriceController.validateAdditionalServicePriceForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      config.additionalServicesRecipients = 'true';
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, pricesCookie])
+        .send({
+          selectAdditionalServicePrice: '1',
+          _csrf: csrfToken,
+        })
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipients`);
     });
   });
 
@@ -500,6 +548,57 @@ describe('additional-services select routes', () => {
         .expect(200);
 
       expect(res.text.includes('data-test-id="additional-service-recipient-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+    });
+  });
+
+  describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipients', () => {
+    const path = '/organisation/some-order-id/additional-services/select/additional-service/price/recipients';
+    beforeEach(() => {
+      getAdditionalServicesContextItems.getAdditionalServicesContextItems = jest.fn()
+        .mockResolvedValue({
+          serviceRecipients: [], selectedRecipients: [], additionalServicePrices: [], itemName: 'SystemOne Admin',
+        });
+
+      getRecipientsFromOapi.getServiceRecipients = jest.fn()
+        .mockReturnValue([]);
+
+      selectAdditionalServiceRecipientController.getServiceRecipientsContext = jest.fn()
+        .mockResolvedValue({});
+
+      selectAdditionalServiceRecipientController.getBackLinkHref = jest.fn()
+        .mockReturnValue('http://returnurl.com');
+    });
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should clear recipients from session if authorised', async () => {
+      await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200);
+    });
+
+    it('should return the additional-services select recipients page if authorised', async () => {
+      const res = await request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie]);
+
+      expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
@@ -603,7 +702,7 @@ describe('additional-services select routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/additional-services/neworderitem`);
+          expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/neworderitem`);
         });
     });
   });

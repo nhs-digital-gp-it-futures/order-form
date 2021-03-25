@@ -2,6 +2,7 @@ import express from 'express';
 import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../../logger';
 import config from '../../../../../config';
+import manifest from './recipients/manifest.json';
 import { withCatch, extractAccessToken } from '../../../../../helpers/routes/routerHelper';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import {
@@ -16,17 +17,20 @@ import {
   validateAdditionalServicePriceForm,
 } from './price/controller';
 import {
+  getBackLinkHref,
   getAdditionalServiceRecipientPageContext,
   getAdditionalServiceRecipientErrorPageContext,
   validateAdditionalServiceRecipientForm,
   getAdditionalServiceRecipientName,
 } from './recipient/controller';
+import { getServiceRecipientsContext } from '../../catalogue-solutions/select/recipients/controller';
 import {
   findSelectedCatalogueItemInSession,
 } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getAdditionalServices } from '../../../../../helpers/api/bapi/getAdditionalServices';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
+import { getAdditionalServicesContextItems } from '../../../../../helpers/routes/getAdditionalServicesContextItems';
 
 const router = express.Router({ mergeParams: true });
 
@@ -145,8 +149,9 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedPriceId, value: additionalServicePrices.prices[0].priceId,
       });
-      logger.info('redirecting to additional services select recipient page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`);
+      const resource = config.additionalServicesRecipients === 'true' ? 'recipients' : 'recipient';
+      logger.info(`redirecting to additional services select ${resource} page`);
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${resource}`);
     }
 
     const context = getAdditionalServicePricePageContext({
@@ -168,8 +173,9 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedPriceId, value: req.body.selectAdditionalServicePrice,
       });
-      logger.info('redirecting to additional services select recipient page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`);
+      const resource = config.additionalServicesRecipients === 'true' ? 'recipients' : 'recipient';
+      logger.info(`redirecting to additional services select ${resource} page`);
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${resource}`);
     }
 
     const selectedAdditionalServiceName = sessionManager.getFromSession({
@@ -215,6 +221,35 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.get('/additional-service/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const { selectStatus } = req.query;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const recipients = await getRecipients({ orderId, accessToken });
+    sessionManager.saveToSession({ req, key: sessionKeys.recipients, value: recipients });
+
+    const {
+      serviceRecipients, selectedRecipients, additionalServicePrices, itemName,
+    } = await getAdditionalServicesContextItems({
+      req, sessionManager, accessToken, logger,
+    });
+
+    const context = await getServiceRecipientsContext({
+      orderId,
+      itemName,
+      selectStatus,
+      serviceRecipients,
+      selectedRecipients,
+      additionalServicePrices,
+      manifest,
+    });
+
+    context.backLinkHref = getBackLinkHref(additionalServicePrices, orderId);
+
+    logger.info(`navigating to order ${orderId} additional-services select recipients page`);
+    return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
   router.post('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const recipients = sessionManager.getFromSession({ req, key: sessionKeys.recipients });
@@ -246,5 +281,6 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
     return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
+
   return router;
 };
