@@ -80,7 +80,7 @@ test('should render the Continue button', async (t) => {
   await t.navigateTo(pageUrl);
   const button = Selector('[data-test-id="continue-button"] button');
   await t
-    .expect(await extractInnerText(button)).eql(content.continueButtonText.text);
+    .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
 test('should redirect to /organisation/order-id/catalogue-solutions when Continue is clicked', async (t) => {

@@ -17,7 +17,7 @@ describe('delete catalogue page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
       const backLinkText = $('[data-test-id="go-back-link"]');
-      expect(backLinkText.length).toEqual(2);
+      expect(backLinkText.length).toEqual(1);
       expect($(backLinkText).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
@@ -56,8 +56,8 @@ describe('delete catalogue page', () => {
 
   it('should render the cancel link', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const noButton = $('[data-test-id="go-back-link"]');
-      expect(noButton.length).toEqual(2);
+      const noButton = $('[data-test-id="cancel-link"]');
+      expect(noButton.length).toEqual(1);
       expect($(noButton).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));

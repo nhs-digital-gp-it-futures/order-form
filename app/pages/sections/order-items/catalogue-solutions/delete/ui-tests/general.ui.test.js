@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 import { orderApiUrl } from '../../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/delete';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/delete/order-item-id/confirmation/write-on-time/';
 
 const orderDescriptionMock = 'desc';
 
@@ -16,7 +16,7 @@ const mocks = ({ postRoute = false }) => {
 
   if (postRoute) {
     nock(orderApiUrl)
-      .delete('/api/v1/orders/order-id')
+      .delete('/api/v1/orders/order-id/order-items/order-item-id')
       .reply(204);
   }
 };
@@ -112,22 +112,33 @@ test('should render the order description', async (t) => {
     .expect(await extractInnerText(orderDescription)).eql(orderDescriptionMock);
 });
 
-test('should render the Cancel button', async (t) => {
+test('should render the go back link', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="no-button"] a');
+  const link = Selector('div[data-test-id="go-back-link"] a');
 
   await t
-    .expect(await extractInnerText(button)).eql(content.noButton)
-    .expect(button.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/order-item-id');
+    .expect(await extractInnerText(link)).eql(content.backLinkText)
+    .expect(link.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/order-item-id');
+});
+
+test('should render the cancel link', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const link = Selector('div[data-test-id="cancel-link"] a');
+
+  await t
+    .expect(await extractInnerText(link)).eql(content.noButton.text)
+    .expect(link.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/order-item-id');
 });
 
 test('should render the Confirm button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="yes-button"] button');
+  const button = Selector('div[data-test-id="yes-button"] button');
 
   await t
     .expect(await extractInnerText(button)).eql(content.yesButton.text);
@@ -137,7 +148,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/delete/order
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="yes-button"] button');
+  const button = Selector('div[data-test-id="yes-button"] button');
 
   await t
     .debug()
