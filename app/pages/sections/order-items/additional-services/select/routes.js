@@ -23,14 +23,20 @@ import {
   validateAdditionalServiceRecipientForm,
   getAdditionalServiceRecipientName,
 } from './recipient/controller';
-import { getServiceRecipientsContext } from '../../catalogue-solutions/select/recipients/controller';
+import { getServiceRecipientsContext, getServiceRecipientsErrorPageContext } from '../../catalogue-solutions/select/recipients/controller';
 import {
   findSelectedCatalogueItemInSession,
 } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getAdditionalServices } from '../../../../../helpers/api/bapi/getAdditionalServices';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
-import { getAdditionalServicesContextItems } from '../../../../../helpers/routes/getAdditionalServicesContextItems';
+import {
+  getAdditionalServicesContextItems,
+  getAdditionalServicesContextItemsFromSession,
+} from '../../../../../helpers/routes/getAdditionalServicesContextItems';
+import { validateSolutionRecipientsForm } from '../../../../../helpers/controllers/validateSolutionRecipientsForm';
+import { getCommencementDate } from '../../../../../helpers/routes/getCommencementDate';
+import { getDeliveryDateContext } from '../../catalogue-solutions/select/date/controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -149,6 +155,10 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedPriceId, value: additionalServicePrices.prices[0].priceId,
       });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedPriceId, value: additionalServicePrices.prices[0].priceId,
+      });
+
       const resource = config.additionalServicesRecipients === 'true' ? 'recipients' : 'recipient';
       logger.info(`redirecting to additional services select ${resource} page`);
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${resource}`);
@@ -221,35 +231,6 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-  router.get('/additional-service/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    const { selectStatus } = req.query;
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const recipients = await getRecipients({ orderId, accessToken });
-    sessionManager.saveToSession({ req, key: sessionKeys.recipients, value: recipients });
-
-    const {
-      serviceRecipients, selectedRecipients, additionalServicePrices, itemName,
-    } = await getAdditionalServicesContextItems({
-      req, sessionManager, accessToken, logger,
-    });
-
-    const context = await getServiceRecipientsContext({
-      orderId,
-      itemName,
-      selectStatus,
-      serviceRecipients,
-      selectedRecipients,
-      additionalServicePrices,
-      manifest,
-    });
-
-    context.backLinkHref = getBackLinkHref(additionalServicePrices, orderId);
-
-    logger.info(`navigating to order ${orderId} additional-services select recipients page`);
-    return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
-  }));
-
   router.post('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const recipients = sessionManager.getFromSession({ req, key: sessionKeys.recipients });
@@ -280,6 +261,106 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     });
 
     return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.get('/additional-service/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const { selectStatus } = req.query;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const recipients = await getRecipients({ orderId, accessToken });
+    sessionManager.saveToSession({ req, key: sessionKeys.recipients, value: recipients });
+
+    const {
+      serviceRecipients, selectedRecipients, additionalServicePrices, itemName,
+    } = await getAdditionalServicesContextItems({
+      req, sessionManager, accessToken, logger,
+    });
+
+    const context = await getServiceRecipientsContext({
+      orderId,
+      itemName,
+      selectStatus,
+      serviceRecipients,
+      selectedRecipients,
+      additionalServicePrices,
+      manifest,
+    });
+
+    context.backLinkHref = getBackLinkHref(additionalServicePrices, orderId);
+    context.selectDeselectButtonAction = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`;
+
+    logger.info(`navigating to order ${orderId} additional-services select recipients page`);
+    return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/additional-service/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const { selectStatus } = req.query;
+
+    const selected = Object
+      .entries(req.body)
+      .filter((item) => item[0] !== '_csrf' && item[0] !== 'orderItemId');
+
+    const response = validateSolutionRecipientsForm({ data: selected });
+
+    if (response.success) {
+      const selectedRecipients = selected.map(([odsCode]) => odsCode);
+
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
+      });
+
+      logger.info('Redirect to planned delivery date page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`);
+    }
+
+    const {
+      serviceRecipients, selectedRecipients, additionalServicePrices, itemName,
+    } = await getAdditionalServicesContextItemsFromSession({ req, sessionManager });
+
+    const context = await getServiceRecipientsErrorPageContext({
+      orderId,
+      itemName,
+      selectStatus,
+      serviceRecipients,
+      selectedRecipients,
+      additionalServicePrices,
+      validationErrors: response.errors,
+      manifest,
+    });
+
+    context.backLinkHref = getBackLinkHref(additionalServicePrices, orderId);
+
+    return res.render(
+      'pages/sections/order-items/catalogue-solutions/select/recipients/template.njk',
+      addContext({ context, user: req.user, csrfToken: req.csrfToken() }),
+    );
+  }));
+
+  router.get('/additional-service/price/recipients/date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+
+    const itemName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+
+    const commencementDate = await getCommencementDate({
+      req,
+      sessionManager,
+      accessToken,
+      logger,
+    });
+
+    const context = await getDeliveryDateContext({
+      orderId, itemName, commencementDate,
+    });
+
+    context.backLinkHref = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`;
+
+    logger.info(`navigating to order ${orderId} additional-services select planned delivery date page`);
+    return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk',
+      addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;

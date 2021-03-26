@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { solutionsApiUrl } from '../../../../../../../../config';
+import config, { solutionsApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
@@ -73,6 +73,7 @@ fixture('Additional-services - flat declarative - general')
   });
 
 test('should render a text field for the quantity question', async (t) => {
+  config.additionalServicesRecipients = 'false';
   await pageSetup();
   await t.navigateTo(pageUrl);
 

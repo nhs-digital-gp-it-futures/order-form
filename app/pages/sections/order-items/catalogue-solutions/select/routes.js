@@ -14,7 +14,6 @@ import {
 } from './price/controller';
 import {
   getServiceRecipientsContext,
-  validateSolutionRecipientsForm,
   getServiceRecipientsErrorPageContext,
   getSelectSolutionPriceEndpoint,
   setContextIfBackFromCatalogueSolutionEdit,
@@ -41,6 +40,7 @@ import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPla
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 import { extractDate } from '../../../../../helpers/controllers/extractDate';
 import { validateOrderItemTypeForm } from '../../../../../helpers/controllers/validateOrderItemTypeForm';
+import { validateSolutionRecipientsForm } from '../../../../../helpers/controllers/validateSolutionRecipientsForm';
 import manifest from './recipients/manifest.json';
 
 const router = express.Router({ mergeParams: true });
