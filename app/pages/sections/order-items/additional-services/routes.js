@@ -11,8 +11,9 @@ import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
 } from './order-item/controller';
+import { getOrderItemContext as getOrderItemRecipientsContext } from '../catalogue-solutions/order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { getOrderItemPageData, getOrderItemRecipientsPageData } from '../../../../helpers/routes/getOrderItemPageData';
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
@@ -55,7 +56,15 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const { orderId, catalogueItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const pageData = await getOrderItemPageData({
+    const additionalServiceRecipientsFeature = config.additionalServicesRecipients === 'true';
+
+    const pageData = additionalServiceRecipientsFeature ? await getOrderItemRecipientsPageData({
+      req,
+      sessionManager,
+      accessToken,
+      orderId,
+      catalogueItemId,
+    }) : await getOrderItemPageData({
       req,
       sessionManager,
       accessToken,
@@ -65,7 +74,16 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
 
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
 
-    const context = await getOrderItemContext({
+    const context = additionalServiceRecipientsFeature ? await getOrderItemRecipientsContext({
+      orderId,
+      catalogueItemId,
+      orderItemType: 'AdditionalService',
+      solutionName: pageData.itemName,
+      selectedPrice: pageData.selectedPrice,
+      formData: pageData.formData,
+      recipients: pageData.recipients,
+      selectedRecipients: pageData.selectedRecipients || [],
+    }) : await getOrderItemContext({
       orderId,
       catalogueItemId,
       orderItemType: 'AdditionalService',
@@ -74,10 +92,11 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,
       formData: pageData.formData,
+      selectedRecipients: pageData.selectedRecipients,
     });
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);
-    return res.render('pages/sections/order-items/additional-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render(`pages/sections/order-items/${additionalServiceRecipientsFeature ? 'catalogue-solutions' : 'additional-services'}/order-item/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {

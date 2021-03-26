@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../commonManifest.json';
-import { solutionsApiUrl } from '../../../../../../config';
+import config, { solutionsApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../helpers/routes/sessionHelper';
 
@@ -90,16 +90,18 @@ test('should render additional-services order-item page', async (t) => {
 });
 
 test('should link to /order/organisation/order-1/additional-services/select/additional-service/recipient for backlink', async (t) => {
+  const resource = config.additionalServicesRecipients === 'true' ? 'recipients' : 'recipient';
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
+    .expect(goBackLink.getAttribute('href')).eql(`/order/organisation/order-1/additional-services/select/additional-service/price/${resource}`);
 });
 
 test('should link to /order/organisation/order-1/additional-services/select/solution/price/recipient for backlink after validation errors', async (t) => {
+  const resource = config.additionalServicesRecipients === 'true' ? 'recipients' : 'recipient';
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -108,7 +110,7 @@ test('should link to /order/organisation/order-1/additional-services/select/solu
 
   await t
     .click(saveButton)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services/select/additional-service/price/recipient');
+    .expect(goBackLink.getAttribute('href')).eql(`/order/organisation/order-1/additional-services/select/additional-service/price/${resource}`);
 });
 
 test('should render the title', async (t) => {

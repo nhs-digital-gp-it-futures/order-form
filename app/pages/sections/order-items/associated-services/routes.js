@@ -16,6 +16,8 @@ import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPag
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
+import { getOrganisation } from '../../../../helpers/api/oapi/getOrganisation';
+import { transformApiValidationResponse } from '../../../../helpers/common/transformApiValidationResponse';
 
 const router = express.Router({ mergeParams: true });
 
@@ -98,6 +100,9 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
+      const orgId = req.user.primaryOrganisationId;
+      const orgData = await getOrganisation({ orgId, accessToken });
+
       const apiResponse = await saveOrderItem({
         accessToken,
         orderId,
@@ -106,13 +111,17 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
         itemName: pageData.itemName,
         selectedPrice: pageData.selectedPrice,
         formData,
+        serviceRecipientId: orgData.odsCode,
+        serviceRecipientName: orgData.name,
       });
 
       if (apiResponse.success) {
         logger.info('Redirecting to the associated-services main page');
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services`);
       }
-      validationErrors.push(...apiResponse.errors);
+
+      const apiErrors = transformApiValidationResponse(apiResponse.errors);
+      validationErrors.push(...apiErrors);
     }
 
     const context = await getOrderItemErrorPageContext({

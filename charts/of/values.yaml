@@ -10,7 +10,7 @@ image:
   repository: gpitfuturesdevacr.azurecr.io/nhsd/buying-catalogue/order-form
   pullPolicy: Always
 
-imagePullSecrets: 
+imagePullSecrets:
 nameOverride: "of"
 fullnameOverride: "gpitfutures-bc-of"
 
@@ -40,9 +40,9 @@ service:
 
 ingress:
   enabled: false
-  annotations: {}    
+  annotations: {}
   hosts:
-    - paths: 
+    - paths:
         - /order
 
   tls: []
@@ -50,7 +50,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources: 
+resources:
   requests:
     memory: 64Mi
     cpu: 10m
@@ -58,7 +58,7 @@ resources:
     cpu: 1000m
     memory: 300Mi
 
-hostAliases:  
+hostAliases:
 
 nodeSelector: {}
 
@@ -67,26 +67,29 @@ tolerations: []
 affinity: {}
 
 appBaseUri:
-  name: 
+  name:
   key:
-baseUri: 
+baseUri:
 cookieSecret:
-  name: 
+  name:
   key:
 feedbackLinkUrl:
 
-serviceDependencies: 
+featureFlags:
+  additionalServicesRecipients: "false"
+
+serviceDependencies:
   isapi: # used for internal calls to isapi custom api
     name:
     key:
   oidc: # used for external references to isapi for oidc use
     baseUriConfig:
-      name: 
-      key:     
+      name:
+      key:
     clientId :
-    clientSecret: 
-      name: 
-      key: 
+    clientSecret:
+      name:
+      key:
   ordapi:
     name:
     key:
@@ -104,8 +107,8 @@ serviceDependencies:
     key:
   redis:
     urlConfig:
-      name: 
-      key: 
+      name:
+      key:
     port: "6379"
     tls: false
     passSecret:

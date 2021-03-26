@@ -2,6 +2,11 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../../../../../config';
 import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
+// eslint-disable-next-line max-len
+export const backLinkHref = (additionalServicePrices, orderId) => (((additionalServicePrices || {}).prices || {}).length === 1
+  ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
+  : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);
+
 const generateRecipientOptions = ({ recipients, selectedAdditionalRecipientId }) => {
   const recipientsMap = recipients.map((recipient) => ({
     value: recipient.odsCode,
@@ -24,9 +29,7 @@ export const getContext = ({
   ...manifest,
   title: `${manifest.title} ${itemName}`,
   questions: recipients && generateQuestionsContext({ recipients, selectedAdditionalRecipientId }),
-  backLinkHref: ((additionalServicePrices || {}).prices || {}).length === 1
-    ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
-    : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`,
+  backLinkHref: backLinkHref(additionalServicePrices, orderId),
 });
 
 export const getErrorContext = (params) => {

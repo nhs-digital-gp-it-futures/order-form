@@ -15,9 +15,11 @@ import {
 import * as additionalServicesController from './dashboard/controller';
 import * as orderItemController from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import {
+  getOrderItemPageData,
+} from '../../../../helpers/routes/getOrderItemPageData';
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
-import { baseUrl } from '../../../../config';
+import config, { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
@@ -134,6 +136,9 @@ describe('additional-services section routes', () => {
 
   describe('GET /organisation/:orderId/additional-services/:catalogueItemId', () => {
     const path = '/organisation/some-order-id/additional-services/neworderitem';
+    beforeEach(() => {
+      config.additionalServicesRecipients = 'false';
+    });
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
