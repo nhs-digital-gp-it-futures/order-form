@@ -76,3 +76,80 @@ export const getOrderItemPageData = async ({
     catalogueSolutionId,
   };
 };
+
+export const getOrderItemRecipientsPageData = async ({
+  req, sessionManager, accessToken, orderId, catalogueItemId,
+}) => {
+  const catalogueSolutionId = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedCatalogueSolutionId,
+  });
+  const recipients = sessionManager.getFromSession({
+    req, key: sessionKeys.recipients,
+  });
+
+  if (catalogueItemId === 'neworderitem') {
+    const itemId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemId,
+    });
+    const itemName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+    const selectedPriceId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedPriceId,
+    });
+    const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
+    const selectedRecipients = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedRecipients,
+    });
+    const deliveryDate = sessionManager.getFromSession({
+      req, key: sessionKeys.plannedDeliveryDate,
+    });
+
+    return {
+      itemId,
+      itemName,
+      catalogueSolutionId,
+      deliveryDate,
+      recipients,
+      selectedPrice,
+      selectedRecipients,
+      formData: {
+        deliveryDate,
+        price: selectedPrice.price,
+      },
+    };
+  }
+
+  const orderItem = await getOrderItem({ orderId, catalogueItemId, accessToken });
+  const itemId = orderItem.catalogueItemId;
+  const itemName = orderItem.catalogueItemName;
+  const selectedRecipients = orderItem.serviceRecipients;
+  const selectedPrice = {
+    currencyCode: orderItem.currencyCode,
+    price: orderItem.price,
+    itemUnit: orderItem.itemUnit,
+    timeUnit: orderItem.timeUnit,
+    type: orderItem.type,
+    provisioningType: orderItem.provisioningType,
+  };
+
+  const [day, month, year] = destructureDate(orderItem.serviceRecipients[0].deliveryDate);
+  const formData = {
+    'deliveryDate-year': year,
+    'deliveryDate-month': month,
+    'deliveryDate-day': day,
+    quantity: orderItem.serviceRecipients[0].quantity,
+    selectEstimationPeriod: orderItem.estimationPeriod,
+    price: orderItem.price,
+  };
+
+  return {
+    itemId,
+    itemName,
+    selectedRecipients,
+    recipients,
+    selectedPrice,
+    formData,
+    catalogueSolutionId,
+  };
+};

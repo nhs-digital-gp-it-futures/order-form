@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl } from '../../../../../../../config';
+import config, { orderApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
@@ -129,6 +129,7 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-id/additional-services/neworderitem when a recipient is selected', async (t) => {
+  config.additionalServicesRecipients = 'false';
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
