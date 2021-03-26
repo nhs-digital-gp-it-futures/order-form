@@ -41,6 +41,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       { req, key: sessionKeys.recipients, value: undefined },
     );
     sessionManager.saveToSession(
+      { req, key: sessionKeys.catalogueItemExists, value: undefined },
+    );
+    sessionManager.saveToSession(
       { req, key: sessionKeys.orderItems, value: context.orderItems },
     );
 
@@ -64,7 +67,6 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
 
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, orderItemId } = req.params;
-    const { solutionAlreadySelected } = req.query;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = await getOrderItemPageDataBulk({
       req,
@@ -75,7 +77,9 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     });
 
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
-
+    const catalogueItemExists = sessionManager.getFromSession({
+      req, key: sessionKeys.catalogueItemExists,
+    });
     const context = await getOrderItemContext({
       orderId,
       orderItemId,
@@ -86,7 +90,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       deliveryDate: pageData.deliveryDate,
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients,
-      solutionAlreadySelected,
+      catalogueItemExists,
     });
 
     if (context.questions.price && !context.questions.price.data) {

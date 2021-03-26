@@ -51,8 +51,8 @@ describe('catalogue-solutions order-item contextCreator', () => {
     it('should return the backLinkHref to select catalogue solution when user selects existing catalogue solution', () => {
       const context = getContext({
         commonManifest,
-        solutionAlreadySelected: true,
         selectedPrice: { type: 'flat', provisioningType: 'ondemand' },
+        catalogueItemExists: { catalogueItemId: 'some-id' },
       });
       expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/');
     });

@@ -24,6 +24,7 @@ import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCata
 import { getSupplier } from '../../../../../helpers/api/ordapi/getSupplier';
 import { getCommencementDate } from '../../../../../helpers/routes/getCommencementDate';
 import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
+import * as validateFormFunction from '../../../../../helpers/controllers/validateSolutionRecipientsForm';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../../logger');
@@ -225,7 +226,7 @@ describe('catalogue-solutions select routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/solution-1?solutionAlreadySelected=true`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/solution-1`);
         });
     });
 
@@ -487,7 +488,7 @@ describe('catalogue-solutions select routes', () => {
     it('should show the recipient select page with errors if there are validation errors', async () => {
       getRecipientsFromOapi.mockResolvedValue([]);
 
-      selectRecipientController.validateSolutionRecipientsForm = jest.fn()
+      validateFormFunction.validateSolutionRecipientsForm = jest.fn()
         .mockReturnValue({ success: false });
 
       selectRecipientController
@@ -519,7 +520,7 @@ describe('catalogue-solutions select routes', () => {
     });
 
     it('should redirect to /organisation/order-1/catalogue-solutions/select/solution/price/recipients/date when a recipient is selected', async () => {
-      selectRecipientController.validateSolutionRecipientsForm = jest.fn()
+      validateFormFunction.validateSolutionRecipientsForm = jest.fn()
         .mockReturnValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
@@ -545,7 +546,7 @@ describe('catalogue-solutions select routes', () => {
       selectRecipientController.getSelectSolutionPriceEndpoint = jest.fn()
         .mockReturnValue('/organisation/order-1/catalogues-solutions/42');
 
-      selectRecipientController.validateSolutionRecipientsForm = jest.fn()
+      validateFormFunction.validateSolutionRecipientsForm = jest.fn()
         .mockReturnValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({

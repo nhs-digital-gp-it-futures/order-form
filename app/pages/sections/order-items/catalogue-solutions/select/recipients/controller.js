@@ -4,7 +4,7 @@ import { getContext, getErrorContext } from './contextCreator';
 export const getSelectSolutionPriceEndpoint = (orderId, orderItemId) => `/organisation/${orderId}/catalogue-solutions/${orderItemId}`;
 
 export const getServiceRecipientsContext = async ({
-  orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices,
+  orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices, manifest,
 }) => getContext({
   orderId,
   itemName,
@@ -12,6 +12,7 @@ export const getServiceRecipientsContext = async ({
   selectedRecipientIdsData: selectedRecipients,
   selectStatus,
   solutionPrices,
+  manifest,
 });
 
 export const getServiceRecipientsErrorPageContext = async ({
@@ -22,6 +23,7 @@ export const getServiceRecipientsErrorPageContext = async ({
   selectedRecipients,
   solutionPrices,
   validationErrors,
+  manifest,
 }) => getErrorContext({
   orderId,
   itemName,
@@ -30,6 +32,7 @@ export const getServiceRecipientsErrorPageContext = async ({
   selectStatus,
   solutionPrices,
   validationErrors,
+  manifest,
 });
 
 export const setContextIfBackFromCatalogueSolutionEdit = (req, context, orderId) => {
@@ -52,18 +55,4 @@ export const setContextIfBackFromCatalogueSolutionEdit = (req, context, orderId)
     context.backLinkHref = referer;
     context.orderItemId = orderItemId;
   }
-};
-
-export const validateSolutionRecipientsForm = ({ data }) => {
-  if (data.length > 0) {
-    return { success: true };
-  }
-
-  const errors = [
-    {
-      field: 'selectSolutionRecipients',
-      id: 'SelectSolutionRecipientsRequired',
-    },
-  ];
-  return { success: false, errors };
 };

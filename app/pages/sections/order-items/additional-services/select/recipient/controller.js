@@ -1,4 +1,4 @@
-import { getContext, getErrorContext } from './contextCreator';
+import { backLinkHref, getContext, getErrorContext } from './contextCreator';
 
 export const getAdditionalServiceRecipientPageContext = (params) => getContext(params);
 
@@ -21,3 +21,6 @@ export const validateAdditionalServiceRecipientForm = ({ data }) => {
 export const getAdditionalServiceRecipientName = ({ serviceRecipientId, recipients }) => (
   recipients.find((recipient) => serviceRecipientId === recipient.odsCode).name
 );
+
+// eslint-disable-next-line max-len
+export const getBackLinkHref = (additionalServicePrices, orderId) => backLinkHref(additionalServicePrices, orderId);

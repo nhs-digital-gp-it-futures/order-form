@@ -1,4 +1,4 @@
-import { baseUrl } from '../../../../../config';
+import config from '../../../../../config';
 import { generateErrorMap } from '../../../../../helpers/contextCreators/generateErrorMap';
 import { generateQuestions } from '../../../../../helpers/contextCreators/generateQuestions';
 import { generateErrorSummary } from '../../../../../helpers/contextCreators/generateErrorSummary';
@@ -38,8 +38,8 @@ export const getContext = ({
     ...commonManifest.deleteButton,
     disabled: catalogueItemId === 'neworderitem',
   },
-  backLinkHref: catalogueItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`
-    : `${baseUrl}/organisation/${orderId}/additional-services`,
+  backLinkHref: catalogueItemId === 'neworderitem' ? `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${config.additionalServicesRecipients === 'true' ? 'recipients' : 'recipient'}`
+    : `${config.baseUrl}/organisation/${orderId}/additional-services`,
 });
 
 export const getErrorContext = (params) => {

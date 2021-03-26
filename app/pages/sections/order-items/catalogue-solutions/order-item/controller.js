@@ -36,7 +36,7 @@ export const getOrderItemContext = async ({
   formData,
   recipients,
   selectedRecipients,
-  solutionAlreadySelected,
+  catalogueItemExists,
 }) => {
   const selectedPriceManifest = getSelectedPriceManifest({
     orderItemType,
@@ -56,7 +56,7 @@ export const getOrderItemContext = async ({
     recipients,
     selectedPrice,
     selectedRecipients,
-    solutionAlreadySelected,
+    catalogueItemExists,
   });
 };
 

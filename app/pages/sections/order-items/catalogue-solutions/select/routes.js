@@ -14,7 +14,6 @@ import {
 } from './price/controller';
 import {
   getServiceRecipientsContext,
-  validateSolutionRecipientsForm,
   getServiceRecipientsErrorPageContext,
   getSelectSolutionPriceEndpoint,
   setContextIfBackFromCatalogueSolutionEdit,
@@ -41,6 +40,8 @@ import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPla
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 import { extractDate } from '../../../../../helpers/controllers/extractDate';
 import { validateOrderItemTypeForm } from '../../../../../helpers/controllers/validateOrderItemTypeForm';
+import { validateSolutionRecipientsForm } from '../../../../../helpers/controllers/validateSolutionRecipientsForm';
+import manifest from './recipients/manifest.json';
 
 const router = express.Router({ mergeParams: true });
 
@@ -90,7 +91,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       });
 
       const orderItems = sessionManager.getFromSession({ req, key: sessionKeys.orderItems });
-      const alreadySelectedItem = orderItems
+      const existingItem = orderItems
         .filter((orderItem) => orderItem.catalogueItemId === selectedItem.catalogueItemId);
 
       sessionManager.saveToSession({
@@ -100,9 +101,12 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedItemName, value: selectedItem.name,
       });
 
-      if (alreadySelectedItem.length > 0 && alreadySelectedItem[0].catalogueItemId) {
+      if (existingItem.length > 0 && existingItem[0].catalogueItemId) {
+        sessionManager.saveToSession({
+          req, key: sessionKeys.catalogueItemExists, value: existingItem,
+        });
         return res.redirect(
-          `${config.baseUrl}/organisation/${orderId}/catalogue-solutions/${alreadySelectedItem[0].catalogueItemId}?solutionAlreadySelected=true`,
+          `${config.baseUrl}/organisation/${orderId}/catalogue-solutions/${existingItem[0].catalogueItemId}`,
         );
       }
       logger.info('redirecting catalogue solutions select price page');
@@ -205,7 +209,13 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
 
     const context = await getServiceRecipientsContext({
-      orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices,
+      orderId,
+      itemName,
+      selectStatus,
+      serviceRecipients,
+      selectedRecipients,
+      solutionPrices,
+      manifest,
     });
 
     setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);
@@ -230,6 +240,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
       });
+
       if (req.body.orderItemId) {
         logger.info('Back to catalogue solution page');
         return res.redirect(`${config.baseUrl}${getSelectSolutionPriceEndpoint(orderId, req.body.orderItemId)}`);
@@ -245,6 +256,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       req,
       key: sessionKeys.selectedRecipients,
     });
+
     const context = await getServiceRecipientsErrorPageContext({
       orderId,
       itemName,
@@ -253,6 +265,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       selectedRecipients,
       solutionPrices,
       validationErrors: response.errors,
+      manifest,
     });
 
     setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);

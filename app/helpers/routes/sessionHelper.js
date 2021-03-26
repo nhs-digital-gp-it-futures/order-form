@@ -24,6 +24,7 @@ export const sessionKeys = {
   selectEstimationPeriod: 'selectEstimationPeriod',
   selectedQuantity: 'selectedQuantity',
   orderItems: 'orderItems',
+  catalogueItemExists: 'catalogueItemExists',
 };
 
 export const getFromSessionOrApi = async ({
