@@ -20,7 +20,7 @@ export const getContext = ({
   const errorMessages = errorMap && (errorMap.quantity || errorMap.deliveryDate)
     ? ((errorMap.quantity || {}).errorMessages || [''])
       .concat((errorMap.deliveryDate || {}).errorMessages) : undefined;
-  const newbackLinkRef = selectedPrice.provisioningType === 'Patient'
+  const newItemBackLink = selectedPrice.provisioningType === 'Patient'
     ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`
     : `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
   const existingItemBackLink = catalogueItemExists !== undefined
@@ -61,7 +61,7 @@ export const getContext = ({
       href: commonManifest.deleteButton.href,
       disabled: orderItemId === 'neworderitem',
     },
-    backLinkHref: orderItemId === 'neworderitem' ? newbackLinkRef : existingItemBackLink,
+    backLinkHref: orderItemId === 'neworderitem' ? newItemBackLink : existingItemBackLink,
   };
 };
 
