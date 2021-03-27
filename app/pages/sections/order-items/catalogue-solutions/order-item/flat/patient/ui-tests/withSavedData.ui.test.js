@@ -199,7 +199,7 @@ test('should render the delete button as not disabled', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="delete-button"] button');
+  const button = Selector('[data-test-id="delete-button"] a');
 
   await t
     .expect(await extractInnerText(button)).eql('Delete Catalogue Solution')

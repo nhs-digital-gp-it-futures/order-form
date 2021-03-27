@@ -54,7 +54,7 @@ export const getContext = ({
     deleteButton: {
       text: commonManifest.deleteButton.text,
       altText: orderItemId === 'neworderitem' ? commonManifest.deleteButton.altText : '',
-      href: commonManifest.deleteButton.href,
+      href: `${baseUrl}/organisation/${orderId}/catalogue-solutions/delete/${orderItemId}/confirmation/${solutionName}`,
       disabled: orderItemId === 'neworderitem',
     },
     backLinkHref: orderItemId === 'neworderitem' ? newbackLinkRef : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
