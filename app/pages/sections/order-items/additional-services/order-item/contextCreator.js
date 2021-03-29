@@ -38,7 +38,7 @@ export const getContext = ({
     ...commonManifest.deleteButton,
     disabled: catalogueItemId === 'neworderitem',
   },
-  backLinkHref: catalogueItemId === 'neworderitem' ? `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${config.additionalServicesRecipients === 'true' ? 'recipients' : 'recipient'}`
+  backLinkHref: catalogueItemId === 'neworderitem' ? `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`
     : `${config.baseUrl}/organisation/${orderId}/additional-services`,
 });
 

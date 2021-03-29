@@ -159,9 +159,8 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedPriceId, value: additionalServicePrices.prices[0].priceId,
       });
 
-      const resource = config.additionalServicesRecipients === 'true' ? 'recipients' : 'recipient';
-      logger.info(`redirecting to additional services select ${resource} page`);
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${resource}`);
+      logger.info('redirecting to additional services select recipients page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`);
     }
 
     const context = getAdditionalServicePricePageContext({
@@ -183,9 +182,8 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedPriceId, value: req.body.selectAdditionalServicePrice,
       });
-      const resource = config.additionalServicesRecipients === 'true' ? 'recipients' : 'recipient';
-      logger.info(`redirecting to additional services select ${resource} page`);
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${resource}`);
+      logger.info('redirecting to additional services select recipients page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`);
     }
 
     const selectedAdditionalServiceName = sessionManager.getFromSession({

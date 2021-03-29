@@ -66,7 +66,8 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-fixture('Additional-services - flat ondemand - general')
+// TODO: fix when feature completed
+fixture.skip('Additional-services - flat ondemand - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);

@@ -407,31 +407,13 @@ describe('additional-services select routes', () => {
       });
     });
 
-    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipient when pricing has one value and additionalServicesRecipients feature is off', async () => {
+    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipients when pricing has one value', async () => {
       getCatalogueItemPricing.mockResolvedValue({
         prices: [
           { priceId: 42 },
         ],
       });
       routerHelper.extractAccessToken = jest.fn().mockReturnValue('access_token');
-      config.additionalServicesRecipients = 'false';
-
-      const res = await request(setUpFakeApp())
-        .get(path)
-        .set('Cookie', [mockAuthorisedCookie, `${sessionKeys.selectedItemId}=12`]);
-
-      expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipient`);
-    });
-
-    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipients when pricing has one value and additionalServicesRecipients feature is on', async () => {
-      getCatalogueItemPricing.mockResolvedValue({
-        prices: [
-          { priceId: 42 },
-        ],
-      });
-      routerHelper.extractAccessToken = jest.fn().mockReturnValue('access_token');
-      config.additionalServicesRecipients = 'true';
 
       const res = await request(setUpFakeApp())
         .get(path)
@@ -544,7 +526,7 @@ describe('additional-services select routes', () => {
       expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
 
-    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipient if a price is selected if additionalServicesRecipients feature is off', async () => {
+    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipients if a price is selected', async () => {
       additionalServicePriceController.validateAdditionalServicePriceForm = jest.fn()
         .mockReturnValue({ success: true });
 
@@ -553,34 +535,6 @@ describe('additional-services select routes', () => {
         getPath: path,
         getPathCookies: [mockAuthorisedCookie],
       });
-
-      config.additionalServicesRecipients = 'false';
-
-      const res = await request(setUpFakeApp())
-        .post(path)
-        .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, pricesCookie])
-        .send({
-          selectAdditionalServicePrice: '1',
-          _csrf: csrfToken,
-        })
-        .expect(302);
-
-      expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipient`);
-    });
-
-    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipients if a price is selected if additionalServicesRecipients feature is on', async () => {
-      additionalServicePriceController.validateAdditionalServicePriceForm = jest.fn()
-        .mockReturnValue({ success: true });
-
-      const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        getPathCookies: [mockAuthorisedCookie],
-      });
-
-      config.additionalServicesRecipients = 'true';
 
       const res = await request(setUpFakeApp())
         .post(path)
