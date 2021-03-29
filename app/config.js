@@ -72,7 +72,4 @@ module.exports = {
 
   // The password to connect to redis
   redisPass: process.env.REDIS_PASS,
-
-  // Feature Flag for additional services recipients
-  additionalServicesRecipients: process.env.ADDITIONAL_SERVICES_RECIPIENTS || 'true',
 };
