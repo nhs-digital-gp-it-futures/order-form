@@ -1,4 +1,4 @@
-FROM node:14-slim as builder
+FROM node:14-slim
 
 # Create app directory
 WORKDIR /usr/src
@@ -17,7 +17,7 @@ RUN npm run build:docker
 # Install prod dependencies inside the dist directory
 RUN cp package.json dist && cd dist && npm install --only=prod
 
-FROM builder as production
+FROM node:14-slim
 
 COPY . .
 
