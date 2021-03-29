@@ -75,9 +75,6 @@ cookieSecret:
   key:
 feedbackLinkUrl:
 
-featureFlags:
-  additionalServicesRecipients: "false"
-
 serviceDependencies:
   isapi: # used for internal calls to isapi custom api
     name:

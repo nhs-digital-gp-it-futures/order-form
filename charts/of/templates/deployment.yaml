@@ -48,8 +48,6 @@ spec:
           env:
             - name: LOGGER_LEVEL
               value: "info"
-            - name: ADDITIONAL_SERVICES_RECIPIENTS
-              value: {{ .Values.featureFlags.additionalServicesRecipients | default "false" | quote }}
             - name: NODE_ENV
               value: production
             - name: APP_BASE_URI

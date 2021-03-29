@@ -13,13 +13,14 @@ import {
   setUpFakeApp,
 } from '../../../../test-utils/routesTestHelper';
 import * as additionalServicesController from './dashboard/controller';
+import * as catalogueSolutionsController from '../catalogue-solutions/order-item/controller';
 import * as orderItemController from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import {
-  getOrderItemPageData,
+  getOrderItemRecipientsPageData,
 } from '../../../../helpers/routes/getOrderItemPageData';
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
-import config, { baseUrl } from '../../../../config';
+import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
@@ -136,9 +137,6 @@ describe('additional-services section routes', () => {
 
   describe('GET /organisation/:orderId/additional-services/:catalogueItemId', () => {
     const path = '/organisation/some-order-id/additional-services/neworderitem';
-    beforeEach(() => {
-      config.additionalServicesRecipients = 'false';
-    });
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -157,8 +155,8 @@ describe('additional-services section routes', () => {
     ));
 
     it('should return the additional-services order item page if authorised', () => {
-      getOrderItemPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      getOrderItemRecipientsPageData.mockResolvedValue({});
+      catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return request(setUpFakeApp())
         .get(path)
@@ -181,7 +179,7 @@ describe('additional-services section routes', () => {
     ));
 
     it('should redirect to the login page if the user is not logged in', () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemRecipientsPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthenticatedUser({
@@ -200,7 +198,7 @@ describe('additional-services section routes', () => {
     });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemRecipientsPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -222,7 +220,7 @@ describe('additional-services section routes', () => {
     });
 
     it('should show the additional-services order item page with errors if there are FE caught validation errors', async () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemRecipientsPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       validateOrderItemForm.mockReturnValue([{}]);
       orderItemController.getOrderItemErrorPageContext = jest.fn()
@@ -252,7 +250,7 @@ describe('additional-services section routes', () => {
     });
 
     it('should show the additional-services order item page with errors if the api response is unsuccessful', async () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemRecipientsPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       validateOrderItemForm.mockReturnValue([]);
       saveOrderItem.mockResolvedValue({ success: false, errors: {} });
@@ -281,7 +279,7 @@ describe('additional-services section routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/additional-services if there are no validation errors and post is successful', async () => {
-      getOrderItemPageData.mockResolvedValue({});
+      getOrderItemRecipientsPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       validateOrderItemForm.mockReturnValue([]);
       saveOrderItem.mockResolvedValue({ success: true });
