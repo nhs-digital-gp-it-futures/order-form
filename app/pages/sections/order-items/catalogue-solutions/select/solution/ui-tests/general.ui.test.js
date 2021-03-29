@@ -39,6 +39,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.solutions, solutionsInSession);

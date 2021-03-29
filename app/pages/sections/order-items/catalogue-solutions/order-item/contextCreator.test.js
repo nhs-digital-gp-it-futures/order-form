@@ -48,6 +48,15 @@ describe('catalogue-solutions order-item contextCreator', () => {
       expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/price/flat/ondemand');
     });
 
+    it('should return the backLinkHref to select catalogue solution when user selects existing catalogue solution', () => {
+      const context = getContext({
+        commonManifest,
+        selectedPrice: { type: 'flat', provisioningType: 'ondemand' },
+        catalogueItemExists: { catalogueItemId: 'some-id' },
+      });
+      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/');
+    });
+
     it('should return the title', () => {
       const solutionName = 'solution-name';
       const orderId = 'order-id';

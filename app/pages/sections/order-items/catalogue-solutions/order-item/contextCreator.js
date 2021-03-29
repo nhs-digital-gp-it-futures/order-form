@@ -15,13 +15,17 @@ export const getContext = ({
   selectedPrice,
   selectedRecipients,
   errorMap,
+  catalogueItemExists,
 }) => {
   const errorMessages = errorMap && (errorMap.quantity || errorMap.deliveryDate)
     ? ((errorMap.quantity || {}).errorMessages || [''])
       .concat((errorMap.deliveryDate || {}).errorMessages) : undefined;
-  const newbackLinkRef = selectedPrice.provisioningType === 'Patient'
+  const newItemBackLink = selectedPrice.provisioningType === 'Patient'
     ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`
     : `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
+  const existingItemBackLink = catalogueItemExists !== undefined
+    ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/`
+    : `${baseUrl}/organisation/${orderId}/catalogue-solutions`;
 
   return {
     ...commonManifest,
@@ -57,7 +61,7 @@ export const getContext = ({
       href: `${baseUrl}/organisation/${orderId}/catalogue-solutions/delete/${orderItemId}/confirmation/${solutionName}`,
       disabled: orderItemId === 'neworderitem',
     },
-    backLinkHref: orderItemId === 'neworderitem' ? newbackLinkRef : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
+    backLinkHref: orderItemId === 'neworderitem' ? newItemBackLink : existingItemBackLink,
   };
 };
 
