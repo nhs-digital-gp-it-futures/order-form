@@ -3,6 +3,7 @@ import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../../logger';
 import config from '../../../../../config';
 import manifest from './recipients/manifest.json';
+import dateManifest from './date/manifest.json';
 import { withCatch, extractAccessToken } from '../../../../../helpers/routes/routerHelper';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import {
@@ -25,18 +26,27 @@ import {
 } from './recipient/controller';
 import { getServiceRecipientsContext, getServiceRecipientsErrorPageContext } from '../../catalogue-solutions/select/recipients/controller';
 import {
+  getDeliveryDateContext,
+  validateDeliveryDateForm,
+  getDeliveryDateErrorPageContext,
+} from '../../catalogue-solutions/select/date/controller';
+import {
+  getProvisionTypeOrderContext,
+} from '../../catalogue-solutions/order-item/flat/controller';
+import {
   findSelectedCatalogueItemInSession,
 } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
 import { getAdditionalServices } from '../../../../../helpers/api/bapi/getAdditionalServices';
+import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
+import { extractDate } from '../../../../../helpers/controllers/extractDate';
 import {
   getAdditionalServicesContextItems,
   getAdditionalServicesContextItemsFromSession,
 } from '../../../../../helpers/routes/getAdditionalServicesContextItems';
 import { validateSolutionRecipientsForm } from '../../../../../helpers/controllers/validateSolutionRecipientsForm';
 import { getCommencementDate } from '../../../../../helpers/routes/getCommencementDate';
-import { getDeliveryDateContext } from '../../catalogue-solutions/select/date/controller';
 
 const router = express.Router({ mergeParams: true });
 
@@ -282,6 +292,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       selectedRecipients,
       additionalServicePrices,
       manifest,
+      orderType: 'additional-services',
     });
 
     context.backLinkHref = getBackLinkHref(additionalServicePrices, orderId);
@@ -351,7 +362,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     });
 
     const context = await getDeliveryDateContext({
-      orderId, itemName, commencementDate,
+      orderId, itemName, commencementDate, manifest: dateManifest, orderType: 'additional-services',
     });
 
     context.backLinkHref = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`;
@@ -359,6 +370,98 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     logger.info(`navigating to order ${orderId} additional-services select planned delivery date page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk',
       addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.post('/additional-service/price/recipients/date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId } = req.params;
+    const validationErrors = [];
+
+    const errors = validateDeliveryDateForm({ data: req.body });
+    validationErrors.push(...errors);
+
+    if (validationErrors.length === 0) {
+      const catalogueItemId = sessionManager.getFromSession({
+        req, key: sessionKeys.selectedItemId,
+      });
+
+      const priceId = sessionManager.getFromSession({
+        req, key: sessionKeys.selectedPriceId,
+      });
+      const additionalServicePrices = sessionManager.getFromSession({
+        req, key: sessionKeys.additionalServicePrices,
+      });
+      const additionalServiceSelectedPrice = additionalServicePrices.prices.filter(
+        (obj) => obj.priceId === parseInt(priceId, 10),
+      );
+      sessionManager.saveToSession({
+        req,
+        key: sessionKeys.additionalServiceSelectedPrice,
+        value: additionalServiceSelectedPrice[0],
+      });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.plannedDeliveryDate, value: extractDate('deliveryDate', req.body),
+      });
+
+      const apiResponse = await putPlannedDeliveryDate({
+        orderId,
+        catalogueItemId,
+        data: req.body,
+        accessToken: extractAccessToken({ req, tokenType: 'access' }),
+      });
+      if (apiResponse.success) {
+        return res.redirect(
+          `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${additionalServiceSelectedPrice[0].type.toLowerCase()}/${additionalServiceSelectedPrice[0].provisioningType.toLowerCase()}`,
+        );
+      }
+      validationErrors.push(...apiResponse.errors);
+    }
+
+    const itemName = sessionManager.getFromSession({
+      req,
+      key: sessionKeys.selectedItemName,
+    });
+
+    const context = await getDeliveryDateErrorPageContext({
+      validationErrors,
+      orderId,
+      itemName,
+      data: req.body,
+      manifest: dateManifest,
+    });
+
+    return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
+
+  router.get('/additional-service/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, priceType, provisioningType } = req.params;
+    const itemName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+    const additionalServiceSelectedPrice = sessionManager.getFromSession({
+      req, key: sessionKeys.additionalServiceSelectedPrice,
+    });
+    const quantity = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedQuantity,
+    });
+    const estimationPeriod = sessionManager.getFromSession({
+      req, key: sessionKeys.selectEstimationPeriod,
+    });
+    const formData = {
+      quantity,
+      selectEstimationPeriod: estimationPeriod,
+    };
+    const context = await getProvisionTypeOrderContext({
+      orderId,
+      orderItemType: 'solution',
+      selectedPrice: additionalServiceSelectedPrice,
+      itemName,
+      formData,
+    });
+    logger.info(`navigating to order ${orderId} catalogue-solutions ${provisioningType} form`);
+    if (priceType === 'flat' && provisioningType === 'patient') {
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+    }
+    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   return router;
