@@ -375,7 +375,6 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
   router.post('/additional-service/price/recipients/date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const validationErrors = [];
-
     const errors = validateDeliveryDateForm({ data: req.body });
     validationErrors.push(...errors);
 

@@ -71,7 +71,7 @@ export const getContext = ({
   const errorMessages = errorMap && errorMap.selectSolutionRecipients.errorMessages;
   return {
     ...addParamsToManifest(manifest, { itemName, orderId }),
-    backLinkHref: ((solutionPrices || {}).prices || {}).length === 1 ? `${baseUrl}/organisation/${orderId}/${orderType}/select/solution` : `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`,
+    backLinkHref: ((solutionPrices || {}).prices || {}).length === 1 ? `${baseUrl}/organisation/${orderId}/${orderType}/select/solution` : `${baseUrl}/organisation/${orderId}/${orderType}/select/solution/price`,
     question: {
       selectSolutionRecipients: {
         id: manifest.question.selectSolutionRecipients.id,
