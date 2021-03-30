@@ -137,7 +137,12 @@ export const getOrderItemPageDataBulk = async ({
   const itemId = selectedCatalogueSolution[0].catalogueItemId;
   const itemName = selectedCatalogueSolution[0].catalogueItemName;
   const catalogueSolutionId = selectedCatalogueSolution[0].catalogueItemId;
+  const originalItem = await getSelectedPrice(
+    { selectedPriceId: selectedCatalogueSolution[0].priceId, accessToken },
+  );
   const selectedPrice = {
+    priceId: selectedCatalogueSolution[0].priceId,
+    originalPrice: originalItem.price,
     price: selectedCatalogueSolution[0].price,
     itemUnit: selectedCatalogueSolution[0].itemUnit,
     timeUnit: selectedCatalogueSolution[0].timeUnit,
@@ -149,6 +154,7 @@ export const getOrderItemPageDataBulk = async ({
   const formData = {
     deliveryDate: [],
     quantity: [],
+    originalPrice: selectedPrice.originalPrice,
     price: selectedPrice.price,
   };
 

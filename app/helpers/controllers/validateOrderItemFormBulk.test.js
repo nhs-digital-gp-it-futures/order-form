@@ -14,7 +14,7 @@ const selectedPrice = {
     name: 'consultation',
     description: 'per consultation',
   },
-  price: 0.1,
+  price: 1,
 };
 
 const deliveryDate = [{
@@ -165,15 +165,55 @@ describe('validateOrderItemFormBulk', () => {
       expect(errors).toEqual([priceLessThanMax]);
     });
 
-    it('should return an array of one validation error if price is greater than the list price', () => {
+    it('should return an array of one validation error if price is greater than the list price and no orignal price exists', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
-        price: '0.11',
+        price: '1.1',
         quantity: ['1'],
         deliveryDate,
       };
 
       const errors = validateOrderItemFormBulk({ orderItemType, data, selectedPrice });
+
+      expect(errors).toEqual([priceGreaterThanListPrice]);
+    });
+
+    it('should not error if price is greater than the list price but less than the orignal price', () => {
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+      const data = {
+        price: '1.1',
+        quantity: ['1'],
+        deliveryDate,
+      };
+
+      const errors = validateOrderItemFormBulk({
+        orderItemType,
+        data,
+        selectedPrice: {
+          ...selectedPrice,
+          originalPrice: 2,
+        },
+      });
+
+      expect(errors).toEqual([]);
+    });
+
+    it('should return an array of one validation error if original price exists and the price provided is greater than it', () => {
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+      const data = {
+        price: '2.1',
+        quantity: ['1'],
+        deliveryDate,
+      };
+
+      const errors = validateOrderItemFormBulk({
+        orderItemType,
+        data,
+        selectedPrice: {
+          ...selectedPrice,
+          originalPrice: 2,
+        },
+      });
 
       expect(errors).toEqual([priceGreaterThanListPrice]);
     });
