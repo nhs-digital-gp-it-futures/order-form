@@ -14,16 +14,16 @@ describe('getCatalogueItems', () => {
 
   it.each`
       supplierId    | catalogueItemType | expectedEndpoint
-      ${undefined}  | ${undefined}      | ${catalogueItemsUrl}
-      ${''}         | ${''}             | ${catalogueItemsUrl}
-      ${'\t'}       | ${'\t'}           | ${catalogueItemsUrl}
-      ${'supplier'} | ${undefined}      | ${`${catalogueItemsUrl}?supplierId=supplier`}
-      ${'supplier'} | ${''}             | ${`${catalogueItemsUrl}?supplierId=supplier`}
-      ${'supplier'} | ${'\t'}           | ${`${catalogueItemsUrl}?supplierId=supplier`}
-      ${undefined}  | ${'solution'}     | ${`${catalogueItemsUrl}?catalogueItemType=solution`}
-      ${''}         | ${'solution'}     | ${`${catalogueItemsUrl}?catalogueItemType=solution`}
-      ${'\t'}       | ${'solution'}     | ${`${catalogueItemsUrl}?catalogueItemType=solution`}
-      ${'supplier'} | ${'solution'}     | ${`${catalogueItemsUrl}?supplierId=supplier&catalogueItemType=solution`}
+      ${undefined}  | ${undefined}      | ${`${catalogueItemsUrl}?publishedStatus=published`}
+      ${''}         | ${''}             | ${`${catalogueItemsUrl}?publishedStatus=published`}
+      ${'\t'}       | ${'\t'}           | ${`${catalogueItemsUrl}?publishedStatus=published`}
+      ${'supplier'} | ${undefined}      | ${`${catalogueItemsUrl}?publishedStatus=published&supplierId=supplier`}
+      ${'supplier'} | ${''}             | ${`${catalogueItemsUrl}?publishedStatus=published&supplierId=supplier`}
+      ${'supplier'} | ${'\t'}           | ${`${catalogueItemsUrl}?publishedStatus=published&supplierId=supplier`}
+      ${undefined}  | ${'solution'}     | ${`${catalogueItemsUrl}?publishedStatus=published&catalogueItemType=solution`}
+      ${''}         | ${'solution'}     | ${`${catalogueItemsUrl}?publishedStatus=published&catalogueItemType=solution`}
+      ${'\t'}       | ${'solution'}     | ${`${catalogueItemsUrl}?publishedStatus=published&catalogueItemType=solution`}
+      ${'supplier'} | ${'solution'}     | ${`${catalogueItemsUrl}?publishedStatus=published&supplierId=supplier&catalogueItemType=solution`}
     `('getCatalogueItems calls getData with the correct params for supplier "$supplierId" and catalogue item type "$catalogueItemType"', async ({ supplierId, catalogueItemType, expectedEndpoint }) => {
     getData.mockResolvedValueOnce([{}]);
     await getCatalogueItems({ supplierId, catalogueItemType });

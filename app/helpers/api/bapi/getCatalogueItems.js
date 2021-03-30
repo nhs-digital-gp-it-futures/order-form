@@ -5,6 +5,8 @@ import { solutionsApiUrl } from '../../../config';
 const getCatalogueItemsQueryString = ({ supplierId, catalogueItemType }) => {
   const queryParameters = [];
 
+  queryParameters.push('publishedStatus=published');
+
   if (supplierId && supplierId.trim().length > 0) {
     queryParameters.push(`supplierId=${supplierId.trim()}`);
   }
