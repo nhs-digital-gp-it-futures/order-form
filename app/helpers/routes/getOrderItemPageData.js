@@ -105,6 +105,16 @@ export const getOrderItemRecipientsPageData = async ({
       req, key: sessionKeys.plannedDeliveryDate,
     });
 
+    const [day, month, year] = destructureDate(deliveryDate);
+    const formData = {
+      deliveryDate: [{
+        'deliveryDate-day': day,
+        'deliveryDate-month': month,
+        'deliveryDate-year': year,
+      }],
+      price: selectedPrice.price,
+    };
+
     return {
       itemId,
       itemName,
@@ -113,10 +123,7 @@ export const getOrderItemRecipientsPageData = async ({
       recipients,
       selectedPrice,
       selectedRecipients,
-      formData: {
-        deliveryDate,
-        price: selectedPrice.price,
-      },
+      formData,
     };
   }
 

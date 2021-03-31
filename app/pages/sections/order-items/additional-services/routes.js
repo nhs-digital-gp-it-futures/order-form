@@ -62,12 +62,15 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       orderId,
       catalogueItemId,
     });
+    pageData.selectedPrice = sessionManager.getFromSession({
+      req, key: sessionKeys.additionalServiceSelectedPrice,
+    });
 
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
 
     const context = await getOrderItemRecipientsContext({
       orderId,
-      catalogueItemId,
+      orderItemId: catalogueItemId,
       orderItemType: 'AdditionalService',
       solutionName: pageData.itemName,
       selectedPrice: pageData.selectedPrice,
@@ -75,6 +78,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients || [],
     });
+    context.backLinkHref = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk',
