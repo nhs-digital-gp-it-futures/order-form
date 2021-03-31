@@ -1,4 +1,3 @@
-import manifest from './manifest.json';
 import { baseUrl } from '../../../../../../config';
 import { addParamsToManifest } from '../../../../../../helpers/contextCreators/addParamsToManifest';
 import { generateErrorMap } from '../../../../../../helpers/contextCreators/generateErrorMap';
@@ -10,9 +9,11 @@ export const getContext = ({
   itemName,
   data,
   errorMap,
+  manifest,
+  orderType,
 }) => ({
   ...addParamsToManifest(manifest, { itemName, orderId }),
-  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`,
+  backLinkHref: `${baseUrl}/organisation/${orderId}/${orderType}/select/solution/price/recipients`,
   questions: generateQuestions({
     questions: manifest.questions,
     formData: data,
@@ -25,6 +26,7 @@ export const getErrorContext = ({
   itemName,
   data,
   validationErrors,
+  manifest,
 }) => {
   const errorMap = generateErrorMap({
     validationErrors,
@@ -36,6 +38,7 @@ export const getErrorContext = ({
     itemName,
     data,
     errorMap,
+    manifest,
   });
 
   const errorSummary = generateErrorSummary({ errorMap });

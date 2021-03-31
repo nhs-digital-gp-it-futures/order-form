@@ -29,6 +29,7 @@ import * as validateFormFunction from '../../../../../helpers/controllers/valida
 import * as selectRecipientController from '../../catalogue-solutions/select/recipients/controller';
 import * as selectPlannedDateController from '../../catalogue-solutions/select/date/controller';
 import { getCommencementDate } from '../../../../../helpers/routes/getCommencementDate';
+import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
@@ -36,15 +37,32 @@ jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 jest.mock('../../../../../helpers/api/bapi/getAdditionalServices');
 jest.mock('../../../../../helpers/routes/getCommencementDate');
+jest.mock('../../../../../helpers/api/ordapi/putPlannedDeliveryDate');
 
 const mockRecipientSessionState = JSON.stringify([
   { id: 'recipient-1', name: 'Recipient 1' },
   { id: 'recipient-2', name: 'Recipient 2' },
 ]);
 const mockRecipientsCookie = `${sessionKeys.recipients}=${mockRecipientSessionState}`;
-
 const mockSelectedItemNameState = 'Item name';
 const mockSelectedItemNameCookie = `${sessionKeys.selectedItemName}=${mockSelectedItemNameState}`;
+const prices = [
+  {
+    priceId: 1,
+    type: 'flat',
+    currencyCode: 'GBP',
+    itemUnit: {
+      name: 'patient',
+      description: 'per patient',
+    },
+    timeUnit: {
+      name: 'year',
+      description: 'per year',
+    },
+    price: 1.64,
+  }];
+
+const pricesCookie = `${sessionKeys.additionalServicePrices}=${JSON.stringify(prices)}`;
 
 describe('additional-services select routes', () => {
   afterEach(() => {
@@ -143,6 +161,95 @@ describe('additional-services select routes', () => {
         .then((res) => {
           expect(res.redirect).toEqual(true);
           expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipients/date`);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+  });
+
+  describe('POST /organisation/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
+    const path = '/organisation/order-1/additional-services/select/additional-service/price/recipients/date';
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSelectedItemNameCookie],
+        postPathCookies: [],
+        expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSelectedItemNameCookie],
+        postPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should show the recipient select page with errors if there are validation errors', async () => {
+      selectPlannedDateController.validateDeliveryDateForm = jest.fn().mockReturnValue([{}]);
+
+      selectPlannedDateController.getDeliveryDateErrorPageContext = jest.fn().mockResolvedValue({
+        errors: [{ text: 'error', field: ['year'], href: '#plannedDeliveryDate' }],
+      });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie, mockSelectedItemNameCookie,
+        ],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockSelectedItemNameCookie, mockRecipientsCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="planned-delivery-date-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should return the correct status and text if the api response is unsuccessful', async () => {
+      selectPlannedDateController.validateDeliveryDateForm = jest.fn().mockReturnValue([{}]);
+
+      putPlannedDeliveryDate.mockResolvedValue({ success: false, errors: [{}] });
+
+      selectPlannedDateController.getDeliveryDateErrorPageContext = jest.fn().mockResolvedValue({
+        errors: [{ text: 'error', field: ['year'], href: '#plannedDeliveryDate' }],
+      });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="planned-delivery-date-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
@@ -346,7 +453,6 @@ describe('additional-services select routes', () => {
         getPath: path,
         getPathCookies: [mockAuthorisedCookie],
       });
-
       const mockSelectedItemCookie = `${sessionKeys.selectedItemId}=${additionalServiceId}`;
       const mockAdditionalServicesCookie = `${sessionKeys.additionalServices}=${JSON.stringify(additionalServices)}`;
 
@@ -446,23 +552,6 @@ describe('additional-services select routes', () => {
 
   describe('POST /organisation/:orderId/additional-services/select/additional-service/price', () => {
     const path = '/organisation/order-1/additional-services/select/additional-service/price';
-    const prices = [
-      {
-        priceId: 1,
-        type: 'flat',
-        currencyCode: 'GBP',
-        itemUnit: {
-          name: 'patient',
-          description: 'per patient',
-        },
-        timeUnit: {
-          name: 'year',
-          description: 'per year',
-        },
-        price: 1.64,
-      }];
-
-    const pricesCookie = `${sessionKeys.additionalServicePrices}=${JSON.stringify(prices)}`;
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -766,7 +855,7 @@ describe('additional-services select routes', () => {
   });
 
   describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
-    const path = '/organisation/some-order-id/additional-services/select/additional-service/price/recipients/date';
+    const path = '/organisation/order-1/additional-services/select/additional-service/price/recipients/date';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -796,7 +885,7 @@ describe('additional-services select routes', () => {
         .expect(200)
         .then(() => {
           expect(mockContext.backLinkHref)
-            .toEqual(`${config.baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipients`);
+            .toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipients`);
         });
     });
 
