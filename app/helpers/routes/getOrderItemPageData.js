@@ -106,15 +106,10 @@ export const getOrderItemAdditionalServicesPageData = async ({
   const recipients = sessionManager.getFromSession({
     req, key: sessionKeys.recipients,
   });
-  
+
   const selectedRecipients = sessionManager.getFromSession({
     req, key: sessionKeys.selectedRecipients,
   });
-
-  console.log();
-  console.log('SELECTED PRICE');
-  console.log(JSON.stringify(selectedPrice));
-  console.log();
 
   return {
     formData,
@@ -123,7 +118,7 @@ export const getOrderItemAdditionalServicesPageData = async ({
     selectedPrice,
     selectedRecipients,
   };
-}
+};
 
 export const getOrderItemRecipientsPageData = async ({
   req, sessionManager, accessToken, orderId, catalogueItemId,

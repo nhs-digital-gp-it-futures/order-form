@@ -157,7 +157,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       accessToken,
       loggerText: 'Additional service',
     });
-    
+
     sessionManager.saveToSession({
       req, key: sessionKeys.additionalServicePrices, value: additionalServicePrices,
     });
@@ -370,7 +370,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
-router.post('/additional-service/price/recipients/date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+  router.post('/additional-service/price/recipients/date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;
     const validationErrors = [];
     const errors = validateDeliveryDateForm({ data: req.body });
@@ -453,7 +453,7 @@ router.post('/additional-service/price/recipients/date', authProvider.authorise(
     const context = await getProvisionTypeOrderContext({
       orderId,
       orderItemType: 'additionalservice',
-      selectedPrice: selectedPrice,
+      selectedPrice,
       itemName,
       formData,
     });

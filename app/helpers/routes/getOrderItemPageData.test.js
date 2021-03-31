@@ -1,7 +1,7 @@
-import { 
+import {
   getOrderItemPageData,
   getOrderItemRecipientsPageData,
-  getOrderItemAdditionalServicesPageData
+  getOrderItemAdditionalServicesPageData,
 } from './getOrderItemPageData';
 import { getSelectedPrice } from '../api/bapi/getSelectedPrice';
 import { getOrderItem } from '../api/ordapi/getOrderItem';
@@ -218,15 +218,19 @@ describe('getOrderItemAdditionalServicesPageData', () => {
 
       getSelectedPrice.mockResolvedValue({});
 
-      const pageData = getOrderItemAdditionalServicesPageData({ req, sessionManager: fakeSessionManager });
+      const pageData = getOrderItemAdditionalServicesPageData({
+        req, sessionManager: fakeSessionManager,
+      });
 
       expect(pageData.itemName).toEqual('some-selected-item-name');
     });
 
     it('should get the additionalServiceSelectedPrice from session and return it as formdate price', async () => {
-      fakeSessionManager.getFromSession = () => { price: '10.123456' };
+      fakeSessionManager.getFromSession = () => { '10.123456'; };
 
-      const pageData = getOrderItemAdditionalServicesPageData({ req, sessionManager: fakeSessionManager });
+      const pageData = getOrderItemAdditionalServicesPageData({
+        req, sessionManager: fakeSessionManager,
+      });
 
       expect(pageData.formData.price).toEqual('10.123456');
     });

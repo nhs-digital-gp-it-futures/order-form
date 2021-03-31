@@ -64,11 +64,6 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       req, key: sessionKeys.additionalServiceSelectedPrice,
     });
 
-    console.log();
-    console.log('PAGE DATA:');
-    console.log(JSON.stringify(pageData));
-    console.log();
-
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
 
     const context = await getOrderItemRecipientsContext({
