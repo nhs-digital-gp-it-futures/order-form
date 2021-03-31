@@ -170,7 +170,8 @@ describe('additional-services section routes', () => {
     });
   });
 
-  fixture.skip('POST /organisation/:orderId/additional-services/:catalogueItemId', () => {
+  // TODO: fix when feature implemented
+  xdescribe('POST /organisation/:orderId/additional-services/:catalogueItemId', () => {
     const path = '/organisation/some-order-id/additional-services/neworderitem';
 
     it('should return 403 forbidden if no csrf token is available', () => (
