@@ -42,6 +42,7 @@ import { extractDate } from '../../../../../helpers/controllers/extractDate';
 import { validateOrderItemTypeForm } from '../../../../../helpers/controllers/validateOrderItemTypeForm';
 import { validateSolutionRecipientsForm } from '../../../../../helpers/controllers/validateSolutionRecipientsForm';
 import manifest from './recipients/manifest.json';
+import dateManifest from './date/manifest.json';
 
 const router = express.Router({ mergeParams: true });
 
@@ -216,6 +217,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       selectedRecipients,
       solutionPrices,
       manifest,
+      orderType: 'catalogue-solutions',
     });
 
     setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);
@@ -289,7 +291,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
 
     const context = await getDeliveryDateContext({
-      orderId, itemName, commencementDate,
+      orderId, itemName, commencementDate, manifest: dateManifest, orderType: 'catalogue-solutions',
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select planned delivery date page`);
@@ -348,6 +350,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       orderId,
       itemName,
       data: req.body,
+      manifest: dateManifest,
     });
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));

@@ -9,7 +9,7 @@ const data = { 'deliveryDate-day': '10', 'deliveryDate-month': '10', 'deliveryDa
 describe('delivery-date contextCreator', () => {
   describe('getContext', () => {
     it('should return the contents of manifest', () => {
-      const context = getContext({});
+      const context = getContext({ manifest, orderType: 'catalogue-solutions' });
       expect(context.backLinkText).toEqual(manifest.backLinkText);
       expect(context.description).toEqual(manifest.description);
       expect(context.organisationHeading).toEqual(manifest.organisationHeading);
@@ -18,22 +18,28 @@ describe('delivery-date contextCreator', () => {
     });
 
     it('should construct the title', () => {
-      const context = getContext({ orderId, itemName });
+      const context = getContext({
+        orderId, itemName, manifest, orderType: 'catalogue-solutions',
+      });
       expect(context.title).toEqual('Planned delivery date of Solution One for order-id');
     });
 
     it('should construct the backLinkHref when solutionPrices contain not 1', () => {
-      const context = getContext({ orderId });
+      const context = getContext({
+        orderId, manifest, orderType: 'catalogue-solutions',
+      });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`);
     });
 
     it('should construct the description', () => {
-      const context = getContext({ orderId, itemName });
+      const context = getContext({
+        orderId, itemName, manifest, orderType: 'catalogue-solutions',
+      });
       expect(context.description).toEqual('The date entered will be applied to all the organisations you’ll be ordering for. We’ve included the commencement date for this Call-off Agreement, but if your planned delivery date is different, you can change it here.');
     });
 
     it('should populate the delivery date with the commencement date passed in', () => {
-      const context = getContext({ orderId, data });
+      const context = getContext({ orderId, data, manifest });
 
       const { deliveryDate } = context.questions;
       expect(deliveryDate.id).toEqual('deliveryDate');

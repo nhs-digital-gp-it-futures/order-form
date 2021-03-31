@@ -4,7 +4,8 @@ import { getContext, getErrorContext } from './contextCreator';
 export const getSelectSolutionPriceEndpoint = (orderId, orderItemId) => `/organisation/${orderId}/catalogue-solutions/${orderItemId}`;
 
 export const getServiceRecipientsContext = async ({
-  orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices, manifest,
+  orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices,
+  manifest, orderType,
 }) => getContext({
   orderId,
   itemName,
@@ -13,6 +14,7 @@ export const getServiceRecipientsContext = async ({
   selectStatus,
   solutionPrices,
   manifest,
+  orderType,
 });
 
 export const getServiceRecipientsErrorPageContext = async ({
