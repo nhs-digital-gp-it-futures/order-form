@@ -46,6 +46,11 @@ export const getOrderItemContext = async ({
 
   modifyManifestIfOnDemand(selectedPrice, selectedPriceManifest, formData.selectEstimationPeriod);
 
+  console.log();
+  console.log('FORM DATA');
+  console.log(JSON.stringify(formData));
+  console.log();
+
   return getContext({
     commonManifest,
     selectedPriceManifest,

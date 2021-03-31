@@ -150,19 +150,10 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       accessToken,
       loggerText: 'Additional service',
     });
-    sessionManager.saveToSession({
-      req, key: sessionKeys.additionalServicePrices, value: additionalServicePrices,
-    });
 
     if (((additionalServicePrices || {}).prices || {}).length === 1) {
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedPriceId, value: additionalServicePrices.prices[0].priceId,
-      });
-
-      sessionManager.saveToSession({
-        req,
-        key: sessionKeys.additionalServiceSelectedPrice,
-        value: additionalServicePrices.prices[0],
       });
 
       logger.info('redirecting to additional services select recipients page');
@@ -390,12 +381,11 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     const context = await getProvisionTypeOrderContext({
       orderId,
       orderItemType: 'additionalservice',
-      selectedPrice,
+      selectedPrice: additionalServiceSelectedPrice,
       itemName,
       formData,
     });
-
-    logger.info(`navigating to order ${orderId} catalogue-solutions ${provisioningType} form`);
+    logger.info(`navigating to order ${orderId} additional services ${provisioningType} form`);
     if (priceType === 'flat' && provisioningType === 'patient') {
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/neworderitem`);
     }

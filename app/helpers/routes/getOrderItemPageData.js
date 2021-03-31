@@ -77,6 +77,54 @@ export const getOrderItemPageData = async ({
   };
 };
 
+export const getOrderItemAdditionalServicesPageData = async ({
+  req, sessionManager, accessToken,
+}) => {
+  const deliveryDate = sessionManager.getFromSession({
+    req, key: sessionKeys.plannedDeliveryDate,
+  });
+
+  const selectedPriceId = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedPriceId,
+  });
+  const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
+
+  const [day, month, year] = destructureDate(deliveryDate);
+  const formData = {
+    deliveryDate: [{
+      'deliveryDate-day': day,
+      'deliveryDate-month': month,
+      'deliveryDate-year': year,
+    }],
+    price: selectedPrice.price,
+  };
+
+  const itemName = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedItemName,
+  });
+
+  const recipients = sessionManager.getFromSession({
+    req, key: sessionKeys.recipients,
+  });
+  
+  const selectedRecipients = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedRecipients,
+  });
+
+  console.log();
+  console.log('SELECTED PRICE');
+  console.log(JSON.stringify(selectedPrice));
+  console.log();
+
+  return {
+    formData,
+    itemName,
+    recipients,
+    selectedPrice,
+    selectedRecipients,
+  };
+}
+
 export const getOrderItemRecipientsPageData = async ({
   req, sessionManager, accessToken, orderId, catalogueItemId,
 }) => {

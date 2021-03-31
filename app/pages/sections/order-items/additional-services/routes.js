@@ -12,7 +12,7 @@ import {
 } from './order-item/controller';
 import { getOrderItemContext as getOrderItemRecipientsContext } from '../catalogue-solutions/order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getOrderItemRecipientsPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { getOrderItemAdditionalServicesPageData } from '../../../../helpers/routes/getOrderItemPageData';
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
@@ -55,16 +55,19 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const { orderId, catalogueItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const pageData = await getOrderItemRecipientsPageData({
+    const pageData = await getOrderItemAdditionalServicesPageData({
       req,
       sessionManager,
       accessToken,
-      orderId,
-      catalogueItemId,
     });
     pageData.selectedPrice = sessionManager.getFromSession({
       req, key: sessionKeys.additionalServiceSelectedPrice,
     });
+
+    console.log();
+    console.log('PAGE DATA:');
+    console.log(JSON.stringify(pageData));
+    console.log();
 
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
 

@@ -1,4 +1,8 @@
-import { getOrderItemPageData, getOrderItemRecipientsPageData } from './getOrderItemPageData';
+import { 
+  getOrderItemPageData,
+  getOrderItemRecipientsPageData,
+  getOrderItemAdditionalServicesPageData
+} from './getOrderItemPageData';
 import { getSelectedPrice } from '../api/bapi/getSelectedPrice';
 import { getOrderItem } from '../api/ordapi/getOrderItem';
 
@@ -187,6 +191,44 @@ describe('getOrderItemPageData', () => {
         selectEstimationPeriod: mockOrderItemResponse.estimationPeriod,
         price: '12.2306',
       });
+    });
+  });
+});
+
+describe('getOrderItemAdditionalServicesPageData', () => {
+  describe('when new order item', () => {
+    afterEach(() => {
+      jest.resetAllMocks();
+    });
+
+    it('should get the deliverydate from session and return this as formdata date', async () => {
+      fakeSessionManager.getFromSession = () => '04-12-2005';
+
+      getSelectedPrice.mockResolvedValue({});
+
+      const pageData = getOrderItemAdditionalServicesPageData({ req, sessionManager: fakeSessionManager, catalogueItemId: 'neworderitem' });
+
+      expect(pageData.formData['deliveryDate-day']).toEqual('04');
+      expect(pageData.formData['deliveryDate-month']).toEqual('12');
+      expect(pageData.formData['deliveryDate-year']).toEqual('2005');
+    });
+
+    it('should get the selectedItemName from session and returns it as itemName', async () => {
+      fakeSessionManager.getFromSession = () => 'some-selected-item-name';
+
+      getSelectedPrice.mockResolvedValue({});
+
+      const pageData = getOrderItemAdditionalServicesPageData({ req, sessionManager: fakeSessionManager });
+
+      expect(pageData.itemName).toEqual('some-selected-item-name');
+    });
+
+    it('should get the additionalServiceSelectedPrice from session and return it as formdate price', async () => {
+      fakeSessionManager.getFromSession = () => { price: '10.123456' };
+
+      const pageData = getOrderItemAdditionalServicesPageData({ req, sessionManager: fakeSessionManager });
+
+      expect(pageData.formData.price).toEqual('10.123456');
     });
   });
 });

@@ -170,8 +170,12 @@ describe('additional-services order-item contextCreator', () => {
 
     describe('flat - patient', () => {
       it('should return the questions', () => {
+        const formData = {
+          price: '10.05',
+        };
+
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest,
+          commonManifest, selectedPriceManifest: flatPatientManifest, formData,
         });
         expect(context.questions).toEqual(flatPatientManifest.questions);
       });
