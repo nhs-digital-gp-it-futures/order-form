@@ -1,4 +1,8 @@
-import { getOrderItemPageData, getOrderItemRecipientsPageData } from './getOrderItemPageData';
+import {
+  getOrderItemPageData,
+  getOrderItemRecipientsPageData,
+  getOrderItemAdditionalServicesPageData,
+} from './getOrderItemPageData';
 import { getSelectedPrice } from '../api/bapi/getSelectedPrice';
 import { getOrderItem } from '../api/ordapi/getOrderItem';
 
@@ -191,6 +195,54 @@ describe('getOrderItemPageData', () => {
   });
 });
 
+describe('getOrderItemAdditionalServicesPageData', () => {
+  const accessToken = 'access_token';
+
+  describe('when new order item', () => {
+    afterEach(() => {
+      jest.resetAllMocks();
+    });
+
+    it('should get the deliverydate from session and return this as formdata date', async () => {
+      fakeSessionManager.getFromSession = () => '2005-04-22';
+
+      getSelectedPrice.mockResolvedValue({ price: '17.21' });
+
+      const pageData = await getOrderItemAdditionalServicesPageData({
+        req, sessionManager: fakeSessionManager, accessToken,
+      });
+
+      const actual = pageData.formData.deliveryDate[0];
+      expect(actual['deliveryDate-day']).toEqual('22');
+      expect(actual['deliveryDate-month']).toEqual('04');
+      expect(actual['deliveryDate-year']).toEqual('2005');
+    });
+
+    it('should get the selectedItemName from session and returns it as itemName', async () => {
+      fakeSessionManager.getFromSession = () => 'some-selected-item-name';
+
+      getSelectedPrice.mockResolvedValue({});
+
+      const pageData = await getOrderItemAdditionalServicesPageData({
+        req, sessionManager: fakeSessionManager, accessToken,
+      });
+
+      expect(pageData.itemName).toEqual('some-selected-item-name');
+    });
+
+    it('should get the additionalServiceSelectedPrice from session and return it as formdate price', async () => {
+      fakeSessionManager.getFromSession = () => { '10.123456'; };
+      getSelectedPrice.mockResolvedValue({ price: '17.21' });
+
+      const pageData = await getOrderItemAdditionalServicesPageData({
+        req, sessionManager: fakeSessionManager, accessToken,
+      });
+
+      expect(pageData.formData.price).toEqual('17.21');
+    });
+  });
+});
+
 describe('getOrderItemRecipientsPageData', () => {
   describe('when new order item', () => {
     afterEach(() => {
@@ -258,13 +310,20 @@ describe('getOrderItemRecipientsPageData', () => {
     });
 
     it('should return the formData with the delivery date and price from getSelectedPrice', async () => {
-      fakeSessionManager.getFromSession = () => '02-02-2022';
+      fakeSessionManager.getFromSession = () => '2022-04-14';
 
       getSelectedPrice.mockResolvedValue({ price: '10.1' });
 
       const pageData = await getOrderItemRecipientsPageData({ req, sessionManager: fakeSessionManager, catalogueItemId: 'neworderitem' });
 
-      expect(pageData.formData).toEqual({ deliveryDate: '02-02-2022', price: '10.1' });
+      expect(pageData.formData).toEqual({
+        deliveryDate: [{
+          'deliveryDate-day': '14',
+          'deliveryDate-month': '04',
+          'deliveryDate-year': '2022',
+        }],
+        price: '10.1',
+      });
     });
   });
 

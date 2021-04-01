@@ -77,6 +77,49 @@ export const getOrderItemPageData = async ({
   };
 };
 
+export const getOrderItemAdditionalServicesPageData = async ({
+  req, sessionManager, accessToken,
+}) => {
+  const deliveryDate = sessionManager.getFromSession({
+    req, key: sessionKeys.plannedDeliveryDate,
+  });
+
+  const selectedPriceId = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedPriceId,
+  });
+  const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
+
+  const [day, month, year] = destructureDate(deliveryDate);
+  const formData = {
+    deliveryDate: [{
+      'deliveryDate-day': day,
+      'deliveryDate-month': month,
+      'deliveryDate-year': year,
+    }],
+    price: selectedPrice.price,
+  };
+
+  const itemName = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedItemName,
+  });
+
+  const recipients = sessionManager.getFromSession({
+    req, key: sessionKeys.recipients,
+  });
+
+  const selectedRecipients = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedRecipients,
+  });
+
+  return {
+    formData,
+    itemName,
+    recipients,
+    selectedPrice,
+    selectedRecipients,
+  };
+};
+
 export const getOrderItemRecipientsPageData = async ({
   req, sessionManager, accessToken, orderId, catalogueItemId,
 }) => {
@@ -105,6 +148,16 @@ export const getOrderItemRecipientsPageData = async ({
       req, key: sessionKeys.plannedDeliveryDate,
     });
 
+    const [day, month, year] = destructureDate(deliveryDate);
+    const formData = {
+      deliveryDate: [{
+        'deliveryDate-day': day,
+        'deliveryDate-month': month,
+        'deliveryDate-year': year,
+      }],
+      price: selectedPrice.price,
+    };
+
     return {
       itemId,
       itemName,
@@ -113,10 +166,7 @@ export const getOrderItemRecipientsPageData = async ({
       recipients,
       selectedPrice,
       selectedRecipients,
-      formData: {
-        deliveryDate,
-        price: selectedPrice.price,
-      },
+      formData,
     };
   }
 

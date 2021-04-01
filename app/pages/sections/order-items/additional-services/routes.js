@@ -12,7 +12,7 @@ import {
 } from './order-item/controller';
 import { getOrderItemContext as getOrderItemRecipientsContext } from '../catalogue-solutions/order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getOrderItemRecipientsPageData } from '../../../../helpers/routes/getOrderItemPageData';
+import { getOrderItemAdditionalServicesPageData } from '../../../../helpers/routes/getOrderItemPageData';
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
@@ -55,19 +55,20 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const { orderId, catalogueItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const pageData = await getOrderItemRecipientsPageData({
+    const pageData = await getOrderItemAdditionalServicesPageData({
       req,
       sessionManager,
       accessToken,
-      orderId,
-      catalogueItemId,
+    });
+    pageData.selectedPrice = sessionManager.getFromSession({
+      req, key: sessionKeys.additionalServiceSelectedPrice,
     });
 
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
 
     const context = await getOrderItemRecipientsContext({
       orderId,
-      catalogueItemId,
+      orderItemId: catalogueItemId,
       orderItemType: 'AdditionalService',
       solutionName: pageData.itemName,
       selectedPrice: pageData.selectedPrice,
@@ -75,6 +76,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients || [],
     });
+    context.backLinkHref = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk',

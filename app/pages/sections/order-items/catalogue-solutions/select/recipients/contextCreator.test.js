@@ -127,7 +127,6 @@ describe('service-recipients contextCreator', () => {
 
   describe('getErrorContext', () => {
     it('should return the context with Errors', () => {
-      // console.log(JSON.stringify(manifest));
       const expectedContext = {
         errors: [
           {

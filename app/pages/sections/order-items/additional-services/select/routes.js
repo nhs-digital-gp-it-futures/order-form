@@ -157,14 +157,12 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       accessToken,
       loggerText: 'Additional service',
     });
+
     sessionManager.saveToSession({
       req, key: sessionKeys.additionalServicePrices, value: additionalServicePrices,
     });
 
     if (((additionalServicePrices || {}).prices || {}).length === 1) {
-      sessionManager.saveToSession({
-        req, key: sessionKeys.selectedPriceId, value: additionalServicePrices.prices[0].priceId,
-      });
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedPriceId, value: additionalServicePrices.prices[0].priceId,
       });
@@ -389,6 +387,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       const additionalServicePrices = sessionManager.getFromSession({
         req, key: sessionKeys.additionalServicePrices,
       });
+
       const additionalServiceSelectedPrice = additionalServicePrices.prices.filter(
         (obj) => obj.priceId === parseInt(priceId, 10),
       );
@@ -433,10 +432,11 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
   router.get('/additional-service/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, priceType, provisioningType } = req.params;
+
     const itemName = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemName,
     });
-    const additionalServiceSelectedPrice = sessionManager.getFromSession({
+    const selectedPrice = sessionManager.getFromSession({
       req, key: sessionKeys.additionalServiceSelectedPrice,
     });
     const quantity = sessionManager.getFromSession({
@@ -449,17 +449,19 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       quantity,
       selectEstimationPeriod: estimationPeriod,
     };
+
     const context = await getProvisionTypeOrderContext({
       orderId,
-      orderItemType: 'solution',
-      selectedPrice: additionalServiceSelectedPrice,
+      orderItemType: 'additionalservice',
+      selectedPrice,
       itemName,
       formData,
     });
-    logger.info(`navigating to order ${orderId} catalogue-solutions ${provisioningType} form`);
+    logger.info(`navigating to order ${orderId} additional services ${provisioningType} form`);
     if (priceType === 'flat' && provisioningType === 'patient') {
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/neworderitem`);
     }
+
     return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
