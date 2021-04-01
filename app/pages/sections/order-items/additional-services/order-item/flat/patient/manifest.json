@@ -12,7 +12,6 @@
     "price": {
       "id": "price",
       "mainAdvice": "What price have you agreed? (£)",
-      "unit": "per patient per year",
       "expandableSection": {
         "dataTestId": "view-section-price-id",
         "title": "What price should I enter?",
