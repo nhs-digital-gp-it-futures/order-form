@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { solutionsApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
-import AdditionalServicePageModel from './additionalServicesPageModel.test';
+import AdditionalServicePageModel from '../../additionalServicesPageModel';
 
 const pageModel = new AdditionalServicePageModel();
 

@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { Selector } from 'testcafe';
 
 export default class AdditionalServicePageModel {
