@@ -7,8 +7,6 @@ import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 import AdditionalServicePageModel from '../../additionalServicesPageModel';
 
-const pageModel = new AdditionalServicePageModel();
-
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -114,6 +112,7 @@ test('should render the price table headings', async (t) => {
 test('should render the solution table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+  const pageModel = new AdditionalServicePageModel();
 
   await t
     .expect(pageModel.quantityInput.getAttribute('value')).eql(undefined)
@@ -249,6 +248,7 @@ test('should anchor to the price field when clicking on the numerical price erro
 test('should render the solution table headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+  const pageModel = new AdditionalServicePageModel();
 
   await t
     .expect(pageModel.table.exists).ok()
@@ -267,6 +267,7 @@ test('should render the solution table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
+  const pageModel = new AdditionalServicePageModel();
   const dateArray = deliveryDate.split('-');
 
   await t
