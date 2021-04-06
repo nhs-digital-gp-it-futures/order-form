@@ -5,6 +5,7 @@ import content from '../manifest.json';
 import { solutionsApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
+import AdditionalServicePageModel from '../../additionalServicesPageModel';
 
 const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
 
@@ -22,12 +23,19 @@ const selectedPrice = {
   price: 0.11,
 };
 
+const recipients = JSON.stringify([
+  { odsCode: 'recipient-1', name: 'Recipient 1' },
+  { odsCode: 'recipient-2', name: 'Recipient 2' },
+]);
+const selectedRecipients = ['recipient-2'];
+
 const itemIdInSession = 'item-1';
 const itemNameInSession = 'Item One';
 const catalogueSolutionIdInSession = 'solution-1';
 const selectedRecipientIdInSession = 'recipient-1';
 const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
+const deliveryDate = '2020-02-12';
 
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
@@ -60,14 +68,17 @@ const pageSetup = async (setup = defaultPageSetup) => {
     await setState(ClientFunction)(sessionKeys.selectedItemName, itemNameInSession);
     await setState(ClientFunction)(sessionKeys.selectedCatalogueSolutionId, catalogueSolutionIdInSession);
     await setState(ClientFunction)(sessionKeys.selectedPriceId, selectedPriceIdInSession);
+    await setState(ClientFunction)(sessionKeys.additionalServiceSelectedPrice, JSON.stringify(selectedPrice));
+    await setState(ClientFunction)(sessionKeys.plannedDeliveryDate, deliveryDate);
+    await setState(ClientFunction)(sessionKeys.recipients, recipients);
+    await setState(ClientFunction)(sessionKeys.selectedRecipients, JSON.stringify(selectedRecipients));
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
   }
 };
 
-// TODO: fix when feature completed
-fixture.skip('Additional-services - flat patient - general')
+fixture('Additional-services - flat patient - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -78,10 +89,10 @@ test('should render a text field for the quantity question', async (t) => {
   await t.navigateTo(pageUrl);
 
   const quantity = Selector('[data-test-id="question-quantity"]');
-  const quantityLabel = quantity.find('label.nhsuk-label');
+  const quantityHelpSection = Selector('[data-test-id="view-section-input-id-practice"]');
 
   await t
-    .expect(await extractInnerText(quantityLabel)).eql(content.questions.quantity.mainAdvice)
+    .expect(await extractInnerText(quantityHelpSection)).eql(content.solutionTable.cellInfo.quantity.expandableSection.title)
     .expect(quantity.find('input').count).eql(1);
 });
 
@@ -89,50 +100,42 @@ test('should render the price table headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const priceTable = Selector('div[data-test-id="price-table"]');
+  const priceTable = Selector('div[data-test-id="solution-table"]');
   const priceColumnHeading = priceTable.find('[data-test-id="column-heading-0"]');
   const unitColumnHeading = priceTable.find('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(await extractInnerText(priceColumnHeading)).eql(content.addPriceTable.columnInfo[0].data)
-    .expect(await extractInnerText(unitColumnHeading)).eql(content.addPriceTable.columnInfo[1].data);
+    .expect(await extractInnerText(priceColumnHeading)).eql(content.solutionTable.columnInfo[0].data)
+    .expect(await extractInnerText(unitColumnHeading)).eql(content.solutionTable.columnInfo[1].data);
 });
 
-test('should render the price table content', async (t) => {
+test('should render the solution table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
-
-  const table = Selector('div[data-test-id="price-table"]');
-  const row = table.find('[data-test-id="table-row-0"]');
-  const priceInput = row.find('[data-test-id="question-price"] input');
-  const expandableSection = row.find('[data-test-id="view-section-input-id"]');
-  const orderUnit = row.find('div[data-test-id="unit-of-order"]');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(priceInput.getAttribute('value')).eql(selectedPrice.price.toString())
+    .expect(pageModel.quantityInput.getAttribute('value')).eql(undefined)
 
-    .expect(expandableSection.exists).ok()
-    .expect(await extractInnerText(expandableSection)).eql(content.addPriceTable.cellInfo.price.expandableSection.title)
-    .expect(expandableSection.find('details[open]').exists).notOk()
-    .click(expandableSection.find('summary'))
-    .expect(expandableSection.find('details[open]').exists).ok()
-    .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
-    .eql(content.addPriceTable.cellInfo.price.expandableSection.innerComponent)
-
-    .expect(await extractInnerText(orderUnit)).eql(selectedPrice.itemUnit.description);
+    .expect(pageModel.practiceExpandableSection.exists).ok()
+    .expect(await extractInnerText(pageModel.practiceExpandableSection))
+    .eql(content.solutionTable.cellInfo.quantity.expandableSection.title)
+    .expect(pageModel.practiceExpandableSection.find('details[open]').exists).notOk()
+    .click(pageModel.practiceExpandableSection.find('summary'))
+    .expect(pageModel.practiceExpandableSection.find('details[open]').exists).ok()
+    .expect(await extractInnerText(pageModel.practiceExpandableSection.find('.nhsuk-details__text')))
+    .eql(content.solutionTable.cellInfo.quantity.expandableSection.innerComponent.replace('<br><br>', ''));
 });
 
-test('should render the price with a value of 0 when returned from the API', async (t) => {
+test('should render empty price when 0 returned from the API', async (t) => {
   const mockSelectedPrice = { ...selectedPrice, price: 0 };
   await pageSetup({ ...defaultPageSetup, postRoute: true, mockData: mockSelectedPrice });
   await t.navigateTo(pageUrl);
 
-  const table = Selector('div[data-test-id="price-table"]');
-  const row = table.find('[data-test-id="table-row-0"]');
-  const priceInput = row.find('[data-test-id="question-price"] input');
+  const priceInput = Selector('#price');
 
   await t
-    .expect(priceInput.getAttribute('value')).eql(mockSelectedPrice.price.toString());
+    .expect(priceInput.getAttribute('value')).eql(undefined);
 });
 
 test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
@@ -245,70 +248,64 @@ test('should anchor to the price field when clicking on the numerical price erro
 test('should render the solution table headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
-
-  const solutionTable = Selector('div[data-test-id="solution-table"]');
-  const solutionNameColumnHeading = solutionTable.find('[data-test-id="column-heading-0"]');
-  const practiceSizeColumnHeading = solutionTable.find('[data-test-id="column-heading-1"]');
-  const dateColumnHeading = solutionTable.find('[data-test-id="column-heading-2"]');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(solutionTable.exists).ok()
-    .expect(solutionNameColumnHeading.exists).ok()
-    .expect(await extractInnerText(solutionNameColumnHeading)).eql(content.solutionTable.columnInfo[0].data)
-    .expect(practiceSizeColumnHeading.exists).ok()
-    .expect(await extractInnerText(practiceSizeColumnHeading)).eql(content.solutionTable.columnInfo[1].data)
-    .expect(dateColumnHeading.exists).ok()
-    .expect(await extractInnerText(dateColumnHeading)).eql(`${content.solutionTable.columnInfo[2].data}\n${content.solutionTable.columnInfo[2].additionalAdvice}`);
+    .expect(pageModel.table.exists).ok()
+    .expect(pageModel.solutionNameColumnHeading.exists).ok()
+    .expect(await extractInnerText(pageModel.solutionNameColumnHeading))
+    .eql(content.solutionTable.columnInfo[0].data)
+    .expect(pageModel.practiceSizeColumnHeading.exists).ok()
+    .expect(await extractInnerText(pageModel.practiceSizeColumnHeading))
+    .eql(content.solutionTable.columnInfo[1].data)
+    .expect(pageModel.dateColumnHeading.exists).ok()
+    .expect(await extractInnerText(pageModel.dateColumnHeading))
+    .eql(`${content.solutionTable.columnInfo[2].data}\n${content.solutionTable.columnInfo[2].additionalAdvice}`);
 });
 
 test('should render the solution table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const table = Selector('div[data-test-id="solution-table"]');
-  const row = table.find('[data-test-id="table-row-0"]');
-  const solutionName = row.find('div[data-test-id="recipient-name-code-recipient"]');
-  const quantityInput = row.find('[data-test-id="question-quantity"] input');
-  const practiceSizeExpandableSection = row.find('[data-test-id="view-section-input-id-practice"]');
-  const dateInput = row.find('[data-test-id="question-deliveryDate"] input');
-  const dayInput = dateInput.nth(0);
-  const monthInput = dateInput.nth(1);
-  const yearInput = dateInput.nth(2);
-  const dateExpandableSection = row.find('[data-test-id="view-section-input-id-date"]');
+  const pageModel = new AdditionalServicePageModel();
+  const dateArray = deliveryDate.split('-');
 
   await t
-    .expect(row.exists).ok()
-    .expect(solutionName.exists).ok()
-    .expect(await extractInnerText(solutionName)).eql('recipient-name (code)')
+    .expect(pageModel.row.exists).ok()
+    .expect(pageModel.solutionName.exists).ok()
+    .expect(await extractInnerText(pageModel.solutionName)).eql('Recipient 2 (recipient-2)')
 
-    .expect(quantityInput.exists).ok()
-    .expect(practiceSizeExpandableSection.exists).ok()
-    .expect(await extractInnerText(practiceSizeExpandableSection)).eql(content.solutionTable.cellInfo.quantity.expandableSection.title)
-    .expect(practiceSizeExpandableSection.find('details[open]').exists).notOk()
-    .click(practiceSizeExpandableSection.find('summary'))
-    .expect(practiceSizeExpandableSection.find('details[open]').exists).ok()
-    .expect(await extractInnerText(practiceSizeExpandableSection.find('.nhsuk-details__text')))
+    .expect(pageModel.quantityInput.exists).ok()
+    .expect(pageModel.practiceExpandableSection.exists).ok()
+    .expect(await extractInnerText(pageModel.practiceExpandableSection))
+    .eql(content.solutionTable.cellInfo.quantity.expandableSection.title)
+    .expect(pageModel.practiceExpandableSection.find('details[open]').exists).notOk()
+    .click(pageModel.practiceExpandableSection.find('summary'))
+    .expect(pageModel.practiceExpandableSection.find('details[open]').exists).ok()
+    .expect(await extractInnerText(pageModel.practiceExpandableSection
+      .find('.nhsuk-details__text')))
     .eql(content.solutionTable.cellInfo.quantity.expandableSection.innerComponent.replace('<br><br>', ''))
 
-    .expect(dateInput.exists).ok()
-    .expect(dayInput.getAttribute('id')).eql('deliveryDate-day')
-    .expect(dayInput.getAttribute('name')).eql('deliveryDate-day')
-    .expect(dayInput.getAttribute('value')).eql('10')
+    .expect(pageModel.dateInput.exists).ok()
+    .expect(pageModel.getDayInputAttribute('id')).eql('deliveryDate-day')
+    .expect(pageModel.getDayInputAttribute('name')).eql('deliveryDate-day')
+    .expect(pageModel.getDayInputAttribute('value')).eql(dateArray[2])
 
-    .expect(monthInput.getAttribute('id')).eql('deliveryDate-month')
-    .expect(monthInput.getAttribute('name')).eql('deliveryDate-month')
-    .expect(monthInput.getAttribute('value')).eql('10')
+    .expect(pageModel.getMonthInputAttribute('id')).eql('deliveryDate-month')
+    .expect(pageModel.getMonthInputAttribute('name')).eql('deliveryDate-month')
+    .expect(pageModel.getMonthInputAttribute('value')).eql(dateArray[1])
 
-    .expect(yearInput.getAttribute('id')).eql('deliveryDate-year')
-    .expect(yearInput.getAttribute('name')).eql('deliveryDate-year')
-    .expect(yearInput.getAttribute('value')).eql('2020')
+    .expect(pageModel.getYearInputAttribute('id')).eql('deliveryDate-year')
+    .expect(pageModel.getYearInputAttribute('name')).eql('deliveryDate-year')
+    .expect(pageModel.getYearInputAttribute('value')).eql(dateArray[0])
 
-    .expect(dateExpandableSection.exists).ok()
-    .expect(await extractInnerText(dateExpandableSection)).eql(content.solutionTable.cellInfo.deliveryDate.expandableSection.title)
-    .expect(dateExpandableSection.find('details[open]').exists).notOk()
-    .click(dateExpandableSection.find('summary'))
-    .expect(dateExpandableSection.find('details[open]').exists).ok()
-    .expect(await extractInnerText(dateExpandableSection.find('.nhsuk-details__text')))
+    .expect(pageModel.dateExpandableSection.exists).ok()
+    .expect(await extractInnerText(pageModel.dateExpandableSection))
+    .eql(content.solutionTable.cellInfo.deliveryDate.expandableSection.title)
+    .expect(pageModel.dateExpandableSection.find('details[open]').exists).notOk()
+    .click(pageModel.dateExpandableSection.find('summary'))
+    .expect(pageModel.dateExpandableSection.find('details[open]').exists).ok()
+    .expect(await extractInnerText(pageModel.dateExpandableSection.find('.nhsuk-details__text')))
     .eql(content.solutionTable.cellInfo.deliveryDate.expandableSection.innerComponent.replace('<br><br>', ''));
 });
 
@@ -316,18 +313,19 @@ test('should render an expandable section for the quantity question', async (t) 
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const expandableSection = Selector('[data-test-id="view-section-quantity-id"]');
+  const expandableSection = Selector('[data-test-id="view-section-input-id-practice"]');
 
   await t
-    .expect(await extractInnerText(expandableSection)).eql(content.questions.quantity.expandableSection.title)
+    .expect(await extractInnerText(expandableSection)).eql(content.solutionTable.cellInfo.quantity.expandableSection.title)
     .expect(expandableSection.find('details[open]').exists).notOk()
     .click(expandableSection.find('summary'))
     .expect(expandableSection.find('details[open]').exists).ok()
     .expect(await extractInnerText(expandableSection.find('.nhsuk-details__text')))
-    .eql(content.questions.quantity.expandableSection.innerComponent);
+    .eql(content.solutionTable.cellInfo.quantity.expandableSection.innerComponent.replace('<br><br>', ''));
 });
 
-test('should render solution table as errors with error message when no practice list sizes are entered', async (t) => {
+// TODO: fix when feature completed
+test.skip('should render solution table as errors with error message when no practice list sizes are entered', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -343,7 +341,8 @@ test('should render solution table as errors with error message when no practice
     .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.QuantityRequired);
 });
 
-test('should render solution table as errors with error message when no date is entered', async (t) => {
+// TODO: fix when feature completed
+test.skip('should render solution table as errors with error message when no date is entered', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
