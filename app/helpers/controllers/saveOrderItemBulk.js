@@ -10,6 +10,7 @@ export const saveOrderItemBulk = async ({
   serviceRecipientName,
   itemId,
   itemName,
+  catalogueSolutionId,
   selectedPrice,
   recipients,
   selectedRecipients,
@@ -25,6 +26,7 @@ export const saveOrderItemBulk = async ({
         serviceRecipientName,
         itemId,
         itemName,
+        catalogueSolutionId,
         selectedPrice,
         recipients: selectedRecipients.map(
           (selectedRecipient) => recipients
@@ -41,6 +43,7 @@ export const saveOrderItemBulk = async ({
         serviceRecipientName,
         itemId,
         itemName,
+        catalogueSolutionId,
         selectedPrice,
         recipients: selectedRecipients.map(
           (selectedRecipient) => recipients

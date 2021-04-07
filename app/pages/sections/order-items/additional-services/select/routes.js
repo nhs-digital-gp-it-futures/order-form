@@ -31,7 +31,7 @@ import {
   getDeliveryDateErrorPageContext,
 } from '../../catalogue-solutions/select/date/controller';
 import {
-  getProvisionTypeOrderContext,
+  getProvisionTypeOrderContext, getProvisionTypeOrderErrorContext, formatFormData,
 } from '../../catalogue-solutions/order-item/flat/controller';
 import {
   findSelectedCatalogueItemInSession,
@@ -41,6 +41,7 @@ import { getAdditionalServices } from '../../../../../helpers/api/bapi/getAdditi
 import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 import { extractDate } from '../../../../../helpers/controllers/extractDate';
+import { validateOrderItemTypeForm } from '../../../../../helpers/controllers/validateOrderItemTypeForm';
 import {
   getAdditionalServicesContextItems,
   getAdditionalServicesContextItemsFromSession,
@@ -426,6 +427,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       data: req.body,
       manifest: dateManifest,
     });
+    context.backLinkHref = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`;
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -465,5 +467,44 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
+  router.post('/additional-service/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, orderItemId, priceType } = req.params;
+    const validationErrors = [];
+    const formData = formatFormData({ formData: req.body });
+    const itemName = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedItemName,
+    });
+    const selectedPrice = sessionManager.getFromSession({
+      req, key: sessionKeys.additionalServiceSelectedPrice,
+    });
+
+    const errors = validateOrderItemTypeForm({
+      orderItemType: 'additionalservice',
+      data: req.body,
+      selectedPrice,
+    });
+    validationErrors.push(...errors);
+    if (validationErrors.length === 0) {
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedQuantity, value: formData.quantity,
+      });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectEstimationPeriod, value: formData.selectEstimationPeriod,
+      });
+      logger.info('Redirecting to the additional services order item page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/neworderitem`);
+    }
+
+    const context = await getProvisionTypeOrderErrorContext({
+      orderId,
+      orderItemId,
+      orderItemType: 'additionalservice',
+      itemName,
+      selectedPrice,
+      formData,
+      validationErrors,
+    });
+    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+  }));
   return router;
 };

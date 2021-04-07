@@ -138,7 +138,7 @@ test('should render empty price when 0 returned from the API', async (t) => {
     .expect(priceInput.getAttribute('value')).eql(undefined);
 });
 
-test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
+test.skip('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -156,7 +156,7 @@ test('should render select quantity field as errors with error message when no q
     .expect(await extractInnerText(quantityField.find('#quantity-error'))).contains(content.errorMessages.QuantityRequired);
 });
 
-test('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
+test.skip('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -175,7 +175,7 @@ test('should render select price field as errors with error message when no pric
     .expect(await extractInnerText(priceField.find('#price-error'))).contains(content.errorMessages.PriceRequired);
 });
 
-test('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
+test.skip('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -191,7 +191,7 @@ test('should anchor to the quantity field when clicking on the quantity required
     .expect(getLocation()).eql(`${pageUrl}#quantity`);
 });
 
-test('should anchor to the quantity field when clicking on the numerical quantity error link in errorSummary ', async (t) => {
+test.skip('should anchor to the quantity field when clicking on the numerical quantity error link in errorSummary ', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -209,7 +209,7 @@ test('should anchor to the quantity field when clicking on the numerical quantit
     .expect(getLocation()).eql(`${pageUrl}#quantity`);
 });
 
-test('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
+test.skip('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -227,7 +227,7 @@ test('should anchor to the price field when clicking on the price required error
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
 
-test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
+test.skip('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -245,7 +245,7 @@ test('should anchor to the price field when clicking on the numerical price erro
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
 
-test('should render the solution table headings', async (t) => {
+test.skip('should render the solution table headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
   const pageModel = new AdditionalServicePageModel();
@@ -263,7 +263,7 @@ test('should render the solution table headings', async (t) => {
     .eql(`${content.solutionTable.columnInfo[2].data}\n${content.solutionTable.columnInfo[2].additionalAdvice}`);
 });
 
-test('should render the solution table content', async (t) => {
+test.skip('should render the solution table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -309,7 +309,7 @@ test('should render the solution table content', async (t) => {
     .eql(content.solutionTable.cellInfo.deliveryDate.expandableSection.innerComponent.replace('<br><br>', ''));
 });
 
-test('should render an expandable section for the quantity question', async (t) => {
+test.skip('should render an expandable section for the quantity question', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
