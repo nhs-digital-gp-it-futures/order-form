@@ -8,7 +8,7 @@ import {
 import { additionalServicesSelectRoutes } from './select/routes';
 import {
   getOrderItemContext as getOrderItemRecipientsContext,
-  formatFormData, getOrderItemErrorContext, getPageData,
+  formatFormData, getOrderItemErrorContext, getPageData, setEstimationPeriod,
 } from '../catalogue-solutions/order-item/controller';
 import { validateOrderItemFormBulk } from '../../../../helpers/controllers/validateOrderItemFormBulk';
 import { getOrderItemPageDataBulk } from '../../../../helpers/routes/getOrderItemPageDataBulk';
@@ -60,9 +60,6 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       accessToken,
       orderId,
       orderItemId: catalogueItemId,
-    });
-    pageData.selectedPrice = sessionManager.getFromSession({
-      req, key: sessionKeys.additionalServiceSelectedPrice,
     });
 
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
@@ -130,6 +127,9 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       const apiErrors = transformApiValidationResponse(apiResponse.errors);
       validationErrors.push(...apiErrors);
     }
+
+    setEstimationPeriod(req, formData, sessionManager);
+
     const context = await getOrderItemErrorContext({
       orderId,
       catalogueItemId,

@@ -57,7 +57,6 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
   router.get('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, catalogueItemId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-
     const pageData = await getOrderItemPageData({
       req,
       sessionManager,
