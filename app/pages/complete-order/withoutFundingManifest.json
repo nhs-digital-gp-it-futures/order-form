@@ -1,8 +1,8 @@
 {
   "backLinkText": "Go back",
   "title": "Complete order {{orderId}}?",
-  "description": "You’re about to complete this order and will be unable to make any further changes. As GMS is not your only source of funding for this order, it'll not be automatically processed and paid for. You’ll need to include your order summary as part of your contract.",
-  "insetAdvice": "Remember, if you're paying for any items using GMS funding, you'll need to create a separate order which will be processed automatically.",
+  "description": "You’re about to complete this order and will be unable to make any further changes. As you're not paying for this order in full using your GP IT Futures centrally held funding allocation, you'll need to contact the supplier to make payment. Once your order is completed, you'll be able to get a copy of your order summary to include in the contract you send to the supplier.",
+  "insetAdvice": "Remember, if you're paying for any items using your centrally held funding allocation, you'll need to create a separate order where the payment will be centrally processed.",
   "orderDescriptionTitle": "Order description",
   "continueEditingOrderButtonText": "Continue editing order",
   "completeOrderButtonText": "Complete order"

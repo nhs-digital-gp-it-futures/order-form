@@ -39,6 +39,26 @@ describe('order confirmation page', () => {
     });
   }));
 
+  it('should not render the complete order inset advice', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const insetAdvice = $('[data-test-id="order-confirmation-page-inset-advice"]');
+      expect(insetAdvice.length).toEqual(0);
+    });
+  }));
+
+  it('should render the complete order inset advice', componentTester(setup, (harness) => {
+    const contextWithInsetAdvice = {
+      ...context,
+      insetAdvice: 'some inset advice',
+    };
+
+    harness.request(contextWithInsetAdvice, ($) => {
+      const insetAdvice = $('div[data-test-id="order-confirmation-page-inset-advice"]');
+      expect(insetAdvice.length).toEqual(1);
+      expect(insetAdvice.text().trim()).toContain(contextWithInsetAdvice.insetAdvice);
+    });
+  }));
+
   it('should render the order summary button', componentTester(setup, (harness) => {
     const withOrderSummaryButtonTextContext = {
       ...context,
