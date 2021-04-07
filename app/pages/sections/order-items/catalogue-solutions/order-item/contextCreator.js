@@ -26,6 +26,7 @@ export const getContext = ({
   const existingItemBackLink = catalogueItemExists !== undefined
     ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/`
     : `${baseUrl}/organisation/${orderId}/catalogue-solutions`;
+
   return {
     ...commonManifest,
     title: `${solutionName} ${commonManifest.title} ${orderId}`,

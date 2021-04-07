@@ -108,7 +108,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-fixture('Catalogue-solutions - flat declarative - withSavedData')
+fixture('Additional-services - flat declarative - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);

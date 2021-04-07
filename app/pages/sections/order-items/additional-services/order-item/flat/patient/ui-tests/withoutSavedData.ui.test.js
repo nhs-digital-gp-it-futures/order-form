@@ -113,7 +113,7 @@ fixture('Additional-services - flat patient - withoutSavedData')
     await nockAndErrorCheck(nock, t);
   });
 
-test.only('should navigate to additional-services dashboard page if save button is clicked and data is valid', async (t) => {
+test('should navigate to additional-services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
     .put(`/api/v1/orders/${callOffId}/order-items/${itemIdInSession}`, validRequestBody)
     .reply(200, {});
@@ -125,7 +125,6 @@ test.only('should navigate to additional-services dashboard page if save button 
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .debug()
     .typeText(quantityInput, '10', { paste: true })
     .click(saveButton)
     .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/additional-services`);
