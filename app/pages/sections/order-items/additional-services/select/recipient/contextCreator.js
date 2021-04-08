@@ -3,7 +3,7 @@ import { baseUrl } from '../../../../../../config';
 import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
 export const backLinkHref = (req, additionalServicePrices, orderId) => {
-  const { referer } = req.headers;
+  const { referer } = req.headers || {};
   const orderItemId = referer ? referer.split('/').pop() : '';
   if (referer && referer.endsWith(`${orderId}/additional-services/${orderItemId}`)) {
     return referer;
@@ -36,7 +36,7 @@ export const getContext = ({
   ...manifest,
   title: `${manifest.title} ${itemName}`,
   questions: recipients && generateQuestionsContext({ recipients, selectedAdditionalRecipientId }),
-  backLinkHref: backLinkHref({ headers: {} }, additionalServicePrices, orderId),
+  backLinkHref: backLinkHref({}, additionalServicePrices, orderId),
 });
 
 export const getErrorContext = (params) => {
