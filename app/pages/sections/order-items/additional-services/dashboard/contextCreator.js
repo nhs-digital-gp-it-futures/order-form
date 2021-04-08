@@ -35,7 +35,7 @@ const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItem
 
 export const backLinkHref = ({ req, orderId }) => {
   const { referer } = req.headers;
-  const slug = referer.split('/').pop();
+  const slug = referer ? referer.split('/').pop() : '';
 
   return slug && slug.toLowerCase() === 'additional-services' ? referer
     : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
