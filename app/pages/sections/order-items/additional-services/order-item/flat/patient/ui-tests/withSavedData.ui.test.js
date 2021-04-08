@@ -204,7 +204,7 @@ test('should render the delete button as not disabled', async (t) => {
   const button = Selector('[data-test-id="delete-button"] a');
 
   await t
-    .expect(await extractInnerText(button)).eql('Delete Catalogue Solution')
+    .expect(await extractInnerText(button)).eql('Delete Additional Service')
     .expect(button.hasClass('nhsuk-button--secondary')).eql(true)
     .expect(button.hasClass('nhsuk-button--disabled')).eql(false);
 });
@@ -242,7 +242,7 @@ test('should show the correct error summary and input error when the price is re
     .expect(price.hasClass('nhsuk-input--error')).ok();
 });
 
-test('should navigate to catalogue-solutions dashboard page if save button is clicked and data is valid', async (t) => {
+test('should navigate to additional services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
     .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
     .reply(200, {});

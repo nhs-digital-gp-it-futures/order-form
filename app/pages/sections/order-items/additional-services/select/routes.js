@@ -294,7 +294,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       orderType: 'additional-services',
     });
 
-    context.backLinkHref = getBackLinkHref(additionalServicePrices, orderId);
+    context.backLinkHref = getBackLinkHref(req, additionalServicePrices, orderId);
     context.selectDeselectButtonAction = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`;
 
     logger.info(`navigating to order ${orderId} additional-services select recipients page`);

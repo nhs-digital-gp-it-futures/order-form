@@ -1,5 +1,7 @@
 import manifest from './manifest.json';
-import { backLinkHref, getContext } from './contextCreator';
+import {
+  backLinkHref, deleteButtonLink, editRecipientsLink, getContext,
+} from './contextCreator';
 import { baseUrl } from '../../../../../config';
 
 describe('additional-services contextCreator', () => {
@@ -39,6 +41,24 @@ describe('additional-services contextCreator', () => {
       const actual = backLinkHref({ req, orderId });
 
       expect(actual).toEqual(senderUrl);
+    });
+  });
+
+  describe('deleteButtonLink', () => {
+    it('should return expected link', () => {
+      const orderItemId = 'order-item-id-92';
+      const solutionName = 'Medi-Sort';
+      const actual = deleteButtonLink({ orderId, orderItemId, solutionName });
+      expect(actual)
+        .toEqual(`${baseUrl}/organisation/${orderId}/additional-services/delete/${orderItemId}/confirmation/${solutionName}`);
+    });
+  });
+
+  describe('editRecipientsLink', () => {
+    it('should return expected link', () => {
+      const actual = editRecipientsLink(orderId);
+      expect(actual)
+        .toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`);
     });
   });
 

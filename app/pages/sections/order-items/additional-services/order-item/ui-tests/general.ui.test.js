@@ -138,7 +138,7 @@ test('should render the delete button', async (t) => {
   const button = Selector('[data-test-id="delete-button"] span');
 
   await t
-    .expect(await extractInnerText(button)).eql(commonContent.deleteButton.text)
+    .expect(await extractInnerText(button)).eql('Delete Additional Service')
     .expect(button.hasClass('nhsuk-button--secondary')).eql(true)
     .expect(button.hasClass('nhsuk-button--disabled')).eql(true);
 });

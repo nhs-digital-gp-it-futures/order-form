@@ -160,6 +160,7 @@ describe('additional-services section routes', () => {
       catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({
         questions: { price: { data: '12' } },
       });
+      additionalServicesController.setAdditionalServicesLinks = jest.fn();
 
       return request(setUpFakeApp())
         .get(path)
@@ -167,7 +168,7 @@ describe('additional-services section routes', () => {
         .expect(200)
         .then((res) => {
           expect(catalogueSolutionsController.getOrderItemContext).toHaveBeenCalled();
-          expect(additionalServicesController.getBackLinkHref).toHaveBeenCalled();
+          expect(additionalServicesController.setAdditionalServicesLinks).toHaveBeenCalled();
           expect(res.text.includes('data-test-id="order-item-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
