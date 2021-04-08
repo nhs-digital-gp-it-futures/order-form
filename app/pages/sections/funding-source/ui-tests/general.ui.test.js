@@ -154,7 +154,7 @@ test('should show the error summary when no funding source selected causing vali
 
   await t
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select yes if GMS is your only source of funding for this order');
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select yes if you\'re paying for this order in full using your GP IT Futures centrally held funding allocation');
 });
 
 test('should render select funding source field as errors with error message when no funding source selected causing validation error', async (t) => {
@@ -171,7 +171,7 @@ test('should render select funding source field as errors with error message whe
 
   await t
     .expect(fundingSourceSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
-    .expect(await extractInnerText(fundingSourceSelectField.find('#selectFundingSource-error'))).contains('Select yes if GMS is your only source of funding for this order');
+    .expect(await extractInnerText(fundingSourceSelectField.find('#selectFundingSource-error'))).contains('Select yes if you\'re paying for this order in full using your GP IT Futures centrally held funding allocation');
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {

@@ -35,7 +35,7 @@ describe('funding source contextCreator', () => {
         questions: [
           {
             id: 'selectFundingSource',
-            mainAdvice: 'Is General Medical Services (GMS) your only source of funding for this order?',
+            mainAdvice: 'Are you paying for this order in full using your GP IT Futures centrally held funding allocation?',
             options: [{
               value: true,
               text: 'Yes',
@@ -57,7 +57,7 @@ describe('funding source contextCreator', () => {
         questions: [
           {
             id: 'selectFundingSource',
-            mainAdvice: 'Is General Medical Services (GMS) your only source of funding for this order?',
+            mainAdvice: 'Are you paying for this order in full using your GP IT Futures centrally held funding allocation?',
             options: [{
               value: true,
               text: 'Yes',

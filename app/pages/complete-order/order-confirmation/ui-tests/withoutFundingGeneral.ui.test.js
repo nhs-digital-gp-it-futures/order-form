@@ -74,6 +74,16 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
+test('should render the inset advice', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const insetAdvice = Selector('[data-test-id="order-confirmation-page-inset-advice"]');
+
+  await t
+    .expect(await extractInnerText(insetAdvice)).contains(content.insetAdvice);
+});
+
 test('should render the get order summary button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
