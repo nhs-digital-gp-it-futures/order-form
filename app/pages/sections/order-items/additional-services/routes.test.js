@@ -156,6 +156,7 @@ describe('additional-services section routes', () => {
 
     it('should return the additional-services order item page if authorised', () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
+      additionalServicesController.getBackLinkHref = jest.fn().mockResolvedValue({});
       catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({
         questions: { price: { data: '12' } },
       });
@@ -165,6 +166,8 @@ describe('additional-services section routes', () => {
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
+          expect(catalogueSolutionsController.getOrderItemContext).toHaveBeenCalled();
+          expect(additionalServicesController.getBackLinkHref).toHaveBeenCalled();
           expect(res.text.includes('data-test-id="order-item-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });

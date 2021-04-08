@@ -4,6 +4,7 @@ import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
 import {
   getAdditionalServicesPageContext,
+  getBackLinkHref,
 } from './dashboard/controller';
 import { additionalServicesSelectRoutes } from './select/routes';
 import {
@@ -74,7 +75,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients || [],
     });
-    context.backLinkHref = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
+    context.backLinkHref = getBackLinkHref(req, orderId);
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk',

@@ -12,6 +12,9 @@
         "data": "Additional Service"
       },
       {
+        "data": "Unit of order"
+      },
+      {
         "data": "Service Recipient (ODS code)"
       }
     ],

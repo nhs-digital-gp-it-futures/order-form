@@ -1,8 +1,37 @@
 import manifest from './manifest.json';
-import { getContext } from './contextCreator';
+import { backLinkHref, getContext } from './contextCreator';
 import { baseUrl } from '../../../../../config';
 
 describe('additional-services contextCreator', () => {
+  const orderId = 'order-8393';
+
+  describe('backLinkHref', () => {
+    it('should return recipients date URL if referer does not end in additional-services', () => {
+      const senderUrl = 'https://some.url.co.uk/order-id/items/894';
+      const req = {
+        headers: {
+          referer: senderUrl,
+        },
+      };
+      const actual = backLinkHref({ req, orderId });
+
+      expect(actual)
+        .toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`);
+    });
+
+    it('should return referer if referer ends in additional-services', () => {
+      const senderUrl = 'https://some.url.co.uk/order-id/items/additional-services';
+      const req = {
+        headers: {
+          referer: senderUrl,
+        },
+      };
+      const actual = backLinkHref({ req, orderId });
+
+      expect(actual).toEqual(senderUrl);
+    });
+  });
+
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1' });
@@ -10,7 +39,6 @@ describe('additional-services contextCreator', () => {
     });
 
     it('should construct the backLinkHref', () => {
-      const orderId = 'order-id';
       const context = getContext({ orderId });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
     });
@@ -70,8 +98,15 @@ describe('additional-services contextCreator', () => {
                 dataTestId: 'orderItem1-catalogueItemName',
               },
               {
-                data: 'Recipient One (recipient-1)',
-                dataTestId: 'orderItem1-serviceRecipient',
+                data: 'per patient per month',
+                dataTestId: 'orderItem1-unitoforder',
+              },
+              {
+                expandableSection: {
+                  dataTestId: 'orderItem1-serviceRecipients',
+                  title: 'Service recipients (ODS code)',
+                  innerComponent: 'Recipient One (recipient-1)',
+                },
               },
             ],
             [
@@ -81,8 +116,15 @@ describe('additional-services contextCreator', () => {
                 dataTestId: 'orderItem2-catalogueItemName',
               },
               {
-                data: 'Recipient Two (recipient-2)',
-                dataTestId: 'orderItem2-serviceRecipient',
+                data: 'per appointment',
+                dataTestId: 'orderItem2-unitoforder',
+              },
+              {
+                expandableSection: {
+                  dataTestId: 'orderItem2-serviceRecipients',
+                  title: 'Service recipients (ODS code)',
+                  innerComponent: 'Recipient Two (recipient-2)<br><br>Recipient Four (recipient-4)<br><br>Recipient Five (recipient-5)',
+                },
               },
             ],
           ],
@@ -93,6 +135,14 @@ describe('additional-services contextCreator', () => {
         {
           catalogueItemId: 'orderItem1',
           catalogueItemName: 'Additional Service One',
+          itemUnit: {
+            name: 'patient',
+            description: 'per patient',
+          },
+          timeUnit: {
+            name: 'month',
+            description: 'per month',
+          },
           serviceRecipients: [{
             name: 'Recipient One',
             odsCode: 'recipient-1',
@@ -104,7 +154,19 @@ describe('additional-services contextCreator', () => {
           serviceRecipients: [{
             name: 'Recipient Two',
             odsCode: 'recipient-2',
+          },
+          {
+            name: 'Recipient Four',
+            odsCode: 'recipient-4',
+          },
+          {
+            name: 'Recipient Five',
+            odsCode: 'recipient-5',
           }],
+          itemUnit: {
+            name: 'appointment',
+            description: 'per appointment',
+          },
         },
       ];
       const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
