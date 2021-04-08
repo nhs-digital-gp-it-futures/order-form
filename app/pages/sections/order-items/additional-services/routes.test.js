@@ -14,22 +14,21 @@ import {
 } from '../../../../test-utils/routesTestHelper';
 import * as additionalServicesController from './dashboard/controller';
 import * as catalogueSolutionsController from '../catalogue-solutions/order-item/controller';
-import * as orderItemController from './order-item/controller';
-import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import {
-  getOrderItemRecipientsPageData,
-  getOrderItemAdditionalServicesPageData,
-} from '../../../../helpers/routes/getOrderItemPageData';
-import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
+import { validateOrderItemFormBulk } from '../../../../helpers/controllers/validateOrderItemFormBulk';
+import { getOrderItemPageDataBulk } from '../../../../helpers/routes/getOrderItemPageDataBulk';
+import { saveOrderItemBulk } from '../../../../helpers/controllers/saveOrderItemBulk';
+import { transformApiValidationResponse } from '../../../../helpers/common/transformApiValidationResponse';
 import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../logger');
 jest.mock('../../../../helpers/routes/getOrderItemPageData');
-jest.mock('../../../../helpers/controllers/validateOrderItemForm');
-jest.mock('../../../../helpers/controllers/saveOrderItem');
+jest.mock('../../../../helpers/controllers/validateOrderItemFormBulk');
+jest.mock('../../../../helpers/controllers/saveOrderItemBulk');
+jest.mock('../../../../helpers/common/transformApiValidationResponse');
 jest.mock('../../../../helpers/api/ordapi/putOrderSection');
+jest.mock('../../../../helpers/routes/getOrderItemPageDataBulk');
 
 const mockSelectedItemIdCookie = `${sessionKeys.selectedItemId}=item-1`;
 const mockSelectedRecipientIdCookie = `${sessionKeys.selectedRecipientId}=recipient-1`;
@@ -156,8 +155,10 @@ describe('additional-services section routes', () => {
     ));
 
     it('should return the additional-services order item page if authorised', () => {
-      getOrderItemAdditionalServicesPageData.mockResolvedValue({});
-      catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({
+        questions: { price: { data: '12' } },
+      });
 
       return request(setUpFakeApp())
         .get(path)
@@ -170,8 +171,7 @@ describe('additional-services section routes', () => {
     });
   });
 
-  // TODO: fix when feature implemented
-  xdescribe('POST /organisation/:orderId/additional-services/:catalogueItemId', () => {
+  describe('POST /organisation/:orderId/additional-services/:catalogueItemId', () => {
     const path = '/organisation/some-order-id/additional-services/neworderitem';
 
     it('should return 403 forbidden if no csrf token is available', () => (
@@ -181,8 +181,8 @@ describe('additional-services section routes', () => {
     ));
 
     it('should redirect to the login page if the user is not logged in', () => {
-      getOrderItemRecipientsPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
@@ -190,7 +190,6 @@ describe('additional-services section routes', () => {
         postPath: path,
         getPathCookies: [
           mockAuthorisedCookie,
-          mockSelectedItemIdCookie,
           mockSelectedRecipientIdCookie,
           mockSelectedPriceIdCookie,
         ],
@@ -200,8 +199,8 @@ describe('additional-services section routes', () => {
     });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      getOrderItemRecipientsPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
@@ -222,10 +221,12 @@ describe('additional-services section routes', () => {
     });
 
     it('should show the additional-services order item page with errors if there are FE caught validation errors', async () => {
-      getOrderItemRecipientsPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      validateOrderItemForm.mockReturnValue([{}]);
-      orderItemController.getOrderItemErrorPageContext = jest.fn()
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
+      catalogueSolutionsController.formatFormData = jest.fn().mockResolvedValue({});
+      catalogueSolutionsController.setEstimationPeriod = jest.fn();
+      validateOrderItemFormBulk.mockReturnValue([{}]);
+      catalogueSolutionsController.getOrderItemErrorContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
         });
@@ -245,6 +246,7 @@ describe('additional-services section routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
+          expect(catalogueSolutionsController.setEstimationPeriod).toHaveBeenCalled();
           expect(res.text.includes('data-test-id="order-item-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
@@ -252,11 +254,14 @@ describe('additional-services section routes', () => {
     });
 
     it('should show the additional-services order item page with errors if the api response is unsuccessful', async () => {
-      getOrderItemRecipientsPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      validateOrderItemForm.mockReturnValue([]);
-      saveOrderItem.mockResolvedValue({ success: false, errors: {} });
-      orderItemController.getOrderItemErrorPageContext = jest.fn()
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
+      catalogueSolutionsController.formatFormData = jest.fn().mockResolvedValue({});
+      validateOrderItemFormBulk.mockReturnValue([]);
+      saveOrderItemBulk.mockResolvedValue({ success: false, errors: {} });
+      transformApiValidationResponse.mockReturnValue([]);
+
+      catalogueSolutionsController.getOrderItemErrorContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
         });
@@ -281,10 +286,12 @@ describe('additional-services section routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/additional-services if there are no validation errors and post is successful', async () => {
-      getOrderItemRecipientsPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      validateOrderItemForm.mockReturnValue([]);
-      saveOrderItem.mockResolvedValue({ success: true });
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
+      catalogueSolutionsController.formatFormData = jest.fn().mockResolvedValue({});
+      catalogueSolutionsController.getPageData = jest.fn().mockResolvedValue({});
+      validateOrderItemFormBulk.mockReturnValue([]);
+      saveOrderItemBulk.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
