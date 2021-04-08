@@ -1,4 +1,4 @@
-import { getContext } from './contextCreator';
+import { backLinkHref, getContext } from './contextCreator';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 import { getOrderDescription } from '../../../../../helpers/routes/getOrderDescription';
 
@@ -29,3 +29,5 @@ export const getAdditionalServicesPageContext = async ({
     orderItems: additionalServiceOrderItemsData,
   });
 };
+
+export const getBackLinkHref = (req, orderId) => backLinkHref({ req, orderId });

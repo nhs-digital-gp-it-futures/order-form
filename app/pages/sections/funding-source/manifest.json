@@ -5,7 +5,7 @@
   "questions": [
     {
       "id": "selectFundingSource",
-      "mainAdvice": "Is General Medical Services (GMS) your only source of funding for this order?",
+      "mainAdvice": "Are you paying for this order in full using your GP IT Futures centrally held funding allocation?",
       "options": [{
         "value": true,
         "text": "Yes"
@@ -17,11 +17,13 @@
     }
   ],
   "insetAdvice": [
-    "We can only process your order if you’re paying for it in full using GMS funding. You’ll need to create a separate order for any items that are being paid for using a different funding source.",
-    "Once your order is completed, you'll be able to get a copy of your order summary to include in the contract you send to the supplier."
+    "Only answer ‘Yes’ if you’re using your central funding allocation to pay for the entire value of this order. It’ll then be centrally processed and paid for out of your allocation.",
+    "If you answer ‘No’, the order can still be completed but you’ll need to contact the supplier to arrange payment.",
+    "In both cases completing your order will generate an order summary that you’ll need to include in the contract you send to the supplier.",
+    "If you’re intending to pay using a combination of your central allocation and any other funding sources, you’ll need to create separate orders for each of the funding sources you’re using."
   ],
   "errorMessages": {
-    "SelectFundingSourceRequired": "Select yes if GMS is your only source of funding for this order"
+    "SelectFundingSourceRequired": "Select yes if you're paying for this order in full using your GP IT Futures centrally held funding allocation"
   },
   "saveButtonText": "Save and return"
 }
