@@ -34,7 +34,7 @@ export const getContext = ({
       questions: selectedPriceManifest.questions,
       formData,
       errorMap,
-      unit: selectedPrice.timeUnit
+      unit: selectedPrice.timeUnit && selectedPrice.provisioningType !== 'OnDemand'
         ? `${selectedPrice.itemUnit.description} ${selectedPrice.timeUnit.description}`
         : selectedPrice.itemUnit.description,
     }),
