@@ -23,4 +23,4 @@ export const getAdditionalServiceRecipientName = ({ serviceRecipientId, recipien
 );
 
 // eslint-disable-next-line max-len
-export const getBackLinkHref = (additionalServicePrices, orderId) => backLinkHref(additionalServicePrices, orderId);
+export const getBackLinkHref = (req, additionalServicePrices, orderId) => backLinkHref(req, additionalServicePrices, orderId);

@@ -1,6 +1,8 @@
 import { fakeSessionManager } from 'buying-catalogue-library';
 import * as contextCreator from './contextCreator';
-import { getAdditionalServicesPageContext, getBackLinkHref } from './controller';
+import {
+  setAdditionalServicesLinks, getAdditionalServicesPageContext, getBackLinkHref,
+} from './controller';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 import { getOrderDescription } from '../../../../../helpers/routes/getOrderDescription';
 import { logger } from '../../../../../logger';
@@ -8,6 +10,8 @@ import { logger } from '../../../../../logger';
 jest.mock('../../../../../logger');
 jest.mock('./contextCreator', () => ({
   backLinkHref: jest.fn(),
+  deleteButtonLink: jest.fn(),
+  editRecipientsLink: jest.fn(),
   getContext: jest.fn(),
 }));
 jest.mock('../../../../../helpers/api/ordapi/getOrderItems');
@@ -103,5 +107,58 @@ describe('getBackLinkHref', () => {
     expect(contextCreator.backLinkHref.mock.calls.length).toEqual(1);
     expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, orderId });
     expect(actual).toEqual(expected);
+  });
+});
+
+describe('setAdditionalServicesLinks', () => {
+  const context = {
+    deleteButton: {
+      altText: 'The Delete Catalogue Solution button will be disabled until you save for the first time',
+      text: 'Delete Catalogue Solution',
+    },
+    editButton: {},
+  };
+  const expected = 'http://some.link.com';
+  const orderItemId = 'order-item-Id';
+
+  it('should set expected backLinkHref', () => {
+    contextCreator.backLinkHref.mockReturnValueOnce(expected);
+
+    setAdditionalServicesLinks(req, context, orderId, orderItemId);
+
+    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, orderId });
+    expect(context.backLinkHref).toEqual(expected);
+  });
+
+  it('should set expected deleteButton alt text', () => {
+    const expectedAltText = context.deleteButton.altText.replace('Catalogue Solution', 'Additional Service');
+
+    setAdditionalServicesLinks(req, context, orderId, orderItemId);
+
+    expect(context.deleteButton.altText).toEqual(expectedAltText);
+  });
+
+  it('should set expected deleteButton link', () => {
+    contextCreator.deleteButtonLink.mockReturnValueOnce(expected);
+
+    setAdditionalServicesLinks(req, context, orderId, orderItemId);
+
+    expect(context.deleteButton.href).toEqual(expected);
+  });
+
+  it('should set expected deleteButton text', () => {
+    const expectedText = context.deleteButton.text.replace('Catalogue Solution', 'Additional Service');
+
+    setAdditionalServicesLinks(req, context, orderId, orderItemId);
+
+    expect(context.deleteButton.text).toEqual(expectedText);
+  });
+
+  it('should set expected editButton link', () => {
+    contextCreator.editRecipientsLink.mockReturnValueOnce(expected);
+
+    setAdditionalServicesLinks(req, context, orderId, orderItemId);
+
+    expect(context.editButton.href).toEqual(expected);
   });
 });

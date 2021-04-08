@@ -1,4 +1,5 @@
 import {
+  getBackLinkHref,
   getAdditionalServiceRecipientPageContext,
   validateAdditionalServiceRecipientForm,
   getAdditionalServiceRecipientName,
@@ -6,6 +7,7 @@ import {
 import * as contextCreator from './contextCreator';
 
 jest.mock('./contextCreator', () => ({
+  backLinkHref: jest.fn(),
   getContext: jest.fn(),
 }));
 
@@ -117,6 +119,24 @@ describe('Additional-services select-recipient controller', () => {
       };
 
       expect(() => getAdditionalServiceRecipientName(data)).toThrow(Error);
+    });
+  });
+
+  describe('getBackLinkHref', () => {
+    it('should return value from backLinkHref', () => {
+      const req = { params: { orderItemId: 'order-item-id-109' } };
+      const additionalServices = [
+        { name: 'service-28' },
+        { name: 'service-84' },
+      ];
+      const orderId = 'order-Id-457';
+      const expected = 'https://www.bbc.co.uk/news';
+      contextCreator.backLinkHref.mockReturnValueOnce(expected);
+
+      const actual = getBackLinkHref(req, additionalServices, orderId);
+
+      expect(contextCreator.backLinkHref).toHaveBeenCalledWith(req, additionalServices, orderId);
+      expect(actual).toEqual(expected);
     });
   });
 });

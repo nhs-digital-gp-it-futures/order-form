@@ -41,6 +41,10 @@ export const backLinkHref = ({ req, orderId }) => {
     : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
 };
 
+export const deleteButtonLink = ({ orderId, orderItemId, solutionName }) => `${baseUrl}/organisation/${orderId}/additional-services/delete/${orderItemId}/confirmation/${solutionName}`;
+
+export const editRecipientsLink = (orderId) => `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`;
+
 export const getContext = ({ orderId, orderDescription, orderItems = [] }) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
