@@ -10,8 +10,18 @@ const generateItems = ({ orderId, orderItems }) => {
       dataTestId: `${orderItem.catalogueItemId}-catalogueItemName`,
     }));
     columns.push(({
-      data: `${orderItem.serviceRecipients[0].name} (${orderItem.serviceRecipients[0].odsCode})`,
-      dataTestId: `${orderItem.catalogueItemId}-serviceRecipient`,
+      data: orderItem.timeUnit
+        ? `${orderItem.itemUnit.description} ${orderItem.timeUnit.description}` : `${orderItem.itemUnit.description}`,
+      dataTestId: `${orderItem.catalogueItemId}-unitoforder`,
+    }));
+
+    const serviceRecipients = orderItem.serviceRecipients.map((recipient) => `${recipient.name} (${recipient.odsCode})`);
+    columns.push(({
+      expandableSection: {
+        dataTestId: `${orderItem.catalogueItemId}-serviceRecipients`,
+        title: 'Service recipients (ODS code)',
+        innerComponent: serviceRecipients.join('<br><br>'),
+      },
     }));
     return columns;
   });
@@ -22,6 +32,14 @@ const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItem
   ...addedOrderItemsTable,
   items: generateItems({ orderId, orderItems }),
 });
+
+export const backLinkHref = ({ req, orderId }) => {
+  const { referer } = req.headers;
+  const slug = referer ? referer.split('/').pop() : '';
+
+  return slug && slug.toLowerCase() === 'additional-services' ? referer
+    : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
+};
 
 export const getContext = ({ orderId, orderDescription, orderItems = [] }) => ({
   ...manifest,

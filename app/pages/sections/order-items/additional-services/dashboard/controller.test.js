@@ -1,12 +1,13 @@
 import { fakeSessionManager } from 'buying-catalogue-library';
 import * as contextCreator from './contextCreator';
-import { getAdditionalServicesPageContext } from './controller';
+import { getAdditionalServicesPageContext, getBackLinkHref } from './controller';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 import { getOrderDescription } from '../../../../../helpers/routes/getOrderDescription';
 import { logger } from '../../../../../logger';
 
 jest.mock('../../../../../logger');
 jest.mock('./contextCreator', () => ({
+  backLinkHref: jest.fn(),
   getContext: jest.fn(),
 }));
 jest.mock('../../../../../helpers/api/ordapi/getOrderItems');
@@ -89,5 +90,18 @@ describe('additional-services controller', () => {
         orderItems: [],
       });
     });
+  });
+});
+
+describe('getBackLinkHref', () => {
+  it('should return result from backLinkHref', () => {
+    const expected = 'http://some.link.com';
+    contextCreator.backLinkHref.mockReturnValueOnce(expected);
+
+    const actual = getBackLinkHref(req, orderId);
+
+    expect(contextCreator.backLinkHref.mock.calls.length).toEqual(1);
+    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, orderId });
+    expect(actual).toEqual(expected);
   });
 });
