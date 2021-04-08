@@ -23,10 +23,10 @@ const selectedPrice = {
   price: 0.11,
 };
 
-const recipients = JSON.stringify([
+const recipients = [
   { odsCode: 'recipient-1', name: 'Recipient 1' },
   { odsCode: 'recipient-2', name: 'Recipient 2' },
-]);
+];
 const selectedRecipients = ['recipient-2'];
 
 const itemIdInSession = 'item-1';
@@ -36,14 +36,17 @@ const selectedRecipientIdInSession = 'recipient-1';
 const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
 const deliveryDate = '2020-02-12';
+const recipientsInSession = JSON.stringify(recipients);
+const selectedRecipientsInSession = JSON.stringify(selectedRecipients);
 
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
   itemName: itemNameInSession,
-  catalogueSolutionId: catalogueSolutionIdInSession,
   serviceRecipientId: selectedRecipientIdInSession,
   serviceRecipientName: selectedRecipientNameInSession,
   selectedPrice,
+  recipients,
+  selectedRecipients,
 });
 
 const mocks = (mockSelectedPrice) => {
@@ -70,8 +73,8 @@ const pageSetup = async (setup = defaultPageSetup) => {
     await setState(ClientFunction)(sessionKeys.selectedPriceId, selectedPriceIdInSession);
     await setState(ClientFunction)(sessionKeys.additionalServiceSelectedPrice, JSON.stringify(selectedPrice));
     await setState(ClientFunction)(sessionKeys.plannedDeliveryDate, deliveryDate);
-    await setState(ClientFunction)(sessionKeys.recipients, recipients);
-    await setState(ClientFunction)(sessionKeys.selectedRecipients, JSON.stringify(selectedRecipients));
+    await setState(ClientFunction)(sessionKeys.recipients, recipientsInSession);
+    await setState(ClientFunction)(sessionKeys.selectedRecipients, selectedRecipientsInSession);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
@@ -138,114 +141,95 @@ test('should render empty price when 0 returned from the API', async (t) => {
     .expect(priceInput.getAttribute('value')).eql(undefined);
 });
 
-test.skip('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
+test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const orderItemPage = Selector('[data-test-id="order-item-page"]');
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const quantityField = orderItemPage.find('[data-test-id="question-quantity"]');
-  const quantityFieldWithError = quantityField.find('[data-test-id="text-field-input-error"]');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(quantityFieldWithError.exists).notOk()
-    .click(saveButton);
+    .expect(pageModel.solutionTableError.exists).notOk()
+    .click(pageModel.saveButton);
 
   await t
-    .expect(quantityFieldWithError.exists).ok()
-    .expect(await extractInnerText(quantityField.find('#quantity-error'))).contains(content.errorMessages.QuantityRequired);
+    .expect(pageModel.solutionTableError.exists).ok()
+    .expect(await extractInnerText(pageModel.solutionTableError)).contains(content.errorMessages.QuantityRequired);
 });
 
-test.skip('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
+test('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const orderItemPage = Selector('[data-test-id="order-item-page"]');
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const priceField = orderItemPage.find('[data-test-id="question-price"]');
-  const priceFieldWithError = priceField.find('[data-test-id="text-field-input-error"]');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(priceFieldWithError.exists).notOk()
-    .selectText(priceField.find('input')).pressKey('delete')
-    .click(saveButton);
+    .expect(pageModel.textFieldError.exists).notOk()
+    .selectText(pageModel.priceInput).pressKey('delete')
+    .click(pageModel.saveButton);
 
   await t
-    .expect(priceFieldWithError.exists).ok()
-    .expect(await extractInnerText(priceField.find('#price-error'))).contains(content.errorMessages.PriceRequired);
+    .expect(pageModel.textFieldError.exists).ok()
+    .expect(await extractInnerText(pageModel.priceField.find('#price-error'))).contains(content.errorMessages.PriceRequired);
 });
 
-test.skip('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
+test('should anchor to the quantity field when clicking on the quantity required error link in errorSummary ', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(errorSummary.exists).notOk()
-    .click(saveButton);
+    .expect(pageModel.errorSummary.exists).notOk()
+    .click(pageModel.saveButton);
 
   await t
-    .click(errorSummary.find('li a').nth(0))
+    .click(pageModel.errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#quantity`);
 });
 
-test.skip('should anchor to the quantity field when clicking on the numerical quantity error link in errorSummary ', async (t) => {
+test('should anchor to the quantity field when clicking on the numerical quantity error link in errorSummary ', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const quantity = Selector('[data-test-id="question-quantity"]');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(errorSummary.exists).notOk()
-    .typeText(quantity, 'blah', { paste: true })
-    .click(saveButton);
+    .expect(pageModel.errorSummary.exists).notOk()
+    .typeText(pageModel.quantityField, 'blah', { paste: true })
+    .click(pageModel.saveButton);
 
   await t
-    .click(errorSummary.find('li a').nth(0))
+    .click(pageModel.errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#quantity`);
 });
 
-test.skip('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
+test('should anchor to the price field when clicking on the price required error link in errorSummary ', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const priceInput = Selector('[data-test-id="question-price"] input');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(errorSummary.exists).notOk()
-    .selectText(priceInput).pressKey('delete')
-    .click(saveButton);
+    .expect(pageModel.errorSummary.exists).notOk()
+    .selectText(pageModel.priceInput).pressKey('delete')
+    .click(pageModel.saveButton);
 
   await t
-    .click(errorSummary.find('li a').nth(1))
+    .click(pageModel.errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
 
-test.skip('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
+test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const priceInput = Selector('[data-test-id="question-price"] input');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(errorSummary.exists).notOk()
-    .typeText(priceInput, 'blah', { paste: true })
-    .click(saveButton);
+    .expect(pageModel.errorSummary.exists).notOk()
+    .typeText(pageModel.priceInput, 'blah', { paste: true })
+    .click(pageModel.saveButton);
 
   await t
-    .click(errorSummary.find('li a').nth(1))
+    .click(pageModel.errorSummary.find('li a').nth(0))
     .expect(getLocation()).eql(`${pageUrl}#price`);
 });
 
-test.skip('should render the solution table headings', async (t) => {
+test('should render the solution table headings', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
   const pageModel = new AdditionalServicePageModel();
@@ -263,7 +247,7 @@ test.skip('should render the solution table headings', async (t) => {
     .eql(`${content.solutionTable.columnInfo[2].data}\n${content.solutionTable.columnInfo[2].additionalAdvice}`);
 });
 
-test.skip('should render the solution table content', async (t) => {
+test('should render the solution table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -309,7 +293,7 @@ test.skip('should render the solution table content', async (t) => {
     .eql(content.solutionTable.cellInfo.deliveryDate.expandableSection.innerComponent.replace('<br><br>', ''));
 });
 
-test.skip('should render an expandable section for the quantity question', async (t) => {
+test('should render an expandable section for the quantity question', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -324,45 +308,40 @@ test.skip('should render an expandable section for the quantity question', async
     .eql(content.solutionTable.cellInfo.quantity.expandableSection.innerComponent.replace('<br><br>', ''));
 });
 
-// TODO: fix when feature completed
-test.skip('should render solution table as errors with error message when no practice list sizes are entered', async (t) => {
+test('should render solution table as errors with error message when no practice list sizes are entered', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const solutionTableError = Selector('[data-test-id="solution-table-error"]');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(solutionTableError.exists).notOk()
-    .click(saveButton);
+    .expect(pageModel.solutionTableError.exists).notOk()
+    .click(pageModel.saveButton);
 
   await t
-    .expect(solutionTableError.exists).ok()
-    .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.QuantityRequired);
+    .expect(pageModel.solutionTableError.exists).ok()
+    .expect(await extractInnerText(pageModel.solutionTableError)).contains(content.errorMessages.QuantityRequired);
 });
 
-// TODO: fix when feature completed
-test.skip('should render solution table as errors with error message when no date is entered', async (t) => {
+test('should render solution table as errors with error message when no date is entered', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
+  const pageModel = new AdditionalServicePageModel();
 
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const solutionTableError = Selector('[data-test-id="solution-table-error"]').nth(1);
   const dayInput = Selector('#deliveryDate-day');
   const monthInput = Selector('#deliveryDate-month');
   const yearInput = Selector('#deliveryDate-year');
 
   await t
-    .expect(solutionTableError.exists).notOk()
+    .expect(pageModel.solutionTableError.exists).notOk()
     .selectText(dayInput).pressKey('delete')
     .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
     .selectText(monthInput).pressKey('delete')
     .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
     .selectText(yearInput).pressKey('delete')
     .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
-    .click(saveButton);
+    .click(pageModel.saveButton);
 
   await t
-    .expect(solutionTableError.exists).ok()
-    .expect(await extractInnerText(solutionTableError)).contains(content.errorMessages.DeliveryDateRequired);
+    .expect(pageModel.solutionTableError.exists).ok()
+    .expect(await extractInnerText(pageModel.solutionTableError.nth(1))).contains(content.errorMessages.DeliveryDateRequired);
 });
