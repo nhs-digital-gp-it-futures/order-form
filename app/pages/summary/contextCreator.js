@@ -249,8 +249,8 @@ const generateRecurringCostDetailsTable = ({
 
       columns.push(({
         classes: recurringCostTable.cellInfo.itemCost.classes,
-        data: formatPrice({ value: item.costPerYear, maximumFractionDigits: 2 }),
-        dataTestId: 'item-cost',
+        data: formatPrice({ value: serviceRecipient.costPerYear, maximumFractionDigits: 2 }),
+        dataTestId: 'costPerYear',
       }));
 
       items.push(columns);
