@@ -69,8 +69,7 @@ describe('additional-services select routes', () => {
     jest.resetAllMocks();
   });
 
-  // TODO: fix when feature implemented
-  xdescribe('POST /organisation/:orderId/additional-services/select/additional-service/price/recipients', () => {
+  describe('POST /organisation/:orderId/additional-services/select/additional-service/price/recipients', () => {
     const path = '/organisation/order-1/additional-services/select/additional-service/price/recipients';
 
     it('should return 403 forbidden if no csrf token is available', () => (
@@ -141,7 +140,36 @@ describe('additional-services select routes', () => {
         });
     });
 
-    it('should redirect to /organisation/order-1/additional-services/price/recipients/date when a recipient is selected', async () => {
+    it('should redirect to additional services page when a recipient is selected and orderItemId is posted', async () => {
+      const slug = '/organisation/order-1/additional-services/8372';
+      const expectedLocation = `${config.baseUrl}${slug}`;
+      selectRecipientController.getSelectSolutionPriceEndpoint = jest.fn()
+        .mockReturnValue(slug);
+      validateFormFunction.validateSolutionRecipientsForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie,
+        ],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie])
+        .send({ _csrf: csrfToken, orderItemId: 8372 })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(expectedLocation);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should redirect to delivery date page when a recipient is selected', async () => {
       validateFormFunction.validateSolutionRecipientsForm = jest.fn()
         .mockReturnValue({ success: true });
 
@@ -714,6 +742,9 @@ describe('additional-services select routes', () => {
 
       selectAdditionalServiceRecipientController.getBackLinkHref = jest.fn()
         .mockReturnValue('http://returnurl.com');
+
+      selectAdditionalServiceRecipientController
+        .setContextIfBackFromAdditionalServiceEdit = jest.fn();
     });
 
     it('should redirect to the login page if the user is not logged in', () => (
@@ -745,6 +776,8 @@ describe('additional-services select routes', () => {
         .set('Cookie', [mockAuthorisedCookie]);
 
       expect(selectAdditionalServiceRecipientController.getBackLinkHref).toHaveBeenCalled();
+      expect(selectAdditionalServiceRecipientController.setContextIfBackFromAdditionalServiceEdit)
+        .toHaveBeenCalled();
       expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });

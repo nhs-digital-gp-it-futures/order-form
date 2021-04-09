@@ -23,6 +23,8 @@ import {
   getAdditionalServiceRecipientErrorPageContext,
   validateAdditionalServiceRecipientForm,
   getAdditionalServiceRecipientName,
+  getAdditionalServicePriceEndpoint,
+  setContextIfBackFromAdditionalServiceEdit,
 } from './recipient/controller';
 import { getServiceRecipientsContext, getServiceRecipientsErrorPageContext } from '../../catalogue-solutions/select/recipients/controller';
 import {
@@ -297,6 +299,8 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     context.backLinkHref = getBackLinkHref(req, additionalServicePrices, orderId);
     context.selectDeselectButtonAction = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`;
 
+    setContextIfBackFromAdditionalServiceEdit(req, context, orderId);
+
     logger.info(`navigating to order ${orderId} additional-services select recipients page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -318,6 +322,11 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
       });
 
+      if (req.body.orderItemId) {
+        logger.info('Redirect to additional services page');
+        return res.redirect(`${config.baseUrl}${getAdditionalServicePriceEndpoint(orderId, req.body.orderItemId)}`);
+      }
+
       logger.info('Redirect to planned delivery date page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`);
     }
@@ -337,7 +346,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       manifest,
     });
 
-    context.backLinkHref = getBackLinkHref(additionalServicePrices, orderId);
+    context.backLinkHref = getBackLinkHref(req, additionalServicePrices, orderId);
 
     return res.render(
       'pages/sections/order-items/catalogue-solutions/select/recipients/template.njk',

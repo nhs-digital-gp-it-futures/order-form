@@ -1,8 +1,11 @@
 import { backLinkHref, getContext, getErrorContext } from './contextCreator';
+import { baseUrl } from '../../../../../../config';
 
 export const getAdditionalServiceRecipientPageContext = (params) => getContext(params);
 
 export const getAdditionalServiceRecipientErrorPageContext = (params) => getErrorContext(params);
+
+export const getAdditionalServicePriceEndpoint = (orderId, orderItemId) => `/organisation/${orderId}/additional-services/${orderItemId}`;
 
 export const validateAdditionalServiceRecipientForm = ({ data }) => {
   if (data.selectRecipient && data.selectRecipient.trim().length > 0) {
@@ -24,3 +27,25 @@ export const getAdditionalServiceRecipientName = ({ serviceRecipientId, recipien
 
 // eslint-disable-next-line max-len
 export const getBackLinkHref = (req, additionalServicePrices, orderId) => backLinkHref(req, additionalServicePrices, orderId);
+
+export const setContextIfBackFromAdditionalServiceEdit = (req, context, orderId) => {
+  if (req.body.orderItemId || req.query.orderItemId) {
+    let { orderItemId } = req.body;
+    if (!orderItemId) {
+      orderItemId = req.query.orderItemId;
+    }
+
+    context.backLinkHref = `${baseUrl}${getAdditionalServicePriceEndpoint(orderId, orderItemId)}`;
+    context.orderItemId = orderItemId;
+
+    return;
+  }
+
+  const { referer } = req.headers;
+  const orderItemId = referer ? referer.split('/').pop() : '';
+
+  if (referer && referer.endsWith(getAdditionalServicePriceEndpoint(orderId, orderItemId))) {
+    context.backLinkHref = referer;
+    context.orderItemId = orderItemId;
+  }
+};
