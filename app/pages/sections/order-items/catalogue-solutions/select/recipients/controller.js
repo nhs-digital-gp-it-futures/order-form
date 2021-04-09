@@ -38,12 +38,8 @@ export const getServiceRecipientsErrorPageContext = async ({
 });
 
 export const setContextIfBackFromCatalogueSolutionEdit = (req, context, orderId) => {
-  if (req.body.orderItemId || req.query.orderItemId) {
-    let { orderItemId } = req.body;
-    if (!orderItemId) {
-      orderItemId = req.query.orderItemId;
-    }
-
+  let orderItemId = req.body.orderItemId || req.query.orderItemId;
+  if (orderItemId) {
     context.backLinkHref = `${baseUrl}${getSelectSolutionPriceEndpoint(orderId, orderItemId)}`;
     context.orderItemId = orderItemId;
 
@@ -51,7 +47,7 @@ export const setContextIfBackFromCatalogueSolutionEdit = (req, context, orderId)
   }
 
   const { referer } = req.headers;
-  const orderItemId = referer.split('/').pop();
+  orderItemId = referer.split('/').pop();
 
   if (referer.endsWith(getSelectSolutionPriceEndpoint(orderId, orderItemId))) {
     context.backLinkHref = referer;
