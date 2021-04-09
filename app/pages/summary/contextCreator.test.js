@@ -447,7 +447,7 @@ describe('order summary contextCreator', () => {
               { classes, data: '1.26 per patient per year', dataTestId: 'price-unit' },
               { classes, data: '85 per month', dataTestId: 'quantity' },
               { classes, data: '24 February 2020', dataTestId: 'planned-date' },
-              { classes: `${classes} nhsuk-table__cell--numeric`, data: '5,000.00', dataTestId: 'item-cost' },
+              { classes: `${classes} nhsuk-table__cell--numeric`, data: '5,000.00', dataTestId: 'costPerYear' },
             ],
           ],
         },
@@ -471,6 +471,7 @@ describe('order summary contextCreator', () => {
             odsCode: 'A10001',
             quantity: 85,
             serviceInstanceId: 'service-instance-id',
+            costPerYear: 5000,
           },
         ],
       }];
