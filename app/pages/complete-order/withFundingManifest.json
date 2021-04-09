@@ -1,7 +1,7 @@
 {
   "backLinkText": "Go back",
   "title": "Complete order {{orderId}}?",
-  "description": "You’re about to complete this order and will be unable to make any further changes. As GMS is your only source of funding for this order, it'll be automatically processed and paid for.",
+  "description": "You’re about to complete this order and will be unable to make any further changes. As you're paying for this order in full using your GP IT Futures centrally held funding allocation, payment will be centrally processed. Once your order is completed, you'll be able to get a copy of your order summary to include in the contract you send to the supplier.",
   "orderDescriptionTitle": "Order description",
   "continueEditingOrderButtonText": "Continue editing order",
   "completeOrderButtonText": "Complete order"
