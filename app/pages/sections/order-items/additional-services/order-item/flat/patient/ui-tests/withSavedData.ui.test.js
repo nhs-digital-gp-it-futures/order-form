@@ -133,7 +133,7 @@ test(`should link to /order/${organisation}/${callOffId}/additional-services for
 
   // need to update below url to /order/${organisation}/${callOffId}/additional-services once feature is added
   await t
-    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${callOffId}/additional-services/select/additional-service/price/recipients/date`);
+    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${callOffId}/additional-services/select/additional-service`);
 });
 
 test('should populate text field for the price question', async (t) => {

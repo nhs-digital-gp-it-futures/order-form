@@ -108,7 +108,7 @@ test('should link to /order/organisation/order-1/additional-services/select/addi
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services/select/additional-service/price/recipients/date');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services/select/additional-service');
 });
 
 test('should render the title', async (t) => {

@@ -8,7 +8,7 @@ describe('additional-services contextCreator', () => {
   const orderId = 'order-8393';
 
   describe('backLinkHref', () => {
-    const recipientsDataUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
+    const additionalServiceUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`;
 
     it('should return recipients date URL if referer does not end in additional-services', () => {
       const senderUrl = 'https://some.url.co.uk/order-id/items/894';
@@ -19,7 +19,7 @@ describe('additional-services contextCreator', () => {
       };
       const actual = backLinkHref({ req, orderId });
 
-      expect(actual).toEqual(recipientsDataUrl);
+      expect(actual).toEqual(additionalServiceUrl);
     });
 
     it('should return recipients date URL if no referer', () => {
@@ -28,7 +28,7 @@ describe('additional-services contextCreator', () => {
       };
       const actual = backLinkHref({ req, orderId });
 
-      expect(actual).toEqual(recipientsDataUrl);
+      expect(actual).toEqual(additionalServiceUrl);
     });
 
     it('should return referer if referer ends in additional-services', () => {

@@ -142,7 +142,7 @@ describe('additional-services select routes', () => {
 
     it('should redirect to additional services page when a recipient is selected and orderItemId is posted', async () => {
       const slug = '/organisation/order-1/additional-services/8372';
-      const expectedLocation = `${config.baseUrl}${slug}`;
+      const expectedLocation = `${config.baseUrl}${slug}?submitted=${8372}`;
       selectRecipientController.getSelectSolutionPriceEndpoint = jest.fn()
         .mockReturnValue(slug);
       validateFormFunction.validateSolutionRecipientsForm = jest.fn()
