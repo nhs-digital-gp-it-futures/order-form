@@ -76,6 +76,12 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       selectedRecipients: pageData.selectedRecipients || [],
     });
 
+    sessionManager.saveToSession({
+      req,
+      key: sessionKeys.selectedRecipients,
+      value: pageData.selectedRecipients,
+    });
+
     setAdditionalServicesLinks(req, context, orderId, catalogueItemId, pageData.itemName);
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);

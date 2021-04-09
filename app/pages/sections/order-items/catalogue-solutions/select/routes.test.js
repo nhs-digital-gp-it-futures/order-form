@@ -519,7 +519,7 @@ describe('catalogue-solutions select routes', () => {
         });
     });
 
-    it('should redirect to /organisation/order-1/catalogue-solutions/select/solution/price/recipients/date when a recipient is selected', async () => {
+    it('should redirect to planned delivey date page when a recipient is selected', async () => {
       validateFormFunction.validateSolutionRecipientsForm = jest.fn()
         .mockReturnValue({ success: true });
 
@@ -543,8 +543,9 @@ describe('catalogue-solutions select routes', () => {
     });
 
     it('should redirect to select solution price endpoint when a recipient is selected and orderItemId is posted', async () => {
-      selectRecipientController.getSelectSolutionPriceEndpoint = jest.fn()
-        .mockReturnValue('/organisation/order-1/catalogues-solutions/42');
+      const slug = '/organisation/order-1/catalogues-solutions/42';
+      const expectedLocation = `${baseUrl}${slug}`;
+      selectRecipientController.getSelectSolutionPriceEndpoint = jest.fn().mockReturnValue(slug);
 
       validateFormFunction.validateSolutionRecipientsForm = jest.fn()
         .mockReturnValue({ success: true });
@@ -563,7 +564,7 @@ describe('catalogue-solutions select routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/catalogues-solutions/42`);
+          expect(res.headers.location).toEqual(expectedLocation);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });

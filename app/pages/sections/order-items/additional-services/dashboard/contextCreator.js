@@ -35,9 +35,14 @@ const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItem
 
 export const backLinkHref = ({ req, orderId }) => {
   const { referer } = req.headers;
-  const slug = referer ? referer.split('/').pop() : '';
+  const slug = (referer ? referer.split('/').pop() : '').toLowerCase();
 
-  return slug && slug.toLowerCase() === 'additional-services' ? referer
+  if (slug === 'additional-services') {
+    return referer;
+  }
+
+  return slug === 'recipients'
+    ? `${baseUrl}/organisation/${orderId}/additional-services`
     : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
 };
 

@@ -42,6 +42,17 @@ describe('additional-services contextCreator', () => {
 
       expect(actual).toEqual(senderUrl);
     });
+
+    it('should return additional-services if referer ends in recipients', () => {
+      const req = {
+        headers: {
+          referer: 'https://some.url.co.uk/order-id/select/price/recipients',
+        },
+      };
+      const actual = backLinkHref({ req, orderId });
+
+      expect(actual).toEqual(`${baseUrl}/organisation/${orderId}/additional-services`);
+    });
   });
 
   describe('deleteButtonLink', () => {
