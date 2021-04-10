@@ -322,9 +322,10 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
       });
 
-      if (req.body.orderItemId) {
+      const { orderItemId } = req.body;
+      if (orderItemId) {
         logger.info('Redirect to additional services page');
-        return res.redirect(`${config.baseUrl}${getAdditionalServicePriceEndpoint(orderId, req.body.orderItemId)}`);
+        return res.redirect(`${config.baseUrl}${getAdditionalServicePriceEndpoint(orderId, orderItemId)}?submitted=${orderItemId}`);
       }
 
       logger.info('Redirect to planned delivery date page');
@@ -347,6 +348,9 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     });
 
     context.backLinkHref = getBackLinkHref(req, additionalServicePrices, orderId);
+    context.selectDeselectButtonAction = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`;
+
+    setContextIfBackFromAdditionalServiceEdit(req, context, orderId);
 
     return res.render(
       'pages/sections/order-items/catalogue-solutions/select/recipients/template.njk',

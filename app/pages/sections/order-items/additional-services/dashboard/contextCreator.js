@@ -43,7 +43,7 @@ export const backLinkHref = ({ req, orderId }) => {
 
   return slug === 'recipients'
     ? `${baseUrl}/organisation/${orderId}/additional-services`
-    : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
+    : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`;
 };
 
 export const deleteButtonLink = ({ orderId, orderItemId, solutionName }) => `${baseUrl}/organisation/${orderId}/additional-services/delete/${orderItemId}/confirmation/${solutionName}`;

@@ -3,6 +3,7 @@ import {
 } from './contextCreator';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 import { getOrderDescription } from '../../../../../helpers/routes/getOrderDescription';
+import { baseUrl } from '../../../../../config';
 
 const KeyCatalogueSolution = 'Catalogue Solution';
 const KeyAdditionalService = 'Additional Service';
@@ -37,12 +38,20 @@ export const getAdditionalServicesPageContext = async ({
 
 export const getBackLinkHref = (req, orderId) => backLinkHref({ req, orderId });
 
-export const setAdditionalServicesLinks = (req, context, orderId, orderItemId, solutionName) => {
-  context.backLinkHref = backLinkHref({ req, orderId });
+export const updateContext = (req, context, orderId, orderItemId, solutionName) => {
+  const submittedOrderItemId = req.query.submitted;
+  context.backLinkHref = (submittedOrderItemId !== undefined
+    && submittedOrderItemId !== 'neworderitem')
+    ? `${baseUrl}/organisation/${orderId}/additional-services`
+    : backLinkHref({ req, orderId });
+
   context.deleteButton.altText = context.deleteButton.altText
     .replace(KeyCatalogueSolution, KeyAdditionalService);
+
   context.deleteButton.href = deleteButtonLink({ orderId, orderItemId, solutionName });
+
   context.deleteButton.text = context.deleteButton.text
     .replace(KeyCatalogueSolution, KeyAdditionalService);
+
   context.editButton.href = editRecipientsLink(orderId);
 };

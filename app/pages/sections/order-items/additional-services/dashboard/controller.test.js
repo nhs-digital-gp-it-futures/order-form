@@ -1,7 +1,8 @@
 import { fakeSessionManager } from 'buying-catalogue-library';
+import { baseUrl } from '../../../../../config';
 import * as contextCreator from './contextCreator';
 import {
-  setAdditionalServicesLinks, getAdditionalServicesPageContext, getBackLinkHref,
+  updateContext, getAdditionalServicesPageContext, getBackLinkHref,
 } from './controller';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 import { getOrderDescription } from '../../../../../helpers/routes/getOrderDescription';
@@ -19,7 +20,7 @@ jest.mock('../../../../../helpers/routes/getOrderDescription');
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
-const req = { params: { orderId } };
+const req = { params: { orderId }, query: {} };
 const catalogueItemType = 'AdditionalService';
 
 describe('additional-services controller', () => {
@@ -110,7 +111,7 @@ describe('getBackLinkHref', () => {
   });
 });
 
-describe('setAdditionalServicesLinks', () => {
+describe('updateContext', () => {
   const context = {
     deleteButton: {
       altText: 'The Delete Catalogue Solution button will be disabled until you save for the first time',
@@ -121,19 +122,27 @@ describe('setAdditionalServicesLinks', () => {
   const expected = 'http://some.link.com';
   const orderItemId = 'order-item-Id';
 
-  it('should set expected backLinkHref', () => {
+  it('should set expected backLinkHref if no submitted query param', () => {
     contextCreator.backLinkHref.mockReturnValueOnce(expected);
 
-    setAdditionalServicesLinks(req, context, orderId, orderItemId);
+    updateContext(req, context, orderId, orderItemId);
 
     expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, orderId });
     expect(context.backLinkHref).toEqual(expected);
   });
 
+  it('should set backLinkHref to additional-services if valid submitted query param', () => {
+    req.query.submitted = 'order-item-81';
+
+    updateContext(req, context, orderId, orderItemId);
+
+    expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/additional-services`);
+  });
+
   it('should set expected deleteButton alt text', () => {
     const expectedAltText = context.deleteButton.altText.replace('Catalogue Solution', 'Additional Service');
 
-    setAdditionalServicesLinks(req, context, orderId, orderItemId);
+    updateContext(req, context, orderId, orderItemId);
 
     expect(context.deleteButton.altText).toEqual(expectedAltText);
   });
@@ -141,7 +150,7 @@ describe('setAdditionalServicesLinks', () => {
   it('should set expected deleteButton link', () => {
     contextCreator.deleteButtonLink.mockReturnValueOnce(expected);
 
-    setAdditionalServicesLinks(req, context, orderId, orderItemId);
+    updateContext(req, context, orderId, orderItemId);
 
     expect(context.deleteButton.href).toEqual(expected);
   });
@@ -149,7 +158,7 @@ describe('setAdditionalServicesLinks', () => {
   it('should set expected deleteButton text', () => {
     const expectedText = context.deleteButton.text.replace('Catalogue Solution', 'Additional Service');
 
-    setAdditionalServicesLinks(req, context, orderId, orderItemId);
+    updateContext(req, context, orderId, orderItemId);
 
     expect(context.deleteButton.text).toEqual(expectedText);
   });
@@ -157,7 +166,7 @@ describe('setAdditionalServicesLinks', () => {
   it('should set expected editButton link', () => {
     contextCreator.editRecipientsLink.mockReturnValueOnce(expected);
 
-    setAdditionalServicesLinks(req, context, orderId, orderItemId);
+    updateContext(req, context, orderId, orderItemId);
 
     expect(context.editButton.href).toEqual(expected);
   });
