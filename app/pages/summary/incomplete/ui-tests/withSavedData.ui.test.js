@@ -357,7 +357,7 @@ test('should render the one off cost totals table with one off cost total price'
     .expect(await extractInnerText(totalCostValueCell)).eql('101.11');
 });
 
-test('should render the recurring cost item details in the table', async (t) => {
+test.skip('should render the recurring cost item details in the table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

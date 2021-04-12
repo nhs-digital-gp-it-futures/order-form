@@ -88,7 +88,6 @@ test('should redirect to /organisation/order-id/catalogue-solutions when Continu
   await t.navigateTo(pageUrl);
   const button = Selector('[data-test-id="continue-button"] button');
   await t
-    .debug()
     .click(button)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions');
 });
