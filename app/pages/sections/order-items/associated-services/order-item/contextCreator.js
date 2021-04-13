@@ -4,6 +4,21 @@ import { generateQuestions } from '../../../../../helpers/contextCreators/genera
 import { generateErrorSummary } from '../../../../../helpers/contextCreators/generateErrorSummary';
 import { generateAddPriceTable } from '../../../../../helpers/contextCreators/generateAddPriceTable';
 
+export const backLinkHref = ({ req, associatedServicePrices, orderId }) => {
+  const { referer } = req.headers;
+  const slug = (referer ? referer.split('/').pop() : '').toLowerCase();
+
+  const singlePriceItemBackLink = ((associatedServicePrices || {}).prices || {}).length === 1
+    ? `${baseUrl}/organisation/${orderId}/associated-services/select/associated-service`
+    : `${baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`;
+
+  if (slug === 'associated-service' || slug === 'price' || slug === 'associated-services') {
+    return referer;
+  }
+
+  return slug === 'neworderitem' ? singlePriceItemBackLink : `${baseUrl}/organisation/${orderId}/associated-services`;
+};
+
 export const getContext = ({
   commonManifest,
   selectedPriceManifest,
@@ -37,8 +52,6 @@ export const getContext = ({
     href: commonManifest.deleteButton.href,
     disabled: catalogueItemId === 'neworderitem',
   },
-  backLinkHref: catalogueItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`
-    : `${baseUrl}/organisation/${orderId}/associated-services`,
 });
 
 export const getErrorContext = (params) => {

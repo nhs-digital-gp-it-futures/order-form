@@ -55,6 +55,9 @@ const orderItemPageDataInSession = JSON.stringify({
   itemName: orderItem.catalogueItemName,
   selectedPrice,
 });
+const associatedServicePricesInSesion = JSON.stringify({
+  prices: [{ priceId: 1 }, { priceId: 2 }],
+});
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -69,9 +72,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
+    await setState(ClientFunction)(sessionKeys.associatedServicePrices, associatedServicePricesInSesion);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
+    await setState(ClientFunction)(sessionKeys.associatedServicePrices, associatedServicePricesInSesion);
   }
 };
 
