@@ -45,3 +45,26 @@ export const getAdditionalServicesContextItemsFromSession = ({ req, sessionManag
     serviceRecipients, selectedRecipients, additionalServicePrices, itemName,
   };
 };
+
+export const getAdditionalServicesPriceContextItemsFromSession = ({ req, sessionManager }) => {
+  const itemName = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedItemName,
+  });
+  const selectedPrice = sessionManager.getFromSession({
+    req, key: sessionKeys.additionalServiceSelectedPrice,
+  });
+  const quantity = sessionManager.getFromSession({
+    req, key: sessionKeys.selectedQuantity,
+  });
+  const estimationPeriod = sessionManager.getFromSession({
+    req, key: sessionKeys.selectEstimationPeriod,
+  });
+  const formData = {
+    quantity,
+    selectEstimationPeriod: estimationPeriod,
+  };
+
+  return {
+    formData, itemName, selectedPrice,
+  };
+};

@@ -47,6 +47,7 @@ import { validateOrderItemTypeForm } from '../../../../../helpers/controllers/va
 import {
   getAdditionalServicesContextItems,
   getAdditionalServicesContextItemsFromSession,
+  getAdditionalServicesPriceContextItemsFromSession,
 } from '../../../../../helpers/routes/getAdditionalServicesContextItems';
 import { validateSolutionRecipientsForm } from '../../../../../helpers/controllers/validateSolutionRecipientsForm';
 import { getCommencementDate } from '../../../../../helpers/routes/getCommencementDate';
@@ -448,22 +449,9 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
   router.get('/additional-service/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, priceType, provisioningType } = req.params;
 
-    const itemName = sessionManager.getFromSession({
-      req, key: sessionKeys.selectedItemName,
-    });
-    const selectedPrice = sessionManager.getFromSession({
-      req, key: sessionKeys.additionalServiceSelectedPrice,
-    });
-    const quantity = sessionManager.getFromSession({
-      req, key: sessionKeys.selectedQuantity,
-    });
-    const estimationPeriod = sessionManager.getFromSession({
-      req, key: sessionKeys.selectEstimationPeriod,
-    });
-    const formData = {
-      quantity,
-      selectEstimationPeriod: estimationPeriod,
-    };
+    const {
+      formData, itemName, selectedPrice,
+    } = getAdditionalServicesPriceContextItemsFromSession({ req, sessionManager });
 
     const context = await getProvisionTypeOrderContext({
       orderId,
@@ -472,6 +460,8 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       itemName,
       formData,
     });
+    context.backLinkHref = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
+
     logger.info(`navigating to order ${orderId} additional services ${provisioningType} form`);
     if (priceType === 'flat' && provisioningType === 'patient') {
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/neworderitem`);
