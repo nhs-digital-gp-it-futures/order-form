@@ -151,7 +151,6 @@ test('should redirect to /organisation/order-id/catalogue-solutions/delete/order
   const button = Selector('div[data-test-id="yes-button"] button');
 
   await t
-    .debug()
     .click(button)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/delete/order-item-id/confirmation/write-on-time/continue');
 });

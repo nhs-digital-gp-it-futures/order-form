@@ -37,7 +37,7 @@ export const backLinkHref = ({ req, orderId }) => {
   const { referer } = req.headers;
   const slug = (referer ? referer.split('/').pop() : '').toLowerCase();
 
-  if (slug === 'additional-services') {
+  if (slug === 'additional-services' || slug === 'date') {
     return referer;
   }
 
