@@ -48,7 +48,6 @@ const mockOrder = {
       itemUnitDescription: 'per patient',
       timeUnitDescription: 'per year',
       quantityPeriodDescription: 'per month',
-      costPerYear: 4302.900,
       serviceRecipients: [
         {
           name: 'Yellow Mountain Medical Practice',
@@ -57,6 +56,7 @@ const mockOrder = {
           itemId: 'C000001-01-A10003-1',
           serviceInstanceId: 'SI1-B81046',
           deliveryDate: '2020-07-06',
+          costPerYear: 4302.900,
         },
       ],
     },
@@ -67,7 +67,6 @@ const mockOrder = {
       provisioningType: 'OnDemand',
       price: 500.261,
       itemUnitDescription: 'per licence',
-      costPerYear: 6003.1321,
       serviceRecipients: [
         {
           name: 'Blue Mountain Medical Practice',
@@ -76,6 +75,7 @@ const mockOrder = {
           serviceInstanceId: 'SI1-A10001',
           deliveryDate: '2020-08-06',
           quantity: 12,
+          costPerYear: 6003.1321,
         },
       ],
     },
@@ -88,7 +88,6 @@ const mockOrder = {
       itemUnitDescription: 'per practice',
       timeUnitDescription: 'per month',
       quantityPeriodDescription: 'per year',
-      costPerYear: 29939.90,
       serviceRecipients: [
         {
           itemId: 'C000001-01-A10002-3',
@@ -97,6 +96,7 @@ const mockOrder = {
           quantity: 12,
           deliveryDate: '2020-09-25',
           serviceInstanceId: 'SI1-A10002',
+          costPerYear: 29939.90,
         },
       ],
     },
@@ -109,7 +109,6 @@ const mockOrder = {
       itemUnitDescription: 'per practice',
       timeUnitDescription: 'per month',
       quantityPeriodDescription: 'per year',
-      costPerYear: 29939.90,
       serviceRecipients: [
         {
           name: 'Blue Mountain Medical Practice',
@@ -118,6 +117,7 @@ const mockOrder = {
           quantity: 12,
           deliveryDate: '2020-09-25',
           serviceInstanceId: 'SI1-A10001',
+          costPerYear: 29939.90,
         },
       ],
     },
@@ -130,7 +130,6 @@ const mockOrder = {
       itemUnitDescription: 'per patient',
       timeUnitDescription: 'per month',
       quantityPeriodDescription: 'per year',
-      costPerYear: 15267.60,
       serviceRecipients: [
         {
           name: 'Yellow Mountain Medical Practice',
@@ -139,6 +138,7 @@ const mockOrder = {
           quantity: 12,
           deliveryDate: '2020-09-25',
           serviceInstanceId: 'SI1-A10003',
+          costPerYear: 15267.60,
         },
       ],
     },
@@ -150,7 +150,6 @@ const mockOrder = {
       price: 1.33,
       itemUnitDescription: 'per consultation',
       quantityPeriodDescription: 'per year',
-      costPerYear: 63.84,
       serviceRecipients: [
         {
           name: 'Red Mountain Medical Practice',
@@ -159,6 +158,7 @@ const mockOrder = {
           serviceInstanceId: 'SI1-A10002',
           quantity: 4,
           deliveryDate: '2020-09-25',
+          costPerYear: 63.84,
         },
       ],
     },
@@ -191,7 +191,6 @@ const mockOrder = {
       price: 0.7,
       itemUnitDescription: 'per fragment',
       quantityPeriodDescription: 'per month',
-      costPerYear: 5040.00,
       serviceRecipients: [
         {
           name: 'Red Mountain Medical Practice',
@@ -200,6 +199,7 @@ const mockOrder = {
           quantity: 600,
           serviceInstanceId: 'SI1-A10002',
           deliveryDate: '2020-09-25',
+          costPerYear: 5040.00,
         },
       ],
     },
@@ -357,7 +357,7 @@ test('should render the one off cost totals table with one off cost total price'
     .expect(await extractInnerText(totalCostValueCell)).eql('101.11');
 });
 
-test.skip('should render the recurring cost item details in the table', async (t) => {
+test('should render the recurring cost item details in the table', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
