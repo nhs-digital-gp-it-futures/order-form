@@ -59,7 +59,7 @@
     "babel-watch": "^7.4.1",
     "cheerio": "^1.0.0-rc.5",
     "chokidar": "^3.5.1",
-    "concurrently": "^6.0.0",
+    "concurrently": "^6.0.2",
     "cross-env": "^7.0.3",
     "eslint": "^7.23.0",
     "eslint-config-airbnb-base": "^14.2.1",
