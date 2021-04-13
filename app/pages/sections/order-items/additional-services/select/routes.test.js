@@ -16,6 +16,7 @@ import {
 import * as selectAdditionalServiceController from './additional-service/controller';
 import * as additionalServicePriceController from './price/controller';
 import * as selectAdditionalServiceRecipientController from './recipient/controller';
+import * as catalogueSolutionsFlatOrderItemController from '../../catalogue-solutions/order-item/flat/controller';
 import config from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import * as routerHelper from '../../../../../helpers/routes/routerHelper';
@@ -937,6 +938,73 @@ describe('additional-services select routes', () => {
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="planned-delivery-date-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
+  });
+
+  describe('GET /organisation/:orderId/additional-services/select/additional-service/price/flat/ondemand', () => {
+    const path = '/organisation/some-order-id/additional-services/select/additional-service/price/flat/ondemand';
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should set backLinkHref on context if authorised', () => {
+      const context = {};
+      catalogueSolutionsFlatOrderItemController.getProvisionTypeOrderContext = jest.fn()
+        .mockResolvedValue(context);
+      getAdditionalServicesContextItems
+        .getAdditionalServicesPriceContextItemsFromSession = jest.fn()
+          .mockReturnValue({});
+
+      selectPlannedDateController.getDeliveryDateContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then(() => {
+          expect(context.backLinkHref)
+            .toEqual(`${config.baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipients/date`);
+        });
+    });
+
+    it('should return the additional-services provision type page if authorised', () => {
+      catalogueSolutionsFlatOrderItemController.getProvisionTypeOrderContext = jest.fn()
+        .mockResolvedValue({});
+      getAdditionalServicesContextItems
+        .getAdditionalServicesPriceContextItemsFromSession = jest.fn()
+          .mockReturnValue({
+            formData: {
+              quantity: 10,
+              selectEstimationPeriod: {},
+            },
+            itemName: 'some-name',
+            selectedPrice: {},
+          });
+
+      selectPlannedDateController.getDeliveryDateContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="order-item-provisiontype-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });
