@@ -1,32 +1,38 @@
 import commonManifest from './commonManifest.json';
 import flatDeclarativeManifest from './flat/declarative/manifest.json';
 import flatOndemandManifest from './flat/ondemand/manifest.json';
-import { getContext, getErrorContext } from './contextCreator';
+import { backLinkHref, getContext, getErrorContext } from './contextCreator';
+import { baseUrl } from '../../../../../config';
 
 describe('associated-services order-item contextCreator', () => {
+  describe('backLinkHref', () => {
+    const orderId = 'order-id';
+    const mockAssociatedServicePrices = { prices: [{ priceId: 29 }, { priceId: 30 }] };
+    const somefakeUrl = 'https://some.url.co.uk/order-id';
+    it.each`
+    senderUrl                               |  expectedUrl                           | associatedServicePrices
+    ${`${somefakeUrl}/associated-service`}  | ${`${somefakeUrl}/associated-service`} | ${''}   
+    ${`${somefakeUrl}/price`}               | ${`${somefakeUrl}/price`}              | ${''}  
+    ${`${somefakeUrl}/associated-services`} | ${`${somefakeUrl}/associated-services`}| ${''}   
+    ${`${somefakeUrl}/neworderitem`}        | ${`${baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`} |${mockAssociatedServicePrices}   
+
+  `('backlinkHref should return expected url', ({ senderUrl, expectedUrl, associatedServicePrices }) => {
+      const req = {
+        headers: {
+          referer: senderUrl,
+        },
+      };
+      const actual = backLinkHref({ req, associatedServicePrices, orderId });
+      expect(actual).toEqual(expectedUrl);
+    });
+  });
+
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({
         commonManifest,
       });
       expect(context.backLinkText).toEqual(commonManifest.backLinkText);
-    });
-
-    it('should return the backLinkHref to associated-services when order item id is not neworderitem', () => {
-      const context = getContext({
-        commonManifest,
-        orderId: 'order-1',
-      });
-      expect(context.backLinkHref).toEqual('/order/organisation/order-1/associated-services');
-    });
-
-    it('should return the backLinkHref to the select a price page when order item id is neworderitem', () => {
-      const context = getContext({
-        commonManifest,
-        orderId: 'order-1',
-        catalogueItemId: 'neworderitem',
-      });
-      expect(context.backLinkHref).toEqual('/order/organisation/order-1/associated-services/select/associated-service/price');
     });
 
     it('should return the title', () => {

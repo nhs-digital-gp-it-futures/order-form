@@ -29,6 +29,9 @@ const orderItemPageDataInSession = JSON.stringify({
   itemName: itemNameInSession,
   selectedPrice,
 });
+const associatedServicePricesInSesion = JSON.stringify({
+  prices: [{ priceId: 1 }, { priceId: 2 }],
+});
 
 const mocks = () => {
   nock(solutionsApiUrl)
@@ -47,9 +50,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
     await setState(ClientFunction)(sessionKeys.selectedItemId, itemIdInSession);
     await setState(ClientFunction)(sessionKeys.selectedItemName, itemNameInSession);
     await setState(ClientFunction)(sessionKeys.selectedPriceId, selectedPriceIdInSession);
+    await setState(ClientFunction)(sessionKeys.associatedServicePrices, associatedServicePricesInSesion);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
+    await setState(ClientFunction)(sessionKeys.associatedServicePrices, associatedServicePricesInSesion);
   }
 };
 
@@ -82,14 +87,14 @@ test('should render associated-services order-item page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-1/associated-services/select/associated-service/price for backlink', async (t) => {
+test('should link to /order/organisation/order-1/associated-services for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/associated-services/select/associated-service/price');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/associated-services');
 });
 
 test('should link to /order/organisation/order-1/associated-services/select/associated-service/price for backlink after validation errors', async (t) => {

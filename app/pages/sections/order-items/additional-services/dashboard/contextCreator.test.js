@@ -6,64 +6,25 @@ import { baseUrl } from '../../../../../config';
 
 describe('additional-services contextCreator', () => {
   const orderId = 'order-8393';
-
   describe('backLinkHref', () => {
     const additionalServiceUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`;
+    const somefakeUrl = 'https://some.url.co.uk/order-id';
+    it.each`
+    senderUrl                               |  expectedUrl        
+    ${`${somefakeUrl}/items/894`}           | ${additionalServiceUrl}  
+    ${''}                                   | ${additionalServiceUrl}             
+    ${`${somefakeUrl}/date`}                | ${`${somefakeUrl}/date`}
+    ${`${somefakeUrl}/additional-services`} | ${`${somefakeUrl}/additional-services`}   
+    ${`${somefakeUrl}/recipients`}          | ${`${baseUrl}/organisation/${orderId}/additional-services`}
 
-    it('should return recipients date URL if referer does not end in additional-services', () => {
-      const senderUrl = 'https://some.url.co.uk/order-id/items/894';
+  `('backlinkHref should return expected url', ({ senderUrl, expectedUrl }) => {
       const req = {
         headers: {
           referer: senderUrl,
         },
       };
       const actual = backLinkHref({ req, orderId });
-
-      expect(actual).toEqual(additionalServiceUrl);
-    });
-
-    it('should return recipients date URL if no referer', () => {
-      const req = {
-        headers: {},
-      };
-      const actual = backLinkHref({ req, orderId });
-
-      expect(actual).toEqual(additionalServiceUrl);
-    });
-
-    it('should return recipients date URL if referer ends in date', () => {
-      const senderUrl = 'https://some.url.co.uk/order-id/select/price/recipients/date';
-      const req = {
-        headers: {
-          referer: senderUrl,
-        },
-      };
-      const actual = backLinkHref({ req, orderId });
-
-      expect(actual).toEqual(senderUrl);
-    });
-
-    it('should return referer if referer ends in additional-services', () => {
-      const senderUrl = 'https://some.url.co.uk/order-id/items/additional-services';
-      const req = {
-        headers: {
-          referer: senderUrl,
-        },
-      };
-      const actual = backLinkHref({ req, orderId });
-
-      expect(actual).toEqual(senderUrl);
-    });
-
-    it('should return additional-services if referer ends in recipients', () => {
-      const req = {
-        headers: {
-          referer: 'https://some.url.co.uk/order-id/select/price/recipients',
-        },
-      };
-      const actual = backLinkHref({ req, orderId });
-
-      expect(actual).toEqual(`${baseUrl}/organisation/${orderId}/additional-services`);
+      expect(actual).toEqual(expectedUrl);
     });
   });
 
