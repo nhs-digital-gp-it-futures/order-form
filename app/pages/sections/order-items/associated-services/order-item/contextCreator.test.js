@@ -7,54 +7,23 @@ import { baseUrl } from '../../../../../config';
 describe('associated-services order-item contextCreator', () => {
   describe('backLinkHref', () => {
     const orderId = 'order-id';
-    const associatedServicePrices = { prices: [{ priceId: 29 }, { priceId: 30 }] };
-    it('should return referer if referer ends in associated-service', () => {
-      const senderUrl = 'https://some.url.co.uk/order-id/items/associated-service';
-      const req = {
-        headers: {
-          referer: senderUrl,
-        },
-      };
-      const actual = backLinkHref({ req, orderId });
+    const mockAssociatedServicePrices = { prices: [{ priceId: 29 }, { priceId: 30 }] };
+    const somefakeUrl = 'https://some.url.co.uk/order-id';
+    it.each`
+    senderUrl                               |  expectedUrl                           | associatedServicePrices
+    ${`${somefakeUrl}/associated-service`}  | ${`${somefakeUrl}/associated-service`} | ${''}   
+    ${`${somefakeUrl}/price`}               | ${`${somefakeUrl}/price`}              | ${''}  
+    ${`${somefakeUrl}/associated-services`} | ${`${somefakeUrl}/associated-services`}| ${''}   
+    ${`${somefakeUrl}/neworderitem`}        | ${`${baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`} |${mockAssociatedServicePrices}   
 
-      expect(actual).toEqual(senderUrl);
-    });
-
-    it('should return referer if referer ends in price', () => {
-      const senderUrl = 'https://some.url.co.uk/order-id/select/price';
-      const req = {
-        headers: {
-          referer: senderUrl,
-        },
-      };
-      const actual = backLinkHref({ req, orderId });
-
-      expect(actual).toEqual(senderUrl);
-    });
-
-    it('should return to associated-services url if referer ends with associated-services', () => {
-      const senderUrl = 'https://some.url.co.uk/order-id/select/associated-services';
-      const req = {
-        headers: {
-          referer: senderUrl,
-        },
-      };
-      const actual = backLinkHref({ req, orderId });
-
-      expect(actual).toEqual(senderUrl);
-    });
-
-    it('should return to associated-services price url if referer ends neworderitem and having more than 1 price', () => {
-      const associatedServicePriceUrl = `${baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`;
-      const senderUrl = 'https://some.url.co.uk/order-id/neworderitem';
+  `('backlinkHref should return expected url', ({ senderUrl, expectedUrl, associatedServicePrices }) => {
       const req = {
         headers: {
           referer: senderUrl,
         },
       };
       const actual = backLinkHref({ req, associatedServicePrices, orderId });
-
-      expect(actual).toEqual(associatedServicePriceUrl);
+      expect(actual).toEqual(expectedUrl);
     });
   });
 
