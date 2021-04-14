@@ -76,6 +76,9 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       selectedRecipients: pageData.selectedRecipients || [],
     });
 
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.selectedItemName, value: pageData.itemName },
+    );
     sessionManager.saveToSession({
       req,
       key: sessionKeys.selectedRecipients,
