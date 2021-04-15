@@ -444,6 +444,7 @@ describe('catalogue-solutions select routes', () => {
       .expect(200)
       .then((res) => {
         expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
+        expect(res.text.includes('data-test-id="solution-recipients-page-title"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         expect(mockSetContext).toHaveBeenCalled();
       }));
