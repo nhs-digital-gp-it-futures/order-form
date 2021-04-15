@@ -780,12 +780,12 @@ describe('additional-services select routes', () => {
       expect(selectAdditionalServiceRecipientController.setContextIfBackFromAdditionalServiceEdit)
         .toHaveBeenCalled();
       expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="solution-recipients-page-title"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
 
-  // TODO: fix when feature implemented
-  xdescribe('POST /organisation/:orderId/additional-services/select/additional-service/price/recipient', () => {
+  describe('POST /organisation/:orderId/additional-services/select/additional-service/price/recipient', () => {
     const path = '/organisation/order-1/additional-services/select/additional-service/price/recipient';
 
     it('should return 403 forbidden if no csrf token is available', () => (

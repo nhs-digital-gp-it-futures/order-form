@@ -114,6 +114,18 @@ describe('catalogue-solutions order-item contextCreator', () => {
       expect(context.editButton.disabled).toEqual(false);
     });
 
+    it('should return the edit button when not neworderitem and link to recipient page', () => {
+      const orderId = 'order-id';
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'notneworderitem',
+        orderId,
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
+      expect(context.editButton.disabled).toEqual(false);
+      expect(context.editButton.href).toEqual(`/order/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`);
+    });
+
     it('should return the save button', () => {
       const context = getContext({
         commonManifest,

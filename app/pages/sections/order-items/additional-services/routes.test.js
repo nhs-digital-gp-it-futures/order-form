@@ -34,6 +34,7 @@ const mockSelectedItemIdCookie = `${sessionKeys.selectedItemId}=item-1`;
 const mockSelectedRecipientIdCookie = `${sessionKeys.selectedRecipientId}=recipient-1`;
 const mockSelectedPriceIdCookie = `${sessionKeys.selectedPriceId}=1`;
 const mockGetPageDataCookie = `${sessionKeys.orderItemPageData}={}`;
+const mockItemNameCookie = `${sessionKeys.selectedItemName}=Solution One`;
 
 describe('additional-services section routes', () => {
   afterEach(() => {
@@ -164,7 +165,7 @@ describe('additional-services section routes', () => {
 
       return request(setUpFakeApp())
         .get(path)
-        .set('Cookie', [mockAuthorisedCookie])
+        .set('Cookie', [mockAuthorisedCookie, mockItemNameCookie])
         .expect(200)
         .then((res) => {
           expect(catalogueSolutionsController.getOrderItemContext).toHaveBeenCalled();
