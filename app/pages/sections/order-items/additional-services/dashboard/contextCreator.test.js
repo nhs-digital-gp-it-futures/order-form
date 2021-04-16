@@ -30,11 +30,11 @@ describe('additional-services contextCreator', () => {
 
   describe('deleteButtonLink', () => {
     it('should return expected link', () => {
-      const orderItemId = 'order-item-id-92';
+      const catalogueItemId = 'order-item-id-92';
       const solutionName = 'Medi-Sort';
-      const actual = deleteButtonLink({ orderId, orderItemId, solutionName });
+      const actual = deleteButtonLink({ orderId, catalogueItemId, solutionName });
       expect(actual)
-        .toEqual(`${baseUrl}/organisation/${orderId}/additional-services/delete/${orderItemId}/confirmation/${solutionName}`);
+        .toEqual(`${baseUrl}/organisation/${orderId}/additional-services/delete/${catalogueItemId}/confirmation/${solutionName}`);
     });
   });
 

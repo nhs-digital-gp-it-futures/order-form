@@ -2,7 +2,8 @@ import { fakeSessionManager } from 'buying-catalogue-library';
 import { baseUrl } from '../../../../../config';
 import * as contextCreator from './contextCreator';
 import {
-  updateContext, getAdditionalServicesPageContext, getBackLinkHref,
+  getAdditionalServicesPageContext, getBackLinkHref,
+  updateContext, updateContextPost,
 } from './controller';
 import { getOrderItems } from '../../../../../helpers/api/ordapi/getOrderItems';
 import { getOrderDescription } from '../../../../../helpers/routes/getOrderDescription';
@@ -20,7 +21,7 @@ jest.mock('../../../../../helpers/routes/getOrderDescription');
 
 const accessToken = 'access_token';
 const orderId = 'order-id';
-const req = { params: { orderId }, query: {} };
+const req = { headers: {}, params: { orderId }, query: {} };
 const catalogueItemType = 'AdditionalService';
 
 describe('additional-services controller', () => {
@@ -168,6 +169,75 @@ describe('updateContext', () => {
 
     updateContext(req, context, orderId, orderItemId);
 
+    expect(context.editButton.href).toEqual(expected);
+  });
+});
+
+describe('updateContextPost', () => {
+  const context = {
+    deleteButton: {
+      altText: 'The Delete Catalogue Solution button will be disabled until you save for the first time',
+      text: 'Delete Catalogue Solution',
+    },
+    editButton: {},
+  };
+  const orderItemId = 'order-item-Id';
+  const additionalServicesUrl = `${baseUrl}/organisation/${orderId}/additional-services`;
+  const expected = 'http://some.link.com';
+
+  it('should set expected backLinkHref to additional-services if no referer', () => {
+    updateContextPost(req, context, orderId, orderItemId);
+
+    expect(context.backLinkHref).toEqual(additionalServicesUrl);
+  });
+
+  it('should set expected backLinkHref to additional-services if not new order item', () => {
+    req.headers.referer = 'https://someorg.com/order/organisation/C010000-01/additional/A390';
+
+    updateContextPost(req, context, orderId, orderItemId);
+
+    expect(context.backLinkHref).toEqual(additionalServicesUrl);
+  });
+
+  it('should set expected backLinkHref to date URL if new order item', () => {
+    const dateUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
+    req.headers.referer = `https://someorg.com/order/organisation/${orderId}/additional/newOrderItem`;
+
+    updateContextPost(req, context, orderId, orderItemId);
+
+    expect(context.backLinkHref).toEqual(dateUrl);
+  });
+
+  it('should set expected deleteButton alt text', () => {
+    const expectedAltText = context.deleteButton.altText.replace('Catalogue Solution', 'Additional Service');
+
+    updateContextPost(req, context, orderId, orderItemId);
+
+    expect(context.deleteButton.altText).toEqual(expectedAltText);
+  });
+
+  it('should set expected deleteButton link', () => {
+    contextCreator.deleteButtonLink.mockReturnValueOnce(expected);
+
+    updateContextPost(req, context, orderId, orderItemId);
+
+    expect(context.deleteButton.href).toEqual(expected);
+  });
+
+  it('should set expected deleteButton text', () => {
+    const expectedText = context.deleteButton.text.replace('Catalogue Solution', 'Additional Service');
+
+    updateContextPost(req, context, orderId, orderItemId);
+
+    expect(context.deleteButton.text).toEqual(expectedText);
+  });
+
+  it('should set expected editButton link', () => {
+    contextCreator.editRecipientsLink.mockReturnValueOnce(expected);
+
+    updateContextPost(req, context, orderId, orderItemId);
+
+    expect(contextCreator.editRecipientsLink).toHaveBeenCalledWith(orderId);
     expect(context.editButton.href).toEqual(expected);
   });
 });

@@ -46,7 +46,7 @@ export const backLinkHref = ({ req, orderId }) => {
     : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`;
 };
 
-export const deleteButtonLink = ({ orderId, orderItemId, solutionName }) => `${baseUrl}/organisation/${orderId}/additional-services/delete/${orderItemId}/confirmation/${solutionName}`;
+export const deleteButtonLink = ({ orderId, catalogueItemId, solutionName }) => `${baseUrl}/organisation/${orderId}/additional-services/delete/${catalogueItemId}/confirmation/${solutionName}`;
 
 export const editRecipientsLink = (orderId) => `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`;
 
