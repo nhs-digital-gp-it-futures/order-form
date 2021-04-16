@@ -146,6 +146,58 @@ describe('catalogue-solutions contextCreator', () => {
       expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
     });
 
+    it('should return the addedOrderItemsTable with items when orderitem in onDemand type', () => {
+      const expectedContext = {
+        addedOrderItemsTable: {
+          ...manifest.addedOrderItemsTable,
+          items: [
+            [
+              {
+                data: 'Solution One',
+                href: '/order/organisation/order-1/catalogue-solutions/orderItem1',
+                dataTestId: 'orderItem1-catalogueItemName',
+              },
+              {
+                data: 'per active user',
+                dataTestId: 'orderItem1-unitOfOrder',
+              },
+              {
+                expandableSection: {
+                  dataTestId: 'orderItem1-serviceRecipients',
+                  title: 'Service recipients (ODS code)',
+                  innerComponent: 'Recipient One (recipient-1)<br><br>Recipient Two (recipient-2)',
+                },
+              },
+            ],
+          ],
+        },
+      };
+
+      const mockOrderItems = [{
+        catalogueItemName: 'Solution One',
+        catalogueItemId: 'orderItem1',
+        provisioningType: 'OnDemand',
+        serviceRecipients: [{
+          name: 'Recipient One',
+          odsCode: 'recipient-1',
+        },
+        {
+          name: 'Recipient Two',
+          odsCode: 'recipient-2',
+        }],
+        itemUnit: {
+          name: 'activeUser',
+          description: 'per active user',
+        },
+        timeUnit: {
+          name: 'year',
+          description: 'per year',
+        },
+      }];
+      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
+      expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
+    });
+
     it('should return the addOrderItemButtonText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.addOrderItemButtonText).toEqual(manifest.addOrderItemButtonText);

@@ -16,7 +16,9 @@ const generateItems = ({ orderId, orderItems }) => {
       dataTestId: `${orderItem.catalogueItemId}-catalogueItemName`,
     }));
     columns.push(({
-      data: `${orderItem.itemUnit.description} ${orderItem.timeUnit.description}`,
+      data: orderItem.provisioningType === 'OnDemand'
+        ? `${orderItem.itemUnit.description}`
+        : `${orderItem.itemUnit.description} ${orderItem.timeUnit.description}`,
       dataTestId: `${orderItem.catalogueItemId}-unitOfOrder`,
     }));
 
