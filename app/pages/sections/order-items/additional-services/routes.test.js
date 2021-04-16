@@ -231,6 +231,7 @@ describe('additional-services section routes', () => {
       catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
       catalogueSolutionsController.formatFormData = jest.fn().mockResolvedValue({});
       catalogueSolutionsController.setEstimationPeriod = jest.fn();
+      additionalServicesController.updateContextPost = jest.fn();
       validateOrderItemFormBulk.mockReturnValue([{}]);
       catalogueSolutionsController.getOrderItemErrorContext = jest.fn()
         .mockResolvedValue({
@@ -253,6 +254,7 @@ describe('additional-services section routes', () => {
         .expect(200)
         .then((res) => {
           expect(catalogueSolutionsController.setEstimationPeriod).toHaveBeenCalled();
+          expect(additionalServicesController.updateContextPost).toHaveBeenCalled();
           expect(res.text.includes('data-test-id="order-item-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);

@@ -55,3 +55,22 @@ export const updateContext = (req, context, orderId, orderItemId, solutionName) 
 
   context.editButton.href = editRecipientsLink(orderId);
 };
+
+export const updateContextPost = (req, context, orderId, solutionName) => {
+  const { referer } = req.headers;
+  const catalogueItemId = referer ? referer.split('/').pop() : '';
+
+  context.backLinkHref = catalogueItemId.toLowerCase() === 'neworderitem'
+    ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`
+    : `${baseUrl}/organisation/${orderId}/additional-services`;
+
+  context.deleteButton.altText = context.deleteButton.altText
+    .replace(KeyCatalogueSolution, KeyAdditionalService);
+
+  context.deleteButton.href = deleteButtonLink({ orderId, catalogueItemId, solutionName });
+
+  context.deleteButton.text = context.deleteButton.text
+    .replace(KeyCatalogueSolution, KeyAdditionalService);
+
+  context.editButton.href = editRecipientsLink(orderId);
+};

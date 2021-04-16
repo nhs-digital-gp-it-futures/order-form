@@ -5,6 +5,7 @@ import { withCatch, extractAccessToken } from '../../../../helpers/routes/router
 import {
   getAdditionalServicesPageContext,
   updateContext,
+  updateContextPost,
 } from './dashboard/controller';
 import { additionalServicesSelectRoutes } from './select/routes';
 import {
@@ -143,7 +144,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
 
     const context = await getOrderItemErrorContext({
       orderId,
-      catalogueItemId,
+      orderItemId: catalogueItemId,
       orderItemType: 'AdditionalService',
       solutionName: pageData.itemName,
       selectedPrice: pageData.selectedPrice,
@@ -153,7 +154,8 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       formData,
       validationErrors,
     });
-    context.backLinkHref = `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
+
+    updateContextPost(req, context, orderId, pageData.itemName);
 
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
