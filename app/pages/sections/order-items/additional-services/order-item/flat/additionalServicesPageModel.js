@@ -18,7 +18,7 @@ export default class AdditionalServicePageModel {
     this.dateColumnHeading = this.table.find('[data-test-id="column-heading-2"]');
 
     this.row = this.table.find('[data-test-id="table-row-0"]');
-    this.solutionName = this.row.find('div[data-test-id="Recipient 2-recipient-2-recipient"]');
+    this.solutionName = (testId) => this.row.find(`div[data-test-id="${testId}-recipient"]`);
     this.quantityField = this.row.find('[data-test-id="question-quantity"]');
     this.quantityInput = this.row.find('[data-test-id="question-quantity"] input');
     this.practiceExpandableSection = this.row.find('[data-test-id="view-section-input-id-practice"]');
