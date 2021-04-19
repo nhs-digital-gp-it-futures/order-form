@@ -63,7 +63,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       orderId,
       orderItemId: catalogueItemId,
     });
-
+    const { selectedPrice } = pageData;
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
 
     const context = await getOrderItemRecipientsContext({
@@ -71,7 +71,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       orderItemId: catalogueItemId,
       orderItemType: 'AdditionalService',
       solutionName: pageData.itemName,
-      selectedPrice: pageData.selectedPrice,
+      selectedPrice,
       formData: pageData.formData,
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients || [],
@@ -86,7 +86,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       value: pageData.selectedRecipients,
     });
 
-    updateContext(req, context, orderId, catalogueItemId, pageData.itemName);
+    updateContext(req, selectedPrice, context, orderId, catalogueItemId, pageData.itemName);
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk',
@@ -98,6 +98,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = getPageData(req, sessionManager);
     const formData = formatFormData({ formData: req.body });
+    const { selectedPrice } = pageData;
     const validationErrors = validateOrderItemFormBulk({
       orderItemType: 'AdditionalService',
       data: formData,
@@ -115,7 +116,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
         itemId: pageData.itemId,
         itemName: pageData.itemName,
         catalogueSolutionId: pageData.catalogueSolutionId,
-        selectedPrice: pageData.selectedPrice,
+        selectedPrice,
         recipients: pageData.recipients,
         selectedRecipients: pageData.selectedRecipients,
         formData,
@@ -147,7 +148,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       orderItemId: catalogueItemId,
       orderItemType: 'AdditionalService',
       solutionName: pageData.itemName,
-      selectedPrice: pageData.selectedPrice,
+      selectedPrice,
       deliveryDate: pageData.deliveryDate,
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients,
@@ -155,7 +156,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       validationErrors,
     });
 
-    updateContextPost(req, context, orderId, pageData.itemName);
+    updateContextPost(req, selectedPrice, context, orderId, pageData.itemName);
 
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

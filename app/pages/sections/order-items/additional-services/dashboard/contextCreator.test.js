@@ -5,25 +5,30 @@ import {
 import { baseUrl } from '../../../../../config';
 
 describe('additional-services contextCreator', () => {
-  const orderId = 'order-8393';
+  const orderId = 'order-id';
   describe('backLinkHref', () => {
-    const additionalServiceUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`;
+    const additionalServicesUrl = `${baseUrl}/organisation/${orderId}/additional-services`;
+    const mockSelectedPriceOnDemandType = { type: 'flat', provisioningType: 'OnDemand' };
+    const mockSelectedPricePatientType = { type: 'flat', provisioningType: 'Patient' };
+    const onDemandPriceUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/flat/ondemand`;
+    const dateUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
     const somefakeUrl = 'https://some.url.co.uk/order-id';
     it.each`
-    senderUrl                               |  expectedUrl        
-    ${`${somefakeUrl}/items/894`}           | ${additionalServiceUrl}  
-    ${''}                                   | ${additionalServiceUrl}             
-    ${`${somefakeUrl}/date`}                | ${`${somefakeUrl}/date`}
-    ${`${somefakeUrl}/additional-services`} | ${`${somefakeUrl}/additional-services`}   
-    ${`${somefakeUrl}/recipients`}          | ${`${baseUrl}/organisation/${orderId}/additional-services`}
-
-  `('backlinkHref should return expected url', ({ senderUrl, expectedUrl }) => {
+    senderUrl                               |  expectedUrl                                                | selectedPrice
+    ${`${somefakeUrl}/items/894`}           | ${additionalServicesUrl}                                    | ${mockSelectedPricePatientType}
+    ${''}                                   | ${additionalServicesUrl}                                    | ${mockSelectedPricePatientType}
+    ${`${somefakeUrl}/date`}                | ${`${somefakeUrl}/date`}                                    | ${mockSelectedPricePatientType}
+    ${`${somefakeUrl}/additional-services`} | ${`${somefakeUrl}/additional-services`}                     | ${mockSelectedPricePatientType}
+    ${`${somefakeUrl}/recipients`}          | ${`${baseUrl}/organisation/${orderId}/additional-services`} | ${mockSelectedPricePatientType}
+    ${`${somefakeUrl}/neworderitem`}        | ${onDemandPriceUrl}                                         | ${mockSelectedPriceOnDemandType}
+    ${`${somefakeUrl}/neworderitem`}        | ${dateUrl}                                                  | ${mockSelectedPricePatientType}
+  `('backlinkHref should return expected url', ({ senderUrl, expectedUrl, selectedPrice }) => {
       const req = {
         headers: {
           referer: senderUrl,
         },
       };
-      const actual = backLinkHref({ req, orderId });
+      const actual = backLinkHref({ req, selectedPrice, orderId });
       expect(actual).toEqual(expectedUrl);
     });
   });
@@ -165,6 +170,7 @@ describe('additional-services contextCreator', () => {
         {
           catalogueItemId: 'orderItem2',
           catalogueItemName: 'Additional Service Two',
+          provisioningType: 'OnDemand',
           serviceRecipients: [{
             name: 'Recipient Two',
             odsCode: 'recipient-2',
@@ -181,8 +187,64 @@ describe('additional-services contextCreator', () => {
             name: 'appointment',
             description: 'per appointment',
           },
+          timeUnit: {
+            name: 'month',
+            description: 'per month',
+          },
         },
       ];
+      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
+      expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
+    });
+
+    it('should return the addedOrderItemsTable with items when orderitem in onDemand type', () => {
+      const expectedContext = {
+        addedOrderItemsTable: {
+          ...manifest.addedOrderItemsTable,
+          items: [
+            [
+              {
+                data: 'Solution One',
+                href: '/order/organisation/order-1/additional-services/orderItem1',
+                dataTestId: 'orderItem1-catalogueItemName',
+              },
+              {
+                data: 'per active user',
+                dataTestId: 'orderItem1-unitoforder',
+              },
+              {
+                expandableSection: {
+                  dataTestId: 'orderItem1-serviceRecipients',
+                  title: 'Service recipients (ODS code)',
+                  innerComponent: 'Recipient One (recipient-1)<br><br>Recipient Two (recipient-2)',
+                },
+              },
+            ],
+          ],
+        },
+      };
+
+      const mockOrderItems = [{
+        catalogueItemName: 'Solution One',
+        catalogueItemId: 'orderItem1',
+        provisioningType: 'OnDemand',
+        serviceRecipients: [{
+          name: 'Recipient One',
+          odsCode: 'recipient-1',
+        },
+        {
+          name: 'Recipient Two',
+          odsCode: 'recipient-2',
+        }],
+        itemUnit: {
+          name: 'activeUser',
+          description: 'per active user',
+        },
+        timeUnit: {
+          name: 'year',
+          description: 'per year',
+        },
+      }];
       const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
       expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
     });
