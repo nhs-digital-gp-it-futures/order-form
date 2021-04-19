@@ -332,6 +332,13 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       logger.info('Redirect to planned delivery date page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`);
     }
+    if (!response.success) {
+      const selectedRecipients = selected.map(([odsCode]) => odsCode);
+
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
+      });
+    }
 
     const {
       serviceRecipients, selectedRecipients, additionalServicePrices, itemName,
