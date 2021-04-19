@@ -2,7 +2,7 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
+import { organisationApiUrl, solutionsApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
@@ -92,8 +92,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-// TODO: fix when feature completed
-fixture.skip('Additional-services - price page - general')
+fixture('Additional-services - price page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -197,10 +196,10 @@ test('should render the Continue button', async (t) => {
 });
 
 test('should redirect to /organisation/order-id/additional-services/select/additional-service/price/recipient when a price is selected', async (t) => {
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/service-recipients')
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id/service-recipients')
     .reply(200, {});
-  await pageSetup();
+  await pageSetup({ withAuth: true, getRoute: true, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const selectAdditionalServiceRadioOptions = Selector('[data-test-id="question-selectAdditionalServicePrice"]');
@@ -208,7 +207,6 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
   const button = Selector('[data-test-id="continue-button"] button');
 
   await t
-
     .click(firstAdditionalService)
     .click(button)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipients');
