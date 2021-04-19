@@ -112,7 +112,7 @@ test('should render the price table headings', async (t) => {
     .expect(await extractInnerText(unitColumnHeading)).eql(content.solutionTable.columnInfo[1].data);
 });
 
-test('should render the solution table content', async (t) => {
+test('should render the solution table display', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
   const pageModel = new AdditionalServicePageModel();
@@ -130,7 +130,7 @@ test('should render the solution table content', async (t) => {
     .eql(content.solutionTable.cellInfo.quantity.expandableSection.innerComponent.replace('<br><br>', ''));
 });
 
-test('should render empty price when 0 returned from the API', async (t) => {
+test('should render 0.00 price when 0 returned from the API', async (t) => {
   const mockSelectedPrice = { ...selectedPrice, price: 0 };
   await pageSetup({ ...defaultPageSetup, postRoute: true, mockData: mockSelectedPrice });
   await t.navigateTo(pageUrl);
@@ -138,7 +138,7 @@ test('should render empty price when 0 returned from the API', async (t) => {
   const priceInput = Selector('#price');
 
   await t
-    .expect(priceInput.getAttribute('value')).eql(undefined);
+    .expect(priceInput.getAttribute('value')).eql('0.00');
 });
 
 test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {
@@ -256,9 +256,8 @@ test('should render the solution table content', async (t) => {
 
   await t
     .expect(pageModel.row.exists).ok()
-    .expect(pageModel.solutionName.exists).ok()
-    .expect(await extractInnerText(pageModel.solutionName)).eql('Recipient 2 (recipient-2)')
-
+    .expect(await extractInnerText(pageModel.solutionName('Recipient 2-recipient-2')))
+    .eql('Recipient 2 (recipient-2)')
     .expect(pageModel.quantityInput.exists).ok()
     .expect(pageModel.practiceExpandableSection.exists).ok()
     .expect(await extractInnerText(pageModel.practiceExpandableSection))
@@ -327,18 +326,14 @@ test('should render solution table as errors with error message when no date is 
   await t.navigateTo(pageUrl);
   const pageModel = new AdditionalServicePageModel();
 
-  const dayInput = Selector('#deliveryDate-day');
-  const monthInput = Selector('#deliveryDate-month');
-  const yearInput = Selector('#deliveryDate-year');
-
   await t
     .expect(pageModel.solutionTableError.exists).notOk()
-    .selectText(dayInput).pressKey('delete')
-    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .selectText(monthInput).pressKey('delete')
-    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .selectText(yearInput).pressKey('delete')
-    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
+    .selectText(pageModel.dayInput).pressKey('delete')
+    .expect(pageModel.dayInput.hasClass('nhsuk-input--error')).notOk()
+    .selectText(pageModel.monthInput).pressKey('delete')
+    .expect(pageModel.monthInput.hasClass('nhsuk-input--error')).notOk()
+    .selectText(pageModel.yearInput).pressKey('delete')
+    .expect(pageModel.yearInput.hasClass('nhsuk-input--error')).notOk()
     .click(pageModel.saveButton);
 
   await t
