@@ -36,14 +36,16 @@ export const getAdditionalServicesPageContext = async ({
   });
 };
 
-export const getBackLinkHref = (req, orderId) => backLinkHref({ req, orderId });
+export const getBackLinkHref = (req, selectedPrice, orderId) => backLinkHref({
+  req, selectedPrice, orderId,
+});
 
-export const updateContext = (req, context, orderId, orderItemId, solutionName) => {
+export const updateContext = (req, selectedPrice, context, orderId, orderItemId, solutionName) => {
   const submittedOrderItemId = req.query.submitted;
   context.backLinkHref = (submittedOrderItemId !== undefined
     && submittedOrderItemId !== 'neworderitem')
     ? `${baseUrl}/organisation/${orderId}/additional-services`
-    : backLinkHref({ req, orderId });
+    : backLinkHref({ req, selectedPrice, orderId });
 
   context.deleteButton.altText = context.deleteButton.altText
     .replace(KeyCatalogueSolution, KeyAdditionalService);
@@ -60,12 +62,12 @@ export const updateContext = (req, context, orderId, orderItemId, solutionName) 
   }
 };
 
-export const updateContextPost = (req, context, orderId, solutionName) => {
+export const updateContextPost = (req, selectedPrice, context, orderId, solutionName) => {
   const { referer } = req.headers;
   const catalogueItemId = referer ? referer.split('/').pop() : '';
 
   context.backLinkHref = catalogueItemId.toLowerCase() === 'neworderitem'
-    ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`
+    ? backLinkHref({ req, selectedPrice, orderId })
     : `${baseUrl}/organisation/${orderId}/additional-services`;
 
   context.deleteButton.altText = context.deleteButton.altText

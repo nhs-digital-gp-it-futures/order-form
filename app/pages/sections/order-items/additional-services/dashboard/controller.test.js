@@ -23,6 +23,7 @@ const accessToken = 'access_token';
 const orderId = 'order-id';
 const req = { headers: {}, params: { orderId }, query: {} };
 const catalogueItemType = 'AdditionalService';
+const selectedPrice = { type: 'Flat', provisioningType: 'Patient' };
 
 describe('additional-services controller', () => {
   describe('getAdditionalServicesPageContext', () => {
@@ -104,10 +105,10 @@ describe('getBackLinkHref', () => {
     const expected = 'http://some.link.com';
     contextCreator.backLinkHref.mockReturnValueOnce(expected);
 
-    const actual = getBackLinkHref(req, orderId);
+    const actual = getBackLinkHref(req, selectedPrice, orderId);
 
     expect(contextCreator.backLinkHref.mock.calls.length).toEqual(1);
-    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, orderId });
+    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, selectedPrice, orderId });
     expect(actual).toEqual(expected);
   });
 });
@@ -119,6 +120,7 @@ describe('updateContext', () => {
       text: 'Delete Catalogue Solution',
     },
     editButton: {},
+    backLinkHref: `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`,
   };
   const expected = 'http://some.link.com';
   const orderItemId = 'order-item-Id';
@@ -126,16 +128,16 @@ describe('updateContext', () => {
   it('should set expected backLinkHref if no submitted query param', () => {
     contextCreator.backLinkHref.mockReturnValueOnce(expected);
 
-    updateContext(req, context, orderId, orderItemId);
+    updateContext(req, selectedPrice, context, orderId, orderItemId);
 
-    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, orderId });
+    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, selectedPrice, orderId });
     expect(context.backLinkHref).toEqual(expected);
   });
 
   it('should set backLinkHref to additional-services if valid submitted query param', () => {
     req.query.submitted = 'order-item-81';
 
-    updateContext(req, context, orderId, orderItemId);
+    updateContext(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/additional-services`);
   });
@@ -143,7 +145,7 @@ describe('updateContext', () => {
   it('should set expected deleteButton alt text', () => {
     const expectedAltText = context.deleteButton.altText.replace('Catalogue Solution', 'Additional Service');
 
-    updateContext(req, context, orderId, orderItemId);
+    updateContext(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.deleteButton.altText).toEqual(expectedAltText);
   });
@@ -151,7 +153,7 @@ describe('updateContext', () => {
   it('should set expected deleteButton link', () => {
     contextCreator.deleteButtonLink.mockReturnValueOnce(expected);
 
-    updateContext(req, context, orderId, orderItemId);
+    updateContext(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.deleteButton.href).toEqual(expected);
   });
@@ -159,7 +161,7 @@ describe('updateContext', () => {
   it('should set expected deleteButton text', () => {
     const expectedText = context.deleteButton.text.replace('Catalogue Solution', 'Additional Service');
 
-    updateContext(req, context, orderId, orderItemId);
+    updateContext(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.deleteButton.text).toEqual(expectedText);
   });
@@ -167,7 +169,7 @@ describe('updateContext', () => {
   it('should set expected editButton link', () => {
     contextCreator.editRecipientsLink.mockReturnValueOnce(expected);
 
-    updateContext(req, context, orderId, orderItemId);
+    updateContext(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.editButton.href).toEqual(expected);
   });
@@ -179,7 +181,7 @@ describe('updateContext', () => {
       },
     };
 
-    updateContext(req, context, orderId, orderItemId);
+    updateContext(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.questions.price.data).toEqual('0.00');
   });
@@ -191,7 +193,7 @@ describe('updateContext', () => {
       },
     };
 
-    updateContext(req, context, orderId, orderItemId);
+    updateContext(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.questions.price.data).toEqual(4.5);
   });
@@ -204,13 +206,14 @@ describe('updateContextPost', () => {
       text: 'Delete Catalogue Solution',
     },
     editButton: {},
+    backLinkHref: `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`,
   };
   const orderItemId = 'order-item-Id';
   const additionalServicesUrl = `${baseUrl}/organisation/${orderId}/additional-services`;
   const expected = 'http://some.link.com';
 
   it('should set expected backLinkHref to additional-services if no referer', () => {
-    updateContextPost(req, context, orderId, orderItemId);
+    updateContextPost(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.backLinkHref).toEqual(additionalServicesUrl);
   });
@@ -218,24 +221,27 @@ describe('updateContextPost', () => {
   it('should set expected backLinkHref to additional-services if not new order item', () => {
     req.headers.referer = 'https://someorg.com/order/organisation/C010000-01/additional/A390';
 
-    updateContextPost(req, context, orderId, orderItemId);
+    updateContextPost(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.backLinkHref).toEqual(additionalServicesUrl);
   });
 
   it('should set expected backLinkHref to date URL if new order item', () => {
     const dateUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
+    contextCreator.backLinkHref.mockReturnValueOnce(dateUrl);
+
     req.headers.referer = `https://someorg.com/order/organisation/${orderId}/additional/newOrderItem`;
 
-    updateContextPost(req, context, orderId, orderItemId);
+    updateContextPost(req, selectedPrice, context, orderId, orderItemId);
 
+    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, selectedPrice, orderId });
     expect(context.backLinkHref).toEqual(dateUrl);
   });
 
   it('should set expected deleteButton alt text', () => {
     const expectedAltText = context.deleteButton.altText.replace('Catalogue Solution', 'Additional Service');
 
-    updateContextPost(req, context, orderId, orderItemId);
+    updateContextPost(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.deleteButton.altText).toEqual(expectedAltText);
   });
@@ -243,7 +249,7 @@ describe('updateContextPost', () => {
   it('should set expected deleteButton link', () => {
     contextCreator.deleteButtonLink.mockReturnValueOnce(expected);
 
-    updateContextPost(req, context, orderId, orderItemId);
+    updateContextPost(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.deleteButton.href).toEqual(expected);
   });
@@ -251,7 +257,7 @@ describe('updateContextPost', () => {
   it('should set expected deleteButton text', () => {
     const expectedText = context.deleteButton.text.replace('Catalogue Solution', 'Additional Service');
 
-    updateContextPost(req, context, orderId, orderItemId);
+    updateContextPost(req, selectedPrice, context, orderId, orderItemId);
 
     expect(context.deleteButton.text).toEqual(expectedText);
   });
@@ -259,7 +265,7 @@ describe('updateContextPost', () => {
   it('should set expected editButton link', () => {
     contextCreator.editRecipientsLink.mockReturnValueOnce(expected);
 
-    updateContextPost(req, context, orderId, orderItemId);
+    updateContextPost(req, selectedPrice, context, orderId, orderItemId);
 
     expect(contextCreator.editRecipientsLink).toHaveBeenCalledWith(orderId);
     expect(context.editButton.href).toEqual(expected);

@@ -108,7 +108,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-fixture('Additional-services - flat declarative - withSavedData')
+fixture('Additional-services - flat Patient - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -124,16 +124,14 @@ test('should render the title', async (t) => {
     .expect(await extractInnerText(title)).eql(`Some item name information for ${callOffId}`);
 });
 
-// TODO: fix when feature completed
 test(`should link to /order/${organisation}/${callOffId}/additional-services for backlink`, async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
-  // need to update below url to /order/${organisation}/${callOffId}/additional-services once feature is added
   await t
-    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${callOffId}/additional-services/select/additional-service`);
+    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${callOffId}/additional-services`);
 });
 
 test('should populate text field for the price question', async (t) => {

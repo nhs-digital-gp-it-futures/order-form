@@ -13,6 +13,7 @@ const recipient1 = { name: 'Recipient One', odsCode: 'recipient-1' };
 const recipient2 = { name: 'Recipient Two', odsCode: 'recipient-2' };
 
 const orderItem1 = {
+  provisioningType: 'Patient',
   catalogueItemId: '10001-001',
   catalogueItemName: 'Additional Service One',
   itemUnit: {
@@ -29,6 +30,7 @@ const orderItem1 = {
 const orderItem2 = {
   catalogueItemId: '10001-002',
   catalogueItemName: 'Additional Service Two',
+  provisioningType: 'OnDemand',
   serviceRecipients: [recipient2],
   itemUnit: {
     name: 'appointment',
