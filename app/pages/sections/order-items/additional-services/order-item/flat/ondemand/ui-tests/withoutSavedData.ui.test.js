@@ -7,7 +7,7 @@ import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
 const organisation = 'organisation';
-const callOffId = 'order-1';
+const callOffId = 'order-id';
 const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/additional-services/neworderitem`;
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -21,35 +21,49 @@ const selectedPrice = {
     name: 'consultation',
     description: 'per consultation',
   },
+  timeUnit: {
+    name: 'year',
+    description: 'per year',
+  },
   price: 0.1,
 };
 
+const recipient1 = { name: 'recipient-name', odsCode: 'code' };
+const recipient2 = { name: 'recipient-name', odsCode: 'code-not-used' };
+const recipients = [recipient1, recipient2];
+const selectedRecipients = ['code'];
+
 const itemIdInSession = 'item-1';
-const itemNameInSession = 'Item One';
-const catalogueSolutionIdInSession = 'solution-1';
+const itemNameInSession = 'Item name';
 const selectedRecipientIdInSession = 'recipient-1';
 const selectedRecipientNameInSession = 'recipient-name';
 const selectedPriceIdInSession = 'price-1';
+const catalogueSolutionIdInSession = 'solution-1';
+const deliveryDateInSession = '2020-10-10';
+const recipientsInSession = JSON.stringify(recipients);
+const selectedRecipientsInSession = JSON.stringify(selectedRecipients);
 
 const orderItemPageDataInSession = JSON.stringify({
   itemId: itemIdInSession,
   itemName: itemNameInSession,
-  catalogueSolutionId: catalogueSolutionIdInSession,
   serviceRecipientId: selectedRecipientIdInSession,
   serviceRecipientName: selectedRecipientNameInSession,
   selectedPrice,
+  recipients,
+  deliveryDate: deliveryDateInSession,
+  selectedRecipients,
 });
 
-const baseServiceRecipient = { name: 'recipient-name', odsCode: 'recipient-1' };
+const baseServiceRecipient = { ...recipient1, deliveryDate: '2020-10-10' };
 const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
 const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
 
 const baseRequestBody = {
   ...selectedPrice,
-  catalogueItemName: 'Item One',
+  catalogueItemId: itemIdInSession,
+  catalogueItemName: 'Item name',
   catalogueItemType: 'AdditionalService',
-  catalogueSolutionId: 'solution-1',
-  estimationPeriod: 'month',
+  estimationPeriod: 'year',
 };
 
 const validRequestBody = {
@@ -62,34 +76,38 @@ const invalidRequestBody = {
   serviceRecipients: [invalidServiceRecipient],
 };
 
-const mocks = () => {
+const mocks = (mockSelectedPrice) => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
-    .reply(200, selectedPrice);
+    .reply(200, mockSelectedPrice);
 };
 
-const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: true };
+const defaultPageSetup = {
+  withAuth: true, getRoute: true, postRoute: true, mockData: selectedPrice,
+};
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
   if (setup.getRoute) {
-    mocks();
+    mocks(setup.mockData);
     await setState(ClientFunction)('fakeToken', authTokenInSession);
     await setState(ClientFunction)(sessionKeys.selectedRecipientId, selectedRecipientIdInSession);
     await setState(ClientFunction)(sessionKeys.selectedRecipientName, selectedRecipientNameInSession);
     await setState(ClientFunction)(sessionKeys.selectedItemId, itemIdInSession);
     await setState(ClientFunction)(sessionKeys.selectedItemName, itemNameInSession);
-    await setState(ClientFunction)(sessionKeys.selectedCatalogueSolutionId, catalogueSolutionIdInSession);
     await setState(ClientFunction)(sessionKeys.selectedPriceId, selectedPriceIdInSession);
+    await setState(ClientFunction)(sessionKeys.catalogueSolutionId, catalogueSolutionIdInSession);
+    await setState(ClientFunction)(sessionKeys.plannedDeliveryDate, deliveryDateInSession);
+    await setState(ClientFunction)(sessionKeys.recipients, recipientsInSession);
+    await setState(ClientFunction)(sessionKeys.selectedRecipients, selectedRecipientsInSession);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
   }
 };
 
-// TODO: fix when feature completed
-fixture.skip('Additional-services - flat ondemand - withoutSavedData')
+fixture('Additional-services - flat ondemand - withoutSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -104,12 +122,10 @@ test('should navigate to additional-services dashboard page if save button is cl
   await t.navigateTo(pageUrl);
 
   const quantityInput = Selector('[data-test-id="question-quantity"]');
-  const estimatiodPeriodInputs = Selector('[data-test-id="question-selectEstimationPeriod"] input');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
     .typeText(quantityInput, '10', { paste: true })
-    .click(estimatiodPeriodInputs.nth(0))
     .click(saveButton)
     .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/additional-services`);
 });
@@ -127,23 +143,15 @@ test('should show text fields as errors with error message when there are BE val
   await t.navigateTo(pageUrl);
 
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  // const errorMessage = Selector('#quantity-error');
   const quantityInput = Selector('[data-test-id="question-quantity"] input');
-  const estimatiodPeriodInputs = Selector('[data-test-id="question-selectEstimationPeriod"] input');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
     .typeText(quantityInput, '0', { paste: true })
-    .click(estimatiodPeriodInputs.nth(0))
     .click(saveButton);
 
   await t
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-
-  // Currently broken, TODO: fix
-  // .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
-
     .expect(quantityInput.getAttribute('value')).eql('0');
-  // .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
 });

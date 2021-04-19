@@ -139,7 +139,7 @@
         "expandableSection": {
           "dataTestId": "view-section-input-id-date",
           "title": "What date should I enter?",
-          "innerComponent": "Enter the planned delivery date you've agreed with the supplier. This is the day that each of the listed Service Recipients will start using this Catalogue Solution.<br><br>We've included the commencement date for this Call-off Agreement, but you can change it if you’ve agreed a different delivery date."
+          "innerComponent": "Enter the planned delivery date you've agreed with the supplier. This is the day that each of the listed Service Recipients will start using this Additional Service.<br><br>We've included the commencement date for this Call-off Agreement, but you can change it if you’ve agreed a different delivery date."
         }
       }
     }

@@ -10,8 +10,9 @@ const generateItems = ({ orderId, orderItems }) => {
       dataTestId: `${orderItem.catalogueItemId}-catalogueItemName`,
     }));
     columns.push(({
-      data: orderItem.timeUnit
-        ? `${orderItem.itemUnit.description} ${orderItem.timeUnit.description}` : `${orderItem.itemUnit.description}`,
+      data: orderItem.provisioningType === 'OnDemand'
+        ? `${orderItem.itemUnit.description}`
+        : `${orderItem.itemUnit.description} ${orderItem.timeUnit.description}`,
       dataTestId: `${orderItem.catalogueItemId}-unitoforder`,
     }));
 
@@ -33,17 +34,21 @@ const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItem
   items: generateItems({ orderId, orderItems }),
 });
 
-export const backLinkHref = ({ req, orderId }) => {
+export const backLinkHref = ({ req, selectedPrice, orderId }) => {
   const { referer } = req.headers;
   const slug = (referer ? referer.split('/').pop() : '').toLowerCase();
+  const newItemBackLink = selectedPrice.provisioningType === 'Patient'
+    ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`
+    : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
 
-  if (slug === 'additional-services' || slug === 'date') {
+  const slugConditions = ['additional-services', 'date', 'ondemand', 'declarative'];
+  if (slugConditions.includes(slug)) {
     return referer;
   }
 
-  return slug === 'recipients'
-    ? `${baseUrl}/organisation/${orderId}/additional-services`
-    : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`;
+  return slug === 'neworderitem'
+    ? newItemBackLink
+    : `${baseUrl}/organisation/${orderId}/additional-services`;
 };
 
 export const deleteButtonLink = ({ orderId, catalogueItemId, solutionName }) => `${baseUrl}/organisation/${orderId}/additional-services/delete/${catalogueItemId}/confirmation/${solutionName}`;
