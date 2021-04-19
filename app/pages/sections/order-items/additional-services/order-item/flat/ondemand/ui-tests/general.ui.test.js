@@ -193,14 +193,14 @@ test('should render the solution table content', async (t) => {
       .expandableSection.innerComponent.replace('<br><br>', ''));
 });
 
-test('should render empty price when 0 returned from the API', async (t) => {
+test('should render 0.00 price when 0 returned from the API', async (t) => {
   const mockSelectedPrice = { ...selectedPrice, price: 0 };
   await pageSetup({ ...defaultPageSetup, postRoute: true, mockData: mockSelectedPrice });
   await t.navigateTo(pageUrl);
   const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(pageModel.priceInput.getAttribute('value')).eql(undefined);
+    .expect(pageModel.priceInput.getAttribute('value')).eql('0.00');
 });
 
 test('should render select quantity field as errors with error message when no quantity entered causing validation error', async (t) => {

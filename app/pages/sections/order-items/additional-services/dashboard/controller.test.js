@@ -171,6 +171,30 @@ describe('updateContext', () => {
 
     expect(context.editButton.href).toEqual(expected);
   });
+
+  it('should set price data to 0.00 if set to 0', () => {
+    context.questions = {
+      price: {
+        data: 0,
+      },
+    };
+
+    updateContext(req, context, orderId, orderItemId);
+
+    expect(context.questions.price.data).toEqual('0.00');
+  });
+
+  it('should not change price data if not set to 0', () => {
+    context.questions = {
+      price: {
+        data: 4.5,
+      },
+    };
+
+    updateContext(req, context, orderId, orderItemId);
+
+    expect(context.questions.price.data).toEqual(4.5);
+  });
 });
 
 describe('updateContextPost', () => {

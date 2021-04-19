@@ -54,6 +54,10 @@ export const updateContext = (req, context, orderId, orderItemId, solutionName) 
     .replace(KeyCatalogueSolution, KeyAdditionalService);
 
   context.editButton.href = editRecipientsLink(orderId);
+
+  if (context.questions && context.questions.price && !context.questions.price.data) {
+    context.questions.price.data = '0.00';
+  }
 };
 
 export const updateContextPost = (req, context, orderId, solutionName) => {
