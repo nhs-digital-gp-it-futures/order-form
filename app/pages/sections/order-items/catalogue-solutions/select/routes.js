@@ -251,6 +251,13 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       logger.info('Redirect to planned delivery date page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`);
     }
+    if (!response.success) {
+      const selectedRecipients = selected.map(([odsCode]) => odsCode);
+
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
+      });
+    }
     const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
     const serviceRecipients = sessionManager.getFromSession({ req, key: sessionKeys.recipients });
     const solutionPrices = sessionManager.getFromSession({ req, key: sessionKeys.solutionPrices });
