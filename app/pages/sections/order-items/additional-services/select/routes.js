@@ -95,6 +95,10 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         selectedAdditionalServiceId,
       });
 
+      sessionManager.saveToSession(
+        { req, key: sessionKeys.selectedRecipients, value: undefined },
+      );
+
       logger.info(`navigating to order ${orderId} additional-services select additional-service page`);
       return res.render('pages/sections/order-items/additional-services/select/additional-service/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     }),
