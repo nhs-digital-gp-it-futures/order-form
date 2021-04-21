@@ -74,5 +74,5 @@ module.exports = {
   redisPass: process.env.REDIS_PASS,
 
   // content and user journey if they can order for multiple organisations
-  showProxy: process.env.SHOW_PROXY || 'true',
+  showProxy: process.env.SHOW_PROXY || 'false',
 };

@@ -89,7 +89,7 @@ const generateCompletedOrdersTable = (completedOrders, completeOrdersTable) => {
 
 export const getContext = ({ orgName, completedOrders = [], incompletedOrders = [] }) => ({
   ...manifest,
-  title: `${orgName} orders`,
+  title: orgName,
   newOrderButtonHref: `${baseUrl}/organisation/neworder`,
   proxyLinkHref: '#',
   completeOrders: generateCompletedOrdersTable(
