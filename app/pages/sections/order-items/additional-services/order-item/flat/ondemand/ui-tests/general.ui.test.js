@@ -218,7 +218,7 @@ test('should render select quantity field as errors with error message when no q
     .expect(await extractInnerText(pageModel.solutionTableError)).contains(content.errorMessages.QuantityRequired);
 });
 
-test('should render select price field as errors with error message when no price entered causing validation error', async (t) => {
+test('should render price field as error with error message when no price entered causing validation error', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
   const pageModel = new AdditionalServicePageModel();
@@ -273,6 +273,21 @@ test('should anchor to the price field when clicking on the price required error
   await t
     .expect(pageModel.errorSummary.exists).notOk()
     .selectText(pageModel.priceInput).pressKey('delete')
+    .click(pageModel.saveButton);
+
+  await t
+    .click(pageModel.errorSummary.find('li a').nth(0))
+    .expect(getLocation()).eql(`${pageUrl}#price`);
+});
+
+test('should anchor to the price field when clicking on the numerical price error link in errorSummary ', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+  const pageModel = new AdditionalServicePageModel();
+
+  await t
+    .expect(pageModel.errorSummary.exists).notOk()
+    .typeText(pageModel.priceInput, 'blah', { paste: true })
     .click(pageModel.saveButton);
 
   await t

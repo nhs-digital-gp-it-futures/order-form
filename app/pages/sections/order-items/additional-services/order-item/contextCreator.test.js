@@ -268,13 +268,6 @@ describe('additional-services order-item contextCreator', () => {
     });
 
     describe('flat - declarative', () => {
-      it('should return the questions', () => {
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatDeclarativeManifest,
-        });
-        expect(context.questions).toEqual(flatDeclarativeManifest.questions);
-      });
-
       it('should populate the quantity with data provided', () => {
         const expectedContext = {
           questions: {
@@ -533,7 +526,6 @@ describe('additional-services order-item contextCreator', () => {
         });
 
         expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.questions).toEqual(expectedContext.questions);
       });
 
       it('should return error for price', () => {

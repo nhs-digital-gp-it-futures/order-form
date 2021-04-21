@@ -1,10 +1,11 @@
 import nock from 'nock';
-import { ClientFunction, Selector } from 'testcafe';
+import { ClientFunction } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../../../../../config';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
+import AdditionalServicePageModel from '../../additionalServicesPageModel';
 
 const organisation = 'organisation';
 const callOffId = 'order-1';
@@ -14,43 +15,85 @@ const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/additi
 
 const getLocation = ClientFunction(() => document.location.href);
 
-const selectedPrice = {
+const deliveryDate = '2020-12-12';
+
+const orderItem = {
+  serviceRecipients: [{
+    odsCode: 'OX3',
+    name: 'Some service recipient 2',
+    deliveryDate,
+    quantity: 10,
+  }],
+  catalogueItemType: 'AdditionalService',
+  catalogueItemName: 'Some item name',
+  catalogueItemId,
+  estimationPeriod: 'year',
   provisioningType: 'Declarative',
-  type: 'Flat',
+  type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
     name: 'consultation',
     description: 'per consultation',
   },
+  timeUnit: {
+    name: 'year',
+    description: 'per year',
+  },
   price: 0.1,
 };
 
-const baseServiceRecipient = { name: 'Some service recipient 2', odsCode: 'OX3', quantity: 3 };
-const catalogueItem = {
-  catalogueItemType: 'AdditionalService',
-  catalogueItemName: 'Some item name',
-  catalogueSolutionId: 'solution-1',
-};
+const recipient1 = { name: 'recipient-name', odsCode: 'code' };
+const recipient2 = { name: 'recipient-name', odsCode: 'code-not-used' };
+const recipients = [recipient1, recipient2];
+const selectedRecipients = ['code'];
 
-const orderItem = {
-  serviceRecipients: [baseServiceRecipient],
-  ...catalogueItem,
-  ...selectedPrice,
+const selectedPrice = {
+  currencyCode: 'GBP',
+  price: orderItem.price,
+  itemUnit: orderItem.itemUnit,
+  timeUnit: orderItem.timeUnit,
+  type: orderItem.type,
+  provisioningType: orderItem.provisioningType,
+  estimationPeriod: orderItem.estimationPeriod,
 };
 
 const orderItemPageDataInSession = JSON.stringify({
-  catalogueSolutionId: orderItem.catalogueSolutionId,
-  itemId: catalogueItemId,
+  itemId: orderItem.catalogueItemId,
   itemName: orderItem.catalogueItemName,
-  serviceRecipientId: baseServiceRecipient.odsCode,
-  serviceRecipientName: baseServiceRecipient.name,
+  serviceRecipientId: orderItem.serviceRecipients[0].odsCode,
+  serviceRecipientName: orderItem.serviceRecipients[0].name,
   selectedPrice,
+  recipients,
+  deliveryDate,
+  selectedRecipients,
 });
+
+const baseServiceRecipient = { ...recipient1, deliveryDate };
+const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
+const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
+
+const baseRequestBody = {
+  ...selectedPrice,
+  catalogueItemId: orderItem.catalogueItemId,
+  catalogueItemName: orderItem.catalogueItemName,
+  catalogueItemType: orderItem.catalogueItemType,
+  orderItemId: null,
+};
+
+const validRequestBody = {
+  ...baseRequestBody,
+  serviceRecipients: [validServiceRecipient],
+};
+
+const invalidRequestBody = {
+  ...baseRequestBody,
+  serviceRecipients: [invalidServiceRecipient],
+};
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`)
-    .reply(200, orderItem);
+    .get(`/api/v1/orders/${callOffId}/order-items`)
+    .reply(200, [orderItem]);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
@@ -66,8 +109,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-// TODO: fix when feature completed
-fixture.skip('Additional-services - flat declarative - withSavedData')
+fixture('Additional-services - flat declarative - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -76,18 +118,20 @@ fixture.skip('Additional-services - flat declarative - withSavedData')
 test('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+  const pageModel = new AdditionalServicePageModel();
 
-  const title = Selector('h1[data-test-id="order-item-page-title"]');
+  const title = pageModel.pageTitle;
 
   await t
-    .expect(await extractInnerText(title)).eql('Some item name information for Some service recipient 2 (OX3)');
+    .expect(await extractInnerText(title)).eql(`${orderItem.catalogueItemName} information for ${callOffId}`);
 });
 
 test(`should link to /order/${organisation}/${callOffId}/additional-services for backlink`, async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+  const pageModel = new AdditionalServicePageModel();
 
-  const goBackLink = Selector('[data-test-id="go-back-link"] a');
+  const { goBackLink } = pageModel;
 
   await t
     .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${callOffId}/additional-services`);
@@ -96,33 +140,35 @@ test(`should link to /order/${organisation}/${callOffId}/additional-services for
 test('should populate text field for the quantity question', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+  const pageModel = new AdditionalServicePageModel();
 
-  const quantity = Selector('[data-test-id="question-quantity"] input');
+  const quantity = pageModel.quantityInput;
 
   await t
-    .expect(quantity.getAttribute('value')).eql('3');
+    .expect(quantity.getAttribute('value'))
+    .eql(orderItem.serviceRecipients[0].quantity.toString());
 });
 
-test('should render the price table content', async (t) => {
+test('should render the price content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+  const pageModel = new AdditionalServicePageModel();
 
-  const priceInput = Selector('[data-test-id="question-price"] input');
-  const orderUnit = Selector('div[data-test-id="unit-of-order"]');
+  const { priceInput } = pageModel;
 
   await t
-    .expect(priceInput.getAttribute('value')).eql('0.10')
-    .expect(await extractInnerText(orderUnit)).eql(orderItem.itemUnit.description);
+    .expect(priceInput.getAttribute('value')).eql('0.10');
 });
 
 test('should render the delete button as not disabled', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
+  const pageModel = new AdditionalServicePageModel();
 
-  const button = Selector('[data-test-id="delete-button"] button');
+  const button = pageModel.deleteButton;
 
   await t
-    .expect(await extractInnerText(button)).eql('Delete')
+    .expect(await extractInnerText(button)).eql('Delete Additional Service')
     .expect(button.hasClass('nhsuk-button--secondary')).eql(true)
     .expect(button.hasClass('nhsuk-button--disabled')).eql(false);
 });
@@ -130,64 +176,37 @@ test('should render the delete button as not disabled', async (t) => {
 test('should show the correct error summary and input error when the quantity is removed and save is clicked', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#quantity-error span');
-  const quantity = Selector('[data-test-id="question-quantity"] input');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(errorMessage.exists).notOk()
-    .expect(quantity.hasClass('nhsuk-input--error')).notOk()
-    .selectText(quantity).pressKey('delete')
-    .click(saveButton);
+    .expect(pageModel.errorSummary.exists).notOk()
+    .expect(pageModel.quantityInput.hasClass('nhsuk-input--error')).notOk()
+    .selectText(pageModel.quantityInput).pressKey('delete')
+    .click(pageModel.saveButton);
 
   await t
-    .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityRequired)
-    .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(quantity.hasClass('nhsuk-input--error')).ok();
+    .expect(pageModel.errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(pageModel.errorSummary.find('li a').nth(0)))
+    .eql(content.errorMessages.QuantityRequired);
 });
 
 test('should show the correct error summary and input error when the price is removed and save is clicked', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#price-error span');
-  const price = Selector('[data-test-id="question-price"] input');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(errorMessage.exists).notOk()
-    .expect(price.hasClass('nhsuk-input--error')).notOk()
-    .selectText(price).pressKey('delete')
-    .click(saveButton);
+    .expect(pageModel.errorSummary.exists).notOk()
+    .expect(pageModel.priceInput.hasClass('nhsuk-input--error')).notOk()
+    .selectText(pageModel.priceInput).pressKey('delete')
+    .click(pageModel.saveButton);
 
   await t
-    .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.PriceRequired)
-    .expect(await extractInnerText(errorMessage)).eql('Error:')
-    .expect(price.hasClass('nhsuk-input--error')).ok();
+    .expect(pageModel.errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(pageModel.errorSummary.find('li a').nth(0)))
+    .eql(content.errorMessages.PriceRequired)
+    .expect(pageModel.priceInput.hasClass('nhsuk-input--error')).ok();
 });
-
-const validServiceRecipient = { ...baseServiceRecipient, quantity: 310 };
-const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
-
-const baseRequestBody = {
-  ...selectedPrice,
-  ...catalogueItem,
-};
-
-const validRequestBody = {
-  ...baseRequestBody,
-  serviceRecipients: [validServiceRecipient],
-};
-
-const invalidRequestBody = {
-  ...baseRequestBody,
-  serviceRecipients: [invalidServiceRecipient],
-};
 
 test('should navigate to additional services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
@@ -196,13 +215,10 @@ test('should navigate to additional services dashboard page if save button is cl
 
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const quantityInput = Selector('[data-test-id="question-quantity"]');
-  const saveButton = Selector('[data-test-id="save-button"] button');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .typeText(quantityInput, '10', { paste: true })
-    .click(saveButton)
+    .click(pageModel.saveButton)
     .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/additional-services`);
 });
 
@@ -217,23 +233,15 @@ test('should show text fields as errors with error message when there are BE val
 
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
-
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  // const errorMessage = Selector('#quantity-error');
-  const quantityInput = Selector('[data-test-id="question-quantity"] input');
-  const saveButton = Selector('[data-test-id="save-button"] button');
+  const pageModel = new AdditionalServicePageModel();
 
   await t
-    .typeText(quantityInput, '0', { replace: true })
-    .click(saveButton);
+    .typeText(pageModel.quantityInput, '0', { replace: true })
+    .click(pageModel.saveButton);
 
   await t
-    .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-
-  // Currently broken, TODO: fix
-  // .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
-
-    .expect(quantityInput.getAttribute('value')).eql('0');
-  // .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
+    .expect(pageModel.errorSummary.find('li a').count).eql(1)
+    .expect(await extractInnerText(pageModel.errorSummary.find('li a').nth(0)))
+    .eql(content.errorMessages.QuantityGreaterThanZero)
+    .expect(pageModel.quantityInput.getAttribute('value')).eql('0');
 });
