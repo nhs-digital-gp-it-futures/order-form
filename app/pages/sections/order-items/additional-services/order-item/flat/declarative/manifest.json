@@ -1,6 +1,16 @@
 {
   "description": "Enter the total amount you think you'll need.",
   "questions": {
+    "price": {
+      "id": "price",
+      "mainAdvice": "What price have you agreed? (£)",
+      "unit": "Unit description",
+      "expandableSection": {
+          "dataTestId": "view-section-price-id",
+          "title": "What price should I enter?",
+          "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
+      }
+    },
     "quantity": {
       "id": "quantity",
       "mainAdvice": "How many do you need?",
@@ -93,15 +103,25 @@
     }
   },
   "errorMessages": {
-    "QuantityRequired": "Enter a quantity",
-    "QuantityMustBeANumber": "Quantity must be a number",
-    "QuantityInvalid": "Quantity must be a whole number",
-    "QuantityGreaterThanZero": "Quantity must be greater than zero",
-    "QuantityLessThanMax": "Maximum quantity exceeded, enter a lower quantity",
+    "DeliveryDateRequired": "Enter a planned delivery date",
+    "DeliveryDateInvalid": "Enter a planned delivery date in a valid format",
+    "DeliveryDateOutsideDeliveryWindow": "Planned delivery date must be within 42 months from the commencement date for this Call-off Agreement",
+    "DeliveryDateNotReal": "Planned delivery date must be a real date",
+    "DeliveryDateDayRequired": "Planned delivery date must include a day",
+    "DeliveryDateMonthRequired": "Planned delivery date must include a month",
+    "DeliveryDateYearRequired": "Planned delivery date must include a year",
+    "DeliveryDateYearLength": "Year must be four numbers, for example 2020",
+    "EstimationPeriodRequired": "Select an estimation period",
     "PriceRequired": "Enter a price",
     "PriceMustBeANumber": "Price must be a number",
     "PriceMoreThan4dp": "Price must be to a maximum of 4 decimal places",
     "PriceGreaterThanOrEqualToZero": "Price cannot be negative",
-    "PriceLessThanMax": "Maximum price exceeded, enter a lower price"
+    "PriceLessThanMax": "Maximum price exceeded, enter a lower price",
+    "PriceGreaterThanListPrice": "You’ve entered a price that is more than the list price, enter a lower price",
+    "QuantityRequired": "Enter a quantity",
+    "QuantityMustBeANumber": "Quantity must be a number",
+    "QuantityInvalid": "Quantity must be a whole number",
+    "QuantityGreaterThanZero": "Quantity must be greater than zero",
+    "QuantityLessThanMax": "Maximum quantity exceeded, enter a lower quantity"
   }
 }
