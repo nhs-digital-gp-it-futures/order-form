@@ -41,6 +41,7 @@ describe('dashboard page', () => {
   describe('proxy buyer', () => {
     it('should render the dashboard page proxy title', componentTester(setup, (harness) => {
       context.config.showProxy = 'true';
+      context.secondaryOrganisation = 'true';
 
       harness.request(context, ($) => {
         const title = $('h1[data-test-id="dashboard-page-proxy-title"]');
@@ -51,6 +52,7 @@ describe('dashboard page', () => {
 
     it('should render the dashboard page proxy description', componentTester(setup, (harness) => {
       context.config.showProxy = 'true';
+      context.secondaryOrganisation = 'true';
 
       harness.request(context, ($) => {
         const description = $('[data-test-id="dashboard-page-proxy-description"]');
