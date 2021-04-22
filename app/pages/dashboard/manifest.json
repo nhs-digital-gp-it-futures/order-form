@@ -103,5 +103,8 @@
         "classes": "nhsuk-u-font-size-16"
       }
     }
+  },
+  "proxy": {
+    "description": "Manage orders currently in progress and view orders that have been submitted for this organisation."
   }
 }
