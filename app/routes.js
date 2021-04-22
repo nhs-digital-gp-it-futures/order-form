@@ -12,6 +12,7 @@ import { sectionRoutes } from './pages/sections/routes';
 import { summaryRoutes } from './pages/summary/routes';
 import { completeOrderRoutes } from './pages/complete-order/routes';
 import { deleteOrderRoutes } from './pages/delete-order/routes';
+import { selectOrganisationRoutes } from './pages/select/routes';
 import includesContext from './includes/manifest.json';
 
 const addContext = ({ context, user, csrfToken }) => ({
@@ -45,6 +46,8 @@ export const routes = (authProvider, sessionManager) => {
   }));
 
   router.use('/organisation', dashboardRoutes(authProvider, addContext));
+
+  router.use('/organisation/select', selectOrganisationRoutes(authProvider, addContext));
 
   router.use('/organisation/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
 

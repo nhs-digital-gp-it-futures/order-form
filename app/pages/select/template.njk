@@ -1,0 +1,26 @@
+{% extends 'includes/layout.njk' %}
+{% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
+
+{% block body %}
+
+  <h1>Select Organisation Page</h1>
+
+  <div class="nhsuk-width-container" data-test-id="organisation-select-page">
+    <div data-test-id="go-back-link">
+      {{ backLink({
+        href: '/order/organisation',
+        text: backLinkText
+      }) }}
+    </div>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+
+<p>Primary Organisation Name is: {{ primaryName }}</p>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
