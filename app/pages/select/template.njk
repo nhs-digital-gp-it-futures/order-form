@@ -1,26 +1,41 @@
 {% extends 'includes/layout.njk' %}
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
+{% from 'components/radios/macro.njk' import radios %}
 
 {% block body %}
-
-  <h1>Select Organisation Page</h1>
-
-  <div class="nhsuk-width-container" data-test-id="organisation-select-page">
+  <div class="nhsuk-width-container" data-test-id="dashboard-page">
     <div data-test-id="go-back-link">
-      {{ backLink({
-        href: '/order/organisation',
-        text: backLinkText
-      }) }}
+      {{  backLink({
+            href: "/order/organisation",
+            text: "Go back"
+          })
+      }}
     </div>
+
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-two-thirds">
+        <h1 class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">Which organisation are you looking for?</h1>
+        <p class="nhsuk-hint">Select the organisation you want to act on behalf of.</p>
+        <p>Primary Organisation Name is: {{ primaryName }}</p>
+      </div>
 
-<p>Primary Organisation Name is: {{ primaryName }}</p>
-
-
+      <div class="nhsuk-grid-column-full">
+        <form method="post">
+          {{  radios({
+                idPrefix: "organisation",
+                name: "organisation",
+                items: organisationList
+              })
+          }}
+          {{  bcButton({
+                dataTestId: "continue-button",
+                text: "Continue",
+                classes: "nhsuk-u-margin-top-9"
+              })
+          }}
+        </form>
       </div>
     </div>
   </div>
-</div>
 {% endblock %}
