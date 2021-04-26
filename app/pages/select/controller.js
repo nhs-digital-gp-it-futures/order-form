@@ -24,6 +24,10 @@ export const getSelectContext = async ({ accessToken, orgId, orgName }) => {
 };
 
 export const getIsUserProxy = async ({ accessToken, orgId }) => {
+  if (!accessToken) {
+    return false;
+  }
+
   const proxyOrganisations = await getProxyOrganisations({ accessToken, orgId });
 
   const userIsProxy = proxyOrganisations.length > 0;
