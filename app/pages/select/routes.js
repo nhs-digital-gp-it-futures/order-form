@@ -8,16 +8,10 @@ export const selectOrganisationRoutes = (authProvider, addContext) => {
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-
-    const organisation = {
-      primary: {
-        id: req.user.primaryOrganisationId,
-        name: req.user.primaryOrganisationName,
-      },
-    };
     const context = await getSelectContext({
       accessToken,
-      organisation,
+      orgId: req.user.primaryOrganisationId,
+      orgName: req.user.primaryOrganisationName,
     });
     logger.info('navigating to organisation selection page');
     res.render('pages/select/template.njk', addContext({ context, user: req.user }));

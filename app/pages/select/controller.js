@@ -1,18 +1,12 @@
 import { getRelatedOrganisations } from '../../helpers/api/oapi/getOrganisation';
 
-export const getSecondaryOrganisationList = async ({ accessToken, organisation }) => {
-  const organisationsList = await getRelatedOrganisations(
-    {
-      accessToken,
-      orgId: organisation.primary.id,
-    },
-  );
-
+export const getProxyOrganisations = async ({ accessToken, orgId }) => {
+  const organisationsList = await getRelatedOrganisations({ accessToken, orgId });
   return organisationsList;
 };
 
-export const getSelectContext = async ({ accessToken, organisation }) => {
-  const organisationsList = await getSecondaryOrganisationList({ accessToken, organisation });
+export const getSelectContext = async ({ accessToken, orgId, orgName }) => {
+  const organisationsList = await getProxyOrganisations({ accessToken, orgId });
 
   let radioList;
 
@@ -22,9 +16,16 @@ export const getSelectContext = async ({ accessToken, organisation }) => {
   }
 
   const context = {
-    primaryName: organisation.primary.name,
+    primaryName: orgName,
     organisationList: radioList,
   };
 
   return context;
+};
+
+export const getIsUserProxy = async ({ accessToken, orgId }) => {
+  const proxyOrganisations = await getProxyOrganisations({ accessToken, orgId });
+
+  const userIsProxy = proxyOrganisations.length > 0;
+  return userIsProxy;
 };

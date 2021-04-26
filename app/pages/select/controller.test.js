@@ -1,4 +1,4 @@
-import { getSecondaryOrganisationList, getSelectContext } from './controller';
+import { getIsUserProxy, getProxyOrganisations, getSelectContext } from './controller';
 import { getRelatedOrganisations } from '../../helpers/api/oapi/getOrganisation';
 
 jest.mock('../../helpers/api/oapi/getOrganisation');
@@ -6,12 +6,8 @@ jest.mock('../../helpers/api/oapi/getOrganisation');
 describe('organisation select controller', () => {
   const options = {
     accessToken: 'access_token',
-    organisation: {
-      primary: {
-        id: 'abc',
-        name: 'primary',
-      },
-    },
+    orgId: 'abc',
+    orgName: 'primary',
   };
 
   const expectedOrgList = [
@@ -28,11 +24,11 @@ describe('organisation select controller', () => {
     jest.resetAllMocks();
   });
 
-  describe('getSecondaryOrganisationList', async () => {
+  describe('getProxyOrganisations', async () => {
     it('should return 4 organisations', async () => {
-      const organisationList = await getSecondaryOrganisationList({
+      const organisationList = await getProxyOrganisations({
         accessToken: options.accessToken,
-        organisation: options.organisation,
+        orgId: options.organisation,
       });
 
       expect(organisationList.length).toEqual(4);
@@ -60,6 +56,14 @@ describe('organisation select controller', () => {
       expect(returnedContext.organisationList[1].text).toEqual('org four');
       expect(returnedContext.organisationList[2].text).toEqual('org one');
       expect(returnedContext.organisationList[3].text).toEqual('zzz org three');
+    });
+  });
+
+  describe('getIsUserProxy', () => {
+    it('should be true if user has proxy organisations', async () => {
+      const userIsProxy = await getIsUserProxy(options.accessToken, options.orgId);
+
+      expect(userIsProxy).toEqual(true);
     });
   });
 });
