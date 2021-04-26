@@ -98,5 +98,5 @@ export const getContext = ({ orgName, completedOrders = [], incompletedOrders = 
   incompleteOrders: generateIncompletedOrdersTable(
     incompletedOrders, manifest.incompleteOrdersTable,
   ),
-  secondaryOrganisation: '',
+  userIsProxy: 'true',
 });
