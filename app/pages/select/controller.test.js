@@ -62,7 +62,10 @@ describe('organisation select controller', async () => {
 
   describe('getIsUserProxy', async () => {
     it('should be true if user has proxy organisations', async () => {
-      const userIsProxy = await getIsUserProxy(options.accessToken, options.orgId);
+      const userIsProxy = await getIsUserProxy({
+        accessToken: options.accessToken,
+        orgId: options.orgId,
+      });
 
       expect(userIsProxy).toEqual(true);
     });
