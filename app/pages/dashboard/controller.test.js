@@ -6,6 +6,7 @@ jest.mock('../../helpers/api/ordapi/getOrders');
 jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
+jest.mock('../select/controller');
 
 describe('dashboard controller', () => {
   describe('getDashboardContext', () => {

@@ -3,7 +3,7 @@ import { getRelatedOrganisations } from '../../helpers/api/oapi/getOrganisation'
 
 jest.mock('../../helpers/api/oapi/getOrganisation');
 
-describe('organisation select controller', () => {
+describe('organisation select controller', async () => {
   const options = {
     accessToken: 'access_token',
     orgId: 'abc',
@@ -20,6 +20,7 @@ describe('organisation select controller', () => {
   beforeEach(() => {
     getRelatedOrganisations.mockResolvedValueOnce(expectedOrgList);
   });
+
   afterEach(() => {
     jest.resetAllMocks();
   });
@@ -38,7 +39,7 @@ describe('organisation select controller', () => {
     });
   });
 
-  describe('getSelectContext', () => {
+  describe('getSelectContext', async () => {
     it('should call getRelatedOrganisations once', async () => {
       const returnedContext = await getSelectContext(options);
 
@@ -59,7 +60,7 @@ describe('organisation select controller', () => {
     });
   });
 
-  describe('getIsUserProxy', () => {
+  describe('getIsUserProxy', async () => {
     it('should be true if user has proxy organisations', async () => {
       const userIsProxy = await getIsUserProxy(options.accessToken, options.orgId);
 
