@@ -52,7 +52,7 @@ describe('dashboard page', () => {
 
     it('should render the dashboard page proxy description', componentTester(setup, (harness) => {
       context.config.showProxy = 'true';
-      context.userIsProxy = 'true';
+      context.userIsProxy = true;
 
       harness.request(context, ($) => {
         const description = $('[data-test-id="dashboard-page-proxy-description"]');
