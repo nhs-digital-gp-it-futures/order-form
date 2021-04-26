@@ -115,7 +115,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         req,
         selectedItemId,
         sessionManager,
-        catalogueItemsKey: 'additionalServices',
+        catalogueItemsKey: sessionKeys.additionalServices,
       });
 
       sessionManager.saveToSession({
