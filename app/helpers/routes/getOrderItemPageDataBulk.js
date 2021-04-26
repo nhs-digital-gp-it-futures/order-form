@@ -138,11 +138,11 @@ export const getOrderItemPageDataBulk = async ({
   const itemName = selectedItem[0].catalogueItemName;
 
   const catalogueSolutions = orderItems.filter((filtered) => filtered.catalogueItemType === 'Solution');
-  
+
   const catalogueSolutionId = catalogueSolutions && catalogueSolutions.length > 0
-  ? catalogueSolutions[0].catalogueItemId 
-  : selectedItem[0].catalogueItemId;
-  
+    ? catalogueSolutions[0].catalogueItemId
+    : selectedItem[0].catalogueItemId;
+
   const selectedPrice = {
     price: selectedItem[0].price,
     itemUnit: selectedItem[0].itemUnit,

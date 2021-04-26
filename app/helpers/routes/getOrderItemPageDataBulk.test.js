@@ -139,7 +139,7 @@ describe('getOrderItemPageDataBulk', () => {
 
     it('should set catalogueSolutionId from selected item catalogueItemId if no Catalogue Solution', async () => {
       getOrderItems.mockResolvedValue(mockOrderItemResponse);
-      
+
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'some-item-id' });
 
       expect(pageData.catalogueSolutionId).toEqual(mockOrderItemResponse[0].catalogueItemId);
@@ -148,10 +148,10 @@ describe('getOrderItemPageDataBulk', () => {
     it('should set catalogueSolutionId from Catalogue Solution if present', async () => {
       mockOrderItemResponse.push({
         catalogueItemId: 'some-item-id-02',
-        catalogueItemType: 'Solution',      
-      })
+        catalogueItemType: 'Solution',
+      });
       getOrderItems.mockResolvedValue(mockOrderItemResponse);
-      
+
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'some-item-id' });
 
       expect(pageData.catalogueSolutionId).toEqual('some-item-id-02');
