@@ -202,36 +202,17 @@ test('should navigate to associated services dashboard page if save button is cl
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-  nock(organisationApiUrl)
-    .get('/api/v1/Organisations/org-id')
-    .reply(200, baseServiceRecipient);
-
-  nock(orderApiUrl)
-    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
-    .reply(400, {
-      errors: {
-        'ServiceRecipients[0].Quantity': ['QuantityGreaterThanZero'],
-      },
-    });
-
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  // const errorMessage = Selector('#quantity-error');
   const quantityInput = Selector('[data-test-id="question-quantity"] input');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .typeText(quantityInput, '20', { replace: true })
+    .typeText(quantityInput, '-8', { replace: true })
     .click(saveButton);
 
   await t
     .expect(await extractInnerText(errorSummary)).contains(content.errorMessages.QuantityGreaterThanZero);
-
-  // Currently broken, TODO: fix
-  // .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
-
-  // .expect(quantityInput.getAttribute('value')).eql('0')
-  // .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
 });
