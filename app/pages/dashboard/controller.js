@@ -2,9 +2,14 @@ import { getContext } from './contextCreator';
 import { getOrders } from '../../helpers/api/ordapi/getOrders';
 import { getIsUserProxy } from '../../helpers/controllers/getIsUserProxy';
 
-export const getDashboardContext = async ({ orgName, orgId, accessToken }) => {
+export const getDashboardContext = async ({
+  orgName,
+  orgId,
+  accessToken,
+  relatedOrganisationIds,
+}) => {
   const { completedOrders, incompletedOrders } = await getOrders({ orgId, accessToken });
-  const userIsProxy = await getIsUserProxy({ accessToken, orgId });
+  const userIsProxy = await getIsUserProxy(relatedOrganisationIds);
 
   return getContext({
     orgName, completedOrders, incompletedOrders, userIsProxy,

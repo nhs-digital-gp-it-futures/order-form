@@ -1,12 +1,8 @@
-import { getProxyOrganisations } from '../api/oapi/getProxyOrganisations';
-
-export const getIsUserProxy = async ({ accessToken, orgId }) => {
-  if (!accessToken) {
+export const getIsUserProxy = async (relatedOrganisationIds) => {
+  if (!relatedOrganisationIds) {
     return false;
   }
 
-  const proxyOrganisations = await getProxyOrganisations({ accessToken, orgId });
-
-  const userIsProxy = proxyOrganisations.length > 0;
+  const userIsProxy = relatedOrganisationIds.length > 0;
   return userIsProxy;
 };

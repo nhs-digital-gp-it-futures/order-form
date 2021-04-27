@@ -9,19 +9,12 @@ describe('getIsUserProxy', () => {
   });
 
   it('should be true if user has proxy organisations', async () => {
-    const userIsProxy = await getIsUserProxy({
-      accessToken: 'access_token',
-      orgId: 'abc',
-    });
-
+    const userIsProxy = await getIsUserProxy(['abc', 'def']);
     expect(userIsProxy).toEqual(true);
   });
 
   it('should be false if access_token is not supplied', async () => {
-    const userIsProxy = await getIsUserProxy({
-      orgId: 'abc',
-    });
-
+    const userIsProxy = await getIsUserProxy();
     expect(userIsProxy).toEqual(false);
   });
 });

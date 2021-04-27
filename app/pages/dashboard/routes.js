@@ -12,6 +12,7 @@ export const dashboardRoutes = (authProvider, addContext) => {
       accessToken,
       orgId: req.user.primaryOrganisationId,
       orgName: req.user.primaryOrganisationName,
+      relatedOrganisationIds: req.user.relatedOrganisationId,
     });
     logger.info('navigating to organisation orders page');
     res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
