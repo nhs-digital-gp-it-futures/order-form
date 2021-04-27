@@ -7,6 +7,7 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 jest.mock('../select/controller');
+jest.mock('../../helpers/controllers/getIsUserProxy');
 
 describe('dashboard controller', () => {
   describe('getDashboardContext', () => {
@@ -32,7 +33,9 @@ describe('dashboard controller', () => {
       await getDashboardContext({ orgId: 'org-id', orgName: 'org1', accessToken: 'access_token' });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
-      expect(contextCreator.getContext).toHaveBeenCalledWith({ orgName: 'org1', completedOrders: [], incompletedOrders: [] });
+      expect(contextCreator.getContext).toHaveBeenCalledWith({
+        orgName: 'org1', completedOrders: [], incompletedOrders: [], userIsProxy: undefined,
+      });
     });
   });
 });

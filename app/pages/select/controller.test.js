@@ -1,9 +1,9 @@
-import { getIsUserProxy, getProxyOrganisations, getSelectContext } from './controller';
-import { getRelatedOrganisations } from '../../helpers/api/oapi/getOrganisation';
+import { getSelectContext } from './controller';
+import { getRelatedOrganisations } from '../../helpers/api/oapi/getRelatedOrganisations';
 
-jest.mock('../../helpers/api/oapi/getOrganisation');
+jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
 
-describe('organisation select controller', async () => {
+describe('organisation select controller', () => {
   const options = {
     accessToken: 'access_token',
     orgId: 'abc',
@@ -25,21 +25,7 @@ describe('organisation select controller', async () => {
     jest.resetAllMocks();
   });
 
-  describe('getProxyOrganisations', async () => {
-    it('should return 4 organisations', async () => {
-      const organisationList = await getProxyOrganisations({
-        accessToken: options.accessToken,
-        orgId: options.organisation,
-      });
-
-      expect(organisationList.length).toEqual(4);
-
-      expect(organisationList[0].name).toEqual('org one');
-      expect(organisationList[0].organisationId).toEqual('001');
-    });
-  });
-
-  describe('getSelectContext', async () => {
+  describe('getSelectContext', () => {
     it('should call getRelatedOrganisations once', async () => {
       const returnedContext = await getSelectContext(options);
 
@@ -57,17 +43,6 @@ describe('organisation select controller', async () => {
       expect(returnedContext.organisationList[1].text).toEqual('org four');
       expect(returnedContext.organisationList[2].text).toEqual('org one');
       expect(returnedContext.organisationList[3].text).toEqual('zzz org three');
-    });
-  });
-
-  describe('getIsUserProxy', async () => {
-    it('should be true if user has proxy organisations', async () => {
-      const userIsProxy = await getIsUserProxy({
-        accessToken: options.accessToken,
-        orgId: options.orgId,
-      });
-
-      expect(userIsProxy).toEqual(true);
     });
   });
 });

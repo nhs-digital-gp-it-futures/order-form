@@ -1,19 +1,19 @@
-import { getRelatedOrganisations } from '../../helpers/api/oapi/getOrganisation';
+import { getProxyOrganisations } from '../../helpers/api/oapi/getProxyOrganisations';
 
-export const getProxyOrganisations = async ({ accessToken, orgId }) => {
-  const organisationsList = await getRelatedOrganisations({ accessToken, orgId });
-  return organisationsList;
+const transformOrganisationList = (organisationsList) => {
+  if (!organisationsList) {
+    return undefined;
+  }
+
+  const radioList = organisationsList.map((org) => ({ value: org.organisationId, text: org.name }));
+  radioList.sort((a, b) => a.text.localeCompare(b.text));
+
+  return radioList;
 };
 
 export const getSelectContext = async ({ accessToken, orgId, orgName }) => {
   const organisationsList = await getProxyOrganisations({ accessToken, orgId });
-
-  let radioList;
-
-  if (organisationsList) {
-    radioList = organisationsList.map((org) => ({ value: org.organisationId, text: org.name }));
-    radioList.sort((a, b) => a.text.localeCompare(b.text));
-  }
+  const radioList = transformOrganisationList(organisationsList);
 
   const context = {
     primaryName: orgName,
@@ -21,15 +21,4 @@ export const getSelectContext = async ({ accessToken, orgId, orgName }) => {
   };
 
   return context;
-};
-
-export const getIsUserProxy = async ({ accessToken, orgId }) => {
-  if (!accessToken) {
-    return false;
-  }
-
-  const proxyOrganisations = await getProxyOrganisations({ accessToken, orgId });
-
-  const userIsProxy = proxyOrganisations.length > 0;
-  return userIsProxy;
 };
