@@ -1,0 +1,5 @@
+{
+    "title": "{{solutionName}} deleted from {{orderId}}",
+    "description": "This Additional Service has been deleted from all the Service Recipients in your order.",
+    "continueButtonText": "Continue"
+}
