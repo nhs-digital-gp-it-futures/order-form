@@ -14,6 +14,9 @@ jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
 
 describe('GET /organisation/select', () => {
   const path = '/organisation/select';
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
 
   it('should redirect to the login page if the user is not logged in', () => (
     testAuthorisedGetPathForUnauthenticatedUser({
