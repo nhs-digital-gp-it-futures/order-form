@@ -21,6 +21,7 @@ import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
 import { deleteCatalogueSolutionsRoutes } from './order-items/catalogue-solutions/delete/routes';
+import { deleteAdditionalServicesRoutes } from './order-items/additional-services/delete/routes';
 
 const router = express.Router({ mergeParams: true });
 
@@ -93,6 +94,8 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.use('/catalogue-solutions/delete', deleteCatalogueSolutionsRoutes(authProvider, addContext, sessionManager));
 
   router.use('/additional-services', additionalServicesRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/additional-services/delete', deleteAdditionalServicesRoutes(authProvider, addContext, sessionManager));
 
   router.use('/associated-services', associatedServicesRoutes(authProvider, addContext, sessionManager));
 
