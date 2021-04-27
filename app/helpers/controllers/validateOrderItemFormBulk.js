@@ -1,4 +1,5 @@
 import { getDateErrors } from './getDateErrors';
+import { getQuantityError } from './getQuantityError';
 import { getSelectedPriceManifest } from './manifestProvider';
 
 export const validateOrderItemFormBulk = ({ data, selectedPrice, orderItemType }) => {
@@ -44,27 +45,10 @@ export const validateOrderItemFormBulk = ({ data, selectedPrice, orderItemType }
   }
 
   if (selectedPriceManifest.solutionTable.cellInfo.quantity.question) {
-    data.quantity.map((size) => {
-      if (!size || size.trim().length === 0) {
-        errors.push({
-          field: 'Quantity',
-          id: 'QuantityRequired',
-        });
-      } else if (Number.isNaN(Number(size))) {
-        errors.push({
-          field: 'Quantity',
-          id: 'QuantityMustBeANumber',
-        });
-      } else if (size.indexOf('.') !== -1) {
-        errors.push({
-          field: 'Quantity',
-          id: 'QuantityInvalid',
-        });
-      } else if (size > 2147483646) {
-        errors.push({
-          field: 'Quantity',
-          id: 'QuantityLessThanMax',
-        });
+    data.quantity.map((item) => {
+      const quantityError = getQuantityError(item);
+      if (quantityError) {
+        errors.push(quantityError);
       }
     });
   }

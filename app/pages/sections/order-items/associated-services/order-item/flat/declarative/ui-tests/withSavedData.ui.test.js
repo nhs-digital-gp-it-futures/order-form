@@ -37,16 +37,10 @@ const orderItem = {
 
 const baseServiceRecipient = { name: 'Some service recipient 2', odsCode: 'OX3' };
 const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
-const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
 
 const validRequestBody = {
   ...orderItem,
   serviceRecipients: [validServiceRecipient],
-};
-
-const invalidRequestBody = {
-  ...orderItem,
-  serviceRecipients: [invalidServiceRecipient],
 };
 
 const orderItemPageDataInSession = JSON.stringify({
@@ -213,7 +207,7 @@ test('should show text fields as errors with error message when there are BE val
     .reply(200, baseServiceRecipient);
 
   nock(orderApiUrl)
-    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, invalidRequestBody)
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
     .reply(400, {
       errors: {
         'ServiceRecipients[0].Quantity': ['QuantityGreaterThanZero'],
@@ -229,16 +223,15 @@ test('should show text fields as errors with error message when there are BE val
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .typeText(quantityInput, '0', { replace: true })
+    .typeText(quantityInput, '20', { replace: true })
     .click(saveButton);
 
   await t
-    .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
+    .expect(await extractInnerText(errorSummary)).contains(content.errorMessages.QuantityGreaterThanZero);
 
   // Currently broken, TODO: fix
   // .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
 
-    .expect(quantityInput.getAttribute('value')).eql('0');
+  // .expect(quantityInput.getAttribute('value')).eql('0')
   // .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
 });
