@@ -52,6 +52,10 @@ describe('validateOrderItemForm', () => {
       field: 'Quantity',
       id: 'QuantityInvalid',
     };
+    const quantityGreaterThanZero = {
+      field: 'Quantity',
+      id: 'QuantityGreaterThanZero',
+    };
     const quantityLessThanMax = {
       field: 'Quantity',
       id: 'QuantityLessThanMax',
@@ -131,6 +135,23 @@ describe('validateOrderItemForm', () => {
       const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([quantityInvalid]);
+    });
+
+    it('should return an array of one validation error if quantity is less than 0', () => {
+      const selectedPriceManifest = { questions: { quantity: 'test' }, addPriceTable: { cellInfo: { price: 'fakePrice' } } };
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+      const data = {
+        quantity: '-1',
+        price: '1.5',
+        selectEstimationPeriod: 'month',
+        'deliveryDate-day': '09',
+        'deliveryDate-month': '02',
+        'deliveryDate-year': '2021',
+      };
+
+      const errors = validateOrderItemForm({ orderItemType, data, selectedPrice });
+
+      expect(errors).toEqual([quantityGreaterThanZero]);
     });
 
     it('should return an array of one validation error if quantity value is too large', () => {

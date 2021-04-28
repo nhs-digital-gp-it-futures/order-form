@@ -38,16 +38,10 @@ const orderItem = {
 
 const baseServiceRecipient = { name: 'Some service recipient 2', odsCode: 'OX3' };
 const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
-const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
 
 const validRequestBody = {
   ...orderItem,
   serviceRecipients: [validServiceRecipient],
-};
-
-const invalidRequestBody = {
-  ...orderItem,
-  serviceRecipients: [invalidServiceRecipient],
 };
 
 const orderItemPageDataInSession = JSON.stringify({
@@ -85,6 +79,53 @@ fixture('Associated-services - flat ondemand - withSavedData')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
   });
+
+test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, baseServiceRecipient);
+
+  nock(orderApiUrl)
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
+    .reply(400, {
+      errors: {
+        'ServiceRecipients[0].Quantity': ['QuantityGreaterThanZero'],
+      },
+    });
+
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .click(saveButton);
+
+  await t
+    .expect(await extractInnerText(errorSummary)).contains(content.errorMessages.QuantityGreaterThanZero);
+});
+
+test('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, baseServiceRecipient);
+
+  nock(orderApiUrl)
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
+    .reply(200, {});
+
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const quantityInput = Selector('[data-test-id="question-quantity"] input');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .typeText(quantityInput, '10', { replace: true })
+    .click(saveButton)
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/associated-services`);
+});
 
 test('should render the title', async (t) => {
   await pageSetup();
@@ -195,61 +236,4 @@ test('should show the correct error summary and input error when the price is re
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
     .expect(price.hasClass('nhsuk-input--error')).ok();
-});
-
-test('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
-  nock(organisationApiUrl)
-    .get('/api/v1/Organisations/org-id')
-    .reply(200, baseServiceRecipient);
-
-  nock(orderApiUrl)
-    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
-    .reply(200, {});
-
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
-  await t.navigateTo(pageUrl);
-
-  const quantityInput = Selector('[data-test-id="question-quantity"]');
-  const saveButton = Selector('[data-test-id="save-button"] button');
-
-  await t
-    .typeText(quantityInput, '10', { replace: true })
-    .click(saveButton)
-    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/associated-services`);
-});
-
-test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-  nock(organisationApiUrl)
-    .get('/api/v1/Organisations/org-id')
-    .reply(200, baseServiceRecipient);
-
-  nock(orderApiUrl)
-    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, invalidRequestBody)
-    .reply(400, {
-      errors: {
-        'ServiceRecipients[0].Quantity': ['QuantityGreaterThanZero'],
-      },
-    });
-
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
-  await t.navigateTo(pageUrl);
-
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  // const errorMessage = Selector('#quantity-error');
-  const quantityInput = Selector('[data-test-id="question-quantity"] input');
-  const saveButton = Selector('[data-test-id="save-button"] button');
-
-  await t
-    .typeText(quantityInput, '0', { replace: true })
-    .click(saveButton);
-
-  await t
-    .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-
-  // Currently broken, TODO: fix
-  // .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
-
-    .expect(quantityInput.getAttribute('value')).eql('0');
-  // .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
 });

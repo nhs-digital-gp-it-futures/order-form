@@ -1,6 +1,11 @@
-const transformPropertyName = (propertyName) => (propertyName.startsWith('[')
-  ? propertyName.substring(4)
-  : propertyName);
+const transformPropertyName = (propertyName) => {
+  if (propertyName.startsWith('[')) {
+    return propertyName.substring(4);
+  }
+
+  return propertyName.indexOf('].') > 0
+    ? propertyName.split('].')[1] : propertyName;
+};
 
 export const transformApiValidationResponse = (validationResponse) => {
   const distinctApiErrors = Object
