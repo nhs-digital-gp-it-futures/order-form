@@ -47,7 +47,7 @@ export const routes = (authProvider, sessionManager) => {
 
   router.use('/organisation', dashboardRoutes(authProvider, addContext));
 
-  router.use('/organisation/select', selectOrganisationRoutes(authProvider, addContext));
+  router.use('/organisation/select', selectOrganisationRoutes(authProvider, addContext, sessionManager));
 
   router.use('/organisation/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
 
