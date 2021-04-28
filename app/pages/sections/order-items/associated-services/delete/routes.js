@@ -23,7 +23,7 @@ export const deleteAssociatedServicesRoutes = (authProvider, addContext, session
     context.description = deleteManifest.description;
     context.backLinkHref = `${config.baseUrl}/organisation/${orderId}/associated-services/${catalogueItemId}`;
 
-    logger.info(`navigating to order ${orderId} catalogue-solutions ${catalogueItemId} deletion page`);
+    logger.info(`navigating to order ${orderId} associated-services ${catalogueItemId} deletion page`);
     return res.render('pages/sections/order-items/catalogue-solutions/delete/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
@@ -33,7 +33,7 @@ export const deleteAssociatedServicesRoutes = (authProvider, addContext, session
 
     await deleteCatalogueSolution({ orderId, orderItemId: catalogueItemId, accessToken });
 
-    logger.info(`navigating to order ${orderId} catalogue-solution ${catalogueItemId} delete confirmation page`);
+    logger.info(`navigating to order ${orderId} associated-service ${catalogueItemId} delete confirmation page`);
     return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/delete/${catalogueItemId}/confirmation/${solutionName}/continue`);
   }));
 
@@ -49,7 +49,7 @@ export const deleteAssociatedServicesRoutes = (authProvider, addContext, session
     });
     context.description = confirmationManifest.description;
 
-    logger.info(`navigating to catalogue ${solutionName} delete-catalogue-confirmation page`);
+    logger.info(`navigating to catalogue ${solutionName} delete-associated-service-confirmation page`);
     res.render('pages/sections/order-items/catalogue-solutions/delete/confirmation/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 

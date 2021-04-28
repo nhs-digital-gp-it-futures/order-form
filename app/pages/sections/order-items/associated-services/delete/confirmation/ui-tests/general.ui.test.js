@@ -12,9 +12,6 @@ const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  // if (setup.getRoute) {
-  //   mocks({ postRoute: setup.postRoute });
-  // }
 };
 
 const getLocation = ClientFunction(() => document.location.href);
