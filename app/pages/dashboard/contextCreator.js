@@ -87,7 +87,10 @@ const generateCompletedOrdersTable = (completedOrders, completeOrdersTable) => {
   };
 };
 
-export const getContext = ({ orgName, completedOrders = [], incompletedOrders = [] }) => ({
+export const getContext = ({
+  orgName, completedOrders = [], incompletedOrders = [], userIsProxy = false,
+}) => ({
+
   ...manifest,
   title: orgName,
   newOrderButtonHref: `${baseUrl}/organisation/neworder`,
@@ -98,5 +101,5 @@ export const getContext = ({ orgName, completedOrders = [], incompletedOrders = 
   incompleteOrders: generateIncompletedOrdersTable(
     incompletedOrders, manifest.incompleteOrdersTable,
   ),
-  secondaryOrganisation: '',
+  userIsProxy,
 });
