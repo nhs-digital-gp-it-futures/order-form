@@ -41,13 +41,15 @@ export const getBackLinkHref = (req, selectedPrice, orderId) => backLinkHref({
 });
 
 export const updateContext = (
-  req, selectedPrice, context, orderId, catalogueItemId, solutionName,
+  req, selectedPrice, context, orderId, catalogueItemId, solutionName, catalogueItemExists,
 ) => {
   const submittedOrderItemId = req.query.submitted;
   context.backLinkHref = (submittedOrderItemId !== undefined
-    && submittedOrderItemId !== 'neworderitem')
+    && submittedOrderItemId !== 'neworderitem' && !catalogueItemExists)
     ? `${baseUrl}/organisation/${orderId}/additional-services`
-    : backLinkHref({ req, selectedPrice, orderId });
+    : backLinkHref({
+      req, selectedPrice, orderId, catalogueItemExists,
+    });
 
   context.deleteButton.altText = context.deleteButton.altText
     .replace(KeyCatalogueSolution, KeyAdditionalService);
