@@ -1,7 +1,6 @@
 import { ErrorContext } from 'buying-catalogue-library';
 import {
   appBaseUri,
-  isDevelopment,
   documentApiHost,
   identityServerUrl,
 } from '../../config';
@@ -14,15 +13,23 @@ export const withCatch = (logger, authProvider, route) => async (req, res, next)
       return next(err);
     }
 
-    if (err.response && err.response.status === 401) {
-      req.headers.referer = `${appBaseUri}${req.originalUrl}`;
-      return authProvider.login()(req, res, next);
+    let responseData;
+    if (err.response) {
+      if (err.response.status === 401) {
+        req.headers.referer = `${appBaseUri}${req.originalUrl}`;
+        return authProvider.login()(req, res, next);
+      }
+
+      responseData = err.response.data;
     }
 
     logger.error(`Unexpected Error:\n${err.stack}`);
 
-    const stackTrace = isDevelopment() ? err.stack : undefined;
-    const defaultError = new ErrorContext({ status: 500, stackTrace });
+    const defaultError = new ErrorContext({
+      status: 500,
+      stackTrace: err.stack,
+      data: responseData,
+    });
 
     return next(defaultError);
   }
