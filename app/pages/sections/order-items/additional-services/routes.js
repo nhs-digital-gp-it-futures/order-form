@@ -40,6 +40,12 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     sessionManager.saveToSession(
       { req, key: sessionKeys.recipients, value: undefined },
     );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.catalogueItemExists, value: undefined },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.orderItems, value: context.orderItems },
+    );
 
     logger.info(`navigating to order ${orderId} additional-services dashboard page`);
     return res.render('pages/sections/order-items/additional-services/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -72,6 +78,9 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
     });
     const { selectedPrice } = pageData;
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
+    const catalogueItemExists = sessionManager.getFromSession({
+      req, key: sessionKeys.catalogueItemExists,
+    });
 
     const context = await getOrderItemRecipientsContext({
       orderId,
@@ -93,7 +102,9 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       value: pageData.selectedRecipients,
     });
 
-    updateContext(req, selectedPrice, context, orderId, catalogueItemId, pageData.itemName);
+    updateContext(
+      req, selectedPrice, context, orderId, catalogueItemId, pageData.itemName, catalogueItemExists,
+    );
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk',

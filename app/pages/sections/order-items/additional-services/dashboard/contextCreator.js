@@ -34,21 +34,26 @@ const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItem
   items: generateItems({ orderId, orderItems }),
 });
 
-export const backLinkHref = ({ req, selectedPrice, orderId }) => {
+export const backLinkHref = ({
+  req, selectedPrice, orderId, catalogueItemExists,
+}) => {
   const { referer } = req.headers;
   const slug = (referer ? referer.split('/').pop() : '').toLowerCase();
   const newItemBackLink = selectedPrice.provisioningType === 'Patient'
     ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`
     : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
+  const existingItemBackLink = catalogueItemExists
+    ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
+    : `${baseUrl}/organisation/${orderId}/additional-services`;
 
-  const slugConditions = ['additional-services', 'date', 'ondemand', 'declarative'];
+  const slugConditions = ['additional-services', 'date', 'ondemand', 'declarative', 'additional-service'];
   if (slugConditions.includes(slug)) {
     return referer;
   }
 
   return slug === 'neworderitem'
     ? newItemBackLink
-    : `${baseUrl}/organisation/${orderId}/additional-services`;
+    : existingItemBackLink;
 };
 
 export const deleteButtonLink = ({ orderId, catalogueItemId, solutionName }) => `${baseUrl}/organisation/${orderId}/additional-services/delete/${catalogueItemId}/confirmation/${solutionName}`;
@@ -64,4 +69,5 @@ export const getContext = ({ orderId, orderDescription, orderItems = [] }) => ({
   }),
   addOrderItemButtonHref: `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`,
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
+  orderItems,
 });
