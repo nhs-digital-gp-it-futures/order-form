@@ -33,4 +33,5 @@ export const getContext = ({ orderId, orderDescription, orderItems = [] }) => ({
   }),
   addOrderItemButtonHref: `${baseUrl}/organisation/${orderId}/associated-services/select/associated-service`,
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
+  orderItems,
 });
