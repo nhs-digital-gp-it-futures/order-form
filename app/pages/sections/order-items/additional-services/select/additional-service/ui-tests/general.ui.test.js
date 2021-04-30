@@ -28,6 +28,9 @@ const mockAdditionalServices = [
 const additionalServicesInSession = JSON.stringify(
   mockAdditionalServices,
 );
+const mockSessionOrderItemsState = JSON.stringify([
+  { catalogueItemId: 'additional-service-3', catalogueItemType: 'AdditionalService', catalogueItemName: 'Additional Service 3' },
+]);
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -51,9 +54,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.additionalServices, additionalServicesInSession);
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
 };
 

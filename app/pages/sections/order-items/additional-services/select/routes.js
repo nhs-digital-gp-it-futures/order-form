@@ -95,10 +95,15 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         selectedAdditionalServiceId,
       });
 
-      sessionManager.saveToSession(
-        { req, key: sessionKeys.selectedRecipients, value: undefined },
-      );
-
+      const orderItems = sessionManager.getFromSession({ req, key: sessionKeys.orderItems });
+      if (orderItems && orderItems.length > 0) {
+        sessionManager.saveToSession(
+          { req, key: sessionKeys.selectedRecipients, value: undefined },
+        );
+        sessionManager.saveToSession(
+          { req, key: sessionKeys.selectedQuantity, value: undefined },
+        );
+      }
       logger.info(`navigating to order ${orderId} additional-services select additional-service page`);
       return res.render('pages/sections/order-items/additional-services/select/additional-service/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     }),
@@ -118,6 +123,10 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         catalogueItemsKey: sessionKeys.additionalServices,
       });
 
+      const orderItems = sessionManager.getFromSession({ req, key: sessionKeys.orderItems });
+      const existingItem = orderItems
+        .filter((orderItem) => orderItem.catalogueItemId === selectedItem.catalogueItemId);
+
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedItemId, value: selectedItemId,
       });
@@ -127,6 +136,15 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedCatalogueSolutionId, value: selectedItem.solution.solutionId,
       });
+
+      if (existingItem.length > 0 && existingItem[0].catalogueItemId) {
+        sessionManager.saveToSession({
+          req, key: sessionKeys.catalogueItemExists, value: existingItem,
+        });
+        return res.redirect(
+          `${config.baseUrl}/organisation/${orderId}/additional-services/${existingItem[0].catalogueItemId}`,
+        );
+      }
 
       logger.info('redirecting additional services select price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);

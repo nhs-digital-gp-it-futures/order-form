@@ -6,6 +6,7 @@ import { baseUrl } from '../../../../../config';
 
 describe('additional-services contextCreator', () => {
   const orderId = 'order-id';
+  const mockcatalogueItemExists = { catalogueItemId: 'some-id' };
   describe('backLinkHref', () => {
     const additionalServicesUrl = `${baseUrl}/organisation/${orderId}/additional-services`;
     const mockSelectedPriceOnDemandType = { type: 'flat', provisioningType: 'OnDemand' };
@@ -13,22 +14,28 @@ describe('additional-services contextCreator', () => {
     const onDemandPriceUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/flat/ondemand`;
     const dateUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
     const somefakeUrl = 'https://some.url.co.uk/order-id';
+    const onselectServiceUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`;
     it.each`
-    senderUrl                               |  expectedUrl                                                | selectedPrice
-    ${`${somefakeUrl}/items/894`}           | ${additionalServicesUrl}                                    | ${mockSelectedPricePatientType}
-    ${''}                                   | ${additionalServicesUrl}                                    | ${mockSelectedPricePatientType}
-    ${`${somefakeUrl}/date`}                | ${`${somefakeUrl}/date`}                                    | ${mockSelectedPricePatientType}
-    ${`${somefakeUrl}/additional-services`} | ${`${somefakeUrl}/additional-services`}                     | ${mockSelectedPricePatientType}
-    ${`${somefakeUrl}/recipients`}          | ${`${baseUrl}/organisation/${orderId}/additional-services`} | ${mockSelectedPricePatientType}
-    ${`${somefakeUrl}/neworderitem`}        | ${onDemandPriceUrl}                                         | ${mockSelectedPriceOnDemandType}
-    ${`${somefakeUrl}/neworderitem`}        | ${dateUrl}                                                  | ${mockSelectedPricePatientType}
-  `('backlinkHref should return expected url', ({ senderUrl, expectedUrl, selectedPrice }) => {
+    senderUrl                               |  expectedUrl                                                | selectedPrice                   | catalogueItemExists
+    ${`${somefakeUrl}/items/894`}           | ${additionalServicesUrl}                                    | ${mockSelectedPricePatientType} | ${''}
+    ${''}                                   | ${additionalServicesUrl}                                    | ${mockSelectedPricePatientType} | ${''}
+    ${`${somefakeUrl}/date`}                | ${`${somefakeUrl}/date`}                                    | ${mockSelectedPricePatientType} | ${''}
+    ${`${somefakeUrl}/additional-services`} | ${`${somefakeUrl}/additional-services`}                     | ${mockSelectedPricePatientType} | ${''}
+    ${`${somefakeUrl}/recipients`}          | ${`${baseUrl}/organisation/${orderId}/additional-services`} | ${mockSelectedPricePatientType} | ${''}
+    ${`${somefakeUrl}/neworderitem`}        | ${onDemandPriceUrl}                                         | ${mockSelectedPriceOnDemandType}| ${''}
+    ${`${somefakeUrl}/neworderitem`}        | ${dateUrl}                                                  | ${mockSelectedPricePatientType} | ${''}
+    ${onselectServiceUrl}                   | ${onselectServiceUrl}                                       | ${mockSelectedPriceOnDemandType}| ${mockcatalogueItemExists}  
+    `('backlinkHref should return expected url', ({
+      senderUrl, expectedUrl, selectedPrice, catalogueItemExists,
+    }) => {
       const req = {
         headers: {
           referer: senderUrl,
         },
       };
-      const actual = backLinkHref({ req, selectedPrice, orderId });
+      const actual = backLinkHref({
+        req, selectedPrice, orderId, catalogueItemExists,
+      });
       expect(actual).toEqual(expectedUrl);
     });
   });
