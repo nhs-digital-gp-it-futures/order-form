@@ -13,6 +13,7 @@ import {
   validateSolutionPriceForm,
 } from './price/controller';
 import {
+  getSelectStatus,
   getServiceRecipientsContext,
   getServiceRecipientsErrorPageContext,
   getSelectSolutionPriceEndpoint,
@@ -212,7 +213,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const context = await getServiceRecipientsContext({
       orderId,
       itemName,
-      selectStatus,
+      selectStatus: getSelectStatus({ selectStatus, selectedRecipients, serviceRecipients }),
       serviceRecipients,
       selectedRecipients,
       solutionPrices,
@@ -269,7 +270,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const context = await getServiceRecipientsErrorPageContext({
       orderId,
       itemName,
-      selectStatus,
+      selectStatus: getSelectStatus({ selectStatus, selectedRecipients, serviceRecipients }),
       serviceRecipients,
       selectedRecipients,
       solutionPrices,
