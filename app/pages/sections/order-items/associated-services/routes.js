@@ -35,6 +35,13 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       logger,
     });
 
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.catalogueItemExists, value: undefined },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.orderItems, value: context.orderItems },
+    );
+
     logger.info(`navigating to order ${orderId} associated-services dashboard page`);
     return res.render('pages/sections/order-items/associated-services/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -123,6 +130,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
 
       if (apiResponse.success) {
         logger.info('Redirecting to the associated-services main page');
+        sessionManager.saveToSession({ req, key: sessionKeys.selectedItemId, value: undefined });
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services`);
       }
 
