@@ -2,7 +2,7 @@ const inMemoryLookupTable = [
   { orgId: 'abc', odsCode: '123' },
   { orgId: 'def', odsCode: '456' },
 ];
-export const getLookUpTable = () => inMemoryLookupTable;
+const getLookUpTable = () => inMemoryLookupTable;
 
 const findOdsCode = (orgId) => {
   const lookupTable = getLookUpTable();
@@ -42,8 +42,7 @@ const findOrdId = (odsCode) => {
 
 export const getOdsCodeForOrganisation = (organisationId) => {
   if (organisationId) {
-    const odsCode = findOdsCode(organisationId);
-    return odsCode;
+    return findOdsCode(organisationId);
   }
 
   return undefined;

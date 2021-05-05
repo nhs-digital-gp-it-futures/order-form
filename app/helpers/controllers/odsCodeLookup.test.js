@@ -1,9 +1,6 @@
 import { getOdsCodeForOrganisation, getOrganisationIdForOdsCode } from './odsCodeLookup';
-// import * as utils from './odsCodeLookup';
 
 fdescribe('odsLookup', () => {
-  // const spy = jest.spyOn(utils, 'getLookUpTable').mockReturnValue(lookupTable);
-
   describe('getOdsCodeForOrganisation', () => {
     it.each`
       orgId     | odsCode
@@ -12,9 +9,6 @@ fdescribe('odsLookup', () => {
       ${'zxy'}  | ${'890'}
     `('should give "$orgId" org Id when the odsCode is "$odsCode"', ({ orgId, odsCode }) => {
       const foundOrdId = getOdsCodeForOrganisation(orgId);
-
-      // expect(spy).toHaveBeenCalled();
-
       expect(foundOrdId).toEqual(odsCode);
     });
 
