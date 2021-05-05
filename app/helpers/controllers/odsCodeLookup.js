@@ -1,21 +1,58 @@
-export const getOdsCodeForOrganisation = (organisationId) => {
-  let code;
+const inMemoryLookupTable = [
+  { orgId: 'abc', odsCode: '123' },
+  { orgId: 'def', odsCode: '456' },
+];
+export const getLookUpTable = () => inMemoryLookupTable;
 
-  switch (organisationId) {
-    case 'abc':
-      code = '123';
-      break;
+const findOdsCode = (orgId) => {
+  const lookupTable = getLookUpTable();
+  const found = lookupTable.filter((row) => row.orgId === orgId);
+  let odsCode;
 
-    case 'def':
-      code = '456';
-      break;
+  if (found.length === 1) {
+    odsCode = found[0].odsCode;
+  } else {
+    // search API
 
-    default: break;
+    odsCode = '890';
+
+    inMemoryLookupTable.push({ orgId, odsCode });
   }
 
-  return code;
+  return odsCode;
 };
 
-// export const getOrganisationIdForOdsCode = async (odsCode) => {
+const findOrdId = (odsCode) => {
+  const lookupTable = getLookUpTable();
+  const found = lookupTable.filter((row) => row.odsCode === odsCode);
+  let orgId;
 
-// };
+  if (found.length === 1) {
+    orgId = found[0].orgId;
+  } else {
+    // search API
+
+    orgId = 'zxy';
+
+    inMemoryLookupTable.push({ orgId, odsCode });
+  }
+
+  return orgId;
+};
+
+export const getOdsCodeForOrganisation = (organisationId) => {
+  if (organisationId) {
+    const odsCode = findOdsCode(organisationId);
+    return odsCode;
+  }
+
+  return undefined;
+};
+
+export const getOrganisationIdForOdsCode = (odsCode) => {
+  if (odsCode) {
+    const orgId = findOrdId(odsCode);
+    return orgId;
+  }
+  return undefined;
+};

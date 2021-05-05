@@ -1,18 +1,43 @@
-import { getOdsCodeForOrganisation } from './odsCodeLookup';
+import { getOdsCodeForOrganisation, getOrganisationIdForOdsCode } from './odsCodeLookup';
+// import * as utils from './odsCodeLookup';
 
-fdescribe('getOdsCodeForOrganisation', () => {
-  it('should give "123" organisation id for "abc" odscode', () => {
-    const odsCode = getOdsCodeForOrganisation('abc');
-    expect(odsCode).toEqual('123');
+fdescribe('odsLookup', () => {
+  // const spy = jest.spyOn(utils, 'getLookUpTable').mockReturnValue(lookupTable);
+
+  describe('getOdsCodeForOrganisation', () => {
+    it.each`
+      orgId     | odsCode
+      ${'abc'}  | ${'123'}
+      ${'def'}  | ${'456'}
+      ${'zxy'}  | ${'890'}
+    `('should give "$orgId" org Id when the odsCode is "$odsCode"', ({ orgId, odsCode }) => {
+      const foundOrdId = getOdsCodeForOrganisation(orgId);
+
+      // expect(spy).toHaveBeenCalled();
+
+      expect(foundOrdId).toEqual(odsCode);
+    });
+
+    it('should give undefined organisation id if odscode not found', () => {
+      const odsCode = getOdsCodeForOrganisation();
+      expect(odsCode).toEqual(undefined);
+    });
   });
 
-  it('should give "456" organisation id for "def" odscode', () => {
-    const odsCode = getOdsCodeForOrganisation('def');
-    expect(odsCode).toEqual('456');
-  });
+  describe('getOrganisationIdForOdsCode', () => {
+    it.each`
+      orgId     | odsCode
+      ${'abc'}  | ${'123'}
+      ${'def'}  | ${'456'}
+      ${'zxy'}  | ${'890'}
+    `('should give "$odsCode" when orgId is "$orgId"', ({ orgId, odsCode }) => {
+      const foundOrdId = getOrganisationIdForOdsCode(odsCode);
+      expect(foundOrdId).toEqual(orgId);
+    });
 
-  it('should give undefined organisation id if odscode not found', () => {
-    const odsCode = getOdsCodeForOrganisation('');
-    expect(odsCode).toEqual(undefined);
+    it('should give undefined odscode if  organisation id not found', () => {
+      const odsCode = getOrganisationIdForOdsCode();
+      expect(odsCode).toEqual(undefined);
+    });
   });
 });
