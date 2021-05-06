@@ -5,18 +5,12 @@ const saveLookupTableToSession = ({
   organisation, lookupTable, req, sessionManager,
 }) => {
   const { organisationId, odsCode } = organisation;
-
   const newRow = { organisationId, odsCode };
-  let lookup = lookupTable;
 
-  if (!lookup) {
-    lookup = [newRow];
-  } else {
-    lookup.push(newRow);
-  }
+  lookupTable.push(newRow);
 
   sessionManager.saveToSession(
-    { req, key: sessionKeys.odsLookupTable, value: lookup },
+    { req, key: sessionKeys.odsLookupTable, value: lookupTable },
   );
 };
 
@@ -31,10 +25,12 @@ export const getOdsCodeForOrganisation = async ({
   let odsCode;
 
   if (orgId) {
-    const lookupTable = sessionManager.getFromSession({ req, key: sessionKeys.odsLookupTable });
+    let lookupTable = sessionManager.getFromSession({ req, key: sessionKeys.odsLookupTable });
 
     if (lookupTable) {
       odsCode = findOdsCode({ orgId, lookupTable });
+    } else {
+      lookupTable = [];
     }
 
     if (!odsCode) {
