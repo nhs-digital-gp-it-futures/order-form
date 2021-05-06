@@ -22,6 +22,9 @@ const selectedSupplierInSession = 'sup-1';
 const associatedServicesInSession = JSON.stringify(
   mockAssociatedServices,
 );
+const mockSessionOrderItemsState = JSON.stringify([
+  { catalogueItemId: 'associated-service-3', catalogueItemType: 'AdditionalService', catalogueItemName: 'Associated Service 3' },
+]);
 
 const mocks = () => {
   nock(bapiUrl)
@@ -37,9 +40,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)(sessionKeys.selectedSupplier, selectedSupplierInSession);
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.associatedServices, associatedServicesInSession);
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
 };
 

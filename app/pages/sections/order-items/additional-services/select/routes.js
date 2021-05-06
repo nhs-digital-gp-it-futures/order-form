@@ -26,7 +26,11 @@ import {
   getAdditionalServicePriceEndpoint,
   setContextIfBackFromAdditionalServiceEdit,
 } from './recipient/controller';
-import { getServiceRecipientsContext, getServiceRecipientsErrorPageContext } from '../../catalogue-solutions/select/recipients/controller';
+import {
+  getSelectStatus,
+  getServiceRecipientsContext,
+  getServiceRecipientsErrorPageContext,
+} from '../../catalogue-solutions/select/recipients/controller';
 import {
   getDeliveryDateContext,
   validateDeliveryDateForm,
@@ -311,7 +315,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     const context = await getServiceRecipientsContext({
       orderId,
       itemName,
-      selectStatus,
+      selectStatus: getSelectStatus({ selectStatus, selectedRecipients, serviceRecipients }),
       serviceRecipients,
       selectedRecipients,
       additionalServicePrices,
@@ -369,7 +373,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     const context = await getServiceRecipientsErrorPageContext({
       orderId,
       itemName,
-      selectStatus,
+      selectStatus: getSelectStatus({ selectStatus, selectedRecipients, serviceRecipients }),
       serviceRecipients,
       selectedRecipients,
       additionalServicePrices,
