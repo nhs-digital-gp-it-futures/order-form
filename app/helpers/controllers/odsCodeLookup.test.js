@@ -1,14 +1,16 @@
 import { getOdsCodeForOrganisation, getOrganisationIdForOdsCode } from './odsCodeLookup';
 
 fdescribe('odsLookup', () => {
-  describe('getOdsCodeForOrganisation', () => {
+  const accessToken = 'access_token';
+
+  fdescribe('getOdsCodeForOrganisation', () => {
     it.each`
       orgId     | odsCode
       ${'abc'}  | ${'123'}
       ${'def'}  | ${'456'}
       ${'zxy'}  | ${'890'}
     `('should give "$orgId" org Id when the odsCode is "$odsCode"', ({ orgId, odsCode }) => {
-      const foundOrdId = getOdsCodeForOrganisation(orgId);
+      const foundOrdId = getOdsCodeForOrganisation({ orgId, accessToken });
       expect(foundOrdId).toEqual(odsCode);
     });
 

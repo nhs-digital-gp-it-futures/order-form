@@ -1,26 +1,28 @@
+import { getOrganisation } from '../api/oapi/getOrganisation';
+
 const inMemoryLookupTable = [
   { orgId: 'abc', odsCode: '123' },
   { orgId: 'def', odsCode: '456' },
 ];
 const getLookUpTable = () => inMemoryLookupTable;
 
-const findOdsCode = (orgId) => {
-  const lookupTable = getLookUpTable();
-  const found = lookupTable.filter((row) => row.orgId === orgId);
-  let odsCode;
+// const findOdsCode = (orgId) => {
+//   const lookupTable = getLookUpTable();
+//   const found = lookupTable.filter((row) => row.orgId === orgId);
+//   let odsCode;
 
-  if (found.length === 1) {
-    odsCode = found[0].odsCode;
-  } else {
-    // search API
+//   if (found.length === 1) {
+//     odsCode = found[0].odsCode;
+//   } else {
+//     // search API
 
-    odsCode = '890';
+//     odsCode = '890';
 
-    inMemoryLookupTable.push({ orgId, odsCode });
-  }
+//     inMemoryLookupTable.push({ orgId, odsCode });
+//   }
 
-  return odsCode;
-};
+//   return odsCode;
+// };
 
 const findOrdId = (odsCode) => {
   const lookupTable = getLookUpTable();
@@ -40,9 +42,14 @@ const findOrdId = (odsCode) => {
   return orgId;
 };
 
-export const getOdsCodeForOrganisation = (organisationId) => {
-  if (organisationId) {
-    return findOdsCode(organisationId);
+export const getOdsCodeForOrganisation = async ({ orgId, accessToken }) => {
+  if (orgId) {
+    const organisation = await getOrganisation({ orgId, accessToken });
+
+    const { odsCode } = organisation;
+    return odsCode;
+
+    // return findOdsCode(orgId);
   }
 
   return undefined;
