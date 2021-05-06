@@ -69,7 +69,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="delete-catalogue-confirmation-page-description"]');
+  const description = Selector('p[data-test-id="delete-catalogue-confirmation-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
