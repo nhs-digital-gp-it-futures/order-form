@@ -3,6 +3,7 @@ import {
   getServiceRecipientsContext,
   getServiceRecipientsErrorPageContext,
   setContextIfBackFromCatalogueSolutionEdit,
+  getSelectStatus,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import { baseUrl } from '../../../../../../config';
@@ -158,6 +159,37 @@ describe('service-recipients controller', () => {
 
       expect(context.backLinkHref).toEqual('some-value');
       expect(context.orderItemId).toEqual(undefined);
+    });
+  });
+
+  describe('getSelectStatus', () => {
+    it('if selectStatus is passed, return it', async () => {
+      const selectStatus = 'something';
+      const serviceRecipients = undefined;
+      const selectedRecipients = undefined;
+      expect(getSelectStatus(
+        { selectStatus, serviceRecipients, selectedRecipients },
+      )).toEqual(selectStatus);
+    });
+
+    it('if selectStatus is undefined, and serviceRecipients and'
+      + ' selectedRecipients are equal length, it returns select', async () => {
+      const serviceRecipients = [[1], [2]];
+      const selectedRecipients = [[1], [2]];
+      const selectStatus = undefined;
+      expect(getSelectStatus(
+        { selectStatus, serviceRecipients, selectedRecipients },
+      )).toEqual('select');
+    });
+
+    it('if selectStatus is undefined, and serviceRecipients and selectedRecipients'
+      + ' are not equal length, it returns false', async () => {
+      const serviceRecipients = [[1], [2]];
+      const selectedRecipients = [[1]];
+      const selectStatus = undefined;
+      expect(getSelectStatus(
+        { selectStatus, serviceRecipients, selectedRecipients },
+      )).toEqual(false);
     });
   });
 });
