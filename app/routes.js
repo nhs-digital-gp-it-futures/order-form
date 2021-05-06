@@ -45,7 +45,7 @@ export const routes = (authProvider, sessionManager) => {
     stream.on('close', () => res.end());
   }));
 
-  router.use('/organisation', dashboardRoutes(authProvider, addContext));
+  router.use('/organisation', dashboardRoutes(authProvider, addContext, sessionManager));
 
   router.use('/organisation/select', selectOrganisationRoutes(authProvider, addContext));
 

@@ -1,64 +1,54 @@
 import { getOrganisation } from '../api/oapi/getOrganisation';
+import { sessionKeys } from '../routes/sessionHelper';
 
-const inMemoryLookupTable = [
-  { orgId: 'abc', odsCode: '123' },
-  { orgId: 'def', odsCode: '456' },
-];
-const getLookUpTable = () => inMemoryLookupTable;
+const saveLookupTableToSession = ({
+  organisation, lookupTable, req, sessionManager,
+}) => {
+  const { organisationId, odsCode } = organisation;
 
-// const findOdsCode = (orgId) => {
-//   const lookupTable = getLookUpTable();
-//   const found = lookupTable.filter((row) => row.orgId === orgId);
-//   let odsCode;
+  const newRow = { organisationId, odsCode };
+  let lookup = lookupTable;
 
-//   if (found.length === 1) {
-//     odsCode = found[0].odsCode;
-//   } else {
-//     // search API
-
-//     odsCode = '890';
-
-//     inMemoryLookupTable.push({ orgId, odsCode });
-//   }
-
-//   return odsCode;
-// };
-
-const findOrdId = (odsCode) => {
-  const lookupTable = getLookUpTable();
-  const found = lookupTable.filter((row) => row.odsCode === odsCode);
-  let orgId;
-
-  if (found.length === 1) {
-    orgId = found[0].orgId;
+  if (!lookup) {
+    lookup = [newRow];
   } else {
-    // search API
-
-    orgId = 'zxy';
-
-    inMemoryLookupTable.push({ orgId, odsCode });
+    lookup.push(newRow);
   }
 
-  return orgId;
+  sessionManager.saveToSession(
+    { req, key: sessionKeys.odsLookupTable, value: lookup },
+  );
 };
 
-export const getOdsCodeForOrganisation = async ({ orgId, accessToken }) => {
+const findOdsCode = ({ orgId, lookupTable }) => {
+  const found = lookupTable.filter((row) => row.organisationId === orgId);
+  return found.length === 1 ? found[0].odsCode : undefined;
+};
+
+export const getOdsCodeForOrganisation = async ({
+  req, sessionManager, orgId, accessToken,
+}) => {
+  let odsCode;
+
   if (orgId) {
-    const organisation = await getOrganisation({ orgId, accessToken });
+    const lookupTable = sessionManager.getFromSession({ req, key: sessionKeys.odsLookupTable });
 
-    const { odsCode } = organisation;
-    return odsCode;
+    if (lookupTable) {
+      odsCode = findOdsCode({ orgId, lookupTable });
+    }
 
-    // return findOdsCode(orgId);
+    if (!odsCode) {
+      const organisation = await getOrganisation({ orgId, accessToken });
+
+      if (organisation && organisation.odsCode) {
+        odsCode = organisation.odsCode;
+
+        saveLookupTableToSession({
+          organisation, lookupTable, req, sessionManager,
+        });
+      }
+    }
   }
 
-  return undefined;
-};
-
-export const getOrganisationIdForOdsCode = (odsCode) => {
-  if (odsCode) {
-    const orgId = findOrdId(odsCode);
-    return orgId;
-  }
-  return undefined;
+  return odsCode;
 };

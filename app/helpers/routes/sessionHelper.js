@@ -25,6 +25,7 @@ export const sessionKeys = {
   selectedQuantity: 'selectedQuantity',
   orderItems: 'orderItems',
   catalogueItemExists: 'catalogueItemExists',
+  odsLookupTable: 'odsLookupTable',
 };
 
 export const getFromSessionOrApi = async ({

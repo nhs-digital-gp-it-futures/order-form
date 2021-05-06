@@ -1,39 +1,39 @@
-import { getOdsCodeForOrganisation, getOrganisationIdForOdsCode } from './odsCodeLookup';
+// import { getOdsCodeForOrganisation, getOrganisationIdForOdsCode } from './odsCodeLookup';
 
-fdescribe('odsLookup', () => {
-  const accessToken = 'access_token';
+// fdescribe('odsLookup', () => {
+//   const accessToken = 'access_token';
 
-  fdescribe('getOdsCodeForOrganisation', () => {
-    it.each`
-      orgId     | odsCode
-      ${'abc'}  | ${'123'}
-      ${'def'}  | ${'456'}
-      ${'zxy'}  | ${'890'}
-    `('should give "$orgId" org Id when the odsCode is "$odsCode"', ({ orgId, odsCode }) => {
-      const foundOrdId = getOdsCodeForOrganisation({ orgId, accessToken });
-      expect(foundOrdId).toEqual(odsCode);
-    });
+//   fdescribe('getOdsCodeForOrganisation', () => {
+//     it.each`
+//       orgId     | odsCode
+//       ${'abc'}  | ${'123'}
+//       ${'def'}  | ${'456'}
+//       ${'zxy'}  | ${'890'}
+//     `('should give "$orgId" org Id when the odsCode is "$odsCode"', ({ orgId, odsCode }) => {
+//       const foundOrdId = getOdsCodeForOrganisation({ orgId, accessToken });
+//       expect(foundOrdId).toEqual(odsCode);
+//     });
 
-    it('should give undefined organisation id if odscode not found', () => {
-      const odsCode = getOdsCodeForOrganisation();
-      expect(odsCode).toEqual(undefined);
-    });
-  });
+//     it('should give undefined organisation id if odscode not found', () => {
+//       const odsCode = getOdsCodeForOrganisation();
+//       expect(odsCode).toEqual(undefined);
+//     });
+//   });
 
-  describe('getOrganisationIdForOdsCode', () => {
-    it.each`
-      orgId     | odsCode
-      ${'abc'}  | ${'123'}
-      ${'def'}  | ${'456'}
-      ${'zxy'}  | ${'890'}
-    `('should give "$odsCode" when orgId is "$orgId"', ({ orgId, odsCode }) => {
-      const foundOrdId = getOrganisationIdForOdsCode(odsCode);
-      expect(foundOrdId).toEqual(orgId);
-    });
+//   describe('getOrganisationIdForOdsCode', () => {
+//     it.each`
+//       orgId     | odsCode
+//       ${'abc'}  | ${'123'}
+//       ${'def'}  | ${'456'}
+//       ${'zxy'}  | ${'890'}
+//     `('should give "$odsCode" when orgId is "$orgId"', ({ orgId, odsCode }) => {
+//       const foundOrdId = getOrganisationIdForOdsCode(odsCode);
+//       expect(foundOrdId).toEqual(orgId);
+//     });
 
-    it('should give undefined odscode if  organisation id not found', () => {
-      const odsCode = getOrganisationIdForOdsCode();
-      expect(odsCode).toEqual(undefined);
-    });
-  });
-});
+//     it('should give undefined odscode if  organisation id not found', () => {
+//       const odsCode = getOrganisationIdForOdsCode();
+//       expect(odsCode).toEqual(undefined);
+//     });
+//   });
+// });
