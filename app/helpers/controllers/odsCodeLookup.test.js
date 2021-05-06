@@ -1,39 +1,56 @@
-// import { getOdsCodeForOrganisation, getOrganisationIdForOdsCode } from './odsCodeLookup';
+import { getOrganisation } from '../api/oapi/getOrganisation';
+import { getOdsCodeForOrganisation } from './odsCodeLookup';
 
-// fdescribe('odsLookup', () => {
-//   const accessToken = 'access_token';
+jest.mock('../api/oapi/getOrganisation');
 
-//   fdescribe('getOdsCodeForOrganisation', () => {
-//     it.each`
-//       orgId     | odsCode
-//       ${'abc'}  | ${'123'}
-//       ${'def'}  | ${'456'}
-//       ${'zxy'}  | ${'890'}
-//     `('should give "$orgId" org Id when the odsCode is "$odsCode"', ({ orgId, odsCode }) => {
-//       const foundOrdId = getOdsCodeForOrganisation({ orgId, accessToken });
-//       expect(foundOrdId).toEqual(odsCode);
-//     });
+fdescribe('odsLookup', () => {
+  const req = {};
+  const fakeSessionManager = {};
+  const accessToken = 'access_token';
 
-//     it('should give undefined organisation id if odscode not found', () => {
-//       const odsCode = getOdsCodeForOrganisation();
-//       expect(odsCode).toEqual(undefined);
-//     });
-//   });
+  beforeEach(() => {
+    fakeSessionManager.getFromSession = () => { };
+    fakeSessionManager.saveToSession = () => { };
+  });
 
-//   describe('getOrganisationIdForOdsCode', () => {
-//     it.each`
-//       orgId     | odsCode
-//       ${'abc'}  | ${'123'}
-//       ${'def'}  | ${'456'}
-//       ${'zxy'}  | ${'890'}
-//     `('should give "$odsCode" when orgId is "$orgId"', ({ orgId, odsCode }) => {
-//       const foundOrdId = getOrganisationIdForOdsCode(odsCode);
-//       expect(foundOrdId).toEqual(orgId);
-//     });
+  afterEach(() => {
+    getOrganisation.mockReset();
+  });
 
-//     it('should give undefined odscode if  organisation id not found', () => {
-//       const odsCode = getOrganisationIdForOdsCode();
-//       expect(odsCode).toEqual(undefined);
-//     });
-//   });
-// });
+  describe('getOdsCodeForOrganisation', () => {
+    it('should give "abc" organisation id if odscode is "123"', async () => {
+      getOrganisation.mockReturnValue({ organisationId: 'abc', odsCode: '123' });
+
+      const foundOdsCode = await getOdsCodeForOrganisation({
+        req, sessionManager: fakeSessionManager, orgId: 'abc', accessToken,
+      });
+      expect(foundOdsCode).toEqual('123');
+    });
+
+    it('should give undefined organisation id if odscode not found', async () => {
+      getOrganisation.mockReturnValue();
+
+      const foundOdsCode = await getOdsCodeForOrganisation({
+        req, sessionManager: fakeSessionManager, orgId: 'i do not exist', accessToken,
+      });
+      expect(foundOdsCode).toEqual(undefined);
+    });
+  });
+
+  // describe('getOrganisationIdForOdsCode', () => {
+  //   it.each`
+  //     orgId     | odsCode
+  //     ${'abc'}  | ${'123'}
+  //     ${'def'}  | ${'456'}
+  //     ${'zxy'}  | ${'890'}
+  //   `('should give "$odsCode" when orgId is "$orgId"', ({ orgId, odsCode }) => {
+  //     const foundOrdId = getOrganisationIdForOdsCode(odsCode);
+  //     expect(foundOrdId).toEqual(orgId);
+  //   });
+
+  //   it('should give undefined odscode if  organisation id not found', () => {
+  //     const odsCode = getOrganisationIdForOdsCode();
+  //     expect(odsCode).toEqual(undefined);
+  //   });
+  // });
+});
