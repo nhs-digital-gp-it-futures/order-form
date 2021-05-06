@@ -1,23 +1,27 @@
+import { sessionManager } from 'buying-catalogue-library';
+import { sessionKeys } from '../routes/sessionHelper';
 import { getOrganisation } from '../api/oapi/getOrganisation';
 import { getOdsCodeForOrganisation } from './odsCodeLookup';
 
 jest.mock('../api/oapi/getOrganisation');
+jest.mock('../../logger');
 
-fdescribe('odsLookup', () => {
-  const req = {};
-  const fakeSessionManager = {};
+fdescribe('odsCodeLookup', () => {
   const accessToken = 'access_token';
 
-  beforeEach(() => {
-    fakeSessionManager.getFromSession = () => { };
-    fakeSessionManager.saveToSession = () => { };
-  });
-
-  afterEach(() => {
-    getOrganisation.mockReset();
-  });
-
   describe('getOdsCodeForOrganisation', () => {
+    const req = {};
+    const fakeSessionManager = {};
+
+    beforeEach(() => {
+      fakeSessionManager.getFromSession = () => { };
+      fakeSessionManager.saveToSession = () => { };
+    });
+
+    afterEach(() => {
+      getOrganisation.mockReset();
+    });
+
     it('should give "abc" organisation id if odscode is "123"', async () => {
       getOrganisation.mockReturnValue({ organisationId: 'abc', odsCode: '123' });
 
@@ -35,9 +39,45 @@ fdescribe('odsLookup', () => {
       });
       expect(foundOdsCode).toEqual(undefined);
     });
+  });
 
-    it('should get value from SESSION MANAGER when found', () => {
-      expect(true).toEqual(false);
+  describe('getOdsCodeForOrganisation using SESSION MANAGER', () => {
+    const req = { session: [] };
+    const fakeLogger = { debug: () => '' };
+
+    const session = sessionManager({ logger: fakeLogger });
+
+    beforeAll(() => {
+      jest.spyOn(session, 'saveToSession');
+
+      getOrganisation.mockReturnValue({ organisationId: 'abc', odsCode: '123' });
+    });
+
+    afterAll(() => {
+      getOrganisation.mockReset();
+    });
+
+    it('should save to session', async () => {
+      await getOdsCodeForOrganisation({
+        req, sessionManager: session, orgId: 'abc', accessToken,
+      });
+
+      expect(session.saveToSession).toHaveBeenCalled();
+    });
+
+    it('should read from session', async () => {
+      await getOdsCodeForOrganisation({
+        req, sessionManager: session, orgId: 'abc', accessToken,
+      });
+
+      expect(session.saveToSession).toHaveBeenCalled();
+
+      const lookupTable = session.getFromSession({ req, key: sessionKeys.odsLookupTable });
+
+      expect(lookupTable).toBeDefined();
+      expect(lookupTable.length).toBe(1);
+      expect(lookupTable[0].organisationId).toBe('abc');
+      expect(lookupTable[0].odsCode).toBe('123');
     });
   });
 });
