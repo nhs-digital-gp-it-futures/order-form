@@ -35,22 +35,9 @@ fdescribe('odsLookup', () => {
       });
       expect(foundOdsCode).toEqual(undefined);
     });
+
+    it('should get value from SESSION MANAGER when found', () => {
+      expect(true).toEqual(false);
+    });
   });
-
-  // describe('getOrganisationIdForOdsCode', () => {
-  //   it.each`
-  //     orgId     | odsCode
-  //     ${'abc'}  | ${'123'}
-  //     ${'def'}  | ${'456'}
-  //     ${'zxy'}  | ${'890'}
-  //   `('should give "$odsCode" when orgId is "$orgId"', ({ orgId, odsCode }) => {
-  //     const foundOrdId = getOrganisationIdForOdsCode(odsCode);
-  //     expect(foundOrdId).toEqual(orgId);
-  //   });
-
-  //   it('should give undefined odscode if  organisation id not found', () => {
-  //     const odsCode = getOrganisationIdForOdsCode();
-  //     expect(odsCode).toEqual(undefined);
-  //   });
-  // });
 });
