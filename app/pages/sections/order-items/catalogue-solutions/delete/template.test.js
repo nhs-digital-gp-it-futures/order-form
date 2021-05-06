@@ -32,7 +32,7 @@ describe('delete catalogue page', () => {
 
   it('should render the delete catalogue page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="delete-catalogue-page-description"]');
+      const description = $('p[data-test-id="delete-catalogue-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -40,7 +40,7 @@ describe('delete catalogue page', () => {
 
   it('should render the delete catalogue description title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const orderDescriptionTitle = $('h3[data-test-id="catalogue-description-title"]');
+      const orderDescriptionTitle = $('h2[data-test-id="catalogue-description-title"]');
       expect(orderDescriptionTitle.length).toEqual(1);
       expect(orderDescriptionTitle.text().trim()).toEqual(context.orderDescriptionTitle);
     });
@@ -48,7 +48,7 @@ describe('delete catalogue page', () => {
 
   it('should render the delete catalogue order description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const orderDescription = $('h4[data-test-id="catalogue-description"]');
+      const orderDescription = $('p[data-test-id="catalogue-description"]');
       expect(orderDescription.length).toEqual(1);
       expect(orderDescription.text().trim()).toEqual(context.orderDescription);
     });
