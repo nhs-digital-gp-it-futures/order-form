@@ -49,8 +49,8 @@ const router = express.Router({ mergeParams: true });
 
 export const catalogueSolutionsSelectRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`);
+    const { orderId, odsCode } = req.params;
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution`);
   }));
 
   router.get('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -79,7 +79,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   }));
 
   router.post('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     const response = validateSolutionForm({ data: req.body });
 
@@ -108,11 +108,11 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
           req, key: sessionKeys.catalogueItemExists, value: existingItem,
         });
         return res.redirect(
-          `${config.baseUrl}/organisation/${orderId}/catalogue-solutions/${existingItem[0].catalogueItemId}`,
+          `${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/${existingItem[0].catalogueItemId}`,
         );
       }
       logger.info('redirecting catalogue solutions select price page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price`);
     }
 
     const solutions = sessionManager.getFromSession({ req, key: sessionKeys.solutions });
@@ -126,7 +126,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   }));
 
   router.get('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedPriceId = Number(sessionManager.getFromSession({
       req, key: sessionKeys.selectedPriceId,
@@ -150,7 +150,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedPriceId, value: solutionPrices.prices[0].priceId,
       });
 
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/recipients`);
     }
 
     const context = getSolutionPricePageContext({
@@ -165,7 +165,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   }));
 
   router.post('/solution/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     const response = validateSolutionPriceForm({ data: req.body });
     if (response.success) {
@@ -173,7 +173,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedPriceId, value: req.body.selectSolutionPrice,
       });
       logger.info('redirecting catalogue solutions select recipient page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/recipients`);
     }
 
     const solutionPrices = sessionManager.getFromSession({
@@ -189,7 +189,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   }));
 
   router.get('/solution/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const { selectStatus } = req.query;
 
     const itemName = sessionManager.getFromSession({
@@ -219,16 +219,17 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       solutionPrices,
       manifest,
       orderType: 'catalogue-solutions',
+      odsCode,
     });
 
-    setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);
+    setContextIfBackFromCatalogueSolutionEdit(req, context, orderId, odsCode);
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select recipient page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/solution/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const { selectStatus } = req.query;
 
     const selected = Object
@@ -238,7 +239,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const response = validateSolutionRecipientsForm({ data: selected });
 
     if (response.success) {
-      const selectedRecipients = selected.map(([odsCode]) => odsCode);
+      const selectedRecipients = selected.map(([recipient]) => recipient);
 
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
@@ -246,14 +247,14 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
 
       if (req.body.orderItemId) {
         logger.info('Back to catalogue solution page');
-        return res.redirect(`${config.baseUrl}${getSelectSolutionPriceEndpoint(orderId, req.body.orderItemId)}`);
+        return res.redirect(`${config.baseUrl}${getSelectSolutionPriceEndpoint(orderId, req.body.orderItemId, odsCode)}`);
       }
 
       logger.info('Redirect to planned delivery date page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/recipients/date`);
     }
     if (!response.success) {
-      const selectedRecipients = selected.map(([odsCode]) => odsCode);
+      const selectedRecipients = selected.map(([recipient]) => recipient);
 
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
@@ -307,7 +308,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   }));
 
   router.post('/solution/price/recipients/date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const validationErrors = [];
 
     const errors = validateDeliveryDateForm({ data: req.body });
@@ -342,7 +343,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       });
       if (apiResponse.success) {
         return res.redirect(
-          `${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice[0].type.toLowerCase()}/${selectedPrice[0].provisioningType.toLowerCase()}`,
+          `${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice[0].type.toLowerCase()}/${selectedPrice[0].provisioningType.toLowerCase()}`,
         );
       }
       validationErrors.push(...apiResponse.errors);
@@ -365,7 +366,9 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   }));
 
   router.get('/solution/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, priceType, provisioningType } = req.params;
+    const {
+      orderId, priceType, provisioningType, odsCode,
+    } = req.params;
     const itemName = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemName,
     });
@@ -391,13 +394,15 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
     logger.info(`navigating to order ${orderId} catalogue-solutions ${provisioningType} form`);
     if (priceType === 'flat' && provisioningType === 'patient') {
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/neworderitem`);
     }
     return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/solution/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId, priceType } = req.params;
+    const {
+      orderId, orderItemId, priceType, odsCode,
+    } = req.params;
     const validationErrors = [];
     const formData = formatFormData({ formData: req.body });
     const itemName = sessionManager.getFromSession({
@@ -421,7 +426,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectEstimationPeriod, value: formData.selectEstimationPeriod,
       });
       logger.info('Redirecting to the catalogue solution order item page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/neworderitem`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/neworderitem`);
     }
 
     const context = await getProvisionTypeOrderErrorContext({

@@ -7,11 +7,12 @@ export const getDashboardContext = async ({
   orgId,
   accessToken,
   relatedOrganisationIds,
+  odsCode,
 }) => {
   const { completedOrders, incompletedOrders } = await getOrders({ orgId, accessToken });
   const userIsProxy = await getIsUserProxy(relatedOrganisationIds);
 
   return getContext({
-    orgName, completedOrders, incompletedOrders, userIsProxy,
+    orgName, completedOrders, incompletedOrders, userIsProxy, odsCode,
   });
 };

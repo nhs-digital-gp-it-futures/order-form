@@ -15,8 +15,8 @@ import {
 import { baseUrl } from '../../config';
 import * as deleteOrderController from './controller';
 
-describe('GET /organisation/:orderId/delete-order', () => {
-  const path = '/organisation/some-order-id/delete-order';
+describe('GET /organisation/:odsCode/:orderId/delete-order', () => {
+  const path = '/organisation/odsCode/some-order-id/delete-order';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -50,8 +50,8 @@ describe('GET /organisation/:orderId/delete-order', () => {
   });
 });
 
-describe('POST /organisation/:orderId/delete-order', () => {
-  const path = '/organisation/order-1/delete-order';
+describe('POST /organisation/:odsCode/:orderId/delete-order', () => {
+  const path = '/organisation/odsCode/order-1/delete-order';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -88,7 +88,7 @@ describe('POST /organisation/:orderId/delete-order', () => {
 
   it('should redirect to /delete-order/confirmation page, if the order is deleted', async () => {
     deleteOrderController.getDeleteOrderContext = jest.fn()
-      .mockResolvedValueOnce();
+      .mockResolvedValueOnce({ odsCode: '03F' });
 
     deleteOrderController.deleteOrder = jest.fn().mockResolvedValueOnce();
 
@@ -108,6 +108,6 @@ describe('POST /organisation/:orderId/delete-order', () => {
       .expect(302);
 
     expect(res.redirect).toEqual(true);
-    expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/delete-order/confirmation`);
+    expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order-1/delete-order/confirmation`);
   });
 });

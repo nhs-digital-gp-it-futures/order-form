@@ -3,19 +3,20 @@ import withoutFundingManifest from './withoutFundingManifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
+const someOdsCode = '03F';
 describe('complete order contextCreator', () => {
   describe('getContext - with funding', () => {
     const fundingSource = true;
 
     it('should return the backLinkText', () => {
-      const context = getContext({ orderId: 'order-1', fundingSource: true });
+      const context = getContext({ orderId: 'order-1', fundingSource: true, odsCode: someOdsCode });
       expect(context.backLinkText).toEqual(withFundingManifest.backLinkText);
     });
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId, fundingSource });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const context = getContext({ orderId, fundingSource, odsCode: someOdsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -50,8 +51,8 @@ describe('complete order contextCreator', () => {
 
     it('should construct the continueEditingOrderButtonHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId, fundingSource });
-      expect(context.continueEditingOrderButtonHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const context = getContext({ orderId, fundingSource, odsCode: someOdsCode });
+      expect(context.continueEditingOrderButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/${orderId}`);
     });
   });
 
@@ -65,8 +66,8 @@ describe('complete order contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId, fundingSource });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const context = getContext({ orderId, fundingSource, odsCode: someOdsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -101,8 +102,8 @@ describe('complete order contextCreator', () => {
 
     it('should construct the continueEditingOrderButtonHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId, fundingSource });
-      expect(context.continueEditingOrderButtonHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const context = getContext({ orderId, fundingSource, odsCode: someOdsCode });
+      expect(context.continueEditingOrderButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/${orderId}`);
     });
 
     it('should return the completeOrderButtonText', () => {

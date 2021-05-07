@@ -48,7 +48,9 @@ const isSectionComplete = (sectionsDataDict = {}, section = {}) => (
     && sectionsDataDict[section.id].status === 'complete')
 );
 
-export const generateTaskList = ({ orderId, taskListManifest, sectionsData }) => {
+export const generateTaskList = ({
+  orderId, taskListManifest, sectionsData, odsCode,
+}) => {
   const sectionsDataDict = convertDataToDict({ sectionsData });
   const taskLists = taskListManifest.tasks.map((task) => ({
     taskName: task.name,
@@ -57,7 +59,7 @@ export const generateTaskList = ({ orderId, taskListManifest, sectionsData }) =>
       href: isSectionEnabled(
         sectionsDataDict, section.dependencies,
       )
-        ? `${baseUrl}/organisation/${orderId}/${section.id}`
+        ? `${baseUrl}/organisation/${odsCode}/${orderId}/${section.id}`
         : undefined,
       complete: isSectionComplete(sectionsDataDict, section),
     })),

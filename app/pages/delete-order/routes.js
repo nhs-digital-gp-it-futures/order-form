@@ -9,7 +9,7 @@ const router = express.Router({ mergeParams: true });
 
 export const deleteOrderRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     const context = await getDeleteOrderContext({
@@ -17,6 +17,7 @@ export const deleteOrderRoutes = (authProvider, addContext, sessionManager) => {
       sessionManager,
       accessToken,
       logger,
+      odsCode,
     });
 
     logger.info(`navigating to order ${orderId} delete-order page`);
@@ -24,12 +25,12 @@ export const deleteOrderRoutes = (authProvider, addContext, sessionManager) => {
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     await deleteOrder({ orderId, accessToken });
 
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/delete-order/confirmation`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/delete-order/confirmation`);
   }));
 
   router.get('/confirmation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {

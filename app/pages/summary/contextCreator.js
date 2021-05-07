@@ -323,7 +323,7 @@ const generateOneOffCostDetailsTable = ({
 };
 
 export const getContext = ({
-  orderId, orderData, oneOffCostItems, recurringCostItems,
+  orderId, orderData, oneOffCostItems, recurringCostItems, odsCode,
 }) => {
   const manifest = orderData.status === 'Complete' ? completeManifest : incompleteManifest;
 
@@ -357,7 +357,7 @@ export const getContext = ({
       ownershipCost: orderData.totalOwnershipCost,
     }),
     commencementDate: formatDate(orderData.commencementDate),
-    backLinkHref: orderData.status === 'Complete' ? `${baseUrl}/organisation` : `${baseUrl}/organisation/${orderId}`,
-    orderSummaryButtonHref: `${baseUrl}/organisation/${orderId}/summary?print=true`,
+    backLinkHref: orderData.status === 'Complete' ? `${baseUrl}/organisation/${odsCode}` : `${baseUrl}/organisation/${odsCode}/${orderId}`,
+    orderSummaryButtonHref: `${baseUrl}/organisation/${odsCode}/${orderId}/summary?print=true`,
   });
 };

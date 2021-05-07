@@ -1,12 +1,12 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../../config';
 
-const generateItems = ({ orderId, orderItems }) => {
+const generateItems = ({ orderId, orderItems, odsCode }) => {
   const items = orderItems.map((orderItem) => {
     const columns = [];
     columns.push(({
       data: orderItem.catalogueItemName,
-      href: `${baseUrl}/organisation/${orderId}/additional-services/${orderItem.catalogueItemId}`,
+      href: `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/${orderItem.catalogueItemId}`,
       dataTestId: `${orderItem.catalogueItemId}-catalogueItemName`,
     }));
     columns.push(({
@@ -29,22 +29,24 @@ const generateItems = ({ orderId, orderItems }) => {
   return items;
 };
 
-const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItems }) => ({
+const generateAddedOrderItemsTable = ({
+  orderId, addedOrderItemsTable, orderItems, odsCode,
+}) => ({
   ...addedOrderItemsTable,
-  items: generateItems({ orderId, orderItems }),
+  items: generateItems({ orderId, orderItems, odsCode }),
 });
 
 export const backLinkHref = ({
-  req, selectedPrice, orderId, catalogueItemExists,
+  req, selectedPrice, orderId, catalogueItemExists, odsCode,
 }) => {
   const { referer } = req.headers;
   const slug = (referer ? referer.split('/').pop() : '').toLowerCase();
   const newItemBackLink = selectedPrice.provisioningType === 'Patient'
-    ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`
-    : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
+    ? `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients/date`
+    : `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
   const existingItemBackLink = catalogueItemExists
-    ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
-    : `${baseUrl}/organisation/${orderId}/additional-services`;
+    ? `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service`
+    : `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services`;
 
   const slugConditions = ['additional-services', 'date', 'ondemand', 'declarative', 'additional-service'];
   if (slugConditions.includes(slug)) {
@@ -56,18 +58,22 @@ export const backLinkHref = ({
     : existingItemBackLink;
 };
 
-export const deleteButtonLink = ({ orderId, catalogueItemId, solutionName }) => `${baseUrl}/organisation/${orderId}/additional-services/delete/${catalogueItemId}/confirmation/${solutionName}`;
+export const deleteButtonLink = ({
+  orderId, catalogueItemId, solutionName, odsCode,
+}) => `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/delete/${catalogueItemId}/confirmation/${solutionName}`;
 
-export const editRecipientsLink = (orderId) => `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`;
+export const editRecipientsLink = (orderId, odsCode) => `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients`;
 
-export const getContext = ({ orderId, orderDescription, orderItems = [] }) => ({
+export const getContext = ({
+  orderId, orderDescription, orderItems = [], odsCode,
+}) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
   orderDescription,
   addedOrderItemsTable: generateAddedOrderItemsTable({
-    orderId, addedOrderItemsTable: manifest.addedOrderItemsTable, orderItems,
+    orderId, addedOrderItemsTable: manifest.addedOrderItemsTable, orderItems, odsCode,
   }),
-  addOrderItemButtonHref: `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`,
-  backLinkHref: `${baseUrl}/organisation/${orderId}`,
+  addOrderItemButtonHref: `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}/${orderId}`,
   orderItems,
 });

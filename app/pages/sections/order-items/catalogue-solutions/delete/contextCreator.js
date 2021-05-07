@@ -3,12 +3,12 @@ import { baseUrl } from '../../../../../config';
 import { addParamsToManifest } from '../../../../../helpers/contextCreators/addParamsToManifest';
 
 export const getContext = ({
-  orderId, orderItemId, solutionName, orderDescription,
+  orderId, orderItemId, solutionName, orderDescription, odsCode,
 }) => {
   const context = ({
     ...addParamsToManifest(manifest, { orderId, orderItemId, solutionName }),
     orderDescription,
-    backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/${orderItemId}`,
+    backLinkHref: `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/${orderItemId}`,
   });
   return context;
 };

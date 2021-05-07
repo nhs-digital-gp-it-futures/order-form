@@ -24,7 +24,7 @@ const router = express.Router({ mergeParams: true });
 
 export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     const context = await getCatalogueSolutionsPageContext({
       req,
@@ -32,6 +32,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
       sessionManager,
       logger,
+      odsCode,
     });
 
     sessionManager.saveToSession(
@@ -52,7 +53,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     await putOrderSection({
       orderId,
@@ -60,13 +61,13 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
   }));
 
   router.use('/select', catalogueSolutionsSelectRoutes(authProvider, addContext, sessionManager));
 
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
+    const { orderId, orderItemId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = await getOrderItemPageDataBulk({
       req,
@@ -91,6 +92,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients,
       catalogueItemExists,
+      odsCode,
     });
 
     if (context.questions.price && !context.questions.price.data) {
@@ -108,7 +110,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
   }));
 
   router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
+    const { orderId, orderItemId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = getPageData(req, sessionManager);
     const formData = formatFormData({ formData: req.body });
@@ -146,7 +148,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
         sessionManager.saveToSession(
           { req, key: sessionKeys.plannedDeliveryDate, value: undefined },
         );
-        return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions`);
       }
 
       const apiErrors = transformApiValidationResponse(apiResponse.errors);

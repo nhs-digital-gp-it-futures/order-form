@@ -39,8 +39,8 @@ describe('catalogue-solutions section routes', () => {
     jest.resetAllMocks();
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions';
+  describe('GET /organisation/:odsCode/:orderId/catalogue-solutions', () => {
+    const path = '/organisation/odsCode/some-order-id/catalogue-solutions';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -73,8 +73,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/catalogue-solutions', () => {
-    const path = '/organisation/order-id/catalogue-solutions';
+  describe('POST /organisation/:odsCode/:orderId/catalogue-solutions', () => {
+    const path = '/organisation/odsCode/order-id/catalogue-solutions';
     afterEach(() => {
       catalogueSolutionsController.getCatalogueSolutionsPageContext.mockRestore();
     });
@@ -137,14 +137,14 @@ describe('catalogue-solutions section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/:orderItemId', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/neworderitem';
+  describe('GET /organisation/:odsCode/:orderId/catalogue-solutions/:orderItemId', () => {
+    const path = '/organisation/odsCode/some-order-id/catalogue-solutions/neworderitem';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -179,8 +179,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/catalogue-solutions/:orderItemId', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/neworderitem';
+  describe('POST /organisation/:odsCode/:orderId/catalogue-solutions/:orderItemId', () => {
+    const path = '/organisation/odsCode/some-order-id/catalogue-solutions/neworderitem';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -292,7 +292,7 @@ describe('catalogue-solutions section routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
+    it('should redirect to /organisation/odsCode/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
       orderItemController.formatFormData = jest.fn().mockResolvedValue({});
@@ -318,7 +318,7 @@ describe('catalogue-solutions section routes', () => {
         .then((res) => {
           expect(orderItemController.getPageData).toHaveBeenCalled();
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/catalogue-solutions`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/some-order-id/catalogue-solutions`);
         });
     });
   });

@@ -42,7 +42,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   }));
 
   router.post('/description', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const response = await postOrPutDescription({
       orgId: req.user.primaryOrganisationId,
@@ -52,7 +52,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     });
 
     if (response.success) {
-      return res.redirect(`${config.baseUrl}/organisation/${response.orderId}`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${response.orderId}`);
     }
 
     const context = await getDescriptionErrorContext({
@@ -72,13 +72,13 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   }));
 
   router.post('/ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const response = await putOrderingParty({
       orderId,
       data: req.body,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
-    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
 
     const context = await getCallOffOrderingPartyErrorContext({
       validationErrors: response.errors,
@@ -110,7 +110,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   }));
 
   router.post('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const validationErrors = [];
 
     const errors = validateCommencementDateForm({ data: req.body });
@@ -122,7 +122,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
         data: req.body,
         accessToken: extractAccessToken({ req, tokenType: 'access' }),
       });
-      if (apiResponse.success) return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+      if (apiResponse.success) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
       validationErrors.push(...apiResponse.errors);
     }
 
@@ -135,17 +135,17 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   }));
 
   router.get('/funding-source', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const fundingSource = await getFundingSource({ orderId, accessToken });
 
-    const context = await getFundingSourceContext({ orderId, fundingSource });
+    const context = await getFundingSourceContext({ orderId, fundingSource, odsCode });
     logger.info(`navigating to order ${orderId} funding-source page`);
     res.render('pages/sections/funding-source/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/funding-source', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const validationErrors = [];
 
@@ -162,7 +162,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       });
       if (apiResponse.success) {
         logger.info('redirecting to order summary page');
-        return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
       }
       validationErrors.push(...apiResponse.errors);
     } else {
@@ -172,6 +172,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     const context = await getFundingSourceErrorPageContext({
       orderId,
       validationErrors,
+      odsCode,
     });
 
     return res.render('pages/sections/funding-source/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));

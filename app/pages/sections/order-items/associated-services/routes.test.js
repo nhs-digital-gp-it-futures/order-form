@@ -38,8 +38,8 @@ describe('associated-services section routes', () => {
     jest.resetAllMocks();
   });
 
-  describe('GET /organisation/:orderId/associated-services', () => {
-    const path = '/organisation/some-order-id/associated-services';
+  describe('GET /organisation/:odsCode/:orderId/associated-services', () => {
+    const path = '/organisation/odsCode/some-order-id/associated-services';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -72,8 +72,8 @@ describe('associated-services section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/associated-services', () => {
-    const path = '/organisation/order-id/associated-services';
+  describe('POST /organisation/:odsCode/:orderId/associated-services', () => {
+    const path = '/organisation/odsCode/order-id/associated-services';
 
     it('should return 403 forbidden if no csrf token is available', () => {
       putOrderSection.mockResolvedValue({});
@@ -133,14 +133,14 @@ describe('associated-services section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
   });
 
-  describe('GET /organisation/:orderId/associated-services/:orderItemId', () => {
-    const path = '/organisation/some-order-id/associated-services/neworderitem';
+  describe('GET /organisation/:odsCode/:orderId/associated-services/:orderItemId', () => {
+    const path = '/organisation/odsCode/some-order-id/associated-services/neworderitem';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -173,8 +173,8 @@ describe('associated-services section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/associated-services/:orderItemId', () => {
-    const path = '/organisation/some-order-id/associated-services/neworderitem';
+  describe('POST /organisation/:odsCode/:orderId/associated-services/:orderItemId', () => {
+    const path = '/organisation/odsCode/some-order-id/associated-services/neworderitem';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -305,7 +305,7 @@ describe('associated-services section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/associated-services`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/some-order-id/associated-services`);
         });
     });
   });

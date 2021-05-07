@@ -24,7 +24,7 @@ const router = express.Router({ mergeParams: true });
 
 export const associatedServicesRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     const context = await getAssociatedServicesPageContext({
       req,
@@ -33,6 +33,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
       sessionManager,
       logger,
+      odsCode,
     });
 
     sessionManager.saveToSession(
@@ -49,7 +50,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
   router.use('/select', associatedServicesSelectRoutes(authProvider, addContext, sessionManager));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     await putOrderSection({
       orderId,
@@ -57,13 +58,13 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
   }));
 
   router.use('/select', associatedServicesSelectRoutes(authProvider, addContext));
 
   router.get('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, catalogueItemId } = req.params;
+    const { orderId, catalogueItemId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     const pageData = await getOrderItemPageData({
@@ -88,16 +89,17 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       itemName: pageData.itemName,
       selectedPrice: pageData.selectedPrice,
       formData: pageData.formData,
+      odsCode,
     });
 
-    context.backLinkHref = getBackLinkHref(req, associatedServicePrices, orderId);
+    context.backLinkHref = getBackLinkHref(req, associatedServicePrices, orderId, odsCode);
 
     logger.info(`navigating to order ${orderId} associated-services order item page`);
     return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, catalogueItemId } = req.params;
+    const { orderId, catalogueItemId, odsCode } = req.params;
     const validationErrors = [];
 
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
@@ -131,7 +133,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       if (apiResponse.success) {
         logger.info('Redirecting to the associated-services main page');
         sessionManager.saveToSession({ req, key: sessionKeys.selectedItemId, value: undefined });
-        return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services`);
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/associated-services`);
       }
 
       const apiErrors = transformApiValidationResponse(apiResponse.errors);
@@ -150,8 +152,9 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       selectedPrice: pageData.selectedPrice,
       formData: req.body,
       validationErrors,
+      odsCode,
     });
-    context.backLinkHref = getBackLinkHref(req, associatedServicePrices, orderId);
+    context.backLinkHref = getBackLinkHref(req, associatedServicePrices, orderId, odsCode);
 
     return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

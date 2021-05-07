@@ -84,8 +84,8 @@ describe('additional-services select routes', () => {
     jest.resetAllMocks();
   });
 
-  describe('POST /organisation/:orderId/additional-services/select/additional-service/price/recipients', () => {
-    const path = '/organisation/order-1/additional-services/select/additional-service/price/recipients';
+  describe('POST /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipients', () => {
+    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service/price/recipients';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -210,8 +210,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
-    const path = '/organisation/order-1/additional-services/select/additional-service/price/recipients/date';
+  describe('POST /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
+    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service/price/recipients/date';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -299,8 +299,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/additional-services/select', () => {
-    const path = '/organisation/order-1/additional-services/select';
+  describe('GET /organisation/:odsCode/:orderId/additional-services/select', () => {
+    const path = '/organisation/odsCode/order-1/additional-services/select';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -329,8 +329,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/additional-services/select/additional-service', () => {
-    const path = '/organisation/some-order-id/additional-services/select/additional-service';
+  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service', () => {
+    const path = '/organisation/odsCode/some-order-id/additional-services/select/additional-service';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -386,8 +386,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/additional-services/select/additional-service', () => {
-    const path = '/organisation/order-1/additional-services/select/additional-service';
+  describe('POST /organisation/:odsCode/:orderId/additional-services/select/additional-service', () => {
+    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -536,8 +536,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/additional-services/select/additional-service/price', () => {
-    const path = '/organisation/some-order-id/additional-services/select/additional-service/price';
+  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service/price', () => {
+    const path = '/organisation/odsCode/some-order-id/additional-services/select/additional-service/price';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -615,8 +615,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/additional-services/select/additional-service/price', () => {
-    const path = '/organisation/order-1/additional-services/select/additional-service/price';
+  describe('POST /organisation/:odsCode/:orderId/additional-services/select/additional-service/price', () => {
+    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service/price';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -705,8 +705,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipient', () => {
-    const path = '/organisation/some-order-id/additional-services/select/additional-service/price/recipient';
+  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipient', () => {
+    const path = '/organisation/odsCode/some-order-id/additional-services/select/additional-service/price/recipient';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -762,8 +762,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipients', () => {
-    const path = '/organisation/some-order-id/additional-services/select/additional-service/price/recipients';
+  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipients', () => {
+    const path = '/organisation/odsCode/some-order-id/additional-services/select/additional-service/price/recipients';
     beforeEach(() => {
       getAdditionalServicesContextItems.getAdditionalServicesContextItems = jest.fn()
         .mockResolvedValue({
@@ -820,8 +820,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/additional-services/select/additional-service/price/recipient', () => {
-    const path = '/organisation/order-1/additional-services/select/additional-service/price/recipient';
+  describe('POST /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipient', () => {
+    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service/price/recipient';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -926,8 +926,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
-    const path = '/organisation/order-1/additional-services/select/additional-service/price/recipients/date';
+  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
+    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service/price/recipients/date';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -978,8 +978,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/additional-services/select/additional-service/price/flat/ondemand', () => {
-    const path = '/organisation/some-order-id/additional-services/select/additional-service/price/flat/ondemand';
+  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/flat/ondemand', () => {
+    const path = '/organisation/odsCode/some-order-id/additional-services/select/additional-service/price/flat/ondemand';
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',

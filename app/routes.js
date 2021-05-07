@@ -4,7 +4,8 @@ import {
 } from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
-import { withCatch, getHealthCheckDependencies } from './helpers/routes/routerHelper';
+import { getOrganisation } from './helpers/api/oapi/getOrganisation';
+import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routes/routerHelper';
 import { getDocumentByFileName } from './helpers/api/dapi/getDocumentByFileName';
 import { dashboardRoutes } from './pages/dashboard/routes';
 import { tasklistRoutes } from './pages/task-list/routes';
@@ -34,8 +35,10 @@ export const routes = (authProvider, sessionManager) => {
   });
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const orgData = await getOrganisation({ orgId: req.user.primaryOrganisationId, accessToken });
     logger.info('redirecting to organisation orders page');
-    return res.redirect(`${config.baseUrl}/organisation`);
+    return res.redirect(`${config.baseUrl}/organisation/${orgData.odsCode}`);
   }));
 
   router.get('/document/:documentName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -45,19 +48,19 @@ export const routes = (authProvider, sessionManager) => {
     stream.on('close', () => res.end());
   }));
 
-  router.use('/organisation', dashboardRoutes(authProvider, addContext));
+  router.use('/organisation/:odsCode', dashboardRoutes(authProvider, addContext));
 
-  router.use('/organisation/select', selectOrganisationRoutes(authProvider, addContext));
+  router.use('/organisation/:odsCode/select', selectOrganisationRoutes(authProvider, addContext));
 
-  router.use('/organisation/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
+  router.use('/organisation/:odsCode/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
 
-  router.use('/organisation/:orderId/summary', summaryRoutes(authProvider, addContext));
+  router.use('/organisation/:odsCode/:orderId/summary', summaryRoutes(authProvider, addContext));
 
-  router.use('/organisation/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
+  router.use('/organisation/:odsCode/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
 
-  router.use('/organisation/:orderId/delete-order', deleteOrderRoutes(authProvider, addContext, sessionManager));
+  router.use('/organisation/:odsCode/:orderId/delete-order', deleteOrderRoutes(authProvider, addContext, sessionManager));
 
-  router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
+  router.use('/organisation/:odsCode/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
 
   router.get('*', (req) => {
     throw new ErrorContext({

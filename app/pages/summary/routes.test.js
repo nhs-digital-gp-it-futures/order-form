@@ -13,8 +13,8 @@ import * as summaryController from './controller';
 
 jest.mock('../../helpers/api/ordapi/getOrder');
 
-describe('GET /organisation/:orderId/summary', () => {
-  const path = '/organisation/order-id/summary';
+describe('GET /organisation/:odsCode/:orderId/summary', () => {
+  const path = '/organisation/odsCode/order-id/summary';
 
   afterEach(() => {
     jest.resetAllMocks();

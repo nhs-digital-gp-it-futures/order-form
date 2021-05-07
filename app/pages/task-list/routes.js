@@ -9,11 +9,11 @@ const router = express.Router({ mergeParams: true });
 export const tasklistRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     clearSession({ req, sessionManager });
 
-    const context = await getTaskListPageContext({ accessToken, orderId });
+    const context = await getTaskListPageContext({ accessToken, orderId, odsCode });
     logger.info(`navigating to order ${orderId} task list page`);
     res.render('pages/task-list/template.njk', addContext({ context, user: req.user }));
   }));

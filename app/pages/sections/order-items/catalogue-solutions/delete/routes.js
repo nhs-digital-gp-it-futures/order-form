@@ -9,7 +9,7 @@ const router = express.Router({ mergeParams: true });
 
 export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/:orderItemId/confirmation/:solutionName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
+    const { orderId, orderItemId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     const context = await getDeleteCatalogueSolutionContext({
@@ -17,6 +17,7 @@ export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, session
       sessionManager,
       accessToken,
       logger,
+      odsCode,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions ${orderItemId} deletion page`);
@@ -24,13 +25,15 @@ export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, session
   }));
 
   router.post('/:orderItemId/confirmation/:solutionName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId, solutionName } = req.params;
+    const {
+      orderId, orderItemId, solutionName, odsCode,
+    } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     await deleteCatalogueSolution({ orderId, orderItemId, accessToken });
 
     logger.info(`navigating to order ${orderId} catalogue-solution ${orderItemId} delete confirmation page`);
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/delete/${orderItemId}/confirmation/${solutionName}/continue`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/delete/${orderItemId}/confirmation/${solutionName}/continue`);
   }));
 
   router.get('/:orderItemId/confirmation/:solutionName/continue', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -49,8 +52,8 @@ export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, session
   }));
 
   router.post('/:orderItemId/confirmation/:solutionName/continue', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
+    const { orderId, odsCode } = req.params;
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions`);
   }));
 
   return router;

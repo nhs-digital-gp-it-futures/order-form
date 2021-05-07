@@ -1,7 +1,7 @@
 import manifest from './manifest.json';
 import { baseUrl } from '../../../../../config';
 
-const generateItems = ({ orderId, orderItems }) => {
+const generateItems = ({ orderId, orderItems, odsCode }) => {
   const items = [];
   const catalogueIds = [];
   orderItems.forEach((orderItem) => {
@@ -12,7 +12,7 @@ const generateItems = ({ orderId, orderItems }) => {
     const columns = [];
     columns.push(({
       data: orderItem.catalogueItemName,
-      href: `${baseUrl}/organisation/${orderId}/catalogue-solutions/${orderItem.catalogueItemId}`,
+      href: `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/${orderItem.catalogueItemId}`,
       dataTestId: `${orderItem.catalogueItemId}-catalogueItemName`,
     }));
     columns.push(({
@@ -47,8 +47,10 @@ const generateItems = ({ orderId, orderItems }) => {
   return items;
 };
 
-const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItems }) => {
-  const items = generateItems({ orderId, orderItems });
+const generateAddedOrderItemsTable = ({
+  orderId, addedOrderItemsTable, orderItems, odsCode,
+}) => {
+  const items = generateItems({ orderId, orderItems, odsCode });
 
   items.sort((a, b) => {
     if (a[0].data < b[0].data) { return -1; }
@@ -62,14 +64,16 @@ const generateAddedOrderItemsTable = ({ orderId, addedOrderItemsTable, orderItem
   };
 };
 
-export const getContext = ({ orderId, orderDescription, orderItems = [] }) => ({
+export const getContext = ({
+  orderId, orderDescription, orderItems = [], odsCode,
+}) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
   orderDescription,
   addedOrderItemsTable: generateAddedOrderItemsTable({
-    orderId, addedOrderItemsTable: manifest.addedOrderItemsTable, orderItems,
+    orderId, addedOrderItemsTable: manifest.addedOrderItemsTable, orderItems, odsCode,
   }),
-  addOrderItemButtonHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`,
+  addOrderItemButtonHref: `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution`,
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
   orderItems,
 });

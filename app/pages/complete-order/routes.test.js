@@ -24,8 +24,8 @@ jest.mock('../../helpers/api/ordapi/putOrderStatus');
 
 const mockFundingCookie = `fundingSource=${true}`;
 
-describe('GET /organisation/:orderId/complete-order', () => {
-  const path = '/organisation/some-order-id/complete-order';
+describe('GET /organisation/:odsCode/:orderId/complete-order', () => {
+  const path = '/organisation/odsCode/some-order-id/complete-order';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -61,8 +61,8 @@ describe('GET /organisation/:orderId/complete-order', () => {
   });
 });
 
-describe('POST /organisation/:orderId/complete-order', () => {
-  const path = '/organisation/some-order-id/complete-order';
+describe('POST /organisation/:odsCode/:orderId/complete-order', () => {
+  const path = '/organisation/odsCode/some-order-id/complete-order';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -123,14 +123,14 @@ describe('POST /organisation/:orderId/complete-order', () => {
       .expect(302)
       .then((res) => {
         expect(res.redirect).toEqual(true);
-        expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/complete-order/order-confirmation`);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/some-order-id/complete-order/order-confirmation`);
         expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       });
   });
 });
 
-describe('GET /organisation/:orderId/complete-order/order-confirmation', () => {
-  const path = '/organisation/some-order-id/complete-order/order-confirmation';
+describe('GET /organisation/:odsCode/:orderId/complete-order/order-confirmation', () => {
+  const path = '/organisation/odsCode/some-order-id/complete-order/order-confirmation';
 
   afterEach(() => {
     jest.resetAllMocks();

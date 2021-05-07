@@ -2,7 +2,7 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../../../../../config';
 import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
-export const backLinkHref = (req, additionalServicePrices, orderId) => {
+export const backLinkHref = (req, additionalServicePrices, orderId, odsCode) => {
   const { referer } = req.headers || {};
   const orderItemId = referer ? referer.split('/').pop() : '';
   if (referer && referer.endsWith(`${orderId}/additional-services/${orderItemId}`)) {
@@ -10,8 +10,8 @@ export const backLinkHref = (req, additionalServicePrices, orderId) => {
   }
 
   return ((additionalServicePrices || {}).prices || {}).length === 1
-    ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
-    : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`;
+    ? `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service`
+    : `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price`;
 };
 
 const generateRecipientOptions = ({ recipients, selectedAdditionalRecipientId }) => {
@@ -31,12 +31,12 @@ const generateQuestionsContext = ({ recipients, selectedAdditionalRecipientId })
 );
 
 export const getContext = ({
-  orderId, itemName, recipients, selectedAdditionalRecipientId, additionalServicePrices,
+  orderId, itemName, recipients, selectedAdditionalRecipientId, additionalServicePrices, odsCode,
 }) => ({
   ...manifest,
   title: `${manifest.title} ${itemName}`,
   questions: recipients && generateQuestionsContext({ recipients, selectedAdditionalRecipientId }),
-  backLinkHref: backLinkHref({}, additionalServicePrices, orderId),
+  backLinkHref: backLinkHref({}, additionalServicePrices, orderId, odsCode),
 });
 
 export const getErrorContext = (params) => {
