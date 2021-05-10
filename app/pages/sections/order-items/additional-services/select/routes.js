@@ -61,7 +61,7 @@ const router = express.Router({ mergeParams: true });
 export const additionalServicesSelectRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, odsCode } = req.params;
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service`);
   }));
 
   router.get(
@@ -82,7 +82,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
           title: 'No Additional Services found',
           description: 'There are no Additional Services offered by this supplier. Go back to the Additional Services dashboard and select continue to complete the section.',
           backLinkText: 'Go back',
-          backLinkHref: `${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services`,
+          backLinkHref: `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`,
         });
       }
 
@@ -146,12 +146,12 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
           req, key: sessionKeys.catalogueItemExists, value: existingItem,
         });
         return res.redirect(
-          `${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/${existingItem[0].catalogueItemId}`,
+          `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/${existingItem[0].catalogueItemId}`,
         );
       }
 
       logger.info('redirecting additional services select price page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price`);
     }
 
     const additionalServices = sessionManager.getFromSession({
@@ -198,7 +198,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       });
 
       logger.info('redirecting to additional services select recipients page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`);
     }
 
     const context = getAdditionalServicePricePageContext({
@@ -221,7 +221,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedPriceId, value: req.body.selectAdditionalServicePrice,
       });
       logger.info('redirecting to additional services select recipients page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`);
     }
 
     const selectedAdditionalServiceName = sessionManager.getFromSession({
@@ -285,7 +285,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedRecipientName, value: selectedRecipientName,
       });
       logger.info('Redirect to new additional service order item page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/neworderitem`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/neworderitem`);
     }
 
     const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
@@ -326,7 +326,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     });
 
     context.backLinkHref = getBackLinkHref(req, additionalServicePrices, orderId, odsCode);
-    context.selectDeselectButtonAction = `${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients`;
+    context.selectDeselectButtonAction = `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`;
 
     setContextIfBackFromAdditionalServiceEdit(req, context, orderId, odsCode);
 
@@ -358,7 +358,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       }
 
       logger.info('Redirect to planned delivery date page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients/date`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients/date`);
     }
     if (!response.success) {
       const selectedRecipients = selected.map(([recipient]) => recipient);
@@ -384,7 +384,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     });
 
     context.backLinkHref = getBackLinkHref(req, additionalServicePrices, orderId, odsCode);
-    context.selectDeselectButtonAction = `${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients`;
+    context.selectDeselectButtonAction = `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`;
 
     setContextIfBackFromAdditionalServiceEdit(req, context, orderId, odsCode);
 
@@ -413,7 +413,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       orderId, itemName, commencementDate, manifest: dateManifest, orderType: 'additional-services',
     });
 
-    context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients`;
+    context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`;
 
     logger.info(`navigating to order ${orderId} additional-services select planned delivery date page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk',
@@ -458,7 +458,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       });
       if (apiResponse.success) {
         return res.redirect(
-          `${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/${additionalServiceSelectedPrice[0].type.toLowerCase()}/${additionalServiceSelectedPrice[0].provisioningType.toLowerCase()}`,
+          `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/${additionalServiceSelectedPrice[0].type.toLowerCase()}/${additionalServiceSelectedPrice[0].provisioningType.toLowerCase()}`,
         );
       }
       validationErrors.push(...apiResponse.errors);
@@ -476,7 +476,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       data: req.body,
       manifest: dateManifest,
     });
-    context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients`;
+    context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`;
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -497,11 +497,11 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       itemName,
       formData,
     });
-    context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients/date`;
+    context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients/date`;
 
     logger.info(`navigating to order ${orderId} additional services ${provisioningType} form`);
     if (priceType === 'flat' && provisioningType === 'patient') {
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/neworderitem`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/neworderitem`);
     }
 
     return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -534,7 +534,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectEstimationPeriod, value: formData.selectEstimationPeriod,
       });
       logger.info('Redirecting to the additional services order item page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services/neworderitem`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/neworderitem`);
     }
 
     const context = await getProvisionTypeOrderErrorContext({

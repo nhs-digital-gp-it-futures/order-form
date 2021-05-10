@@ -33,7 +33,7 @@ export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, session
     await deleteCatalogueSolution({ orderId, orderItemId, accessToken });
 
     logger.info(`navigating to order ${orderId} catalogue-solution ${orderItemId} delete confirmation page`);
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/delete/${orderItemId}/confirmation/${solutionName}/continue`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/delete/${orderItemId}/confirmation/${solutionName}/continue`);
   }));
 
   router.get('/:orderItemId/confirmation/:solutionName/continue', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -53,7 +53,7 @@ export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, session
 
   router.post('/:orderItemId/confirmation/:solutionName/continue', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, odsCode } = req.params;
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions`);
   }));
 
   return router;

@@ -6,7 +6,7 @@ const generateItems = ({ orderId, orderItems, odsCode }) => {
     const columns = [];
     columns.push(({
       data: orderItem.catalogueItemName,
-      href: `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/${orderItem.catalogueItemId}`,
+      href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/${orderItem.catalogueItemId}`,
       dataTestId: `${orderItem.catalogueItemId}-catalogueItemName`,
     }));
     columns.push(({
@@ -42,11 +42,11 @@ export const backLinkHref = ({
   const { referer } = req.headers;
   const slug = (referer ? referer.split('/').pop() : '').toLowerCase();
   const newItemBackLink = selectedPrice.provisioningType === 'Patient'
-    ? `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients/date`
-    : `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
+    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients/date`
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
   const existingItemBackLink = catalogueItemExists
-    ? `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service`
-    : `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services`;
+    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service`
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`;
 
   const slugConditions = ['additional-services', 'date', 'ondemand', 'declarative', 'additional-service'];
   if (slugConditions.includes(slug)) {
@@ -60,9 +60,9 @@ export const backLinkHref = ({
 
 export const deleteButtonLink = ({
   orderId, catalogueItemId, solutionName, odsCode,
-}) => `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/delete/${catalogueItemId}/confirmation/${solutionName}`;
+}) => `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/delete/${catalogueItemId}/confirmation/${solutionName}`;
 
-export const editRecipientsLink = (orderId, odsCode) => `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price/recipients`;
+export const editRecipientsLink = (orderId, odsCode) => `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`;
 
 export const getContext = ({
   orderId, orderDescription, orderItems = [], odsCode,
@@ -73,7 +73,7 @@ export const getContext = ({
   addedOrderItemsTable: generateAddedOrderItemsTable({
     orderId, addedOrderItemsTable: manifest.addedOrderItemsTable, orderItems, odsCode,
   }),
-  addOrderItemButtonHref: `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service`,
+  addOrderItemButtonHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service`,
   backLinkHref: `${baseUrl}/organisation/${odsCode}/${orderId}`,
   orderItems,
 });

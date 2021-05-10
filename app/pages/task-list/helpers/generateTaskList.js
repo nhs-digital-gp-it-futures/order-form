@@ -59,7 +59,7 @@ export const generateTaskList = ({
       href: isSectionEnabled(
         sectionsDataDict, section.dependencies,
       )
-        ? `${baseUrl}/organisation/${odsCode}/${orderId}/${section.id}`
+        ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/${section.id}`
         : undefined,
       complete: isSectionComplete(sectionsDataDict, section),
     })),

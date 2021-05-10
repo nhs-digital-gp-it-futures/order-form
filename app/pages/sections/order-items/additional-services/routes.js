@@ -61,7 +61,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}`);
   }));
 
   router.use('/select', additionalServicesSelectRoutes(authProvider, addContext, sessionManager));
@@ -155,7 +155,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
         sessionManager.saveToSession(
           { req, key: sessionKeys.plannedDeliveryDate, value: undefined },
         );
-        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/additional-services`);
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`);
       }
 
       const apiErrors = transformApiValidationResponse(apiResponse.errors);

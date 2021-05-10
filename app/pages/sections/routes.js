@@ -52,7 +52,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
     });
 
     if (response.success) {
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${response.orderId}`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${response.orderId}`);
     }
 
     const context = await getDescriptionErrorContext({
@@ -78,7 +78,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       data: req.body,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
-    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
+    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}`);
 
     const context = await getCallOffOrderingPartyErrorContext({
       validationErrors: response.errors,
@@ -122,7 +122,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
         data: req.body,
         accessToken: extractAccessToken({ req, tokenType: 'access' }),
       });
-      if (apiResponse.success) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
+      if (apiResponse.success) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}`);
       validationErrors.push(...apiResponse.errors);
     }
 
@@ -162,7 +162,7 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       });
       if (apiResponse.success) {
         logger.info('redirecting to order summary page');
-        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}`);
       }
       validationErrors.push(...apiResponse.errors);
     } else {

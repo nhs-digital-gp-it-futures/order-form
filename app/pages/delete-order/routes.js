@@ -30,7 +30,7 @@ export const deleteOrderRoutes = (authProvider, addContext, sessionManager) => {
 
     await deleteOrder({ orderId, accessToken });
 
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/delete-order/confirmation`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/delete-order/confirmation`);
   }));
 
   router.get('/confirmation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {

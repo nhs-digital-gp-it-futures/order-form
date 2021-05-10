@@ -5,7 +5,7 @@ export const getAdditionalServiceRecipientPageContext = (params) => getContext(p
 
 export const getAdditionalServiceRecipientErrorPageContext = (params) => getErrorContext(params);
 
-export const getAdditionalServicePriceEndpoint = (orderId, orderItemId, odsCode) => `/organisation/${odsCode}/${orderId}/additional-services/${orderItemId}`;
+export const getAdditionalServicePriceEndpoint = (orderId, orderItemId, odsCode) => `/organisation/${odsCode}/order/${orderId}/additional-services/${orderItemId}`;
 
 export const validateAdditionalServiceRecipientForm = ({ data }) => {
   if (data.selectRecipient && data.selectRecipient.trim().length > 0) {

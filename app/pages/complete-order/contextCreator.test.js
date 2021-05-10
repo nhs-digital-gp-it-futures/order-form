@@ -16,7 +16,7 @@ describe('complete order contextCreator', () => {
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId, fundingSource, odsCode: someOdsCode });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/${orderId}`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -52,7 +52,7 @@ describe('complete order contextCreator', () => {
     it('should construct the continueEditingOrderButtonHref', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId, fundingSource, odsCode: someOdsCode });
-      expect(context.continueEditingOrderButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/${orderId}`);
+      expect(context.continueEditingOrderButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/${orderId}`);
     });
   });
 
@@ -67,7 +67,7 @@ describe('complete order contextCreator', () => {
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId, fundingSource, odsCode: someOdsCode });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/${orderId}`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -103,7 +103,7 @@ describe('complete order contextCreator', () => {
     it('should construct the continueEditingOrderButtonHref', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId, fundingSource, odsCode: someOdsCode });
-      expect(context.continueEditingOrderButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/${orderId}`);
+      expect(context.continueEditingOrderButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/${orderId}`);
     });
 
     it('should return the completeOrderButtonText', () => {

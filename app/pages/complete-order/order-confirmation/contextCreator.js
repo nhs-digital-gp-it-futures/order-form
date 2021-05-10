@@ -8,7 +8,7 @@ export const getContext = ({ orderId, fundingSource, odsCode }) => {
   const context = ({
     ...addParamsToManifest(manifest, { orderId }),
     backLinkHref: `${baseUrl}/organisation/${odsCode}`,
-    orderSummaryButtonHref: `${baseUrl}/organisation/${odsCode}/${orderId}/summary?print=true`,
+    orderSummaryButtonHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/summary?print=true`,
   });
   return context;
 };

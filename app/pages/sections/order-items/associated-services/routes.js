@@ -58,7 +58,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}`);
   }));
 
   router.use('/select', associatedServicesSelectRoutes(authProvider, addContext));
@@ -133,7 +133,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       if (apiResponse.success) {
         logger.info('Redirecting to the associated-services main page');
         sessionManager.saveToSession({ req, key: sessionKeys.selectedItemId, value: undefined });
-        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/associated-services`);
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services`);
       }
 
       const apiErrors = transformApiValidationResponse(apiResponse.errors);

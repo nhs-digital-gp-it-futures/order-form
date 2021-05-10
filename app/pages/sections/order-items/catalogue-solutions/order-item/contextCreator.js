@@ -22,11 +22,11 @@ export const getContext = ({
     ? ((errorMap.quantity || {}).errorMessages || [''])
       .concat((errorMap.deliveryDate || {}).errorMessages) : undefined;
   const newItemBackLink = selectedPrice.provisioningType === 'Patient'
-    ? `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/recipients/date`
-    : `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
+    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients/date`
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
   const existingItemBackLink = catalogueItemExists !== undefined
-    ? `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/`
-    : `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions`;
+    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/`
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions`;
 
   return {
     ...commonManifest,
@@ -53,13 +53,13 @@ export const getContext = ({
     editButton: {
       text: commonManifest.editButton.text,
       altText: orderItemId === 'neworderitem' ? commonManifest.editButton.altText : '',
-      href: `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/recipients`,
+      href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients`,
       disabled: orderItemId === 'neworderitem',
     },
     deleteButton: {
       text: commonManifest.deleteButton.text,
       altText: orderItemId === 'neworderitem' ? commonManifest.deleteButton.altText : '',
-      href: `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/delete/${orderItemId}/confirmation/${solutionName}`,
+      href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/delete/${orderItemId}/confirmation/${solutionName}`,
       disabled: orderItemId === 'neworderitem',
     },
     backLinkHref: orderItemId === 'neworderitem' ? newItemBackLink : existingItemBackLink,

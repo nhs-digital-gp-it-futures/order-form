@@ -1,7 +1,7 @@
 import { baseUrl } from '../../../../../../config';
 import { getContext, getErrorContext } from './contextCreator';
 
-export const getSelectSolutionPriceEndpoint = (orderId, orderItemId, odsCode) => `/organisation/${odsCode}/${orderId}/catalogue-solutions/${orderItemId}`;
+export const getSelectSolutionPriceEndpoint = (orderId, orderItemId, odsCode) => `/organisation/${odsCode}/order/${orderId}/catalogue-solutions/${orderItemId}`;
 
 export const getSelectStatus = ({ selectStatus, selectedRecipients, serviceRecipients }) => {
   if (selectStatus) {

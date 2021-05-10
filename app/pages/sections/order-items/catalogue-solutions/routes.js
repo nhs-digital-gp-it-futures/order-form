@@ -61,7 +61,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}`);
   }));
 
   router.use('/select', catalogueSolutionsSelectRoutes(authProvider, addContext, sessionManager));
@@ -148,7 +148,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
         sessionManager.saveToSession(
           { req, key: sessionKeys.plannedDeliveryDate, value: undefined },
         );
-        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions`);
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions`);
       }
 
       const apiErrors = transformApiValidationResponse(apiResponse.errors);

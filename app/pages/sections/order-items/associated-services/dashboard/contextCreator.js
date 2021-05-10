@@ -6,7 +6,7 @@ const generateItems = ({ orderId, orderItems, odsCode }) => {
     const columns = [];
     columns.push(({
       data: orderItem.catalogueItemName,
-      href: `${baseUrl}/organisation/${odsCode}/${orderId}/associated-services/${orderItem.catalogueItemId}`,
+      href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/${orderItem.catalogueItemId}`,
       dataTestId: `${orderItem.catalogueItemId}-catalogueItemName`,
     }));
     columns.push(({
@@ -35,7 +35,7 @@ export const getContext = ({
   addedOrderItemsTable: generateAddedOrderItemsTable({
     orderId, addedOrderItemsTable: manifest.addedOrderItemsTable, orderItems, odsCode,
   }),
-  addOrderItemButtonHref: `${baseUrl}/organisation/${odsCode}/${orderId}/associated-services/select/associated-service`,
-  backLinkHref: `${baseUrl}/organisation/${odsCode}/${orderId}`,
+  addOrderItemButtonHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/select/associated-service`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}`,
   orderItems,
 });

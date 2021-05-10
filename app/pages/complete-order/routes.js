@@ -41,7 +41,7 @@ export const completeOrderRoutes = (authProvider, addContext, sessionManager) =>
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/complete-order/order-confirmation`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/complete-order/order-confirmation`);
   }));
 
   router.get('/order-confirmation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {

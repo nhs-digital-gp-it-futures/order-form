@@ -7,7 +7,7 @@ const generateIncompletedOrdersTable = (incompletedOrders, incompleteOrdersTable
     const columns = [
       {
         data: order.orderId,
-        href: `${baseUrl}/organisation/${odsCode}/${order.orderId}`,
+        href: `${baseUrl}/organisation/${odsCode}/order/${order.orderId}`,
         dataTestId: `${order.orderId}-id`,
         classes: incompleteOrdersTable.cellInfo.orderId.classes,
       },
@@ -47,7 +47,7 @@ const generateCompletedOrdersTable = (completedOrders, completeOrdersTable, odsC
     const columns = [
       {
         data: order.orderId,
-        href: `${baseUrl}/organisation/${odsCode}/${order.orderId}/summary`,
+        href: `${baseUrl}/organisation/${odsCode}/order/${order.orderId}/summary`,
         dataTestId: `${order.orderId}-id`,
         classes: completeOrdersTable.cellInfo.orderId.classes,
       },
@@ -93,7 +93,7 @@ export const getContext = ({
 
   ...manifest,
   title: orgName,
-  newOrderButtonHref: `${baseUrl}/organisation/${odsCode}/neworder`,
+  newOrderButtonHref: `${baseUrl}/organisation/${odsCode}/order/neworder`,
   proxyLinkHref: '#',
   completeOrders: generateCompletedOrdersTable(
     completedOrders, manifest.completeOrdersTable, odsCode,

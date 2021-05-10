@@ -27,7 +27,7 @@ describe('order summary contextCreator', () => {
     it('should construct the backLinkHref for an incomplete order', () => {
       const orderId = 'order-id';
       const context = getContext({ orderId, orderData: mockOrderData, odsCode: someOdsCode });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/${orderId}`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -58,7 +58,7 @@ describe('order summary contextCreator', () => {
     it('should return the order summary button href', () => {
       const orderId = 'order-1';
       const context = getContext({ orderId, orderData: mockOrderData, odsCode: someOdsCode });
-      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/${orderId}/summary?print=true`);
+      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/${orderId}/summary?print=true`);
     });
 
     it('should return the dateSummaryCreatedLabel', () => {

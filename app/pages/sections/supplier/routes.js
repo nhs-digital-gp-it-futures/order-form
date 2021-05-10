@@ -41,7 +41,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
       return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     } catch (err) {
       logger.info('redirecting to suppliers search page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/supplier/search`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`);
     }
   }));
 
@@ -52,7 +52,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
       data: req.body,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
-    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}`);
+    if (response.success) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}`);
 
     const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
 
@@ -69,7 +69,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     const { orderId, odsCode } = req.params;
 
     const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
-    if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/supplier`);
+    if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier`);
 
     const context = await getSupplierSearchPageContext({ orderId });
     logger.info(`navigating to order ${orderId} suppliers search page`);
@@ -93,7 +93,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
           req, key: sessionKeys.suppliersFound, value: suppliersFound,
         });
         logger.info('redirecting suppliers select page');
-        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/supplier/search/select`);
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search/select`);
       }
 
       throw new ErrorContext({
@@ -101,7 +101,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
         title: 'No supplier found',
         description: "There are no suppliers that match the search terms you've provided. Try searching again.",
         backLinkText: 'Go back to search',
-        backLinkHref: `${config.baseUrl}/organisation/${odsCode}/${orderId}/supplier/search`,
+        backLinkHref: `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`,
       });
     }
 
@@ -117,7 +117,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     const { orderId, odsCode } = req.params;
     const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
 
-    if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/supplier`);
+    if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier`);
 
     const suppliersFound = sessionManager.getFromSession({
       req, key: sessionKeys.suppliersFound,
@@ -135,7 +135,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     }
 
     logger.info('no suppliers found in session redirecting suppliers search page');
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/supplier/search`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`);
   }));
 
   router.post('/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -150,7 +150,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
           req, key: sessionKeys.selectedSupplier, value: req.body.selectSupplier,
         });
         logger.info('redirecting supplier section page');
-        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/supplier`);
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier`);
       }
 
       const context = await getSupplierSelectErrorPageContext({
@@ -162,7 +162,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
       return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     }
     logger.info('no suppliers found in session redirecting suppliers search page');
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/supplier/search`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`);
   }));
 
   return router;

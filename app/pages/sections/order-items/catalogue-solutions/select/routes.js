@@ -50,7 +50,7 @@ const router = express.Router({ mergeParams: true });
 export const catalogueSolutionsSelectRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, odsCode } = req.params;
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution`);
   }));
 
   router.get('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -108,11 +108,11 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
           req, key: sessionKeys.catalogueItemExists, value: existingItem,
         });
         return res.redirect(
-          `${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/${existingItem[0].catalogueItemId}`,
+          `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/${existingItem[0].catalogueItemId}`,
         );
       }
       logger.info('redirecting catalogue solutions select price page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price`);
     }
 
     const solutions = sessionManager.getFromSession({ req, key: sessionKeys.solutions });
@@ -150,7 +150,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedPriceId, value: solutionPrices.prices[0].priceId,
       });
 
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/recipients`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients`);
     }
 
     const context = getSolutionPricePageContext({
@@ -173,7 +173,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedPriceId, value: req.body.selectSolutionPrice,
       });
       logger.info('redirecting catalogue solutions select recipient page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/recipients`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients`);
     }
 
     const solutionPrices = sessionManager.getFromSession({
@@ -251,7 +251,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       }
 
       logger.info('Redirect to planned delivery date page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/recipients/date`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients/date`);
     }
     if (!response.success) {
       const selectedRecipients = selected.map(([recipient]) => recipient);
@@ -343,7 +343,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       });
       if (apiResponse.success) {
         return res.redirect(
-          `${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice[0].type.toLowerCase()}/${selectedPrice[0].provisioningType.toLowerCase()}`,
+          `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice[0].type.toLowerCase()}/${selectedPrice[0].provisioningType.toLowerCase()}`,
         );
       }
       validationErrors.push(...apiResponse.errors);
@@ -394,7 +394,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
     logger.info(`navigating to order ${orderId} catalogue-solutions ${provisioningType} form`);
     if (priceType === 'flat' && provisioningType === 'patient') {
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/neworderitem`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/neworderitem`);
     }
     return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -426,7 +426,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectEstimationPeriod, value: formData.selectEstimationPeriod,
       });
       logger.info('Redirecting to the catalogue solution order item page');
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/neworderitem`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/neworderitem`);
     }
 
     const context = await getProvisionTypeOrderErrorContext({

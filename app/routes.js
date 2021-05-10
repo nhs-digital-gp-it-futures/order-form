@@ -52,15 +52,15 @@ export const routes = (authProvider, sessionManager) => {
 
   router.use('/organisation/:odsCode/select', selectOrganisationRoutes(authProvider, addContext));
 
-  router.use('/organisation/:odsCode/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
+  router.use('/organisation/:odsCode/order/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
 
-  router.use('/organisation/:odsCode/:orderId/summary', summaryRoutes(authProvider, addContext));
+  router.use('/organisation/:odsCode/order/:orderId/summary', summaryRoutes(authProvider, addContext));
 
-  router.use('/organisation/:odsCode/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
+  router.use('/organisation/:odsCode/order/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
 
-  router.use('/organisation/:odsCode/:orderId/delete-order', deleteOrderRoutes(authProvider, addContext, sessionManager));
+  router.use('/organisation/:odsCode/order/:orderId/delete-order', deleteOrderRoutes(authProvider, addContext, sessionManager));
 
-  router.use('/organisation/:odsCode/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
+  router.use('/organisation/:odsCode/order/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
 
   router.get('*', (req) => {
     throw new ErrorContext({

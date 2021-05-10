@@ -42,8 +42,8 @@ describe('associated-services select routes', () => {
     jest.resetAllMocks();
   });
 
-  describe('GET /organisation/:odsCode/:orderId/associated-services/select', () => {
-    const path = '/organisation/odsCode/order-1/associated-services/select';
+  describe('GET /organisation/:odsCode/order/:orderId/associated-services/select', () => {
+    const path = '/organisation/odsCode/order/order-1/associated-services/select';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -68,12 +68,12 @@ describe('associated-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order-1/associated-services/select/associated-service`);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/select/associated-service`);
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/associated-services/select/associated-service', () => {
-    const path = '/organisation/odsCode/some-order-id/associated-services/select/associated-service';
+  describe('GET /organisation/:odsCode/order/:orderId/associated-services/select/associated-service', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services/select/associated-service';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -124,8 +124,8 @@ describe('associated-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:odsCode/:orderId/associated-services/select/associated-service', () => {
-    const path = '/organisation/odsCode/order-1/associated-services/select/associated-service';
+  describe('POST /organisation/:odsCode/order/:orderId/associated-services/select/associated-service', () => {
+    const path = '/organisation/odsCode/order/order-1/associated-services/select/associated-service';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -241,7 +241,7 @@ describe('associated-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order-1/associated-services/${associatedServiceId}`);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/${associatedServiceId}`);
     });
 
     it('should redirect to /organisation/some-order-id/associated-services/select/associated-service/price if an associated service is selected', async () => {
@@ -275,12 +275,12 @@ describe('associated-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order-1/associated-services/select/associated-service/price`);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/select/associated-service/price`);
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/associated-services/select/associated-service/price', () => {
-    const path = '/organisation/odsCode/some-order-id/associated-services/select/associated-service/price';
+  describe('GET /organisation/:odsCode/order/:orderId/associated-services/select/associated-service/price', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services/select/associated-service/price';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -314,8 +314,8 @@ describe('associated-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:odsCode/:orderId/associated-services/select/associated-service/price', () => {
-    const path = '/organisation/odsCode/order-1/associated-services/select/associated-service/price';
+  describe('POST /organisation/:odsCode/order/:orderId/associated-services/select/associated-service/price', () => {
+    const path = '/organisation/odsCode/order/order-1/associated-services/select/associated-service/price';
     const prices = [
       {
         priceId: 1,
@@ -418,7 +418,7 @@ describe('associated-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order-1/associated-services/neworderitem`);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/neworderitem`);
     });
   });
 });

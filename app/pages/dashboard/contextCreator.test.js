@@ -55,7 +55,7 @@ describe('getContext', () => {
 
   it('should construct newOrderButtonHref', () => {
     const context = getContext({ odsCode: someOdsCode });
-    expect(context.newOrderButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/neworder`);
+    expect(context.newOrderButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/neworder`);
   });
 
   describe('ordersData', () => {
@@ -71,7 +71,7 @@ describe('getContext', () => {
 
       expect(completeOrder1[0].data).toEqual('order2');
       expect(completeOrder1[0].classes).toEqual(classes);
-      expect(completeOrder1[0].href).toEqual(`${baseUrl}/organisation/${someOdsCode}/order2/summary`);
+      expect(completeOrder1[0].href).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/order2/summary`);
       expect(completeOrder1[0].dataTestId).toEqual('order2-id');
       expect(completeOrder1[1].data).toEqual('Some new order');
       expect(completeOrder1[1].classes).toEqual(classes);
@@ -94,7 +94,7 @@ describe('getContext', () => {
 
       expect(completeOrder2[0].data).toEqual('order3');
       expect(completeOrder2[0].classes).toEqual(classes);
-      expect(completeOrder2[0].href).toEqual(`${baseUrl}/organisation/${someOdsCode}/order3/summary`);
+      expect(completeOrder2[0].href).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/order3/summary`);
       expect(completeOrder2[0].dataTestId).toEqual('order3-id');
       expect(completeOrder2[5].data).toEqual('No');
       expect(completeOrder2[5].classes).toEqual(classes);
@@ -112,7 +112,7 @@ describe('getContext', () => {
 
       expect(incompleteOrder1[0].data).toEqual('order1');
       expect(incompleteOrder1[0].classes).toEqual(classes);
-      expect(incompleteOrder1[0].href).toEqual(`${baseUrl}/organisation/${someOdsCode}/order1`);
+      expect(incompleteOrder1[0].href).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/order1`);
       expect(incompleteOrder1[0].dataTestId).toEqual('order1-id');
       expect(incompleteOrder1[1].data).toEqual('Some Order');
       expect(incompleteOrder1[1].classes).toEqual(classes);

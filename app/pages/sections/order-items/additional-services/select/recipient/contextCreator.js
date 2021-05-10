@@ -10,8 +10,8 @@ export const backLinkHref = (req, additionalServicePrices, orderId, odsCode) => 
   }
 
   return ((additionalServicePrices || {}).prices || {}).length === 1
-    ? `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service`
-    : `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services/select/additional-service/price`;
+    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service`
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price`;
 };
 
 const generateRecipientOptions = ({ recipients, selectedAdditionalRecipientId }) => {

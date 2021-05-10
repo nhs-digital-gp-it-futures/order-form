@@ -15,8 +15,8 @@ import {
 import { baseUrl } from '../../config';
 import * as deleteOrderController from './controller';
 
-describe('GET /organisation/:odsCode/:orderId/delete-order', () => {
-  const path = '/organisation/odsCode/some-order-id/delete-order';
+describe('GET /organisation/:odsCode/order/:orderId/delete-order', () => {
+  const path = '/organisation/odsCode/order/some-order-id/delete-order';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -50,8 +50,8 @@ describe('GET /organisation/:odsCode/:orderId/delete-order', () => {
   });
 });
 
-describe('POST /organisation/:odsCode/:orderId/delete-order', () => {
-  const path = '/organisation/odsCode/order-1/delete-order';
+describe('POST /organisation/:odsCode/order/:orderId/delete-order', () => {
+  const path = '/organisation/odsCode/order/order-1/delete-order';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -108,6 +108,6 @@ describe('POST /organisation/:odsCode/:orderId/delete-order', () => {
       .expect(302);
 
     expect(res.redirect).toEqual(true);
-    expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order-1/delete-order/confirmation`);
+    expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/delete-order/confirmation`);
   });
 });

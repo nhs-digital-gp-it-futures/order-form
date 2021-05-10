@@ -45,16 +45,16 @@ export const getExistingOrderContext = ({
   }),
   deleteOrderButton: {
     text: commonManifest.deleteOrderButton.text,
-    href: `${baseUrl}/organisation/${odsCode}/${orderId}/delete-order`,
+    href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/delete-order`,
   },
   previewOrderButton: {
     text: commonManifest.previewOrderButton.text,
-    href: `${baseUrl}/organisation/${odsCode}/${orderId}/summary`,
+    href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/summary`,
   },
   completeOrderButton: {
     text: commonManifest.completeOrderButton.text,
     altText: commonManifest.completeOrderButton.disabledAltText,
-    href: `${baseUrl}/organisation/${odsCode}/${orderId}/complete-order`,
+    href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/complete-order`,
     disabled: !enableSubmitButton,
   },
 });

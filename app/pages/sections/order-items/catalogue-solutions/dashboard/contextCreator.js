@@ -12,7 +12,7 @@ const generateItems = ({ orderId, orderItems, odsCode }) => {
     const columns = [];
     columns.push(({
       data: orderItem.catalogueItemName,
-      href: `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/${orderItem.catalogueItemId}`,
+      href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/${orderItem.catalogueItemId}`,
       dataTestId: `${orderItem.catalogueItemId}-catalogueItemName`,
     }));
     columns.push(({
@@ -73,7 +73,7 @@ export const getContext = ({
   addedOrderItemsTable: generateAddedOrderItemsTable({
     orderId, addedOrderItemsTable: manifest.addedOrderItemsTable, orderItems, odsCode,
   }),
-  addOrderItemButtonHref: `${baseUrl}/organisation/${odsCode}/${orderId}/catalogue-solutions/select/solution`,
+  addOrderItemButtonHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution`,
   backLinkHref: `${baseUrl}/organisation/${orderId}`,
   orderItems,
 });

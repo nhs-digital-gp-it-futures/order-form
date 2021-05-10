@@ -22,7 +22,7 @@ export const deleteAssociatedServicesRoutes = (authProvider, addContext, session
       odsCode,
     });
     context.description = deleteManifest.description;
-    context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/${orderId}/associated-services/${catalogueItemId}`;
+    context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/${catalogueItemId}`;
 
     logger.info(`navigating to order ${orderId} associated-services ${catalogueItemId} deletion page`);
     return res.render('pages/sections/order-items/catalogue-solutions/delete/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -37,7 +37,7 @@ export const deleteAssociatedServicesRoutes = (authProvider, addContext, session
     await deleteCatalogueSolution({ orderId, orderItemId: catalogueItemId, accessToken });
 
     logger.info(`navigating to order ${orderId} associated-service ${catalogueItemId} delete confirmation page`);
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/associated-services/delete/${catalogueItemId}/confirmation/${solutionName}/continue`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/delete/${catalogueItemId}/confirmation/${solutionName}/continue`);
   }));
 
   router.get('/:catalogueItemId/confirmation/:solutionName/continue', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -58,7 +58,7 @@ export const deleteAssociatedServicesRoutes = (authProvider, addContext, session
 
   router.post('/:catalogueItemId/confirmation/:solutionName/continue', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, odsCode } = req.params;
-    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/${orderId}/associated-services`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services`);
   }));
 
   return router;

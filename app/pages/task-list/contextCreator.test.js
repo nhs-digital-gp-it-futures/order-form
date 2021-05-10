@@ -118,7 +118,7 @@ describe('task-list contextCreator', () => {
 
       const expectedDeleteOrderButtonContext = {
         text: commonManifest.deleteOrderButton.text,
-        href: `${baseUrl}/organisation/${someOdsCode}/${orderId}/delete-order`,
+        href: `${baseUrl}/organisation/${someOdsCode}/order/${orderId}/delete-order`,
       };
 
       const context = getContext({ orderId, odsCode: someOdsCode });
@@ -129,7 +129,7 @@ describe('task-list contextCreator', () => {
     it('should return the previewOrderButton context', () => {
       const expectedPreviewOrderButtonContext = {
         text: commonManifest.previewOrderButton.text,
-        href: `${baseUrl}/organisation/${someOdsCode}/order-id/summary`,
+        href: `${baseUrl}/organisation/${someOdsCode}/order/order-id/summary`,
       };
 
       const context = getContext({ orderId: 'order-id', odsCode: someOdsCode });
@@ -141,7 +141,7 @@ describe('task-list contextCreator', () => {
       const expectedSubmitOrderButtonContext = {
         text: commonManifest.completeOrderButton.text,
         altText: commonManifest.completeOrderButton.disabledAltText,
-        href: `${baseUrl}/organisation/${someOdsCode}/order-id/complete-order`,
+        href: `${baseUrl}/organisation/${someOdsCode}/order/order-id/complete-order`,
         disabled: false,
       };
 

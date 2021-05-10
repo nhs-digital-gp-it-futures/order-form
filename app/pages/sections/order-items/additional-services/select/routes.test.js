@@ -84,8 +84,8 @@ describe('additional-services select routes', () => {
     jest.resetAllMocks();
   });
 
-  describe('POST /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipients', () => {
-    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service/price/recipients';
+  describe('POST /organisation/:odsCode/order/:orderId/additional-services/select/additional-service/price/recipients', () => {
+    const path = '/organisation/odsCode/order/order-1/additional-services/select/additional-service/price/recipients';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -156,7 +156,7 @@ describe('additional-services select routes', () => {
     });
 
     it('should redirect to additional services page when a recipient is selected and orderItemId is posted', async () => {
-      const slug = '/organisation/order-1/additional-services/8372';
+      const slug = '/organisation/odsCode/order/order-1/additional-services/8372';
       const expectedLocation = `${config.baseUrl}${slug}?submitted=${8372}`;
       selectRecipientController.getSelectSolutionPriceEndpoint = jest.fn()
         .mockReturnValue(slug);
@@ -204,14 +204,14 @@ describe('additional-services select routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipients/date`);
+          expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/odsCode/order/order-1/additional-services/select/additional-service/price/recipients/date`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
   });
 
-  describe('POST /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
-    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service/price/recipients/date';
+  describe('POST /organisation/:odsCode/order/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
+    const path = '/organisation/odsCode/order/order-1/additional-services/select/additional-service/price/recipients/date';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -299,8 +299,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/additional-services/select', () => {
-    const path = '/organisation/odsCode/order-1/additional-services/select';
+  describe('GET /organisation/:odsCode/order/:orderId/additional-services/select', () => {
+    const path = '/organisation/odsCode/order/order-1/additional-services/select';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -325,12 +325,12 @@ describe('additional-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service`);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/odsCode/order/order-1/additional-services/select/additional-service`);
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service', () => {
-    const path = '/organisation/odsCode/some-order-id/additional-services/select/additional-service';
+  describe('GET /organisation/:odsCode/order/:orderId/additional-services/select/additional-service', () => {
+    const path = '/organisation/odsCode/order/some-order-id/additional-services/select/additional-service';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -386,8 +386,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:odsCode/:orderId/additional-services/select/additional-service', () => {
-    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service';
+  describe('POST /organisation/:odsCode/order/:orderId/additional-services/select/additional-service', () => {
+    const path = '/organisation/odsCode/order/order-1/additional-services/select/additional-service';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -475,7 +475,7 @@ describe('additional-services select routes', () => {
       expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
 
-    it('should redirect to /organisation/some-order-id/additional-services/catalogueItemId if a existing additional service is selected', async () => {
+    it('should redirect to /organisation/odsCode/order/some-order-id/additional-services/catalogueItemId if a existing additional service is selected', async () => {
       selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
         .mockResolvedValue([]);
       getAdditionalServices.mockResolvedValue(additionalServices);
@@ -501,10 +501,10 @@ describe('additional-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/${additionalServiceId}`);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/odsCode/order/order-1/additional-services/${additionalServiceId}`);
     });
 
-    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price if an additional service is selected', async () => {
+    it('should redirect to /organisation/odsCode/order/some-order-id/additional-services/select/additional-service/price if an additional service is selected', async () => {
       selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
         .mockResolvedValue([]);
 
@@ -532,12 +532,12 @@ describe('additional-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price`);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/odsCode/order/order-1/additional-services/select/additional-service/price`);
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service/price', () => {
-    const path = '/organisation/odsCode/some-order-id/additional-services/select/additional-service/price';
+  describe('GET /organisation/:odsCode/order/:orderId/additional-services/select/additional-service/price', () => {
+    const path = '/organisation/odsCode/order/some-order-id/additional-services/select/additional-service/price';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -578,7 +578,7 @@ describe('additional-services select routes', () => {
       });
     });
 
-    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipients when pricing has one value', async () => {
+    it('should redirect to /organisation/odsCode/order/some-order-id/additional-services/select/additional-service/price/recipients when pricing has one value', async () => {
       getCatalogueItemPricing.mockResolvedValue({
         prices: [
           { priceId: 42 },
@@ -591,7 +591,7 @@ describe('additional-services select routes', () => {
         .set('Cookie', [mockAuthorisedCookie, `${sessionKeys.selectedItemId}=12`]);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipients`);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/odsCode/order/some-order-id/additional-services/select/additional-service/price/recipients`);
     });
 
     it('should return the additional-services select price page if authorised and pricing has multiple values', async () => {
@@ -615,8 +615,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:odsCode/:orderId/additional-services/select/additional-service/price', () => {
-    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service/price';
+  describe('POST /organisation/:odsCode/order/:orderId/additional-services/select/additional-service/price', () => {
+    const path = '/organisation/odsCode/order/order-1/additional-services/select/additional-service/price';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -680,7 +680,7 @@ describe('additional-services select routes', () => {
       expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
 
-    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price/recipients if a price is selected', async () => {
+    it('should redirect to /organisation/odsCode/order/some-order-id/additional-services/select/additional-service/price/recipients if a price is selected', async () => {
       additionalServicePriceController.validateAdditionalServicePriceForm = jest.fn()
         .mockReturnValue({ success: true });
 
@@ -701,12 +701,12 @@ describe('additional-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipients`);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/odsCode/order/order-1/additional-services/select/additional-service/price/recipients`);
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipient', () => {
-    const path = '/organisation/odsCode/some-order-id/additional-services/select/additional-service/price/recipient';
+  describe('GET /organisation/:odsCode/order/:orderId/additional-services/select/additional-service/price/recipient', () => {
+    const path = '/organisation/odsCode/order/some-order-id/additional-services/select/additional-service/price/recipient';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -746,6 +746,7 @@ describe('additional-services select routes', () => {
           recipients,
           selectedAdditionalRecipientId,
           additionalServicePrices,
+          odsCode: 'odsCode',
         });
     });
 
@@ -762,8 +763,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipients', () => {
-    const path = '/organisation/odsCode/some-order-id/additional-services/select/additional-service/price/recipients';
+  describe('GET /organisation/:odsCode/order/:orderId/additional-services/select/additional-service/price/recipients', () => {
+    const path = '/organisation/odsCode/order/some-order-id/additional-services/select/additional-service/price/recipients';
     beforeEach(() => {
       getAdditionalServicesContextItems.getAdditionalServicesContextItems = jest.fn()
         .mockResolvedValue({
@@ -820,8 +821,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipient', () => {
-    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service/price/recipient';
+  describe('POST /organisation/:odsCode/order/:orderId/additional-services/select/additional-service/price/recipient', () => {
+    const path = '/organisation/odsCode/order/order-1/additional-services/select/additional-service/price/recipient';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -891,7 +892,7 @@ describe('additional-services select routes', () => {
         });
     });
 
-    it('should redirect to /organisation/order-1/additional-services/select/additional-service/neworderitem if a recipient is selected', async () => {
+    it('should redirect to /organisation/odsCode/order/order-1/additional-services/select/additional-service/neworderitem if a recipient is selected', async () => {
       getRecipients.mockResolvedValue([]);
 
       selectAdditionalServiceRecipientController.validateAdditionalServiceRecipientForm = jest.fn()
@@ -920,14 +921,14 @@ describe('additional-services select routes', () => {
         .then((res) => {
           expect(res.redirect).toEqual(true);
           expect(res.headers.location)
-            .toEqual(`${config.baseUrl}/organisation/order-1/additional-services/neworderitem`);
+            .toEqual(`${config.baseUrl}/organisation/odsCode/order/order-1/additional-services/neworderitem`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
-    const path = '/organisation/odsCode/order-1/additional-services/select/additional-service/price/recipients/date';
+  describe('GET /organisation/:odsCode/order/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
+    const path = '/organisation/odsCode/order/order-1/additional-services/select/additional-service/price/recipients/date';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -957,7 +958,7 @@ describe('additional-services select routes', () => {
         .expect(200)
         .then(() => {
           expect(mockContext.backLinkHref)
-            .toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipients`);
+            .toEqual(`${config.baseUrl}/organisation/odsCode/order/order-1/additional-services/select/additional-service/price/recipients`);
         });
     });
 
@@ -978,8 +979,8 @@ describe('additional-services select routes', () => {
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/additional-services/select/additional-service/price/flat/ondemand', () => {
-    const path = '/organisation/odsCode/some-order-id/additional-services/select/additional-service/price/flat/ondemand';
+  describe('GET /organisation/:odsCode/order/:orderId/additional-services/select/additional-service/price/flat/ondemand', () => {
+    const path = '/organisation/odsCode/order/some-order-id/additional-services/select/additional-service/price/flat/ondemand';
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
@@ -1013,7 +1014,7 @@ describe('additional-services select routes', () => {
         .expect(200)
         .then(() => {
           expect(context.backLinkHref)
-            .toEqual(`${config.baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipients/date`);
+            .toEqual(`${config.baseUrl}/organisation/odsCode/order/some-order-id/additional-services/select/additional-service/price/recipients/date`);
         });
     });
 

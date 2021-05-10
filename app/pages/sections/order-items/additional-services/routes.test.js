@@ -41,8 +41,8 @@ describe('additional-services section routes', () => {
     jest.resetAllMocks();
   });
 
-  describe('GET /organisation/:odsCode/:orderId/additional-services', () => {
-    const path = '/organisation/odsCode/some-order-id/additional-services';
+  describe('GET /organisation/:odsCode/order/:orderId/additional-services', () => {
+    const path = '/organisation/odsCode/order/some-order-id/additional-services';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -75,8 +75,8 @@ describe('additional-services section routes', () => {
     });
   });
 
-  describe('POST /organisation/:odsCode/:orderId/additional-services', () => {
-    const path = '/organisation/odsCode/order-id/additional-services';
+  describe('POST /organisation/:odsCode/order/:orderId/additional-services', () => {
+    const path = '/organisation/odsCode/order/order-id/additional-services';
 
     it('should return 403 forbidden if no csrf token is available', () => {
       putOrderSection.mockResolvedValue({});
@@ -142,8 +142,8 @@ describe('additional-services section routes', () => {
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/additional-services/:catalogueItemId', () => {
-    const path = '/organisation/odsCode/some-order-id/additional-services/neworderitem';
+  describe('GET /organisation/:odsCode/order/:orderId/additional-services/:catalogueItemId', () => {
+    const path = '/organisation/odsCode/order/some-order-id/additional-services/neworderitem';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -183,8 +183,8 @@ describe('additional-services section routes', () => {
     });
   });
 
-  describe('POST /organisation/:odsCode/:orderId/additional-services/:catalogueItemId', () => {
-    const path = '/organisation/odsCode/some-order-id/additional-services/neworderitem';
+  describe('POST /organisation/:odsCode/order/:orderId/additional-services/:catalogueItemId', () => {
+    const path = '/organisation/odsCode/order/some-order-id/additional-services/neworderitem';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({

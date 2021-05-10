@@ -22,8 +22,8 @@ describe('catalogue-solutions delete routes', () => {
     jest.resetAllMocks();
   });
 
-  describe('GET /organisation/odsCode/:orderId/catalogue-solutions/delete/:orderItemId/confirmation/:solutionName', () => {
-    const path = '/organisation/odsCode/some-order-id/catalogue-solutions/delete/order-item-1/confirmation/write-on-time';
+  describe('GET /organisation/odsCode/order/:orderId/catalogue-solutions/delete/:orderItemId/confirmation/:solutionName', () => {
+    const path = '/organisation/odsCode/order/some-order-id/catalogue-solutions/delete/order-item-1/confirmation/write-on-time';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -55,8 +55,8 @@ describe('catalogue-solutions delete routes', () => {
     });
   });
 
-  describe('POST /organisation/:odsCode/:orderId/catalogue-solutions/delete/:orderItemId/confirmation/:solutionName', () => {
-    const path = '/organisation/odsCode/some-order-id/catalogue-solutions/delete/order-item-1/confirmation/write-on-time';
+  describe('POST /organisation/:odsCode/order/:orderId/catalogue-solutions/delete/:orderItemId/confirmation/:solutionName', () => {
+    const path = '/organisation/odsCode/order/some-order-id/catalogue-solutions/delete/order-item-1/confirmation/write-on-time';
 
     it('should return 403 forbidden if no csrf token is available', async () => {
       await testPostPathWithoutCsrf({
@@ -111,7 +111,7 @@ describe('catalogue-solutions delete routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/some-order-id/catalogue-solutions/delete/order-item-1/confirmation/write-on-time/continue`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/catalogue-solutions/delete/order-item-1/confirmation/write-on-time/continue`);
         });
     });
   });

@@ -21,7 +21,7 @@ export const getContext = ({ orderId, fundingSource, odsCode }) => {
   const context = ({
     ...manifest,
     title: `${manifest.title} ${orderId}`,
-    backLinkHref: `${baseUrl}/organisation/${odsCode}/${orderId}`,
+    backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}`,
     questions: generateQuestionsContext({ fundingSource }),
   });
   return context;

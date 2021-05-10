@@ -11,14 +11,14 @@ export const backLinkHref = ({
   const slug = (referer ? referer.split('/').pop() : '').toLowerCase();
 
   const singlePriceItemBackLink = ((associatedServicePrices || {}).prices || {}).length === 1
-    ? `${baseUrl}/organisation/${odsCode}/${orderId}/associated-services/select/associated-service`
-    : `${baseUrl}/organisation/${odsCode}/${orderId}/associated-services/select/associated-service/price`;
+    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/select/associated-service`
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/select/associated-service/price`;
 
   if (slug === 'associated-service' || slug === 'price' || slug === 'associated-services') {
     return referer;
   }
 
-  return slug === 'neworderitem' ? singlePriceItemBackLink : `${baseUrl}/organisation/${odsCode}/${orderId}/associated-services`;
+  return slug === 'neworderitem' ? singlePriceItemBackLink : `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services`;
 };
 
 export const getContext = ({
@@ -53,7 +53,7 @@ export const getContext = ({
   deleteButton: {
     altText: catalogueItemId === 'neworderitem' ? commonManifest.deleteButton.altText : '',
     disabled: catalogueItemId === 'neworderitem',
-    href: `${baseUrl}/organisation/${odsCode}/${orderId}/associated-services/delete/${catalogueItemId}/confirmation/${itemName}`,
+    href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/delete/${catalogueItemId}/confirmation/${itemName}`,
     text: commonManifest.deleteButton.text,
   },
 });

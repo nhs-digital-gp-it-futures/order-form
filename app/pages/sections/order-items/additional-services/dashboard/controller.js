@@ -48,7 +48,7 @@ export const updateContext = (
   const submittedOrderItemId = req.query.submitted;
   context.backLinkHref = (submittedOrderItemId !== undefined
     && submittedOrderItemId !== 'neworderitem' && !catalogueItemExists)
-    ? `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services`
+    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`
     : backLinkHref({
       req, selectedPrice, orderId, catalogueItemExists, odsCode,
     });
@@ -76,7 +76,7 @@ export const updateContextPost = (req, selectedPrice, context, orderId, solution
 
   context.backLinkHref = catalogueItemId.toLowerCase() === 'neworderitem'
     ? backLinkHref({ req, selectedPrice, orderId })
-    : `${baseUrl}/organisation/${odsCode}/${orderId}/additional-services`;
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`;
 
   context.deleteButton.altText = context.deleteButton.altText
     .replace(KeyCatalogueSolution, KeyAdditionalService);
