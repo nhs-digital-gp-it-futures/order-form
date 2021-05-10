@@ -6,7 +6,7 @@ import { getDashboardContext } from './controller';
 const router = express.Router({ mergeParams: true });
 
 export const dashboardRoutes = (authProvider, addContext) => {
-  router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+  router.get('/:odsCode', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const context = await getDashboardContext({
       accessToken,

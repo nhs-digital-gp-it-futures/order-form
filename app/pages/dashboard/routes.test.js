@@ -14,7 +14,7 @@ dashboardController.getDashboardContext = jest.fn()
   .mockResolvedValueOnce({});
 
 describe('GET /organisation', () => {
-  const path = '/organisation';
+  const path = '/organisation/J28';
 
   afterEach(() => {
     jest.resetAllMocks();
