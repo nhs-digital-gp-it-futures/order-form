@@ -9,6 +9,7 @@ jest.mock('./contextCreator', () => ({
 }));
 jest.mock('../select/controller');
 jest.mock('../../helpers/controllers/getIsUserProxy');
+jest.mock('../../helpers/controllers/odsCodeLookup.js');
 
 describe('dashboard controller', () => {
   describe('getDashboardContext', () => {
