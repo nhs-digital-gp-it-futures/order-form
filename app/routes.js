@@ -69,7 +69,11 @@ export const routes = (authProvider, sessionManager) => {
 
   errorHandler(router, (error, req, res) => {
     logger.error(`${error.title || error.name} - ${error.description || error.name}`);
-    return res.render('pages/error/template.njk', addContext({ context: error, user: req.user }));
+    const context = {
+      ...error,
+      isDevelopment: config.isDevelopment(),
+    };
+    return res.render('pages/error/template.njk', addContext({ context, user: req.user }));
   });
 
   return router;
