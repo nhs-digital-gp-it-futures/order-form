@@ -8,7 +8,7 @@ jest.mock('../api/oapi/getOrganisation');
 jest.mock('../api/oapi/getOrganisationUsingOdsCode');
 jest.mock('../../logger');
 
-fdescribe('odsCodeLookup', () => {
+describe('odsCodeLookup', () => {
   const accessToken = 'access_token';
 
   describe('getOdsCodeForOrganisation', () => {

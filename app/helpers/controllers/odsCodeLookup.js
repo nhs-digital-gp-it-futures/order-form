@@ -78,11 +78,6 @@ export const getOrganisationIdFromOdsCode = async ({
         saveLookupTableToSession({
           organisation, lookupTable, req, sessionManager,
         });
-      // } else {
-      //   console.log('=================', 'getOrganisationUsingOdsCode', organisation);
-      //   if (!organisation.organisationId) {
-      //     console.error('===== ERROR, no organisationId');
-      //   }
       }
     }
   }
