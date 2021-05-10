@@ -5,7 +5,7 @@ import { logger } from '../../../logger';
 
 jest.mock('buying-catalogue-library');
 
-describe('getOrderSummary', () => {
+xdescribe('getOrderSummary', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
