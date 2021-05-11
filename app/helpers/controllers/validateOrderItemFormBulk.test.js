@@ -15,6 +15,7 @@ const selectedPrice = {
     description: 'per consultation',
   },
   price: 0.1,
+  listPrice: 0.3,
 };
 
 const deliveryDate = [{
@@ -172,7 +173,7 @@ describe('validateOrderItemFormBulk', () => {
     it('should return an array of one validation error if price is greater than the list price', () => {
       getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
       const data = {
-        price: '0.11',
+        price: '0.4',
         quantity: ['1'],
         deliveryDate,
       };
