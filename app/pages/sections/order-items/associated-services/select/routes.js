@@ -80,12 +80,25 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         catalogueItemsKey: 'associatedServices',
       });
 
+      const orderItems = sessionManager.getFromSession({ req, key: sessionKeys.orderItems });
+      const existingItem = orderItems
+        .filter((orderItem) => orderItem.catalogueItemId === selectedItem.catalogueItemId);
+
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedItemId, value: selectedItemId,
       });
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedItemName, value: selectedItem.name,
       });
+
+      if (existingItem.length > 0 && existingItem[0].catalogueItemId) {
+        sessionManager.saveToSession({
+          req, key: sessionKeys.catalogueItemExists, value: existingItem,
+        });
+        return res.redirect(
+          `${config.baseUrl}/organisation/${orderId}/associated-services/${existingItem[0].catalogueItemId}`,
+        );
+      }
 
       logger.info('redirecting to associated services select price page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`);
@@ -128,6 +141,15 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
     sessionManager.saveToSession({
       req, key: sessionKeys.associatedServicePrices, value: associatedServicePrices,
     });
+
+    if (((associatedServicePrices || {}).prices || {}).length === 1) {
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedPriceId, value: associatedServicePrices.prices[0].priceId,
+      });
+
+      logger.info('redirecting to additional services select recipients page');
+      return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/neworderitem`);
+    }
 
     const context = getAssociatedServicePricePageContext({
       orderId,

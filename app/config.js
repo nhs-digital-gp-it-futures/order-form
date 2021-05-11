@@ -72,4 +72,7 @@ module.exports = {
 
   // The password to connect to redis
   redisPass: process.env.REDIS_PASS,
+
+  // content and user journey if they can order for multiple organisations
+  showProxy: process.env.SHOW_PROXY || 'true',
 };

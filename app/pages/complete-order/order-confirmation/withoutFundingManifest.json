@@ -1,10 +1,11 @@
 {
   "backLinkText": "Go back to all orders",
   "title": "Order {{orderId}} completed",
-  "description": "You've successfully completed your order, but it'll not be automatically processed and paid for. You'll need to include a copy of your order summary in your contract.",
+  "description": "You've successfully completed your order. As your centrally held funding allocation is not the only source of funding, contact the supplier to make payment. Your order summary will need to be included in the contract you send to them.",
+  "insetAdvice": "Remember, if you're paying for any items using your centrally held funding allocation, you'll need to create a separate order where the payment will be centrally processed.",
   "orderSummaryButtonText": "Get order summary",
   "orderSummaryAdvice": [
     "By using this button you can view your order summary. You'll be given the option to print a copy or create a PDF version that can be included in your contract.",
-    "You can get a copy of your order summary at any time by using the relevant link in your Organisation's completed orders section."
+    "You can get a copy of your order summary at any time by using the relevant link in your organisation's completed orders section."
   ]
 }

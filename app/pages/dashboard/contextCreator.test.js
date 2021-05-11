@@ -49,7 +49,7 @@ describe('getContext', () => {
 
   it('should construct title', () => {
     const context = getContext({ orgName: 'Org1' });
-    expect(context.title).toEqual('Org1 orders');
+    expect(context.title).toEqual('Org1');
   });
 
   it('should construct newOrderButtonHref', () => {

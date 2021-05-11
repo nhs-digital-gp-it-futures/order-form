@@ -124,31 +124,35 @@ export const getOrderItemPageDataBulk = async ({
   }
 
   const orderItems = await getOrderItems({ orderId, orderItemId, accessToken });
-  const selectedCatalogueSolution = orderItems
+  const selectedItem = orderItems
     .filter((orderItemFiltered) => orderItemFiltered.catalogueItemId === orderItemId);
   const serviceRecipients = [];
-  const filteredServiceRecipients = selectedCatalogueSolution[0].serviceRecipients;
+  const filteredServiceRecipients = selectedItem[0].serviceRecipients;
   filteredServiceRecipients.forEach(
     (serviceRecipient) => {
       serviceRecipients.push(`${serviceRecipient.name} (${serviceRecipient.odsCode})`);
     },
   );
 
-  const itemId = selectedCatalogueSolution[0].catalogueItemId;
-  const itemName = selectedCatalogueSolution[0].catalogueItemName;
-  const catalogueSolutionId = selectedCatalogueSolution[0].catalogueItemId;
+  const itemId = selectedItem[0].catalogueItemId;
+  const itemName = selectedItem[0].catalogueItemName;
+
+  const catalogueSolutions = orderItems.filter((filtered) => filtered.catalogueItemType === 'Solution');
+  const catalogueSolutionId = catalogueSolutions && catalogueSolutions.length > 0
+    ? catalogueSolutions[0].catalogueItemId
+    : selectedItem[0].catalogueItemId;
   const originalItem = await getSelectedPrice(
-    { selectedPriceId: selectedCatalogueSolution[0].priceId, accessToken },
+    { selectedPriceId: selectedItem[0].priceId, accessToken },
   );
   const selectedPrice = {
-    priceId: selectedCatalogueSolution[0].priceId,
+    priceId: selectedItem[0].priceId,
     originalPrice: originalItem.price,
-    price: selectedCatalogueSolution[0].price,
-    itemUnit: selectedCatalogueSolution[0].itemUnit,
-    timeUnit: selectedCatalogueSolution[0].timeUnit,
-    type: selectedCatalogueSolution[0].type,
-    provisioningType: selectedCatalogueSolution[0].provisioningType,
-    currencyCode: selectedCatalogueSolution[0].currencyCode,
+    price: selectedItem[0].price,
+    itemUnit: selectedItem[0].itemUnit,
+    timeUnit: selectedItem[0].timeUnit,
+    type: selectedItem[0].type,
+    provisioningType: selectedItem[0].provisioningType,
+    currencyCode: selectedItem[0].currencyCode,
   };
 
   const formData = {
@@ -162,12 +166,12 @@ export const getOrderItemPageDataBulk = async ({
   const selectedRecipients = [];
 
   const newRecipientsOrderItems = await checkAndUpdateNewOrderItems({
-    req, sessionManager, accessToken, selectedCatalogueSolution, serviceRecipients,
+    req, sessionManager, accessToken, selectedCatalogueSolution: selectedItem, serviceRecipients,
   });
 
   const updatedOrderItems = newRecipientsOrderItems && newRecipientsOrderItems.length > 0
     ? newRecipientsOrderItems
-    : selectedCatalogueSolution;
+    : selectedItem;
 
   updatedOrderItems.forEach((orderItem) => {
     orderItem.serviceRecipients.forEach((serviceRecipient) => {

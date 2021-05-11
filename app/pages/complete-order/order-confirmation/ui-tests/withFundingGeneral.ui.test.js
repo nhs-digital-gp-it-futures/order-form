@@ -74,20 +74,32 @@ test('should render the description', async (t) => {
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
-test('should not render the get order summary button', async (t) => {
+test('should render the get order summary button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const orderSummaryButton = Selector('[data-test-id="order-confirmation-page-orderSummaryButton"]');
 
-  await t.expect(orderSummaryButton.exists).notOk();
+  await t
+    .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
 });
 
-test('should not render the order summary advice', async (t) => {
+test('should render the get order summary button link with href /order/organisation/order-id/summary?print=true', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const advice = Selector('div[data-test-id="order-confirmation-page-orderSummaryAdvice"]');
+  const orderSummaryButton = Selector('[data-test-id="order-confirmation-page-orderSummaryButton"] a');
 
-  await t.expect(advice.exists).notOk();
+  await t
+    .expect(orderSummaryButton.getAttribute('href')).eql('/order/organisation/order-id/summary?print=true');
+});
+
+test('should render the order summary advice', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  await Promise.all(content.orderSummaryAdvice.map(async (advice, idx) => {
+    const selectedAdvice = Selector(`div[data-test-id="order-confirmation-page-orderSummaryAdvice"] p:nth-child(${idx + 1})`);
+    await t.expect(await extractInnerText(selectedAdvice)).eql(advice);
+  }));
 });

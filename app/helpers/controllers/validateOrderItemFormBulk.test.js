@@ -86,6 +86,10 @@ describe('validateOrderItemFormBulk', () => {
       field: 'Quantity',
       id: 'QuantityMustBeANumber',
     };
+    const quantityGreaterThanZero = {
+      field: 'Quantity',
+      id: 'QuantityGreaterThanZero',
+    };
     const quantityInvalid = {
       field: 'Quantity',
       id: 'QuantityInvalid',
@@ -242,6 +246,19 @@ describe('validateOrderItemFormBulk', () => {
       const errors = validateOrderItemFormBulk({ orderItemType, data, selectedPrice });
 
       expect(errors).toEqual([quantityMustBeANumber]);
+    });
+
+    it('should return an array of one validation error if quantity is less than zero', () => {
+      getSelectedPriceManifest.getSelectedPriceManifest.mockReturnValue(selectedPriceManifest);
+      const data = {
+        price: '0.1',
+        quantity: ['-1'],
+        deliveryDate,
+      };
+
+      const errors = validateOrderItemFormBulk({ orderItemType, data, selectedPrice });
+
+      expect(errors).toEqual([quantityGreaterThanZero]);
     });
 
     it('should return an array of one validation error if quantity is invalid', () => {

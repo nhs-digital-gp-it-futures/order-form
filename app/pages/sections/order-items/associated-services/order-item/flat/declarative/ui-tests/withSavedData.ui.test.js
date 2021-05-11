@@ -37,22 +37,19 @@ const orderItem = {
 
 const baseServiceRecipient = { name: 'Some service recipient 2', odsCode: 'OX3' };
 const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
-const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
 
 const validRequestBody = {
   ...orderItem,
   serviceRecipients: [validServiceRecipient],
 };
 
-const invalidRequestBody = {
-  ...orderItem,
-  serviceRecipients: [invalidServiceRecipient],
-};
-
 const orderItemPageDataInSession = JSON.stringify({
   itemId: catalogueItemId,
   itemName: orderItem.catalogueItemName,
   selectedPrice,
+});
+const associatedServicePricesInSesion = JSON.stringify({
+  prices: [{ priceId: 1 }, { priceId: 2 }],
 });
 
 const mocks = () => {
@@ -68,9 +65,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
+    await setState(ClientFunction)(sessionKeys.associatedServicePrices, associatedServicePricesInSesion);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
+    await setState(ClientFunction)(sessionKeys.associatedServicePrices, associatedServicePricesInSesion);
   }
 };
 
@@ -126,7 +125,7 @@ test('should render the delete button as not disabled', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="delete-button"] button');
+  const button = Selector('[data-test-id="delete-button"] a');
 
   await t
     .expect(await extractInnerText(button)).eql('Delete')
@@ -203,37 +202,17 @@ test('should navigate to associated services dashboard page if save button is cl
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-  nock(organisationApiUrl)
-    .get('/api/v1/Organisations/org-id')
-    .reply(200, baseServiceRecipient);
-
-  nock(orderApiUrl)
-    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, invalidRequestBody)
-    .reply(400, {
-      errors: {
-        'ServiceRecipients[0].Quantity': ['QuantityGreaterThanZero'],
-      },
-    });
-
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  // const errorMessage = Selector('#quantity-error');
   const quantityInput = Selector('[data-test-id="question-quantity"] input');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .typeText(quantityInput, '0', { replace: true })
+    .typeText(quantityInput, '-8', { replace: true })
     .click(saveButton);
 
   await t
-    .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-
-  // Currently broken, TODO: fix
-  // .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
-
-    .expect(quantityInput.getAttribute('value')).eql('0');
-  // .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
+    .expect(await extractInnerText(errorSummary)).contains(content.errorMessages.QuantityGreaterThanZero);
 });

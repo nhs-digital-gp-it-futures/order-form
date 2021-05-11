@@ -1,5 +1,5 @@
 import manifest from './manifest.json';
-import { getContext, getErrorContext } from './contextCreator';
+import { backLinkHref, getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../../../../config';
 import * as errorContext from '../../../../getSectionErrorContext';
 
@@ -8,6 +8,27 @@ jest.mock('../../../../getSectionErrorContext', () => ({
 }));
 
 describe('additional-services select-recipient contextCreator', () => {
+  describe('backLinkHref', () => {
+    const orderId = 'order-Id-30';
+    const orderItemId = 'order-item-id-85';
+    const req = {
+      headers: {},
+    };
+
+    it('should return referer if it ends additional service order item Id URL', () => {
+      const referer = `https://some-nhs-site.com/${orderId}/additional-services/${orderItemId}`;
+      req.headers.referer = referer;
+      const actual = backLinkHref(req, {}, orderId);
+      expect(actual).toEqual(referer);
+    });
+
+    it('should return price URL if referer does not end with additional service order item Id URL', () => {
+      req.headers.referer = `https://some-nhs-site.com/${orderId}/additional-services/service/95`;
+      const actual = backLinkHref(req, {}, orderId);
+      expect(actual).toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);
+    });
+  });
+
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1' });

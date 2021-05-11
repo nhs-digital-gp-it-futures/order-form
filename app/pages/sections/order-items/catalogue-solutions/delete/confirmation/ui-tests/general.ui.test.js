@@ -69,7 +69,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="delete-catalogue-confirmation-page-description"]');
+  const description = Selector('p[data-test-id="delete-catalogue-confirmation-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -88,7 +88,6 @@ test('should redirect to /organisation/order-id/catalogue-solutions when Continu
   await t.navigateTo(pageUrl);
   const button = Selector('[data-test-id="continue-button"] button');
   await t
-    .debug()
     .click(button)
     .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions');
 });

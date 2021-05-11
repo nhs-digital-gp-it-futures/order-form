@@ -51,6 +51,14 @@ describe('transformApiValidationResponse', () => {
     expect(errors).toEqual([{ field: deliveryDate, id: deliveryDateError }]);
   });
 
+  it('should retrieve name from array validation response', () => {
+    const errors = transformApiValidationResponse({
+      [`ServiceRecipients[0].${deliveryDate}`]: [deliveryDateError],
+    });
+
+    expect(errors).toEqual([{ field: deliveryDate, id: deliveryDateError }]);
+  });
+
   it('should transform multiple errors in a bulk validation error response', () => {
     const errors = transformApiValidationResponse({
       [`[0].${deliveryDate}`]: [deliveryDateError],

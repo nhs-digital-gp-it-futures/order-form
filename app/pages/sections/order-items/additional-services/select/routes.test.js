@@ -16,6 +16,7 @@ import {
 import * as selectAdditionalServiceController from './additional-service/controller';
 import * as additionalServicePriceController from './price/controller';
 import * as selectAdditionalServiceRecipientController from './recipient/controller';
+import * as catalogueSolutionsFlatOrderItemController from '../../catalogue-solutions/order-item/flat/controller';
 import config from '../../../../../config';
 import { getRecipients } from '../../../../../helpers/api/ordapi/getRecipients';
 import * as routerHelper from '../../../../../helpers/routes/routerHelper';
@@ -29,6 +30,7 @@ import * as validateFormFunction from '../../../../../helpers/controllers/valida
 import * as selectRecipientController from '../../catalogue-solutions/select/recipients/controller';
 import * as selectPlannedDateController from '../../catalogue-solutions/select/date/controller';
 import { getCommencementDate } from '../../../../../helpers/routes/getCommencementDate';
+import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/ordapi/getRecipients');
@@ -36,15 +38,46 @@ jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 jest.mock('../../../../../helpers/api/bapi/getAdditionalServices');
 jest.mock('../../../../../helpers/routes/getCommencementDate');
+jest.mock('../../../../../helpers/api/ordapi/putPlannedDeliveryDate');
 
 const mockRecipientSessionState = JSON.stringify([
   { id: 'recipient-1', name: 'Recipient 1' },
   { id: 'recipient-2', name: 'Recipient 2' },
 ]);
+const mockSessionOrderItemsState = JSON.stringify([
+  { catalogueItemId: '100001-001-A01', catalogueItemType: 'AdditionalService', catalogueItemName: 'Additionalservice 1' },
+  { catalogueItemId: '100001-001-A02', catalogueItemType: 'AdditionalService', catalogueItemName: 'Additionalservice 2' },
+]);
+const additionalServiceId = '100001-001-A01';
+const additionalServices = [
+  {
+    additionalServiceId,
+    name: 'Additionalservice 1',
+  }];
+const selectedCatalogueItemIdInSession = { catalogueItemId: '100001-001-A01', name: 'Additionalservice 4', solution: { solutionId: 'solution-1' } };
+const mockOrderItemsCookie = `${sessionKeys.orderItems}=${mockSessionOrderItemsState}`;
+const mockSelectedItemCookie = `${sessionKeys.selectedItemId}=${additionalServiceId}`;
+const mockAdditionalServicesCookie = `${sessionKeys.additionalServices}=${JSON.stringify(additionalServices)}`;
 const mockRecipientsCookie = `${sessionKeys.recipients}=${mockRecipientSessionState}`;
-
 const mockSelectedItemNameState = 'Item name';
 const mockSelectedItemNameCookie = `${sessionKeys.selectedItemName}=${mockSelectedItemNameState}`;
+const prices = [
+  {
+    priceId: 1,
+    type: 'flat',
+    currencyCode: 'GBP',
+    itemUnit: {
+      name: 'patient',
+      description: 'per patient',
+    },
+    timeUnit: {
+      name: 'year',
+      description: 'per year',
+    },
+    price: 1.64,
+  }];
+
+const pricesCookie = `${sessionKeys.additionalServicePrices}=${JSON.stringify(prices)}`;
 
 describe('additional-services select routes', () => {
   afterEach(() => {
@@ -122,7 +155,36 @@ describe('additional-services select routes', () => {
         });
     });
 
-    it('should redirect to /organisation/order-1/additional-services/price/recipients/date when a recipient is selected', async () => {
+    it('should redirect to additional services page when a recipient is selected and orderItemId is posted', async () => {
+      const slug = '/organisation/order-1/additional-services/8372';
+      const expectedLocation = `${config.baseUrl}${slug}?submitted=${8372}`;
+      selectRecipientController.getSelectSolutionPriceEndpoint = jest.fn()
+        .mockReturnValue(slug);
+      validateFormFunction.validateSolutionRecipientsForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie,
+        ],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockRecipientsCookie, mockSelectedItemNameCookie])
+        .send({ _csrf: csrfToken, orderItemId: 8372 })
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(expectedLocation);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should redirect to delivery date page when a recipient is selected', async () => {
       validateFormFunction.validateSolutionRecipientsForm = jest.fn()
         .mockReturnValue({ success: true });
 
@@ -143,6 +205,95 @@ describe('additional-services select routes', () => {
         .then((res) => {
           expect(res.redirect).toEqual(true);
           expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipients/date`);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+  });
+
+  describe('POST /organisation/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
+    const path = '/organisation/order-1/additional-services/select/additional-service/price/recipients/date';
+
+    it('should return 403 forbidden if no csrf token is available', () => (
+      testPostPathWithoutCsrf({
+        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
+      })
+    ));
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedPostPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSelectedItemNameCookie],
+        postPathCookies: [],
+        expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedPostPathForUnauthorisedUsers({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        postPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockSelectedItemNameCookie],
+        postPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should show the recipient select page with errors if there are validation errors', async () => {
+      selectPlannedDateController.validateDeliveryDateForm = jest.fn().mockReturnValue([{}]);
+
+      selectPlannedDateController.getDeliveryDateErrorPageContext = jest.fn().mockResolvedValue({
+        errors: [{ text: 'error', field: ['year'], href: '#plannedDeliveryDate' }],
+      });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [
+          mockAuthorisedCookie, mockSelectedItemNameCookie,
+        ],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockSelectedItemNameCookie, mockRecipientsCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="planned-delivery-date-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
+
+    it('should return the correct status and text if the api response is unsuccessful', async () => {
+      selectPlannedDateController.validateDeliveryDateForm = jest.fn().mockReturnValue([{}]);
+
+      putPlannedDeliveryDate.mockResolvedValue({ success: false, errors: [{}] });
+
+      selectPlannedDateController.getDeliveryDateErrorPageContext = jest.fn().mockResolvedValue({
+        errors: [{ text: 'error', field: ['year'], href: '#plannedDeliveryDate' }],
+      });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      return request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({ _csrf: csrfToken })
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="planned-delivery-date-page"')).toEqual(true);
+          expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
@@ -324,20 +475,44 @@ describe('additional-services select routes', () => {
       expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
 
-    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price if an additional service is selected', async () => {
+    it('should redirect to /organisation/some-order-id/additional-services/catalogueItemId if a existing additional service is selected', async () => {
       selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
         .mockResolvedValue([]);
-      const additionalServiceId = 'additional-service-1';
-      const additionalServices = [
-        {
-          additionalServiceId,
-          name: 'Additional Service 1',
-        }];
       getAdditionalServices.mockResolvedValue(additionalServices);
 
       selectAdditionalServiceController.validateAdditionalServicesForm = jest.fn()
         .mockReturnValue({ success: true });
-      findSelectedCatalogueItemInSession.mockReturnValue({ name: 'Additional Service 1', solution: { solutionId: 'solution-1' } });
+      findSelectedCatalogueItemInSession.mockReturnValue(selectedCatalogueItemIdInSession);
+      selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockAdditionalServicesCookie, mockSelectedItemCookie, mockOrderItemsCookie])
+        .send({
+          _csrf: csrfToken,
+        })
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/order-1/additional-services/${additionalServiceId}`);
+    });
+
+    it('should redirect to /organisation/some-order-id/additional-services/select/additional-service/price if an additional service is selected', async () => {
+      selectAdditionalServiceController.findAddedCatalogueSolutions = jest.fn()
+        .mockResolvedValue([]);
+
+      getAdditionalServices.mockResolvedValue(additionalServices);
+
+      selectAdditionalServiceController.validateAdditionalServicesForm = jest.fn()
+        .mockReturnValue({ success: true });
+      findSelectedCatalogueItemInSession.mockReturnValue({ catalogueItemId: '100001-001-A03', name: 'Additionalservice 3', solution: { solutionId: 'solution-1' } });
       selectAdditionalServiceController.getAdditionalServicePageContext = jest.fn()
         .mockResolvedValue({});
 
@@ -347,15 +522,11 @@ describe('additional-services select routes', () => {
         getPathCookies: [mockAuthorisedCookie],
       });
 
-      const mockSelectedItemCookie = `${sessionKeys.selectedItemId}=${additionalServiceId}`;
-      const mockAdditionalServicesCookie = `${sessionKeys.additionalServices}=${JSON.stringify(additionalServices)}`;
-
       const res = await request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockAdditionalServicesCookie, mockSelectedItemCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockAdditionalServicesCookie, mockSelectedItemCookie, mockOrderItemsCookie])
         .send({
-          selectAdditionalService: additionalServiceId,
           _csrf: csrfToken,
         })
         .expect(302);
@@ -446,23 +617,6 @@ describe('additional-services select routes', () => {
 
   describe('POST /organisation/:orderId/additional-services/select/additional-service/price', () => {
     const path = '/organisation/order-1/additional-services/select/additional-service/price';
-    const prices = [
-      {
-        priceId: 1,
-        type: 'flat',
-        currencyCode: 'GBP',
-        itemUnit: {
-          name: 'patient',
-          description: 'per patient',
-        },
-        timeUnit: {
-          name: 'year',
-          description: 'per year',
-        },
-        price: 1.64,
-      }];
-
-    const pricesCookie = `${sessionKeys.additionalServicePrices}=${JSON.stringify(prices)}`;
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -624,6 +778,9 @@ describe('additional-services select routes', () => {
 
       selectAdditionalServiceRecipientController.getBackLinkHref = jest.fn()
         .mockReturnValue('http://returnurl.com');
+
+      selectAdditionalServiceRecipientController
+        .setContextIfBackFromAdditionalServiceEdit = jest.fn();
     });
 
     it('should redirect to the login page if the user is not logged in', () => (
@@ -654,7 +811,11 @@ describe('additional-services select routes', () => {
         .get(path)
         .set('Cookie', [mockAuthorisedCookie]);
 
+      expect(selectAdditionalServiceRecipientController.getBackLinkHref).toHaveBeenCalled();
+      expect(selectAdditionalServiceRecipientController.setContextIfBackFromAdditionalServiceEdit)
+        .toHaveBeenCalled();
       expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
+      expect(res.text.includes('data-test-id="solution-recipients-page-title"')).toBeTruthy();
       expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
     });
   });
@@ -766,7 +927,7 @@ describe('additional-services select routes', () => {
   });
 
   describe('GET /organisation/:orderId/additional-services/select/additional-service/price/recipients/date', () => {
-    const path = '/organisation/some-order-id/additional-services/select/additional-service/price/recipients/date';
+    const path = '/organisation/order-1/additional-services/select/additional-service/price/recipients/date';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -796,7 +957,7 @@ describe('additional-services select routes', () => {
         .expect(200)
         .then(() => {
           expect(mockContext.backLinkHref)
-            .toEqual(`${config.baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipients`);
+            .toEqual(`${config.baseUrl}/organisation/order-1/additional-services/select/additional-service/price/recipients`);
         });
     });
 
@@ -812,6 +973,73 @@ describe('additional-services select routes', () => {
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="planned-delivery-date-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+        });
+    });
+  });
+
+  describe('GET /organisation/:orderId/additional-services/select/additional-service/price/flat/ondemand', () => {
+    const path = '/organisation/some-order-id/additional-services/select/additional-service/price/flat/ondemand';
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
+      testAuthorisedGetPathForUnauthorisedUser({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockUnauthorisedCookie],
+        expectedPageId: 'data-test-id="error-title"',
+        expectedPageMessage: 'You are not authorised to view this page',
+      })
+    ));
+
+    it('should set backLinkHref on context if authorised', () => {
+      const context = {};
+      catalogueSolutionsFlatOrderItemController.getProvisionTypeOrderContext = jest.fn()
+        .mockResolvedValue(context);
+      getAdditionalServicesContextItems
+        .getAdditionalServicesPriceContextItemsFromSession = jest.fn()
+          .mockReturnValue({});
+
+      selectPlannedDateController.getDeliveryDateContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then(() => {
+          expect(context.backLinkHref)
+            .toEqual(`${config.baseUrl}/organisation/some-order-id/additional-services/select/additional-service/price/recipients/date`);
+        });
+    });
+
+    it('should return the additional-services provision type page if authorised', () => {
+      catalogueSolutionsFlatOrderItemController.getProvisionTypeOrderContext = jest.fn()
+        .mockResolvedValue({});
+      getAdditionalServicesContextItems
+        .getAdditionalServicesPriceContextItemsFromSession = jest.fn()
+          .mockReturnValue({
+            formData: {
+              quantity: 10,
+              selectEstimationPeriod: {},
+            },
+            itemName: 'some-name',
+            selectedPrice: {},
+          });
+
+      selectPlannedDateController.getDeliveryDateContext = jest.fn()
+        .mockResolvedValue({});
+
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="order-item-provisiontype-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
         });
     });

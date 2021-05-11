@@ -64,6 +64,8 @@ spec:
                   key: {{ .Values.cookieSecret.key }}
             - name: FEEDBACK_LINK_URL
               value: {{ .Values.feedbackLinkUrl | quote }}
+            - name: SHOW_PROXY
+              value: {{ .Values.showProxy | quote }}
             {{- if .Values.serviceDependencies }}   
             {{- if .Values.serviceDependencies.redis.urlConfig }}
             - name: REDIS_URL              

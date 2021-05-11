@@ -12,6 +12,7 @@ import { sectionRoutes } from './pages/sections/routes';
 import { summaryRoutes } from './pages/summary/routes';
 import { completeOrderRoutes } from './pages/complete-order/routes';
 import { deleteOrderRoutes } from './pages/delete-order/routes';
+import { selectOrganisationRoutes } from './pages/select/routes';
 import includesContext from './includes/manifest.json';
 
 const addContext = ({ context, user, csrfToken }) => ({
@@ -46,6 +47,8 @@ export const routes = (authProvider, sessionManager) => {
 
   router.use('/organisation', dashboardRoutes(authProvider, addContext));
 
+  router.use('/organisation/select', selectOrganisationRoutes(authProvider, addContext));
+
   router.use('/organisation/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
 
   router.use('/organisation/:orderId/summary', summaryRoutes(authProvider, addContext));
@@ -66,7 +69,11 @@ export const routes = (authProvider, sessionManager) => {
 
   errorHandler(router, (error, req, res) => {
     logger.error(`${error.title || error.name} - ${error.description || error.name}`);
-    return res.render('pages/error/template.njk', addContext({ context: error, user: req.user }));
+    const context = {
+      ...error,
+      isDevelopment: config.isDevelopment(),
+    };
+    return res.render('pages/error/template.njk', addContext({ context, user: req.user }));
   });
 
   return router;

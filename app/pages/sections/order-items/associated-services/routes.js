@@ -7,6 +7,7 @@ import {
 } from './dashboard/controller';
 import { associatedServicesSelectRoutes } from './select/routes';
 import {
+  getBackLinkHref,
   formatFormData,
   getOrderItemContext,
   getOrderItemErrorPageContext,
@@ -33,6 +34,13 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       sessionManager,
       logger,
     });
+
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.catalogueItemExists, value: undefined },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.orderItems, value: context.orderItems },
+    );
 
     logger.info(`navigating to order ${orderId} associated-services dashboard page`);
     return res.render('pages/sections/order-items/associated-services/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -69,6 +77,9 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     sessionManager.saveToSession({
       req, key: sessionKeys.orderItemPageData, value: pageData,
     });
+    const associatedServicePrices = sessionManager.getFromSession({
+      req, key: sessionKeys.associatedServicePrices,
+    });
 
     const context = await getOrderItemContext({
       orderId,
@@ -78,6 +89,8 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       selectedPrice: pageData.selectedPrice,
       formData: pageData.formData,
     });
+
+    context.backLinkHref = getBackLinkHref(req, associatedServicePrices, orderId);
 
     logger.info(`navigating to order ${orderId} associated-services order item page`);
     return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -117,12 +130,17 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
 
       if (apiResponse.success) {
         logger.info('Redirecting to the associated-services main page');
+        sessionManager.saveToSession({ req, key: sessionKeys.selectedItemId, value: undefined });
         return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services`);
       }
 
       const apiErrors = transformApiValidationResponse(apiResponse.errors);
       validationErrors.push(...apiErrors);
     }
+
+    const associatedServicePrices = sessionManager.getFromSession({
+      req, key: sessionKeys.associatedServicePrices,
+    });
 
     const context = await getOrderItemErrorPageContext({
       orderId,
@@ -133,6 +151,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
       formData: req.body,
       validationErrors,
     });
+    context.backLinkHref = getBackLinkHref(req, associatedServicePrices, orderId);
 
     return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

@@ -70,18 +70,24 @@ describe('associated-services contextCreator', () => {
           items: [
             [
               {
-                classes: 'nhsuk-input--width-10',
                 data: 'Additional Service One',
                 href: '/order/organisation/order-1/associated-services/orderItem1',
                 dataTestId: 'orderItem1-catalogueItemName',
               },
+              {
+                data: 'per patient per month',
+                dataTestId: 'orderItem1-unitoforder',
+              },
             ],
             [
               {
-                classes: 'nhsuk-input--width-10',
                 data: 'Additional Service Two',
                 href: '/order/organisation/order-1/associated-services/orderItem2',
                 dataTestId: 'orderItem2-catalogueItemName',
+              },
+              {
+                data: 'per appointment',
+                dataTestId: 'orderItem2-unitoforder',
               },
             ],
           ],
@@ -90,12 +96,24 @@ describe('associated-services contextCreator', () => {
 
       const mockOrderItems = [
         {
-          orderItemId: 'orderItem1',
+          catalogueItemId: 'orderItem1',
           catalogueItemName: 'Additional Service One',
+          itemUnit: {
+            name: 'patient',
+            description: 'per patient',
+          },
+          timeUnit: {
+            name: 'month',
+            description: 'per month',
+          },
         },
         {
-          orderItemId: 'orderItem2',
+          catalogueItemId: 'orderItem2',
           catalogueItemName: 'Additional Service Two',
+          itemUnit: {
+            name: 'appointment',
+            description: 'per appointment',
+          },
         },
       ];
       const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });

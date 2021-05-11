@@ -2,10 +2,17 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../../../../../config';
 import { getSectionErrorContext } from '../../../../getSectionErrorContext';
 
-// eslint-disable-next-line max-len
-export const backLinkHref = (additionalServicePrices, orderId) => (((additionalServicePrices || {}).prices || {}).length === 1
-  ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
-  : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);
+export const backLinkHref = (req, additionalServicePrices, orderId) => {
+  const { referer } = req.headers || {};
+  const orderItemId = referer ? referer.split('/').pop() : '';
+  if (referer && referer.endsWith(`${orderId}/additional-services/${orderItemId}`)) {
+    return referer;
+  }
+
+  return ((additionalServicePrices || {}).prices || {}).length === 1
+    ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`
+    : `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`;
+};
 
 const generateRecipientOptions = ({ recipients, selectedAdditionalRecipientId }) => {
   const recipientsMap = recipients.map((recipient) => ({
@@ -29,7 +36,7 @@ export const getContext = ({
   ...manifest,
   title: `${manifest.title} ${itemName}`,
   questions: recipients && generateQuestionsContext({ recipients, selectedAdditionalRecipientId }),
-  backLinkHref: backLinkHref(additionalServicePrices, orderId),
+  backLinkHref: backLinkHref({}, additionalServicePrices, orderId),
 });
 
 export const getErrorContext = (params) => {

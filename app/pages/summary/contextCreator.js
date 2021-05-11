@@ -231,7 +231,7 @@ const generateRecurringCostDetailsTable = ({
 
       columns.push(({
         classes: recurringCostTable.cellInfo.priceUnit.classes,
-        data: `${formatPrice({ value: item.price })} ${item.itemUnitDescription} ${item.timeUnitDescription ? item.timeUnitDescription : ''}`,
+        data: `${formatPrice({ value: item.price })} ${item.itemUnitDescription} ${item.provisioningType !== 'OnDemand' && item.timeUnitDescription ? item.timeUnitDescription : ''}`,
         dataTestId: 'price-unit',
       }));
 
@@ -249,8 +249,8 @@ const generateRecurringCostDetailsTable = ({
 
       columns.push(({
         classes: recurringCostTable.cellInfo.itemCost.classes,
-        data: formatPrice({ value: item.costPerYear, maximumFractionDigits: 2 }),
-        dataTestId: 'item-cost',
+        data: formatPrice({ value: serviceRecipient.costPerYear, maximumFractionDigits: 2 }),
+        dataTestId: 'costPerYear',
       }));
 
       items.push(columns);

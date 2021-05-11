@@ -11,7 +11,10 @@ const setup = {
 
 const context = {
   ...manifest,
-  title: 'org1 orders',
+  config: {
+    showProxy: 'false',
+  },
+  title: 'org1',
   proxyLinkHref: '/proxy/href',
   newOrderButtonHref: '/organisation/neworder',
   completeOrders: { items: [mockOrders[0]] },
@@ -23,7 +26,7 @@ describe('dashboard page', () => {
     harness.request(context, ($) => {
       const title = $('h1[data-test-id="dashboard-page-title"]');
       expect(title.length).toEqual(1);
-      expect(title.text().trim()).toEqual(context.title);
+      expect(title.text().trim()).toEqual(`${context.title} orders`);
     });
   }));
 
@@ -34,6 +37,39 @@ describe('dashboard page', () => {
       expect(description.text().trim()).toEqual(context.description);
     });
   }));
+
+  describe('proxy buyer', () => {
+    it('should render the dashboard page proxy title', componentTester(setup, (harness) => {
+      context.config.showProxy = 'true';
+      context.userIsProxy = true;
+
+      harness.request(context, ($) => {
+        const title = $('h1[data-test-id="dashboard-page-proxy-title"]');
+        expect(title.length).toEqual(1);
+        expect(title.text().trim()).toEqual(`Orders for ${context.title}`);
+      });
+    }));
+
+    it('should render the dashboard page proxy description', componentTester(setup, (harness) => {
+      context.config.showProxy = 'true';
+      context.userIsProxy = true;
+
+      harness.request(context, ($) => {
+        const description = $('[data-test-id="dashboard-page-proxy-description"]');
+        expect(description.length).toEqual(1);
+        expect(description.text().trim()).toEqual(context.proxy.description);
+      });
+    }));
+
+    it('should render the dashboard page proxy on behalf of', componentTester(setup, (harness) => {
+      context.config.showProxy = 'true';
+      harness.request(context, ($) => {
+        const description = $('[data-test-id="dashboard-page-proxy-on-behalf"]');
+        expect(description.length).toEqual(1);
+        expect(description.text().trim()).toEqual(`${context.title} Change organisation`);
+      });
+    }));
+  });
 
   it('should render the create new order button', componentTester(setup, (harness) => {
     harness.request(context, ($) => {

@@ -13,6 +13,7 @@ import {
   validateSolutionPriceForm,
 } from './price/controller';
 import {
+  getSelectStatus,
   getServiceRecipientsContext,
   getServiceRecipientsErrorPageContext,
   getSelectSolutionPriceEndpoint,
@@ -42,6 +43,7 @@ import { extractDate } from '../../../../../helpers/controllers/extractDate';
 import { validateOrderItemTypeForm } from '../../../../../helpers/controllers/validateOrderItemTypeForm';
 import { validateSolutionRecipientsForm } from '../../../../../helpers/controllers/validateSolutionRecipientsForm';
 import manifest from './recipients/manifest.json';
+import dateManifest from './date/manifest.json';
 
 const router = express.Router({ mergeParams: true });
 
@@ -211,11 +213,12 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const context = await getServiceRecipientsContext({
       orderId,
       itemName,
-      selectStatus,
+      selectStatus: getSelectStatus({ selectStatus, selectedRecipients, serviceRecipients }),
       serviceRecipients,
       selectedRecipients,
       solutionPrices,
       manifest,
+      orderType: 'catalogue-solutions',
     });
 
     setContextIfBackFromCatalogueSolutionEdit(req, context, orderId);
@@ -249,6 +252,13 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       logger.info('Redirect to planned delivery date page');
       return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`);
     }
+    if (!response.success) {
+      const selectedRecipients = selected.map(([odsCode]) => odsCode);
+
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedRecipients, value: selectedRecipients,
+      });
+    }
     const itemName = sessionManager.getFromSession({ req, key: sessionKeys.selectedItemName });
     const serviceRecipients = sessionManager.getFromSession({ req, key: sessionKeys.recipients });
     const solutionPrices = sessionManager.getFromSession({ req, key: sessionKeys.solutionPrices });
@@ -260,7 +270,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const context = await getServiceRecipientsErrorPageContext({
       orderId,
       itemName,
-      selectStatus,
+      selectStatus: getSelectStatus({ selectStatus, selectedRecipients, serviceRecipients }),
       serviceRecipients,
       selectedRecipients,
       solutionPrices,
@@ -289,7 +299,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
 
     const context = await getDeliveryDateContext({
-      orderId, itemName, commencementDate,
+      orderId, itemName, commencementDate, manifest: dateManifest, orderType: 'catalogue-solutions',
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select planned delivery date page`);
@@ -348,6 +358,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       orderId,
       itemName,
       data: req.body,
+      manifest: dateManifest,
     });
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));

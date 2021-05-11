@@ -15,11 +15,13 @@ const generateFormData = (commencementDate) => {
 };
 
 export const getDeliveryDateContext = async ({
-  orderId, itemName, commencementDate,
+  orderId, itemName, commencementDate, manifest, orderType,
 }) => getContext({
   orderId,
   itemName,
   data: generateFormData(commencementDate),
+  manifest,
+  orderType,
 });
 
 export const validateDeliveryDateForm = ({ data }) => {
@@ -33,10 +35,11 @@ export const validateDeliveryDateForm = ({ data }) => {
 };
 
 export const getDeliveryDateErrorPageContext = async ({
-  orderId, itemName, data, validationErrors,
+  orderId, itemName, data, validationErrors, manifest,
 }) => getErrorContext({
   orderId,
   itemName,
   data,
   validationErrors,
+  manifest,
 });

@@ -447,7 +447,7 @@ describe('order summary contextCreator', () => {
               { classes, data: '1.26 per patient per year', dataTestId: 'price-unit' },
               { classes, data: '85 per month', dataTestId: 'quantity' },
               { classes, data: '24 February 2020', dataTestId: 'planned-date' },
-              { classes: `${classes} nhsuk-table__cell--numeric`, data: '5,000.00', dataTestId: 'item-cost' },
+              { classes: `${classes} nhsuk-table__cell--numeric`, data: '5,000.00', dataTestId: 'costPerYear' },
             ],
           ],
         },
@@ -471,6 +471,60 @@ describe('order summary contextCreator', () => {
             odsCode: 'A10001',
             quantity: 85,
             serviceInstanceId: 'service-instance-id',
+            costPerYear: 5000,
+          },
+        ],
+      }];
+
+      const contextData = {
+        orderId: 'order-1',
+        orderData: mockOrderData,
+        recurringCostItems: mockRecurringCosts,
+      };
+
+      const context = getContext(contextData);
+      expect(context.recurringCostTable).toEqual(expectedContext.recurringCostTable);
+    });
+
+    it('should return the recurring cost table where price unit should not have timeUnit description when OnDemand type order items are provided', () => {
+      const classes = 'nhsuk-u-font-size-14';
+      const expectedContext = {
+        recurringCostTable: {
+          ...incompleteManifest.recurringCostTable,
+          items: [
+            [
+              { classes, data: 'Some Recipient Name (A10001)', dataTestId: 'recipient-name' },
+              { classes, data: 'item-1', dataTestId: 'item-id' },
+              { classes, data: 'Some item name', dataTestId: 'item-name' },
+              { classes, data: 'service-instance-id', dataTestId: 'service-instance-id' },
+              { classes, data: '1.26 per consultation ', dataTestId: 'price-unit' },
+              { classes, data: '85 per month', dataTestId: 'quantity' },
+              { classes, data: '24 February 2020', dataTestId: 'planned-date' },
+              { classes: `${classes} nhsuk-table__cell--numeric`, data: '5,000.00', dataTestId: 'costPerYear' },
+            ],
+          ],
+        },
+      };
+
+      const mockRecurringCosts = [{
+        catalogueItemType: 'Solution',
+        provisioningType: 'OnDemand',
+        cataloguePriceType: 'Flat',
+        catalogueItemName: 'Some item name',
+        price: 1.260,
+        itemUnitDescription: 'per consultation',
+        timeUnitDescription: 'per year',
+        quantityPeriodDescription: 'per month',
+        costPerYear: 5000.000,
+        serviceRecipients: [
+          {
+            itemId: 'item-1',
+            deliveryDate: '2020-02-24',
+            name: 'Some Recipient Name',
+            odsCode: 'A10001',
+            quantity: 85,
+            serviceInstanceId: 'service-instance-id',
+            costPerYear: 5000,
           },
         ],
       }];

@@ -75,6 +75,9 @@ cookieSecret:
   key:
 feedbackLinkUrl:
 
+featureFlags:
+  showProxy: "true"
+
 serviceDependencies:
   isapi: # used for internal calls to isapi custom api
     name:
