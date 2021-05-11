@@ -1,4 +1,5 @@
 import { getOrganisation } from '../api/oapi/getOrganisation';
+import { getOrganisationUsingOdsCode } from '../api/oapi/getOrganisationUsingOdsCode';
 import { sessionKeys } from '../routes/sessionHelper';
 
 const saveLookupTableToSession = ({
@@ -19,32 +20,61 @@ const findOdsCode = ({ orgId, lookupTable }) => {
   return found.length === 1 ? found[0].odsCode : undefined;
 };
 
+const findOrgId = ({ odsCode, lookupTable }) => {
+  const found = lookupTable.filter((row) => row.odsCode === odsCode);
+  return found.length === 1 ? found[0].organisationId : undefined;
+};
+
+const getOrganisationOdsCodeFromApi = async ({
+  req, sessionManager, lookupTable, orgId, accessToken,
+}) => {
+  const organisation = await getOrganisation({ orgId, accessToken });
+  if (!(organisation && organisation.odsCode)) {
+    return undefined;
+  }
+
+  saveLookupTableToSession({
+    organisation, lookupTable, req, sessionManager,
+  });
+
+  return organisation.odsCode;
+};
+
 export const getOdsCodeForOrganisation = async ({
   req, sessionManager, orgId, accessToken,
 }) => {
-  let odsCode;
+  if (!orgId) {
+    return undefined;
+  }
 
-  if (orgId) {
-    let lookupTable = sessionManager.getFromSession({ req, key: sessionKeys.odsLookupTable });
+  const lookupTable = sessionManager.getFromSession({ req, key: sessionKeys.odsLookupTable }) ?? [];
 
-    if (lookupTable) {
-      odsCode = findOdsCode({ orgId, lookupTable });
-    } else {
-      lookupTable = [];
-    }
+  return findOdsCode({ orgId, lookupTable }) ?? getOrganisationOdsCodeFromApi({
+    req, sessionManager, lookupTable, orgId, accessToken,
+  });
+};
 
-    if (!odsCode) {
-      const organisation = await getOrganisation({ orgId, accessToken });
+export const getOrganisationIdFromOdsCode = async ({
+  req, sessionManager, odsCode, accessToken,
+}) => {
+  if (!odsCode) {
+    return undefined;
+  }
 
-      if (organisation && organisation.odsCode) {
-        odsCode = organisation.odsCode;
+  const lookupTable = sessionManager.getFromSession({ req, key: sessionKeys.odsLookupTable }) ?? [];
+  let orgId = findOrgId({ odsCode, lookupTable });
 
-        saveLookupTableToSession({
-          organisation, lookupTable, req, sessionManager,
-        });
-      }
+  if (!orgId) {
+    const organisation = await getOrganisationUsingOdsCode({ odsCode, accessToken });
+
+    if (organisation && organisation.organisationId) {
+      orgId = organisation.organisationId;
+
+      saveLookupTableToSession({
+        organisation, lookupTable, req, sessionManager,
+      });
     }
   }
 
-  return odsCode;
+  return orgId;
 };

@@ -88,7 +88,7 @@ const generateCompletedOrdersTable = (completedOrders, completeOrdersTable) => {
 };
 
 export const getContext = ({
-  orgName, completedOrders = [], incompletedOrders = [], userIsProxy = false,
+  orgName, completedOrders = [], incompletedOrders = [], userIsProxy = false, odsCode,
 }) => ({
 
   ...manifest,
@@ -102,4 +102,5 @@ export const getContext = ({
     incompletedOrders, manifest.incompleteOrdersTable,
   ),
   userIsProxy,
+  odsCode,
 });
