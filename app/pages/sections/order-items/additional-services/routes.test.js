@@ -136,7 +136,7 @@ describe('additional-services section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
@@ -324,7 +324,7 @@ describe('additional-services section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/additional-services`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/additional-services`);
         });
     });
   });

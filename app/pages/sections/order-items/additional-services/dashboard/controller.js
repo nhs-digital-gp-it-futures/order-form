@@ -42,9 +42,9 @@ export const getBackLinkHref = (req, selectedPrice, orderId, odsCode) => backLin
   req, selectedPrice, orderId, odsCode,
 });
 
-export const updateContext = (
+export const updateContext = ({
   req, selectedPrice, context, orderId, catalogueItemId, solutionName, catalogueItemExists, odsCode,
-) => {
+}) => {
   const submittedOrderItemId = req.query.submitted;
   context.backLinkHref = (submittedOrderItemId !== undefined
     && submittedOrderItemId !== 'neworderitem' && !catalogueItemExists)
@@ -70,12 +70,16 @@ export const updateContext = (
   }
 };
 
-export const updateContextPost = (req, selectedPrice, context, orderId, solutionName, odsCode) => {
+export const updateContextPost = ({
+  req, selectedPrice, context, orderId, solutionName, odsCode,
+}) => {
   const { referer } = req.headers;
   const catalogueItemId = referer ? referer.split('/').pop() : '';
 
   context.backLinkHref = catalogueItemId.toLowerCase() === 'neworderitem'
-    ? backLinkHref({ req, selectedPrice, orderId })
+    ? backLinkHref({
+      req, selectedPrice, orderId, odsCode,
+    })
     : `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`;
 
   context.deleteButton.altText = context.deleteButton.altText

@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/description';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/description';
 
 const mocks = () => {
   nock(orderApiUrl)

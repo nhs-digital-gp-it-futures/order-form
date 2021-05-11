@@ -3,7 +3,7 @@ import completeManifest from './complete/manifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
-const someOdsCode = '03F';
+const odsCode = '03F';
 describe('order summary contextCreator', () => {
   describe('getContext', () => {
     const mockOrderData = { description: 'Some order description' };
@@ -12,22 +12,22 @@ describe('order summary contextCreator', () => {
     const mockEmptySupplierRow = { multiLine: { data: [''] }, dataTestId: 'supplier' };
 
     it('should return the backLinkText', () => {
-      const context = getContext({ orderId: 'order-1', orderData: mockOrderData, odsCode: someOdsCode });
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData, odsCode });
       expect(context.backLinkText).toEqual(incompleteManifest.backLinkText);
     });
 
     it('should construct the backLinkHref for a complete order', () => {
       const orderId = 'order-id';
       const context = getContext({
-        orderId, orderData: mockCompletedOrderData, odsCode: someOdsCode,
+        orderId, orderData: mockCompletedOrderData, odsCode,
       });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}`);
     });
 
     it('should construct the backLinkHref for an incomplete order', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId, orderData: mockOrderData, odsCode: someOdsCode });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/${orderId}`);
+      const context = getContext({ orderId, orderData: mockOrderData, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -57,8 +57,8 @@ describe('order summary contextCreator', () => {
 
     it('should return the order summary button href', () => {
       const orderId = 'order-1';
-      const context = getContext({ orderId, orderData: mockOrderData, odsCode: someOdsCode });
-      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/${orderId}/summary?print=true`);
+      const context = getContext({ orderId, orderData: mockOrderData, odsCode });
+      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/summary?print=true`);
     });
 
     it('should return the dateSummaryCreatedLabel', () => {

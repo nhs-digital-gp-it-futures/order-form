@@ -6,7 +6,7 @@ import { orderApiUrl } from '../../../../config';
 import { formatDate } from '../../../../helpers/common/dateFormatter';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/summary';
 
 const mocks = () => {
   nock(orderApiUrl)

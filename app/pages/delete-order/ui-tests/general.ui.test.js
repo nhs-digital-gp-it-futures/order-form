@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 import { orderApiUrl } from '../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/delete-order';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/delete-order';
 
 const orderDescriptionMock = 'desc';
 
@@ -61,7 +61,7 @@ test('should render delete-order select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation for backLink', async (t) => {
+test('should link to /order/organisation/odsCode for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -69,7 +69,7 @@ test('should link to /order/organisation for backLink', async (t) => {
 
   await t
     .expect(await extractInnerText(goBackLink)).eql(content.backLinkText)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -120,7 +120,7 @@ test('should render the No button', async (t) => {
 
   await t
     .expect(await extractInnerText(button)).eql(content.noButton.text)
-    .expect(button.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(button.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
 
 test('should render the Yes button', async (t) => {
@@ -133,7 +133,7 @@ test('should render the Yes button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.yesButton.text);
 });
 
-test('should redirect to /organisation/order-id/delete-order/confirmation when Yes is clicked', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/delete-order/confirmation when Yes is clicked', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -141,5 +141,5 @@ test('should redirect to /organisation/order-id/delete-order/confirmation when Y
 
   await t
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/delete-order/confirmation');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/delete-order/confirmation');
 });

@@ -29,7 +29,7 @@ const completedOrders = [
     onlyGMS: false,
   },
 ];
-const someOdsCode = '03F';
+const odsCode = '03F';
 
 describe('getContext', () => {
   const classes = 'nhsuk-u-font-size-16';
@@ -54,14 +54,14 @@ describe('getContext', () => {
   });
 
   it('should construct newOrderButtonHref', () => {
-    const context = getContext({ odsCode: someOdsCode });
-    expect(context.newOrderButtonHref).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/neworder`);
+    const context = getContext({ odsCode });
+    expect(context.newOrderButtonHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/neworder`);
   });
 
   describe('ordersData', () => {
     it('should format completed orders correctly', () => {
       const context = getContext({
-        orgName: 'Org1', completedOrders, incompletedOrders, odsCode: someOdsCode,
+        orgName: 'Org1', completedOrders, incompletedOrders, odsCode,
       });
 
       expect(context.completeOrders.items.length).toEqual(2);
@@ -71,7 +71,7 @@ describe('getContext', () => {
 
       expect(completeOrder1[0].data).toEqual('order2');
       expect(completeOrder1[0].classes).toEqual(classes);
-      expect(completeOrder1[0].href).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/order2/summary`);
+      expect(completeOrder1[0].href).toEqual(`${baseUrl}/organisation/${odsCode}/order/order2/summary`);
       expect(completeOrder1[0].dataTestId).toEqual('order2-id');
       expect(completeOrder1[1].data).toEqual('Some new order');
       expect(completeOrder1[1].classes).toEqual(classes);
@@ -94,7 +94,7 @@ describe('getContext', () => {
 
       expect(completeOrder2[0].data).toEqual('order3');
       expect(completeOrder2[0].classes).toEqual(classes);
-      expect(completeOrder2[0].href).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/order3/summary`);
+      expect(completeOrder2[0].href).toEqual(`${baseUrl}/organisation/${odsCode}/order/order3/summary`);
       expect(completeOrder2[0].dataTestId).toEqual('order3-id');
       expect(completeOrder2[5].data).toEqual('No');
       expect(completeOrder2[5].classes).toEqual(classes);
@@ -103,7 +103,7 @@ describe('getContext', () => {
 
     it('should format an incomplete order correctly', () => {
       const context = getContext({
-        orgName: 'Org1', completedOrders, incompletedOrders, odsCode: someOdsCode,
+        orgName: 'Org1', completedOrders, incompletedOrders, odsCode,
       });
       expect(context.incompleteOrders.items.length).toEqual(1);
 
@@ -112,7 +112,7 @@ describe('getContext', () => {
 
       expect(incompleteOrder1[0].data).toEqual('order1');
       expect(incompleteOrder1[0].classes).toEqual(classes);
-      expect(incompleteOrder1[0].href).toEqual(`${baseUrl}/organisation/${someOdsCode}/order/order1`);
+      expect(incompleteOrder1[0].href).toEqual(`${baseUrl}/organisation/${odsCode}/order/order1`);
       expect(incompleteOrder1[0].dataTestId).toEqual('order1-id');
       expect(incompleteOrder1[1].data).toEqual('Some Order');
       expect(incompleteOrder1[1].classes).toEqual(classes);

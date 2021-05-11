@@ -6,7 +6,7 @@ import { solutionsApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service/price';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/select/associated-service/price';
 
 const selectedItemNameInSession = 'Associated Service Name';
 const selectedItemIdInSession = 'associated-service-1';

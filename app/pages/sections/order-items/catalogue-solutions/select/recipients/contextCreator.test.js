@@ -31,10 +31,11 @@ describe('service-recipients contextCreator', () => {
     });
 
     it('should construct the backLinkHref when solutionPrices contain 1', () => {
+      const odsCode = '03F';
       const context = getContext({
-        orderId, solutionPrices: { prices: [{}] }, manifest, orderType: 'catalogue-solutions',
+        orderId, solutionPrices: { prices: [{}] }, manifest, orderType: 'catalogue-solutions', odsCode,
       });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution`);
     });
 
     it('should construct the backLinkHref when solutionPrices contain not 1', () => {

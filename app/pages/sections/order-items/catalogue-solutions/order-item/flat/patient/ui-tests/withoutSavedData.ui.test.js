@@ -10,7 +10,8 @@ const getLocation = ClientFunction(() => document.location.href);
 
 const organisation = 'organisation';
 const callOffId = 'order-id';
-const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/catalogue-solutions/neworderitem`;
+const odsCode = '03F';
+const pageUrl = `http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/catalogue-solutions/neworderitem`;
 
 const selectedPrice = {
   priceId: 2,
@@ -127,7 +128,7 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
   await t
     .typeText(quantityInput, '10', { paste: true })
     .click(saveButton)
-    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/catalogue-solutions`);
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/catalogue-solutions`);
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {

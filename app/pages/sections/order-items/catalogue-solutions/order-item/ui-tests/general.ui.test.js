@@ -7,7 +7,7 @@ import { solutionsApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/neworderitem';
 
 const selectedPrice = {
   priceId: 2,

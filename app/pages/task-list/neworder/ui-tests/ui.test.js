@@ -6,7 +6,7 @@ import neworderPageContent from '../manifest.json';
 import { baseUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/neworder';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/neworder';
 
 const pageSetup = async (setup = { withAuth: true }) => {
   if (setup.withAuth) {

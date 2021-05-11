@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { orderApiUrl } from '../../../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/delete/order-item-id/confirmation/write-on-time-associated-service/continue';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/delete/order-item-id/confirmation/write-on-time-associated-service/continue';
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
 const pageSetup = async (setup = defaultPageSetup) => {

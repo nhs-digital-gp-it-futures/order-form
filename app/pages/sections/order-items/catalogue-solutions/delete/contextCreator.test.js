@@ -6,6 +6,7 @@ describe('delete-order contextCreator', () => {
   describe('getContext', () => {
     const orderId = 'order-1';
     const orderItemId = 'order-item-1';
+    const odsCode = '03F';
 
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1' });
@@ -13,8 +14,8 @@ describe('delete-order contextCreator', () => {
     });
 
     it('should construct the backLinkHref', () => {
-      const context = getContext({ orderId, orderItemId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/${orderItemId}`);
+      const context = getContext({ orderId, orderItemId, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/${orderItemId}`);
     });
 
     it('should return the title', () => {
@@ -40,9 +41,9 @@ describe('delete-order contextCreator', () => {
     });
 
     it('should return the no button', () => {
-      const context = getContext({ orderId, orderItemId });
+      const context = getContext({ orderId, orderItemId, odsCode });
       expect(context.noButtonText).toEqual(manifest.noButtonText);
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/${orderItemId}`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/${orderItemId}`);
     });
 
     it('should return the yes button', () => {

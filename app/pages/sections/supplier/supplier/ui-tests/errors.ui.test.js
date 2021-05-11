@@ -5,7 +5,7 @@ import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/supplier';
 
 const mockSupplierData = {
   name: 'SupplierTwo',

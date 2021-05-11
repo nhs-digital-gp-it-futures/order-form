@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/ordering-party';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/ordering-party';
 
 const mockOrgData = {
   name: 'Org name',

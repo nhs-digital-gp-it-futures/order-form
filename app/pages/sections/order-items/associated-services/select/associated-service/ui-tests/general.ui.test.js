@@ -6,7 +6,7 @@ import { solutionsApiUrl as bapiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/select/associated-service';
 
 const mockAssociatedServices = [
   {

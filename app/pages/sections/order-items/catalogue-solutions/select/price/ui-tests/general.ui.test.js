@@ -6,7 +6,7 @@ import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../
 import { solutionsApiUrl, organisationApiUrl } from '../../../../../../../config';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price';
 
 const selectedItemNameInSession = 'Solution One';
 const selectedItemIdInSession = 'solution-1';

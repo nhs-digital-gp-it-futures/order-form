@@ -74,6 +74,6 @@ export const getContext = ({
     orderId, addedOrderItemsTable: manifest.addedOrderItemsTable, orderItems, odsCode,
   }),
   addOrderItemButtonHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service`,
-  backLinkHref: `${baseUrl}/organisation/${odsCode}/${orderId}`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}`,
   orderItems,
 });

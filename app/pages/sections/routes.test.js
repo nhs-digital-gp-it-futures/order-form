@@ -40,8 +40,8 @@ orderingPartyController.getCallOffOrderingPartyContext = jest.fn()
   .mockResolvedValue({});
 
 describe('section routes', () => {
-  describe('GET /organisation/:orderId/description', () => {
-    const path = '/organisation/some-order-id/description';
+  describe('GET /organisation/:odsCode/order/:orderId/description', () => {
+    const path = '/organisation/odsCode/order/some-order-id/description';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -69,8 +69,8 @@ describe('section routes', () => {
       }));
   });
 
-  describe('POST /organisation/:orderId/description', () => {
-    const path = '/organisation/:orderId/description';
+  describe('POST /organisation/:odsCode/order/:orderId/description', () => {
+    const path = '/organisation/odsCode/order/:orderId/description';
 
     afterEach(() => {
       descriptionController.postOrPutDescription.mockReset();
@@ -126,7 +126,7 @@ describe('section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order1`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order1`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
@@ -161,8 +161,8 @@ describe('section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/ordering-party', () => {
-    const path = '/organisation/some-order-id/ordering-party';
+  describe('GET /organisation/:odsCode/order/:orderId/ordering-party', () => {
+    const path = '/organisation/odsCode/order/some-order-id/ordering-party';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -190,8 +190,8 @@ describe('section routes', () => {
       }));
   });
 
-  describe('POST /organisation/:orderId/ordering-party', () => {
-    const path = '/organisation/order-id/ordering-party';
+  describe('POST /organisation/:odsCode/order/:orderId/ordering-party', () => {
+    const path = '/organisation/odsCode/order/order-id/ordering-party';
 
     afterEach(() => {
       jest.resetAllMocks();
@@ -243,7 +243,7 @@ describe('section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
@@ -277,8 +277,8 @@ describe('section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/commencement-date', () => {
-    const path = '/organisation/some-order-id/commencement-date';
+  describe('GET /organisation/:odsCode/order/:orderId/commencement-date', () => {
+    const path = '/organisation/odsCode/order/some-order-id/commencement-date';
 
     commencementDateController.getCommencementDateContext = jest.fn()
       .mockResolvedValue({});
@@ -310,8 +310,8 @@ describe('section routes', () => {
       }));
   });
 
-  describe('POST /organisation/:orderId/commencement-date', () => {
-    const path = '/organisation/order-id/commencement-date';
+  describe('POST /organisation/:odsCode/order/:orderId/commencement-date', () => {
+    const path = '/organisation/odsCode/order/order-id/commencement-date';
 
     commencementDateController.validateCommencementDateForm = jest.fn()
       .mockReturnValue([]);
@@ -374,7 +374,7 @@ describe('section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
@@ -436,8 +436,8 @@ describe('section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/funding-source', () => {
-    const path = '/organisation/some-order-id/funding-source';
+  describe('GET /organisation/odsCode/order/:orderId/funding-source', () => {
+    const path = '/organisation/odsCode/order/some-order-id/funding-source';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -469,8 +469,8 @@ describe('section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/funding-source', () => {
-    const path = '/organisation/some-order-id/funding-source';
+  describe('POST /organisation/:odsCode/order/:orderId/funding-source', () => {
+    const path = '/organisation/odsCode/order/some-order-id/funding-source';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -553,7 +553,7 @@ describe('section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });

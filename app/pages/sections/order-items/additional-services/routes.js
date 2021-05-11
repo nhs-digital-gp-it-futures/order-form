@@ -104,10 +104,16 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       value: pageData.selectedRecipients,
     });
 
-    updateContext(
-      req, selectedPrice, context, orderId, catalogueItemId,
-      pageData.itemName, catalogueItemExists, odsCode,
-    );
+    updateContext({
+      req,
+      selectedPrice,
+      context,
+      orderId,
+      catalogueItemId,
+      solutionName: pageData.itemName,
+      catalogueItemExists,
+      odsCode,
+    });
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk',
@@ -177,7 +183,9 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       validationErrors,
     });
 
-    updateContextPost(req, selectedPrice, context, orderId, pageData.itemName, odsCode);
+    updateContextPost({
+      req, selectedPrice, context, orderId, solutionName: pageData.itemName, odsCode,
+    });
 
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

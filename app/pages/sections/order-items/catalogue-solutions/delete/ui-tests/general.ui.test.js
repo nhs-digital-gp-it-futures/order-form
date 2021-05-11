@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 import { orderApiUrl } from '../../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/delete/order-item-id/confirmation/write-on-time/';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/delete/order-item-id/confirmation/write-on-time/';
 
 const orderDescriptionMock = 'desc';
 

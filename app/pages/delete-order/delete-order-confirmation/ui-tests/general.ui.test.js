@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 import { orderApiUrl } from '../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/delete-order/confirmation';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/delete-order/confirmation';
 
 const orderDescriptionMock = 'desc';
 
@@ -55,7 +55,7 @@ test('should render delete-order-confirmation page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation for backLink', async (t) => {
+test('should link to /order/organisation/odsCode for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

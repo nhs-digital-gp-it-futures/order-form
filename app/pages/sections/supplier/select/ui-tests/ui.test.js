@@ -6,7 +6,7 @@ import { orderApiUrl } from '../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier/search/select';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/supplier/search/select';
 
 const suppliersFoundInSession = JSON.stringify([
   { supplierId: 'supplier-1', name: 'Supplier 1' },

@@ -6,7 +6,7 @@ import { organisationApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipients';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients';
 
 const selectedItemNameInSession = 'Solution One';
 

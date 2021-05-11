@@ -4,7 +4,7 @@ import existingOrderManifest from './existingorder/manifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
-const someOdsCode = '03F';
+const odsCode = '03F';
 describe('task-list contextCreator', () => {
   describe('getContext for new order', () => {
     it('should return the backLinkText', () => {
@@ -13,8 +13,8 @@ describe('task-list contextCreator', () => {
     });
 
     it('should return the backLinkHref', () => {
-      const context = getContext({ orderId: 'neworder', odsCode: someOdsCode });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}`);
+      const context = getContext({ orderId: 'neworder', odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}`);
     });
 
     it('should return the orderId provided', () => {
@@ -42,7 +42,7 @@ describe('task-list contextCreator', () => {
         disabled: true,
       };
 
-      const context = getContext({ orderId, odsCode: someOdsCode });
+      const context = getContext({ orderId, odsCode });
 
       expect(context.deleteOrderButton).toEqual(expectedDeleteOrderButtonContext);
     });
@@ -68,7 +68,7 @@ describe('task-list contextCreator', () => {
         disabled: true,
       };
 
-      const context = getContext({ orderId: 'neworder', odsCode: someOdsCode });
+      const context = getContext({ orderId: 'neworder', odsCode });
 
       expect(context.completeOrderButton).toEqual(expectedSubmitOrderButtonContext);
     });
@@ -81,8 +81,8 @@ describe('task-list contextCreator', () => {
     });
 
     it('should return the backLinkHref', () => {
-      const context = getContext({ orderId: 'order-id', odsCode: someOdsCode });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${someOdsCode}`);
+      const context = getContext({ orderId: 'order-id', odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}`);
     });
 
     it('should return the orderId provided', () => {
@@ -118,10 +118,10 @@ describe('task-list contextCreator', () => {
 
       const expectedDeleteOrderButtonContext = {
         text: commonManifest.deleteOrderButton.text,
-        href: `${baseUrl}/organisation/${someOdsCode}/order/${orderId}/delete-order`,
+        href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/delete-order`,
       };
 
-      const context = getContext({ orderId, odsCode: someOdsCode });
+      const context = getContext({ orderId, odsCode });
 
       expect(context.deleteOrderButton).toEqual(expectedDeleteOrderButtonContext);
     });
@@ -129,10 +129,10 @@ describe('task-list contextCreator', () => {
     it('should return the previewOrderButton context', () => {
       const expectedPreviewOrderButtonContext = {
         text: commonManifest.previewOrderButton.text,
-        href: `${baseUrl}/organisation/${someOdsCode}/order/order-id/summary`,
+        href: `${baseUrl}/organisation/${odsCode}/order/order-id/summary`,
       };
 
-      const context = getContext({ orderId: 'order-id', odsCode: someOdsCode });
+      const context = getContext({ orderId: 'order-id', odsCode });
 
       expect(context.previewOrderButton).toEqual(expectedPreviewOrderButtonContext);
     });
@@ -141,11 +141,11 @@ describe('task-list contextCreator', () => {
       const expectedSubmitOrderButtonContext = {
         text: commonManifest.completeOrderButton.text,
         altText: commonManifest.completeOrderButton.disabledAltText,
-        href: `${baseUrl}/organisation/${someOdsCode}/order/order-id/complete-order`,
+        href: `${baseUrl}/organisation/${odsCode}/order/order-id/complete-order`,
         disabled: false,
       };
 
-      const context = getContext({ orderId: 'order-id', enableSubmitButton: true, odsCode: someOdsCode });
+      const context = getContext({ orderId: 'order-id', enableSubmitButton: true, odsCode });
 
       expect(context.completeOrderButton).toEqual(expectedSubmitOrderButtonContext);
     });

@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import { baseUrl, orderApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solutions';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/catalogue-solutions';
 
 const mockAddedOrderItems = [
   {

@@ -8,7 +8,7 @@ import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelpe
 
 const getLocation = ClientFunction(() => document.location.href);
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/neworderitem';
 
 const selectedPrice = {
   priceId: 2,

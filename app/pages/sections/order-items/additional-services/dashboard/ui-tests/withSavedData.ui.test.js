@@ -6,8 +6,9 @@ import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../
 
 const organisation = 'organisation';
 const callOffId = 'C010000-01';
+const odsCode = '03F';
 
-const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/additional-services`;
+const pageUrl = `http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/additional-services`;
 
 const recipient1 = { name: 'Recipient One', odsCode: 'recipient-1' };
 const recipient2 = { name: 'Recipient Two', odsCode: 'recipient-2' };
@@ -95,7 +96,7 @@ test('should render the added additional service items in the table', async (t) 
 
   await t
     .expect(await extractInnerText(row1SolutionName)).eql(orderItem1.catalogueItemName)
-    .expect(row1SolutionName.getAttribute('href')).eql(`${baseUrl}/${organisation}/${callOffId}/additional-services/${orderItem1.catalogueItemId}`)
+    .expect(row1SolutionName.getAttribute('href')).eql(`${baseUrl}/${organisation}/${odsCode}/order/${callOffId}/additional-services/${orderItem1.catalogueItemId}`)
     .expect(await extractInnerText(row1UnitOfOrder)).eql(`${orderItem1.itemUnit.description} ${orderItem1.timeUnit.description}`)
     .expect(await extractInnerText(row1ServiceRecipients)).eql('Service recipients (ODS code)')
     .expect(row1ServiceRecipients.find('details[open]').exists).notOk()
@@ -105,7 +106,7 @@ test('should render the added additional service items in the table', async (t) 
     .eql(`${recipient1.name} (${recipient1.odsCode})${recipient2.name} (${recipient2.odsCode})`)
 
     .expect(await extractInnerText(row2SolutionName)).eql(orderItem2.catalogueItemName)
-    .expect(row2SolutionName.getAttribute('href')).eql(`${baseUrl}/${organisation}/${callOffId}/additional-services/${orderItem2.catalogueItemId}`)
+    .expect(row2SolutionName.getAttribute('href')).eql(`${baseUrl}/${organisation}/${odsCode}/order/${callOffId}/additional-services/${orderItem2.catalogueItemId}`)
     .expect(await extractInnerText(row2UnitOfOrder)).eql(`${orderItem2.itemUnit.description}`)
     .expect(await extractInnerText(row2ServiceRecipients)).eql('Service recipients (ODS code)')
     .expect(row2ServiceRecipients.find('details[open]').exists).notOk()

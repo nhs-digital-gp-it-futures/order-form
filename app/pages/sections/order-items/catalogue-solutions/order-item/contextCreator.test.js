@@ -14,6 +14,7 @@ describe('catalogue-solutions order-item contextCreator', () => {
   const selectedOnDemandPrice = {
     itemUnit: { description: 'per consultation – core hours' }, type: 'flat', provisioningType: 'ondemand',
   };
+  const odsCode = '03F';
 
   describe('getContext', () => {
     it('should return the backLinkText', () => {
@@ -25,9 +26,9 @@ describe('catalogue-solutions order-item contextCreator', () => {
 
     it('should return the backLinkHref to catalogue solutions when order item id is not neworderitem', () => {
       const context = getContext({
-        commonManifest, selectedPrice: { type: 'flat', provisioningType: 'patient' },
+        commonManifest, selectedPrice: { type: 'flat', provisioningType: 'patient' }, odsCode,
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions');
+      expect(context.backLinkHref).toEqual(`/order/organisation/${odsCode}/order/undefined/catalogue-solutions`);
     });
 
     it('should return the backLinkHref to recipient when order item id is neworderitem and order type is Patient', () => {
@@ -35,8 +36,9 @@ describe('catalogue-solutions order-item contextCreator', () => {
         commonManifest,
         orderItemId: 'neworderitem',
         selectedPrice: { type: 'flat', provisioningType: 'Patient' },
+        odsCode,
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/price/recipients/date');
+      expect(context.backLinkHref).toEqual(`/order/organisation/${odsCode}/order/undefined/catalogue-solutions/select/solution/price/recipients/date`);
     });
 
     it('should return the backLinkHref to recipient when order item id is neworderitem and order type is OnDemand', () => {
@@ -44,8 +46,9 @@ describe('catalogue-solutions order-item contextCreator', () => {
         commonManifest,
         orderItemId: 'neworderitem',
         selectedPrice: { type: 'flat', provisioningType: 'ondemand' },
+        odsCode,
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/price/flat/ondemand');
+      expect(context.backLinkHref).toEqual(`/order/organisation/${odsCode}/order/undefined/catalogue-solutions/select/solution/price/flat/ondemand`);
     });
 
     it('should return the backLinkHref to select catalogue solution when user selects existing catalogue solution', () => {
@@ -53,8 +56,9 @@ describe('catalogue-solutions order-item contextCreator', () => {
         commonManifest,
         selectedPrice: { type: 'flat', provisioningType: 'ondemand' },
         catalogueItemExists: { catalogueItemId: 'some-id' },
+        odsCode,
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/');
+      expect(context.backLinkHref).toEqual(`/order/organisation/${odsCode}/order/undefined/catalogue-solutions/select/solution/`);
     });
 
     it('should return the title', () => {
@@ -121,9 +125,10 @@ describe('catalogue-solutions order-item contextCreator', () => {
         orderItemId: 'notneworderitem',
         orderId,
         selectedPrice: { type: 'flat', provisioningType: 'patient' },
+        odsCode,
       });
       expect(context.editButton.disabled).toEqual(false);
-      expect(context.editButton.href).toEqual(`/order/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`);
+      expect(context.editButton.href).toEqual(`/order/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients`);
     });
 
     it('should return the save button', () => {

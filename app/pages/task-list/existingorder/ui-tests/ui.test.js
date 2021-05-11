@@ -18,7 +18,7 @@ const mockExistingOrderSummary = {
   sectionStatus: 'some status',
 };
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id';
 
 const mocks = (data) => {
   nock(orderApiUrl)

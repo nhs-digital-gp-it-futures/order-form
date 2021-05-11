@@ -6,7 +6,7 @@ import { solutionsApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/additional-services/neworderitem';
 
 const selectedPrice = {
   priceId: 1,
@@ -101,14 +101,14 @@ test('should render additional-services order-item page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-1/additional-services for backlink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-1/additional-services for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/additional-services');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1/additional-services');
 });
 
 test('should render the title', async (t) => {

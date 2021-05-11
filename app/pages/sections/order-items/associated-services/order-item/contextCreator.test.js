@@ -9,12 +9,13 @@ describe('associated-services order-item contextCreator', () => {
     const orderId = 'order-id';
     const mockAssociatedServicePrices = { prices: [{ priceId: 29 }, { priceId: 30 }] };
     const somefakeUrl = 'https://some.url.co.uk/order-id';
+    const odsCode = '03F';
     it.each`
     senderUrl                               |  expectedUrl                           | associatedServicePrices
     ${`${somefakeUrl}/associated-service`}  | ${`${somefakeUrl}/associated-service`} | ${''}   
     ${`${somefakeUrl}/price`}               | ${`${somefakeUrl}/price`}              | ${''}  
     ${`${somefakeUrl}/associated-services`} | ${`${somefakeUrl}/associated-services`}| ${''}   
-    ${`${somefakeUrl}/neworderitem`}        | ${`${baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`} |${mockAssociatedServicePrices}   
+    ${`${somefakeUrl}/neworderitem`}        | ${`${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/select/associated-service/price`} |${mockAssociatedServicePrices}   
 
   `('backlinkHref should return expected url', ({ senderUrl, expectedUrl, associatedServicePrices }) => {
       const req = {
@@ -22,7 +23,9 @@ describe('associated-services order-item contextCreator', () => {
           referer: senderUrl,
         },
       };
-      const actual = backLinkHref({ req, associatedServicePrices, orderId });
+      const actual = backLinkHref({
+        req, associatedServicePrices, orderId, odsCode,
+      });
       expect(actual).toEqual(expectedUrl);
     });
   });
