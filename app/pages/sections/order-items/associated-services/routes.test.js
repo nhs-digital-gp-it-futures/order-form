@@ -84,6 +84,8 @@ describe('associated-services section routes', () => {
     });
 
     it('should redirect to the login page if the user is not logged in', () => {
+      associatedServicesController.getAssociatedServicesPageContext = jest.fn()
+        .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthenticatedUser({
@@ -97,6 +99,8 @@ describe('associated-services section routes', () => {
     });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      associatedServicesController.getAssociatedServicesPageContext = jest.fn()
+        .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -111,6 +115,8 @@ describe('associated-services section routes', () => {
     });
 
     it('should return the correct status and text if no error is thrown', async () => {
+      associatedServicesController.getAssociatedServicesPageContext = jest.fn()
+        .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({

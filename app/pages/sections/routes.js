@@ -22,6 +22,7 @@ import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
 import { deleteCatalogueSolutionsRoutes } from './order-items/catalogue-solutions/delete/routes';
 import { deleteAdditionalServicesRoutes } from './order-items/additional-services/delete/routes';
+import { deleteAssociatedServicesRoutes } from './order-items/associated-services/delete/routes';
 
 const router = express.Router({ mergeParams: true });
 
@@ -98,6 +99,8 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.use('/additional-services/delete', deleteAdditionalServicesRoutes(authProvider, addContext, sessionManager));
 
   router.use('/associated-services', associatedServicesRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/associated-services/delete', deleteAssociatedServicesRoutes(authProvider, addContext, sessionManager));
 
   router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId } = req.params;

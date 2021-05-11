@@ -48,9 +48,10 @@ export const getContext = ({
     errorMap,
   }),
   deleteButton: {
-    text: commonManifest.deleteButton.text,
-    href: commonManifest.deleteButton.href,
+    altText: catalogueItemId === 'neworderitem' ? commonManifest.deleteButton.altText : '',
     disabled: catalogueItemId === 'neworderitem',
+    href: `${baseUrl}/organisation/${orderId}/associated-services/delete/${catalogueItemId}/confirmation/${itemName}`,
+    text: commonManifest.deleteButton.text,
   },
 });
 

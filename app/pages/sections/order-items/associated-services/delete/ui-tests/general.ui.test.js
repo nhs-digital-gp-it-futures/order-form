@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 import { orderApiUrl } from '../../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/delete/order-item-id/confirmation/write-on-time-additional-service/';
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/delete/order-item-id/confirmation/write-on-time-associated-service/';
 
 const orderDescriptionMock = 'desc';
 
@@ -33,7 +33,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('delete-additional-service page - general')
+fixture('delete-associated-service page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -51,7 +51,7 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
-test('should render additional-service select page', async (t) => {
+test('should render associated-service select page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -61,7 +61,7 @@ test('should render additional-service select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/additional-services for backLink', async (t) => {
+test('should link to /order/organisation/order-id/associated-services for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -69,7 +69,7 @@ test('should link to /order/organisation/order-id/additional-services for backLi
 
   await t
     .expect(await extractInnerText(goBackLink)).eql(content.backLinkText)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/additional-services/order-item-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/associated-services/order-item-id');
 });
 
 test('should render the title', async (t) => {
@@ -79,7 +79,7 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="delete-catalogue-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql('Delete write-on-time-additional-service from order-id?');
+    .expect(await extractInnerText(title)).eql('Delete write-on-time-associated-service from order-id?');
 });
 
 test('should render the description', async (t) => {
@@ -120,7 +120,7 @@ test('should render the go back link', async (t) => {
 
   await t
     .expect(await extractInnerText(link)).eql(content.backLinkText)
-    .expect(link.getAttribute('href')).eql('/order/organisation/order-id/additional-services/order-item-id');
+    .expect(link.getAttribute('href')).eql('/order/organisation/order-id/associated-services/order-item-id');
 });
 
 test('should render the cancel link', async (t) => {
@@ -131,7 +131,7 @@ test('should render the cancel link', async (t) => {
 
   await t
     .expect(await extractInnerText(link)).eql(content.noButton.text)
-    .expect(link.getAttribute('href')).eql('/order/organisation/order-id/additional-services/order-item-id');
+    .expect(link.getAttribute('href')).eql('/order/organisation/order-id/associated-services/order-item-id');
 });
 
 test('should render the Confirm button', async (t) => {
@@ -144,7 +144,7 @@ test('should render the Confirm button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.yesButton.text);
 });
 
-test('should redirect to /organisation/order-id/additional-services/delete/order-item-id/confirmation/write-on-time-additional-service/continue when Confirm is clicked', async (t) => {
+test('should redirect to /organisation/order-id/associated-services/delete/order-item-id/confirmation/write-on-time-associated-service/continue when Confirm is clicked', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -152,5 +152,5 @@ test('should redirect to /organisation/order-id/additional-services/delete/order
 
   await t
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/delete/order-item-id/confirmation/write-on-time-additional-service/continue');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/associated-services/delete/order-item-id/confirmation/write-on-time-associated-service/continue');
 });

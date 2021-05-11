@@ -133,7 +133,7 @@ test('should render the delete button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="delete-button"] button');
+  const button = Selector('[data-test-id="delete-button"] span');
 
   await t
     .expect(await extractInnerText(button)).eql(commonContent.deleteButton.text)
@@ -145,7 +145,7 @@ test('delete button should still be disabled after validation errors', async (t)
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
-  const deleteButton = Selector('[data-test-id="delete-button"] button');
+  const deleteButton = Selector('[data-test-id="delete-button"] span');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t

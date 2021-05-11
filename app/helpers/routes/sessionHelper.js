@@ -27,6 +27,7 @@ export const sessionKeys = {
   catalogueItemExists: 'catalogueItemExists',
   proxyOrganisationId: 'proxyOrganisationId',
   proxyOrganisationName: 'proxyOrganisationName',
+  odsLookupTable: 'odsLookupTable',
 };
 
 export const getFromSessionOrApi = async ({

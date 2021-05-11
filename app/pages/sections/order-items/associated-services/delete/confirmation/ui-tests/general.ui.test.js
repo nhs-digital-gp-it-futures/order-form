@@ -5,29 +5,18 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { orderApiUrl } from '../../../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/delete/order-item-id/confirmation/write-on-time/continue';
-
-const orderDescriptionMock = 'desc';
-
-const mocks = () => {
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/description')
-    .reply(200, { description: orderDescriptionMock });
-};
+const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/delete/order-item-id/confirmation/write-on-time-associated-service/continue';
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
-  if (setup.getRoute) {
-    mocks({ postRoute: setup.postRoute });
-  }
 };
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('delete-catalogue-confirmation page - general')
+fixture('delete-associated-service-confirmation page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -62,7 +51,7 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="delete-catalogue-confirmation-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql('write-on-time deleted from order-id');
+    .expect(await extractInnerText(title)).eql('write-on-time-associated-service deleted from order-id');
 });
 
 test('should render the description', async (t) => {
@@ -83,11 +72,14 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions when Continue is clicked', async (t) => {
+test('should redirect to /organisation/order-id/associated-services when Continue is clicked', async (t) => {
+  nock(orderApiUrl)
+    .get('/api/v1/orders/order-id/sections/description')
+    .reply(200, { description: 'desc' });
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
   const button = Selector('[data-test-id="continue-button"] button');
   await t
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/associated-services');
 });

@@ -1,0 +1,5 @@
+{
+    "title": "{{solutionName}} deleted from {{orderId}}",
+    "description": "This Associated Service has been deleted from your order.",
+    "continueButtonText": "Continue"
+}
