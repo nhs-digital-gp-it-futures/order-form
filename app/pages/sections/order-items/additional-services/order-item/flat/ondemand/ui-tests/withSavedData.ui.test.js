@@ -70,7 +70,6 @@ const orderItemPageDataInSession = JSON.stringify({
 
 const baseServiceRecipient = { ...recipient1, deliveryDate };
 const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
-const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
 
 const baseRequestBody = {
   ...selectedPrice,
@@ -83,11 +82,6 @@ const baseRequestBody = {
 const validRequestBody = {
   ...baseRequestBody,
   serviceRecipients: [validServiceRecipient],
-};
-
-const invalidRequestBody = {
-  ...baseRequestBody,
-  serviceRecipients: [invalidServiceRecipient],
 };
 
 const mocks = () => {
@@ -268,14 +262,6 @@ test('should navigate to additional services dashboard page if save button is cl
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-  nock(orderApiUrl)
-    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, invalidRequestBody)
-    .reply(400, {
-      errors: {
-        'ServiceRecipients[0].Quantity': ['QuantityGreaterThanZero'],
-      },
-    });
-
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -291,11 +277,5 @@ test('should show text fields as errors with error message when there are BE val
     .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-
-  // Currently broken, TODO: fix
-  // .expect(errorMessage.exists).ok()
-  // .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
-
     .expect(quantityInput.getAttribute('value')).eql('0');
-  // .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
 });

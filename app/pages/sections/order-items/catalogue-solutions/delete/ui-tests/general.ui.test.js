@@ -61,7 +61,7 @@ test('should render delete-catalogue select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/catalogue-solutions for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/catalogue-solutions for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -69,7 +69,7 @@ test('should link to /order/organisation/order-id/catalogue-solutions for backLi
 
   await t
     .expect(await extractInnerText(goBackLink)).eql(content.backLinkText)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/order-item-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions/order-item-id');
 });
 
 test('should render the title', async (t) => {
@@ -120,7 +120,7 @@ test('should render the go back link', async (t) => {
 
   await t
     .expect(await extractInnerText(link)).eql(content.backLinkText)
-    .expect(link.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/order-item-id');
+    .expect(link.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions/order-item-id');
 });
 
 test('should render the cancel link', async (t) => {
@@ -131,7 +131,7 @@ test('should render the cancel link', async (t) => {
 
   await t
     .expect(await extractInnerText(link)).eql(content.noButton.text)
-    .expect(link.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/order-item-id');
+    .expect(link.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions/order-item-id');
 });
 
 test('should render the Confirm button', async (t) => {
@@ -144,7 +144,7 @@ test('should render the Confirm button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.yesButton.text);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/delete/order-item-id/confirmation/write-on-time/continue when Confirm is clicked', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/catalogue-solutions/delete/order-item-id/confirmation/write-on-time/continue when Confirm is clicked', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -152,5 +152,5 @@ test('should redirect to /organisation/order-id/catalogue-solutions/delete/order
 
   await t
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/delete/order-item-id/confirmation/write-on-time/continue');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/delete/order-item-id/confirmation/write-on-time/continue');
 });

@@ -59,7 +59,7 @@ test('should link to /order/organisation/order-1 for backlink', async (t) => {
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1');
 });
 
 test('should render the title', async (t) => {
@@ -105,7 +105,7 @@ test('should render the get order summary top button', async (t) => {
   await t
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
   await t
-    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
+    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1/summary?print=true');
   await t
     .expect(await extractInnerText(orderSummaryButtonDescription)).eql(content.orderSummaryButtonInfoText);
 });
@@ -121,7 +121,7 @@ test('should render the get order summary bottom button', async (t) => {
   await t
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
   await t
-    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
+    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1/summary?print=true');
   await t
     .expect(await extractInnerText(orderSummaryButtonDescription)).eql(content.orderSummaryButtonInfoText);
 });

@@ -154,6 +154,7 @@ describe('supplier contextCreator', () => {
         backLinkHref: '/order/organisation/order-id/supplier/search/select',
         searchAgainLinkHref: '/order/organisation/order-id/supplier/search',
         showSearchAgainLink: true,
+        supplierData: undefined,
       };
 
       getErrorContext(mockParams);

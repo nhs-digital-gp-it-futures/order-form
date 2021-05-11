@@ -135,14 +135,14 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect back to /organisation/order-id/supplier/search when no suppliers are returned', async (t) => {
+test('should redirect back to /organisation/odsCode/order/order-id/supplier/search when no suppliers are returned', async (t) => {
   mocks({});
 
   await pageSetup({ ...defaultPageSetup, withAuth: true, getRoute: false });
   await t.navigateTo(pageUrl);
 
   await t
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/supplier/search');
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
@@ -196,10 +196,10 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .expect(getLocation()).eql(`${pageUrl}#selectSupplier`);
 });
 
-test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/supplier when ORDAPI returns order data', async (t) => {
   await pageSetup({ ...defaultPageSetup, mockData: orderData });
   await t.navigateTo(pageUrl);
 
   await t
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/supplier');
 });

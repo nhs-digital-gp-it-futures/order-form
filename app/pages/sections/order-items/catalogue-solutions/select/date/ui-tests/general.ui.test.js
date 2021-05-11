@@ -187,7 +187,7 @@ test('should navigate to task list page if save button is clicked and data is va
 
   await t
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/neworderitem');
 });
 
 // FE Validation tests

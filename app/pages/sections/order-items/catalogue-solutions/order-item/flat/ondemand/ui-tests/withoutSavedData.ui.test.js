@@ -92,7 +92,7 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
   await t
     .typeText(quantityInput, '10', { paste: true })
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/neworderitem');
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {

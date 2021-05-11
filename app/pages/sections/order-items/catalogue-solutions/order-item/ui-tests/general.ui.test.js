@@ -101,14 +101,14 @@ test('should render Catalogue-solutions order-item page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/catalogue-solutions/select/solution/recipients/date for backlink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/recipients/date for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution/price/recipients/date');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients/date');
 });
 
 test('should render the title', async (t) => {

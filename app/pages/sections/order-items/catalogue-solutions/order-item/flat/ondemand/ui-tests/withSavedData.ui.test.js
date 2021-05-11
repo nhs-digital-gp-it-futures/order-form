@@ -103,14 +103,14 @@ test('should render the title', async (t) => {
     .expect(await extractInnerText(title)).eql('Some item name information for order-id');
 });
 
-test('should link to /order/organisation/order-id/catalogue-solutions for backlink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/catalogue-solutions for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions');
 });
 
 test('should populate text field for the price question', async (t) => {
@@ -227,7 +227,7 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
 
   await t
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/1');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/1');
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {

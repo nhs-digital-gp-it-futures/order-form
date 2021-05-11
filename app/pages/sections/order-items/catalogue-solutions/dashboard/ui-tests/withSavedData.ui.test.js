@@ -116,7 +116,7 @@ test('should render the added catalogue solutions items in the table', async (t)
 
   await t
     .expect(await extractInnerText(row1SolutionName)).eql('Solution One')
-    .expect(row1SolutionName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/catalogue-solutions/orderItem1`)
+    .expect(row1SolutionName.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order-1/catalogue-solutions/orderItem1`)
     .expect(await extractInnerText(row1UnitOfOrder)).eql('per patient per year')
     .expect(await extractInnerText(row1ServiceRecipients)).eql('Service recipients (ODS code)')
     .expect(row1ServiceRecipients.find('details[open]').exists).notOk()
@@ -126,7 +126,7 @@ test('should render the added catalogue solutions items in the table', async (t)
     .eql('Recipient One (recipient-1)Recipient Three (recipient-3)')
 
     .expect(await extractInnerText(row2SolutionName)).eql('Solution Two')
-    .expect(row2SolutionName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/catalogue-solutions/orderItem2`)
+    .expect(row2SolutionName.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order-1/catalogue-solutions/orderItem2`)
     .expect(await extractInnerText(row2UnitOfOrder)).eql('per patient per year')
     .expect(await extractInnerText(row2ServiceRecipients)).eql('Service recipients (ODS code)')
     .expect(row2ServiceRecipients.find('details[open]').exists).notOk()

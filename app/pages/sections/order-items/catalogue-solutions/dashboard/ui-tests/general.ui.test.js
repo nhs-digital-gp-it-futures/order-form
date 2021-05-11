@@ -119,7 +119,7 @@ test('should render the Add Catalogue Solution button', async (t) => {
     .expect(await extractInnerText(addOrderItemButton)).eql(content.addOrderItemButtonText);
 });
 
-test('should navigate to /organisation/order-1/catalogue-solutions/select/solution when Add Catalogue Solution button is clicked', async (t) => {
+test('should navigate to /organisation/odsCode/order/order-1/catalogue-solutions/select/solution when Add Catalogue Solution button is clicked', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -127,7 +127,7 @@ test('should navigate to /organisation/order-1/catalogue-solutions/select/soluti
 
   await t
     .click(addOrderItemButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/catalogue-solutions/select/solution');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-1/catalogue-solutions/select/solution');
 });
 
 test('should render the Continue button', async (t) => {
@@ -140,7 +140,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(continueButton)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-1 when clicking the Continue button', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/sections/catalogue-solutions', { status: 'complete' })
     .reply(200);
@@ -152,5 +152,5 @@ test('should redirect to /organisation/order-1 when clicking the Continue button
 
   await t
     .click(continueButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-1');
 });

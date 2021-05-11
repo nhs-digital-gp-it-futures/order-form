@@ -51,7 +51,7 @@ test(`should link to ${baseUrl}/organisation for Back link`, async (t) => {
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode');
 });
 
 test('should render the title', async (t) => {
@@ -108,7 +108,7 @@ test('should always render task 1 item 1 as a link', async (t) => {
 
   await t
     .click(task1Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/neworder/description`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/neworder/description`);
 });
 
 test('should not render the complete tag for task 1 item 1', async (t) => {

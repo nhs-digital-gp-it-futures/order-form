@@ -135,5 +135,5 @@ test('should redirect to search if there is no data in ORDAPI and supplierSelect
   await t.navigateTo(pageUrl);
 
   await t
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/supplier/search');
 });
