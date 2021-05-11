@@ -5,12 +5,10 @@ import { getDashboardContext } from './controller';
 
 const router = express.Router({ mergeParams: true });
 
-export const dashboardRoutes = (authProvider, addContext, sessionManager) => {
+export const dashboardRoutes = (authProvider, addContext) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const context = await getDashboardContext({
-      req,
-      sessionManager,
       accessToken,
       orgId: req.user.primaryOrganisationId,
       orgName: req.user.primaryOrganisationName,
