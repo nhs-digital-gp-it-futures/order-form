@@ -1,13 +1,14 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import { orderApiUrl } from '../../../../../../../../config';
+import { orderApiUrl, solutionsApiUrl } from '../../../../../../../../config';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
 const organisation = 'organisation';
 const callOffId = 'order-1';
+const priceId = '1018';
 const catalogueItemId = '10000-001';
 
 const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/catalogue-solutions/${catalogueItemId}`;
@@ -39,6 +40,7 @@ const orderItem = {
     description: 'per year',
   },
   price: 0.1,
+  priceId,
 };
 
 const recipient1 = { name: 'recipient-name', odsCode: 'code' };
@@ -54,6 +56,8 @@ const selectedPrice = {
   type: orderItem.type,
   provisioningType: orderItem.provisioningType,
   estimationPeriod: orderItem.estimationPeriod,
+  originalPrice: '10.0001',
+  priceId,
 };
 
 const orderItemPageDataInSession = JSON.stringify({
@@ -93,6 +97,9 @@ const mocks = () => {
   nock(orderApiUrl)
     .get(`/api/v1/orders/${callOffId}/order-items`)
     .reply(200, [orderItem]);
+  nock(solutionsApiUrl)
+    .get(`/api/v1/prices/${priceId}`)
+    .reply(200, orderItem);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
