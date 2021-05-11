@@ -12,6 +12,10 @@ const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/organisations/org-id/orders')
     .reply(200, mockOrdersData);
+
+  nock('http://localhost:5103/api/v1/Organisations/org-id')
+    .get('')
+    .reply(200);
 };
 
 const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
