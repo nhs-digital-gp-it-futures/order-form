@@ -14,14 +14,16 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
+const odsCode = '03F';
+
 describe('Additional-services select-recipient controller', () => {
   describe('getAdditionalServicePriceEndpoint', () => {
     it('returns expected string when orderId and orderItemId input', () => {
       const orderId = 'C010000-01';
       const orderItemId = 421;
-      const expected = `/organisation/${orderId}/additional-services/${orderItemId}`;
+      const expected = `/organisation/${odsCode}/order/${orderId}/additional-services/${orderItemId}`;
 
-      expect(getAdditionalServicePriceEndpoint(orderId, orderItemId)).toEqual(expected);
+      expect(getAdditionalServicePriceEndpoint(orderId, orderItemId, odsCode)).toEqual(expected);
     });
   });
 
@@ -146,9 +148,10 @@ describe('Additional-services select-recipient controller', () => {
       const expected = 'https://www.bbc.co.uk/news';
       contextCreator.backLinkHref.mockReturnValueOnce(expected);
 
-      const actual = getBackLinkHref(req, additionalServices, orderId);
+      const actual = getBackLinkHref(req, additionalServices, orderId, odsCode);
 
-      expect(contextCreator.backLinkHref).toHaveBeenCalledWith(req, additionalServices, orderId);
+      expect(contextCreator.backLinkHref)
+        .toHaveBeenCalledWith(req, additionalServices, orderId, odsCode);
       expect(actual).toEqual(expected);
     });
   });
@@ -191,10 +194,10 @@ describe('Additional-services select-recipient controller', () => {
       const request = {
         body: {},
         query: {},
-        headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${orderId}/additional-services/${orderItemId}` },
+        headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${odsCode}/order/${orderId}/additional-services/${orderItemId}` },
       };
 
-      setContextIfBackFromAdditionalServiceEdit(request, context, orderId);
+      setContextIfBackFromAdditionalServiceEdit(request, context, orderId, odsCode);
 
       expect(context.backLinkHref).toEqual(request.headers.referer);
       expect(context.orderItemId).toEqual(orderItemId.toString());

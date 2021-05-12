@@ -7,7 +7,7 @@ import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 import AdditionalServicePageModel from '../../additionalServicesPageModel';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/additional-services/neworderitem';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/additional-services/neworderitem';
 
 const getLocation = ClientFunction(() => document.location.href);
 

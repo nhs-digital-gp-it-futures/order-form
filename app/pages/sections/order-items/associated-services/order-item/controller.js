@@ -3,8 +3,8 @@ import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from '../../../../../helpers/controllers/manifestProvider';
 import { removeCommas } from '../../../../../helpers/common/priceFormatter';
 
-export const getBackLinkHref = (req, associatedServicePrices, orderId) => backLinkHref({
-  req, associatedServicePrices, orderId,
+export const getBackLinkHref = (req, associatedServicePrices, orderId, odsCode) => backLinkHref({
+  req, associatedServicePrices, orderId, odsCode,
 });
 export const formatFormData = ({ formData }) => ({
   quantity: formData.quantity
@@ -22,6 +22,7 @@ export const getOrderItemContext = async ({
   itemName,
   selectedPrice,
   formData,
+  odsCode,
 }) => {
   const selectedPriceManifest = getSelectedPriceManifest({
     orderItemType,
@@ -37,6 +38,7 @@ export const getOrderItemContext = async ({
     itemName,
     selectedPrice,
     formData,
+    odsCode,
   });
 };
 

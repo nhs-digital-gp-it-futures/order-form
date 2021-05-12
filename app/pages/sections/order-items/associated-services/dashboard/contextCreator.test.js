@@ -11,8 +11,9 @@ describe('associated-services contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const odsCode = '03F';
+      const context = getContext({ orderId, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -71,7 +72,7 @@ describe('associated-services contextCreator', () => {
             [
               {
                 data: 'Additional Service One',
-                href: '/order/organisation/order-1/associated-services/orderItem1',
+                href: '/order/organisation/03F/order/order-1/associated-services/orderItem1',
                 dataTestId: 'orderItem1-catalogueItemName',
               },
               {
@@ -82,7 +83,7 @@ describe('associated-services contextCreator', () => {
             [
               {
                 data: 'Additional Service Two',
-                href: '/order/organisation/order-1/associated-services/orderItem2',
+                href: '/order/organisation/03F/order/order-1/associated-services/orderItem2',
                 dataTestId: 'orderItem2-catalogueItemName',
               },
               {
@@ -116,13 +117,14 @@ describe('associated-services contextCreator', () => {
           },
         },
       ];
-      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
+      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems, odsCode: '03F' });
       expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
     });
 
     it('should return the addOrderItemButtonHref', () => {
-      const context = getContext({ orderId: 'order-1' });
-      expect(context.addOrderItemButtonHref).toEqual(`${baseUrl}/organisation/order-1/associated-services/select/associated-service`);
+      const odsCode = '03F';
+      const context = getContext({ orderId: 'order-1', odsCode });
+      expect(context.addOrderItemButtonHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/order-1/associated-services/select/associated-service`);
     });
 
     it('should return the continueButtonText', () => {

@@ -5,12 +5,12 @@ import commonManifest from './commonManifest.json';
 import { generateTaskList } from './helpers/generateTaskList';
 import { baseUrl } from '../../config';
 
-export const getNewOrderContext = ({ orderId }) => ({
+export const getNewOrderContext = ({ orderId, odsCode }) => ({
   ...commonManifest,
   ...neworderPageManifest,
-  backLinkHref: `${baseUrl}/organisation`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}`,
   orderId,
-  taskList: generateTaskList({ orderId, taskListManifest }),
+  taskList: generateTaskList({ orderId, taskListManifest, odsCode }),
   deleteOrderButton: {
     text: commonManifest.deleteOrderButton.text,
     altText: commonManifest.deleteOrderButton.disabledAltText,
@@ -32,38 +32,40 @@ export const getNewOrderContext = ({ orderId }) => ({
 });
 
 export const getExistingOrderContext = ({
-  orderId, orderDescription, sectionsData, enableSubmitButton = false,
+  orderId, orderDescription, sectionsData, enableSubmitButton = false, odsCode,
 }) => ({
   ...commonManifest,
   ...existingorderPageManifest,
-  backLinkHref: `${baseUrl}/organisation`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}`,
   orderId,
   title: `${existingorderPageManifest.title} ${orderId}`,
   orderDescription,
-  taskList: generateTaskList({ orderId, taskListManifest, sectionsData }),
+  taskList: generateTaskList({
+    orderId, taskListManifest, sectionsData, odsCode,
+  }),
   deleteOrderButton: {
     text: commonManifest.deleteOrderButton.text,
-    href: `${baseUrl}/organisation/${orderId}/delete-order`,
+    href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/delete-order`,
   },
   previewOrderButton: {
     text: commonManifest.previewOrderButton.text,
-    href: `${baseUrl}/organisation/${orderId}/summary`,
+    href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/summary`,
   },
   completeOrderButton: {
     text: commonManifest.completeOrderButton.text,
     altText: commonManifest.completeOrderButton.disabledAltText,
-    href: `${baseUrl}/organisation/${orderId}/complete-order`,
+    href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/complete-order`,
     disabled: !enableSubmitButton,
   },
 });
 
 export const getContext = ({
-  orderId, orderDescription, sectionsData, enableSubmitButton,
+  orderId, orderDescription, sectionsData, enableSubmitButton, odsCode,
 }) => {
   if (orderId === 'neworder') {
-    return getNewOrderContext({ orderId });
+    return getNewOrderContext({ orderId, odsCode });
   }
   return getExistingOrderContext({
-    orderId, orderDescription, sectionsData, enableSubmitButton,
+    orderId, orderDescription, sectionsData, enableSubmitButton, odsCode,
   });
 };

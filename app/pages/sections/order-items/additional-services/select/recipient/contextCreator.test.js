@@ -7,6 +7,8 @@ jest.mock('../../../../getSectionErrorContext', () => ({
   getSectionErrorContext: jest.fn(),
 }));
 
+const odsCode = '03F';
+
 describe('additional-services select-recipient contextCreator', () => {
   describe('backLinkHref', () => {
     const orderId = 'order-Id-30';
@@ -24,8 +26,8 @@ describe('additional-services select-recipient contextCreator', () => {
 
     it('should return price URL if referer does not end with additional service order item Id URL', () => {
       req.headers.referer = `https://some-nhs-site.com/${orderId}/additional-services/service/95`;
-      const actual = backLinkHref(req, {}, orderId);
-      expect(actual).toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);
+      const actual = backLinkHref(req, {}, orderId, odsCode);
+      expect(actual).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price`);
     });
   });
 
@@ -37,8 +39,8 @@ describe('additional-services select-recipient contextCreator', () => {
 
     it('should construct the backLinkHref to price page if no additional services price input', () => {
       const orderId = 'order-1';
-      const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);
+      const context = getContext({ orderId, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price`);
     });
 
     it('should construct the backLinkHref to additional service page if one additional services price input', () => {
@@ -48,8 +50,8 @@ describe('additional-services select-recipient contextCreator', () => {
         ],
       };
       const orderId = 'order-1';
-      const context = getContext({ orderId, additionalServicePrices });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`);
+      const context = getContext({ orderId, additionalServicePrices, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service`);
     });
 
     it('should construct the backLinkHref to price page if more than one additional services prices input', () => {
@@ -61,8 +63,8 @@ describe('additional-services select-recipient contextCreator', () => {
         ],
       };
       const orderId = 'order-1';
-      const context = getContext({ orderId, additionalServicePrices });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price`);
+      const context = getContext({ orderId, additionalServicePrices, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price`);
     });
 
     it('should return the title', () => {

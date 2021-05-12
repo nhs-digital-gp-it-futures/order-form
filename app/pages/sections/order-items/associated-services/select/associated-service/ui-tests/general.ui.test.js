@@ -6,7 +6,7 @@ import { solutionsApiUrl as bapiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/select/associated-service';
 
 const mockAssociatedServices = [
   {
@@ -205,7 +205,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .expect(getLocation()).eql(`${pageUrl}#selectAssociatedService`);
 });
 
-test('should redirect to /organisation/order-id/associated-services/select/associated-service/price when an associated service is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/associated-services/select/associated-service/price when an associated service is selected', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -216,5 +216,5 @@ test('should redirect to /organisation/order-id/associated-services/select/assoc
   await t
     .click(firstAssociatedService)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service/price');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/select/associated-service/price');
 });

@@ -4,6 +4,9 @@ export const getCompleteOrderContext = async ({
   orderId,
   orderDescription,
   fundingSource,
+  odsCode,
 }) => getContext(
-  { orderId, orderDescription, fundingSource },
+  {
+    orderId, orderDescription, fundingSource, odsCode,
+  },
 );

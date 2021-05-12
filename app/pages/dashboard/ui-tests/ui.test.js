@@ -6,7 +6,7 @@ import { baseUrl, orderApiUrl } from '../../../config';
 import mockOrdersData from '../../../test-utils/mockData/mockOrders.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -25,8 +25,7 @@ const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-// TODO: fix when routes are changed
-fixture.skip('Dashboard page')
+fixture('Dashboard page')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -91,7 +90,7 @@ test('should render add new order button', async (t) => {
 
   await t
     .expect(await extractInnerText(button)).eql(content.newOrderButtonText)
-    .expect(button.getAttribute('href')).eql(`${baseUrl}/organisation/neworder`);
+    .expect(button.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/neworder`);
 });
 
 test('should navigate to the new order page when add new order button is clicked', async (t) => {
@@ -102,7 +101,7 @@ test('should navigate to the new order page when add new order button is clicked
 
   await t
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/neworder');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/neworder');
 });
 
 test('should render the incomplete orders table', async (t) => {
@@ -140,7 +139,7 @@ test('should render the incomplete orders table content', async (t) => {
 
   await t
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[0].orderId)
-    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order1`)
+    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order1`)
     .expect(await extractInnerText(description)).eql(mockOrdersData[0].description)
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[0].lastUpdatedBy)
     .expect(await extractInnerText(lastUpdated)).eql('6 May 2020')
@@ -214,7 +213,7 @@ test('should render the complete orders table content', async (t) => {
 
   await t
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[1].orderId)
-    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order2/summary`)
+    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order2/summary`)
     .expect(await extractInnerText(description)).eql(mockOrdersData[1].description)
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[1].lastUpdatedBy)
     .expect(await extractInnerText(dateCompleted)).eql('9 December 2020')
@@ -261,5 +260,5 @@ test('should navigate to the summary page when an order id is clicked', async (t
 
   await t
     .click(orderId)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order2/summary');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order2/summary');
 });

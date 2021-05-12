@@ -6,7 +6,7 @@ import { orderApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipients/date';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients/date';
 
 const catalogueId = 'catalogue-id';
 const itemName = 'One Solution';
@@ -187,7 +187,7 @@ test('should navigate to task list page if save button is clicked and data is va
 
   await t
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/neworderitem');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/neworderitem');
 });
 
 // FE Validation tests

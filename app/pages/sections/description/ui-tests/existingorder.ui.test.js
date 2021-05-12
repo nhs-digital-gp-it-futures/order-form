@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/description';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/description';
 
 const postDescriptionErrorResponse = {
   errors: [
@@ -70,7 +70,7 @@ test('should navigate to task list page when valid description is added and save
 
   await t
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-1');
 });
 
 test('should show the error summary when there are validation errors', async (t) => {

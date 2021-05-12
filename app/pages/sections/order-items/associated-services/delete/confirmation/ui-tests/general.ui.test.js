@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { orderApiUrl } from '../../../../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/delete/order-item-id/confirmation/write-on-time-associated-service/continue';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/delete/order-item-id/confirmation/write-on-time-associated-service/continue';
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
 const pageSetup = async (setup = defaultPageSetup) => {
@@ -72,7 +72,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/associated-services when Continue is clicked', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/associated-services when Continue is clicked', async (t) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/description')
     .reply(200, { description: 'desc' });
@@ -81,5 +81,5 @@ test('should redirect to /organisation/order-id/associated-services when Continu
   const button = Selector('[data-test-id="continue-button"] button');
   await t
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/associated-services');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services');
 });

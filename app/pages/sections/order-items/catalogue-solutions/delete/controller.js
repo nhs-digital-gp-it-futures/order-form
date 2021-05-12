@@ -7,6 +7,7 @@ export const getDeleteCatalogueSolutionContext = async ({
   sessionManager,
   accessToken,
   logger,
+  odsCode,
 }) => {
   const { orderId } = req.params;
   const { orderItemId } = req.params;
@@ -19,7 +20,7 @@ export const getDeleteCatalogueSolutionContext = async ({
   });
 
   return getContext({
-    orderId, orderItemId, solutionName, orderDescription,
+    orderId, orderItemId, solutionName, orderDescription, odsCode,
   });
 };
 

@@ -5,7 +5,7 @@ import content from '../withoutFundingManifest.json';
 import { orderApiUrl } from '../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/complete-order';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/complete-order';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -53,14 +53,14 @@ test('should render complete order page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should render go back link with href /organisation/order-id', async (t) => {
+test('should render go back link with href /organisation/odsCode/order/order-id', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -131,7 +131,7 @@ test('should navigate back to order when Continue editing order button is clicke
 
   await t
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id');
 });
 
 test('should render complete order button', async (t) => {

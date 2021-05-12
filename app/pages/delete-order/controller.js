@@ -7,6 +7,7 @@ export const getDeleteOrderContext = async ({
   sessionManager,
   accessToken,
   logger,
+  odsCode,
 }) => {
   const { orderId } = req.params;
   const orderDescription = await getOrderDescription({
@@ -16,7 +17,7 @@ export const getDeleteOrderContext = async ({
     logger,
   });
 
-  return getContext({ orderId, orderDescription });
+  return getContext({ orderId, orderDescription, odsCode });
 };
 
 export const deleteOrder = async ({

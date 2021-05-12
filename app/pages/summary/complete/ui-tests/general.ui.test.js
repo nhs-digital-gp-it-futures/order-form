@@ -6,7 +6,7 @@ import { orderApiUrl } from '../../../../config';
 import { formatDate } from '../../../../helpers/common/dateFormatter';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/summary';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -59,7 +59,7 @@ test('should link to /order/organisation/order-1 for backlink', async (t) => {
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode');
 });
 
 test('should render the title', async (t) => {
@@ -146,7 +146,7 @@ test('should render the get order summary top button', async (t) => {
   await t
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
   await t
-    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
+    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1/summary?print=true');
   await t
     .expect(await extractInnerText(orderSummaryButtonDescription)).eql(content.orderSummaryButtonInfoText);
 });
@@ -162,7 +162,7 @@ test('should render the get order summary bottom button', async (t) => {
   await t
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
   await t
-    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
+    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1/summary?print=true');
   await t
     .expect(await extractInnerText(orderSummaryButtonDescription)).eql(content.orderSummaryButtonInfoText);
 });
