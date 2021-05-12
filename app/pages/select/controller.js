@@ -5,7 +5,11 @@ const transformOrganisationList = (organisationsList) => {
     return undefined;
   }
 
-  const radioList = organisationsList.map((org) => ({ value: org.organisationId, text: org.name }));
+  const radioList = organisationsList.map((org) => (
+    {
+      value: org.organisationId,
+      text: org.name,
+    }));
   radioList.sort((a, b) => a.text.localeCompare(b.text));
 
   return radioList;

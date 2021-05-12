@@ -81,7 +81,7 @@ export const routes = (authProvider, sessionManager) => {
 
   router.use('/organisation/:odsCode', dashboardRoutes(authProvider, addContext));
 
-  router.use('/organisation/:odsCode/select', selectOrganisationRoutes(authProvider, addContext));
+  router.use('/organisation/:odsCode/select', selectOrganisationRoutes(authProvider, addContext, sessionManager));
 
   router.use('/organisation/:odsCode/order/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
 
