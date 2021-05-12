@@ -95,6 +95,7 @@ export const getOrderItemPageDataBulk = async ({
     });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
+    selectedPrice.listPrice = selectedPrice.price;
     const [day, month, year] = destructureDate(deliveryDate);
     const selectedQuantity = sessionManager.getFromSession({
       req, key: sessionKeys.selectedQuantity,
@@ -141,8 +142,12 @@ export const getOrderItemPageDataBulk = async ({
   const catalogueSolutionId = catalogueSolutions && catalogueSolutions.length > 0
     ? catalogueSolutions[0].catalogueItemId
     : selectedItem[0].catalogueItemId;
-
+  const listItem = await getSelectedPrice(
+    { selectedPriceId: selectedItem[0].priceId, accessToken },
+  );
   const selectedPrice = {
+    priceId: selectedItem[0].priceId,
+    listPrice: listItem.price,
     price: selectedItem[0].price,
     itemUnit: selectedItem[0].itemUnit,
     timeUnit: selectedItem[0].timeUnit,
