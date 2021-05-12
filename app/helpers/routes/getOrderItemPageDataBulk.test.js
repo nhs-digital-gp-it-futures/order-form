@@ -41,7 +41,10 @@ describe('getOrderItemPageDataBulk', () => {
 
       const pageData = await getOrderItemPageDataBulk({ req, sessionManager: fakeSessionManager, orderItemId: 'neworderitem' });
 
-      expect(pageData.selectedPrice).toEqual({ price: '10.000001' });
+      expect(pageData.selectedPrice).toEqual({
+        price: '10.000001',
+        listPrice: '10.000001',
+      });
     });
 
     it('should get the selectedCatalogueSolutionId from session and return this as catalogueSolutionId', async () => {
