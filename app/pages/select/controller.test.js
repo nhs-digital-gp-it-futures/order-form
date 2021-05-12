@@ -3,7 +3,7 @@ import { getRelatedOrganisations } from '../../helpers/api/oapi/getRelatedOrgani
 
 jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
 
-fdescribe('organisation select controller', () => {
+describe('organisation select controller', () => {
   const options = {
     accessToken: 'access_token',
     orgId: 'abc',
@@ -40,16 +40,16 @@ fdescribe('organisation select controller', () => {
 
       expect(returnedContext.organisationList.length).toEqual(4);
       expect(returnedContext.organisationList[0].text).toEqual('a org two');
-      expect(returnedContext.organisationList[0].value).toEqual('002|a org two');
+      expect(returnedContext.organisationList[0].value).toEqual('002');
 
       expect(returnedContext.organisationList[1].text).toEqual('org four');
-      expect(returnedContext.organisationList[1].value).toEqual('004|org four');
+      expect(returnedContext.organisationList[1].value).toEqual('004');
 
       expect(returnedContext.organisationList[2].text).toEqual('org one');
-      expect(returnedContext.organisationList[2].value).toEqual('001|org one');
+      expect(returnedContext.organisationList[2].value).toEqual('001');
 
       expect(returnedContext.organisationList[3].text).toEqual('zzz org three');
-      expect(returnedContext.organisationList[3].value).toEqual('003|zzz org three');
+      expect(returnedContext.organisationList[3].value).toEqual('003');
     });
   });
 });

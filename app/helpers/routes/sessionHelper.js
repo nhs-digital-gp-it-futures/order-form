@@ -25,8 +25,7 @@ export const sessionKeys = {
   selectedQuantity: 'selectedQuantity',
   orderItems: 'orderItems',
   catalogueItemExists: 'catalogueItemExists',
-  proxyOrganisationId: 'proxyOrganisationId',
-  proxyOrganisationName: 'proxyOrganisationName',
+  selectedOdsCode: 'selectedOdsCode',
   odsLookupTable: 'odsLookupTable',
 };
 

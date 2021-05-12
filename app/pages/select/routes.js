@@ -5,6 +5,8 @@ import { withCatch, extractAccessToken } from '../../helpers/routes/routerHelper
 import { getSelectContext } from './controller';
 import { sessionKeys } from '../../helpers/routes/sessionHelper';
 
+import { getOdsCodeForOrganisation } from '../../helpers/controllers/odsCodeLookup';
+
 export const selectOrganisationRoutes = (authProvider, addContext, sessionManager) => {
   const router = express.Router({ mergeParams: true });
 
@@ -21,17 +23,17 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
 
   router.post('/',
     authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-      const selectedOrganisation = req.body.organisation;
-      const split = selectedOrganisation.split('|');
+      const accessToken = extractAccessToken({ req, tokenType: 'access' });
+      const orgId = req.body.organisation;
 
-      sessionManager.saveToSession({
-        req, key: sessionKeys.proxyOrganisationId, value: split[0],
-      });
-      sessionManager.saveToSession({
-        req, key: sessionKeys.proxyOrganisationName, value: split[1],
+      const odsCode = await getOdsCodeForOrganisation({
+        req, sessionManager, orgId, accessToken,
       });
 
-      logger.info('proxy organisation Id updated');
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedOdsCode, value: odsCode,
+      });
+
       return res.redirect(`${config.baseUrl}/organisation/`);
     }));
 
