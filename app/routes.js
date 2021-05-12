@@ -48,7 +48,6 @@ export const routes = (authProvider, sessionManager) => {
 
   const regExp = new RegExp('^/organisation/[A-Za-z]\\d{6}-\\d{2}');
 
-  // eslint-disable-next-line consistent-return
   router.use(async (req, res, next) => {
     const trimmedUrl = req.url.replace(/\/$/, '');
     if (trimmedUrl === '/organisation' || trimmedUrl === '/organisation/select' || regExp.exec(trimmedUrl)) {
@@ -74,7 +73,7 @@ export const routes = (authProvider, sessionManager) => {
       }
     }
 
-    next();
+    return next();
   });
 
   router.use('/organisation', dashboardRoutes(authProvider, addContext));
