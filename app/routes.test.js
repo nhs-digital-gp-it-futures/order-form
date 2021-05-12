@@ -10,11 +10,13 @@ import {
 } from './test-utils/routesTestHelper';
 import { baseUrl } from './config';
 import { getDocumentByFileName } from './helpers/api/dapi/getDocumentByFileName';
+import { getOdsCodeForOrganisation } from './helpers/controllers/odsCodeLookup';
 
 jest.mock('./logger');
 jest.mock('./helpers/api/ordapi/getOrder');
 jest.mock('./helpers/routes/getOrderDescription');
 jest.mock('./helpers/api/dapi/getDocumentByFileName');
+jest.mock('./helpers/controllers/odsCodeLookup');
 
 describe('routes', () => {
   afterEach(() => {
@@ -37,6 +39,127 @@ describe('routes', () => {
       .then((res) => {
         expect(res.redirect).toEqual(true);
         expect(res.headers.location).toEqual(`${baseUrl}/organisation`);
+      }));
+  });
+
+  describe('GET /organisation', () => {
+    const path = '/organisation';
+    const odsCode = 'J89';
+
+    beforeEach(() => {
+      getOdsCodeForOrganisation.mockResolvedValue(odsCode);
+    });
+
+    // TODO: fix when routes are changed
+    // itx('should redirect to the login page if the user is not logged in', () => (
+    //   testAuthorisedGetPathForUnauthenticatedUser({
+    //     app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+    //   })
+    // ));
+
+    it('should redirect to /organisation/odsCode if user logged in with odsCode', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(302)
+      .then((res) => {
+        expect(res.redirect).toEqual(true);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/${odsCode}`);
+      }));
+
+    it('should redirect to /organisation/odsCode if user logged in with odsCode and URL ends in slash', () => request(setUpFakeApp())
+      .get(`${path}/`)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(302)
+      .then((res) => {
+        expect(res.redirect).toEqual(true);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/${odsCode}`);
+      }));
+  });
+
+  describe('GET /organisation/select', () => {
+    const path = '/organisation/select';
+    const odsCode = 'J89';
+
+    beforeEach(() => {
+      getOdsCodeForOrganisation.mockResolvedValue(odsCode);
+    });
+
+    it('should redirect to /organisation/odsCode/select if user logged in with odsCode', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(302)
+      .then((res) => {
+        expect(res.redirect).toEqual(true);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/${odsCode}/select`);
+      }));
+
+    it('should redirect to /organisation/odsCode/select if user logged in with odsCode and URL ends in slash', () => request(setUpFakeApp())
+      .get(`${path}/`)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(302)
+      .then((res) => {
+        expect(res.redirect).toEqual(true);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/${odsCode}/select`);
+      }));
+  });
+
+  describe('GET /organisation/C116727-01', () => {
+    const path = '/organisation/C116727-01';
+    const odsCode = 'E02';
+
+    beforeEach(() => {
+      getOdsCodeForOrganisation.mockResolvedValue(odsCode);
+    });
+
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
+
+    it('should redirect to /organisation/odsCode/order/{orderId}/ if user logged in with odsCode', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(302)
+      .then((res) => {
+        expect(res.redirect).toEqual(true);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/${odsCode}/order/C116727-01`);
+      }));
+
+    it('should redirect to /organisation/odsCode/order/orderId if url ends in slash', () => request(setUpFakeApp())
+      .get(`${path}/`)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(302)
+      .then((res) => {
+        expect(res.redirect).toEqual(true);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/${odsCode}/order/C116727-01/`);
+      }));
+  });
+
+  describe('GET /organisation/:orderId/summary', () => {
+    const path = '/organisation/H123456-78/summary';
+    const odsCode = 'W28';
+
+    beforeEach(() => {
+      getOdsCodeForOrganisation.mockResolvedValue(odsCode);
+    });
+
+    it('should redirect to /organisation/odsCode/select if user logged in with odsCode', () => request(setUpFakeApp())
+      .get(path)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(302)
+      .then((res) => {
+        expect(res.redirect).toEqual(true);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/${odsCode}/order/H123456-78/summary`);
+      }));
+
+    it('should redirect to /organisation/odsCode/select if user logged in with odsCode and URL ends in slash', () => request(setUpFakeApp())
+      .get(`${path}/`)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(302)
+      .then((res) => {
+        expect(res.redirect).toEqual(true);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/${odsCode}/order/H123456-78/summary/`);
       }));
   });
 
