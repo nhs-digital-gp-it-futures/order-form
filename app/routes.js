@@ -15,6 +15,7 @@ import { completeOrderRoutes } from './pages/complete-order/routes';
 import { deleteOrderRoutes } from './pages/delete-order/routes';
 import { selectOrganisationRoutes } from './pages/select/routes';
 import includesContext from './includes/manifest.json';
+import { getOdsCodeForOrganisation } from './helpers/controllers/odsCodeLookup';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -47,6 +48,36 @@ export const routes = (authProvider, sessionManager) => {
     const stream = await getDocumentByFileName({ res, documentName, contentType });
     stream.on('close', () => res.end());
   }));
+
+  const regExp = new RegExp('^/organisation/[A-Za-z]\\d{6}-\\d{2}');
+
+  router.use(async (req, res, next) => {
+    const trimmedUrl = req.url.replace(/\/$/, '');
+    if (trimmedUrl === '/organisation' || trimmedUrl === '/organisation/select' || regExp.exec(trimmedUrl)) {
+      const organisationId = req.user ? req.user.primaryOrganisationId : null;
+      if (organisationId) {
+        const accessToken = extractAccessToken({ req, tokenType: 'access' });
+        const odsCode = await getOdsCodeForOrganisation({
+          req, sessionManager, orgId: organisationId, accessToken,
+        });
+
+        if (odsCode) {
+          logger.info(`Retrieved ODS Code for Organisation Id '${req.user.primaryOrganisationId}': ${odsCode}`);
+
+          if (trimmedUrl === '/organisation') {
+            return res.redirect(`${config.baseUrl}/organisation/${odsCode}`);
+          } if (trimmedUrl === '/organisation/select') {
+            return res.redirect(`${config.baseUrl}/organisation/${odsCode}/select`);
+          }
+          const newUrl = req.url.replace('/organisation/', `/organisation/${odsCode}/order/`);
+
+          return res.redirect(`${config.baseUrl}${newUrl}`);
+        }
+      }
+    }
+
+    return next();
+  });
 
   router.use('/organisation/:odsCode', dashboardRoutes(authProvider, addContext));
 
