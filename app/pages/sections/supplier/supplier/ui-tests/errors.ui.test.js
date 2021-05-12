@@ -5,7 +5,7 @@ import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/supplier';
 
 const mockSupplierData = {
   name: 'SupplierTwo',
@@ -107,7 +107,7 @@ test('should navigate to task list page if save button is clicked and data is va
 
   await t
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id');
 });
 
 test('should show the error summary when there are validation errors', async (t) => {

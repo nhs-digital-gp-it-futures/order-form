@@ -17,11 +17,11 @@ const generateQuestionsContext = ({ fundingSource }) => (
   }))
 );
 
-export const getContext = ({ orderId, fundingSource }) => {
+export const getContext = ({ orderId, fundingSource, odsCode }) => {
   const context = ({
     ...manifest,
     title: `${manifest.title} ${orderId}`,
-    backLinkHref: `${baseUrl}/organisation/${orderId}`,
+    backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}`,
     questions: generateQuestionsContext({ fundingSource }),
   });
   return context;
@@ -29,7 +29,7 @@ export const getContext = ({ orderId, fundingSource }) => {
 
 export const getErrorContext = (params) => {
   const updatedManifest = getContext({
-    orderId: params.orderId,
+    orderId: params.orderId, odsCode: params.odsCode,
   });
 
   return {

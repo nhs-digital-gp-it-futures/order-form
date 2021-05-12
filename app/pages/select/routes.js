@@ -12,11 +12,15 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const { odsCode } = req.params;
     const context = await getSelectContext({
       accessToken,
       orgId: req.user.primaryOrganisationId,
       orgName: req.user.primaryOrganisationName,
+      odsCode,
     });
+
+    context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}`;
     logger.info('navigating to organisation selection page');
     res.render('pages/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

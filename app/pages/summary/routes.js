@@ -9,7 +9,7 @@ const router = express.Router({ mergeParams: true });
 export const summaryRoutes = (authProvider, addContext) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const { print } = req.query;
 
     const {
@@ -17,7 +17,7 @@ export const summaryRoutes = (authProvider, addContext) => {
     } = await getOrder({ orderId, accessToken });
 
     const context = await getSummaryPageContext({
-      orderId, orderData, oneOffCostItems, recurringCostItems,
+      orderId, orderData, oneOffCostItems, recurringCostItems, odsCode,
     });
 
     if (print) {

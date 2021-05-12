@@ -6,9 +6,8 @@ import { solutionsApiUrl, orderApiUrl, organisationApiUrl } from '../../../../..
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
-const organisation = 'organisation';
 const callOffId = 'order-1';
-const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/associated-services/neworderitem`;
+const pageUrl = `http://localhost:1234/order/organisation/odsCode/order/${callOffId}/associated-services/neworderitem`;
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -116,5 +115,6 @@ test.skip('should navigate to associated-services dashboard page if save button 
     .typeText(quantityInput, '10', { paste: true })
     .click(estimatiodPeriodInputs.nth(0))
     .click(saveButton)
-    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/associated-services`);
+
+    .expect(getLocation()).eql(`http://localhost:1234/order/organisation/odsCode/order/${callOffId}/associated-services`);
 });

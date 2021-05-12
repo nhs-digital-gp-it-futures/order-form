@@ -2,6 +2,7 @@ import manifest from './manifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../../../../config';
 
+const odsCode = '03F';
 describe('catalogue-solutions contextCreator', () => {
   describe('getContext', () => {
     it('should return the backLinkText', () => {
@@ -66,7 +67,7 @@ describe('catalogue-solutions contextCreator', () => {
             [
               {
                 data: 'Solution One',
-                href: '/order/organisation/order-1/catalogue-solutions/orderItem1',
+                href: '/order/organisation/03F/order/order-1/catalogue-solutions/orderItem1',
                 dataTestId: 'orderItem1-catalogueItemName',
               },
               {
@@ -84,7 +85,7 @@ describe('catalogue-solutions contextCreator', () => {
             [
               {
                 data: 'Solution Two',
-                href: '/order/organisation/order-1/catalogue-solutions/orderItem3',
+                href: '/order/organisation/03F/order/order-1/catalogue-solutions/orderItem3',
                 dataTestId: 'orderItem3-catalogueItemName',
               },
               {
@@ -142,7 +143,7 @@ describe('catalogue-solutions contextCreator', () => {
           },
         },
       ];
-      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
+      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems, odsCode });
       expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
     });
 
@@ -154,7 +155,7 @@ describe('catalogue-solutions contextCreator', () => {
             [
               {
                 data: 'Solution One',
-                href: '/order/organisation/order-1/catalogue-solutions/orderItem1',
+                href: '/order/organisation/03F/order/order-1/catalogue-solutions/orderItem1',
                 dataTestId: 'orderItem1-catalogueItemName',
               },
               {
@@ -194,7 +195,7 @@ describe('catalogue-solutions contextCreator', () => {
           description: 'per year',
         },
       }];
-      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
+      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems, odsCode });
       expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
     });
 
@@ -204,8 +205,8 @@ describe('catalogue-solutions contextCreator', () => {
     });
 
     it('should return the addOrderItemButtonHref', () => {
-      const context = getContext({ orderId: 'order-1' });
-      expect(context.addOrderItemButtonHref).toEqual(`${baseUrl}/organisation/order-1/catalogue-solutions/select/solution`);
+      const context = getContext({ orderId: 'order-1', odsCode });
+      expect(context.addOrderItemButtonHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/order-1/catalogue-solutions/select/solution`);
     });
 
     it('should return the continueButtonText', () => {

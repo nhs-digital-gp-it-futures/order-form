@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import { baseUrl, orderApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/associated-services';
 
 const mockAddedOrderItems = [
   {
@@ -78,8 +78,8 @@ test('should render the added associated service items in the table', async (t) 
 
   await t
     .expect(await extractInnerText(row1CatalogueItemName)).eql('Associated Service One')
-    .expect(row1CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/associated-services/orderItem1`)
+    .expect(row1CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/orderItem1`)
 
     .expect(await extractInnerText(row2CatalogueItemName)).eql('Associated Service Two')
-    .expect(row2CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/associated-services/orderItem2`);
+    .expect(row2CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/orderItem2`);
 });

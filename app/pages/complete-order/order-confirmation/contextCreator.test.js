@@ -14,8 +14,9 @@ describe('Order confirmation contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId, fundingSource });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
+      const odsCode = '03F';
+      const context = getContext({ orderId, fundingSource, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}`);
     });
 
     it('should return the title', () => {
@@ -39,8 +40,9 @@ describe('Order confirmation contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId, fundingSource });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
+      const odsCode = '03F';
+      const context = getContext({ orderId, fundingSource, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}`);
     });
 
     it('should return the title', () => {
@@ -59,8 +61,9 @@ describe('Order confirmation contextCreator', () => {
     });
 
     it('should return the order summary button href', () => {
-      const context = getContext({ orderId: 'order-1', fundingSource });
-      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/order-1/summary?print=true`);
+      const odsCode = '03F';
+      const context = getContext({ orderId: 'order-1', fundingSource, odsCode });
+      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/order-1/summary?print=true`);
     });
 
     it('should return the order summary advice', () => {

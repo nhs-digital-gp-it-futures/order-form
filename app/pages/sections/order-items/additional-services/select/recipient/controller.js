@@ -5,7 +5,7 @@ export const getAdditionalServiceRecipientPageContext = (params) => getContext(p
 
 export const getAdditionalServiceRecipientErrorPageContext = (params) => getErrorContext(params);
 
-export const getAdditionalServicePriceEndpoint = (orderId, orderItemId) => `/organisation/${orderId}/additional-services/${orderItemId}`;
+export const getAdditionalServicePriceEndpoint = (orderId, orderItemId, odsCode) => `/organisation/${odsCode}/order/${orderId}/additional-services/${orderItemId}`;
 
 export const validateAdditionalServiceRecipientForm = ({ data }) => {
   if (data.selectRecipient && data.selectRecipient.trim().length > 0) {
@@ -26,12 +26,12 @@ export const getAdditionalServiceRecipientName = ({ serviceRecipientId, recipien
 );
 
 // eslint-disable-next-line max-len
-export const getBackLinkHref = (req, additionalServicePrices, orderId) => backLinkHref(req, additionalServicePrices, orderId);
+export const getBackLinkHref = (req, additionalServicePrices, orderId, odsCode) => backLinkHref(req, additionalServicePrices, orderId, odsCode);
 
-export const setContextIfBackFromAdditionalServiceEdit = (req, context, orderId) => {
+export const setContextIfBackFromAdditionalServiceEdit = (req, context, orderId, odsCode) => {
   let orderItemId = req.body.orderItemId || req.query.orderItemId;
   if (orderItemId) {
-    context.backLinkHref = `${baseUrl}${getAdditionalServicePriceEndpoint(orderId, orderItemId)}`;
+    context.backLinkHref = `${baseUrl}${getAdditionalServicePriceEndpoint(orderId, orderItemId, odsCode)}`;
     context.orderItemId = orderItemId;
 
     return;
@@ -40,7 +40,9 @@ export const setContextIfBackFromAdditionalServiceEdit = (req, context, orderId)
   const { referer } = req.headers;
   orderItemId = referer ? referer.split('/').pop() : '';
 
-  if (referer && referer.endsWith(getAdditionalServicePriceEndpoint(orderId, orderItemId))) {
+  if (referer && referer.endsWith(
+    getAdditionalServicePriceEndpoint(orderId, orderItemId, odsCode),
+  )) {
     context.backLinkHref = referer;
     context.orderItemId = orderItemId;
   }

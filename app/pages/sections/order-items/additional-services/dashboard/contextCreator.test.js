@@ -7,24 +7,25 @@ import { baseUrl } from '../../../../../config';
 describe('additional-services contextCreator', () => {
   const orderId = 'order-id';
   const mockcatalogueItemExists = { catalogueItemId: 'some-id' };
+  const odsCode = '03F';
   describe('backLinkHref', () => {
-    const additionalServicesUrl = `${baseUrl}/organisation/${orderId}/additional-services`;
+    const additionalServicesUrl = `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`;
     const mockSelectedPriceOnDemandType = { type: 'flat', provisioningType: 'OnDemand' };
     const mockSelectedPricePatientType = { type: 'flat', provisioningType: 'Patient' };
-    const onDemandPriceUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/flat/ondemand`;
-    const dateUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients/date`;
+    const onDemandPriceUrl = `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/flat/ondemand`;
+    const dateUrl = `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients/date`;
     const somefakeUrl = 'https://some.url.co.uk/order-id';
-    const onselectServiceUrl = `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`;
+    const onselectServiceUrl = `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service`;
     it.each`
-    senderUrl                               |  expectedUrl                                                | selectedPrice                   | catalogueItemExists
-    ${`${somefakeUrl}/items/894`}           | ${additionalServicesUrl}                                    | ${mockSelectedPricePatientType} | ${''}
-    ${''}                                   | ${additionalServicesUrl}                                    | ${mockSelectedPricePatientType} | ${''}
-    ${`${somefakeUrl}/date`}                | ${`${somefakeUrl}/date`}                                    | ${mockSelectedPricePatientType} | ${''}
-    ${`${somefakeUrl}/additional-services`} | ${`${somefakeUrl}/additional-services`}                     | ${mockSelectedPricePatientType} | ${''}
-    ${`${somefakeUrl}/recipients`}          | ${`${baseUrl}/organisation/${orderId}/additional-services`} | ${mockSelectedPricePatientType} | ${''}
-    ${`${somefakeUrl}/neworderitem`}        | ${onDemandPriceUrl}                                         | ${mockSelectedPriceOnDemandType}| ${''}
-    ${`${somefakeUrl}/neworderitem`}        | ${dateUrl}                                                  | ${mockSelectedPricePatientType} | ${''}
-    ${onselectServiceUrl}                   | ${onselectServiceUrl}                                       | ${mockSelectedPriceOnDemandType}| ${mockcatalogueItemExists}  
+    senderUrl                               |  expectedUrl                                                                 | selectedPrice                   | catalogueItemExists
+    ${`${somefakeUrl}/items/894`}           | ${additionalServicesUrl}                                                     | ${mockSelectedPricePatientType} | ${''}
+    ${''}                                   | ${additionalServicesUrl}                                                     | ${mockSelectedPricePatientType} | ${''}
+    ${`${somefakeUrl}/date`}                | ${`${somefakeUrl}/date`}                                                     | ${mockSelectedPricePatientType} | ${''}
+    ${`${somefakeUrl}/additional-services`} | ${`${somefakeUrl}/additional-services`}                                      | ${mockSelectedPricePatientType} | ${''}
+    ${`${somefakeUrl}/recipients`}          | ${`${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`} | ${mockSelectedPricePatientType} | ${''}
+    ${`${somefakeUrl}/neworderitem`}        | ${onDemandPriceUrl}                                                          | ${mockSelectedPriceOnDemandType}| ${''}
+    ${`${somefakeUrl}/neworderitem`}        | ${dateUrl}                                                                   | ${mockSelectedPricePatientType} | ${''}
+    ${onselectServiceUrl}                   | ${onselectServiceUrl}                                                        | ${mockSelectedPriceOnDemandType}| ${mockcatalogueItemExists}  
     `('backlinkHref should return expected url', ({
       senderUrl, expectedUrl, selectedPrice, catalogueItemExists,
     }) => {
@@ -34,7 +35,7 @@ describe('additional-services contextCreator', () => {
         },
       };
       const actual = backLinkHref({
-        req, selectedPrice, orderId, catalogueItemExists,
+        req, selectedPrice, orderId, catalogueItemExists, odsCode,
       });
       expect(actual).toEqual(expectedUrl);
     });
@@ -44,17 +45,19 @@ describe('additional-services contextCreator', () => {
     it('should return expected link', () => {
       const catalogueItemId = 'order-item-id-92';
       const solutionName = 'Medi-Sort';
-      const actual = deleteButtonLink({ orderId, catalogueItemId, solutionName });
+      const actual = deleteButtonLink({
+        orderId, catalogueItemId, solutionName, odsCode,
+      });
       expect(actual)
-        .toEqual(`${baseUrl}/organisation/${orderId}/additional-services/delete/${catalogueItemId}/confirmation/${solutionName}`);
+        .toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/delete/${catalogueItemId}/confirmation/${solutionName}`);
     });
   });
 
   describe('editRecipientsLink', () => {
     it('should return expected link', () => {
-      const actual = editRecipientsLink(orderId);
+      const actual = editRecipientsLink(orderId, odsCode);
       expect(actual)
-        .toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`);
+        .toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`);
     });
   });
 
@@ -65,8 +68,8 @@ describe('additional-services contextCreator', () => {
     });
 
     it('should construct the backLinkHref', () => {
-      const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const context = getContext({ orderId, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -120,7 +123,7 @@ describe('additional-services contextCreator', () => {
             [
               {
                 data: 'Additional Service One',
-                href: '/order/organisation/order-1/additional-services/orderItem1',
+                href: '/order/organisation/03F/order/order-1/additional-services/orderItem1',
                 dataTestId: 'orderItem1-catalogueItemName',
               },
               {
@@ -138,7 +141,7 @@ describe('additional-services contextCreator', () => {
             [
               {
                 data: 'Additional Service Two',
-                href: '/order/organisation/order-1/additional-services/orderItem2',
+                href: '/order/organisation/03F/order/order-1/additional-services/orderItem2',
                 dataTestId: 'orderItem2-catalogueItemName',
               },
               {
@@ -200,7 +203,7 @@ describe('additional-services contextCreator', () => {
           },
         },
       ];
-      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
+      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems, odsCode });
       expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
     });
 
@@ -212,7 +215,7 @@ describe('additional-services contextCreator', () => {
             [
               {
                 data: 'Solution One',
-                href: '/order/organisation/order-1/additional-services/orderItem1',
+                href: '/order/organisation/03F/order/order-1/additional-services/orderItem1',
                 dataTestId: 'orderItem1-catalogueItemName',
               },
               {
@@ -252,7 +255,7 @@ describe('additional-services contextCreator', () => {
           description: 'per year',
         },
       }];
-      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
+      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems, odsCode });
       expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
     });
 
@@ -262,8 +265,8 @@ describe('additional-services contextCreator', () => {
     });
 
     it('should return the addOrderItemButtonHref', () => {
-      const context = getContext({ orderId: 'order-1' });
-      expect(context.addOrderItemButtonHref).toEqual(`${baseUrl}/organisation/order-1/additional-services/select/additional-service`);
+      const context = getContext({ orderId: 'order-1', odsCode });
+      expect(context.addOrderItemButtonHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/order-1/additional-services/select/additional-service`);
     });
 
     it('should return the continueButtonText', () => {

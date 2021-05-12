@@ -1,7 +1,7 @@
 import { getContext, getErrorContext } from './contextCreator';
 
-export const getFundingSourceContext = async ({ orderId, fundingSource }) => getContext(
-  { orderId, fundingSource },
+export const getFundingSourceContext = async ({ orderId, fundingSource, odsCode }) => getContext(
+  { orderId, fundingSource, odsCode },
 );
 export const getFundingSourceErrorPageContext = (params) => getErrorContext(params);
 

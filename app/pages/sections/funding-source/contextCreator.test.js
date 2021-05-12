@@ -16,8 +16,9 @@ describe('funding source contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const odsCode = '03F';
+      const context = getContext({ orderId, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {

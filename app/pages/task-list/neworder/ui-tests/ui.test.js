@@ -6,7 +6,7 @@ import neworderPageContent from '../manifest.json';
 import { baseUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/neworder';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/neworder';
 
 const pageSetup = async (setup = { withAuth: true }) => {
   if (setup.withAuth) {
@@ -16,8 +16,7 @@ const pageSetup = async (setup = { withAuth: true }) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-// TODO: fix when routes are changed
-fixture.skip('Task-list page - new order')
+fixture('Task-list page - new order')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
@@ -52,7 +51,7 @@ test(`should link to ${baseUrl}/organisation for Back link`, async (t) => {
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode');
 });
 
 test('should render the title', async (t) => {
@@ -109,7 +108,7 @@ test('should always render task 1 item 1 as a link', async (t) => {
 
   await t
     .click(task1Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/neworder/description`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/neworder/description`);
 });
 
 test('should not render the complete tag for task 1 item 1', async (t) => {

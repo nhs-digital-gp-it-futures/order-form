@@ -10,8 +10,9 @@ const organisation = 'organisation';
 const callOffId = 'order-1';
 const priceId = '1018';
 const catalogueItemId = '10000-001';
+const odsCode = '03F';
 
-const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/catalogue-solutions/${catalogueItemId}`;
+const pageUrl = `http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/catalogue-solutions/${catalogueItemId}`;
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -131,14 +132,14 @@ test('should render the title', async (t) => {
     .expect(await extractInnerText(title)).eql(`Some item name information for ${callOffId}`);
 });
 
-test(`should link to /order/${organisation}/${callOffId}/catalogue-solutions for backlink`, async (t) => {
+test(`should link to /order/${organisation}/${odsCode}/order/${callOffId}/catalogue-solutions for backlink`, async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${callOffId}/catalogue-solutions`);
+    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${odsCode}/order/${callOffId}/catalogue-solutions`);
 });
 
 test('should populate text field for the price question', async (t) => {
@@ -259,7 +260,7 @@ test('should navigate to catalogue-solutions dashboard page if save button is cl
 
   await t
     .click(saveButton)
-    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/catalogue-solutions`);
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/catalogue-solutions`);
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {

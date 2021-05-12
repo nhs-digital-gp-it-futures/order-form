@@ -6,7 +6,7 @@ import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../
 import { solutionsApiUrl, organisationApiUrl } from '../../../../../../../config';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price';
 
 const selectedItemNameInSession = 'Solution One';
 const selectedItemIdInSession = 'solution-1';
@@ -235,7 +235,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price/recipients when a price is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients when a price is selected', async (t) => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
     .reply(200, []);
@@ -250,10 +250,10 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
   await t
     .click(firstSolution)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipients');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients');
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price/recipients if only one price returned', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients if only one price returned', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices?catalogueItemId=solution-1')
     .reply(200, mockSinglePriceSolution);
@@ -266,7 +266,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
   await t.navigateTo(pageUrl);
 
   await t
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipients');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients');
 });
 
 test('should show the error summary when no price selected causing validation error', async (t) => {

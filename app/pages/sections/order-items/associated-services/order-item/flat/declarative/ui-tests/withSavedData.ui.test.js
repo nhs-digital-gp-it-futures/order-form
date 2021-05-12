@@ -9,8 +9,8 @@ import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelpe
 const organisation = 'organisation';
 const callOffId = 'order-1';
 const catalogueItemId = '10000-001';
-
-const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/associated-services/${catalogueItemId}`;
+const odsCode = '03F';
+const pageUrl = `http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/associated-services/${catalogueItemId}`;
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -89,14 +89,14 @@ test('should render the title', async (t) => {
     .expect(await extractInnerText(title)).eql('Some item name information for order-1');
 });
 
-test(`should link to /order/${organisation}/${callOffId}/associated-services for backlink`, async (t) => {
+test(`should link to /order/${organisation}/${odsCode}/order/${callOffId}/associated-services for backlink`, async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${callOffId}/associated-services`);
+    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/${odsCode}/order/${callOffId}/associated-services`);
 });
 
 test('should populate text field for the quantity question', async (t) => {
@@ -198,7 +198,7 @@ test('should navigate to associated services dashboard page if save button is cl
   await t
     .typeText(quantityInput, '10', { replace: true })
     .click(saveButton)
-    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/associated-services`);
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/associated-services`);
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
