@@ -1,12 +1,13 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import { orderApiUrl } from '../../../../../../../../config';
+import { orderApiUrl, solutionsApiUrl } from '../../../../../../../../config';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/1';
+const priceId = '1018';
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -29,18 +30,20 @@ const orderItem = {
     description: 'per consultation core hours',
   },
   price: 0.1,
+  priceId,
 };
 
 const recipients = [{ name: 'recipient-name', odsCode: 'code' }, { name: 'recipient-name', odsCode: 'code-not-used' }];
 const selectedRecipients = ['code'];
 
 const selectedPrice = {
-  priceId: 3,
   price: orderItem.price,
   itemUnit: orderItem.itemUnit,
   timeUnit: orderItem.timeUnit,
   type: orderItem.type,
   provisioningType: orderItem.provisioningType,
+  listPrice: '10.0001',
+  priceId,
 };
 
 const orderItemPageDataInSession = JSON.stringify({
@@ -58,6 +61,9 @@ const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/order-items')
     .reply(200, [orderItem]);
+  nock(solutionsApiUrl)
+    .get(`/api/v1/prices/${priceId}`)
+    .reply(200, orderItem);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };

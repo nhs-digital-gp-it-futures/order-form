@@ -5,6 +5,7 @@ module.exports = {
     node: true,
     jest: true,
   },
+  parserOptions: { ecmaVersion: 2021 },
   rules: {
     'import/prefer-default-export': 'off',
     'array-callback-return': 'off',
