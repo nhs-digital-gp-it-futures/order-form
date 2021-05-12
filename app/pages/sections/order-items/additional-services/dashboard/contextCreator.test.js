@@ -17,15 +17,15 @@ describe('additional-services contextCreator', () => {
     const somefakeUrl = 'https://some.url.co.uk/order-id';
     const onselectServiceUrl = `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service`;
     it.each`
-    senderUrl                               |  expectedUrl                                                | selectedPrice                   | catalogueItemExists
-    ${`${somefakeUrl}/items/894`}           | ${additionalServicesUrl}                                    | ${mockSelectedPricePatientType} | ${''}
-    ${''}                                   | ${additionalServicesUrl}                                    | ${mockSelectedPricePatientType} | ${''}
-    ${`${somefakeUrl}/date`}                | ${`${somefakeUrl}/date`}                                    | ${mockSelectedPricePatientType} | ${''}
-    ${`${somefakeUrl}/additional-services`} | ${`${somefakeUrl}/additional-services`}                     | ${mockSelectedPricePatientType} | ${''}
+    senderUrl                               |  expectedUrl                                                                 | selectedPrice                   | catalogueItemExists
+    ${`${somefakeUrl}/items/894`}           | ${additionalServicesUrl}                                                     | ${mockSelectedPricePatientType} | ${''}
+    ${''}                                   | ${additionalServicesUrl}                                                     | ${mockSelectedPricePatientType} | ${''}
+    ${`${somefakeUrl}/date`}                | ${`${somefakeUrl}/date`}                                                     | ${mockSelectedPricePatientType} | ${''}
+    ${`${somefakeUrl}/additional-services`} | ${`${somefakeUrl}/additional-services`}                                      | ${mockSelectedPricePatientType} | ${''}
     ${`${somefakeUrl}/recipients`}          | ${`${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`} | ${mockSelectedPricePatientType} | ${''}
-    ${`${somefakeUrl}/neworderitem`}        | ${onDemandPriceUrl}                                         | ${mockSelectedPriceOnDemandType}| ${''}
-    ${`${somefakeUrl}/neworderitem`}        | ${dateUrl}                                                  | ${mockSelectedPricePatientType} | ${''}
-    ${onselectServiceUrl}                   | ${onselectServiceUrl}                                       | ${mockSelectedPriceOnDemandType}| ${mockcatalogueItemExists}  
+    ${`${somefakeUrl}/neworderitem`}        | ${onDemandPriceUrl}                                                          | ${mockSelectedPriceOnDemandType}| ${''}
+    ${`${somefakeUrl}/neworderitem`}        | ${dateUrl}                                                                   | ${mockSelectedPricePatientType} | ${''}
+    ${onselectServiceUrl}                   | ${onselectServiceUrl}                                                        | ${mockSelectedPriceOnDemandType}| ${mockcatalogueItemExists}  
     `('backlinkHref should return expected url', ({
       senderUrl, expectedUrl, selectedPrice, catalogueItemExists,
     }) => {
