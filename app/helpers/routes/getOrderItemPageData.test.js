@@ -97,6 +97,7 @@ describe('getOrderItemPageData', () => {
 
   describe('when existing order item', () => {
     const mockOrderItemResponse = {
+      priceId: '1018',
       catalogueItemId: 'some-item-id',
       catalogueItemName: 'some item name',
       serviceRecipients: [recipient],
@@ -153,6 +154,7 @@ describe('getOrderItemPageData', () => {
       const pageData = await getOrderItemPageData({ req, sessionManager: fakeSessionManager, catalogueItemId: 'existingsolution' });
 
       expect(pageData.selectedPrice).toEqual({
+        priceId: '1018',
         currencyCode: mockOrderItemResponse.currencyCode,
         price: mockOrderItemResponse.price,
         itemUnit: mockOrderItemResponse.itemUnit,
