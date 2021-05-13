@@ -180,7 +180,7 @@ test('should show the correct error summary and input error when the price is re
     .expect(price.hasClass('nhsuk-input--error')).ok();
 });
 
-test('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
+test.skip('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id')
     .reply(200, baseServiceRecipient);

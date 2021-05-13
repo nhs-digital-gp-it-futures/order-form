@@ -18,6 +18,7 @@ import * as selectRecipientController from './recipients/controller';
 import * as selectPlannedDateController from './date/controller';
 import { baseUrl } from '../../../../../config';
 import { getServiceRecipients as getRecipientsFromOapi } from '../../../../../helpers/api/oapi/getServiceRecipients';
+import { getServiceRecipients } from '../../../../../helpers/routes/getServiceRecipients';
 import { findSelectedCatalogueItemInSession } from '../../../../../helpers/routes/findSelectedCatalogueItemInSession';
 import { getCatalogueItems } from '../../../../../helpers/api/bapi/getCatalogueItems';
 import { getCatalogueItemPricing } from '../../../../../helpers/api/bapi/getCatalogueItemPricing';
@@ -29,6 +30,7 @@ import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/oapi/getServiceRecipients');
+jest.mock('../../../../../helpers/routes/getServiceRecipients');
 jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItems');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
@@ -258,7 +260,7 @@ describe('catalogue-solutions select routes', () => {
     });
   });
 
-  describe('GET /organisation/:odsCode/:orderId/catalogue-solutions/select/solution/price', () => {
+  describe('GET /organisation/:odsCode/order/:orderId/catalogue-solutions/select/solution/price', () => {
     afterEach(() => {
       jest.resetAllMocks();
     });
@@ -406,7 +408,7 @@ describe('catalogue-solutions select routes', () => {
     beforeEach(() => {
       selectRecipientController.setContextIfBackFromCatalogueSolutionEdit = mockSetContext;
 
-      getRecipientsFromOapi.mockResolvedValue([]);
+      getServiceRecipients.mockResolvedValue([]);
 
       selectRecipientController.getServiceRecipientsContext = jest.fn()
         .mockResolvedValue({});

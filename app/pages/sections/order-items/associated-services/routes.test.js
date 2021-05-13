@@ -19,7 +19,7 @@ import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPag
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
-import { getOrganisation } from '../../../../helpers/api/oapi/getOrganisation';
+import { getOrganisationFromOdsCode } from '../../../../helpers/controllers/odsCodeLookup';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../logger');
@@ -27,7 +27,7 @@ jest.mock('../../../../helpers/routes/getOrderItemPageData');
 jest.mock('../../../../helpers/controllers/validateOrderItemForm');
 jest.mock('../../../../helpers/controllers/saveOrderItem');
 jest.mock('../../../../helpers/api/ordapi/putOrderSection');
-jest.mock('../../../../helpers/api/oapi/getOrganisation');
+jest.mock('../../../../helpers/controllers/odsCodeLookup');
 
 const mockSelectedItemIdCookie = `${sessionKeys.selectedItemId}=item-1`;
 const mockSelectedPriceIdCookie = `${sessionKeys.selectedPriceId}=1`;
@@ -252,7 +252,7 @@ describe('associated-services section routes', () => {
     });
 
     it('should show the associated-services order item page with errors if the api response is unsuccessful', async () => {
-      getOrganisation.mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue({});
       getOrderItemPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       validateOrderItemForm.mockReturnValue([]);
@@ -281,8 +281,8 @@ describe('associated-services section routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/associated-services if there are no validation errors and post is successful', async () => {
-      getOrganisation.mockResolvedValue({});
+    it('should redirect to /organisation/odsCode/order/some-order-id/associated-services if there are no validation errors and post is successful', async () => {
+      getOrganisationFromOdsCode.mockResolvedValue({});
       getOrderItemPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       validateOrderItemForm.mockReturnValue([]);

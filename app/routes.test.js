@@ -32,8 +32,7 @@ describe('routes', () => {
       })
     ));
 
-    // Todo: unskip once get odscode feature is implemented
-    it.skip('should redirect to /organisation', () => request(setUpFakeApp())
+    it('should redirect to /organisation', () => request(setUpFakeApp())
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
       .expect(302)

@@ -74,7 +74,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-fixture('Associated-services - flat ondemand - withSavedData')
+fixture.skip('Associated-services - flat ondemand - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);

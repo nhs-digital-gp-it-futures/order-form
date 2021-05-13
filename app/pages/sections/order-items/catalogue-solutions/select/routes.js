@@ -204,6 +204,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
       sessionManager,
       logger,
+      odsCode,
     });
 
     const selectedRecipients = sessionManager.getFromSession({

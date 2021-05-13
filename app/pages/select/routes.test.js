@@ -9,8 +9,10 @@ import {
   setUpFakeApp,
 } from '../../test-utils/routesTestHelper';
 import * as controller from './controller';
+import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
 
 jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
+jest.mock('../../helpers/controllers/odsCodeLookup');
 
 describe('GET /organisation/:odsCode/select', () => {
   const path = '/organisation/odsCode/select';
@@ -35,6 +37,7 @@ describe('GET /organisation/:odsCode/select', () => {
   ));
 
   it('should return the page with correct status when the user is authorised', () => {
+    getOrganisationFromOdsCode.mockResolvedValueOnce({});
     controller.organisationsList = jest.fn()
       .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });
 
