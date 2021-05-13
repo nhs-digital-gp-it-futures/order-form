@@ -4,7 +4,9 @@ import { generateErrorMap } from '../../../helpers/contextCreators/generateError
 import { generateQuestions } from '../../../helpers/contextCreators/generateQuestions';
 import { generateErrorSummary } from '../../../helpers/contextCreators/generateErrorSummary';
 
-export const getContext = ({ odsCode, orderId, data, errorMap }) => ({
+export const getContext = ({
+  odsCode, orderId, data, errorMap,
+}) => ({
   ...manifest,
   backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}`,
   title: `${manifest.title} ${orderId}`,
@@ -15,7 +17,9 @@ export const getContext = ({ odsCode, orderId, data, errorMap }) => ({
   }),
 });
 
-export const getErrorContext = ({ validationErrors, orderId, data }) => {
+export const getErrorContext = ({
+  validationErrors, orderId, data,
+}) => {
   const errorMap = generateErrorMap({
     validationErrors,
     errorMessagesFromManifest: manifest.errorMessages,
@@ -27,7 +31,9 @@ export const getErrorContext = ({ validationErrors, orderId, data }) => {
     errorMap,
   });
 
-  const errorSummary = generateErrorSummary({ errorMap });
+  const errorSummary = generateErrorSummary({
+    errorMap,
+  });
 
   return ({
     errors: errorSummary,
