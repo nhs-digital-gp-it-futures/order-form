@@ -10,8 +10,8 @@ describe('delete-order-confirmation contextCreator', () => {
     });
 
     it('should construct the backLinkHref', () => {
-      const context = getContext({});
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
+      const context = getContext({ odsCode: 'N39' });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/N39`);
     });
 
     it('should return the title', () => {

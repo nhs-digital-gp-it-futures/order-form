@@ -25,6 +25,7 @@ const mockManifest = {
   ],
 };
 
+const odsCode = 'J84';
 const orderId = 'order-id';
 
 describe('getSectionErrorContext', () => {
@@ -85,11 +86,12 @@ describe('getSectionErrorContext', () => {
       { href: '#field1', text: 'field1 is required' },
     ]);
     const context = getSectionErrorContext({
+      odsCode,
       orderId,
       validationErrors: mockValidationErrors,
       data: { field1: 'a lovely field1' },
       manifest: mockManifest,
     });
-    expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+    expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
   });
 });

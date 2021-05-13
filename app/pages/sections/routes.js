@@ -28,9 +28,10 @@ const router = express.Router({ mergeParams: true });
 
 export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/description', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { odsCode, orderId } = req.params;
     const context = await getDescriptionContext({
       req,
+      odsCode,
       orderId,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
       sessionManager,
@@ -103,8 +104,8 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.use('/associated-services/delete', deleteAssociatedServicesRoutes(authProvider, addContext, sessionManager));
 
   router.get('/commencement-date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    const context = await getCommencementDateContext({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    const { odsCode, orderId } = req.params;
+    const context = await getCommencementDateContext({ odsCode, orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     logger.info(`navigating to order ${orderId} commencement-date page`);
     res.render('pages/sections/commencement-date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

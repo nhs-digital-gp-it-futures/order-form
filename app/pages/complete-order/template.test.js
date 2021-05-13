@@ -14,7 +14,7 @@ describe('complete order page', () => {
     completeOrderButtonText: 'Complete order',
     continueEditingOrderButtonText: 'Continue editing order',
     title: 'some complete order title',
-    backLinkHref: '/organisation/order-1',
+    backLinkHref: '/organisation/odsCode/order/order-1',
     continueEditingOrderButtonHref: '/organisation/order-1',
     orderDescription: 'some order description',
     csrfToken: 'mockCsrfToken',
@@ -32,6 +32,7 @@ describe('complete order page', () => {
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.text().trim()).toEqual(context.backLinkText);
+      expect($(backLink).find('a').attr('href')).toEqual('/organisation/odsCode/order/order-1');
     });
   }));
 

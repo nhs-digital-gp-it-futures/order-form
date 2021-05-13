@@ -11,7 +11,7 @@ describe('commencement-date page', () => {
   it('should render a backLink', componentTester(setup, (harness) => {
     const context = {
       backLinkText: 'Go back',
-      backLinkHref: '/organisation/order-1',
+      backLinkHref: '/organisation/X94/order/order-1',
     };
 
     harness.request(context, ($) => {

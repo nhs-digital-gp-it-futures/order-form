@@ -106,10 +106,12 @@ describe('getBackLinkHref', () => {
     const expected = 'http://some.link.com';
     contextCreator.backLinkHref.mockReturnValueOnce(expected);
 
-    const actual = getBackLinkHref(req, selectedPrice, orderId);
+    const actual = getBackLinkHref(req, selectedPrice, orderId, odsCode);
 
     expect(contextCreator.backLinkHref.mock.calls.length).toEqual(1);
-    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, selectedPrice, orderId });
+    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({
+      req, selectedPrice, orderId, odsCode,
+    });
     expect(actual).toEqual(expected);
   });
 });
