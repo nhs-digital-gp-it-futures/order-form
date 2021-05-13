@@ -4,7 +4,8 @@ import {
 } from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
-import { withCatch, getHealthCheckDependencies } from './helpers/routes/routerHelper';
+import { getOrganisation } from './helpers/api/oapi/getOrganisation';
+import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routes/routerHelper';
 import { getDocumentByFileName } from './helpers/api/dapi/getDocumentByFileName';
 import { dashboardRoutes } from './pages/dashboard/routes';
 import { tasklistRoutes } from './pages/task-list/routes';
@@ -14,6 +15,7 @@ import { completeOrderRoutes } from './pages/complete-order/routes';
 import { deleteOrderRoutes } from './pages/delete-order/routes';
 import { selectOrganisationRoutes } from './pages/select/routes';
 import includesContext from './includes/manifest.json';
+import { getOdsCodeForOrganisation } from './helpers/controllers/odsCodeLookup';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -34,8 +36,10 @@ export const routes = (authProvider, sessionManager) => {
   });
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const orgData = await getOrganisation({ orgId: req.user.primaryOrganisationId, accessToken });
     logger.info('redirecting to organisation orders page');
-    return res.redirect(`${config.baseUrl}/organisation`);
+    return res.redirect(`${config.baseUrl}/organisation/${orgData.odsCode}`);
   }));
 
   router.get('/document/:documentName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -45,19 +49,49 @@ export const routes = (authProvider, sessionManager) => {
     stream.on('close', () => res.end());
   }));
 
-  router.use('/organisation', dashboardRoutes(authProvider, addContext));
+  const regExp = new RegExp('^/organisation/[A-Za-z]\\d{6}-\\d{2}');
 
-  router.use('/organisation/select', selectOrganisationRoutes(authProvider, addContext));
+  router.use(async (req, res, next) => {
+    const trimmedUrl = req.url.replace(/\/$/, '');
+    if (trimmedUrl === '/organisation' || trimmedUrl === '/organisation/select' || regExp.exec(trimmedUrl)) {
+      const organisationId = req.user ? req.user.primaryOrganisationId : null;
+      if (organisationId) {
+        const accessToken = extractAccessToken({ req, tokenType: 'access' });
+        const odsCode = await getOdsCodeForOrganisation({
+          req, sessionManager, orgId: organisationId, accessToken,
+        });
 
-  router.use('/organisation/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
+        if (odsCode) {
+          logger.info(`Retrieved ODS Code for Organisation Id '${req.user.primaryOrganisationId}': ${odsCode}`);
 
-  router.use('/organisation/:orderId/summary', summaryRoutes(authProvider, addContext));
+          if (trimmedUrl === '/organisation') {
+            return res.redirect(`${config.baseUrl}/organisation/${odsCode}`);
+          } if (trimmedUrl === '/organisation/select') {
+            return res.redirect(`${config.baseUrl}/organisation/${odsCode}/select`);
+          }
+          const newUrl = req.url.replace('/organisation/', `/organisation/${odsCode}/order/`);
 
-  router.use('/organisation/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
+          return res.redirect(`${config.baseUrl}${newUrl}`);
+        }
+      }
+    }
 
-  router.use('/organisation/:orderId/delete-order', deleteOrderRoutes(authProvider, addContext, sessionManager));
+    return next();
+  });
 
-  router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
+  router.use('/organisation/:odsCode', dashboardRoutes(authProvider, addContext));
+
+  router.use('/organisation/:odsCode/select', selectOrganisationRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/organisation/:odsCode/order/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/organisation/:odsCode/order/:orderId/summary', summaryRoutes(authProvider, addContext));
+
+  router.use('/organisation/:odsCode/order/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/organisation/:odsCode/order/:orderId/delete-order', deleteOrderRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/organisation/:odsCode/order/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
 
   router.get('*', (req) => {
     throw new ErrorContext({

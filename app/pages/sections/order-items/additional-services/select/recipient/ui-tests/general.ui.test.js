@@ -6,7 +6,7 @@ import { orderApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/select/additional-service/price/recipient';
 
 const selectedItemName = 'Additional Service';
 
@@ -70,14 +70,14 @@ test('should render Additional-service select-recipient page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/additional-services/select/additional-service/price for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/additional-services/select/additional-service/price for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/additional-services/select/additional-service/price');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/additional-services/select/additional-service/price');
 });
 
 test('should render the title', async (t) => {
@@ -128,7 +128,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/additional-services/neworderitem when a recipient is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/additional-services/neworderitem when a recipient is selected', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -139,7 +139,7 @@ test('should redirect to /organisation/order-id/additional-services/neworderitem
   await t
     .click(firstRecipient)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/neworderitem');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/neworderitem');
 });
 
 test('should show the error summary when no additionalService selected causing validation error', async (t) => {

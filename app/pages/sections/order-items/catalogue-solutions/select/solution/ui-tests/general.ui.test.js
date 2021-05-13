@@ -6,7 +6,7 @@ import { solutionsApiUrl, orderApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution';
 
 const selectedItemIdInSession = 'solution-B';
 const mockSolutions = [
@@ -166,7 +166,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/solution-A when a existing solution is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/catalogue-solutions/solution-A when a existing solution is selected', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -177,10 +177,10 @@ test('should redirect to /organisation/order-id/catalogue-solutions/solution-A w
   await t
     .click(firstSolution)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/solution-A');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/solution-A');
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price when new solution is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price when new solution is selected', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -191,7 +191,7 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
   await t
     .click(selectedSolution)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price');
 });
 test('should show the error summary when no solution selected causing validation error', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });

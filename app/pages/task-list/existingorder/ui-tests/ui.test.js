@@ -18,7 +18,7 @@ const mockExistingOrderSummary = {
   sectionStatus: 'some status',
 };
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id';
 
 const mocks = (data) => {
   nock(orderApiUrl)
@@ -83,7 +83,7 @@ test(`should link to ${baseUrl}/organisation for Back link`, async (t) => {
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode');
 });
 
 test('should render the title', async (t) => {
@@ -140,7 +140,7 @@ test('should always render task 1 item 1 as a link', async (t) => {
 
   await t
     .click(task1Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/description`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/description`);
 });
 
 test('should always render the complete tag for task 1 item 1', async (t) => {
@@ -175,7 +175,7 @@ test('should always render task 2 item 1 as a link', async (t) => {
 
   await t
     .click(task2Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/ordering-party`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/ordering-party`);
 });
 
 test('should not render the complete tag for task 2 item 1 when returned as incomplete from the API', async (t) => {
@@ -222,7 +222,7 @@ test('should always render task 2 item 2 as a link', async (t) => {
 
   await t
     .click(task2Item2.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/supplier`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/supplier`);
 });
 
 test('should not render the complete tag for task 2 item 2 when returned as incomplete from the API', async (t) => {
@@ -287,7 +287,7 @@ test('should only render task 3 item 1 as a link if all dependencies are met', a
 
   await t
     .click(task3Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/commencement-date`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/commencement-date`);
 });
 
 test('should not render the complete tag for task 3 item 1 when returned as incomplete from the API', async (t) => {
@@ -354,7 +354,7 @@ test('should only render task 4 item 1 as a link if all dependencies are met', a
 
   await t
     .click(task4Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/catalogue-solutions`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/catalogue-solutions`);
 });
 
 test('should not render the complete tag for task 4 item 1 when returned as incomplete from the API', async (t) => {
@@ -423,7 +423,7 @@ test('should only render task 5 item 1 as a link if all dependencies are met', a
 
   await t
     .click(task5Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/additional-services`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/additional-services`);
 });
 
 test('should not render the complete tag for task 5 item 1 when returned as incomplete from the API', async (t) => {
@@ -476,7 +476,7 @@ test('should only render task 6 item 1 as a link if Catalogue solution saved and
 
   await t
     .click(task6Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/associated-services`);
 });
 
 test('should render task 6 item 1 as link catalogue solution not viewed', async (t) => {
@@ -493,7 +493,7 @@ test('should render task 6 item 1 as link catalogue solution not viewed', async 
 
   await t
     .click(task6Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/associated-services`);
 });
 
 test('should render task 6 item 1 as text catalogue solution incomplete, add additional services incomplete', async (t) => {
@@ -511,7 +511,7 @@ test('should render task 6 item 1 as text catalogue solution incomplete, add add
 
   await t
     .click(task6Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/associated-services`);
 });
 
 test('should only render task 6 item 1 as a link if catalogue solution 1 and additional services viewed with 0 services', async (t) => {
@@ -529,7 +529,7 @@ test('should only render task 6 item 1 as a link if catalogue solution 1 and add
 
   await t
     .click(task6Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/associated-services`);
 });
 
 test('should only render task 6 item 1 as a link if catalogue solution 1 and additional services 1', async (t) => {
@@ -547,7 +547,7 @@ test('should only render task 6 item 1 as a link if catalogue solution 1 and add
 
   await t
     .click(task6Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/associated-services`);
 });
 
 test('should only render task 6 item 1 as a link if associated-services completed', async (t) => {
@@ -564,7 +564,7 @@ test('should only render task 6 item 1 as a link if associated-services complete
 
   await t
     .click(task6Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/associated-services`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/associated-services`);
 });
 
 test('should not render the complete tag for task 6 item 1 when returned as incomplete from the API', async (t) => {
@@ -653,7 +653,7 @@ test('should only render task 7 item 1 as a link if associated service saved and
   await t
     .expect(task7Item1.find('a').exists).ok()
     .click(task7Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/funding-source`);
 });
 
 test('should only render task 7 item 1 as a link if Catalogue solution saved and count 0 and associated service saved and count 1', async (t) => {
@@ -672,7 +672,7 @@ test('should only render task 7 item 1 as a link if Catalogue solution saved and
   await t
     .expect(task7Item1.find('a').exists).ok()
     .click(task7Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/funding-source`);
 });
 
 test('should render task 7 item 1 as text if Catalogue solution saved and count 0 and associated service saved and count 0', async (t) => {
@@ -708,7 +708,7 @@ test('should only render task 7 item 1 as a link if Catalogue solution saved and
   await t
     .expect(task7Item1.find('a').exists).ok()
     .click(task7Item1.find('a'))
-    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/order-id/funding-source`);
+    .expect(getLocation()).eql(`http://localhost:1234${baseUrl}/organisation/odsCode/order/order-id/funding-source`);
 });
 
 test('should not render the complete tag for task 7 item 1 when returned as incomplete from the API', async (t) => {
@@ -756,7 +756,7 @@ test('should render the "Preview order summary" button', async (t) => {
     .expect(await extractInnerText(previewOrderButton)).eql(commonContent.previewOrderButton.text)
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).eql(true)
     .expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).eql(false)
-    .expect(previewOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/summary`);
+    .expect(previewOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order-id/summary`);
 });
 
 test('should render the "Complete order" button', async (t) => {
@@ -787,5 +787,5 @@ test('should enable the "Complete order" button when sectionStatus is "complete"
     .expect(await extractInnerText(completeOrderButton)).eql(commonContent.completeOrderButton.text)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--secondary')).eql(false)
     .expect(submitOrderButtonLink.hasClass('nhsuk-button--disabled')).eql(false)
-    .expect(completeOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/order-id/complete-order`);
+    .expect(completeOrderButton.find('a').getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order-id/complete-order`);
 });

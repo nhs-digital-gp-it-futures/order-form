@@ -6,7 +6,7 @@ import { solutionsApiUrl as bapiUrl, orderApiUrl } from '../../../../../../../co
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/select/additional-service';
 
 const mockAdditionalServices = [
   {
@@ -143,7 +143,7 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
   await t
     .click(firstAdditionalService)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/select/additional-service/price');
 });
 
 test('should show the error summary when no additional service is selected causing validation error', async (t) => {
@@ -213,7 +213,7 @@ test('should render the error page if no additional services are found', async (
 
   await t
     .expect(await extractInnerText(backLink)).eql('Go back')
-    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/order-id/additional-services')
+    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/odsCode/order/order-id/additional-services')
 
     .expect(await extractInnerText(errorTitle)).eql('No Additional Services found')
     .expect(await extractInnerText(errorDescription)).eql('There are no Additional Services offered by this supplier. Go back to the Additional Services dashboard and select continue to complete the section.');

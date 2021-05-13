@@ -12,8 +12,8 @@ import * as controller from './controller';
 
 jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
 
-describe('GET /organisation/select', () => {
-  const path = '/organisation/select';
+describe('GET /organisation/:odsCode/select', () => {
+  const path = '/organisation/odsCode/select';
   afterEach(() => {
     jest.resetAllMocks();
   });

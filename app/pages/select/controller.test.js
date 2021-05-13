@@ -35,14 +35,21 @@ describe('organisation select controller', () => {
       expect(returnedContext.organisationList.length).toEqual(4);
     });
 
-    it('should give results in alphabetical order', async () => {
+    it('should give results in alphabetical order with formatted value', async () => {
       const returnedContext = await getSelectContext(options);
 
       expect(returnedContext.organisationList.length).toEqual(4);
       expect(returnedContext.organisationList[0].text).toEqual('a org two');
+      expect(returnedContext.organisationList[0].value).toEqual('002');
+
       expect(returnedContext.organisationList[1].text).toEqual('org four');
+      expect(returnedContext.organisationList[1].value).toEqual('004');
+
       expect(returnedContext.organisationList[2].text).toEqual('org one');
+      expect(returnedContext.organisationList[2].value).toEqual('001');
+
       expect(returnedContext.organisationList[3].text).toEqual('zzz org three');
+      expect(returnedContext.organisationList[3].value).toEqual('003');
     });
   });
 });

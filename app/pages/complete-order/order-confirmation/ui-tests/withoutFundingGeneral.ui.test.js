@@ -5,7 +5,7 @@ import content from '../withoutFundingManifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/complete-order/order-confirmation';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/complete-order/order-confirmation';
 
 const pageSetup = async (setup = { withAuth: true }) => {
   if (setup.withAuth) {
@@ -51,7 +51,7 @@ test('should render go back link with href /organisation', async (t) => {
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode');
 });
 
 test('should render the title', async (t) => {
@@ -94,14 +94,14 @@ test('should render the get order summary button', async (t) => {
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
 });
 
-test('should render the get order summary button link with href /order/organisation/order-id/summary?print=true', async (t) => {
+test('should render the get order summary button link with href /order/organisation/odsCode/order/order-id/summary?print=true', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const orderSummaryButton = Selector('[data-test-id="order-confirmation-page-orderSummaryButton"] a');
 
   await t
-    .expect(orderSummaryButton.getAttribute('href')).eql('/order/organisation/order-id/summary?print=true');
+    .expect(orderSummaryButton.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/summary?print=true');
 });
 
 test('should render the order summary advice', async (t) => {

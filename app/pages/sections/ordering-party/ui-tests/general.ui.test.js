@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/ordering-party';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/ordering-party';
 
 const mockOrgData = {
   name: 'Org name',
@@ -189,7 +189,7 @@ test('should navigate to task list page if save button is clicked and data is va
   await t
     .expect(saveButton.exists).ok()
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id');
 });
 
 test('should show the error summary when there are validation errors', async (t) => {

@@ -1,7 +1,7 @@
 import { baseUrl } from '../../../../../../config';
 import { getContext, getErrorContext } from './contextCreator';
 
-export const getSelectSolutionPriceEndpoint = (orderId, orderItemId) => `/organisation/${orderId}/catalogue-solutions/${orderItemId}`;
+export const getSelectSolutionPriceEndpoint = (orderId, orderItemId, odsCode) => `/organisation/${odsCode}/order/${orderId}/catalogue-solutions/${orderItemId}`;
 
 export const getSelectStatus = ({ selectStatus, selectedRecipients, serviceRecipients }) => {
   if (selectStatus) {
@@ -19,7 +19,7 @@ export const getSelectStatus = ({ selectStatus, selectedRecipients, serviceRecip
 
 export const getServiceRecipientsContext = async ({
   orderId, itemName, selectStatus, serviceRecipients, selectedRecipients, solutionPrices,
-  manifest, orderType,
+  manifest, orderType, odsCode,
 }) => getContext({
   orderId,
   itemName,
@@ -29,6 +29,7 @@ export const getServiceRecipientsContext = async ({
   solutionPrices,
   manifest,
   orderType,
+  odsCode,
 });
 
 export const getServiceRecipientsErrorPageContext = async ({
@@ -51,10 +52,10 @@ export const getServiceRecipientsErrorPageContext = async ({
   manifest,
 });
 
-export const setContextIfBackFromCatalogueSolutionEdit = (req, context, orderId) => {
+export const setContextIfBackFromCatalogueSolutionEdit = (req, context, orderId, odsCode) => {
   let orderItemId = req.body.orderItemId || req.query.orderItemId;
   if (orderItemId) {
-    context.backLinkHref = `${baseUrl}${getSelectSolutionPriceEndpoint(orderId, orderItemId)}`;
+    context.backLinkHref = `${baseUrl}${getSelectSolutionPriceEndpoint(orderId, orderItemId, odsCode)}`;
     context.orderItemId = orderItemId;
 
     return;
@@ -63,7 +64,7 @@ export const setContextIfBackFromCatalogueSolutionEdit = (req, context, orderId)
   const { referer } = req.headers;
   orderItemId = referer.split('/').pop();
 
-  if (referer.endsWith(getSelectSolutionPriceEndpoint(orderId, orderItemId))) {
+  if (referer.endsWith(getSelectSolutionPriceEndpoint(orderId, orderItemId, odsCode))) {
     context.backLinkHref = referer;
     context.orderItemId = orderItemId;
   }

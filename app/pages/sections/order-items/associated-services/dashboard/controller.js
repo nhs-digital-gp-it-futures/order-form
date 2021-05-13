@@ -9,6 +9,7 @@ export const getAssociatedServicesPageContext = async ({
   accessToken,
   sessionManager,
   logger,
+  odsCode,
 }) => {
   const orderDescriptionData = await getOrderDescription({
     req,
@@ -27,5 +28,6 @@ export const getAssociatedServicesPageContext = async ({
     orderId,
     orderDescription: orderDescriptionData || '',
     orderItems: associatedServiceOrderItemsData,
+    odsCode,
   });
 };

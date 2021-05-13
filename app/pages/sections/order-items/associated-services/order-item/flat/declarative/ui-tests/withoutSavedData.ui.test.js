@@ -8,7 +8,8 @@ import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelpe
 
 const organisation = 'organisation';
 const callOffId = 'order-1';
-const pageUrl = `http://localhost:1234/order/${organisation}/${callOffId}/associated-services/neworderitem`;
+const odsCode = '03F';
+const pageUrl = `http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/associated-services/neworderitem`;
 
 const getLocation = ClientFunction(() => document.location.href);
 
@@ -101,7 +102,7 @@ test('should navigate to associated-services dashboard page if save button is cl
   await t
     .typeText(quantityInput, '10', { paste: true })
     .click(saveButton)
-    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${callOffId}/associated-services`);
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/associated-services`);
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {

@@ -112,14 +112,15 @@ describe('generateTaskList', () => {
     });
 
     it('should construct correct href for item', () => {
-      const taskList = generateTaskList({ orderId, taskListManifest });
+      const odsCode = '03F';
+      const taskList = generateTaskList({ orderId, taskListManifest, odsCode });
       let hrefFound;
       taskList.forEach((task, i) => {
         task.items.forEach((item, j) => {
           if (item.href) {
             hrefFound = true;
             expect(item.href)
-              .toEqual(`${baseUrl}/organisation/${orderId}/${taskListManifest.tasks[i].sections[j].id}`);
+              .toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/${taskListManifest.tasks[i].sections[j].id}`);
           }
         });
       });

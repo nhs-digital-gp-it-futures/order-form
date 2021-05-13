@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { orderApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/associated-services';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -55,14 +55,14 @@ test('should render associated-services page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should render go back link with href /organisation/order-1', async (t) => {
+test('should render go back link with href /organisation/odsCode/order/order-1', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1');
 });
 
 test('should render the title', async (t) => {
@@ -117,7 +117,7 @@ test('should render the Add Associated Services button', async (t) => {
     .expect(await extractInnerText(addOrderItemButton)).eql(content.addOrderItemButtonText);
 });
 
-test('should navigate to /organisation/order-1/associated-services/select/associated-service when Add Associated Services button is clicked', async (t) => {
+test('should navigate to /organisation/odsCode/order/order-1/associated-services/select/associated-service when Add Associated Services button is clicked', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -125,7 +125,7 @@ test('should navigate to /organisation/order-1/associated-services/select/associ
 
   await t
     .click(addOrderItemButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/associated-services/select/associated-service');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-1/associated-services/select/associated-service');
 });
 
 test('should render the Continue button', async (t) => {
@@ -138,7 +138,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(continueButton)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-1 when clicking the Continue button', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-1 when clicking the Continue button', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-1/sections/associated-services')
     .reply(200);
@@ -150,5 +150,5 @@ test('should redirect to /organisation/order-1 when clicking the Continue button
 
   await t
     .click(continueButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-1');
 });

@@ -25,6 +25,7 @@ export const sessionKeys = {
   selectedQuantity: 'selectedQuantity',
   orderItems: 'orderItems',
   catalogueItemExists: 'catalogueItemExists',
+  selectedOdsCode: 'selectedOdsCode',
   odsLookupTable: 'odsLookupTable',
 };
 

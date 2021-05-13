@@ -21,15 +21,16 @@ const dataFromOapi = [{
   name: 'Some service recipient 2',
   odsCode: 'ods2',
 }];
+const odsCode = '03F';
 
 describe('service-recipients controller', () => {
   describe('getSelectSolutionPriceEndpoint', () => {
     it('returns expected string when orderId and orderItemId input', () => {
       const orderId = 'C010000-01';
       const orderItemId = 421;
-      const expected = `/organisation/${orderId}/catalogue-solutions/${orderItemId}`;
+      const expected = `/organisation/${odsCode}/order/${orderId}/catalogue-solutions/${orderItemId}`;
 
-      expect(getSelectSolutionPriceEndpoint(orderId, orderItemId)).toEqual(expected);
+      expect(getSelectSolutionPriceEndpoint(orderId, orderItemId, odsCode)).toEqual(expected);
     });
   });
 
@@ -138,10 +139,10 @@ describe('service-recipients controller', () => {
       const request = {
         body: {},
         query: {},
-        headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${orderId}/catalogue-solutions/${orderItemId}` },
+        headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${odsCode}/order/${orderId}/catalogue-solutions/${orderItemId}` },
       };
 
-      setContextIfBackFromCatalogueSolutionEdit(request, context, orderId);
+      setContextIfBackFromCatalogueSolutionEdit(request, context, orderId, odsCode);
 
       expect(context.backLinkHref).toEqual(request.headers.referer);
       expect(context.orderItemId).toEqual(orderItemId.toString());

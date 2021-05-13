@@ -23,8 +23,8 @@ describe('Associated services delete routes', () => {
     jest.resetAllMocks();
   });
 
-  describe('GET /organisation/:orderId/associated-services/delete/:catalogueItemId/confirmation/:solutionName', () => {
-    const path = '/organisation/some-order-id/associated-services/delete/order-item-1/confirmation/write-on-time-associated-service';
+  describe('GET /organisation/:odsCode/order/:orderId/associated-services/delete/:catalogueItemId/confirmation/:solutionName', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services/delete/order-item-1/confirmation/write-on-time-associated-service';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -56,8 +56,8 @@ describe('Associated services delete routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/associated-services/delete/:catalogueItemId/confirmation/:solutionName', () => {
-    const path = '/organisation/some-order-id/associated-services/delete/order-item-1/confirmation/write-on-time-associated-service';
+  describe('POST /organisation/:odsCode/order/:orderId/associated-services/delete/:catalogueItemId/confirmation/:solutionName', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services/delete/order-item-1/confirmation/write-on-time-associated-service';
 
     it('should return 403 forbidden if no csrf token is available', async () => {
       await testPostPathWithoutCsrf({
@@ -117,13 +117,13 @@ describe('Associated services delete routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/associated-services/delete/order-item-1/confirmation/write-on-time-associated-service/continue`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/associated-services/delete/order-item-1/confirmation/write-on-time-associated-service/continue`);
         });
     });
   });
 
-  describe('GET /organisation/:orderId/associated-services/delete/:catalogueItemId/confirmation/:solutionName/continue', () => {
-    const path = '/organisation/some-order-id/associated-services/delete/order-item-1/confirmation/write-on-time-associated-service/continue';
+  describe('GET /organisation/:odsCode/order/:orderId/associated-services/delete/:catalogueItemId/confirmation/:solutionName/continue', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services/delete/order-item-1/confirmation/write-on-time-associated-service/continue';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -156,8 +156,8 @@ describe('Associated services delete routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/associated-services/delete/:catalogueItemId/confirmation/:solutionName/continue', () => {
-    const path = '/organisation/some-order-id/associated-services/delete/order-item-1/confirmation/write-on-time-associated-service/continue';
+  describe('POST /organisation/:odsCode/order/:orderId/associated-services/delete/:catalogueItemId/confirmation/:solutionName/continue', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services/delete/order-item-1/confirmation/write-on-time-associated-service/continue';
 
     it('should return 403 forbidden if no csrf token is available', async () => {
       await testPostPathWithoutCsrf({
@@ -216,7 +216,7 @@ describe('Associated services delete routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/associated-services`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/associated-services`);
         });
     });
   });

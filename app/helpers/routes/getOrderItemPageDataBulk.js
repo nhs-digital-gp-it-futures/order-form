@@ -95,6 +95,7 @@ export const getOrderItemPageDataBulk = async ({
     });
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
+    selectedPrice.listPrice = selectedPrice.price;
     const [day, month, year] = destructureDate(deliveryDate);
     const selectedQuantity = sessionManager.getFromSession({
       req, key: sessionKeys.selectedQuantity,

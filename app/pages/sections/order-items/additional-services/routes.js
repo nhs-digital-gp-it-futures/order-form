@@ -23,7 +23,7 @@ const router = express.Router({ mergeParams: true });
 
 export const additionalServicesRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     const context = await getAdditionalServicesPageContext({
       req,
@@ -32,6 +32,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
       sessionManager,
       logger,
+      odsCode,
     });
 
     sessionManager.saveToSession(
@@ -52,7 +53,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     await putOrderSection({
       orderId,
@@ -60,13 +61,13 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}`);
   }));
 
   router.use('/select', additionalServicesSelectRoutes(authProvider, addContext, sessionManager));
 
   router.get('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, catalogueItemId } = req.params;
+    const { orderId, catalogueItemId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     const pageData = await getOrderItemPageDataBulk({
@@ -91,6 +92,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       formData: pageData.formData,
       recipients: pageData.recipients,
       selectedRecipients: pageData.selectedRecipients || [],
+      odsCode,
     });
 
     sessionManager.saveToSession(
@@ -102,9 +104,16 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       value: pageData.selectedRecipients,
     });
 
-    updateContext(
-      req, selectedPrice, context, orderId, catalogueItemId, pageData.itemName, catalogueItemExists,
-    );
+    updateContext({
+      req,
+      selectedPrice,
+      context,
+      orderId,
+      catalogueItemId,
+      solutionName: pageData.itemName,
+      catalogueItemExists,
+      odsCode,
+    });
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk',
@@ -112,7 +121,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
   }));
 
   router.post('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, catalogueItemId } = req.params;
+    const { orderId, catalogueItemId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const pageData = getPageData(req, sessionManager);
     const formData = formatFormData({ formData: req.body });
@@ -152,7 +161,7 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
         sessionManager.saveToSession(
           { req, key: sessionKeys.plannedDeliveryDate, value: undefined },
         );
-        return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services`);
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`);
       }
 
       const apiErrors = transformApiValidationResponse(apiResponse.errors);
@@ -174,7 +183,9 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       validationErrors,
     });
 
-    updateContextPost(req, selectedPrice, context, orderId, pageData.itemName);
+    updateContextPost({
+      req, selectedPrice, context, orderId, solutionName: pageData.itemName, odsCode,
+    });
 
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

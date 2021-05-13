@@ -7,12 +7,14 @@ const router = express.Router({ mergeParams: true });
 
 export const dashboardRoutes = (authProvider, addContext) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const context = await getDashboardContext({
       accessToken,
       orgId: req.user.primaryOrganisationId,
       orgName: req.user.primaryOrganisationName,
       relatedOrganisationIds: req.user.relatedOrganisationId,
+      odsCode,
     });
     logger.info('navigating to organisation orders page');
     res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));

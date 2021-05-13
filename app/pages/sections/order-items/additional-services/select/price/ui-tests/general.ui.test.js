@@ -6,7 +6,7 @@ import { organisationApiUrl, solutionsApiUrl } from '../../../../../../../config
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/select/additional-service/price';
 
 const selectedItemNameInSession = 'Additional Service Name';
 const selectedItemIdInSession = 'additional-service-1';
@@ -195,7 +195,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/additional-services/select/additional-service/price/recipient when a price is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/additional-services/select/additional-service/price/recipient when a price is selected', async (t) => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
     .reply(200, {});
@@ -209,7 +209,7 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
   await t
     .click(firstAdditionalService)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipients');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/select/additional-service/price/recipients');
 });
 
 test('should render the title on validation error', async (t) => {
