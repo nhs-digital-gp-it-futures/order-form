@@ -17,7 +17,9 @@ const generateQuestionsContext = ({ suppliers, selectedSupplier }) => (
   }))
 );
 
-export const getContext = ({ orderId, suppliers, selectedSupplier, odsCode }) => ({
+export const getContext = ({
+  orderId, suppliers, selectedSupplier, odsCode,
+}) => ({
   ...manifest,
   questions: suppliers && generateQuestionsContext({ suppliers, selectedSupplier }),
   backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`,

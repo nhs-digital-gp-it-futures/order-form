@@ -17,7 +17,7 @@ const selectedRecipientIdsData = ['ods2'];
 describe('service-recipients contextCreator', () => {
   describe('getContext', () => {
     const odsCode = '03F';
-    
+
     it('should return the contents of manifest', () => {
       const context = getContext({ manifest });
       expect(context.backLinkText).toEqual(manifest.backLinkText);

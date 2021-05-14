@@ -25,7 +25,9 @@ const formatFormData = (data) => ({
   },
 });
 
-export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessToken, odsCode }) => {
+export const getCallOffOrderingPartyContext = async ({
+  orderId, orgId, accessToken, odsCode,
+}) => {
   const callOffOrgData = await getCallOffOrderingParty({ orderId, accessToken });
   if (callOffOrgData && callOffOrgData.name) {
     logger.info(`Call off ordering party found in ORDAPI for ${orderId}`);

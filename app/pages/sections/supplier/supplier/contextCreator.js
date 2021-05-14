@@ -12,7 +12,9 @@ const populateQuestionsWithData = (primaryContact) => (
   })
 );
 
-export const getContext = ({ orderId, supplierData, hasSavedData, odsCode }) => ({
+export const getContext = ({
+  orderId, supplierData, hasSavedData, odsCode,
+}) => ({
   ...manifest,
   questions: supplierData && supplierData.primaryContact
     ? populateQuestionsWithData(supplierData.primaryContact)

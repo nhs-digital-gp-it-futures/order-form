@@ -143,7 +143,7 @@ test('should render Catalogue-solutions price page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test.skip('should link to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution for backlink', async (t) => {
+test('should link to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

@@ -122,6 +122,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       orderId,
       solutions,
       validationErrors: response.errors,
+      odsCode,
     });
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -160,6 +161,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       solutionPrices,
       selectedPriceId,
       selectedCatalogueItemName,
+      odsCode,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select price page`);

@@ -33,12 +33,12 @@ describe('supplier contextCreator', () => {
     });
 
     it('should return the description', () => {
-      const context = getContext({ orderId: 'order-1' });
+      const context = getContext({ orderId });
       expect(context.description).toEqual(manifest.description);
     });
 
     it('should return the insetAdvice', () => {
-      const context = getContext({ orderId: 'order-1' });
+      const context = getContext({ orderId });
       expect(context.insetAdvice).toEqual(manifest.insetAdvice);
     });
 
@@ -60,19 +60,16 @@ describe('supplier contextCreator', () => {
     });
 
     it('should not construct the searchAgainLinkHref if hasSavedData is true', () => {
-      const orderId = 'order-id';
       const context = getContext({ orderId, hasSavedData: true });
       expect(context.searchAgainLinkHref).toEqual(undefined);
     });
 
     it('should add showSearchAgainLink is true if hasSavedData is false', () => {
-      const orderId = 'order-id';
       const context = getContext({ orderId });
       expect(context.showSearchAgainLink).toEqual(true);
     });
 
     it('should add showSearchAgainLink is false if hasSavedData is true', () => {
-      const orderId = 'order-id';
       const context = getContext({ orderId, hasSavedData: true });
       expect(context.showSearchAgainLink).toEqual(false);
     });

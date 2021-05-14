@@ -87,7 +87,7 @@ test('should link to /organisation/odsCode/order/order-id/catalogue-solutions fo
     .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions');
 });
 
-test.skip('should link to /organisation/odsCode/order/order-id/catalogue-solutions for backlink with validation errors', async (t) => {
+test('should link to /organisation/odsCode/order/order-id/catalogue-solutions for backlink with validation errors', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
