@@ -27,26 +27,19 @@ describe('routes', () => {
 
   describe('GET /', () => {
     const path = '/';
-    const odsCode = 'odsCode';
-
-    beforeEach(() => {
-      getOrganisation.mockResolvedValue({ odsCode });
-    });
-
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
       })
     ));
 
-    it('should redirect to /organisation/odsCode', () => request(setUpFakeApp())
+    it('should redirect to /organisation', () => request(setUpFakeApp())
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
       .expect(302)
       .then((res) => {
-        expect(getOrganisation).toHaveBeenCalled();
         expect(res.redirect).toEqual(true);
-        expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode`);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation`);
       }));
   });
 
