@@ -10,9 +10,12 @@ import {
 } from '../../test-utils/routesTestHelper';
 import * as controller from './controller';
 import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
+import { getProxyOrganisations } from '../../helpers/api/oapi/getProxyOrganisations';
 
 jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
 jest.mock('../../helpers/controllers/odsCodeLookup');
+jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
+jest.mock('../../helpers/api/oapi/getProxyOrganisations');
 
 describe('GET /organisation/:odsCode/select', () => {
   const path = '/organisation/odsCode/select';
@@ -40,6 +43,7 @@ describe('GET /organisation/:odsCode/select', () => {
     getOrganisationFromOdsCode.mockResolvedValueOnce({});
     controller.organisationsList = jest.fn()
       .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });
+    getProxyOrganisations.mockResolvedValue([{ organisationId: '123', name: 'abc' }]);
 
     return request(setUpFakeApp())
       .get(path)

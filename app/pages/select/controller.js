@@ -19,6 +19,8 @@ export const getSelectContext = async ({ accessToken, orgId, orgName }) => {
   const organisationsList = await getProxyOrganisations({ accessToken, orgId });
   const radioList = transformOrganisationList(organisationsList);
 
+  radioList.unshift({ value: orgId, text: orgName });
+
   const context = {
     primaryName: orgName,
     organisationList: radioList,
