@@ -20,6 +20,7 @@ import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
+import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
 import { deleteCatalogueSolutionsRoutes } from './order-items/catalogue-solutions/delete/routes';
 import { deleteAdditionalServicesRoutes } from './order-items/additional-services/delete/routes';
 import { deleteAssociatedServicesRoutes } from './order-items/associated-services/delete/routes';
@@ -44,8 +45,11 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   router.post('/description', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const { organisationId } = await getOrganisationFromOdsCode({
+      req, sessionManager, odsCode, accessToken,
+    });
     const response = await postOrPutDescription({
-      orgId: req.user.primaryOrganisationId,
+      orgId: organisationId,
       orderId,
       data: req.body,
       accessToken,
@@ -64,8 +68,12 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   }));
 
   router.get('/ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    const orgId = req.user.primaryOrganisationId;
+    const { orderId, odsCode } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    const { organisationId } = await getOrganisationFromOdsCode({
+      req, sessionManager, odsCode, accessToken,
+    });
+    const orgId = organisationId;
     const context = await getCallOffOrderingPartyContext({ orderId, orgId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     logger.info(`navigating to order ${orderId} ordering-party page`);
     res.render('pages/sections/ordering-party/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));

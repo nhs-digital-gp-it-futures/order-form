@@ -168,6 +168,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       selectedRecipients: pageData.selectedRecipients,
       formData,
       validationErrors,
+      odsCode,
     });
 
     return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));

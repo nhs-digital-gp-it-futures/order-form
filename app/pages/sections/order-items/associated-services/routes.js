@@ -17,7 +17,7 @@ import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPag
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
-import { getOrganisation } from '../../../../helpers/api/oapi/getOrganisation';
+import { getOrganisationFromOdsCode } from '../../../../helpers/controllers/odsCodeLookup';
 import { transformApiValidationResponse } from '../../../../helpers/common/transformApiValidationResponse';
 
 const router = express.Router({ mergeParams: true });
@@ -115,8 +115,9 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
-      const orgId = req.user.primaryOrganisationId;
-      const orgData = await getOrganisation({ orgId, accessToken });
+      const orgData = await getOrganisationFromOdsCode({
+        req, sessionManager, odsCode, accessToken,
+      });
 
       const apiResponse = await saveOrderItem({
         accessToken,

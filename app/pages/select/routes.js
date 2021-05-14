@@ -5,7 +5,7 @@ import { withCatch, extractAccessToken } from '../../helpers/routes/routerHelper
 import { getSelectContext } from './controller';
 import { sessionKeys } from '../../helpers/routes/sessionHelper';
 
-import { getOdsCodeForOrganisation } from '../../helpers/controllers/odsCodeLookup';
+import { getOdsCodeForOrganisation, getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
 
 export const selectOrganisationRoutes = (authProvider, addContext, sessionManager) => {
   const router = express.Router({ mergeParams: true });
@@ -13,10 +13,13 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { odsCode } = req.params;
+    const { organisationId, name } = await getOrganisationFromOdsCode({
+      req, sessionManager, odsCode, accessToken,
+    });
     const context = await getSelectContext({
       accessToken,
-      orgId: req.user.primaryOrganisationId,
-      orgName: req.user.primaryOrganisationName,
+      orgId: organisationId,
+      orgName: name,
       odsCode,
     });
 

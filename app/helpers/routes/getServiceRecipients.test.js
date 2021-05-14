@@ -3,6 +3,7 @@ import { getServiceRecipients } from './getServiceRecipients';
 import { logger } from '../../logger';
 import { getServiceRecipients as getServiceRecipientsFromApi } from '../api/oapi/getServiceRecipients';
 import { getFromSessionOrApi, sessionKeys } from './sessionHelper';
+import { getOrganisationFromOdsCode } from '../controllers/odsCodeLookup';
 
 jest.mock('../../logger');
 jest.mock('../api/oapi/getServiceRecipients', () => ({
@@ -13,6 +14,9 @@ jest.mock('../routes/sessionHelper', () => ({
   getFromSessionOrApi: jest.fn(),
   sessionKeys: jest.requireActual(),
 }));
+jest.mock('../controllers/odsCodeLookup', () => ({
+  getOrganisationFromOdsCode: jest.fn(),
+}));
 
 describe('getServiceRecipients', () => {
   afterEach(() => {
@@ -20,18 +24,19 @@ describe('getServiceRecipients', () => {
   });
 
   it('should call getServiceRecipients (OAPI) with the correct params', async () => {
+    const orgId = '10001';
+    getOrganisationFromOdsCode.mockResolvedValueOnce({ organisationId: orgId });
     getServiceRecipientsFromApi.mockResolvedValueOnce([{ name: 'Name', odsCode: '00A' }]);
     getFromSessionOrApi.mockImplementation(async ({ apiCall }) => apiCall());
 
-    const orgId = '10001';
-    const req = { user: { primaryOrganisationId: orgId } };
+    const req = { user: '' };
     const accessToken = 'access-token';
-
     await getServiceRecipients({
       req,
       sessionManager: fakeSessionManager,
       accessToken,
       logger,
+      odsCode: '00A',
     });
 
     expect(getServiceRecipientsFromApi.mock.calls.length).toEqual(1);
@@ -40,15 +45,16 @@ describe('getServiceRecipients', () => {
 
   it('should return the expected result from the API', async () => {
     const recipients = [{ name: 'Name', odsCode: '00B' }];
-
+    getOrganisationFromOdsCode.mockResolvedValueOnce({ organisationId: '10001' });
     getServiceRecipientsFromApi.mockResolvedValueOnce(recipients);
     getFromSessionOrApi.mockImplementation(async ({ apiCall }) => apiCall());
 
     const actualResult = await getServiceRecipients({
-      req: { user: { primaryOrganisationId: '10002' } },
+      req: { user: '' },
       sessionManager: fakeSessionManager,
       accessToken: 'access-token',
       logger,
+      odsCode: '00A',
     });
 
     expect(actualResult).toEqual(recipients);

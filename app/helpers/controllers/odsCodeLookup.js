@@ -54,7 +54,7 @@ export const getOdsCodeForOrganisation = async ({
   });
 };
 
-export const getOrganisationIdFromOdsCode = async ({
+export const getOrganisationFromOdsCode = async ({
   req, sessionManager, odsCode, accessToken,
 }) => {
   if (!odsCode) {
@@ -66,15 +66,20 @@ export const getOrganisationIdFromOdsCode = async ({
 
   if (!orgId) {
     const organisation = await getOrganisationUsingOdsCode({ odsCode, accessToken });
-
+    const organisationData = {};
     if (organisation && organisation.organisationId) {
       orgId = organisation.organisationId;
+      organisationData.organisationId = orgId;
+      organisationData.name = organisation.organisationName;
 
       saveLookupTableToSession({
         organisation, lookupTable, req, sessionManager,
       });
     }
+
+    return organisationData;
   }
 
-  return orgId;
+  const organisation = await getOrganisation({ orgId, accessToken });
+  return organisation;
 };

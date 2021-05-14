@@ -2,7 +2,7 @@ import { getServiceRecipients } from './getServiceRecipients';
 import { sessionKeys } from './sessionHelper';
 
 export const getAdditionalServicesContextItems = async ({
-  req, sessionManager, accessToken, logger,
+  req, sessionManager, accessToken, logger, odsCode,
 }) => {
   sessionManager.clearFromSession({ req, keys: [sessionKeys.recipients] });
 
@@ -11,6 +11,7 @@ export const getAdditionalServicesContextItems = async ({
     accessToken,
     sessionManager,
     logger,
+    odsCode,
   });
 
   const selectedRecipients = sessionManager.getFromSession({

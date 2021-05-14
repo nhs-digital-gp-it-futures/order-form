@@ -1,0 +1,11 @@
+{
+  "odsCode": "odsCode",
+  "organisationId": "org-id",
+  "organisationName": "org-name",
+  "primaryRoleId": "AB12",
+  "address": {
+    "line1": "xyz",
+    "postcode": "some-postcode",
+    "country": "some-country"
+  }
+}

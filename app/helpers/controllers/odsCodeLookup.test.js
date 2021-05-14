@@ -2,7 +2,7 @@ import { sessionManager } from 'buying-catalogue-library';
 import { sessionKeys } from '../routes/sessionHelper';
 import { getOrganisation } from '../api/oapi/getOrganisation';
 import { getOrganisationUsingOdsCode } from '../api/oapi/getOrganisationUsingOdsCode';
-import { getOdsCodeForOrganisation, getOrganisationIdFromOdsCode } from './odsCodeLookup';
+import { getOdsCodeForOrganisation, getOrganisationFromOdsCode } from './odsCodeLookup';
 
 jest.mock('../api/oapi/getOrganisation');
 jest.mock('../api/oapi/getOrganisationUsingOdsCode');
@@ -10,6 +10,10 @@ jest.mock('../../logger');
 
 describe('odsCodeLookup', () => {
   const accessToken = 'access_token';
+  const organisationData = {
+    organisationId: '123',
+    name: 'org 1',
+  };
 
   describe('getOdsCodeForOrganisation', () => {
     const req = {};
@@ -83,7 +87,7 @@ describe('odsCodeLookup', () => {
     });
   });
 
-  describe('getOrganisationIdFromOdsCode', () => {
+  describe('getOrganisationFromOdsCode', () => {
     const req = {};
     const fakeSessionManager = {};
 
@@ -96,13 +100,13 @@ describe('odsCodeLookup', () => {
       getOrganisationUsingOdsCode.mockReset();
     });
 
-    it('should give "123" organisation id if odscode is "abc"', async () => {
-      getOrganisationUsingOdsCode.mockReturnValue({ odsCode: '123', organisationId: 'abc' });
+    it('should give organisation if odscode is "abc"', async () => {
+      getOrganisationUsingOdsCode.mockReturnValue({ odsCode: 'abc', organisationId: '123', organisationName: 'org 1' });
 
-      const orgId = await getOrganisationIdFromOdsCode({
+      const orgData = await getOrganisationFromOdsCode({
         req, sessionManager: fakeSessionManager, odsCode: 'abc', accessToken,
       });
-      expect(orgId).toEqual('abc');
+      expect(orgData).toEqual(organisationData);
     });
 
     it('should give undefined odscode if organisation id not found', async () => {
@@ -115,7 +119,7 @@ describe('odsCodeLookup', () => {
     });
   });
 
-  describe('getOrganisationIdFromOdsCode using SESSION MANAGER', () => {
+  describe('getOrganisationFromOdsCode using SESSION MANAGER', () => {
     const req = { session: [] };
     const fakeLogger = { debug: () => '' };
 
@@ -132,7 +136,7 @@ describe('odsCodeLookup', () => {
     });
 
     it('should save to session', async () => {
-      await getOrganisationIdFromOdsCode({
+      await getOrganisationFromOdsCode({
         req, sessionManager: session, odsCode: '123', accessToken,
       });
 
@@ -140,7 +144,7 @@ describe('odsCodeLookup', () => {
     });
 
     it('should read from session', async () => {
-      await getOrganisationIdFromOdsCode({
+      await getOrganisationFromOdsCode({
         req, sessionManager: session, odsCode: '123', accessToken,
       });
 

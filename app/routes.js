@@ -4,7 +4,6 @@ import {
 } from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
-import { getOrganisation } from './helpers/api/oapi/getOrganisation';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routes/routerHelper';
 import { getDocumentByFileName } from './helpers/api/dapi/getDocumentByFileName';
 import { dashboardRoutes } from './pages/dashboard/routes';
@@ -36,10 +35,8 @@ export const routes = (authProvider, sessionManager) => {
   });
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const orgData = await getOrganisation({ orgId: req.user.primaryOrganisationId, accessToken });
     logger.info('redirecting to organisation orders page');
-    return res.redirect(`${config.baseUrl}/organisation/${orgData.odsCode}`);
+    return res.redirect(`${config.baseUrl}/organisation`);
   }));
 
   router.get('/document/:documentName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -79,7 +76,7 @@ export const routes = (authProvider, sessionManager) => {
     return next();
   });
 
-  router.use('/organisation/:odsCode', dashboardRoutes(authProvider, addContext));
+  router.use('/organisation/:odsCode', dashboardRoutes(authProvider, addContext, sessionManager));
 
   router.use('/organisation/:odsCode/select', selectOrganisationRoutes(authProvider, addContext, sessionManager));
 

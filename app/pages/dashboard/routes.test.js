@@ -9,13 +9,18 @@ import {
   setUpFakeApp,
 } from '../../test-utils/routesTestHelper';
 import * as dashboardController from './controller';
+import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
+
+jest.mock('../../helpers/controllers/odsCodeLookup');
 
 dashboardController.getDashboardContext = jest.fn()
   .mockResolvedValueOnce({});
 
 describe('GET /organisation/:odsCode', () => {
   const path = '/organisation/odsCode';
-
+  beforeEach(() => {
+    getOrganisationFromOdsCode.mockResolvedValueOnce({});
+  });
   afterEach(() => {
     jest.resetAllMocks();
   });
