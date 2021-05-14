@@ -150,8 +150,6 @@ test('should link to /organisation/odsCode/order/order-id/catalogue-solutions/se
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    // .debug()
-    // .takeScreenshot({fullPage: true})
     .expect(goBackLink.getAttribute('href'))
     .eql('/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution');
 });
