@@ -52,7 +52,7 @@ test('should render Summary page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-1 for backlink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-1 for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

@@ -17,14 +17,20 @@ const generateQuestionsContext = ({ suppliers, selectedSupplier }) => (
   }))
 );
 
-export const getContext = ({ orderId, suppliers, selectedSupplier }) => ({
+export const getContext = ({
+  orderId, suppliers, selectedSupplier, odsCode,
+}) => ({
   ...manifest,
   questions: suppliers && generateQuestionsContext({ suppliers, selectedSupplier }),
-  backLinkHref: `${baseUrl}/organisation/${orderId}/supplier/search`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`,
 });
 
 export const getErrorContext = (params) => {
-  const updatedManifest = getContext({ orderId: params.orderId, suppliers: params.suppliers });
+  const updatedManifest = getContext({
+    orderId: params.orderId,
+    suppliers: params.suppliers,
+    odsCode: params.odsCode,
+  });
 
   return {
     ...getSectionErrorContext({ ...params, manifest: updatedManifest }),

@@ -11,7 +11,7 @@ describe('catalogue-solution order-item - quantity and estimation page', () => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation/order-1/catalogue-solutions/select/solution/price/recipients/date',
+      backLinkHref: '/organisation/odsCode/order/order-1/catalogue-solutions/select/solution/price/recipients/date',
     };
 
     harness.request(context, ($) => {
@@ -19,7 +19,7 @@ describe('catalogue-solution order-item - quantity and estimation page', () => {
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
       expect($(backLink).find('a').attr('href'))
-        .toEqual('/organisation/order-1/catalogue-solutions/select/solution/price/recipients/date');
+        .toEqual(context.backLinkHref);
     });
   }));
 

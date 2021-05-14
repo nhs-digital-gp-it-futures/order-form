@@ -16,6 +16,8 @@ const selectedRecipientIdsData = ['ods2'];
 
 describe('service-recipients contextCreator', () => {
   describe('getContext', () => {
+    const odsCode = '03F';
+
     it('should return the contents of manifest', () => {
       const context = getContext({ manifest });
       expect(context.backLinkText).toEqual(manifest.backLinkText);
@@ -31,7 +33,6 @@ describe('service-recipients contextCreator', () => {
     });
 
     it('should construct the backLinkHref when solutionPrices contain 1', () => {
-      const odsCode = '03F';
       const context = getContext({
         orderId, solutionPrices: { prices: [{}] }, manifest, orderType: 'catalogue-solutions', odsCode,
       });
@@ -40,9 +41,9 @@ describe('service-recipients contextCreator', () => {
 
     it('should construct the backLinkHref when solutionPrices contain not 1', () => {
       const context = getContext({
-        orderId, solutionPrices: [{}, {}], manifest, orderType: 'catalogue-solutions',
+        orderId, solutionPrices: [{}, {}], manifest, orderType: 'catalogue-solutions', odsCode,
       });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price`);
     });
 
     it('should construct the description', () => {

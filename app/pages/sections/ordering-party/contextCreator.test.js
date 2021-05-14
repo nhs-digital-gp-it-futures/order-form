@@ -31,6 +31,7 @@ const questionData = {
 };
 
 const orderId = 'order-id';
+const odsCode = 'odsCode';
 
 const mockValidationErrors = [{
   field: 'EmailAddress',
@@ -72,8 +73,8 @@ describe('ordering-party contextCreator', () => {
     });
 
     it('should construct the backLinkHref', () => {
-      const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const context = getContext({ orderId, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should construct title with orderId', () => {
@@ -95,15 +96,17 @@ describe('ordering-party contextCreator', () => {
         orderId: 'order-id',
         validationErrors: mockValidationErrors,
         orgData: mockOrderingPartyData,
+        odsCode: 'odsCode',
       };
 
       const updatedManifest = {
         ...manifest,
         title: 'Call-off Ordering Party information for order-id',
-        backLinkHref: '/order/organisation/order-id',
+        backLinkHref: '/order/organisation/odsCode/order/order-id',
       };
 
       getErrorContext(mockParams);
+
       expect(errorContext.getSectionErrorContext.mock.calls.length).toEqual(1);
       expect(errorContext.getSectionErrorContext).toHaveBeenCalledWith({
         ...mockParams, manifest: updatedManifest,

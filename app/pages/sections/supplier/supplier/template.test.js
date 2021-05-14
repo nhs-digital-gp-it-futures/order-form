@@ -28,14 +28,14 @@ describe('supplier page', () => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation/order-1/search/select',
+      backLinkHref: '/organisation/odsCode/order/order-1/search/select',
     };
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect(backLink.find('a').attr('href')).toEqual('/organisation/order-1/search/select');
+      expect(backLink.find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 
@@ -222,7 +222,7 @@ describe('supplier page', () => {
   it('should render the "Search again" link if showSearchAgainLink is true', componentTester(setup, (harness) => {
     const context = {
       searchAgainLinkText: manifest.searchAgainLinkText,
-      searchAgainLinkHref: '/organisation/order-1/search',
+      searchAgainLinkHref: '/organisation/odsCode/order/order-1/search',
       showSearchAgainLink: true,
     };
 
@@ -237,7 +237,7 @@ describe('supplier page', () => {
   it('should not render the "Search again" link if showSearchAgainLink is false', componentTester(setup, (harness) => {
     const context = {
       searchAgainLinkText: manifest.searchAgainLinkText,
-      searchAgainLinkHref: '/organisation/order-1/search',
+      searchAgainLinkHref: '/organisation/odsCode/order/order-1/search',
       showSearchAgainLink: false,
     };
 

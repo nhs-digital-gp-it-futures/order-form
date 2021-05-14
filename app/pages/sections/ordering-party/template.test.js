@@ -27,7 +27,7 @@ const context = {
   ...manifest,
   orgData: mockData,
   title: 'Call-off Ordering Party information for order-id',
-  backLinkHref: '/organisation/order-1',
+  backLinkHref: '/organisation/odsCode/order/order-1',
   csrfToken: 'mockCsrfToken',
 };
 
@@ -72,7 +72,7 @@ describe('ordering-party page', () => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 

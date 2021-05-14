@@ -15,10 +15,11 @@ const generateFormData = (commencementDateData) => {
   return undefined;
 };
 
-export const getCommencementDateContext = async ({ orderId, accessToken }) => {
+export const getCommencementDateContext = async ({ odsCode, orderId, accessToken }) => {
   const commencementDateData = await getCommencementDate({ orderId, accessToken });
 
   return getContext({
+    odsCode,
     orderId,
     data: generateFormData(commencementDateData),
   });

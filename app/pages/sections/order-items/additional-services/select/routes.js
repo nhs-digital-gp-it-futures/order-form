@@ -97,6 +97,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         orderId,
         additionalServices,
         selectedAdditionalServiceId,
+        odsCode,
       });
 
       const orderItems = sessionManager.getFromSession({ req, key: sessionKeys.orderItems });
@@ -206,6 +207,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       additionalServicePrices,
       selectedPriceId,
       selectedAdditionalServiceName,
+      odsCode,
     });
 
     logger.info(`navigating to order ${orderId} additional-services select price page`);
@@ -496,6 +498,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       selectedPrice,
       itemName,
       formData,
+      odsCode,
     });
     context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients/date`;
 

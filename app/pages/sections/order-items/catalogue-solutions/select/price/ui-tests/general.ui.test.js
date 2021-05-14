@@ -143,17 +143,18 @@ test('should render Catalogue-solutions price page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /organisation/order-id/catalogue-solutions/select/solution for backlink', async (t) => {
+test('should link to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution');
+    .expect(goBackLink.getAttribute('href'))
+    .eql('/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution');
 });
 
-test('should link to /organisation/order-id/catalogue-solutions/select/solution for backlink with validation errors', async (t) => {
+test('should link to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution for backlink with validation errors', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -167,7 +168,7 @@ test('should link to /organisation/order-id/catalogue-solutions/select/solution 
 
   await t
     .expect(errorSummary.exists).ok()
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution');
 });
 
 test('should render the title', async (t) => {

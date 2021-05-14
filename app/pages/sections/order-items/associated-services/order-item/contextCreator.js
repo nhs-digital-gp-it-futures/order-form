@@ -9,16 +9,17 @@ export const backLinkHref = ({
 }) => {
   const { referer } = req.headers;
   const slug = (referer ? referer.split('/').pop() : '').toLowerCase();
+  const associatedServicesUrl = `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services`;
 
   const singlePriceItemBackLink = ((associatedServicePrices || {}).prices || {}).length === 1
-    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/select/associated-service`
-    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/select/associated-service/price`;
+    ? `${associatedServicesUrl}/select/associated-service`
+    : `${associatedServicesUrl}/select/associated-service/price`;
 
   if (slug === 'associated-service' || slug === 'price' || slug === 'associated-services') {
     return referer;
   }
 
-  return slug === 'neworderitem' ? singlePriceItemBackLink : `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services`;
+  return slug === 'neworderitem' ? singlePriceItemBackLink : associatedServicesUrl;
 };
 
 export const getContext = ({

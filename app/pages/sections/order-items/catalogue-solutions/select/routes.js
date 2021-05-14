@@ -54,7 +54,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   }));
 
   router.get('/solution', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedSolutionId = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemId,
@@ -63,7 +63,9 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     const solutions = await getCatalogueItems({ supplierId: supplierData.supplierId, catalogueItemType: 'Solution' });
     sessionManager.saveToSession({ req, key: sessionKeys.solutions, value: solutions });
 
-    const context = await getSolutionsPageContext({ orderId, solutions, selectedSolutionId });
+    const context = await getSolutionsPageContext({
+      orderId, solutions, selectedSolutionId, odsCode,
+    });
 
     const orderItems = sessionManager.getFromSession({ req, key: sessionKeys.orderItems });
     if (orderItems.length > 0) {
@@ -120,6 +122,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       orderId,
       solutions,
       validationErrors: response.errors,
+      odsCode,
     });
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/solution/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -158,6 +161,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       solutionPrices,
       selectedPriceId,
       selectedCatalogueItemName,
+      odsCode,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select price page`);
@@ -183,6 +187,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       orderId,
       solutionPrices,
       validationErrors: response.errors,
+      odsCode,
     });
 
     return res.render('pages/sections/order-items/catalogue-solutions/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -286,7 +291,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
   }));
 
   router.get('/solution/price/recipients/date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     const itemName = sessionManager.getFromSession({
@@ -301,7 +306,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     });
 
     const context = await getDeliveryDateContext({
-      orderId, itemName, commencementDate, manifest: dateManifest, orderType: 'catalogue-solutions',
+      orderId, itemName, commencementDate, manifest: dateManifest, orderType: 'catalogue-solutions', odsCode,
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions select planned delivery date page`);
@@ -368,7 +373,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
 
   router.get('/solution/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const {
-      orderId, priceType, provisioningType, odsCode,
+      orderId, odsCode, priceType, provisioningType,
     } = req.params;
     const itemName = sessionManager.getFromSession({
       req, key: sessionKeys.selectedItemName,
@@ -392,6 +397,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       selectedPrice,
       itemName,
       formData,
+      odsCode,
     });
     logger.info(`navigating to order ${orderId} catalogue-solutions ${provisioningType} form`);
     if (priceType === 'flat' && provisioningType === 'patient') {
@@ -402,7 +408,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
 
   router.post('/solution/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const {
-      orderId, orderItemId, priceType, odsCode,
+      orderId, odsCode, orderItemId, priceType,
     } = req.params;
     const validationErrors = [];
     const formData = formatFormData({ formData: req.body });

@@ -13,7 +13,7 @@ describe('summary print page', () => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation/order-1',
+      backLinkHref: '/organisation/odsCode/order/order-1',
     };
 
     harness.request(context, ($) => {

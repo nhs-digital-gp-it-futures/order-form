@@ -20,18 +20,22 @@ describe('additional-services order-item contextCreator', () => {
     it('should return the backLinkHref to additional-services when order item id is not neworderitem', () => {
       const context = getContext({
         commonManifest,
+        odsCode: 'odsCode',
         orderId: 'order-1',
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/order-1/additional-services');
+      expect(context.backLinkHref)
+        .toEqual('/order/organisation/odsCode/order/order-1/additional-services');
     });
 
     it('should return the backLinkHref to recipients when order item id is neworderitem', () => {
       const context = getContext({
         commonManifest,
+        odsCode: 'odsCode',
         orderId: 'order-1',
         catalogueItemId: 'neworderitem',
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/order-1/additional-services/select/additional-service/price/recipients');
+      expect(context.backLinkHref)
+        .toEqual('/order/organisation/odsCode/order/order-1/additional-services/select/additional-service/price/recipients');
     });
 
     it('should return the title', () => {

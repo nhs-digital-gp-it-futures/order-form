@@ -45,10 +45,11 @@ export const getContext = ({
   additionalServicePrices,
   selectedPriceId,
   selectedAdditionalServiceName,
+  odsCode,
 }) => ({
   ...manifest,
   title: `${manifest.title} ${selectedAdditionalServiceName}`,
-  backLinkHref: `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service`,
   questions: additionalServicePrices
     && generateQuestionsContext(additionalServicePrices, selectedPriceId),
 });

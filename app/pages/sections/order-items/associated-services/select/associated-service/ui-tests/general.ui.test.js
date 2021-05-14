@@ -78,7 +78,7 @@ test('should render associated-services select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/associated-services/associated-service for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/associated-services/associated-service for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -86,7 +86,7 @@ test('should link to /order/organisation/order-id/associated-services/associated
 
   await t
     .expect(await extractInnerText(goBackLink)).eql(content.backLinkText)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/associated-services');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/associated-services');
 });
 
 test('should render the title', async (t) => {
@@ -151,7 +151,7 @@ test('should render the error page if no associated services are found', async (
 
   await t
     .expect(await extractInnerText(backLink)).eql('Go back')
-    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/order-id/associated-services')
+    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/odsCode/order/order-id/associated-services')
     .expect(await extractInnerText(errorTitle)).eql('No Associated Services found')
     .expect(await extractInnerText(errorDescription)).eql('There are no Associated Services offered by this supplier. Go back to the Associated Services dashboard and select continue to complete the section.');
 });

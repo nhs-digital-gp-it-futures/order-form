@@ -11,9 +11,10 @@ export const getContext = ({
   errorMap,
   manifest,
   orderType,
+  odsCode,
 }) => ({
   ...addParamsToManifest(manifest, { itemName, orderId }),
-  backLinkHref: `${baseUrl}/organisation/${orderId}/${orderType}/select/solution/price/recipients`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/${orderType}/select/solution/price/recipients`,
   questions: generateQuestions({
     questions: manifest.questions,
     formData: data,

@@ -10,10 +10,10 @@ const setup = {
 const context = {
   ...manifest,
   title: 'Service Recipients for Solution One for order-id',
-  backLinkHref: '/organisation/order-1',
+  backLinkHref: '/organisation/odsCode/order/order-1',
   csrfToken: 'mockCsrfToken',
   orderItemId: 'H489000-1C',
-  selectDeselectButtonAction: '/organisation/order-1/service-recipients',
+  selectDeselectButtonAction: '/organisation/odsCode/order/order-1/service-recipients',
   selectStatus: 'select',
   selectDeselectButtonText: 'Select all',
 };
@@ -24,7 +24,7 @@ describe('recipients page', () => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 

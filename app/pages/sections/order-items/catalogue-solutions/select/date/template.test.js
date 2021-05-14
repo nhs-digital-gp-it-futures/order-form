@@ -10,7 +10,7 @@ const setup = {
 const context = {
   ...manifest,
   title: 'Service Recipients for Solution One for order-id',
-  backLinkHref: '/organisation/order-1',
+  backLinkHref: '/organisation/odsCode/orderorder-1',
   csrfToken: 'mockCsrfToken',
 };
 
@@ -20,7 +20,7 @@ describe('delivery date page', () => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 

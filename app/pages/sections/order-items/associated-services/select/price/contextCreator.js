@@ -45,10 +45,11 @@ export const getContext = ({
   associatedServicePrices,
   selectedPriceId,
   selectedAssociatedServiceName,
+  odsCode,
 }) => ({
   ...manifest,
   title: `${manifest.title} ${selectedAssociatedServiceName}`,
-  backLinkHref: `${baseUrl}/organisation/${orderId}/associated-services/select/associated-service`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/select/associated-service`,
   questions: associatedServicePrices
     && generateQuestionsContext(associatedServicePrices, selectedPriceId),
 });
@@ -58,6 +59,7 @@ export const getErrorContext = (params) => {
     orderId: params.orderId,
     associatedServicePrices: params.associatedServicePrices,
     selectedAssociatedServiceName: params.selectedAssociatedServiceName,
+    odsCode: params.odsCode,
   });
 
   return {

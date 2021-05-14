@@ -42,14 +42,14 @@ fixture('Description page - existing order')
     await nockAndErrorCheck(nock, t);
   });
 
-test('should link to /order/organisation/order-1 for backlink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-1 for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1');
 });
 
 test('should populate the text area with existing decription data', async (t) => {

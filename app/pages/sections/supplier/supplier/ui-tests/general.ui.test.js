@@ -107,7 +107,7 @@ test('should render the inset advice', async (t) => {
     .expect(await extractInnerText(insetAdvice)).contains(content.insetAdvice);
 });
 
-test('should navigate to /organisation/order-id/supplier/search when click on searchAgainLink', async (t) => {
+test('should navigate to /organisation/odsCode/order/order-id/supplier/search when click on searchAgainLink', async (t) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, {});
@@ -123,7 +123,7 @@ test('should navigate to /organisation/order-id/supplier/search when click on se
   await t
     .expect(await extractInnerText(searchAgainLink)).eql(content.searchAgainLinkText)
     .click(searchAgainLink)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/supplier/search');
 });
 
 test('should render the primary contact details form', async (t) => {

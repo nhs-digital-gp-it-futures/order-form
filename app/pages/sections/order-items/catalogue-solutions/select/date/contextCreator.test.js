@@ -25,10 +25,11 @@ describe('delivery-date contextCreator', () => {
     });
 
     it('should construct the backLinkHref when solutionPrices contain not 1', () => {
+      const odsCode = 'odsCode';
       const context = getContext({
-        orderId, manifest, orderType: 'catalogue-solutions',
+        orderId, manifest, orderType: 'catalogue-solutions', odsCode,
       });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients`);
     });
 
     it('should construct the description', () => {

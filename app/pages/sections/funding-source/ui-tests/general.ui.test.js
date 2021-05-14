@@ -50,7 +50,7 @@ test('should render funding source page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should render go back link with href /organisation/order-id', async (t) => {
+test('should render go back link with href /organisation/odsCode/order/order-id', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

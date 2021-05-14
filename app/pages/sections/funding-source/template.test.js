@@ -10,7 +10,7 @@ const setup = {
 const context = {
   ...manifest,
   title: 'org1 orders',
-  backLinkHref: '/organisation/order-1',
+  backLinkHref: '/organisation/odsCode/order/order-1',
   questions: [
     {
       id: 'selectFundingSource',
@@ -34,7 +34,7 @@ describe('funding source page', () => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect($(backLink).find('a').attr('href')).toEqual('/organisation/odsCode/order/order-1');
     });
   }));
 

@@ -546,7 +546,7 @@ describe('catalogue-solutions select routes', () => {
     });
 
     it('should redirect to select solution price endpoint when a recipient is selected and orderItemId is posted', async () => {
-      const slug = '/organisation/order-1/catalogues-solutions/42';
+      const slug = '/organisation/odsCode/order/order-1/catalogues-solutions/42';
       const expectedLocation = `${baseUrl}${slug}`;
       selectRecipientController.getSelectSolutionPriceEndpoint = jest.fn().mockReturnValue(slug);
 

@@ -13,7 +13,7 @@ const router = express.Router({ mergeParams: true });
 
 export const completeOrderRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, odsCode } = req.params;
+    const { odsCode, orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const fundingSource = await getFundingSource({ orderId, accessToken });
     sessionManager.saveToSession({ req, key: sessionKeys.fundingSource, value: fundingSource });
@@ -22,7 +22,6 @@ export const completeOrderRoutes = (authProvider, addContext, sessionManager) =>
       sessionManager,
       accessToken,
       logger,
-      odsCode,
     });
 
     const context = await getCompleteOrderContext({
@@ -45,7 +44,7 @@ export const completeOrderRoutes = (authProvider, addContext, sessionManager) =>
   }));
 
   router.get('/order-confirmation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, odsCode } = req.params;
+    const { odsCode, orderId } = req.params;
     const fundingSource = sessionManager.getFromSession({ req, key: sessionKeys.fundingSource });
 
     const context = await getOrderConfirmationContext({ orderId, fundingSource, odsCode });

@@ -9,7 +9,7 @@ const setup = {
 
 const context = {
   ...manifest,
-  backLinkHref: '/organisation/order-1/catalogue-solutions/order-item-id',
+  backLinkHref: '/organisation/odsCode/order/order-1/catalogue-solutions/order-item-id',
   catalogueDescription: 'some description',
 };
 

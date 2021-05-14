@@ -15,13 +15,14 @@ const generateFormData = (commencementDate) => {
 };
 
 export const getDeliveryDateContext = async ({
-  orderId, itemName, commencementDate, manifest, orderType,
+  orderId, itemName, commencementDate, manifest, orderType, odsCode,
 }) => getContext({
   orderId,
   itemName,
   data: generateFormData(commencementDate),
   manifest,
   orderType,
+  odsCode,
 });
 
 export const validateDeliveryDateForm = ({ data }) => {

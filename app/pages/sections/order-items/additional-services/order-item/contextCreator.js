@@ -38,8 +38,9 @@ export const getContext = ({
     ...commonManifest.deleteButton,
     disabled: catalogueItemId === 'neworderitem',
   },
-  backLinkHref: catalogueItemId === 'neworderitem' ? `${config.baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipients`
-    : `${config.baseUrl}/organisation/${orderId}/additional-services`,
+  backLinkHref: catalogueItemId === 'neworderitem'
+    ? `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`
+    : `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`,
 });
 
 export const getErrorContext = (params) => {

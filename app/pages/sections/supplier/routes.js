@@ -37,6 +37,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
         supplierId: selectedSupplier,
         accessToken: extractAccessToken({ req, tokenType: 'access' }),
         hasSavedData: dataFoundInOrdapi,
+        odsCode,
       });
       return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
     } catch (err) {
@@ -61,6 +62,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
       orderId,
       data: req.body,
       hasSavedData: dataFoundInOrdapi,
+      odsCode,
     });
     return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -71,7 +73,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     const dataFoundInOrdapi = await checkOrdapiForSupplier({ orderId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
     if (dataFoundInOrdapi) return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier`);
 
-    const context = await getSupplierSearchPageContext({ orderId });
+    const context = await getSupplierSearchPageContext({ orderId, odsCode });
     logger.info(`navigating to order ${orderId} suppliers search page`);
     return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -108,6 +110,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
     const context = await getSupplierSearchPageErrorContext({
       orderId,
       validationErrors: response.errors,
+      odsCode,
     });
 
     return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
@@ -127,7 +130,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
         req, key: sessionKeys.selectedSupplier,
       });
       const context = getSupplierSelectPageContext({
-        orderId, suppliers: suppliersFound, selectedSupplier,
+        orderId, suppliers: suppliersFound, selectedSupplier, odsCode,
       });
 
       logger.info(`navigating to order ${orderId} suppliers select page`);
@@ -157,6 +160,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
         orderId,
         suppliers: suppliersFound,
         validationErrors: response.errors,
+        odsCode,
       });
 
       return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));

@@ -17,6 +17,7 @@ jest.mock('./helpers/api/ordapi/getOrder');
 jest.mock('./helpers/routes/getOrderDescription');
 jest.mock('./helpers/api/dapi/getDocumentByFileName');
 jest.mock('./helpers/controllers/odsCodeLookup');
+jest.mock('./helpers/api/oapi/getOrganisation');
 
 describe('routes', () => {
   afterEach(() => {
@@ -25,7 +26,6 @@ describe('routes', () => {
 
   describe('GET /', () => {
     const path = '/';
-
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
@@ -44,18 +44,17 @@ describe('routes', () => {
 
   describe('GET /organisation', () => {
     const path = '/organisation';
-    const odsCode = 'J89';
+    const odsCode = 'odsCode';
 
     beforeEach(() => {
       getOdsCodeForOrganisation.mockResolvedValue(odsCode);
     });
 
-    // TODO: fix when routes are changed
-    // itx('should redirect to the login page if the user is not logged in', () => (
-    //   testAuthorisedGetPathForUnauthenticatedUser({
-    //     app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-    //   })
-    // ));
+    it('should redirect to the login page if the user is not logged in', () => (
+      testAuthorisedGetPathForUnauthenticatedUser({
+        app: request(setUpFakeApp()), getPath: `${path}/{odsCode}`, expectedRedirectPath: 'http://identity-server/login',
+      })
+    ));
 
     it('should redirect to /organisation/odsCode if user logged in with odsCode', () => request(setUpFakeApp())
       .get(path)

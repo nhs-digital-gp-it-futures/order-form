@@ -70,14 +70,14 @@ fixture('Supplier page - with saved data')
     await nockAndErrorCheck(nock, t);
   });
 
-test('should link to /order/organisation/order-id for backLink when data comes from ORDAPI', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id for backLink when data comes from ORDAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
 
 test('should render supplier name with data from ORDAPI', async (t) => {
@@ -159,7 +159,7 @@ test('should not show the search again link when there are validation errors and
     .expect(searchAgainLink.exists).notOk();
 });
 
-test('should link back to the /order/organisation/order-id when clicking the backlink validation errors and details are provided from ORDAPI', async (t) => {
+test('should link back to the /order/organisation/odsCode/order/order-id when clicking the backlink validation errors and details are provided from ORDAPI', async (t) => {
   nock(orderApiUrl)
     .put('/api/v1/orders/order-id/sections/supplier', requestPutBody)
     .reply(400, { errors: [] });
@@ -178,5 +178,5 @@ test('should link back to the /order/organisation/order-id when clicking the bac
     .click(saveButton);
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
