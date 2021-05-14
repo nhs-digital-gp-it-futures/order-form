@@ -44,6 +44,7 @@ const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
   }
 };
 
+// TODO: fix when feature completed
 fixture.skip('Ordering-party page - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {

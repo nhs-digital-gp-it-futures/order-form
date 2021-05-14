@@ -44,6 +44,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
+// TODO: fix when feature completed
 fixture.skip('Catalogue-solutions - recipients page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {

@@ -88,6 +88,7 @@ fixture('Associated-services - flat declarative - withoutSavedData')
     await nockAndErrorCheck(nock, t);
   });
 
+// TODO: fix when feature completed
 test.skip('should navigate to associated-services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
     .put(`/api/v1/orders/${callOffId}/order-items/${itemIdInSession}`, validRequestBody)
