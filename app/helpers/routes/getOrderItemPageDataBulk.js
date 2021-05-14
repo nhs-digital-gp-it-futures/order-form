@@ -103,6 +103,7 @@ export const getOrderItemPageDataBulk = async ({
     const selectEstimationPeriod = sessionManager.getFromSession({
       req, key: sessionKeys.selectEstimationPeriod,
     });
+    selectedPrice.listPrice = selectedPrice.price;
     const formData = {
       deliveryDate: [{
         'deliveryDate-day': day,

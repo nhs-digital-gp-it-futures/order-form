@@ -83,6 +83,7 @@ export const getErrorContext = (params) => {
     selectedPrice: params.selectedPrice,
     formData: params.formData,
     errorMap,
+    odsCode: params.odsCode,
   });
 
   const errorSummary = generateErrorSummary({ errorMap });

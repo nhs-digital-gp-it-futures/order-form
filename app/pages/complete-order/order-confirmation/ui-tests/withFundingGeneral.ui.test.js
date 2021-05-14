@@ -84,7 +84,7 @@ test('should render the get order summary button', async (t) => {
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
 });
 
-test('should render the get order summary button link with href /order/organisation/organisation/odsCode/order/order-id/summary?print=true', async (t) => {
+test('should render the get order summary button link with href /order/organisation/odsCode/order/order-id/summary?print=true', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

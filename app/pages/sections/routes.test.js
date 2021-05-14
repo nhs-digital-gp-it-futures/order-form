@@ -21,6 +21,7 @@ import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
 import * as fundingSourceController from './funding-source/controller';
+import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
@@ -29,6 +30,7 @@ jest.mock('../../helpers/routes/getOrderDescription');
 jest.mock('../../helpers/api/ordapi/putOrderingParty');
 jest.mock('../../helpers/api/ordapi/putCommencementDate');
 jest.mock('../../helpers/api/ordapi/putServiceRecipients');
+jest.mock('../../helpers/controllers/odsCodeLookup');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -71,6 +73,9 @@ describe('section routes', () => {
 
   describe('POST /organisation/:odsCode/order/:orderId/description', () => {
     const path = '/organisation/odsCode/order/:orderId/description';
+    beforeEach(() => {
+      getOrganisationFromOdsCode.mockResolvedValue({});
+    });
 
     afterEach(() => {
       descriptionController.postOrPutDescription.mockReset();
@@ -163,7 +168,9 @@ describe('section routes', () => {
 
   describe('GET /organisation/:odsCode/order/:orderId/ordering-party', () => {
     const path = '/organisation/odsCode/order/some-order-id/ordering-party';
-
+    beforeEach(() => {
+      getOrganisationFromOdsCode.mockResolvedValue({});
+    });
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
@@ -192,7 +199,9 @@ describe('section routes', () => {
 
   describe('POST /organisation/:odsCode/order/:orderId/ordering-party', () => {
     const path = '/organisation/odsCode/order/order-id/ordering-party';
-
+    beforeEach(() => {
+      getOrganisationFromOdsCode.mockResolvedValue({});
+    });
     afterEach(() => {
       jest.resetAllMocks();
     });

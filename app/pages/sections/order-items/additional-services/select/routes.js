@@ -312,7 +312,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     const {
       serviceRecipients, selectedRecipients, additionalServicePrices, itemName,
     } = await getAdditionalServicesContextItems({
-      req, sessionManager, accessToken, logger,
+      req, sessionManager, accessToken, logger, odsCode,
     });
 
     const context = await getServiceRecipientsContext({
