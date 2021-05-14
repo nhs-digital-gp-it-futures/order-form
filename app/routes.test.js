@@ -11,7 +11,6 @@ import {
 import { baseUrl } from './config';
 import { getDocumentByFileName } from './helpers/api/dapi/getDocumentByFileName';
 import { getOdsCodeForOrganisation } from './helpers/controllers/odsCodeLookup';
-import { getOrganisation } from './helpers/api/oapi/getOrganisation';
 
 jest.mock('./logger');
 jest.mock('./helpers/api/ordapi/getOrder');
