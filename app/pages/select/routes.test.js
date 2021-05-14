@@ -8,9 +8,10 @@ import {
   mockAuthorisedCookie,
   setUpFakeApp,
 } from '../../test-utils/routesTestHelper';
-import * as controller from './controller';
+import { getProxyOrganisations } from '../../helpers/api/oapi/getProxyOrganisations';
 
 jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
+jest.mock('../../helpers/api/oapi/getProxyOrganisations');
 
 describe('GET /organisation/:odsCode/select', () => {
   const path = '/organisation/odsCode/select';
@@ -35,8 +36,7 @@ describe('GET /organisation/:odsCode/select', () => {
   ));
 
   it('should return the page with correct status when the user is authorised', () => {
-    controller.organisationsList = jest.fn()
-      .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });
+    getProxyOrganisations.mockResolvedValue([{ organisationId: '123', name: 'abc' }]);
 
     return request(setUpFakeApp())
       .get(path)
