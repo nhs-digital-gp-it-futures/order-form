@@ -9,19 +9,20 @@ jest.mock('../../../../getSectionErrorContext', () => ({
 
 describe('associated-services associated-service contextCreator', () => {
   describe('getContext', () => {
+    const orderId = 'order-1';
+
     it('should return the backLinkText', () => {
-      const context = getContext({ orderId: 'order-1' });
+      const context = getContext({ orderId });
       expect(context.backLinkText).toEqual(manifest.backLinkText);
     });
 
     it('should construct the backLinkHref', () => {
-      const orderId = 'order-1';
-      const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/associated-services`);
+      const odsCode = 'odsCode';
+      const context = getContext({ orderId, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services`);
     });
 
     it('should return the title', () => {
-      const orderId = 'order-1';
       const context = getContext({ orderId });
       expect(context.title).toEqual(`${manifest.title} ${orderId}`);
     });

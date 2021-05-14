@@ -132,10 +132,12 @@ describe('updateContext', () => {
     contextCreator.backLinkHref.mockReturnValueOnce(expected);
 
     updateContext({
-      req, selectedPrice, context, orderId, catalogueItemId,
+      req, selectedPrice, context, orderId, catalogueItemId, odsCode,
     });
 
-    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({ req, selectedPrice, orderId });
+    expect(contextCreator.backLinkHref).toHaveBeenCalledWith({
+      req, selectedPrice, orderId, odsCode,
+    });
     expect(context.backLinkHref).toEqual(expected);
   });
 

@@ -70,9 +70,10 @@ export const getContext = ({
 }) => {
   const toggledStatus = selectStatus === 'select' ? 'deselect' : 'select';
   const errorMessages = errorMap && errorMap.selectSolutionRecipients.errorMessages;
+  const orderIdUrl = `${baseUrl}/organisation/${odsCode}/order/${orderId}`;
   return {
     ...addParamsToManifest(manifest, { itemName, orderId }),
-    backLinkHref: ((solutionPrices || {}).prices || {}).length === 1 ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/${orderType}/select/solution` : `${baseUrl}/organisation/${orderId}/${orderType}/select/solution/price`,
+    backLinkHref: ((solutionPrices || {}).prices || {}).length === 1 ? `${orderIdUrl}/${orderType}/select/solution` : `${orderIdUrl}/${orderType}/select/solution/price`,
     question: {
       selectSolutionRecipients: {
         id: manifest.question.selectSolutionRecipients.id,
@@ -85,7 +86,7 @@ export const getContext = ({
         errorMessages,
       },
     },
-    selectDeselectButtonAction: `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients`,
+    selectDeselectButtonAction: `${orderIdUrl}/catalogue-solutions/select/solution/price/recipients`,
     selectStatus: toggledStatus,
     selectDeselectButtonText: manifest.selectDeselectButtonText[toggledStatus]
       || manifest.selectDeselectButtonText.select,

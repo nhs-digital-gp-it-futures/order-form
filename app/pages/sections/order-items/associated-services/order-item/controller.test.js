@@ -30,6 +30,7 @@ const selectedPrice = {
 
 const orderItemType = 'associated-services';
 const orderId = 'order-id';
+const odsCode = 'odsCode';
 const req = { params: { orderId }, query: {} };
 const associatedServicePrices = { prices: [] };
 
@@ -39,11 +40,11 @@ describe('associated-services order-item controller', () => {
       const expected = 'http://some.link.com';
       contextCreator.backLinkHref.mockReturnValueOnce(expected);
 
-      const actual = getBackLinkHref(req, associatedServicePrices, orderId);
+      const actual = getBackLinkHref(req, associatedServicePrices, orderId, odsCode);
 
       expect(contextCreator.backLinkHref.mock.calls.length).toEqual(1);
       expect(contextCreator.backLinkHref).toHaveBeenCalledWith({
-        req, associatedServicePrices, orderId,
+        req, associatedServicePrices, orderId, odsCode,
       });
       expect(actual).toEqual(expected);
     });

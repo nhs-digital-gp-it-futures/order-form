@@ -11,6 +11,7 @@ export const getContext = ({
   itemName,
   selectedPrice,
   errorMap,
+  odsCode,
 }) => ({
   ...commonManifest,
   title: `${commonManifest.title} ${itemName} for ${orderId}`,
@@ -20,7 +21,7 @@ export const getContext = ({
     errorMap,
   }),
   description: selectedPrice.provisioningType === 'Declarative' ? selectedPriceManifest.description.replace('[price]', selectedPrice.price) : selectedPriceManifest.description,
-  backLinkHref: `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipients/date`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients/date`,
 });
 
 export const getErrorContext = (params) => {

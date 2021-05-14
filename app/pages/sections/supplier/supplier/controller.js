@@ -26,7 +26,7 @@ const formatFormData = (data) => ({
 });
 
 export const getSupplierPageContext = async ({
-  orderId, supplierId, accessToken, hasSavedData,
+  orderId, supplierId, accessToken, hasSavedData, odsCode,
 }) => {
   if (hasSavedData) {
     const ordapiSupplierData = await getSupplierFromOrdapi({ orderId, accessToken });
@@ -35,6 +35,7 @@ export const getSupplierPageContext = async ({
       orderId,
       supplierData: ordapiSupplierData,
       hasSavedData,
+      odsCode,
     });
   }
 
@@ -42,7 +43,7 @@ export const getSupplierPageContext = async ({
     logger.info(`SupplierId found in session for ${orderId} - ${supplierId}`);
     const supplierData = await getSupplierFromBapi({ supplierId, accessToken });
 
-    const context = getContext({ orderId, supplierData });
+    const context = getContext({ orderId, supplierData, odsCode });
     return context;
   }
 

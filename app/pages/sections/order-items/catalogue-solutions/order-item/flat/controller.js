@@ -15,6 +15,7 @@ export const getProvisionTypeOrderContext = async ({
   selectedPrice,
   itemName,
   formData,
+  odsCode,
 }) => {
   const selectedPriceManifest = getSelectedPriceManifest({
     orderItemType,
@@ -28,6 +29,7 @@ export const getProvisionTypeOrderContext = async ({
     itemName,
     selectedPrice,
     formData,
+    odsCode,
   });
 };
 

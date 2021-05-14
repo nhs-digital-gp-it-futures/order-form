@@ -92,14 +92,14 @@ test('should render additional-services select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/additional-services/additional-service for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/additional-services/additional-service for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/additional-services');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/additional-services');
 });
 
 test('should render the title', async (t) => {
@@ -132,7 +132,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/additional-services/select/additional-service/price when an additional service is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/additional-services/select/additional-service/price when an additional service is selected', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 

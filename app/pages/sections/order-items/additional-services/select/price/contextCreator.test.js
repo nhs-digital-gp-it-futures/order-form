@@ -87,8 +87,10 @@ describe('additional-services select-price contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId, additionalServicePrices });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/additional-services/select/additional-service`);
+      const odsCode = 'odsCode';
+      const context = getContext({ orderId, additionalServicePrices, odsCode });
+      expect(context.backLinkHref)
+        .toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service`);
     });
 
     it('should return the title', () => {

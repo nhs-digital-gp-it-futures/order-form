@@ -63,7 +63,7 @@ test('should link to /order/organisation/odsCode for backLink', async (t) => {
 
   await t
     .expect(await extractInnerText(goBackLink)).eql(content.backLinkText)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode');
 });
 
 test('should render the title', async (t) => {

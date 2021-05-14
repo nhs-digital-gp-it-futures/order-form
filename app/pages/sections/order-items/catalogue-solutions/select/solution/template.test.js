@@ -12,14 +12,14 @@ describe('catalogue-solutions select page', () => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation/order-1/catalogue-solutions',
+      backLinkHref: '/organisation/odsCode/order/order-1/catalogue-solutions',
     };
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1/catalogue-solutions');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 

@@ -65,9 +65,11 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
   }));
 
   router.get('/ordering-party', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const orgId = req.user.primaryOrganisationId;
-    const context = await getCallOffOrderingPartyContext({ orderId, orgId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    const context = await getCallOffOrderingPartyContext({
+      orderId, orgId, accessToken: extractAccessToken({ req, tokenType: 'access' }), odsCode,
+    });
     logger.info(`navigating to order ${orderId} ordering-party page`);
     res.render('pages/sections/ordering-party/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

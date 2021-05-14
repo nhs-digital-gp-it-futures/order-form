@@ -17,6 +17,8 @@ const mockValidationErrors = [{
 }];
 
 describe('decription contextCreator', () => {
+  const orderId = 'order-id';
+
   describe('getContext', () => {
     it('should return the contents of the manifest', () => {
       const context = getContext({});
@@ -32,14 +34,12 @@ describe('decription contextCreator', () => {
     });
 
     it('should construct the backLinkHref', () => {
-      const odsCode = 'I28';
-      const orderId = 'order-id';
-      const context = getContext({ orderId });
+      const odsCode = 'odsCode';
+      const context = getContext({ orderId, odsCode });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should add description to the question', () => {
-      const orderId = 'order-id';
       const context = getContext({ orderId, description: 'a description of the order' });
       expect(context.questions[0].data).toEqual('a description of the order');
     });

@@ -33,14 +33,14 @@ export const completeOrderRoutes = (authProvider, addContext, sessionManager) =>
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     await putOrderStatus({
       orderId,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/complete-order/order-confirmation`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/complete-order/order-confirmation`);
   }));
 
   router.get('/order-confirmation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {

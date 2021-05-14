@@ -16,8 +16,10 @@ describe('supplier select contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/supplier/search`);
+      const odsCode = 'odsCode';
+      const context = getContext({ orderId, odsCode });
+      expect(context.backLinkHref)
+        .toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`);
     });
 
     it('should return the title', () => {

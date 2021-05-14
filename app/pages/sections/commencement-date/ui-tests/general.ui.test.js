@@ -58,14 +58,14 @@ test('should render commencement-date page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
 
 test('should render the title', async (t) => {

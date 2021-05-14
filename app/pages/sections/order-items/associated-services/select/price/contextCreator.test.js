@@ -80,35 +80,39 @@ const returnedPriceArray = [{
 
 describe('associated-services select-price contextCreator', () => {
   describe('getContext', () => {
+    const orderId = 'order-id';
+    const odsCode = 'odsCode';
+
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1', associatedServicePrices });
       expect(context.backLinkText).toEqual(manifest.backLinkText);
     });
 
     it('should construct the backLinkHref', () => {
-      const orderId = 'order-id';
-      const context = getContext({ orderId, associatedServicePrices });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/associated-services/select/associated-service`);
+      const context = getContext({ orderId, associatedServicePrices, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/select/associated-service`);
     });
 
     it('should return the title', () => {
       const selectedAssociatedServiceName = 'Associated Service name';
-      const context = getContext({ orderId: 'order-1', associatedServicePrices, selectedAssociatedServiceName });
+      const context = getContext({
+        orderId, associatedServicePrices, selectedAssociatedServiceName,
+      });
       expect(context.title).toEqual(`${manifest.title} ${selectedAssociatedServiceName}`);
     });
 
     it('should return the description', () => {
-      const context = getContext({ orderId: 'order-1', associatedServicePrices });
+      const context = getContext({ orderId, associatedServicePrices });
       expect(context.description).toEqual(manifest.description);
     });
 
     it('should return the continueButtonText', () => {
-      const context = getContext({ orderId: 'order-1', associatedServicePrices });
+      const context = getContext({ orderId, associatedServicePrices });
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
     });
 
     it('should return the formatted list of questions', () => {
-      const context = getContext({ orderId: 'order-1', associatedServicePrices, selectedPriceId: 2 });
+      const context = getContext({ orderId, associatedServicePrices, selectedPriceId: 2 });
       expect(context.questions).toEqual(returnedPriceArray);
     });
   });

@@ -60,6 +60,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         orderId,
         associatedServices,
         selectedAssociatedServiceId,
+        odsCode,
       });
 
       logger.info(`navigating to order ${orderId} associated-services select associated-service page`);
@@ -156,6 +157,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
       associatedServicePrices,
       selectedPriceId,
       selectedAssociatedServiceName,
+      odsCode,
     });
 
     logger.info(`navigating to order ${orderId} associated-services select price page`);

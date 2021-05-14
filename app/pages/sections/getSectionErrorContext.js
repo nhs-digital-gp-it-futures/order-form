@@ -2,7 +2,7 @@ import { formatErrors, formatAllErrors, addErrorsAndDataToManifest } from 'buyin
 import { baseUrl } from '../../config';
 
 export const getSectionErrorContext = ({
-  odsCode, orderId, validationErrors, data, manifest,
+  orderId, validationErrors, data, manifest, odsCode,
 }) => {
   const formattedErrors = formatErrors({ manifest, errors: validationErrors });
   const modifiedManifest = addErrorsAndDataToManifest({ manifest, errors: formattedErrors, data });

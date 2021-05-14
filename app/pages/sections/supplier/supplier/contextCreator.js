@@ -12,17 +12,19 @@ const populateQuestionsWithData = (primaryContact) => (
   })
 );
 
-export const getContext = ({ orderId, supplierData, hasSavedData }) => ({
+export const getContext = ({ orderId, supplierData, hasSavedData, odsCode }) => ({
   ...manifest,
   questions: supplierData && supplierData.primaryContact
     ? populateQuestionsWithData(supplierData.primaryContact)
     : manifest.questions,
   title: `${manifest.title} ${orderId}`,
   supplierData,
-  searchAgainLinkHref: hasSavedData ? undefined : `${baseUrl}/organisation/${orderId}/supplier/search`,
+  searchAgainLinkHref: hasSavedData
+    ? undefined
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`,
   backLinkHref: hasSavedData
-    ? `${baseUrl}/organisation/${orderId}`
-    : `${baseUrl}/organisation/${orderId}/supplier/search/select`,
+    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}`
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search/select`,
   showSearchAgainLink: !hasSavedData,
 });
 
@@ -31,6 +33,7 @@ export const getErrorContext = (params) => {
     orderId: params.orderId,
     supplierData: params.data,
     hasSavedData: params.hasSavedData,
+    odsCode: params.odsCode,
   });
 
   return {

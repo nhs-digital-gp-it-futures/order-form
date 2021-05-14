@@ -208,7 +208,7 @@ describe('Additional-services select-recipient controller', () => {
       const request = {
         body: {},
         query: {},
-        headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${orderId}/some-URL` },
+        headers: { referer: `https://buyingcatalogue.co.uk/order/organisation/${odsCode}/order/${orderId}/some-URL` },
       };
 
       setContextIfBackFromAdditionalServiceEdit(request, context, orderId);

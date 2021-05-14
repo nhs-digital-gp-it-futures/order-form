@@ -154,14 +154,14 @@ describe('existingorder task-list page', () => {
     const context = {
       orderId: 'order-id',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation',
+      backLinkHref: '/organisation/odsCode',
     };
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 

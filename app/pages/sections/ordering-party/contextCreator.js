@@ -12,20 +12,21 @@ const populateQuestionsWithData = (primaryContact) => (
   })
 );
 
-export const getContext = ({ orderId, orgData }) => ({
+export const getContext = ({ orderId, orgData, odsCode }) => ({
   ...manifest,
   questions: orgData && orgData.primaryContact
     ? populateQuestionsWithData(orgData.primaryContact)
     : manifest.questions,
   title: `${manifest.title} ${orderId}`,
   orgData,
-  backLinkHref: `${baseUrl}/organisation/${orderId}`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}`,
 });
 
 export const getErrorContext = (params) => {
   const updatedManifest = getContext({
     orderId: params.orderId,
     orgData: params.data,
+    odsCode: params.odsCode,
   });
 
   return {

@@ -120,14 +120,14 @@ test('should render Additional-services price page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/additional-services/select/additional-service for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/additional-services/select/additional-service for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/additional-services/select/additional-service');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/additional-services/select/additional-service');
 });
 
 test('should render the title', async (t) => {

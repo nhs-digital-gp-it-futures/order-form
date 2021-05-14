@@ -2,7 +2,7 @@ import manifest from './manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
 import { baseUrl } from '../../../config';
 
-const odsCode = 'V47';
+const odsCode = 'odsCode';
 const orderId = 'order-id';
 
 describe('commencement-date contextCreator', () => {
@@ -13,7 +13,7 @@ describe('commencement-date contextCreator', () => {
     });
 
     it('should construct the backLinkHref', () => {
-      const context = getContext({ orderId });
+      const context = getContext({ orderId, odsCode });
       expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 

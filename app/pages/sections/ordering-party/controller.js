@@ -25,13 +25,14 @@ const formatFormData = (data) => ({
   },
 });
 
-export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessToken }) => {
+export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessToken, odsCode }) => {
   const callOffOrgData = await getCallOffOrderingParty({ orderId, accessToken });
   if (callOffOrgData && callOffOrgData.name) {
     logger.info(`Call off ordering party found in ORDAPI for ${orderId}`);
     return getContext({
       orderId,
       orgData: callOffOrgData,
+      odsCode,
     });
   }
   logger.info(`No call off ordering party found in ORDAPI for ${orderId}.`);
@@ -39,6 +40,7 @@ export const getCallOffOrderingPartyContext = async ({ orderId, orgId, accessTok
     return getContext({
       orderId,
       orgData: await getOrganisation({ orgId, accessToken }),
+      odsCode,
     });
   } catch (error) {
     logger.error(`No organisation data returned from OAPI for id: ${orgId}. ${error}`);

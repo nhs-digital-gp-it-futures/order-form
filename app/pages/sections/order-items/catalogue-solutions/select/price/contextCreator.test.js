@@ -82,34 +82,36 @@ const returnedPriceArray = [{
 
 describe('catalogue-solutions select-price contextCreator', () => {
   describe('getContext', () => {
+    const orderId = 'order-id';
+    const odsCode = 'odsCode';
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1', solutionPrices });
       expect(context.backLinkText).toEqual(manifest.backLinkText);
     });
 
     it('should construct the backLinkHref', () => {
-      const orderId = 'order-id';
-      const context = getContext({ orderId, solutionPrices });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution`);
+      const context = getContext({ orderId, solutionPrices, odsCode });
+      expect(context.backLinkHref)
+        .toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution`);
     });
 
     it('should return the title', () => {
-      const context = getContext({ orderId: 'order-1', solutionPrices, selectedCatalogueItemName: 'Solution name' });
+      const context = getContext({ orderId, solutionPrices, selectedCatalogueItemName: 'Solution name' });
       expect(context.title).toEqual(`${manifest.title} Solution name`);
     });
 
     it('should return the description', () => {
-      const context = getContext({ orderId: 'order-1', solutionPrices });
+      const context = getContext({ orderId, solutionPrices });
       expect(context.description).toEqual(manifest.description);
     });
 
     it('should return the continueButtonText', () => {
-      const context = getContext({ orderId: 'order-1', solutionPrices });
+      const context = getContext({ orderId, solutionPrices });
       expect(context.continueButtonText).toEqual(manifest.continueButtonText);
     });
 
     it('should return the formatted list of questions', () => {
-      const context = getContext({ orderId: 'order-1', solutionPrices, selectedPriceId: 2 });
+      const context = getContext({ orderId, solutionPrices, selectedPriceId: 2 });
       expect(context.questions).toEqual(returnedPriceArray);
     });
   });

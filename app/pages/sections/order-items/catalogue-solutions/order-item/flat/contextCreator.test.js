@@ -21,8 +21,9 @@ describe('quantity and estimation ondemand form contextCreator', () => {
         selectedPriceManifest: flatOnDemandManifest,
         orderId: 'order-1',
         selectedPrice,
+        odsCode: 'odsCode',
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/order-1/catalogue-solutions/select/solution/price/recipients/date');
+      expect(context.backLinkHref).toEqual('/order/organisation/odsCode/order/order-1/catalogue-solutions/select/solution/price/recipients/date');
     });
 
     it('should return the backLinkHref to recipient when order item id is neworderitem', () => {
@@ -32,8 +33,9 @@ describe('quantity and estimation ondemand form contextCreator', () => {
         orderId: 'order-1',
         orderItemId: 'neworderitem',
         selectedPrice,
+        odsCode: 'odsCode',
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/order-1/catalogue-solutions/select/solution/price/recipients/date');
+      expect(context.backLinkHref).toEqual('/order/organisation/odsCode/order/order-1/catalogue-solutions/select/solution/price/recipients/date');
     });
 
     it('should return the title', () => {
