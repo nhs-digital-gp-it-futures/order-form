@@ -75,7 +75,9 @@ export const sectionRoutes = (authProvider, addContext, sessionManager) => {
       req, sessionManager, odsCode, accessToken,
     });
     const orgId = organisationId;
-    const context = await getCallOffOrderingPartyContext({ orderId, orgId, accessToken: extractAccessToken({ req, tokenType: 'access' }) });
+    const context = await getCallOffOrderingPartyContext({
+      orderId, orgId, accessToken: extractAccessToken({ req, tokenType: 'access' }), odsCode,
+    });
     logger.info(`navigating to order ${orderId} ordering-party page`);
     res.render('pages/sections/ordering-party/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));

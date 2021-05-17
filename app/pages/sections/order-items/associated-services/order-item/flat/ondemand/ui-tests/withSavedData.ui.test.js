@@ -5,6 +5,7 @@ import { orderApiUrl, organisationApiUrl } from '../../../../../../../../config'
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const organisation = 'organisation';
 const callOffId = 'order-1';
@@ -36,7 +37,7 @@ const orderItem = {
   ...selectedPrice,
 };
 
-const baseServiceRecipient = { name: 'Some service recipient 2', odsCode: 'OX3' };
+const baseServiceRecipient = { name: 'org-name', odsCode: 'odsCode' };
 const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
 
 const validRequestBody = {
@@ -74,9 +75,13 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
 };
 
-// TODO: fix when feature completed
-fixture.skip('Associated-services - flat ondemand - withSavedData')
+fixture('Associated-services - flat ondemand - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
+  .beforeEach(async () => {
+    nock(organisationApiUrl)
+      .get('/api/v1/ods/odsCode')
+      .reply(200, mockOrgData);
+  })
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
   });
