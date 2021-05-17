@@ -73,7 +73,6 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-// TODO: fix when feature completed
 fixture('Additional-services order items - common - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {

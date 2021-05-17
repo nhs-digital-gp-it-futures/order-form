@@ -13,6 +13,7 @@ describe('odsCodeLookup', () => {
   const organisationData = {
     organisationId: '123',
     name: 'org 1',
+    odsCode: 'abc',
   };
 
   describe('getOdsCodeForOrganisation', () => {

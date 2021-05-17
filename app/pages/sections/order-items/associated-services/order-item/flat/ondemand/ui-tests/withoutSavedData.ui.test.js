@@ -5,6 +5,7 @@ import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl, organisationApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const callOffId = 'order-1';
 const pageUrl = `http://localhost:1234/order/organisation/odsCode/order/${callOffId}/associated-services/neworderitem`;
@@ -12,7 +13,6 @@ const pageUrl = `http://localhost:1234/order/organisation/odsCode/order/${callOf
 const getLocation = ClientFunction(() => document.location.href);
 
 const selectedPrice = {
-  priceId: 1,
   provisioningType: 'OnDemand',
   type: 'Flat',
   currencyCode: 'GBP',
@@ -34,7 +34,7 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const baseServiceRecipient = { name: 'recipient-name', odsCode: 'recipient-1' };
+const baseServiceRecipient = { name: 'org-name', odsCode: 'odsCode' };
 const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
 
 const baseRequestBody = {
@@ -73,6 +73,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 fixture('Associated-services - flat ondemand - withoutSavedData')
   .page('http://localhost:1234/order/some-fake-page')
+  .beforeEach(async () => {
+    nock(organisationApiUrl)
+      .get('/api/v1/ods/odsCode')
+      .reply(200, mockOrgData);
+  })
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
   });
@@ -95,8 +100,7 @@ test('should show text fields as errors with error message when there are BE val
     .expect(await extractInnerText(errorSummary)).contains(content.errorMessages.QuantityGreaterThanZero);
 });
 
-// TODO: fix - passes when file tests run but fails on running all tests
-test.skip('should navigate to associated-services dashboard page if save button is clicked and data is valid', async (t) => {
+test('should navigate to associated-services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id')
     .reply(200, baseServiceRecipient);

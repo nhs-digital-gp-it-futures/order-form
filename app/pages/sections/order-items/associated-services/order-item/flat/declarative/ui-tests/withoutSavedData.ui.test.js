@@ -5,10 +5,11 @@ import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl, organisationApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const organisation = 'organisation';
 const callOffId = 'order-1';
-const odsCode = '03F';
+const odsCode = 'odsCode';
 const pageUrl = `http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/associated-services/neworderitem`;
 
 const getLocation = ClientFunction(() => document.location.href);
@@ -35,7 +36,7 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedPrice,
 });
 
-const baseServiceRecipient = { name: 'recipient-name', odsCode: 'recipient-1' };
+const baseServiceRecipient = { name: 'org-name', odsCode: 'odsCode' };
 const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
 const invalidServiceRecipient = { ...baseServiceRecipient, quantity: 0 };
 
@@ -84,12 +85,16 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 fixture('Associated-services - flat declarative - withoutSavedData')
   .page('http://localhost:1234/order/some-fake-page')
+  .beforeEach(async () => {
+    nock(organisationApiUrl)
+      .get('/api/v1/ods/odsCode')
+      .reply(200, mockOrgData);
+  })
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
   });
 
-// TODO: fix when feature completed
-test.skip('should navigate to associated-services dashboard page if save button is clicked and data is valid', async (t) => {
+test('should navigate to associated-services dashboard page if save button is clicked and data is valid', async (t) => {
   nock(orderApiUrl)
     .put(`/api/v1/orders/${callOffId}/order-items/${itemIdInSession}`, validRequestBody)
     .reply(200, {});
