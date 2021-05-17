@@ -71,6 +71,7 @@ export const getOrganisationFromOdsCode = async ({
       orgId = organisation.organisationId;
       organisationData.organisationId = orgId;
       organisationData.name = organisation.organisationName;
+      organisationData.odsCode = organisation.odsCode;
 
       saveLookupTableToSession({
         organisation, lookupTable, req, sessionManager,

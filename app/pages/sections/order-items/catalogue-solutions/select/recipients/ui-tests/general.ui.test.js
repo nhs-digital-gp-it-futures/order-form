@@ -4,6 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { organisationApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
+import mockOrgData from '../../../../../../../test-utils/mockData/mockOrganisationData.json';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients';
@@ -44,9 +45,13 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-// TODO: fix when feature completed
-fixture.skip('Catalogue-solutions - recipients page - general')
+fixture('Catalogue-solutions - recipients page - general')
   .page('http://localhost:1234/order/some-fake-page')
+  .beforeEach(async () => {
+    nock(organisationApiUrl)
+      .get('/api/v1/ods/odsCode')
+      .reply(200, mockOrgData);
+  })
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
   });

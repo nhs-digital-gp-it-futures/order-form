@@ -2,10 +2,11 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl } from '../../../../config';
+import { orderApiUrl, organisationApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/ordering-party';
+const odsCode = 'AB3';
+const pageUrl = `http://localhost:1234/order/organisation/${odsCode}/order/order-id/ordering-party`;
 
 const mockDataFromOrdapi = {
   name: 'Org name',
@@ -30,6 +31,9 @@ const mockDataFromOrdapi = {
 };
 
 const mocks = () => {
+  nock(organisationApiUrl)
+    .get(`/api/v1/ods/${odsCode}`)
+    .reply(200, mockDataFromOrdapi);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/ordering-party')
     .reply(200, mockDataFromOrdapi);
@@ -44,8 +48,7 @@ const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
   }
 };
 
-// TODO: fix when feature completed
-fixture.skip('Ordering-party page - with saved data')
+fixture('Ordering-party page - with saved data')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);

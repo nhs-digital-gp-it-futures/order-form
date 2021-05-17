@@ -5,22 +5,26 @@ import { orderApiUrl, organisationApiUrl } from '../../../../../../../../config'
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const organisation = 'organisation';
 const callOffId = 'order-1';
 const catalogueItemId = '10000-001';
-const odsCode = '03F';
+const odsCode = 'odsCode';
+
 const pageUrl = `http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/associated-services/${catalogueItemId}`;
 
 const getLocation = ClientFunction(() => document.location.href);
 
 const selectedPrice = {
+  priceId: 1,
   provisioningType: 'Declarative',
   type: 'Flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'consultation',
-    description: 'per consultation',
+    name: 'course',
+    description: 'per course',
+    tierName: 'courses',
   },
   price: 0.1,
 };
@@ -35,7 +39,7 @@ const orderItem = {
   ...selectedPrice,
 };
 
-const baseServiceRecipient = { name: 'Some service recipient 2', odsCode: 'OX3' };
+const baseServiceRecipient = { name: 'org-name', odsCode: 'odsCode' };
 const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
 
 const validRequestBody = {
@@ -75,9 +79,36 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 fixture('Associated-services - flat declarative - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
+  .beforeEach(async () => {
+    nock(organisationApiUrl)
+      .get(`/api/v1/ods/${odsCode}`)
+      .reply(200, mockOrgData);
+  })
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
   });
+
+test('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, baseServiceRecipient);
+
+  nock(orderApiUrl)
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
+    .reply(200, {});
+
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const quantityInput = Selector('[data-test-id="question-quantity"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .typeText(quantityInput, '10', { replace: true })
+    .debug()
+    .click(saveButton)
+    .expect(getLocation()).eql(`http://localhost:1234/order/organisation/${odsCode}/order/${callOffId}/associated-services`);
+});
 
 test('should render the title', async (t) => {
   await pageSetup();
@@ -178,28 +209,6 @@ test('should show the correct error summary and input error when the price is re
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(price.hasClass('nhsuk-input--error')).ok();
-});
-
-// TODO: fix when feature completed
-test.skip('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
-  nock(organisationApiUrl)
-    .get('/api/v1/Organisations/org-id')
-    .reply(200, baseServiceRecipient);
-
-  nock(orderApiUrl)
-    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
-    .reply(200, {});
-
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
-  await t.navigateTo(pageUrl);
-
-  const quantityInput = Selector('[data-test-id="question-quantity"]');
-  const saveButton = Selector('[data-test-id="save-button"] button');
-
-  await t
-    .typeText(quantityInput, '10', { replace: true })
-    .click(saveButton)
-    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/associated-services`);
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
