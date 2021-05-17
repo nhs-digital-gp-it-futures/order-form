@@ -88,28 +88,6 @@ fixture('Associated-services - flat declarative - withSavedData')
     await nockAndErrorCheck(nock, t);
   });
 
-test('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
-  nock(organisationApiUrl)
-    .get('/api/v1/Organisations/org-id')
-    .reply(200, baseServiceRecipient);
-
-  nock(orderApiUrl)
-    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
-    .reply(200, {});
-
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
-  await t.navigateTo(pageUrl);
-
-  const quantityInput = Selector('[data-test-id="question-quantity"]');
-  const saveButton = Selector('[data-test-id="save-button"] button');
-
-  await t
-    .typeText(quantityInput, '10', { replace: true })
-    .debug()
-    .click(saveButton)
-    .expect(getLocation()).eql(`http://localhost:1234/order/organisation/${odsCode}/order/${callOffId}/associated-services`);
-});
-
 test('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -209,6 +187,27 @@ test('should show the correct error summary and input error when the price is re
     .expect(await extractInnerText(errorMessage)).eql('Error:')
 
     .expect(price.hasClass('nhsuk-input--error')).ok();
+});
+
+test('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, baseServiceRecipient);
+
+  nock(orderApiUrl)
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
+    .reply(200, {});
+
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const quantityInput = Selector('[data-test-id="question-quantity"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .typeText(quantityInput, '10', { replace: true })
+    .click(saveButton)
+    .expect(getLocation()).eql(`http://localhost:1234/order/organisation/${odsCode}/order/${callOffId}/associated-services`);
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {

@@ -106,7 +106,6 @@ test('should show text fields as errors with error message when there are BE val
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .debug()
     .click(saveButton);
 
   await t

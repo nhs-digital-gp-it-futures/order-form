@@ -84,7 +84,7 @@ test('should render organisation ods code with data from OAPI', async (t) => {
     .expect(await extractInnerText(text)).eql(mockDataFromOapi.odsCode);
 });
 
-// TODO: fix failes when all test cases are run
+// TODO: fix - fails when all test cases are run
 test.skip('should render organisation address with data from OAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -113,7 +113,7 @@ test.skip('should render organisation address with data from OAPI', async (t) =>
     .expect(await extractInnerText(addressTextCountry)).eql(mockDataFromOapi.address.country);
 });
 
-// TODO: fix failes when all test cases are run
+// TODO: fix - fails when all test cases are run
 test.skip('should render the primary contact details form with populated data from OAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
