@@ -15,6 +15,7 @@ import { deleteOrderRoutes } from './pages/delete-order/routes';
 import { selectOrganisationRoutes } from './pages/select/routes';
 import includesContext from './includes/manifest.json';
 import { getOdsCodeForOrganisation } from './helpers/controllers/odsCodeLookup';
+import { sessionKeys } from './helpers/routes/sessionHelper';
 
 const addContext = ({ context, user, csrfToken }) => ({
   ...context,
@@ -49,7 +50,18 @@ export const routes = (authProvider, sessionManager) => {
   const regExp = new RegExp('^/organisation/[A-Za-z]\\d{6}-\\d{2}');
 
   router.use(async (req, res, next) => {
-    const trimmedUrl = req.url.replace(/\/$/, '');
+    const trimmedUrl = req.url.replace(/\/$/, '').toLowerCase();
+
+    if (trimmedUrl === '/organisation') {
+      const sessionOdsCode = sessionManager.getFromSession({
+        req,
+        key: sessionKeys.selectedOdsCode,
+      });
+      if (sessionOdsCode) {
+        return res.redirect(`${config.baseUrl}/organisation/${sessionOdsCode}`);
+      }
+    }
+
     if (trimmedUrl === '/organisation' || trimmedUrl === '/organisation/select' || regExp.exec(trimmedUrl)) {
       const organisationId = req.user ? req.user.primaryOrganisationId : null;
       if (organisationId) {

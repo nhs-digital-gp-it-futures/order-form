@@ -33,11 +33,22 @@ describe('dashboard controller', () => {
       getIsUserProxy.mockResolvedValueOnce(true);
       contextCreator.getContext.mockResolvedValueOnce();
 
-      await getDashboardContext({ orgId: 'org-id', orgName: 'org1', accessToken: 'access_token' });
+      await getDashboardContext({
+        orgId: 'org-id',
+        orgName: 'org1',
+        accessToken: 'access_token',
+        odsCode: 'odsCode',
+        mainOrgOdsCode: 'mainOdsCode',
+      });
 
       expect(contextCreator.getContext.mock.calls.length).toEqual(1);
       expect(contextCreator.getContext).toHaveBeenCalledWith({
-        orgName: 'org1', completedOrders: [], incompletedOrders: [], userIsProxy: true,
+        orgName: 'org1',
+        completedOrders: [],
+        incompletedOrders: [],
+        userIsProxy: true,
+        odsCode: 'odsCode',
+        mainOrgOdsCode: 'mainOdsCode',
       });
     });
   });
