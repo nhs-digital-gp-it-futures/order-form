@@ -27,6 +27,7 @@ export const sessionKeys = {
   catalogueItemExists: 'catalogueItemExists',
   selectedOdsCode: 'selectedOdsCode',
   odsLookupTable: 'odsLookupTable',
+  selectedOrgId: 'selectedOrgId',
 };
 
 export const getFromSessionOrApi = async ({

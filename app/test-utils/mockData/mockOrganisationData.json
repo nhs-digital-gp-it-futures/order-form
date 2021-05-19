@@ -7,5 +7,7 @@
     "line1": "xyz",
     "postcode": "some-postcode",
     "country": "some-country"
-  }
+  },
+  "primaryOrganisationId": "org-id",
+  "relatedOrganisationId": ["org-id-2", "org-id-5"]
 }

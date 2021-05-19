@@ -2,7 +2,7 @@ import express from 'express';
 import config from '../../config';
 import { logger } from '../../logger';
 import { withCatch, extractAccessToken } from '../../helpers/routes/routerHelper';
-import { getSelectContext } from './controller';
+import { getSelectContext, getSelectErrorContext } from './controller';
 import { sessionKeys } from '../../helpers/routes/sessionHelper';
 
 import { getOdsCodeForOrganisation, getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
@@ -16,14 +16,18 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
     const { organisationId, name } = await getOrganisationFromOdsCode({
       req, sessionManager, odsCode, accessToken,
     });
+    const selectedOrgId = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedOrgId,
+    });
+
     const context = await getSelectContext({
       accessToken,
       orgId: organisationId,
       orgName: name,
       odsCode,
+      selectedOrgId,
     });
 
-    context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}`;
     logger.info('navigating to organisation selection page');
     res.render('pages/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
   }));
@@ -33,6 +37,13 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
       const accessToken = extractAccessToken({ req, tokenType: 'access' });
       const orgId = req.body.organisation;
 
+      if (!orgId) {
+        const context = await getSelectErrorContext({ accessToken, req });
+
+        logger.info('redirecting back to organisation selection page due to validation error');
+        return res.render('pages/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+      }
+
       const odsCode = await getOdsCodeForOrganisation({
         req, sessionManager, orgId, accessToken,
       });
@@ -40,8 +51,11 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedOdsCode, value: odsCode,
       });
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedOrgId, value: orgId,
+      });
 
-      return res.redirect(`${config.baseUrl}/organisation/`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}`);
     }));
 
   return router;

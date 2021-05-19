@@ -1,30 +1,51 @@
+import { formatErrors, formatAllErrors, addErrorsAndDataToManifest } from 'buying-catalogue-library';
+import { generateQuestionsContext } from './contextCreator';
 import { getProxyOrganisations } from '../../helpers/api/oapi/getProxyOrganisations';
+import manifest from './manifest.json';
+import { baseUrl } from '../../config';
 
-const transformOrganisationList = (organisationsList) => {
-  if (!organisationsList) {
-    return undefined;
-  }
-
-  const radioList = organisationsList.map((org) => (
-    {
-      value: org.organisationId,
-      text: org.name,
-    }));
-  radioList.sort((a, b) => a.text.localeCompare(b.text));
-
-  return radioList;
-};
-
-export const getSelectContext = async ({ accessToken, orgId, orgName }) => {
+export const getSelectContext = async ({
+  accessToken, orgId, orgName, odsCode, selectedOrgId,
+}) => {
   const organisationsList = await getProxyOrganisations({ accessToken, orgId });
-  const radioList = transformOrganisationList(organisationsList);
-
-  radioList.unshift({ value: orgId, text: orgName });
-
   const context = {
+    ...manifest,
+    backLinkHref: `${baseUrl}/organisation/${odsCode}`,
     primaryName: orgName,
-    organisationList: radioList,
+    questions: organisationsList && generateQuestionsContext({
+      organisationsList, selectedOrgId, orgId, orgName,
+    }),
+    odsCode,
+    orgId,
+    orgName,
   };
 
   return context;
+};
+
+export const getSelectErrorContext = async ({ accessToken, req }) => {
+  const context = await getSelectContext({
+    accessToken,
+    orgId: req.body.orgId,
+    orgName: req.body.orgName,
+    odsCode: req.body.odsCode,
+  });
+
+  const errors = [
+    {
+      field: 'organisation',
+      id: 'SelectOrganisation',
+    },
+  ];
+
+  const formattedErrors = formatErrors({ manifest: context, errors });
+  const modifiedManifest = addErrorsAndDataToManifest({
+    manifest: context, errors: formattedErrors,
+  });
+  const allErrors = formatAllErrors(modifiedManifest.questions);
+
+  return {
+    ...modifiedManifest,
+    errors: allErrors,
+  };
 };
