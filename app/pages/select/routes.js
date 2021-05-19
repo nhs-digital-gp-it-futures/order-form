@@ -29,7 +29,7 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
     });
 
     logger.info('navigating to organisation selection page');
-    res.render('pages/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/select/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/',
@@ -41,7 +41,7 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
         const context = await getSelectErrorContext({ accessToken, req });
 
         logger.info('redirecting back to organisation selection page due to validation error');
-        return res.render('pages/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+        return res.render('pages/select/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
       }
 
       const odsCode = await getOdsCodeForOrganisation({

@@ -24,7 +24,7 @@ export const deleteAdditionalServicesRoutes = (authProvider, addContext, session
     context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/${catalogueItemId}`;
 
     logger.info(`navigating to order ${orderId} catalogue-solutions ${catalogueItemId} deletion page`);
-    return res.render('pages/sections/order-items/catalogue-solutions/delete/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/delete/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/:catalogueItemId/confirmation/:solutionName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -52,7 +52,7 @@ export const deleteAdditionalServicesRoutes = (authProvider, addContext, session
     context.description = confirmationManifest.description;
 
     logger.info(`navigating to catalogue ${solutionName} delete-catalogue-confirmation page`);
-    res.render('pages/sections/order-items/catalogue-solutions/delete/confirmation/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/sections/order-items/catalogue-solutions/delete/confirmation/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/:catalogueItemId/confirmation/:solutionName/continue', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {

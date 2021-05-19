@@ -49,7 +49,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     );
 
     logger.info(`navigating to order ${orderId} catalogue-solutions dashboard page`);
-    return res.render('pages/sections/order-items/catalogue-solutions/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/dashboard/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -106,7 +106,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       { req, key: sessionKeys.selectedRecipients, value: pageData.selectedRecipients },
     );
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
-    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -171,7 +171,7 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       odsCode,
     });
 
-    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   return router;

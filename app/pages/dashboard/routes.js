@@ -26,7 +26,7 @@ export const dashboardRoutes = (authProvider, addContext, sessionManager) => {
       mainOrgOdsCode,
     });
     logger.info('navigating to organisation orders page');
-    res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
+    res.render('pages/dashboard/template.njk', addContext({ context, req }));
   }));
 
   return router;
