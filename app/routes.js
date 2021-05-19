@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   ErrorContext, errorHandler, healthRoutes, authenticationRoutes,
+  cookiePolicyAgreed, cookiePolicyExists,
 } from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
@@ -17,13 +18,14 @@ import includesContext from './includes/manifest.json';
 import { getOdsCodeForOrganisation } from './helpers/controllers/odsCodeLookup';
 import { sessionKeys } from './helpers/routes/sessionHelper';
 
-const addContext = ({ context, user, csrfToken }) => ({
+const addContext = ({ context, req, csrfToken }) => ({
   ...context,
   ...includesContext,
   config,
-  username: user && user.name,
-  organisation: user && user.primaryOrganisationName,
+  username: req && req.user && req.user.name,
+  organisation: req && req.user && req.user.primaryOrganisationName,
   csrfToken,
+  showCookieBanner: !cookiePolicyExists({ req, logger }),
 });
 
 export const routes = (authProvider, sessionManager) => {
@@ -39,6 +41,11 @@ export const routes = (authProvider, sessionManager) => {
     logger.info('redirecting to organisation orders page');
     return res.redirect(`${config.baseUrl}/organisation`);
   }));
+
+  router.get('/dismiss-cookie-banner', (req, res) => {
+    cookiePolicyAgreed({ res, logger });
+    res.redirect(req.headers.referer);
+  });
 
   router.get('/document/:documentName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { documentName } = req.params;
@@ -116,7 +123,7 @@ export const routes = (authProvider, sessionManager) => {
       ...error,
       isDevelopment: config.isDevelopment(),
     };
-    return res.render('pages/error/template.njk', addContext({ context, user: req.user }));
+    return res.render('pages/error/template.njk', addContext({ context, req }));
   });
 
   return router;
