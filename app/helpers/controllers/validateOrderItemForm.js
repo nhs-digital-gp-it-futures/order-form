@@ -55,6 +55,11 @@ export const validateOrderItemForm = ({ data, selectedPrice, orderItemType }) =>
         field: 'Price',
         id: 'PriceLessThanMax',
       });
+    } else if (parseFloat(data.price) > selectedPrice.listPrice) {
+      errors.push({
+        field: 'Price',
+        id: 'PriceGreaterThanListPrice',
+      });
     }
   }
 
