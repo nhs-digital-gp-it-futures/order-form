@@ -1,5 +1,6 @@
 import request from 'supertest';
 import {
+  fakeSessionManager,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
 } from 'buying-catalogue-library';
@@ -55,6 +56,18 @@ describe('routes', () => {
         app: request(setUpFakeApp()), getPath: `${path}/{odsCode}`, expectedRedirectPath: 'http://identity-server/login',
       })
     ));
+
+    it('should redirect to /organisation/sessionOdsCode if user logged in with odsCode', () => {
+      fakeSessionManager.getFromSession = () => 'sessionOdsCode';
+      request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(302)
+        .then((res) => {
+          expect(res.redirect).toEqual(true);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/${odsCode}`);
+        });
+    });
 
     it('should redirect to /organisation/odsCode if user logged in with odsCode', () => request(setUpFakeApp())
       .get(path)

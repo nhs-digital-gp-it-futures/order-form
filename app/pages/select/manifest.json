@@ -1,0 +1,13 @@
+{
+  "backLinkText": "Go back",
+  "title": "Which organisation are you looking for?",
+  "description": "Select the organisation you want to act on behalf of.",
+  "questions": [
+    {
+      "id": "organisation"    }
+  ],
+  "errorMessages": {
+    "SelectOrganisation": "Select the organisation you are looking for"
+  },
+  "continueButtonText": "Continue"
+}

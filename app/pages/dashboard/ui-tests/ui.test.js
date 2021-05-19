@@ -16,6 +16,9 @@ const mocks = () => {
   nock(organisationApiUrl)
     .get('/api/v1/ods/odsCode')
     .reply(200, mockOrgData);
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, mockOrgData);
 };
 
 const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
