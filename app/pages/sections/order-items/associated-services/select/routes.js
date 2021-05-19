@@ -64,7 +64,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
       });
 
       logger.info(`navigating to order ${orderId} associated-services select associated-service page`);
-      return res.render('pages/sections/order-items/associated-services/select/associated-service/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+      return res.render('pages/sections/order-items/associated-services/select/associated-service/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
     }),
   );
 
@@ -116,7 +116,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
 
     return res.render(
       'pages/sections/order-items/associated-services/select/associated-service/template.njk',
-      addContext({ context, user: req.user, csrfToken: req.csrfToken() }),
+      addContext({ context, req, csrfToken: req.csrfToken() }),
     );
   }));
 
@@ -161,7 +161,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
     });
 
     logger.info(`navigating to order ${orderId} associated-services select price page`);
-    return res.render('pages/sections/order-items/associated-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/associated-services/select/price/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/associated-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -189,7 +189,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
       validationErrors: response.errors,
     });
 
-    return res.render('pages/sections/order-items/associated-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/associated-services/select/price/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   return router;

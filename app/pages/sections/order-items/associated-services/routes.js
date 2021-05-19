@@ -44,7 +44,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     );
 
     logger.info(`navigating to order ${orderId} associated-services dashboard page`);
-    return res.render('pages/sections/order-items/associated-services/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/associated-services/dashboard/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.use('/select', associatedServicesSelectRoutes(authProvider, addContext, sessionManager));
@@ -95,7 +95,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     context.backLinkHref = getBackLinkHref(req, associatedServicePrices, orderId, odsCode);
 
     logger.info(`navigating to order ${orderId} associated-services order item page`);
-    return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -157,7 +157,7 @@ export const associatedServicesRoutes = (authProvider, addContext, sessionManage
     });
     context.backLinkHref = getBackLinkHref(req, associatedServicePrices, orderId, odsCode);
 
-    return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/associated-services/order-item/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   return router;

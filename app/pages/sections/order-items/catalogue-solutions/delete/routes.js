@@ -21,7 +21,7 @@ export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, session
     });
 
     logger.info(`navigating to order ${orderId} catalogue-solutions ${orderItemId} deletion page`);
-    return res.render('pages/sections/order-items/catalogue-solutions/delete/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/delete/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/:orderItemId/confirmation/:solutionName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -48,7 +48,7 @@ export const deleteCatalogueSolutionsRoutes = (authProvider, addContext, session
     });
 
     logger.info(`navigating to catalogue ${solutionName} delete-catalogue-confirmation page`);
-    res.render('pages/sections/order-items/catalogue-solutions/delete/confirmation/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/sections/order-items/catalogue-solutions/delete/confirmation/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/:orderItemId/confirmation/:solutionName/continue', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {

@@ -21,7 +21,7 @@ export const deleteOrderRoutes = (authProvider, addContext, sessionManager) => {
     });
 
     logger.info(`navigating to order ${orderId} delete-order page`);
-    res.render('pages/delete-order/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/delete-order/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -45,7 +45,7 @@ export const deleteOrderRoutes = (authProvider, addContext, sessionManager) => {
     });
 
     logger.info(`navigating to order ${orderId} delete-order-confirmation page`);
-    res.render('pages/delete-order/delete-order-confirmation/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/delete-order/delete-order-confirmation/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   return router;

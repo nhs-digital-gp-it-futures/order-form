@@ -29,7 +29,7 @@ export const completeOrderRoutes = (authProvider, addContext, sessionManager) =>
     });
 
     logger.info(`navigating to order ${orderId} complete-order page`);
-    res.render('pages/complete-order/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/complete-order/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -50,7 +50,7 @@ export const completeOrderRoutes = (authProvider, addContext, sessionManager) =>
     const context = await getOrderConfirmationContext({ orderId, fundingSource, odsCode });
 
     logger.info(`navigating to order ${orderId} order-confirmation page`);
-    res.render('pages/complete-order/order-confirmation/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/complete-order/order-confirmation/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   return router;

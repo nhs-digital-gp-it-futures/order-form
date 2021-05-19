@@ -39,7 +39,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
         hasSavedData: dataFoundInOrdapi,
         odsCode,
       });
-      return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+      return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
     } catch (err) {
       logger.info('redirecting to suppliers search page');
       return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`);
@@ -64,7 +64,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
       hasSavedData: dataFoundInOrdapi,
       odsCode,
     });
-    return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/supplier/supplier/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -75,7 +75,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
 
     const context = await getSupplierSearchPageContext({ orderId, odsCode });
     logger.info(`navigating to order ${orderId} suppliers search page`);
-    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/search', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -113,7 +113,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
       odsCode,
     });
 
-    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/supplier/search/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/search/select', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -134,7 +134,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
       });
 
       logger.info(`navigating to order ${orderId} suppliers select page`);
-      return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+      return res.render('pages/sections/supplier/select/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
     }
 
     logger.info('no suppliers found in session redirecting suppliers search page');
@@ -163,7 +163,7 @@ export const supplierRoutes = (authProvider, addContext, sessionManager) => {
         odsCode,
       });
 
-      return res.render('pages/sections/supplier/select/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+      return res.render('pages/sections/supplier/select/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
     }
     logger.info('no suppliers found in session redirecting suppliers search page');
     return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`);

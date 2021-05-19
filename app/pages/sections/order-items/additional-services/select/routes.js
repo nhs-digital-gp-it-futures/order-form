@@ -110,7 +110,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
         );
       }
       logger.info(`navigating to order ${orderId} additional-services select additional-service page`);
-      return res.render('pages/sections/order-items/additional-services/select/additional-service/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+      return res.render('pages/sections/order-items/additional-services/select/additional-service/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
     }),
   );
 
@@ -166,7 +166,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
     return res.render(
       'pages/sections/order-items/additional-services/select/additional-service/template.njk',
-      addContext({ context, user: req.user, csrfToken: req.csrfToken() }),
+      addContext({ context, req, csrfToken: req.csrfToken() }),
     );
   }));
 
@@ -211,7 +211,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     });
 
     logger.info(`navigating to order ${orderId} additional-services select price page`);
-    return res.render('pages/sections/order-items/additional-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/additional-services/select/price/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/additional-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -239,7 +239,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       validationErrors: response.errors,
     });
 
-    return res.render('pages/sections/order-items/additional-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/additional-services/select/price/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -267,7 +267,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     });
 
     logger.info(`navigating to order ${orderId} additional-services select recipient page`);
-    return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/additional-service/price/recipient', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -299,7 +299,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       validationErrors: response.errors,
     });
 
-    return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/additional-services/select/recipient/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/additional-service/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -333,7 +333,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     setContextIfBackFromAdditionalServiceEdit(req, context, orderId, odsCode);
 
     logger.info(`navigating to order ${orderId} additional-services select recipients page`);
-    return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/select/recipients/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/additional-service/price/recipients', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -392,7 +392,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
     return res.render(
       'pages/sections/order-items/catalogue-solutions/select/recipients/template.njk',
-      addContext({ context, user: req.user, csrfToken: req.csrfToken() }),
+      addContext({ context, req, csrfToken: req.csrfToken() }),
     );
   }));
 
@@ -419,7 +419,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
 
     logger.info(`navigating to order ${orderId} additional-services select planned delivery date page`);
     return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk',
-      addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+      addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/additional-service/price/recipients/date', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -480,7 +480,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
     });
     context.backLinkHref = `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`;
 
-    return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/select/date/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.get('/additional-service/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -507,7 +507,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/neworderitem`);
     }
 
-    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/additional-service/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -549,7 +549,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       formData,
       validationErrors,
     });
-    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
   return router;
 };
