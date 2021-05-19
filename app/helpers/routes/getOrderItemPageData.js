@@ -29,6 +29,8 @@ export const getOrderItemPageData = async ({
 
     const selectedPrice = await getSelectedPrice({ selectedPriceId, accessToken });
 
+    selectedPrice.listPrice = selectedPrice.price;
+
     return {
       itemId,
       itemName,
@@ -47,7 +49,11 @@ export const getOrderItemPageData = async ({
   const itemName = orderItem.catalogueItemName;
   const serviceRecipientId = orderItem.serviceRecipients[0].odsCode;
   const serviceRecipientName = orderItem.serviceRecipients[0].name;
+  const selectedListPrice = await getSelectedPrice(
+    { selectedPriceId: orderItem.priceId, accessToken },
+  );
   const selectedPrice = {
+    listPrice: selectedListPrice.price,
     priceId: orderItem.priceId,
     currencyCode: orderItem.currencyCode,
     price: orderItem.price,

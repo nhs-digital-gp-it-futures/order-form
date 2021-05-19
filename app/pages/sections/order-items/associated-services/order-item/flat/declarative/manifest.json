@@ -52,6 +52,7 @@
     "PriceMustBeANumber": "Price must be a number",
     "PriceMoreThan4dp": "Price must be to a maximum of 4 decimal places",
     "PriceGreaterThanOrEqualToZero": "Price cannot be negative",
-    "PriceLessThanMax": "Maximum price exceeded, enter a lower price"
+    "PriceLessThanMax": "Maximum price exceeded, enter a lower price",
+    "PriceGreaterThanListPrice": "You’ve entered a price that is more than the list price, enter a lower price"
   }
 }
