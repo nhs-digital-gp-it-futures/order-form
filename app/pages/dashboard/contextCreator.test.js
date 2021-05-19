@@ -127,5 +127,13 @@ describe('getContext', () => {
       expect(incompleteOrder1[4].classes).toEqual(classes);
       expect(incompleteOrder1[4].dataTestId).toEqual('order1-dateCreated');
     });
+
+    it('should set changeOrganisationHref correctly', () => {
+      const context = getContext({
+        mainOrgOdsCode: '48G',
+      });
+
+      expect(context.changeOrganisationHref).toEqual(`${baseUrl}/organisation/48G/select`);
+    });
   });
 });

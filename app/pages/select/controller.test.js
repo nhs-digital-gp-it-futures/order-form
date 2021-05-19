@@ -1,5 +1,7 @@
-import { getSelectContext } from './controller';
+import { getSelectContext, getSelectErrorContext } from './controller';
 import { getRelatedOrganisations } from '../../helpers/api/oapi/getRelatedOrganisations';
+import { baseUrl } from '../../config';
+import manifest from './manifest.json';
 
 jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
 
@@ -8,6 +10,8 @@ describe('organisation select controller', () => {
     accessToken: 'access_token',
     orgId: 'abc',
     orgName: 'primary',
+    odsCode: 'odsCode',
+    selectedOrgId: '002',
   };
 
   const expectedOrgList = [
@@ -32,37 +36,118 @@ describe('organisation select controller', () => {
       expect(getRelatedOrganisations.mock.calls.length).toEqual(1);
       expect(getRelatedOrganisations).toHaveBeenCalledWith({ accessToken: 'access_token', orgId: 'abc' });
 
-      expect(returnedContext.organisationList.length).toEqual(5);
+      expect(returnedContext.questions.length).toEqual(1);
+      const question = returnedContext.questions[0];
+      expect(question.id).toEqual('organisation');
+      expect(question.options.length).toEqual(expectedOrgList.length + 1);
     });
 
-    it('should give results with current Organisation as the first option', async () => {
+    it('should return expected backLinkHref', async () => {
       const returnedContext = await getSelectContext(options);
 
-      expect(returnedContext.organisationList[0].text).toEqual('primary');
-      expect(returnedContext.organisationList[0].value).toEqual('abc');
-
-      expect(returnedContext.organisationList[1].text).toEqual('a org two');
-      expect(returnedContext.organisationList[1].value).toEqual('002');
+      expect(returnedContext.backLinkHref).toEqual(`${baseUrl}/organisation/${options.odsCode}`);
     });
 
-    it('should give results in alphabetical order with formatted value', async () => {
+    it('should return manifest values', async () => {
       const returnedContext = await getSelectContext(options);
 
-      expect(returnedContext.organisationList.length).toEqual(5);
-      expect(returnedContext.organisationList[0].text).toEqual(options.orgName);
-      expect(returnedContext.organisationList[0].value).toEqual(options.orgId);
+      expect(returnedContext.backLinkText).toEqual(manifest.backLinkText);
+      expect(returnedContext.continueButtonText).toEqual(manifest.continueButtonText);
+      expect(returnedContext.description).toEqual(manifest.description);
+      expect(returnedContext.errorMessages).toEqual(manifest.errorMessages);
+      expect(returnedContext.title).toEqual(manifest.title);
+    });
 
-      expect(returnedContext.organisationList[1].text).toEqual('a org two');
-      expect(returnedContext.organisationList[1].value).toEqual('002');
+    it('should return org values', async () => {
+      const returnedContext = await getSelectContext(options);
 
-      expect(returnedContext.organisationList[2].text).toEqual('org four');
-      expect(returnedContext.organisationList[2].value).toEqual('004');
+      expect(returnedContext.odsCode).toEqual(options.odsCode);
+      expect(returnedContext.orgId).toEqual(options.orgId);
+      expect(returnedContext.orgName).toEqual(options.orgName);
+      expect(returnedContext.primaryName).toEqual(options.orgName);
+    });
 
-      expect(returnedContext.organisationList[3].text).toEqual('org one');
-      expect(returnedContext.organisationList[3].value).toEqual('001');
+    it('should return question options with current Organisation as the first option', async () => {
+      const returnedContext = await getSelectContext(options);
 
-      expect(returnedContext.organisationList[4].text).toEqual('zzz org three');
-      expect(returnedContext.organisationList[4].value).toEqual('003');
+      const question = returnedContext.questions[0];
+      expect(question.options[0].text).toEqual('primary');
+      expect(question.options[0].value).toEqual('abc');
+
+      expect(question.options[1].text).toEqual('a org two');
+      expect(question.options[1].value).toEqual('002');
+    });
+
+    it('should return question options in alphabetical order with formatted value', async () => {
+      const returnedContext = await getSelectContext(options);
+
+      const question = returnedContext.questions[0];
+      expect(question.options.length).toEqual(5);
+      expect(question.options[0].text).toEqual(options.orgName);
+      expect(question.options[0].value).toEqual(options.orgId);
+      expect(question.options[0].checked).toEqual(undefined);
+
+      expect(question.options[1].text).toEqual('a org two');
+      expect(question.options[1].value).toEqual('002');
+      expect(question.options[1].checked).toEqual(true);
+
+      expect(question.options[2].text).toEqual('org four');
+      expect(question.options[2].value).toEqual('004');
+      expect(question.options[2].checked).toEqual(undefined);
+
+      expect(question.options[3].text).toEqual('org one');
+      expect(question.options[3].value).toEqual('001');
+      expect(question.options[3].checked).toEqual(undefined);
+
+      expect(question.options[4].text).toEqual('zzz org three');
+      expect(question.options[4].value).toEqual('003');
+      expect(question.options[4].checked).toEqual(undefined);
+    });
+  });
+
+  describe('getSelectErrorContext', () => {
+    const params = {
+      accessToken: 'access_token',
+      req: {
+        body: {
+          odsCode: 'odsCode',
+          orgId: 'orgId',
+          orgName: 'orgName',
+        },
+      },
+    };
+
+    it('should return expected backLinkHref', async () => {
+      const returnedContext = await getSelectErrorContext(params);
+
+      expect(returnedContext.backLinkHref).toEqual(`${baseUrl}/organisation/${options.odsCode}`);
+    });
+
+    it('should return expected errors', async () => {
+      const returnedContext = await getSelectErrorContext(params);
+
+      expect(returnedContext.errors.length).toEqual(1);
+      expect(returnedContext.errors[0].text).toEqual(manifest.errorMessages.SelectOrganisation);
+      expect(returnedContext.errors[0].href).toEqual('#organisation');
+    });
+
+    it('should return manifest values', async () => {
+      const returnedContext = await getSelectErrorContext(params);
+
+      expect(returnedContext.backLinkText).toEqual(manifest.backLinkText);
+      expect(returnedContext.continueButtonText).toEqual(manifest.continueButtonText);
+      expect(returnedContext.description).toEqual(manifest.description);
+      expect(returnedContext.errorMessages).toEqual(manifest.errorMessages);
+      expect(returnedContext.title).toEqual(manifest.title);
+    });
+
+    it('should return org values', async () => {
+      const returnedContext = await getSelectErrorContext(params);
+
+      expect(returnedContext.odsCode).toEqual(params.req.body.odsCode);
+      expect(returnedContext.orgId).toEqual(params.req.body.orgId);
+      expect(returnedContext.orgName).toEqual(params.req.body.orgName);
+      expect(returnedContext.primaryName).toEqual(params.req.body.orgName);
     });
   });
 });
