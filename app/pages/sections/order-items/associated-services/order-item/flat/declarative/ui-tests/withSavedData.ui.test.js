@@ -1,7 +1,7 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import { orderApiUrl, organisationApiUrl } from '../../../../../../../../config';
+import { orderApiUrl, organisationApiUrl, solutionsApiUrl } from '../../../../../../../../config';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
@@ -13,11 +13,12 @@ const catalogueItemId = '10000-001';
 const odsCode = 'odsCode';
 
 const pageUrl = `http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/associated-services/${catalogueItemId}`;
+const selectedPriceId = '1';
 
 const getLocation = ClientFunction(() => document.location.href);
 
 const selectedPrice = {
-  priceId: 1,
+  priceId: '1',
   provisioningType: 'Declarative',
   type: 'Flat',
   currencyCode: 'GBP',
@@ -60,6 +61,9 @@ const mocks = () => {
   nock(orderApiUrl)
     .get(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`)
     .reply(200, { ...orderItem, serviceRecipients: [validServiceRecipient] });
+  nock(solutionsApiUrl)
+    .get(`/api/v1/prices/${selectedPriceId}`)
+    .reply(200, selectedPrice);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };

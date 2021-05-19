@@ -36,7 +36,13 @@ All environment variables are provided a default to work with your local cluster
 
 `OIDC_CLIENT_SECRET` and `COOKIE_SECRET`
 
-Add these to your `.env` file in project root. Ask a colleague for their values
+Update your `.env` file in project root with values that are mentioned below:
+
+NODE_ENV=development
+LOGGER_LEVEL=debug
+OIDC_CLIENT_SECRET=SampleClientSecret
+COOKIE_SECRET=secret squirrel
+REDIS_PORT=6380
 
 Run the app with `npm run start:dev`
 Application should now be running on <http://localhost:3006/order/>.
