@@ -1,6 +1,6 @@
 import manifest from './manifest.json';
 
-const transformOrganisationList = (organisationsList, selectedOrgId, orgId, orgName) => {
+const transformOrganisationList = (organisationsList, orgId, orgName) => {
   if (!organisationsList) {
     return undefined;
   }
@@ -9,24 +9,22 @@ const transformOrganisationList = (organisationsList, selectedOrgId, orgId, orgN
     {
       value: org.organisationId,
       text: org.name,
-      checked: org.organisationId === selectedOrgId ? true : undefined,
     }));
   radioList.sort((a, b) => a.text.localeCompare(b.text));
 
   radioList.unshift({
     value: orgId,
     text: orgName,
-    checked: orgId === selectedOrgId ? true : undefined,
   });
 
   return radioList;
 };
 
 export const generateQuestionsContext = ({
-  organisationsList, selectedOrgId, orgId, orgName,
+  organisationsList, orgId, orgName,
 }) => (
   manifest.questions.map((question) => ({
     ...question,
-    options: transformOrganisationList(organisationsList, selectedOrgId, orgId, orgName),
+    options: transformOrganisationList(organisationsList, orgId, orgName),
   }))
 );

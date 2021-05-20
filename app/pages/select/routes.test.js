@@ -81,10 +81,10 @@ describe('select organisation routes', () => {
 
     it('should redirect back to select page, if the organisation is not selected', async () => {
       getOrganisationFromOdsCode.mockResolvedValueOnce({});
+      controller.getSelectErrorContext = jest.fn();
       controller.organisationsList = jest.fn()
         .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });
       getProxyOrganisations.mockResolvedValue([{ organisationId: '123', name: 'abc' }]);
-      getOdsCodeForOrganisation.mockResolvedValueOnce('odsCode');
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
@@ -98,6 +98,7 @@ describe('select organisation routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
+          expect(controller.getSelectErrorContext).toHaveBeenCalled();
           expect(res.text.includes('data-test-id="organisation-select-page"')).toBeTruthy();
         });
     });

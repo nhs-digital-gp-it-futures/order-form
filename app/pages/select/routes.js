@@ -16,8 +16,9 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
     const { organisationId, name } = await getOrganisationFromOdsCode({
       req, sessionManager, odsCode, accessToken,
     });
-    const selectedOrgId = sessionManager.getFromSession({
-      req, key: sessionKeys.selectedOrgId,
+
+    const currentOdsCode = sessionManager.getFromSession({
+      req, key: sessionKeys.selectedOdsCode,
     });
 
     const context = await getSelectContext({
@@ -25,7 +26,7 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
       orgId: organisationId,
       orgName: name,
       odsCode,
-      selectedOrgId,
+      currentOdsCode,
     });
 
     logger.info('navigating to organisation selection page');
@@ -38,7 +39,11 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
       const orgId = req.body.organisation;
 
       if (!orgId) {
-        const context = await getSelectErrorContext({ accessToken, req });
+        const currentOdsCode = sessionManager.getFromSession({
+          req, key: sessionKeys.selectedOdsCode,
+        });
+
+        const context = await getSelectErrorContext({ accessToken, req, currentOdsCode });
 
         logger.info('redirecting back to organisation selection page due to validation error');
         return res.render('pages/select/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
