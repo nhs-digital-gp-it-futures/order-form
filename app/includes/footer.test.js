@@ -34,14 +34,12 @@ describe('footer', () => {
     const context = { footerLinks };
 
     harness.request(context, ($) => {
-      const footer = $('[data-test-id="footer"]');
-      const footerComponent = footer.find('[data-test-id="footer-component"]');
+      const footer = $('#nhsuk-footer ul');
 
       expect(footer.length).toEqual(1);
-      expect(footerComponent.length).toEqual(1);
 
       footerLinks.map((link, i) => {
-        expect(footerComponent.find(`li:nth-child(${i + 1})`).text().trim()).toEqual(link.label);
+        expect(footer.find(`li:nth-child(${i + 1})`).text().trim()).toEqual(link.label);
       });
     });
   }));
@@ -55,8 +53,8 @@ describe('footer', () => {
       expect(footer.length).toEqual(1);
       expect(legalPanel.length).toEqual(1);
       expect(legalPanel.find('li:nth-child(1)').text().trim()).toEqual('Legal');
-      expect(legalPanel.find('li:nth-child(2)').text().trim()).toEqual('Privacy and Cookies');
-      expect(legalPanel.find('li:nth-child(2) > a').attr('href')).toEqual('https://digital.nhs.uk/about-nhs-digital/privacy-and-cookies');
+      expect(legalPanel.find('li:nth-child(2)').text().trim()).toEqual('Privacy policy and cookies');
+      expect(legalPanel.find('li:nth-child(2) > a').attr('href')).toEqual('/privacy-policy');
     });
   }));
 });
