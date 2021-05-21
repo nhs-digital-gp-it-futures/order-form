@@ -1,4 +1,5 @@
 import { componentTester } from '../test-utils/componentTester';
+import manifest from './manifest.json';
 
 const setup = {
   template: {
@@ -6,39 +7,14 @@ const setup = {
   },
 };
 
-const footerLinks = [
-  {
-    label: 'Buyer\'s Guide',
-    URL: '/guide',
-  },
-  {
-    label: 'NHS Digital Helpdesk',
-    URL: '/guide#contact-us',
-  },
-  {
-    label: 'NHS Digital',
-    URL: 'https://digital.nhs.uk/',
-  },
-  {
-    label: 'About GP IT Futures',
-    URL: 'https://digital.nhs.uk/services/future-gp-it-systems-and-services',
-  },
-  {
-    label: 'Capabilities and Standards Model',
-    URL: 'https://gpitbjss.atlassian.net/wiki/spaces/GPITF/overview',
-  },
-];
-
 describe('footer', () => {
   it('should render the footer panel', componentTester(setup, (harness) => {
-    const context = { footerLinks };
-
-    harness.request(context, ($) => {
+    harness.request(manifest, ($) => {
       const footer = $('#nhsuk-footer ul');
 
       expect(footer.length).toEqual(1);
 
-      footerLinks.map((link, i) => {
+      manifest.footerLinks.map((link, i) => {
         expect(footer.find(`li:nth-child(${i + 1})`).text().trim()).toEqual(link.label);
       });
     });
