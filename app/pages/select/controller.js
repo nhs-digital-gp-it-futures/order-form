@@ -5,15 +5,16 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 
 export const getSelectContext = async ({
-  accessToken, orgId, orgName, odsCode, selectedOrgId,
+  accessToken, orgId, orgName, odsCode, currentOdsCode,
 }) => {
   const organisationsList = await getProxyOrganisations({ accessToken, orgId });
   const context = {
     ...manifest,
-    backLinkHref: `${baseUrl}/organisation/${odsCode}`,
+    backLinkHref: currentOdsCode
+      ? `${baseUrl}/organisation/${currentOdsCode}` : `${baseUrl}/organisation/${odsCode}`,
     primaryName: orgName,
     questions: organisationsList && generateQuestionsContext({
-      organisationsList, selectedOrgId, orgId, orgName,
+      organisationsList, orgId, orgName,
     }),
     odsCode,
     orgId,
@@ -23,12 +24,13 @@ export const getSelectContext = async ({
   return context;
 };
 
-export const getSelectErrorContext = async ({ accessToken, req }) => {
+export const getSelectErrorContext = async ({ accessToken, req, currentOdsCode }) => {
   const context = await getSelectContext({
     accessToken,
     orgId: req.body.orgId,
     orgName: req.body.orgName,
     odsCode: req.body.odsCode,
+    currentOdsCode,
   });
 
   const errors = [
