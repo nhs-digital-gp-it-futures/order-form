@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   ErrorContext, errorHandler, healthRoutes, authenticationRoutes,
-  cookiePolicyAgreed, cookiePolicyExists,
+  cookiePolicyAgreed, cookiePolicyExists, consentCookieExpiration,
 } from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
@@ -36,6 +36,8 @@ export const routes = (authProvider, sessionManager) => {
   authenticationRoutes({
     router, authProvider, tokenType: 'id', logoutRedirectPath: config.logoutRedirectPath, logger,
   });
+
+  consentCookieExpiration({ router, logger });
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     logger.info('redirecting to organisation orders page');

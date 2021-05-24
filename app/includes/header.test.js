@@ -26,6 +26,30 @@ describe('header', () => {
     });
   }));
 
+  describe('cookie banner', () => {
+    it('should render the cookie banner if showCookieBanner is true', componentTester(setup, (harness) => {
+      const context = {
+        showCookieBanner: true,
+      };
+
+      harness.request(context, ($) => {
+        const banner = $('[data-test-id="cookie-banner"]');
+        expect(banner.length).toEqual(1);
+      });
+    }));
+
+    it('should not render the cookie banner if showCookieBanner is false', componentTester(setup, (harness) => {
+      const context = {
+        showCookieBanner: false,
+      };
+
+      harness.request(context, ($) => {
+        const banner = $('[data-test-id="cookie-banner"]');
+        expect(banner.length).toEqual(0);
+      });
+    }));
+  });
+
   it('should render logo with correct href and aria-label', componentTester(setup, (harness) => {
     const context = {};
 
