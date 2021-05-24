@@ -75,7 +75,4 @@ module.exports = {
 
   // content and user journey if they can order for multiple organisations
   showProxy: process.env.SHOW_PROXY || 'true',
-
-  // Cookie consent expiration date
-  buyingcatalogueCookieConsentExpiration: 1621594398846,
 };

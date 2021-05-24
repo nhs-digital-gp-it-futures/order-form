@@ -3,6 +3,7 @@ import {
   fakeSessionManager,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
+  consentCookieExpiration,
 } from 'buying-catalogue-library';
 import {
   mockUnauthorisedCookie,
@@ -23,6 +24,20 @@ jest.mock('./helpers/api/oapi/getOrganisation');
 describe('routes', () => {
   afterEach(() => {
     jest.resetAllMocks();
+  });
+
+  describe.skip('cookie banner', () => {
+    jest.mock('buying-catalogue-library');
+    consentCookieExpiration.mockResolvedValueOnce({});
+
+    // TODO: not able to mock consentCookieExpiration
+    it('should call consentCookieExpiration with correct parameter when the user is authorised', () => request(setUpFakeApp())
+      .get('/aaa')
+      .expect(200)
+      .then(() => {
+        expect(consentCookieExpiration.mock.calls.length).toEqual(1);
+        expect(consentCookieExpiration).toHaveBeenCalled();
+      }));
   });
 
   describe('GET /', () => {

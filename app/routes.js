@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   ErrorContext, errorHandler, healthRoutes, authenticationRoutes,
-  cookiePolicyAgreed, cookiePolicyExists, cookiePolicyClear,
+  cookiePolicyAgreed, cookiePolicyExists, consentCookieExpiration,
 } from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
@@ -30,8 +30,6 @@ const addContext = ({ context, req, csrfToken }) => ({
 
 export const routes = (authProvider, sessionManager) => {
   const router = express.Router();
-  const a = new Date();
-  const currentTimeInMillisecods = a.getTime();
 
   healthRoutes({ router, dependencies: getHealthCheckDependencies(config), logger });
 
@@ -39,17 +37,7 @@ export const routes = (authProvider, sessionManager) => {
     router, authProvider, tokenType: 'id', logoutRedirectPath: config.logoutRedirectPath, logger,
   });
 
-  if (config.buyingcatalogueCookieConsentExpiration < currentTimeInMillisecods) {
-    router.use(async (req, res, next) => {
-      const cookieName = 'buyingcatalogue-cookie-consent';
-      const value = req.cookies[cookieName] ? JSON.parse(req.cookies[cookieName]) : undefined;
-      if (value && value.creationDate
-        && (value.creationDate < config.buyingcatalogueCookieConsentExpiration)) {
-        cookiePolicyClear({ res, logger });
-      }
-      return next();
-    });
-  }
+  consentCookieExpiration({ router, logger });
 
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     logger.info('redirecting to organisation orders page');
