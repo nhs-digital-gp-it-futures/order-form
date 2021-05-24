@@ -19,7 +19,7 @@ jest.mock('../../helpers/api/oapi/getProxyOrganisations');
 
 describe('select organisation routes', () => {
   describe('GET /organisation/:odsCode/select', () => {
-    const path = '/organisation/odsCode/select';
+    const path = '/organisation/odsCode/select/selectedOdsCode';
     afterEach(() => {
       jest.resetAllMocks();
     });
@@ -47,7 +47,7 @@ describe('select organisation routes', () => {
   });
 
   describe('POST /organisation/:odsCode/select', () => {
-    const path = '/organisation/odsCode/select';
+    const path = '/organisation/odsCode/select/selectedOdsCode';
 
     afterEach(() => {
       jest.resetAllMocks();
