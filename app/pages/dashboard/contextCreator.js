@@ -106,7 +106,7 @@ export const getContext = ({
   incompleteOrders: generateIncompletedOrdersTable(
     incompletedOrders, manifest.incompleteOrdersTable, odsCode,
   ),
-  changeOrganisationHref: `${baseUrl}/organisation/${mainOrgOdsCode}/select`,
+  changeOrganisationHref: `${baseUrl}/organisation/${mainOrgOdsCode}/select/${odsCode}`,
   userIsProxy,
   odsCode,
 });

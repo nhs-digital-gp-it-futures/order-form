@@ -30,6 +30,7 @@ const completedOrders = [
   },
 ];
 const odsCode = '03F';
+const selectedOdsCode = '14E';
 
 describe('getContext', () => {
   const classes = 'nhsuk-u-font-size-16';
@@ -130,10 +131,11 @@ describe('getContext', () => {
 
     it('should set changeOrganisationHref correctly', () => {
       const context = getContext({
+        odsCode: selectedOdsCode,
         mainOrgOdsCode: '48G',
       });
 
-      expect(context.changeOrganisationHref).toEqual(`${baseUrl}/organisation/48G/select`);
+      expect(context.changeOrganisationHref).toEqual(`${baseUrl}/organisation/48G/select/${selectedOdsCode}`);
     });
   });
 });
