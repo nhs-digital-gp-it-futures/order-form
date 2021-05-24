@@ -10,15 +10,11 @@ import { getOdsCodeForOrganisation, getOrganisationFromOdsCode } from '../../hel
 export const selectOrganisationRoutes = (authProvider, addContext, sessionManager) => {
   const router = express.Router({ mergeParams: true });
 
-  router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+  router.get('/:selectedOdsCode', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const { odsCode } = req.params;
+    const { odsCode, selectedOdsCode } = req.params;
     const { organisationId, name } = await getOrganisationFromOdsCode({
       req, sessionManager, odsCode, accessToken,
-    });
-
-    const currentOdsCode = sessionManager.getFromSession({
-      req, key: sessionKeys.selectedOdsCode,
     });
 
     const context = await getSelectContext({
@@ -26,24 +22,21 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
       orgId: organisationId,
       orgName: name,
       odsCode,
-      currentOdsCode,
+      selectedOdsCode,
     });
 
     logger.info('navigating to organisation selection page');
     res.render('pages/select/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/',
+  router.post('/:selectedOdsCode',
     authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
       const accessToken = extractAccessToken({ req, tokenType: 'access' });
       const orgId = req.body.organisation;
 
       if (!orgId) {
-        const currentOdsCode = sessionManager.getFromSession({
-          req, key: sessionKeys.selectedOdsCode,
-        });
-
-        const context = await getSelectErrorContext({ accessToken, req, currentOdsCode });
+        const { selectedOdsCode } = req.params;
+        const context = await getSelectErrorContext({ accessToken, req, selectedOdsCode });
 
         logger.info('redirecting back to organisation selection page due to validation error');
         return res.render('pages/select/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));

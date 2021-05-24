@@ -12,7 +12,7 @@ describe('organisation select controller', () => {
     orgName: 'primary',
     odsCode: 'odsCode',
     selectedOrgId: '002',
-    currentOdsCode: 'currentOdsCode',
+    selectedOdsCode: 'currentOdsCode',
   };
 
   const expectedOrgList = [
@@ -43,14 +43,14 @@ describe('organisation select controller', () => {
       expect(question.options.length).toEqual(expectedOrgList.length + 1);
     });
 
-    it('should return backLinkHref with currentOdsCode if valid', async () => {
+    it('should return backLinkHref with selectedOdsCode if valid', async () => {
       const returnedContext = await getSelectContext(options);
 
-      expect(returnedContext.backLinkHref).toEqual(`${baseUrl}/organisation/${options.currentOdsCode}`);
+      expect(returnedContext.backLinkHref).toEqual(`${baseUrl}/organisation/${options.selectedOdsCode}`);
     });
 
-    it('should return backLinkHref with odsCode if currentOdsCode is invalid ', async () => {
-      options.currentOdsCode = undefined;
+    it('should return backLinkHref with odsCode if selectedOdsCode is invalid ', async () => {
+      options.selectedOdsCode = undefined;
 
       const returnedContext = await getSelectContext(options);
 
@@ -124,13 +124,13 @@ describe('organisation select controller', () => {
           orgName: 'orgName',
         },
       },
-      currentOdsCode: 'currentOdsCode',
+      selectedOdsCode: 'currentOdsCode',
     };
 
     it('should return expected backLinkHref', async () => {
       const returnedContext = await getSelectErrorContext(params);
 
-      expect(returnedContext.backLinkHref).toEqual(`${baseUrl}/organisation/${params.currentOdsCode}`);
+      expect(returnedContext.backLinkHref).toEqual(`${baseUrl}/organisation/${params.selectedOdsCode}`);
     });
 
     it('should return expected errors', async () => {
