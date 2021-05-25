@@ -1,16 +1,17 @@
 import request from 'supertest';
 import {
-  FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
   testAuthorisedGetPathForUnauthorisedUser,
   getCsrfTokenFromGet,
-  fakeSessionManager,
 } from 'buying-catalogue-library';
-import { App } from '../../../app';
-import { routes } from '../../../routes';
+import {
+  mockUnauthorisedCookie,
+  mockAuthorisedCookie,
+  setUpFakeApp,
+} from '../../../test-utils/routesTestHelper';
 import { baseUrl } from '../../../config';
 import { sessionKeys } from '../../../helpers/routes/sessionHelper';
 import { getSearchSuppliers } from '../../../helpers/api/bapi/getSearchSuppliers';
@@ -24,43 +25,17 @@ jest.mock('../../../logger');
 jest.mock('../../../helpers/api/bapi/getSearchSuppliers');
 jest.mock('../../../helpers/api/ordapi/putSupplier');
 
-const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
-
-const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113',
-  name: 'Cool Dude',
-  ordering: 'manage',
-  primaryOrganisationId: 'org-id',
-});
-
-const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
-
-const mockUnauthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
-});
-const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
-
 const mockSuppliersFoundState = JSON.stringify([
   { supplierId: 'supplier-1', name: 'Supplier 1' },
   { supplierId: 'supplier-2', name: 'Supplier 2' },
 ]);
-
 const mockSuppliersFoundCookie = `${sessionKeys.suppliersFound}=${mockSuppliersFoundState}`;
-
 const mockSelectedSupplierState = 'supplier-1';
-
 const mockSelectedSupplierCookie = `${sessionKeys.selectedSupplier}=${mockSelectedSupplierState}`;
 
-const setUpFakeApp = () => {
-  const authProvider = new FakeAuthProvider(mockLogoutMethod);
-  const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, fakeSessionManager()));
-  return app;
-};
-
 describe('supplier section routes', () => {
-  describe('GET /organisation/:orderId/supplier', () => {
-    const path = '/organisation/some-order-id/supplier';
+  describe('GET /organisation/:odsCode/order/:orderId/supplier', () => {
+    const path = '/organisation/odsCode/order/some-order-id/supplier';
 
     beforeEach(() => {
       baseController.checkOrdapiForSupplier = jest.fn()
@@ -116,7 +91,7 @@ describe('supplier section routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/supplier/search if error from getSupplierPageContext', () => {
+    it('should redirect to /organisation/odsCode/order/some-order-id/supplier/search if error from getSupplierPageContext', () => {
       supplierController.getSupplierPageContext = jest.fn()
         .mockRejectedValue({});
 
@@ -126,13 +101,13 @@ describe('supplier section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier/search`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/supplier/search`);
         });
     });
   });
 
-  describe('POST /organisation/:orderId/supplier', () => {
-    const path = '/organisation/order-id/supplier';
+  describe('POST /organisation/:odsCode/order/:orderId/supplier', () => {
+    const path = '/organisation/odsCode/order/order-id/supplier';
     afterEach(() => {
       supplierController.getSupplierPageContext.mockRestore();
     });
@@ -189,7 +164,7 @@ describe('supplier section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
@@ -222,8 +197,8 @@ describe('supplier section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/supplier/search', () => {
-    const path = '/organisation/some-order-id/supplier/search';
+  describe('GET /organisation/:odsCode/order/:orderId/supplier/search', () => {
+    const path = '/organisation/odsCode/order/some-order-id/supplier/search';
 
     beforeEach(() => {
       baseController.checkOrdapiForSupplier = jest.fn()
@@ -261,7 +236,7 @@ describe('supplier section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/supplier`);
         });
     });
 
@@ -276,8 +251,8 @@ describe('supplier section routes', () => {
         })));
   });
 
-  describe('POST /organisation/:orderId/supplier/search', () => {
-    const path = '/organisation/order-1/supplier/search';
+  describe('POST /organisation/:odsCode/order/:orderId/supplier/search', () => {
+    const path = '/organisation/odsCode/order/order-1/supplier/search';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -336,7 +311,7 @@ describe('supplier section routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/supplier/search/select if there are suppliers', async () => {
+    it('should redirect to /organisation/odsCode/order/some-order-id/supplier/search/select if there are suppliers', async () => {
       supplierSearchController.validateSupplierSearchForm = jest.fn()
         .mockImplementation(() => ({ success: true }));
 
@@ -359,7 +334,7 @@ describe('supplier section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/supplier/search/select`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/supplier/search/select`);
         });
     });
 
@@ -390,8 +365,8 @@ describe('supplier section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/supplier/search/select', () => {
-    const path = '/organisation/some-order-id/supplier/search/select';
+  describe('GET /organisation/:odsCode/order/:orderId/supplier/search/select', () => {
+    const path = '/organisation/odsCode/order/some-order-id/supplier/search/select';
 
     beforeEach(() => {
       baseController.checkOrdapiForSupplier = jest.fn()
@@ -441,7 +416,7 @@ describe('supplier section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier/search`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/supplier/search`);
         })));
 
     it('should redirect to /supplier if authorised and data found in ORDAPI', () => {
@@ -454,13 +429,13 @@ describe('supplier section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/supplier`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/supplier`);
         });
     });
   });
 
-  describe('POST /organisation/:orderId/supplier/search/select', () => {
-    const path = '/organisation/order-1/supplier/search/select';
+  describe('POST /organisation/:odsCode/order/:orderId/supplier/search/select', () => {
+    const path = '/organisation/odsCode/order/order-1/supplier/search/select';
 
     beforeEach(() => {
       baseController.checkOrdapiForSupplier = jest.fn()
@@ -529,7 +504,7 @@ describe('supplier section routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/supplier if a supplier is selected', async () => {
+    it('should redirect to /organisation/odsCode/order/some-order-id/supplier if a supplier is selected', async () => {
       supplierSelectController.validateSupplierSelectForm = jest.fn()
         .mockImplementation(() => ({ success: true }));
 
@@ -550,7 +525,7 @@ describe('supplier section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/supplier`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/supplier`);
         });
     });
 
@@ -571,7 +546,7 @@ describe('supplier section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/supplier/search`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/supplier/search`);
         });
     });
   });

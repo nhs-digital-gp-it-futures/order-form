@@ -1,27 +1,31 @@
 import express from 'express';
 import {
   ErrorContext, errorHandler, healthRoutes, authenticationRoutes,
+  cookiePolicyAgreed, cookiePolicyExists,
 } from 'buying-catalogue-library';
 import config from './config';
 import { logger } from './logger';
 import { withCatch, getHealthCheckDependencies, extractAccessToken } from './helpers/routes/routerHelper';
 import { getDocumentByFileName } from './helpers/api/dapi/getDocumentByFileName';
-import { getDashboardContext } from './pages/dashboard/controller';
-import { getTaskListPageContext } from './pages/task-list/controller';
+import { dashboardRoutes } from './pages/dashboard/routes';
+import { tasklistRoutes } from './pages/task-list/routes';
 import { sectionRoutes } from './pages/sections/routes';
 import { summaryRoutes } from './pages/summary/routes';
 import { completeOrderRoutes } from './pages/complete-order/routes';
 import { deleteOrderRoutes } from './pages/delete-order/routes';
+import { selectOrganisationRoutes } from './pages/select/routes';
 import includesContext from './includes/manifest.json';
-import { clearSession } from './helpers/routes/sessionHelper';
+import { getOdsCodeForOrganisation } from './helpers/controllers/odsCodeLookup';
+import { sessionKeys } from './helpers/routes/sessionHelper';
 
-const addContext = ({ context, user, csrfToken }) => ({
+const addContext = ({ context, req, csrfToken }) => ({
   ...context,
   ...includesContext,
   config,
-  username: user && user.name,
-  organisation: user && user.primaryOrganisationName,
+  username: req && req.user && req.user.name,
+  organisation: req && req.user && req.user.primaryOrganisationName,
   csrfToken,
+  showCookieBanner: !cookiePolicyExists({ req, logger }),
 });
 
 export const routes = (authProvider, sessionManager) => {
@@ -38,6 +42,11 @@ export const routes = (authProvider, sessionManager) => {
     return res.redirect(`${config.baseUrl}/organisation`);
   }));
 
+  router.get('/dismiss-cookie-banner', (req, res) => {
+    cookiePolicyAgreed({ res, logger });
+    res.redirect(req.headers.referer);
+  });
+
   router.get('/document/:documentName', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const { documentName } = req.params;
     const contentType = 'application/pdf';
@@ -45,35 +54,60 @@ export const routes = (authProvider, sessionManager) => {
     stream.on('close', () => res.end());
   }));
 
-  router.get('/organisation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const context = await getDashboardContext({
-      accessToken,
-      orgId: req.user.primaryOrganisationId,
-      orgName: req.user.primaryOrganisationName,
-    });
-    logger.info('navigating to organisation orders page');
-    res.render('pages/dashboard/template.njk', addContext({ context, user: req.user }));
-  }));
+  const regExp = new RegExp('^/organisation/[A-Za-z]\\d{6}-\\d{2}');
 
-  router.get('/organisation/:orderId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const { orderId } = req.params;
+  router.use(async (req, res, next) => {
+    const trimmedUrl = req.url.replace(/\/$/, '').toLowerCase();
 
-    clearSession({ req, sessionManager });
+    if (trimmedUrl === '/organisation') {
+      const sessionOdsCode = sessionManager.getFromSession({
+        req,
+        key: sessionKeys.selectedOdsCode,
+      });
+      if (sessionOdsCode) {
+        return res.redirect(`${config.baseUrl}/organisation/${sessionOdsCode}`);
+      }
+    }
 
-    const context = await getTaskListPageContext({ accessToken, orderId });
-    logger.info(`navigating to order ${orderId} task list page`);
-    res.render('pages/task-list/template.njk', addContext({ context, user: req.user }));
-  }));
+    if (trimmedUrl === '/organisation' || trimmedUrl === '/organisation/select' || regExp.exec(trimmedUrl)) {
+      const organisationId = req.user ? req.user.primaryOrganisationId : null;
+      if (organisationId) {
+        const accessToken = extractAccessToken({ req, tokenType: 'access' });
+        const odsCode = await getOdsCodeForOrganisation({
+          req, sessionManager, orgId: organisationId, accessToken,
+        });
 
-  router.use('/organisation/:orderId/summary', summaryRoutes(authProvider, addContext));
+        if (odsCode) {
+          logger.info(`Retrieved ODS Code for Organisation Id '${req.user.primaryOrganisationId}': ${odsCode}`);
 
-  router.use('/organisation/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
+          if (trimmedUrl === '/organisation') {
+            return res.redirect(`${config.baseUrl}/organisation/${odsCode}`);
+          } if (trimmedUrl === '/organisation/select') {
+            return res.redirect(`${config.baseUrl}/organisation/${odsCode}/select`);
+          }
+          const newUrl = req.url.replace('/organisation/', `/organisation/${odsCode}/order/`);
 
-  router.use('/organisation/:orderId/delete-order', deleteOrderRoutes(authProvider, addContext, sessionManager));
+          return res.redirect(`${config.baseUrl}${newUrl}`);
+        }
+      }
+    }
 
-  router.use('/organisation/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
+    return next();
+  });
+
+  router.use('/organisation/:odsCode', dashboardRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/organisation/:odsCode/select', selectOrganisationRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/organisation/:odsCode/order/:orderId', tasklistRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/organisation/:odsCode/order/:orderId/summary', summaryRoutes(authProvider, addContext));
+
+  router.use('/organisation/:odsCode/order/:orderId/complete-order', completeOrderRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/organisation/:odsCode/order/:orderId/delete-order', deleteOrderRoutes(authProvider, addContext, sessionManager));
+
+  router.use('/organisation/:odsCode/order/:orderId', sectionRoutes(authProvider, addContext, sessionManager));
 
   router.get('*', (req) => {
     throw new ErrorContext({
@@ -85,7 +119,11 @@ export const routes = (authProvider, sessionManager) => {
 
   errorHandler(router, (error, req, res) => {
     logger.error(`${error.title || error.name} - ${error.description || error.name}`);
-    return res.render('pages/error/template.njk', addContext({ context: error, user: req.user }));
+    const context = {
+      ...error,
+      isDevelopment: config.isDevelopment(),
+    };
+    return res.render('pages/error/template.njk', addContext({ context, req }));
   });
 
   return router;

@@ -6,7 +6,7 @@ import { solutionsApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services/neworderitem';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/associated-services/neworderitem';
 
 const selectedPrice = {
   priceId: 1,
@@ -29,6 +29,9 @@ const orderItemPageDataInSession = JSON.stringify({
   itemName: itemNameInSession,
   selectedPrice,
 });
+const associatedServicePricesInSesion = JSON.stringify({
+  prices: [{ priceId: 1 }, { priceId: 2 }],
+});
 
 const mocks = () => {
   nock(solutionsApiUrl)
@@ -47,9 +50,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
     await setState(ClientFunction)(sessionKeys.selectedItemId, itemIdInSession);
     await setState(ClientFunction)(sessionKeys.selectedItemName, itemNameInSession);
     await setState(ClientFunction)(sessionKeys.selectedPriceId, selectedPriceIdInSession);
+    await setState(ClientFunction)(sessionKeys.associatedServicePrices, associatedServicePricesInSesion);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
+    await setState(ClientFunction)(sessionKeys.associatedServicePrices, associatedServicePricesInSesion);
   }
 };
 
@@ -82,17 +87,17 @@ test('should render associated-services order-item page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-1/associated-services/select/associated-service/price for backlink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-1/associated-services for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/associated-services/select/associated-service/price');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1/associated-services');
 });
 
-test('should link to /order/organisation/order-1/associated-services/select/associated-service/price for backlink after validation errors', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-1/associated-services/select/associated-service/price for backlink after validation errors', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -101,7 +106,7 @@ test('should link to /order/organisation/order-1/associated-services/select/asso
 
   await t
     .click(saveButton)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/associated-services/select/associated-service/price');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1/associated-services/select/associated-service/price');
 });
 
 test('should render the title', async (t) => {
@@ -118,7 +123,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="order-item-page-description"]');
+  const description = Selector('[data-test-id="order-item-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(commonContent.description);
@@ -128,7 +133,7 @@ test('should render the delete button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="delete-button"] button');
+  const button = Selector('[data-test-id="delete-button"] span');
 
   await t
     .expect(await extractInnerText(button)).eql(commonContent.deleteButton.text)
@@ -140,7 +145,7 @@ test('delete button should still be disabled after validation errors', async (t)
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
-  const deleteButton = Selector('[data-test-id="delete-button"] button');
+  const deleteButton = Selector('[data-test-id="delete-button"] span');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t

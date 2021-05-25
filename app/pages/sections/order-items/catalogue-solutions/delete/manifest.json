@@ -1,0 +1,13 @@
+{
+    "backLinkText": "Go back",
+    "title": "Delete {{solutionName}} from {{orderId}}?",
+    "description": "This Catalogue Solution will be deleted from all the Service Recipients in your order along with any of its Additional Services.",
+    "orderDescriptionTitle": "Order description",
+    "orderDescription": "{{orderDescription}}",
+    "noButton": {
+      "text": "Cancel delete"
+    },
+    "yesButton": {
+      "text": "Confirm delete"
+    }
+  }

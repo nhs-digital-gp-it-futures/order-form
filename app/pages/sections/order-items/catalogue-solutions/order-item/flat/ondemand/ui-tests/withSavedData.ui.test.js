@@ -1,52 +1,68 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import { orderApiUrl } from '../../../../../../../../config';
+import { orderApiUrl, solutionsApiUrl } from '../../../../../../../../config';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/catalogue-solutions/existing-order-id';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/1';
+const priceId = '1018';
 
 const getLocation = ClientFunction(() => document.location.href);
 
 const orderItem = {
-  serviceRecipient: {
+  serviceRecipients: [{
     odsCode: 'OX3',
     name: 'Some service recipient 2',
-  },
+    deliveryDate: '2020-12-12',
+    quantity: 3,
+  }],
   catalogueItemType: 'Solution',
-  catalogueItemName: 'Some catalogue name',
-  catalogueItemId: '10000-001',
-  deliveryDate: '2020-04-27',
-  quantity: 3,
-  estimationPeriod: 'month',
-  provisioningType: 'OnDemand',
+  catalogueItemName: 'Some item name',
+  catalogueItemId: '1',
+  estimationPeriod: null,
+  provisioningType: 'ondemand',
   type: 'flat',
   currencyCode: 'GBP',
   itemUnit: {
-    name: 'consultation',
-    description: 'per consultation',
+    name: 'consultationCore',
+    description: 'per consultation core hours',
   },
   price: 0.1,
+  priceId,
+};
+
+const recipients = [{ name: 'recipient-name', odsCode: 'code' }, { name: 'recipient-name', odsCode: 'code-not-used' }];
+const selectedRecipients = ['code'];
+
+const selectedPrice = {
+  price: orderItem.price,
+  itemUnit: orderItem.itemUnit,
+  timeUnit: orderItem.timeUnit,
+  type: orderItem.type,
+  provisioningType: orderItem.provisioningType,
+  listPrice: '10.0001',
+  priceId,
 };
 
 const orderItemPageDataInSession = JSON.stringify({
-  solutionId: orderItem.catalogueItemId,
-  solutionName: orderItem.catalogueItemName,
-  serviceRecipientId: orderItem.serviceRecipient.odsCode,
-  serviceRecipientName: orderItem.serviceRecipient.name,
-  selectedPrice: {
-    price: orderItem.price,
-    itemUnit: orderItem.itemUnit,
-    type: orderItem.type,
-    provisioningType: orderItem.provisioningType,
-  },
+  itemId: orderItem.catalogueItemId,
+  itemName: orderItem.catalogueItemName,
+  serviceRecipientId: orderItem.serviceRecipients[0].odsCode,
+  serviceRecipientName: orderItem.serviceRecipients[0].name,
+  selectedPrice,
+  recipients,
+  deliveryDate: orderItem.serviceRecipients[0].deliveryDate,
+  selectedRecipients,
 });
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-1/order-items/existing-order-id')
+    .get('/api/v1/orders/order-id/order-items')
+    .reply(200, [orderItem]);
+  nock(solutionsApiUrl)
+    .get(`/api/v1/prices/${priceId}`)
     .reply(200, orderItem);
 };
 
@@ -69,6 +85,20 @@ fixture('Catalogue-solutions - flat ondemand - withSavedData')
     await nockAndErrorCheck(nock, t);
   });
 
+test('should render a text field for the price question', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  const price = Selector('[data-test-id="question-price"]');
+  const priceSpan = price.find('span');
+  const priceLabel = price.find('label.nhsuk-label');
+
+  await t
+    .expect(await extractInnerText(priceLabel)).eql(content.questions.price.mainAdvice)
+    .expect(price.find('input').count).eql(1)
+    .expect(await extractInnerText(priceSpan)).eql('per consultation core hours');
+});
+
 test('should render the title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
@@ -76,134 +106,101 @@ test('should render the title', async (t) => {
   const title = Selector('h1[data-test-id="order-item-page-title"]');
 
   await t
-    .expect(await extractInnerText(title)).eql('Some catalogue name information for Some service recipient 2 (OX3)');
+    .expect(await extractInnerText(title)).eql('Some item name information for order-id');
 });
 
-test('should link to /order/organisation/order-1/catalogue-solutions for backlink when not a new order item', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/catalogue-solutions for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/catalogue-solutions');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions');
 });
 
-test('should populate input fields for day, month and year if data is returned from api', async (t) => {
+test('should populate text field for the price question', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const inputFields = Selector('#deliveryDate input:not([name=_csrf])');
-  const dayInput = inputFields.nth(0);
-  const monthInput = inputFields.nth(1);
-  const yearInput = inputFields.nth(2);
+  const price = Selector('[data-test-id="question-price"] input');
 
   await t
-    .expect(dayInput.getAttribute('value')).eql('27')
-    .expect(monthInput.getAttribute('value')).eql('04')
-    .expect(yearInput.getAttribute('value')).eql('2020');
+    .expect(price.getAttribute('value')).eql('0.10');
 });
 
-test('should populate text field for the quantity question', async (t) => {
+test('should render the solution table content', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const quantity = Selector('[data-test-id="question-quantity"] input');
+  const table = Selector('div[data-test-id="solution-table"]');
+  const row = table.find('[data-test-id="table-row-0"]');
+  const solutionName = row.find('div[data-test-id="Some service recipient 2-OX3-recipient"]');
+  const quantityInput = row.find('[data-test-id="question-quantity"] input');
+  const quantityExpandableSection = row.find('[data-test-id="view-section-input-id-practice"]');
+  const dateInput = row.find('[data-test-id="question-deliveryDate"] input');
+  const dayInput = dateInput.nth(0);
+  const monthInput = dateInput.nth(1);
+  const yearInput = dateInput.nth(2);
+  const dateExpandableSection = row.find('[data-test-id="view-section-input-id-date"]');
 
   await t
-    .expect(quantity.getAttribute('value')).eql('3');
-});
+    .expect(row.exists).ok()
+    .expect(solutionName.exists).ok()
+    .expect(await extractInnerText(solutionName)).eql('Some service recipient 2 (OX3)')
 
-test('should populate the selectEstimationPeriod question radio button', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
+    .expect(quantityInput.exists).ok()
+    .expect(quantityExpandableSection.exists).ok()
+    .expect(await extractInnerText(quantityExpandableSection)).eql(content.solutionTable.cellInfo.quantity.expandableSection.title)
+    .expect(quantityExpandableSection.find('details[open]').exists).notOk()
+    .click(quantityExpandableSection.find('summary'))
+    .expect(quantityExpandableSection.find('details[open]').exists).ok()
+    .expect(await extractInnerText(quantityExpandableSection.find('.nhsuk-details__text')))
+    .eql(content.solutionTable.cellInfo.quantity.expandableSection.innerComponent.replace('<br><br>', ''))
 
-  const selectEstimationPeriodRadioOptions = Selector('[data-test-id="question-selectEstimationPeriod"] input').nth(0);
+    .expect(dateInput.exists).ok()
+    .expect(dayInput.getAttribute('id')).eql('deliveryDate-day')
+    .expect(dayInput.getAttribute('name')).eql('deliveryDate-day')
+    .expect(dayInput.getAttribute('value')).eql('12')
 
-  await t
-    .expect(selectEstimationPeriodRadioOptions.hasAttribute('checked')).ok();
-});
+    .expect(monthInput.getAttribute('id')).eql('deliveryDate-month')
+    .expect(monthInput.getAttribute('name')).eql('deliveryDate-month')
+    .expect(monthInput.getAttribute('value')).eql('12')
 
-test('should render the price table content', async (t) => {
-  await pageSetup();
-  await t.navigateTo(pageUrl);
+    .expect(yearInput.getAttribute('id')).eql('deliveryDate-year')
+    .expect(yearInput.getAttribute('name')).eql('deliveryDate-year')
+    .expect(yearInput.getAttribute('value')).eql('2020')
 
-  const priceInput = Selector('[data-test-id="question-price"] input');
-  const orderUnit = Selector('div[data-test-id="unit-of-order"]');
-
-  await t
-    .expect(priceInput.getAttribute('value')).eql('0.10')
-    .expect(await extractInnerText(orderUnit)).eql(orderItem.itemUnit.description);
+    .expect(dateExpandableSection.exists).ok()
+    .expect(await extractInnerText(dateExpandableSection)).eql(content.solutionTable.cellInfo.deliveryDate.expandableSection.title)
+    .expect(dateExpandableSection.find('details[open]').exists).notOk()
+    .click(dateExpandableSection.find('summary'))
+    .expect(dateExpandableSection.find('details[open]').exists).ok()
+    .expect(await extractInnerText(dateExpandableSection.find('.nhsuk-details__text')))
+    .eql(content.solutionTable.cellInfo.deliveryDate.expandableSection.innerComponent.replace('<br><br>', ''));
 });
 
 test('should render the delete button as not disabled', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="delete-button"] button');
+  const button = Selector('[data-test-id="delete-button"] a');
 
   await t
-    .expect(await extractInnerText(button)).eql('Delete')
+    .expect(await extractInnerText(button)).eql('Delete Catalogue Solution')
     .expect(button.hasClass('nhsuk-button--secondary')).eql(true)
     .expect(button.hasClass('nhsuk-button--disabled')).eql(false);
 });
 
-test('should show the correct error summary and input error when date is removed and save is clicked', async (t) => {
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
+test('should render the edit button as not disabled', async (t) => {
+  await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#deliveryDate-error span');
-  const dayInput = Selector('#deliveryDate-day');
-  const monthInput = Selector('#deliveryDate-month');
-  const yearInput = Selector('#deliveryDate-year');
+  const button = Selector('[data-test-id="edit-button"] a');
 
   await t
-    .expect(errorMessage.exists).notOk()
-    .expect(dayInput.hasClass('nhsuk-input--error')).notOk()
-    .selectText(dayInput).pressKey('delete')
-    .expect(monthInput.hasClass('nhsuk-input--error')).notOk()
-    .selectText(monthInput).pressKey('delete')
-    .expect(yearInput.hasClass('nhsuk-input--error')).notOk()
-    .selectText(yearInput).pressKey('delete')
-    .click(saveButton);
-
-  await t
-    .expect(errorSummary.exists).ok()
-    .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateRequired)
-    .expect(errorMessage.exists).ok()
-    .expect(await extractInnerText(errorMessage)).eql('Error:')
-
-    .expect(dayInput.hasClass('nhsuk-input--error')).ok()
-    .expect(monthInput.hasClass('nhsuk-input--error')).ok()
-    .expect(yearInput.hasClass('nhsuk-input--error')).ok();
-});
-
-test('should show the correct error summary and input error when the quantity is removed and save is clicked', async (t) => {
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
-  await t.navigateTo(pageUrl);
-
-  const saveButton = Selector('[data-test-id="save-button"] button');
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#quantity-error span');
-  const quantity = Selector('[data-test-id="question-quantity"] input');
-
-  await t
-    .expect(errorMessage.exists).notOk()
-    .expect(quantity.hasClass('nhsuk-input--error')).notOk()
-    .selectText(quantity).pressKey('delete')
-    .click(saveButton);
-
-  await t
-    .expect(errorSummary.exists).ok()
-    .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityRequired)
-    .expect(errorMessage.exists).ok()
-    .expect(await extractInnerText(errorMessage)).eql('Error:')
-
-    .expect(quantity.hasClass('nhsuk-input--error')).ok();
+    .expect(await extractInnerText(button)).eql('Edit Service Recipients')
+    .expect(button.hasClass('nhsuk-button--secondary')).eql(true);
 });
 
 test('should show the correct error summary and input error when the price is removed and save is clicked', async (t) => {
@@ -222,74 +219,39 @@ test('should show the correct error summary and input error when the price is re
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
     .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.PriceRequired)
-    .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
-
     .expect(price.hasClass('nhsuk-input--error')).ok();
 });
 
-test('should navigate to catalogue solution dashboard page if save button is clicked and data is valid', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/order-items/existing-order-id', {
-      deliveryDate: '2020-04-27', quantity: 310, estimationPeriod: 'month', price: 0.1,
-    })
-    .reply(200, {});
-
+test('should navigate to catalogue-solutions dashboard page if save button is clicked and data is valid', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
-  const quantityInput = Selector('[data-test-id="question-quantity"]');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
-    .typeText(quantityInput, '10', { paste: true })
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/catalogue-solutions');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/1');
 });
 
 test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/order-items/existing-order-id', {
-      deliveryDate: '2020-04-27', quantity: 3, estimationPeriod: 'month', price: 0.1,
-    })
-    .reply(400, {
-      errors: [{
-        field: 'DeliveryDate',
-        id: 'DeliveryDateOutsideDeliveryWindow',
-      }],
-    });
-
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#deliveryDate-error');
-  const deliveryDateInputs = Selector('[data-test-id="question-deliveryDate"] input');
-  const dayInput = deliveryDateInputs.nth(0);
-  const monthInput = deliveryDateInputs.nth(1);
-  const yearInput = deliveryDateInputs.nth(2);
+  const errorMessage = Selector('[data-test-id="solution-table-error"]');
+  const quantityInput = Selector('[data-test-id="question-quantity"] input');
   const saveButton = Selector('[data-test-id="save-button"] button');
 
   await t
+    .typeText(quantityInput, 'H')
     .click(saveButton);
 
   await t
-    .expect(errorSummary.exists).ok()
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.DeliveryDateOutsideDeliveryWindow)
+    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityMustBeANumber)
 
-    .expect(errorMessage.exists).ok()
-    .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.DeliveryDateOutsideDeliveryWindow)
-
-    .expect(dayInput.getAttribute('value')).eql('27')
-    .expect(dayInput.hasClass('nhsuk-input--error')).ok()
-
-    .expect(monthInput.getAttribute('value')).eql('04')
-    .expect(monthInput.hasClass('nhsuk-input--error')).ok()
-
-    .expect(yearInput.getAttribute('value')).eql('2020')
-    .expect(yearInput.hasClass('nhsuk-input--error')).ok();
+    .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityMustBeANumber);
 });

@@ -2,11 +2,12 @@
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
-{% from 'components/bc-table-flexible/macro.njk' import bcTableFlexible %}
+{% from 'components/bc-table/macro.njk' import bcTable %}
 {% from 'components/date-field/macro.njk' import dateField %}
-{% from 'components/text-field/macro.njk' import textField %}
+{% from 'components/text-field-with-units/macro.njk' import textFieldWithUnits %}
 {% from 'components/radiobutton-options/macro.njk' import radiobuttonOptions %}
 {% from 'components/view/components/view-expandable-section/macro.njk' import viewExpandableSection %}
+{% from 'components/bc-error-wrapper/macro.njk' import bcErrorWrapper %}
 
 {% block body %}
   <div class="nhsuk-width-container" data-test-id="order-item-page">
@@ -25,7 +26,7 @@
             }) }}
         {% endif %}
         <h1 data-test-id="order-item-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
-        <h2 data-test-id="order-item-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
+        <p data-test-id="order-item-page-description" class="nhsuk-heading-l nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</p>
       </div>
 
       <form method="post">
@@ -33,55 +34,55 @@
           <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
           <div class="nhsuk-u-margin-bottom-5">
-            {{ dateField({ question: questions.deliveryDate}) }}
-          </div>
-
-          <div class="nhsuk-u-margin-bottom-5">
             <div class="">
-              {{ textField({ 
-                question: questions.quantity,
+              {{ textFieldWithUnits({
+                question: questions.price,
                 classes: "nhsuk-input--width-10"
               }) }}
-              {{ viewExpandableSection(questions.quantity.expandableSection) }}
+              {{ viewExpandableSection(questions.price.expandableSection) }}
             </div>
-
-            {% if (questions.selectEstimationPeriod) %}
-              <div class="nhsuk-u-margin-bottom-5">
-                {{
-                  radiobuttonOptions({
-                    question: questions.selectEstimationPeriod
-                  })
-                }}
-                {{ viewExpandableSection(questions.selectEstimationPeriod.expandableSection) }}
-              </div>
-            {% endif %}
-
           </div>
         </div>
 
         <div class="nhsuk-grid-column-full">
           <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-3 bc-c-order-table__hr"/>
-          <div data-test-id="price-table" class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
-            {{ bcTableFlexible({
-              columnInfo: addPriceTable.columnInfo,
-              classes: addPriceTable.classes,
-              data: addPriceTable.items
+          <div data-test-id="solution-table" class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
+            {{ bcErrorWrapper({
+              id: 'solution-table',
+              dataTestId: 'solution-table',
+              classes: 'nhsuk-u-margin-top-0',
+              errorMessages: solutionTable.errorMessages,
+              innerComponent: bcTable({
+                  columnInfo: solutionTable.columnInfo,
+                  classes: solutionTable.classes,
+                  data: solutionTable.items
+                })
             }) }}
           </div>
         </div>
 
         <div class="nhsuk-grid-column-full">
-          <div class="bc-u-float-right">
             <div class="bc-u-inline-block">
               {{ bcButton({
                   dataTestId: "delete-button",
                   text: deleteButton.text,
+                  altText: deleteButton.altText,
                   href: deleteButton.href,
                   disabled: deleteButton.disabled,
                   classes: "nhsuk-u-margin-top-9 nhsuk-button--secondary nhsuk-u-margin-right-5"
               }) }}
             </div>
-            
+          <div class="bc-u-float-right">
+            <div class="bc-u-inline-block">
+              {{ bcButton({
+                  dataTestId: "edit-button",
+                  text: editButton.text,
+                  altText: editButton.altText,
+                  href: editButton.href,
+                  disabled: editButton.disabled,
+                  classes: "nhsuk-u-margin-top-9 nhsuk-button--secondary nhsuk-u-margin-right-5"
+              }) }}
+            </div>
             <div class="bc-u-inline-block">
               {{ bcButton({
                   dataTestId: "save-button",

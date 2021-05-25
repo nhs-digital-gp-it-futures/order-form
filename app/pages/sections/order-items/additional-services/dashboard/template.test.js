@@ -12,14 +12,14 @@ describe('Additional-services - Dashboard page', () => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation/order-1',
+      backLinkHref: '/organisation/odsCode/order/order-1',
     };
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 
@@ -41,7 +41,7 @@ describe('Additional-services - Dashboard page', () => {
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="additional-services-page-description"]');
+      const description = $('[data-test-id="additional-services-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -66,8 +66,8 @@ describe('Additional-services - Dashboard page', () => {
     };
 
     harness.request(context, ($) => {
-      const orderDescriptionHeading = $('h3[data-test-id="order-description-heading"]');
-      const orderDescription = $('h4[data-test-id="order-description"]');
+      const orderDescriptionHeading = $('h2[data-test-id="order-description-heading"]');
+      const orderDescription = $('p[data-test-id="order-description"]');
 
       expect(orderDescriptionHeading.length).toEqual(1);
       expect(orderDescriptionHeading.text().trim()).toContain(context.orderDescriptionHeading);

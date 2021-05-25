@@ -6,7 +6,7 @@ import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/supplier';
 
 const supplierDataFromBapi = {
   name: 'SupplierTwo',
@@ -60,14 +60,14 @@ fixture('Supplier page - without saved data')
     await nockAndErrorCheck(nock, t);
   });
 
-test('should link to /order/organisation/order-id/supplier/search/select for backLink when data comes from BAPI', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/supplier/search/select for backLink when data comes from BAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/supplier/search/select');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/supplier/search/select');
 });
 
 test('should render supplier name with data from BAPI when no data from ORDAPI and supplierId provided', async (t) => {
@@ -135,5 +135,5 @@ test('should redirect to search if there is no data in ORDAPI and supplierSelect
   await t.navigateTo(pageUrl);
 
   await t
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/supplier/search');
 });

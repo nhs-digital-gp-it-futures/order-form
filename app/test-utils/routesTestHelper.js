@@ -1,4 +1,7 @@
-import { FakeAuthProvider, fakeSessionManager } from 'buying-catalogue-library';
+import {
+  FakeAuthProvider,
+  fakeSessionManager,
+} from 'buying-catalogue-library';
 import { App } from '../app';
 import { routes } from '../routes';
 

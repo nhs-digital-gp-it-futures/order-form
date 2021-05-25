@@ -14,8 +14,8 @@ describe('complete order page', () => {
     completeOrderButtonText: 'Complete order',
     continueEditingOrderButtonText: 'Continue editing order',
     title: 'some complete order title',
-    backLinkHref: '/organisation/order-1',
-    continueEditingOrderButtonHref: '/organisation/order-1',
+    backLinkHref: '/organisation/odsCode/order/order-1',
+    continueEditingOrderButtonHref: '/organisation/odsCode/order/order-1',
     orderDescription: 'some order description',
     csrfToken: 'mockCsrfToken',
   };
@@ -24,7 +24,7 @@ describe('complete order page', () => {
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 
@@ -32,6 +32,7 @@ describe('complete order page', () => {
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.text().trim()).toEqual(context.backLinkText);
+      expect($(backLink).find('a').attr('href')).toEqual('/organisation/odsCode/order/order-1');
     });
   }));
 
@@ -45,7 +46,7 @@ describe('complete order page', () => {
 
   it('should render the complete order page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="complete-order-page-description"]');
+      const description = $('[data-test-id="complete-order-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -73,7 +74,7 @@ describe('complete order page', () => {
 
   it('should render the complete order page order description title', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const orderDescriptionTitle = $('h3[data-test-id="order-description-title"]');
+      const orderDescriptionTitle = $('h2[data-test-id="order-description-title"]');
       expect(orderDescriptionTitle.length).toEqual(1);
       expect(orderDescriptionTitle.text().trim()).toEqual(context.orderDescriptionTitle);
     });
@@ -81,7 +82,7 @@ describe('complete order page', () => {
 
   it('should render the complete order page order description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="complete-order-page-description"]');
+      const description = $('[data-test-id="complete-order-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -101,7 +102,7 @@ describe('complete order page', () => {
       const button = $('[data-test-id="continue-editing-order-button"] a');
       expect(button.length).toEqual(1);
       expect(button.text().trim()).toEqual(context.continueEditingOrderButtonText);
-      expect($(button).attr('href')).toEqual('/organisation/order-1');
+      expect($(button).attr('href')).toEqual('/organisation/odsCode/order/order-1');
     });
   }));
 

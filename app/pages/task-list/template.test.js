@@ -69,8 +69,8 @@ describe('neworder task-list page', () => {
     };
 
     harness.request(context, ($) => {
-      const neworderDescriptionTitle = $('[data-test-id="neworder-order-description-title"]');
-      const neworderDescription = $('[data-test-id="neworder-order-description"]');
+      const neworderDescriptionTitle = $('h2[data-test-id="neworder-order-description-title"]');
+      const neworderDescription = $('p[data-test-id="neworder-order-description"]');
       expect(neworderDescriptionTitle.length).toEqual(0);
       expect(neworderDescription.length).toEqual(0);
     });
@@ -103,9 +103,8 @@ describe('neworder task-list page', () => {
       const deleteOrderButton = $('[data-test-id="delete-order-button"]');
       expect(deleteOrderButton.length).toEqual(1);
       expect(deleteOrderButton.text().trim()).toEqual(commonManifest.deleteOrderButton.text);
-      expect(deleteOrderButton.attr('aria-label')).toEqual(commonManifest.deleteOrderButton.disabledAltText);
-      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
-      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(deleteOrderButton.find('span').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(deleteOrderButton.find('span').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 
@@ -124,9 +123,8 @@ describe('neworder task-list page', () => {
       const previewOrderButton = $('[data-test-id="preview-order-button"]');
       expect(previewOrderButton.length).toEqual(1);
       expect(previewOrderButton.text().trim()).toEqual(commonManifest.previewOrderButton.text);
-      expect(previewOrderButton.attr('aria-label')).toEqual(commonManifest.previewOrderButton.disabledAltText);
-      expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
-      expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(previewOrderButton.find('span').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(previewOrderButton.find('span').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 
@@ -145,9 +143,8 @@ describe('neworder task-list page', () => {
       const completeOrderButton = $('[data-test-id="complete-order-button"]');
       expect(completeOrderButton.length).toEqual(1);
       expect(completeOrderButton.text().trim()).toEqual(commonManifest.completeOrderButton.text);
-      expect(completeOrderButton.attr('aria-label')).toEqual(commonManifest.completeOrderButton.disabledAltText);
-      expect(completeOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
-      expect(completeOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(completeOrderButton.find('span').hasClass('nhsuk-button--secondary')).toEqual(false);
+      expect(completeOrderButton.find('span').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 });
@@ -157,14 +154,14 @@ describe('existingorder task-list page', () => {
     const context = {
       orderId: 'order-id',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation',
+      backLinkHref: '/organisation/odsCode',
     };
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 
@@ -248,7 +245,6 @@ describe('existingorder task-list page', () => {
       const deleteOrderButton = $('[data-test-id="delete-order-button"]');
       expect(deleteOrderButton.length).toEqual(1);
       expect(deleteOrderButton.text().trim()).toEqual(commonManifest.deleteOrderButton.text);
-      expect(deleteOrderButton.attr('aria-label')).toEqual(commonManifest.deleteOrderButton.text);
       expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
       expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(false);
     });
@@ -259,7 +255,7 @@ describe('existingorder task-list page', () => {
       orderId: 'neworder',
       previewOrderButton: {
         text: commonManifest.previewOrderButton.text,
-        href: '/organisation/order-id/preview',
+        href: '/organisation/odsCode/order/order-id/preview',
       },
     };
 
@@ -267,10 +263,9 @@ describe('existingorder task-list page', () => {
       const previewOrderButton = $('[data-test-id="preview-order-button"]');
       expect(previewOrderButton.length).toEqual(1);
       expect(previewOrderButton.text().trim()).toEqual(commonManifest.previewOrderButton.text);
-      expect(previewOrderButton.attr('aria-label')).toEqual(commonManifest.previewOrderButton.text);
       expect(previewOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
       expect(previewOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(false);
-      expect(previewOrderButton.find('a').attr('href')).toEqual('/organisation/order-id/preview');
+      expect(previewOrderButton.find('a').attr('href')).toEqual('/organisation/odsCode/order/order-id/preview');
     });
   }));
 
@@ -289,9 +284,8 @@ describe('existingorder task-list page', () => {
       const completeOrderButton = $('[data-test-id="complete-order-button"]');
       expect(completeOrderButton.length).toEqual(1);
       expect(completeOrderButton.text().trim()).toEqual(commonManifest.completeOrderButton.text);
-      expect(completeOrderButton.attr('aria-label')).toEqual(commonManifest.completeOrderButton.disabledAltText);
-      expect(completeOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(false);
-      expect(completeOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(completeOrderButton.find('span').hasClass('nhsuk-button--secondary')).toEqual(false);
+      expect(completeOrderButton.find('span').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 });

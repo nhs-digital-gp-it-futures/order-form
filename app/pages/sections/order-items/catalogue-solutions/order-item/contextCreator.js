@@ -2,7 +2,7 @@ import { baseUrl } from '../../../../../config';
 import { generateErrorMap } from '../../../../../helpers/contextCreators/generateErrorMap';
 import { generateQuestions } from '../../../../../helpers/contextCreators/generateQuestions';
 import { generateErrorSummary } from '../../../../../helpers/contextCreators/generateErrorSummary';
-import { generateAddPriceTable } from '../../../../../helpers/contextCreators/generateAddPriceTable';
+import { generateSolutionTable } from '../../../../../helpers/contextCreators/generateSolutionTable';
 
 export const getContext = ({
   commonManifest,
@@ -10,38 +10,61 @@ export const getContext = ({
   orderId,
   orderItemId,
   solutionName,
-  serviceRecipientName,
-  odsCode,
-  selectedPrice,
   formData,
+  recipients,
+  selectedPrice,
+  selectedRecipients,
   errorMap,
-}) => ({
-  ...commonManifest,
-  title: `${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`,
-  questions: selectedPriceManifest && generateQuestions({
-    questions: selectedPriceManifest.questions,
-    formData,
-    errorMap,
-  }),
-  addPriceTable: selectedPriceManifest && generateAddPriceTable({
-    addPriceTable: selectedPriceManifest.addPriceTable,
-    price: formData && formData.price,
-    itemUnitDescription: selectedPrice
-      && selectedPrice.itemUnit
-      && selectedPrice.itemUnit.description,
-    timeUnitDescription: selectedPrice
-      && selectedPrice.timeUnit
-      && selectedPrice.timeUnit.description,
-    errorMap,
-  }),
-  deleteButton: {
-    text: commonManifest.deleteButton.text,
-    href: commonManifest.deleteButton.href,
-    disabled: orderItemId === 'neworderitem',
-  },
-  backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/catalogue-solutions/select/solution/price/recipient`
-    : `${baseUrl}/organisation/${orderId}/catalogue-solutions`,
-});
+  catalogueItemExists,
+  odsCode,
+}) => {
+  const errorMessages = errorMap && (errorMap.quantity || errorMap.deliveryDate)
+    ? ((errorMap.quantity || {}).errorMessages || [''])
+      .concat((errorMap.deliveryDate || {}).errorMessages) : undefined;
+  const newItemBackLink = selectedPrice.provisioningType === 'Patient'
+    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients/date`
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/${selectedPrice.type.toLowerCase()}/${selectedPrice.provisioningType.toLowerCase()}`;
+  const existingItemBackLink = catalogueItemExists !== undefined
+    ? `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/`
+    : `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions`;
+
+  return {
+    ...commonManifest,
+    title: `${solutionName} ${commonManifest.title} ${orderId}`,
+    questions: selectedPriceManifest && generateQuestions({
+      questions: selectedPriceManifest.questions,
+      formData,
+      errorMap,
+      unit: selectedPrice.timeUnit && selectedPrice.provisioningType !== 'OnDemand'
+        ? `${selectedPrice.itemUnit.description} ${selectedPrice.timeUnit.description}`
+        : selectedPrice.itemUnit.description,
+    }),
+    solutionTable: selectedPriceManifest && generateSolutionTable({
+      solutionTable: selectedPriceManifest.solutionTable,
+      deliveryDate: formData.deliveryDate,
+      recipients: selectedRecipients.map(
+        (selectedRecipient) => recipients.find(
+          (recipient) => recipient.odsCode === selectedRecipient,
+        ),
+      ),
+      quantity: formData.quantity,
+      errorMessages,
+    }),
+    editButton: {
+      text: commonManifest.editButton.text,
+      altText: orderItemId === 'neworderitem' ? commonManifest.editButton.altText : '',
+      href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients`,
+      disabled: orderItemId === 'neworderitem',
+    },
+    deleteButton: {
+      text: commonManifest.deleteButton.text,
+      altText: orderItemId === 'neworderitem' ? commonManifest.deleteButton.altText : '',
+      href: `${baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/delete/${orderItemId}/confirmation/${solutionName}`,
+      disabled: orderItemId === 'neworderitem',
+    },
+    backLinkHref: orderItemId === 'neworderitem' ? newItemBackLink : existingItemBackLink,
+  };
+};
 
 export const getErrorContext = (params) => {
   const errorMap = generateErrorMap({
@@ -55,11 +78,12 @@ export const getErrorContext = (params) => {
     orderId: params.orderId,
     orderItemId: params.orderItemId,
     solutionName: params.solutionName,
-    serviceRecipientName: params.serviceRecipientName,
-    odsCode: params.selectedRecipientId,
+    recipients: params.recipients,
+    selectedRecipients: params.selectedRecipients,
     selectedPrice: params.selectedPrice,
     formData: params.formData,
     errorMap,
+    odsCode: params.odsCode,
   });
 
   const errorSummary = generateErrorSummary({ errorMap });

@@ -1,16 +1,17 @@
 import request from 'supertest';
 import {
-  FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
-  fakeSessionManager,
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
-import { App } from '../../app';
-import { routes } from '../../routes';
+import {
+  mockUnauthorisedCookie,
+  mockAuthorisedCookie,
+  setUpFakeApp,
+} from '../../test-utils/routesTestHelper';
 import { baseUrl } from '../../config';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { getOrderDescription } from '../../helpers/routes/getOrderDescription';
@@ -21,32 +22,10 @@ jest.mock('../../helpers/api/ordapi/getFundingSource');
 jest.mock('../../helpers/routes/getOrderDescription');
 jest.mock('../../helpers/api/ordapi/putOrderStatus');
 
-const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
-
-const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113',
-  name: 'Cool Dude',
-  ordering: 'manage',
-  primaryOrganisationId: 'org-id',
-});
-
-const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
-
-const mockUnauthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
-});
-const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
 const mockFundingCookie = `fundingSource=${true}`;
 
-const setUpFakeApp = () => {
-  const authProvider = new FakeAuthProvider(mockLogoutMethod);
-  const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, fakeSessionManager()));
-  return app;
-};
-
-describe('GET /organisation/:orderId/complete-order', () => {
-  const path = '/organisation/some-order-id/complete-order';
+describe('GET /organisation/:odsCode/order/:orderId/complete-order', () => {
+  const path = '/organisation/odsCode/order/some-order-id/complete-order';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -82,8 +61,8 @@ describe('GET /organisation/:orderId/complete-order', () => {
   });
 });
 
-describe('POST /organisation/:orderId/complete-order', () => {
-  const path = '/organisation/some-order-id/complete-order';
+describe('POST /organisation/:odsCode/order/:orderId/complete-order', () => {
+  const path = '/organisation/odsCode/order/some-order-id/complete-order';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -144,14 +123,14 @@ describe('POST /organisation/:orderId/complete-order', () => {
       .expect(302)
       .then((res) => {
         expect(res.redirect).toEqual(true);
-        expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/complete-order/order-confirmation`);
+        expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/complete-order/order-confirmation`);
         expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
       });
   });
 });
 
-describe('GET /organisation/:orderId/complete-order/order-confirmation', () => {
-  const path = '/organisation/some-order-id/complete-order/order-confirmation';
+describe('GET /organisation/:odsCode/order/:orderId/complete-order/order-confirmation', () => {
+  const path = '/organisation/odsCode/order/some-order-id/complete-order/order-confirmation';
 
   afterEach(() => {
     jest.resetAllMocks();

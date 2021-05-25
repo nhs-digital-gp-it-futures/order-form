@@ -11,8 +11,9 @@ describe('associated-services contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const odsCode = '03F';
+      const context = getContext({ orderId, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -71,15 +72,23 @@ describe('associated-services contextCreator', () => {
             [
               {
                 data: 'Additional Service One',
-                href: '/order/organisation/order-1/associated-services/orderItem1',
+                href: '/order/organisation/03F/order/order-1/associated-services/orderItem1',
                 dataTestId: 'orderItem1-catalogueItemName',
+              },
+              {
+                data: 'per patient per month',
+                dataTestId: 'orderItem1-unitoforder',
               },
             ],
             [
               {
                 data: 'Additional Service Two',
-                href: '/order/organisation/order-1/associated-services/orderItem2',
+                href: '/order/organisation/03F/order/order-1/associated-services/orderItem2',
                 dataTestId: 'orderItem2-catalogueItemName',
+              },
+              {
+                data: 'per appointment',
+                dataTestId: 'orderItem2-unitoforder',
               },
             ],
           ],
@@ -88,21 +97,34 @@ describe('associated-services contextCreator', () => {
 
       const mockOrderItems = [
         {
-          orderItemId: 'orderItem1',
+          catalogueItemId: 'orderItem1',
           catalogueItemName: 'Additional Service One',
+          itemUnit: {
+            name: 'patient',
+            description: 'per patient',
+          },
+          timeUnit: {
+            name: 'month',
+            description: 'per month',
+          },
         },
         {
-          orderItemId: 'orderItem2',
+          catalogueItemId: 'orderItem2',
           catalogueItemName: 'Additional Service Two',
+          itemUnit: {
+            name: 'appointment',
+            description: 'per appointment',
+          },
         },
       ];
-      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems });
+      const context = getContext({ orderId: 'order-1', orderItems: mockOrderItems, odsCode: '03F' });
       expect(context.addedOrderItemsTable).toEqual(expectedContext.addedOrderItemsTable);
     });
 
     it('should return the addOrderItemButtonHref', () => {
-      const context = getContext({ orderId: 'order-1' });
-      expect(context.addOrderItemButtonHref).toEqual(`${baseUrl}/organisation/order-1/associated-services/select/associated-service`);
+      const odsCode = '03F';
+      const context = getContext({ orderId: 'order-1', odsCode });
+      expect(context.addOrderItemButtonHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/order-1/associated-services/select/associated-service`);
     });
 
     it('should return the continueButtonText', () => {

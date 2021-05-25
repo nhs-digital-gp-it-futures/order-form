@@ -10,7 +10,7 @@ const setup = {
 const context = {
   ...manifest,
   title: 'org1 orders',
-  backLinkHref: '/organisation/order-1',
+  backLinkHref: '/organisation/odsCode/order/order-1',
   csrfToken: 'mockCsrfToken',
 };
 
@@ -39,7 +39,7 @@ describe('description page', () => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect($(backLink).find('a').attr('href')).toEqual('/organisation/odsCode/order/order-1');
     });
   }));
 
@@ -66,9 +66,16 @@ describe('description page', () => {
 
   it('should render the description page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="description-page-description"]');
+      const description = $('label[data-test-id="description-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
+    });
+  }));
+
+  it('should render the description as a label with the "for" as the textbox id', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const description = $('label[data-test-id="description-page-description"]');
+      expect(description[0].attribs.for).toEqual(context.questions[0].id);
     });
   }));
 

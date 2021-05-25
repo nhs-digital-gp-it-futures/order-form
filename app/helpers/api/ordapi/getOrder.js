@@ -1,18 +1,9 @@
 import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { orderApiUrl } from '../../../config';
+import { sortItems } from '../../common/sortItems';
 
 const getOrderEndpoint = (orderId) => `${orderApiUrl}/api/v1/orders/${orderId}`;
-
-const createServiceRecipientsDict = (serviceRecipients = []) => {
-  const reducer = (dict, serviceRecipient) => (
-    {
-      ...dict,
-      [serviceRecipient.odsCode]: serviceRecipient,
-    });
-
-  return serviceRecipients.reduce(reducer, {});
-};
 
 const isOneOff = (orderItem) => orderItem.catalogueItemType.toLowerCase() === 'AssociatedService'.toLowerCase()
     && orderItem.provisioningType.toLowerCase() === 'Declarative'.toLowerCase();
@@ -23,17 +14,6 @@ const transformOrderItems = (orderItems = []) => {
 
   return { oneOffCostItems, recurringCostItems };
 };
-
-const sortItems = (items, propToSort) => (
-  items.sort((itemA, itemB) => {
-    const itemAPropValue = itemA[propToSort].toLowerCase();
-    const itemBPropValue = itemB[propToSort].toLowerCase();
-
-    if (itemAPropValue < itemBPropValue) return -1;
-    if (itemAPropValue > itemBPropValue) return 1;
-    return 0;
-  })
-);
 
 export const sortServiceRecipients = (serviceRecipients) => sortItems(serviceRecipients, 'name');
 
@@ -76,14 +56,18 @@ export const getOrder = async ({ orderId, accessToken }) => {
   });
   logger.info(`Order data returned for ${orderId}`);
 
-  if (orderData.serviceRecipients && orderData.serviceRecipients.length > 0
-    && orderData.orderItems && orderData.orderItems.length > 0) {
-    const sortedOrderItems = sortOrderItems(orderData.serviceRecipients, orderData.orderItems);
+  if (orderData.orderItems && orderData.orderItems.length > 0) {
+    const sortedOrderItems = sortItems(orderData.orderItems, 'catalogueItemName');
+
+    sortedOrderItems.forEach((o) => {
+      const orderItem = o;
+      orderItem.serviceRecipients = sortItems(orderItem.serviceRecipients, 'name');
+    });
+
     const { recurringCostItems, oneOffCostItems } = transformOrderItems(sortedOrderItems);
-    const serviceRecipients = createServiceRecipientsDict(orderData.serviceRecipients);
 
     return {
-      orderData, oneOffCostItems, recurringCostItems, serviceRecipients,
+      orderData, oneOffCostItems, recurringCostItems,
     };
   }
   return {

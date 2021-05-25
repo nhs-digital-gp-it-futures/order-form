@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-globals */
 import { getDateErrors } from './getDateErrors';
+import { getQuantityError } from './getQuantityError';
 import { getSelectedPriceManifest } from './manifestProvider';
 
 export const validateOrderItemForm = ({ data, selectedPrice, orderItemType }) => {
@@ -18,26 +19,9 @@ export const validateOrderItemForm = ({ data, selectedPrice, orderItemType }) =>
   }
 
   if (selectedPriceManifest.questions.quantity) {
-    if (!data.quantity || data.quantity.trim().length === 0) {
-      errors.push({
-        field: 'Quantity',
-        id: 'QuantityRequired',
-      });
-    } else if (isNaN(data.quantity)) {
-      errors.push({
-        field: 'Quantity',
-        id: 'QuantityMustBeANumber',
-      });
-    } else if (data.quantity.indexOf('.') !== -1) {
-      errors.push({
-        field: 'Quantity',
-        id: 'QuantityInvalid',
-      });
-    } else if (data.quantity > 2147483646) {
-      errors.push({
-        field: 'Quantity',
-        id: 'QuantityLessThanMax',
-      });
+    const quantityError = getQuantityError(data.quantity);
+    if (quantityError) {
+      errors.push(quantityError);
     }
   }
 
@@ -70,6 +54,11 @@ export const validateOrderItemForm = ({ data, selectedPrice, orderItemType }) =>
       errors.push({
         field: 'Price',
         id: 'PriceLessThanMax',
+      });
+    } else if (parseFloat(data.price) > selectedPrice.listPrice) {
+      errors.push({
+        field: 'Price',
+        id: 'PriceGreaterThanListPrice',
       });
     }
   }

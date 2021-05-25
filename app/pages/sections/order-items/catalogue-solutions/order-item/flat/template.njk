@@ -1,0 +1,64 @@
+{% extends 'includes/layout.njk' %}
+{% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
+{% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
+{% from 'components/bc-table/macro.njk' import bcTable %}
+{% from 'components/date-field/macro.njk' import dateField %}
+{% from 'components/text-field/macro.njk' import textField %}
+{% from 'components/radiobutton-options/macro.njk' import radiobuttonOptions %}
+{% from 'components/view/components/view-expandable-section/macro.njk' import viewExpandableSection %}
+
+{% block body %}
+  <div class="nhsuk-width-container" data-test-id="order-item-provisiontype-page">
+    <div data-test-id="go-back-link">
+      {{ backLink({
+        "href": backLinkHref,
+        "text": backLinkText
+      }) }}
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div>
+        {% if (errors.length > 0) %}
+            {{ bcErrorSummary({
+              errors: errors
+            }) }}
+        {% endif %}
+        <h1 data-test-id="order-item-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{title}}</h1>
+        <p data-test-id="order-item-page-description" class="nhsuk-heading-l nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</p>
+      </div>
+
+      <form method="post">
+        <div>
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+          <div class="nhsuk-u-margin-bottom-5">
+            <div class="nhsuk-u-margin-bottom-6">
+              {{ textField({ 
+                question: questions.quantity,
+                classes: "nhsuk-input--width-10"
+              }) }}
+              {{ viewExpandableSection(questions.quantity.expandableSection) }}
+            </div>
+
+            {% if (questions.selectEstimationPeriod) %}
+              <div class="nhsuk-u-margin-bottom-5">
+                {{
+                  radiobuttonOptions({
+                    question: questions.selectEstimationPeriod
+                  })
+                }}
+                {{ viewExpandableSection(questions.selectEstimationPeriod.expandableSection) }}
+              </div>
+            {% endif %}
+            {{ bcButton({
+                dataTestId: "continue-button",
+                text: continueButtonText,
+                classes: "nhsuk-u-margin-top-9"
+            })}}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

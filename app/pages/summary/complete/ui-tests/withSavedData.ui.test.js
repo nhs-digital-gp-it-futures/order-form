@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/summary';
 
 const mockOrder = {
   description: 'some order description',
@@ -39,8 +39,6 @@ const mockOrder = {
   commencementDate: '2020-02-01T00:00:00',
   orderItems: [
     {
-      itemId: 'C000001-01-A10003-1',
-      serviceRecipientsOdsCode: 'A10003',
       cataloguePriceType: 'Flat',
       catalogueItemType: 'Solution',
       catalogueItemName: 'Some catalogue name',
@@ -49,158 +47,201 @@ const mockOrder = {
       price: 1.260,
       itemUnitDescription: 'per patient',
       timeUnitDescription: 'per year',
-      quantity: 3415,
       quantityPeriodDescription: 'per month',
-      deliveryDate: '2020-07-06',
-      costPerYear: 4302.900,
+      serviceRecipients: [
+        {
+          name: 'Yellow Mountain Medical Practice',
+          odsCode: 'A10003',
+          quantity: 3415,
+          itemId: 'C000001-01-A10003-1',
+          serviceInstanceId: 'SI1-B81046',
+          deliveryDate: '2020-07-06',
+          costPerYear: 4302.900,
+        },
+      ],
     },
     {
-      itemId: 'C000001-01-A10001-2',
-      serviceRecipientsOdsCode: 'A10001',
       cataloguePriceType: 'Flat',
       catalogueItemType: 'Solution',
       catalogueItemName: 'Some catalogue name',
-      serviceInstanceId: 'SI1-A10001',
       provisioningType: 'OnDemand',
       price: 500.261,
       itemUnitDescription: 'per licence',
-      quantity: 12,
-      deliveryDate: '2020-08-06',
-      costPerYear: 6003.1321,
+      serviceRecipients: [
+        {
+          name: 'Blue Mountain Medical Practice',
+          odsCode: 'A10001',
+          itemId: 'C000001-01-A10001-2',
+          serviceInstanceId: 'SI1-A10001',
+          deliveryDate: '2020-08-06',
+          quantity: 12,
+          costPerYear: 6003.1321,
+        },
+      ],
     },
     {
-      itemId: 'C000001-01-A10002-3',
-      serviceRecipientsOdsCode: 'A10002',
       cataloguePriceType: 'Flat',
       catalogueItemType: 'Solution',
       catalogueItemName: 'Remote Consultation',
-      serviceInstanceId: 'SI1-A10002',
       provisioningType: 'Declarative',
       price: 207.916999,
       itemUnitDescription: 'per practice',
       timeUnitDescription: 'per month',
       quantityPeriodDescription: 'per year',
-      quantity: 12,
-      deliveryDate: '2020-09-25',
-      costPerYear: 29939.90,
+      serviceRecipients: [
+        {
+          itemId: 'C000001-01-A10002-3',
+          name: 'Red Mountain Medical Practice',
+          odsCode: 'A10002',
+          quantity: 12,
+          deliveryDate: '2020-09-25',
+          serviceInstanceId: 'SI1-A10002',
+          costPerYear: 29939.90,
+        },
+      ],
     },
     {
-      itemId: 'C000001-01-A10001-4',
-      serviceRecipientsOdsCode: 'A10001',
       cataloguePriceType: 'Flat',
       catalogueItemType: 'AdditionalService',
       catalogueItemName: 'Remote Consultation',
-      serviceInstanceId: 'SI1-A10001',
       provisioningType: 'Declarative',
       price: 207.9161,
       itemUnitDescription: 'per practice',
       timeUnitDescription: 'per month',
       quantityPeriodDescription: 'per year',
-      quantity: 12,
-      deliveryDate: '2020-09-25',
-      costPerYear: 29939.90,
+      serviceRecipients: [
+        {
+          name: 'Blue Mountain Medical Practice',
+          odsCode: 'A10001',
+          itemId: 'C000001-01-A10001-4',
+          quantity: 12,
+          deliveryDate: '2020-09-25',
+          serviceInstanceId: 'SI1-A10001',
+          costPerYear: 29939.90,
+        },
+      ],
     },
     {
-      itemId: 'C000001-01-A10003-5',
-      serviceRecipientsOdsCode: 'A10003',
       cataloguePriceType: 'Flat',
       catalogueItemType: 'AdditionalService',
       catalogueItemName: 'Patient Consultation',
-      serviceInstanceId: 'SI1-A10003',
       provisioningType: 'Patient',
       price: 106.025,
       itemUnitDescription: 'per patient',
       timeUnitDescription: 'per month',
       quantityPeriodDescription: 'per year',
-      quantity: 12,
-      deliveryDate: '2020-09-25',
-      costPerYear: 15267.60,
+      serviceRecipients: [
+        {
+          name: 'Yellow Mountain Medical Practice',
+          odsCode: 'A10003',
+          itemId: 'C000001-01-A10003-5',
+          quantity: 12,
+          deliveryDate: '2020-09-25',
+          serviceInstanceId: 'SI1-A10003',
+          costPerYear: 15267.60,
+        },
+      ],
     },
     {
-      itemId: 'C000001-01-A10002-6',
-      serviceRecipientsOdsCode: 'A10002',
       cataloguePriceType: 'Flat',
       catalogueItemType: 'AdditionalService',
       catalogueItemName: 'OnDemand Consultation',
-      serviceInstanceId: 'SI1-A10002',
       provisioningType: 'OnDemand',
       price: 1.33,
       itemUnitDescription: 'per consultation',
-      quantity: 4,
       quantityPeriodDescription: 'per year',
-      deliveryDate: '2020-09-25',
-      costPerYear: 63.84,
+      serviceRecipients: [
+        {
+          name: 'Red Mountain Medical Practice',
+          odsCode: 'A10002',
+          itemId: 'C000001-01-A10002-6',
+          serviceInstanceId: 'SI1-A10002',
+          quantity: 4,
+          deliveryDate: '2020-09-25',
+          costPerYear: 63.84,
+        },
+      ],
     },
     {
-      itemId: 'C000001-01-A10001-23',
       cataloguePriceType: 'Flat',
       catalogueItemType: 'AssociatedService',
       catalogueItemName: 'Core Training',
-      serviceInstanceId: 'SI1-A10001',
       catalogueItemId: '10000-S-001',
       provisioningType: 'Declarative',
       price: 585.00,
       itemUnitDescription: 'per Day',
-      quantity: 70,
       costPerYear: 40850.00,
-      serviceRecipientsOdsCode: 'A10001',
+      serviceRecipients: [
+        {
+          name: 'Blue Mountain Medical Practice',
+          odsCode: 'A10001',
+          itemId: 'C000001-01-A10001-23',
+          serviceInstanceId: 'SI1-A10001',
+          quantity: 70,
+          deliveryDate: '2020-09-25',
+        },
+      ],
     },
     {
-      itemId: 'C000001-01-A10002-24',
       cataloguePriceType: 'Flat',
       catalogueItemType: 'AssociatedService',
       catalogueItemName: 'OnDemand associated service',
-      serviceInstanceId: 'SI1-A10002',
       catalogueItemId: '10000-S-002',
       provisioningType: 'OnDemand',
       price: 0.7,
       itemUnitDescription: 'per fragment',
-      quantity: 600,
       quantityPeriodDescription: 'per month',
-      costPerYear: 5040.00,
-      serviceRecipientsOdsCode: 'A10002',
+      serviceRecipients: [
+        {
+          name: 'Red Mountain Medical Practice',
+          odsCode: 'A10002',
+          itemId: 'C000001-01-A10002-24',
+          quantity: 600,
+          serviceInstanceId: 'SI1-A10002',
+          deliveryDate: '2020-09-25',
+          costPerYear: 5040.00,
+        },
+      ],
     },
     {
-      itemId: 'C000001-01-A10001-33',
       cataloguePriceType: 'Flat',
       catalogueItemType: 'AssociatedService',
       catalogueItemName: 'All Training',
-      serviceInstanceId: 'SI1-A10001',
       catalogueItemId: '10000-S-003',
       provisioningType: 'Declarative',
       price: 50.00,
       itemUnitDescription: 'per Day',
-      quantity: 10,
       costPerYear: 501.00,
-      serviceRecipientsOdsCode: 'A10001',
+      serviceRecipients: [
+        {
+          name: 'Blue Mountain Medical Practice',
+          odsCode: 'A10001',
+          deliveryDate: '2020-09-25',
+          itemId: 'C000001-01-A10001-33',
+          quantity: 10,
+          serviceInstanceId: 'SI1-A10001',
+        },
+      ],
     },
     {
-      itemId: 'C000001-01-A10001-34',
       cataloguePriceType: 'Flat',
       catalogueItemType: 'AssociatedService',
       catalogueItemName: '55 Training',
-      serviceInstanceId: 'SI1-A10001',
       catalogueItemId: '10000-S-003',
       provisioningType: 'Declarative',
       price: 55.55,
       itemUnitDescription: 'per Day',
-      quantity: 55,
       costPerYear: 5555.55,
-      serviceRecipientsOdsCode: 'A10001',
-    },
-  ],
-  serviceRecipients: [
-    {
-      name: 'Red Mountain Medical Practice',
-      odsCode: 'A10002',
-    },
-    {
-      name: 'Blue Mountain Medical Practice',
-      odsCode: 'A10001',
-    },
-    {
-      name: 'Yellow Mountain Medical Practice',
-      odsCode: 'A10003',
+      serviceRecipients: [
+        {
+          name: 'Blue Mountain Medical Practice',
+          odsCode: 'A10001',
+          itemId: 'C000001-01-A10001-34',
+          serviceInstanceId: 'SI1-A10001',
+          quantity: 55,
+          deliveryDate: '2020-09-25',
+        },
+      ],
     },
   ],
   totalOneOffCost: 101.1111999,
@@ -302,17 +343,17 @@ test('should render the oneOff cost item details in the table', async (t) => {
     .expect(await extractInnerText(oneOffCostRow2.find('td').nth(5))).eql('40,850.00');
 });
 
-test('should render the one off cost totals table with one off cost total price', async (t) => {
+test('should render the one off cost table footer with one off cost total price', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const oneOffCostTotalsTable = Selector('[data-test-id="one-off-cost-totals-table"]');
-  const row1 = oneOffCostTotalsTable.find('[data-test-id="table-row-0"]');
+  const oneOffCostTableFooter = Selector('[data-test-id="one-off-cost-table"] tfoot');
+  const row1 = oneOffCostTableFooter.find('[data-test-id="table-row-0"]');
   const totalCostLabelCell = row1.find('div[data-test-id="total-cost-label"]');
   const totalCostValueCell = row1.find('div[data-test-id="total-cost-value"]');
 
   await t
-    .expect(await extractInnerText(totalCostLabelCell)).eql(content.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data)
+    .expect(await extractInnerText(totalCostLabelCell)).eql(content.oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.data)
     .expect(await extractInnerText(totalCostValueCell)).eql('101.11');
 });
 
@@ -330,100 +371,100 @@ test('should render the recurring cost item details in the table', async (t) => 
   const recurringCostRow6 = recurringCostTable.find('[data-test-id="table-row-6"]');
 
   await t
-    .expect(await extractInnerText(recurringCostRow0.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
-    .expect(await extractInnerText(recurringCostRow0.find('td').nth(1))).eql('C000001-01-A10001-4')
-    .expect(await extractInnerText(recurringCostRow0.find('td').nth(2))).eql('Remote Consultation')
-    .expect(await extractInnerText(recurringCostRow0.find('td').nth(3))).eql('SI1-A10001')
-    .expect(await extractInnerText(recurringCostRow0.find('td').nth(4))).eql('207.9161 per practice per month')
-    .expect(await extractInnerText(recurringCostRow0.find('td').nth(5))).eql('12 per year')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(0))).eql('Red Mountain Medical Practice (A10002)')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(1))).eql('C000001-01-A10002-24')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(2))).eql('OnDemand associated service')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(3))).eql('SI1-A10002')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(4))).eql('0.70 per fragment')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(5))).eql('600 per month')
     .expect(await extractInnerText(recurringCostRow0.find('td').nth(6))).eql('25 September 2020')
-    .expect(await extractInnerText(recurringCostRow0.find('td').nth(7))).eql('29,939.90')
+    .expect(await extractInnerText(recurringCostRow0.find('td').nth(7))).eql('5,040.00')
 
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(1))).eql('C000001-01-A10001-2')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(2))).eql('Some catalogue name')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(3))).eql('SI1-A10001')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(4))).eql('500.261 per licence')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(5))).eql('12')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(6))).eql('6 August 2020')
-    .expect(await extractInnerText(recurringCostRow1.find('td').nth(7))).eql('6,003.13')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(0))).eql('Red Mountain Medical Practice (A10002)')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(1))).eql('C000001-01-A10002-6')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(2))).eql('OnDemand Consultation')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(3))).eql('SI1-A10002')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(4))).eql('1.33 per consultation')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(5))).eql('4 per year')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(6))).eql('25 September 2020')
+    .expect(await extractInnerText(recurringCostRow1.find('td').nth(7))).eql('63.84')
 
-    .expect(await extractInnerText(recurringCostRow2.find('td').nth(0))).eql('Red Mountain Medical Practice (A10002)')
-    .expect(await extractInnerText(recurringCostRow2.find('td').nth(1))).eql('C000001-01-A10002-24')
-    .expect(await extractInnerText(recurringCostRow2.find('td').nth(2))).eql('OnDemand associated service')
-    .expect(await extractInnerText(recurringCostRow2.find('td').nth(3))).eql('SI1-A10002')
-    .expect(await extractInnerText(recurringCostRow2.find('td').nth(4))).eql('0.70 per fragment')
-    .expect(await extractInnerText(recurringCostRow2.find('td').nth(5))).eql('600 per month')
-    .expect(await extractInnerText(recurringCostRow2.find('td').nth(6))).eql('')
-    .expect(await extractInnerText(recurringCostRow2.find('td').nth(7))).eql('5,040.00')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(0))).eql('Yellow Mountain Medical Practice (A10003)')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(1))).eql('C000001-01-A10003-5')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(2))).eql('Patient Consultation')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(3))).eql('SI1-A10003')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(4))).eql('106.025 per patient per month')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(5))).eql('12 per year')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(6))).eql('25 September 2020')
+    .expect(await extractInnerText(recurringCostRow2.find('td').nth(7))).eql('15,267.60')
 
     .expect(await extractInnerText(recurringCostRow3.find('td').nth(0))).eql('Red Mountain Medical Practice (A10002)')
-    .expect(await extractInnerText(recurringCostRow3.find('td').nth(1))).eql('C000001-01-A10002-6')
-    .expect(await extractInnerText(recurringCostRow3.find('td').nth(2))).eql('OnDemand Consultation')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(1))).eql('C000001-01-A10002-3')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(2))).eql('Remote Consultation')
     .expect(await extractInnerText(recurringCostRow3.find('td').nth(3))).eql('SI1-A10002')
-    .expect(await extractInnerText(recurringCostRow3.find('td').nth(4))).eql('1.33 per consultation')
-    .expect(await extractInnerText(recurringCostRow3.find('td').nth(5))).eql('4 per year')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(4))).eql('207.917 per practice per month')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(5))).eql('12 per year')
     .expect(await extractInnerText(recurringCostRow3.find('td').nth(6))).eql('25 September 2020')
-    .expect(await extractInnerText(recurringCostRow3.find('td').nth(7))).eql('63.84')
+    .expect(await extractInnerText(recurringCostRow3.find('td').nth(7))).eql('29,939.90')
 
-    .expect(await extractInnerText(recurringCostRow4.find('td').nth(0))).eql('Red Mountain Medical Practice (A10002)')
-    .expect(await extractInnerText(recurringCostRow4.find('td').nth(1))).eql('C000001-01-A10002-3')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(1))).eql('C000001-01-A10001-4')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(2))).eql('Remote Consultation')
-    .expect(await extractInnerText(recurringCostRow4.find('td').nth(3))).eql('SI1-A10002')
-    .expect(await extractInnerText(recurringCostRow4.find('td').nth(4))).eql('207.917 per practice per month')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(3))).eql('SI1-A10001')
+    .expect(await extractInnerText(recurringCostRow4.find('td').nth(4))).eql('207.9161 per practice per month')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(5))).eql('12 per year')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(6))).eql('25 September 2020')
     .expect(await extractInnerText(recurringCostRow4.find('td').nth(7))).eql('29,939.90')
 
     .expect(await extractInnerText(recurringCostRow5.find('td').nth(0))).eql('Yellow Mountain Medical Practice (A10003)')
-    .expect(await extractInnerText(recurringCostRow5.find('td').nth(1))).eql('C000001-01-A10003-5')
-    .expect(await extractInnerText(recurringCostRow5.find('td').nth(2))).eql('Patient Consultation')
-    .expect(await extractInnerText(recurringCostRow5.find('td').nth(3))).eql('SI1-A10003')
-    .expect(await extractInnerText(recurringCostRow5.find('td').nth(4))).eql('106.025 per patient per month')
-    .expect(await extractInnerText(recurringCostRow5.find('td').nth(5))).eql('12 per year')
-    .expect(await extractInnerText(recurringCostRow5.find('td').nth(6))).eql('25 September 2020')
-    .expect(await extractInnerText(recurringCostRow5.find('td').nth(7))).eql('15,267.60')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(1))).eql('C000001-01-A10003-1')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(2))).eql('Some catalogue name')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(3))).eql('SI1-B81046')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(4))).eql('1.26 per patient per year')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(5))).eql('3,415 per month')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(6))).eql('6 July 2020')
+    .expect(await extractInnerText(recurringCostRow5.find('td').nth(7))).eql('4,302.90')
 
-    .expect(await extractInnerText(recurringCostRow6.find('td').nth(0))).eql('Yellow Mountain Medical Practice (A10003)')
-    .expect(await extractInnerText(recurringCostRow6.find('td').nth(1))).eql('C000001-01-A10003-1')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(0))).eql('Blue Mountain Medical Practice (A10001)')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(1))).eql('C000001-01-A10001-2')
     .expect(await extractInnerText(recurringCostRow6.find('td').nth(2))).eql('Some catalogue name')
-    .expect(await extractInnerText(recurringCostRow6.find('td').nth(3))).eql('SI1-A10003')
-    .expect(await extractInnerText(recurringCostRow6.find('td').nth(4))).eql('1.26 per patient per year')
-    .expect(await extractInnerText(recurringCostRow6.find('td').nth(5))).eql('3,415 per month')
-    .expect(await extractInnerText(recurringCostRow6.find('td').nth(6))).eql('6 July 2020')
-    .expect(await extractInnerText(recurringCostRow6.find('td').nth(7))).eql('4,302.90');
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(3))).eql('SI1-A10001')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(4))).eql('500.261 per licence')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(5))).eql('12')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(6))).eql('6 August 2020')
+    .expect(await extractInnerText(recurringCostRow6.find('td').nth(7))).eql('6,003.13');
 });
 
-test('should render the recurring cost totals table with the totals provided', async (t) => {
+test('should render the recurring cost table footer with the totals provided', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const recurringCostTotalsTable = Selector('[data-test-id="recurring-cost-totals-table"]');
+  const recurringCostTableFooter = Selector('[data-test-id="recurring-cost-table"] tfoot');
 
-  const row1 = recurringCostTotalsTable.find('[data-test-id="table-row-0"]');
+  const row1 = recurringCostTableFooter.find('[data-test-id="table-row-0"]');
   const totalYearCostLabelCell = row1.find('div[data-test-id="total-year-cost-label"]');
   const totalYearCostValueCell = row1.find('div[data-test-id="total-year-cost-value"]');
 
-  const row2 = recurringCostTotalsTable.find('[data-test-id="table-row-1"]');
+  const row2 = recurringCostTableFooter.find('[data-test-id="table-row-1"]');
   const totalMonthlyCostLabelCell = row2.find('div[data-test-id="total-monthly-cost-label"]');
   const totalMonthlyCostValueCell = row2.find('div[data-test-id="total-monthly-cost-value"]');
 
-  const row3 = recurringCostTotalsTable.find('[data-test-id="table-row-2"]');
+  const row3 = recurringCostTableFooter.find('[data-test-id="table-row-2"]');
   const totalOwnershipCostLabelCell = row3.find('div[data-test-id="total-ownership-cost-label"]');
   const totalOwnershipCostValueCell = row3.find('div[data-test-id="total-ownership-cost-value"]');
 
-  const row4 = recurringCostTotalsTable.find('[data-test-id="table-row-3"]');
+  const row4 = recurringCostTableFooter.find('[data-test-id="table-row-3"]');
   const totalOwnershipTermsLabelCell = row4.find('div[data-test-id="total-ownership-terms"]');
 
   await t
-    .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data)
+    .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTableFooter.cellInfo.totalOneYearCostLabel.data)
     .expect(await extractInnerText(totalYearCostValueCell)).eql('1,981.03')
 
-    .expect(await extractInnerText(totalMonthlyCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data)
+    .expect(await extractInnerText(totalMonthlyCostLabelCell)).eql(content.recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.data)
     .expect(await extractInnerText(totalMonthlyCostValueCell)).eql('191.69')
 
-    .expect(await extractInnerText(totalOwnershipCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data)
+    .expect(await extractInnerText(totalOwnershipCostLabelCell)).eql(content.recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.data)
     .expect(await extractInnerText(totalOwnershipCostValueCell)).eql('2,345.43')
 
-    .expect(await extractInnerText(totalOwnershipTermsLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data);
+    .expect(await extractInnerText(totalOwnershipTermsLabelCell)).eql(content.recurringCostTableFooter.cellInfo.totalOwnershipTerms.data);
 });

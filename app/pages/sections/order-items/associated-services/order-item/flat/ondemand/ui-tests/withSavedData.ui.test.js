@@ -1,50 +1,68 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import { orderApiUrl } from '../../../../../../../../config';
+import { solutionsApiUrl, orderApiUrl, organisationApiUrl } from '../../../../../../../../config';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services/item-1';
+const organisation = 'organisation';
+const callOffId = 'order-1';
+const catalogueItemId = '10000-001';
+
+const pageUrl = `http://localhost:1234/order/${organisation}/odsCode/order/${callOffId}/associated-services/${catalogueItemId}`;
+const selectedPriceId = '1';
 
 const getLocation = ClientFunction(() => document.location.href);
 
-const orderItem = {
-  serviceRecipient: {
-    odsCode: 'OX3',
-    name: 'Some service recipient 2',
-  },
-  catalogueItemType: 'AssociatedService',
-  catalogueItemName: 'Some item name',
-  catalogueItemId: '10000-001',
-  quantity: 3,
-  estimationPeriod: 'month',
+const selectedPrice = {
+  priceId: selectedPriceId,
   provisioningType: 'OnDemand',
-  type: 'flat',
+  type: 'Flat',
   currencyCode: 'GBP',
   itemUnit: {
     name: 'consultation',
     description: 'per consultation',
   },
   price: 0.1,
+  estimationPeriod: 'month',
+};
+
+const catalogueItem = {
+  catalogueItemType: 'AssociatedService',
+  catalogueItemName: 'Some item name',
+};
+
+const orderItem = {
+  ...catalogueItem,
+  ...selectedPrice,
+};
+
+const baseServiceRecipient = { name: 'org-name', odsCode: 'odsCode' };
+const validServiceRecipient = { ...baseServiceRecipient, quantity: 10 };
+
+const validRequestBody = {
+  ...orderItem,
+  serviceRecipients: [validServiceRecipient],
 };
 
 const orderItemPageDataInSession = JSON.stringify({
-  itemId: orderItem.catalogueItemId,
+  itemId: catalogueItemId,
   itemName: orderItem.catalogueItemName,
-  selectedPrice: {
-    price: orderItem.price,
-    itemUnit: orderItem.itemUnit,
-    type: orderItem.type,
-    provisioningType: orderItem.provisioningType,
-  },
+  selectedPrice,
+});
+const associatedServicePricesInSesion = JSON.stringify({
+  prices: [{ priceId: 1 }, { priceId: 2 }],
 });
 
 const mocks = () => {
   nock(orderApiUrl)
-    .get('/api/v1/orders/order-1/order-items/item-1')
-    .reply(200, orderItem);
+    .get(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`)
+    .reply(200, { ...orderItem, serviceRecipients: [validServiceRecipient] });
+  nock(solutionsApiUrl)
+    .get(`/api/v1/prices/${selectedPriceId}`)
+    .reply(200, selectedPrice);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
@@ -54,17 +72,71 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
+    await setState(ClientFunction)(sessionKeys.associatedServicePrices, associatedServicePricesInSesion);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.orderItemPageData, orderItemPageDataInSession);
+    await setState(ClientFunction)(sessionKeys.associatedServicePrices, associatedServicePricesInSesion);
   }
 };
 
 fixture('Associated-services - flat ondemand - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
+  .beforeEach(async () => {
+    nock(organisationApiUrl)
+      .get('/api/v1/ods/odsCode')
+      .reply(200, mockOrgData);
+  })
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
   });
+
+test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, baseServiceRecipient);
+
+  nock(orderApiUrl)
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
+    .reply(400, {
+      errors: {
+        'ServiceRecipients[0].Quantity': ['QuantityGreaterThanZero'],
+      },
+    });
+
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const errorSummary = Selector('[data-test-id="error-summary"]');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .click(saveButton);
+
+  await t
+    .expect(await extractInnerText(errorSummary)).contains(content.errorMessages.QuantityGreaterThanZero);
+});
+
+test('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, baseServiceRecipient);
+
+  nock(orderApiUrl)
+    .put(`/api/v1/orders/${callOffId}/order-items/${catalogueItemId}`, validRequestBody)
+    .reply(200, {});
+
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const quantityInput = Selector('[data-test-id="question-quantity"] input');
+  const saveButton = Selector('[data-test-id="save-button"] button');
+
+  await t
+    .typeText(quantityInput, '10', { replace: true })
+    .click(saveButton)
+    .expect(getLocation()).eql(`http://localhost:1234/order/${organisation}/odsCode/order/${callOffId}/associated-services`);
+});
 
 test('should render the title', async (t) => {
   await pageSetup();
@@ -76,14 +148,14 @@ test('should render the title', async (t) => {
     .expect(await extractInnerText(title)).eql('Some item name information for order-1');
 });
 
-test('should link to /order/organisation/order-1/associated-services for backlink', async (t) => {
+test(`should link to /order/${organisation}/odsCode/order/${callOffId}/associated-services for backlink`, async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1/associated-services');
+    .expect(goBackLink.getAttribute('href')).eql(`/order/${organisation}/odsCode/order/${callOffId}/associated-services`);
 });
 
 test('should populate text field for the quantity question', async (t) => {
@@ -93,7 +165,7 @@ test('should populate text field for the quantity question', async (t) => {
   const quantity = Selector('[data-test-id="question-quantity"] input');
 
   await t
-    .expect(quantity.getAttribute('value')).eql('3');
+    .expect(quantity.getAttribute('value')).eql('10');
 });
 
 test('should populate the selectEstimationPeriod question radio button', async (t) => {
@@ -122,7 +194,7 @@ test('should render the delete button as not disabled', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const button = Selector('[data-test-id="delete-button"] button');
+  const button = Selector('[data-test-id="delete-button"] a');
 
   await t
     .expect(await extractInnerText(button)).eql('Delete')
@@ -175,52 +247,4 @@ test('should show the correct error summary and input error when the price is re
     .expect(errorMessage.exists).ok()
     .expect(await extractInnerText(errorMessage)).eql('Error:')
     .expect(price.hasClass('nhsuk-input--error')).ok();
-});
-
-test('should navigate to associated services dashboard page if save button is clicked and data is valid', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/order-items/item-1', { quantity: 310, estimationPeriod: 'month', price: 0.1 })
-    .reply(200, {});
-
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
-  await t.navigateTo(pageUrl);
-
-  const quantityInput = Selector('[data-test-id="question-quantity"]');
-  const saveButton = Selector('[data-test-id="save-button"] button');
-
-  await t
-    .typeText(quantityInput, '10', { paste: true })
-    .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1/associated-services');
-});
-
-test('should show text fields as errors with error message when there are BE validation errors', async (t) => {
-  nock(orderApiUrl)
-    .put('/api/v1/orders/order-1/order-items/item-1', { quantity: 3, estimationPeriod: 'month', price: 0.1 })
-    .reply(400, {
-      errors: [{
-        field: 'Quantity',
-        id: 'QuantityGreaterThanZero',
-      }],
-    });
-
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
-  await t.navigateTo(pageUrl);
-
-  const errorSummary = Selector('[data-test-id="error-summary"]');
-  const errorMessage = Selector('#quantity-error');
-  const quantityInput = Selector('[data-test-id="question-quantity"] input');
-  const saveButton = Selector('[data-test-id="save-button"] button');
-
-  await t
-    .click(saveButton);
-
-  await t
-    .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a').nth(0))).eql(content.errorMessages.QuantityGreaterThanZero)
-
-    .expect(await extractInnerText(errorMessage)).contains(content.errorMessages.QuantityGreaterThanZero)
-
-    .expect(quantityInput.getAttribute('value')).eql('3')
-    .expect(quantityInput.hasClass('nhsuk-input--error')).ok();
 });

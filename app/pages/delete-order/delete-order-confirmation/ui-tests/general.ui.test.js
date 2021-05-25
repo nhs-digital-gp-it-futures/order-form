@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 import { orderApiUrl } from '../../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/delete-order/confirmation';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/delete-order/confirmation';
 
 const orderDescriptionMock = 'desc';
 
@@ -55,7 +55,7 @@ test('should render delete-order-confirmation page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation for backLink', async (t) => {
+test('should link to /order/organisation/odsCode for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -63,7 +63,7 @@ test('should link to /order/organisation for backLink', async (t) => {
 
   await t
     .expect(await extractInnerText(goBackLink)).eql(content.backLinkText)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode');
 });
 
 test('should render the title', async (t) => {
@@ -80,7 +80,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="delete-order-confirmation-page-description"]');
+  const description = Selector('[data-test-id="delete-order-confirmation-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -90,7 +90,7 @@ test('should render the order description title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const orderDescriptionTitle = Selector('h3[data-test-id="order-description-title"]');
+  const orderDescriptionTitle = Selector('h2[data-test-id="order-description-title"]');
 
   await t
     .expect(await extractInnerText(orderDescriptionTitle)).eql(content.orderDescriptionTitle);
@@ -100,7 +100,7 @@ test('should render the order description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const orderDescription = Selector('h4[data-test-id="order-description"]');
+  const orderDescription = Selector('p[data-test-id="order-description"]');
 
   await t
     .expect(await extractInnerText(orderDescription)).eql(orderDescriptionMock);

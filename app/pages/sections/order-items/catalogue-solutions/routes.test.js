@@ -1,61 +1,46 @@
 import request from 'supertest';
 import {
-  FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
-  fakeSessionManager,
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
+import {
+  mockUnauthorisedCookie,
+  mockAuthorisedCookie,
+  setUpFakeApp,
+} from '../../../../test-utils/routesTestHelper';
 import * as catalogueSolutionsController from './dashboard/controller';
 import * as orderItemController from './order-item/controller';
-import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
-import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
-import { App } from '../../../../app';
-import { routes } from '../../../../routes';
+import { getOrderItemPageDataBulk } from '../../../../helpers/routes/getOrderItemPageDataBulk';
 import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
+import { validateOrderItemFormBulk } from '../../../../helpers/controllers/validateOrderItemFormBulk';
+import { saveOrderItemBulk } from '../../../../helpers/controllers/saveOrderItemBulk';
+import { transformApiValidationResponse } from '../../../../helpers/common/transformApiValidationResponse';
 
 jest.mock('../../../../logger');
-jest.mock('../../../../helpers/routes/getOrderItemPageData');
-jest.mock('../../../../helpers/controllers/validateOrderItemForm');
-jest.mock('../../../../helpers/controllers/saveOrderItem');
+jest.mock('../../../../helpers/routes/getOrderItemPageDataBulk');
+jest.mock('../../../../helpers/controllers/validateOrderItemFormBulk');
+jest.mock('../../../../helpers/controllers/saveOrderItemBulk');
 jest.mock('../../../../helpers/api/ordapi/putOrderSection');
-
-const mockLogoutMethod = jest.fn().mockResolvedValue({});
-
-const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113',
-  name: 'Cool Dude',
-  ordering: 'manage',
-  primaryOrganisationId: 'org-id',
-});
-const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
-
-const mockUnauthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
-});
-const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
+jest.mock('../../../../helpers/api/ordapi/putOrderSection');
+jest.mock('../../../../helpers/common/transformApiValidationResponse');
 
 const mockSelectedRecipientIdCookie = `${sessionKeys.selectedRecipientId}=recipient-1`;
 const mockSelectedPriceIdCookie = `${sessionKeys.selectedPriceId}=1`;
-
-const mockGetPageDataCookie = `${sessionKeys.orderItemPageData}={}`;
-
-const setUpFakeApp = () => {
-  const authProvider = new FakeAuthProvider(mockLogoutMethod);
-  const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, fakeSessionManager()));
-  return app;
-};
+const mockGetPageDataCookie = `${sessionKeys.orderItemPageData}=${{ selectedRecipients: [{}] }}`;
 
 describe('catalogue-solutions section routes', () => {
-  describe('GET /organisation/:orderId/catalogue-solutions', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions';
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  describe('GET /organisation/:odsCode/order/:orderId/catalogue-solutions', () => {
+    const path = '/organisation/odsCode/order/some-order-id/catalogue-solutions';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -88,8 +73,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/catalogue-solutions', () => {
-    const path = '/organisation/order-id/catalogue-solutions';
+  describe('POST /organisation/:odsCode/order/:orderId/catalogue-solutions', () => {
+    const path = '/organisation/odsCode/order/order-id/catalogue-solutions';
     afterEach(() => {
       catalogueSolutionsController.getCatalogueSolutionsPageContext.mockRestore();
     });
@@ -103,6 +88,8 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should redirect to the login page if the user is not logged in', () => {
+      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+        .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthenticatedUser({
@@ -116,6 +103,8 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+        .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -130,6 +119,8 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should return the correct status and text if no error is thrown', async () => {
+      catalogueSolutionsController.getCatalogueSolutionsPageContext = jest.fn()
+        .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
@@ -146,14 +137,14 @@ describe('catalogue-solutions section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
   });
 
-  describe('GET /organisation/:orderId/catalogue-solutions/:orderItemId', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/neworderitem';
+  describe('GET /organisation/:odsCode/order/:orderId/catalogue-solutions/:orderItemId', () => {
+    const path = '/organisation/odsCode/order/some-order-id/catalogue-solutions/neworderitem';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -172,8 +163,10 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should return the catalogue-solutions order item page if authorised', () => {
-      getOrderItemPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({
+        questions: { price: { data: '12' } },
+      });
 
       return request(setUpFakeApp())
         .get(path)
@@ -186,8 +179,8 @@ describe('catalogue-solutions section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/catalogue-solutions/:orderItemId', () => {
-    const path = '/organisation/some-order-id/catalogue-solutions/neworderitem';
+  describe('POST /organisation/:odsCode/order/:orderId/catalogue-solutions/:orderItemId', () => {
+    const path = '/organisation/odsCode/order/some-order-id/catalogue-solutions/neworderitem';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -196,8 +189,8 @@ describe('catalogue-solutions section routes', () => {
     ));
 
     it('should redirect to the login page if the user is not logged in', () => {
-      getOrderItemPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '' } } });
 
       return testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
@@ -214,8 +207,8 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
-      getOrderItemPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '' } } });
 
       return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
@@ -235,10 +228,12 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the catalogue-solutions order item page with errors if there are FE caught validation errors', async () => {
-      getOrderItemPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      validateOrderItemForm.mockReturnValue([{}]);
-      orderItemController.getOrderItemErrorPageContext = jest.fn()
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
+      orderItemController.formatFormData = jest.fn().mockResolvedValue({});
+      orderItemController.setEstimationPeriod = jest.fn();
+      validateOrderItemFormBulk.mockReturnValue([{}]);
+      orderItemController.getOrderItemErrorContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
         });
@@ -258,6 +253,7 @@ describe('catalogue-solutions section routes', () => {
         .send({ _csrf: csrfToken })
         .expect(200)
         .then((res) => {
+          expect(orderItemController.setEstimationPeriod).toHaveBeenCalled();
           expect(res.text.includes('data-test-id="order-item-page"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-summary"')).toEqual(true);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
@@ -265,11 +261,14 @@ describe('catalogue-solutions section routes', () => {
     });
 
     it('should show the catalogue-solutions order item page with errors if the api response is unsuccessful', async () => {
-      getOrderItemPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      validateOrderItemForm.mockReturnValue([]);
-      saveOrderItem.mockResolvedValue({ success: false, errors: [{}] });
-      orderItemController.getOrderItemErrorPageContext = jest.fn()
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
+      orderItemController.formatFormData = jest.fn().mockResolvedValue({});
+      validateOrderItemFormBulk.mockReturnValue([]);
+      saveOrderItemBulk.mockResolvedValue({ success: false, errors: {} });
+      transformApiValidationResponse.mockReturnValue([]);
+
+      orderItemController.getOrderItemErrorContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
         });
@@ -293,11 +292,13 @@ describe('catalogue-solutions section routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
-      getOrderItemPageData.mockResolvedValue({});
-      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
-      validateOrderItemForm.mockReturnValue([]);
-      saveOrderItem.mockResolvedValue({ success: true });
+    it('should redirect to /organisation/odsCode/order/some-order-id/catalogue-solutions if there are no validation errors and post is successful', async () => {
+      getOrderItemPageDataBulk.mockResolvedValue({});
+      orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
+      orderItemController.formatFormData = jest.fn().mockResolvedValue({});
+      orderItemController.getPageData = jest.fn().mockResolvedValue({});
+      validateOrderItemFormBulk.mockReturnValue([]);
+      saveOrderItemBulk.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -315,8 +316,9 @@ describe('catalogue-solutions section routes', () => {
         })
         .expect(302)
         .then((res) => {
+          expect(orderItemController.getPageData).toHaveBeenCalled();
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/catalogue-solutions`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/catalogue-solutions`);
         });
     });
   });

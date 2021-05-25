@@ -1,23 +1,25 @@
 import request from 'supertest';
 import {
-  FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
-  fakeSessionManager,
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
   getCsrfTokenFromGet,
 } from 'buying-catalogue-library';
+import {
+  mockUnauthorisedCookie,
+  mockAuthorisedCookie,
+  setUpFakeApp,
+} from '../../../../test-utils/routesTestHelper';
 import * as associatedServicesController from './dashboard/controller';
 import * as orderItemController from './order-item/controller';
 import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
 import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
 import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
-import { App } from '../../../../app';
-import { routes } from '../../../../routes';
 import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
+import { getOrganisationFromOdsCode } from '../../../../helpers/controllers/odsCodeLookup';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
 jest.mock('../../../../logger');
@@ -25,40 +27,19 @@ jest.mock('../../../../helpers/routes/getOrderItemPageData');
 jest.mock('../../../../helpers/controllers/validateOrderItemForm');
 jest.mock('../../../../helpers/controllers/saveOrderItem');
 jest.mock('../../../../helpers/api/ordapi/putOrderSection');
-
-const mockLogoutMethod = jest.fn().mockResolvedValue({});
-
-const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113',
-  name: 'Cool Dude',
-  ordering: 'manage',
-  primaryOrganisationId: 'org-id',
-});
-const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
-
-const mockUnauthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
-});
-const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
+jest.mock('../../../../helpers/controllers/odsCodeLookup');
 
 const mockSelectedItemIdCookie = `${sessionKeys.selectedItemId}=item-1`;
 const mockSelectedPriceIdCookie = `${sessionKeys.selectedPriceId}=1`;
 const mockGetPageDataCookie = `${sessionKeys.orderItemPageData}={}`;
-
-const setUpFakeApp = () => {
-  const authProvider = new FakeAuthProvider(mockLogoutMethod);
-  const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, fakeSessionManager()));
-  return app;
-};
 
 describe('associated-services section routes', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
 
-  describe('GET /organisation/:orderId/associated-services', () => {
-    const path = '/organisation/some-order-id/associated-services';
+  describe('GET /organisation/:odsCode/order/:orderId/associated-services', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -91,8 +72,8 @@ describe('associated-services section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/associated-services', () => {
-    const path = '/organisation/order-id/associated-services';
+  describe('POST /organisation/:odsCode/order/:orderId/associated-services', () => {
+    const path = '/organisation/odsCode/order/order-id/associated-services';
 
     it('should return 403 forbidden if no csrf token is available', () => {
       putOrderSection.mockResolvedValue({});
@@ -103,6 +84,8 @@ describe('associated-services section routes', () => {
     });
 
     it('should redirect to the login page if the user is not logged in', () => {
+      associatedServicesController.getAssociatedServicesPageContext = jest.fn()
+        .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthenticatedUser({
@@ -116,6 +99,8 @@ describe('associated-services section routes', () => {
     });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      associatedServicesController.getAssociatedServicesPageContext = jest.fn()
+        .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
 
       return testAuthorisedPostPathForUnauthorisedUsers({
@@ -130,6 +115,8 @@ describe('associated-services section routes', () => {
     });
 
     it('should return the correct status and text if no error is thrown', async () => {
+      associatedServicesController.getAssociatedServicesPageContext = jest.fn()
+        .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
@@ -146,14 +133,14 @@ describe('associated-services section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
   });
 
-  describe('GET /organisation/:orderId/associated-services/:orderItemId', () => {
-    const path = '/organisation/some-order-id/associated-services/neworderitem';
+  describe('GET /organisation/:odsCode/order/:orderId/associated-services/:orderItemId', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services/neworderitem';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -186,8 +173,8 @@ describe('associated-services section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/associated-services/:orderItemId', () => {
-    const path = '/organisation/some-order-id/associated-services/neworderitem';
+  describe('POST /organisation/:odsCode/order/:orderId/associated-services/:orderItemId', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services/neworderitem';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -265,10 +252,11 @@ describe('associated-services section routes', () => {
     });
 
     it('should show the associated-services order item page with errors if the api response is unsuccessful', async () => {
+      getOrganisationFromOdsCode.mockResolvedValue({});
       getOrderItemPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       validateOrderItemForm.mockReturnValue([]);
-      saveOrderItem.mockResolvedValue({ success: false, errors: [{}] });
+      saveOrderItem.mockResolvedValue({ success: false, errors: {} });
       orderItemController.getOrderItemErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a price', href: '#priceRequired' }],
@@ -293,7 +281,8 @@ describe('associated-services section routes', () => {
         });
     });
 
-    it('should redirect to /organisation/some-order-id/associated-services if there are no validation errors and post is successful', async () => {
+    it('should redirect to /organisation/odsCode/order/some-order-id/associated-services if there are no validation errors and post is successful', async () => {
+      getOrganisationFromOdsCode.mockResolvedValue({});
       getOrderItemPageData.mockResolvedValue({});
       orderItemController.getOrderItemContext = jest.fn().mockResolvedValue({});
       validateOrderItemForm.mockReturnValue([]);
@@ -316,7 +305,7 @@ describe('associated-services section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id/associated-services`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/associated-services`);
         });
     });
   });

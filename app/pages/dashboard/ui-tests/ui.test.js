@@ -2,16 +2,23 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { baseUrl, orderApiUrl } from '../../../config';
+import { baseUrl, orderApiUrl, organisationApiUrl } from '../../../config';
 import mockOrdersData from '../../../test-utils/mockData/mockOrders.json';
+import mockOrgData from '../../../test-utils/mockData/mockOrganisationData.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode';
 
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/organisations/org-id/orders')
     .reply(200, mockOrdersData);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .reply(200, mockOrgData);
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id')
+    .reply(200, mockOrgData);
 };
 
 const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
@@ -76,7 +83,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="dashboard-page-description"]');
+  const description = Selector('[data-test-id="dashboard-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -90,7 +97,7 @@ test('should render add new order button', async (t) => {
 
   await t
     .expect(await extractInnerText(button)).eql(content.newOrderButtonText)
-    .expect(button.getAttribute('href')).eql(`${baseUrl}/organisation/neworder`);
+    .expect(button.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/neworder`);
 });
 
 test('should navigate to the new order page when add new order button is clicked', async (t) => {
@@ -101,7 +108,7 @@ test('should navigate to the new order page when add new order button is clicked
 
   await t
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/neworder');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/neworder');
 });
 
 test('should render the incomplete orders table', async (t) => {
@@ -109,7 +116,7 @@ test('should render the incomplete orders table', async (t) => {
   await t.navigateTo(pageUrl);
 
   const incompleteTable = Selector('div[data-test-id="incomplete-orders-table"]');
-  const incompleteTableTitle = Selector('h3[data-test-id="incomplete-orders-table-title"]');
+  const incompleteTableTitle = incompleteTable.find('caption');
   const incompleteColumnHeading1 = incompleteTable.find('[data-test-id="column-heading-0"]');
   const incompleteColumnHeading2 = incompleteTable.find('[data-test-id="column-heading-1"]');
   const incompleteColumnHeading3 = incompleteTable.find('[data-test-id="column-heading-2"]');
@@ -139,7 +146,7 @@ test('should render the incomplete orders table content', async (t) => {
 
   await t
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[0].orderId)
-    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order1`)
+    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order1`)
     .expect(await extractInnerText(description)).eql(mockOrdersData[0].description)
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[0].lastUpdatedBy)
     .expect(await extractInnerText(lastUpdated)).eql('6 May 2020')
@@ -180,7 +187,7 @@ test('should render the complete orders table', async (t) => {
   await t.navigateTo(pageUrl);
 
   const completeTable = Selector('div[data-test-id="complete-orders-table"]');
-  const completeTableTitle = Selector('h3[data-test-id="complete-orders-table-title"]');
+  const completeTableTitle = completeTable.find('caption');
   const completeColumnHeading1 = completeTable.find('[data-test-id="column-heading-0"]');
   const completeColumnHeading2 = completeTable.find('[data-test-id="column-heading-1"]');
   const completeColumnHeading3 = completeTable.find('[data-test-id="column-heading-2"]');
@@ -213,7 +220,7 @@ test('should render the complete orders table content', async (t) => {
 
   await t
     .expect(await extractInnerText(orderId)).eql(mockOrdersData[1].orderId)
-    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/order2/summary`)
+    .expect(orderId.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order2/summary`)
     .expect(await extractInnerText(description)).eql(mockOrdersData[1].description)
     .expect(await extractInnerText(lastUpdatedBy)).eql(mockOrdersData[1].lastUpdatedBy)
     .expect(await extractInnerText(dateCompleted)).eql('9 December 2020')
@@ -260,5 +267,5 @@ test('should navigate to the summary page when an order id is clicked', async (t
 
   await t
     .click(orderId)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order2/summary');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order2/summary');
 });

@@ -1,6 +1,7 @@
 import { getData } from 'buying-catalogue-library';
 import { logger } from '../../../logger';
 import { solutionsApiUrl } from '../../../config';
+import { sortItems } from '../../common/sortItems';
 
 const getCatalogueItemsQueryString = ({ supplierId, catalogueItemType }) => {
   const queryParameters = [];
@@ -15,9 +16,7 @@ const getCatalogueItemsQueryString = ({ supplierId, catalogueItemType }) => {
     queryParameters.push(`catalogueItemType=${catalogueItemType.trim()}`);
   }
 
-  return queryParameters.length > 0
-    ? `?${queryParameters.join('&')}`
-    : '';
+  return `?${queryParameters.join('&')}`;
 };
 
 const getCatalogueItemsEndpoint = ({ supplierId, catalogueItemType }) => {
@@ -30,6 +29,7 @@ export const getCatalogueItems = async ({ supplierId, catalogueItemType }) => {
 
   logger.info(`Retrieving ${catalogueItemType} catalogue items from BAPI for supplier ${supplierId}`);
   const catalogueItems = await getData({ endpoint, logger });
+  sortItems(catalogueItems, 'name');
 
   logger.info(`Found ${catalogueItems.length} ${catalogueItemType}(s) for supplier "${supplierId}".`);
   return catalogueItems;

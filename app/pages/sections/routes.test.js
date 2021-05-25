@@ -1,27 +1,27 @@
 import request from 'supertest';
 import {
-  FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
   testAuthorisedGetPathForUnauthorisedUser,
   getCsrfTokenFromGet,
-  fakeSessionManager,
 } from 'buying-catalogue-library';
-import { App } from '../../app';
-import { routes } from '../../routes';
+import {
+  mockUnauthorisedCookie,
+  mockAuthorisedCookie,
+  setUpFakeApp,
+} from '../../test-utils/routesTestHelper';
 import { baseUrl } from '../../config';
 import * as descriptionController from './description/controller';
 import * as orderingPartyController from './ordering-party/controller';
 import * as commencementDateController from './commencement-date/controller';
-import * as serviceRecipientsController from './service-recipients/controller';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { putFundingSource } from '../../helpers/api/ordapi/putFundingSource';
 import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
-import { putServiceRecipients } from '../../helpers/api/ordapi/putServiceRecipients';
 import * as fundingSourceController from './funding-source/controller';
+import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
@@ -30,6 +30,7 @@ jest.mock('../../helpers/routes/getOrderDescription');
 jest.mock('../../helpers/api/ordapi/putOrderingParty');
 jest.mock('../../helpers/api/ordapi/putCommencementDate');
 jest.mock('../../helpers/api/ordapi/putServiceRecipients');
+jest.mock('../../helpers/controllers/odsCodeLookup');
 
 descriptionController.getDescriptionContext = jest.fn()
   .mockResolvedValue({});
@@ -40,35 +41,9 @@ descriptionController.postOrPutDescription = jest.fn()
 orderingPartyController.getCallOffOrderingPartyContext = jest.fn()
   .mockResolvedValue({});
 
-serviceRecipientsController.getServiceRecipientsContext = jest.fn()
-  .mockResolvedValue({});
-
-const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
-
-const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113',
-  name: 'Cool Dude',
-  ordering: 'manage',
-  primaryOrganisationId: 'org-id',
-});
-
-const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
-
-const mockUnauthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
-});
-const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
-
-const setUpFakeApp = () => {
-  const authProvider = new FakeAuthProvider(mockLogoutMethod);
-  const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, fakeSessionManager()));
-  return app;
-};
-
 describe('section routes', () => {
-  describe('GET /organisation/:orderId/description', () => {
-    const path = '/organisation/some-order-id/description';
+  describe('GET /organisation/:odsCode/order/:orderId/description', () => {
+    const path = '/organisation/odsCode/order/some-order-id/description';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -96,8 +71,11 @@ describe('section routes', () => {
       }));
   });
 
-  describe('POST /organisation/:orderId/description', () => {
-    const path = '/organisation/:orderId/description';
+  describe('POST /organisation/:odsCode/order/:orderId/description', () => {
+    const path = '/organisation/odsCode/order/:orderId/description';
+    beforeEach(() => {
+      getOrganisationFromOdsCode.mockResolvedValue({});
+    });
 
     afterEach(() => {
       descriptionController.postOrPutDescription.mockReset();
@@ -153,7 +131,7 @@ describe('section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order1`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order1`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
@@ -188,9 +166,11 @@ describe('section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/ordering-party', () => {
-    const path = '/organisation/some-order-id/ordering-party';
-
+  describe('GET /organisation/:odsCode/order/:orderId/ordering-party', () => {
+    const path = '/organisation/odsCode/order/some-order-id/ordering-party';
+    beforeEach(() => {
+      getOrganisationFromOdsCode.mockResolvedValue({});
+    });
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
@@ -217,9 +197,11 @@ describe('section routes', () => {
       }));
   });
 
-  describe('POST /organisation/:orderId/ordering-party', () => {
-    const path = '/organisation/order-id/ordering-party';
-
+  describe('POST /organisation/:odsCode/order/:orderId/ordering-party', () => {
+    const path = '/organisation/odsCode/order/order-id/ordering-party';
+    beforeEach(() => {
+      getOrganisationFromOdsCode.mockResolvedValue({});
+    });
     afterEach(() => {
       jest.resetAllMocks();
     });
@@ -270,7 +252,7 @@ describe('section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
@@ -304,8 +286,8 @@ describe('section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/commencement-date', () => {
-    const path = '/organisation/some-order-id/commencement-date';
+  describe('GET /organisation/:odsCode/order/:orderId/commencement-date', () => {
+    const path = '/organisation/odsCode/order/some-order-id/commencement-date';
 
     commencementDateController.getCommencementDateContext = jest.fn()
       .mockResolvedValue({});
@@ -337,8 +319,8 @@ describe('section routes', () => {
       }));
   });
 
-  describe('POST /organisation/:orderId/commencement-date', () => {
-    const path = '/organisation/order-id/commencement-date';
+  describe('POST /organisation/:odsCode/order/:orderId/commencement-date', () => {
+    const path = '/organisation/odsCode/order/order-id/commencement-date';
 
     commencementDateController.validateCommencementDateForm = jest.fn()
       .mockReturnValue([]);
@@ -401,7 +383,7 @@ describe('section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });
@@ -463,107 +445,8 @@ describe('section routes', () => {
     });
   });
 
-  describe('GET /organisation/:orderId/service-recipients', () => {
-    const path = '/organisation/some-order-id/service-recipients';
-
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
-
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedGetPathForUnauthorisedUser({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        getPathCookies: [mockUnauthorisedCookie],
-        expectedPageId: 'data-test-id="error-title"',
-        expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
-
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        expect(res.text.includes('data-test-id="service-recipients-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
-
-    it('should return the correct status and text when the user is authorised and the path has query string', () => request(setUpFakeApp())
-      .get(`${path}?selectStatus=select`)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        expect(res.text.includes('data-test-id="service-recipients-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-      }));
-  });
-
-  describe('POST /organisation/:orderId/service-recipients', () => {
-    const path = '/organisation/order-id/service-recipients';
-
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-
-    it('should return 403 forbidden if no csrf token is available', () => (
-      testPostPathWithoutCsrf({
-        app: request(setUpFakeApp()), postPath: path, postPathCookies: [mockAuthorisedCookie],
-      })
-    ));
-
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedPostPathForUnauthenticatedUser({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        postPath: path,
-        getPathCookies: [mockAuthorisedCookie],
-        postPathCookies: [],
-        expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
-
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedPostPathForUnauthorisedUsers({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        postPath: path,
-        getPathCookies: [mockAuthorisedCookie],
-        postPathCookies: [mockUnauthorisedCookie],
-        expectedPageId: 'data-test-id="error-title"',
-        expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
-
-    it('should return the correct status and text if response.success is true', async () => {
-      putServiceRecipients.mockResolvedValue({ success: true });
-
-      const { cookies, csrfToken } = await getCsrfTokenFromGet({
-        app: request(setUpFakeApp()),
-        getPath: path,
-        getPathCookies: [mockAuthorisedCookie],
-      });
-
-      return request(setUpFakeApp())
-        .post(path)
-        .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie])
-        .send({ _csrf: csrfToken })
-        .expect(302)
-        .then((res) => {
-          expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-id`);
-          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-        });
-    });
-  });
-
-  describe('GET /organisation/:orderId/funding-source', () => {
-    const path = '/organisation/some-order-id/funding-source';
+  describe('GET /organisation/odsCode/order/:orderId/funding-source', () => {
+    const path = '/organisation/odsCode/order/some-order-id/funding-source';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -595,8 +478,8 @@ describe('section routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/funding-source', () => {
-    const path = '/organisation/some-order-id/funding-source';
+  describe('POST /organisation/:odsCode/order/:orderId/funding-source', () => {
+    const path = '/organisation/odsCode/order/some-order-id/funding-source';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -679,7 +562,7 @@ describe('section routes', () => {
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
-          expect(res.headers.location).toEqual(`${baseUrl}/organisation/some-order-id`);
+          expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id`);
           expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
         });
     });

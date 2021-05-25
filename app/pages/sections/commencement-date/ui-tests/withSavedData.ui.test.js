@@ -4,7 +4,7 @@ import { extractInnerText } from 'buying-catalogue-library';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/commencement-date';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/commencement-date';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -63,7 +63,7 @@ test('should navigate to task list page if save button is clicked and data is va
 
   await t
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id');
 });
 
 // FE Validation tests

@@ -12,7 +12,7 @@ describe('header', () => {
     const context = {};
 
     harness.request(context, ($) => {
-      const betaBanner = $('span[data-test-id="beta-banner"]');
+      const betaBanner = $('[data-test-id="beta-banner"]');
       expect(betaBanner.length).toEqual(1);
     });
   }));

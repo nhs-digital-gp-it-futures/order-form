@@ -11,9 +11,12 @@ const setup = {
 
 const context = {
   ...manifest,
-  title: 'org1 orders',
+  config: {
+    showProxy: 'false',
+  },
+  title: 'org1',
   proxyLinkHref: '/proxy/href',
-  newOrderButtonHref: '/organisation/neworder',
+  newOrderButtonHref: '/organisation/odsCode/order/neworder',
   completeOrders: { items: [mockOrders[0]] },
   incompleteOrders: { items: [mockOrders[1], mockOrders[2]] },
 };
@@ -23,17 +26,50 @@ describe('dashboard page', () => {
     harness.request(context, ($) => {
       const title = $('h1[data-test-id="dashboard-page-title"]');
       expect(title.length).toEqual(1);
-      expect(title.text().trim()).toEqual(context.title);
+      expect(title.text().trim()).toEqual(`${context.title} orders`);
     });
   }));
 
   it('should render the dashboard page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="dashboard-page-description"]');
+      const description = $('[data-test-id="dashboard-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
   }));
+
+  describe('proxy buyer', () => {
+    it('should render the dashboard page proxy title', componentTester(setup, (harness) => {
+      context.config.showProxy = 'true';
+      context.userIsProxy = true;
+
+      harness.request(context, ($) => {
+        const title = $('h1[data-test-id="dashboard-page-proxy-title"]');
+        expect(title.length).toEqual(1);
+        expect(title.text().trim()).toEqual(`Orders for ${context.title}`);
+      });
+    }));
+
+    it('should render the dashboard page proxy description', componentTester(setup, (harness) => {
+      context.config.showProxy = 'true';
+      context.userIsProxy = true;
+
+      harness.request(context, ($) => {
+        const description = $('[data-test-id="dashboard-page-proxy-description"]');
+        expect(description.length).toEqual(1);
+        expect(description.text().trim()).toEqual(context.proxy.description);
+      });
+    }));
+
+    it('should render the dashboard page proxy on behalf of', componentTester(setup, (harness) => {
+      context.config.showProxy = 'true';
+      harness.request(context, ($) => {
+        const description = $('[data-test-id="dashboard-page-proxy-on-behalf"]');
+        expect(description.length).toEqual(1);
+        expect(description.text().trim()).toEqual(`${context.title} Change organisation`);
+      });
+    }));
+  });
 
   it('should render the create new order button', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
@@ -47,9 +83,9 @@ describe('dashboard page', () => {
   describe('incomplete orders table', () => {
     it('should render the table title', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const tableTitle = $('h3[data-test-id="incomplete-orders-table-title"]');
-        expect(tableTitle.length).toEqual(1);
-        expect(tableTitle.text().trim()).toEqual(context.incompleteOrdersTableTitle);
+        const tableCaption = $('[data-test-id="incomplete-orders-table"] caption');
+        expect(tableCaption.length).toEqual(1);
+        expect(tableCaption.text().trim()).toEqual(context.incompleteOrdersTableTitle);
       });
     }));
 
@@ -116,9 +152,9 @@ describe('dashboard page', () => {
   describe('complete orders table', () => {
     it('should render the table title', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const tableTitle = $('h3[data-test-id="complete-orders-table-title"]');
-        expect(tableTitle.length).toEqual(1);
-        expect(tableTitle.text().trim()).toEqual(context.completeOrdersTableTitle);
+        const tableCaption = $('[data-test-id="complete-orders-table"] caption');
+        expect(tableCaption.length).toEqual(1);
+        expect(tableCaption.text().trim()).toEqual(context.completeOrdersTableTitle);
       });
     }));
 

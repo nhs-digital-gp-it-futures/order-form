@@ -6,7 +6,7 @@ import { solutionsApiUrl as bapiUrl, orderApiUrl } from '../../../../../../../co
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/select/additional-service';
 
 const mockAdditionalServices = [
   {
@@ -28,6 +28,9 @@ const mockAdditionalServices = [
 const additionalServicesInSession = JSON.stringify(
   mockAdditionalServices,
 );
+const mockSessionOrderItemsState = JSON.stringify([
+  { catalogueItemId: 'additional-service-3', catalogueItemType: 'AdditionalService', catalogueItemName: 'Additional Service 3' },
+]);
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -51,9 +54,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.additionalServices, additionalServicesInSession);
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
 };
 
@@ -87,14 +92,14 @@ test('should render additional-services select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/additional-services/additional-service for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/additional-services/additional-service for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/additional-services');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/additional-services');
 });
 
 test('should render the title', async (t) => {
@@ -111,7 +116,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="additional-service-select-page-description"]');
+  const description = Selector('[data-test-id="additional-service-select-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -127,7 +132,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/additional-services/select/additional-service/price when an additional service is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/additional-services/select/additional-service/price when an additional service is selected', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -138,7 +143,7 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
   await t
     .click(firstAdditionalService)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/select/additional-service/price');
 });
 
 test('should show the error summary when no additional service is selected causing validation error', async (t) => {
@@ -208,7 +213,7 @@ test('should render the error page if no additional services are found', async (
 
   await t
     .expect(await extractInnerText(backLink)).eql('Go back')
-    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/order-id/additional-services')
+    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/odsCode/order/order-id/additional-services')
 
     .expect(await extractInnerText(errorTitle)).eql('No Additional Services found')
     .expect(await extractInnerText(errorDescription)).eql('There are no Additional Services offered by this supplier. Go back to the Additional Services dashboard and select continue to complete the section.');

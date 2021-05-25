@@ -2,10 +2,11 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl } from '../../../../config';
+import { orderApiUrl, organisationApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/ordering-party';
+const odsCode = 'AB3';
+const pageUrl = `http://localhost:1234/order/organisation/${odsCode}/order/order-id/ordering-party`;
 
 const mockDataFromOrdapi = {
   name: 'Org name',
@@ -30,6 +31,9 @@ const mockDataFromOrdapi = {
 };
 
 const mocks = () => {
+  nock(organisationApiUrl)
+    .get(`/api/v1/ods/${odsCode}`)
+    .reply(200, mockDataFromOrdapi);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/ordering-party')
     .reply(200, mockDataFromOrdapi);
@@ -54,7 +58,7 @@ test('should render organisation name with data from ORDAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const heading = Selector('h3[data-test-id="organisation-name-heading"]');
+  const heading = Selector('h2[data-test-id="organisation-name-heading"]');
   const text = Selector('div[data-test-id="organisation-name"]');
 
   await t
@@ -66,7 +70,7 @@ test('should render organisation ods code with data from ORDAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const heading = Selector('h3[data-test-id="organisation-ods-code-heading"]');
+  const heading = Selector('h2[data-test-id="organisation-ods-code-heading"]');
   const text = Selector('div[data-test-id="organisation-ods-code"]');
 
   await t
@@ -78,7 +82,7 @@ test('should render organisation address with data from ORDAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const heading = Selector('h3[data-test-id="organisation-address-heading"]');
+  const heading = Selector('h2[data-test-id="organisation-address-heading"]');
   const addressTextLine1 = Selector('[data-test-id="organisation-address-1"]');
   const addressTextLine2 = Selector('[data-test-id="organisation-address-2"]');
   const addressTextLine3 = Selector('[data-test-id="organisation-address-3"]');

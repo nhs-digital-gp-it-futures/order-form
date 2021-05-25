@@ -11,8 +11,9 @@ describe('delete-order contextCreator', () => {
 
     it('should construct the backLinkHref', () => {
       const orderId = 'order-1';
-      const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const odsCode = '03F';
+      const context = getContext({ orderId, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -39,9 +40,10 @@ describe('delete-order contextCreator', () => {
 
     it('should return the no button', () => {
       const orderId = 'order-1';
-      const context = getContext({ orderId });
+      const odsCode = '03F';
+      const context = getContext({ orderId, odsCode });
       expect(context.noButtonText).toEqual(manifest.noButtonText);
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should return the yes button', () => {

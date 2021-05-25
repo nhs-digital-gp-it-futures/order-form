@@ -6,7 +6,7 @@ import { solutionsApiUrl as bapiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/select/associated-service';
 
 const mockAssociatedServices = [
   {
@@ -22,6 +22,9 @@ const selectedSupplierInSession = 'sup-1';
 const associatedServicesInSession = JSON.stringify(
   mockAssociatedServices,
 );
+const mockSessionOrderItemsState = JSON.stringify([
+  { catalogueItemId: 'associated-service-3', catalogueItemType: 'AdditionalService', catalogueItemName: 'Associated Service 3' },
+]);
 
 const mocks = () => {
   nock(bapiUrl)
@@ -37,9 +40,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.getRoute) {
     mocks();
     await setState(ClientFunction)(sessionKeys.selectedSupplier, selectedSupplierInSession);
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.associatedServices, associatedServicesInSession);
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
 };
 
@@ -73,7 +78,7 @@ test('should render associated-services select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/associated-services/associated-service for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/associated-services/associated-service for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -81,7 +86,7 @@ test('should link to /order/organisation/order-id/associated-services/associated
 
   await t
     .expect(await extractInnerText(goBackLink)).eql(content.backLinkText)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/associated-services');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/associated-services');
 });
 
 test('should render the title', async (t) => {
@@ -98,7 +103,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="associated-service-select-page-description"]');
+  const description = Selector('[data-test-id="associated-service-select-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -146,7 +151,7 @@ test('should render the error page if no associated services are found', async (
 
   await t
     .expect(await extractInnerText(backLink)).eql('Go back')
-    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/order-id/associated-services')
+    .expect(backLink.find('a').getAttribute('href')).ok('/organisation/odsCode/order/order-id/associated-services')
     .expect(await extractInnerText(errorTitle)).eql('No Associated Services found')
     .expect(await extractInnerText(errorDescription)).eql('There are no Associated Services offered by this supplier. Go back to the Associated Services dashboard and select continue to complete the section.');
 });
@@ -200,7 +205,7 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .expect(getLocation()).eql(`${pageUrl}#selectAssociatedService`);
 });
 
-test('should redirect to /organisation/order-id/associated-services/select/associated-service/price when an associated service is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/associated-services/select/associated-service/price when an associated service is selected', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -211,5 +216,5 @@ test('should redirect to /organisation/order-id/associated-services/select/assoc
   await t
     .click(firstAssociatedService)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service/price');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/select/associated-service/price');
 });

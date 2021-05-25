@@ -12,14 +12,14 @@ describe('additional-services order-item page', () => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation/order-1',
+      backLinkHref: '/organisation/odsCode/order/order-1',
     };
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 
@@ -61,7 +61,7 @@ describe('additional-services order-item page', () => {
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="order-item-page-description"]');
+      const description = $('[data-test-id="order-item-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -318,8 +318,8 @@ describe('additional-services order-item page', () => {
       const deleteOrderButton = $('[data-test-id="delete-button"]');
       expect(deleteOrderButton.length).toEqual(1);
       expect(deleteOrderButton.text().trim()).toEqual(commonManifest.deleteButton.text);
-      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--secondary')).toEqual(true);
-      expect(deleteOrderButton.find('a').hasClass('nhsuk-button--disabled')).toEqual(true);
+      expect(deleteOrderButton.find('span').hasClass('nhsuk-button--secondary')).toEqual(true);
+      expect(deleteOrderButton.find('span').hasClass('nhsuk-button--disabled')).toEqual(true);
     });
   }));
 

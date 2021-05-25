@@ -1,10 +1,15 @@
 {
+  "description": "Enter the quantity you think you'll need and over what period.",
   "questions": {
-    "deliveryDate": {
-      "id": "deliveryDate",
-      "type": "date",
-      "mainAdvice": "What is the planned delivery date?",
-      "additionalAdvice": "For example 14 01 2020"
+    "price": {
+      "id": "price",
+      "mainAdvice": "What price have you agreed? (£)",
+      "unit": "Unit description",
+      "expandableSection": {
+        "dataTestId": "view-section-price-id",
+        "title": "What price should I enter?",
+        "innerComponent": "You can change the list price if you’ve agreed a different rate with the supplier."
+      }
     },
     "quantity": {
       "id": "quantity",
@@ -12,10 +17,10 @@
       "rows": 3,
       "expandableSection": {
         "dataTestId": "view-section-quantity-id",
-        "title": "What amount should I enter?",
-        "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
+        "title": "What quantity should I enter?",
+        "innerComponent": "Enter the estimated quantity you think you'll need either per month or per year."
       }
-    }, 
+    },
     "selectEstimationPeriod": {
       "id": "selectEstimationPeriod",
       "type": "radio",
@@ -68,18 +73,68 @@
       }
     }
   },
+  "solutionTable": {
+    "columnInfo": [
+      {
+        "data": "Recipient name (ODS code)",
+        "width": "33%",
+        "classes": " nhsuk-u-padding-bottom-5 nhsuk-u-font-size-20"
+      },
+      {
+        "data": "Quantity per",
+        "width": "33%",
+        "classes": "nhsuk-u-padding-bottom-5 nhsuk-u-font-size-20"
+      },
+      {
+        "data": "Planned delivery date",
+        "width": "33%",
+        "classes": "nhsuk-u-padding-bottom-3 nhsuk-u-font-size-20",
+        "additionalAdvice": "For example 14 01 2020"
+      }
+    ],
+    "cellInfo": {
+      "recipient": {
+        "dataTestId": "recipient",
+        "classes": "nhsuk-u-padding-top-5"
+      },
+      "quantity": {
+        "question": {
+          "type": "input",
+          "id": "quantity"
+        },
+        "expandableSection": {
+          "dataTestId": "view-section-input-id-practice",
+          "title": "What quantity should I enter?",
+          "innerComponent": "Estimate the quantity you think you'll need either per month or per year."
+        },
+        "classes": "nhsuk-u-margin-top-5 nhsuk-input--width-10"
+      },
+      "deliveryDate": {
+        "question": {
+          "type": "date",
+          "id": "deliveryDate"
+        },
+        "expandableSection": {
+          "dataTestId": "view-section-input-id-date",
+          "title": "What date should I enter?",
+          "innerComponent": "Enter the planned delivery date you've agreed with the supplier. This is the day that each of the listed Service Recipients will start using this Catalogue Solution.<br><br>We've included the commencement date for this Call-off Agreement, but you can change it if you’ve agreed a different delivery date."
+        }
+      }
+    }
+  },
   "errorMessages": {
-    "QuantityRequired": "Enter an estimated quantity",
-    "QuantityMustBeANumber": "Estimated quantity must be a number",
-    "QuantityInvalid": "Estimated quantity must be a whole number",
-    "QuantityGreaterThanZero": "Estimated quantity must be greater than zero",
-    "QuantityLessThanMax": "Maximum quantity exceeded, enter a lower estimated quantity",
     "EstimationPeriodRequired": "Select an estimation period",
     "PriceRequired": "Enter a price",
     "PriceMustBeANumber": "Price must be a number",
     "PriceMoreThan4dp": "Price must be to a maximum of 4 decimal places",
     "PriceGreaterThanOrEqualToZero": "Price cannot be negative",
     "PriceLessThanMax": "Maximum price exceeded, enter a lower price",
+    "PriceGreaterThanListPrice": "You’ve entered a price that is more than the list price, enter a lower price",
+    "QuantityRequired": "Enter an estimated quantity",
+    "QuantityMustBeANumber": "Estimated quantity must be a number",
+    "QuantityInvalid": "Estimated quantity must be a whole number",
+    "QuantityGreaterThanZero": "Estimated quantity must be greater than zero",
+    "QuantityLessThanMax": "Maximum quantity exceeded, enter a lower estimated quantity",
     "DeliveryDateRequired": "Enter a planned delivery date",
     "DeliveryDateInvalid": "Enter a planned delivery date in a valid format",
     "DeliveryDateOutsideDeliveryWindow": "Planned delivery date must be within 42 months from the commencement date for this Call-off Agreement",

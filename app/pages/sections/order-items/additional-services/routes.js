@@ -4,24 +4,26 @@ import config from '../../../../config';
 import { withCatch, extractAccessToken } from '../../../../helpers/routes/routerHelper';
 import {
   getAdditionalServicesPageContext,
+  updateContext,
+  updateContextPost,
 } from './dashboard/controller';
 import { additionalServicesSelectRoutes } from './select/routes';
 import {
-  formatFormData,
-  getOrderItemContext,
-  getOrderItemErrorPageContext,
-} from './order-item/controller';
-import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
-import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
+  getOrderItemContext as getOrderItemRecipientsContext,
+  formatFormData, getOrderItemErrorContext, getPageData, setEstimationPeriod,
+} from '../catalogue-solutions/order-item/controller';
+import { validateOrderItemFormBulk } from '../../../../helpers/controllers/validateOrderItemFormBulk';
+import { getOrderItemPageDataBulk } from '../../../../helpers/routes/getOrderItemPageDataBulk';
+import { saveOrderItemBulk } from '../../../../helpers/controllers/saveOrderItemBulk';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
+import { transformApiValidationResponse } from '../../../../helpers/common/transformApiValidationResponse';
 
 const router = express.Router({ mergeParams: true });
 
 export const additionalServicesRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     const context = await getAdditionalServicesPageContext({
       req,
@@ -30,14 +32,28 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
       sessionManager,
       logger,
+      odsCode,
     });
 
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.selectedRecipients, value: undefined },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.recipients, value: undefined },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.catalogueItemExists, value: undefined },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.orderItems, value: context.orderItems },
+    );
+
     logger.info(`navigating to order ${orderId} additional-services dashboard page`);
-    return res.render('pages/sections/order-items/additional-services/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/additional-services/dashboard/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     await putOrderSection({
       orderId,
@@ -45,91 +61,133 @@ export const additionalServicesRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}`);
   }));
 
   router.use('/select', additionalServicesSelectRoutes(authProvider, addContext, sessionManager));
 
-  router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
+  router.get('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, catalogueItemId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
-    const pageData = await getOrderItemPageData({
+    const pageData = await getOrderItemPageDataBulk({
       req,
       sessionManager,
       accessToken,
       orderId,
-      orderItemId,
+      orderItemId: catalogueItemId,
+    });
+    const { selectedPrice } = pageData;
+    sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
+    const catalogueItemExists = sessionManager.getFromSession({
+      req, key: sessionKeys.catalogueItemExists,
     });
 
-    sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
-
-    const context = await getOrderItemContext({
+    const context = await getOrderItemRecipientsContext({
       orderId,
-      orderItemId,
+      orderItemId: catalogueItemId,
       orderItemType: 'AdditionalService',
-      itemName: pageData.itemName,
-      odsCode: pageData.serviceRecipientId,
-      serviceRecipientName: pageData.serviceRecipientName,
-      selectedPrice: pageData.selectedPrice,
+      solutionName: pageData.itemName,
+      selectedPrice,
       formData: pageData.formData,
+      recipients: pageData.recipients,
+      selectedRecipients: pageData.selectedRecipients || [],
+      odsCode,
+    });
+
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.selectedItemName, value: pageData.itemName },
+    );
+    sessionManager.saveToSession({
+      req,
+      key: sessionKeys.selectedRecipients,
+      value: pageData.selectedRecipients,
+    });
+
+    updateContext({
+      req,
+      selectedPrice,
+      context,
+      orderId,
+      catalogueItemId,
+      solutionName: pageData.itemName,
+      catalogueItemExists,
+      odsCode,
     });
 
     logger.info(`navigating to order ${orderId} additional-services order item page`);
-    return res.render('pages/sections/order-items/additional-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk',
+      addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
-  router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
-    const validationErrors = [];
-
+  router.post('/:catalogueItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
+    const { orderId, catalogueItemId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const pageData = sessionManager.getFromSession({ req, key: sessionKeys.orderItemPageData });
-
+    const pageData = getPageData(req, sessionManager);
     const formData = formatFormData({ formData: req.body });
-
-    const errors = validateOrderItemForm({
+    const { selectedPrice } = pageData;
+    const validationErrors = validateOrderItemFormBulk({
       orderItemType: 'AdditionalService',
       data: formData,
       selectedPrice: pageData.selectedPrice,
     });
-    validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
-      const apiResponse = await saveOrderItem({
+      const apiResponse = await saveOrderItemBulk({
         accessToken,
         orderId,
-        orderItemId,
+        orderItemId: catalogueItemId,
         orderItemType: 'AdditionalService',
         serviceRecipientId: pageData.serviceRecipientId,
         serviceRecipientName: pageData.serviceRecipientName,
         itemId: pageData.itemId,
         itemName: pageData.itemName,
         catalogueSolutionId: pageData.catalogueSolutionId,
-        selectedPrice: pageData.selectedPrice,
+        selectedPrice,
+        recipients: pageData.recipients,
+        selectedRecipients: pageData.selectedRecipients,
         formData,
       });
 
       if (apiResponse.success) {
         logger.info('Redirecting to the additional-services main page');
-        return res.redirect(`${config.baseUrl}/organisation/${orderId}/additional-services`);
+        sessionManager.saveToSession({ req, key: sessionKeys.solutions, value: undefined });
+        sessionManager.saveToSession({ req, key: sessionKeys.selectedItemId, value: undefined });
+        sessionManager.saveToSession({ req, key: sessionKeys.solutionPrices, value: undefined });
+        sessionManager.saveToSession({ req, key: sessionKeys.selectedPriceId, value: undefined });
+        sessionManager.saveToSession(
+          { req, key: sessionKeys.selectedRecipients, value: undefined },
+        );
+        sessionManager.saveToSession(
+          { req, key: sessionKeys.plannedDeliveryDate, value: undefined },
+        );
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`);
       }
-      validationErrors.push(...apiResponse.errors);
+
+      const apiErrors = transformApiValidationResponse(apiResponse.errors);
+      validationErrors.push(...apiErrors);
     }
 
-    const context = await getOrderItemErrorPageContext({
+    setEstimationPeriod(req, formData, sessionManager);
+
+    const context = await getOrderItemErrorContext({
       orderId,
-      orderItemId,
+      orderItemId: catalogueItemId,
       orderItemType: 'AdditionalService',
-      itemName: pageData.itemName,
-      serviceRecipientId: pageData.serviceRecipientId,
-      serviceRecipientName: pageData.serviceRecipientName,
-      selectedPrice: pageData.selectedPrice,
-      formData: req.body,
+      solutionName: pageData.itemName,
+      selectedPrice,
+      deliveryDate: pageData.deliveryDate,
+      recipients: pageData.recipients,
+      selectedRecipients: pageData.selectedRecipients,
+      formData,
       validationErrors,
     });
 
-    return res.render('pages/sections/order-items/additional-services/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    updateContextPost({
+      req, selectedPrice, context, orderId, solutionName: pageData.itemName, odsCode,
+    });
+
+    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   return router;

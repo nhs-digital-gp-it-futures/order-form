@@ -1,8 +1,11 @@
-import { getContext, getErrorContext } from './contextCreator';
+import { backLinkHref, getContext, getErrorContext } from './contextCreator';
 import commonManifest from './commonManifest.json';
 import { getSelectedPriceManifest } from '../../../../../helpers/controllers/manifestProvider';
 import { removeCommas } from '../../../../../helpers/common/priceFormatter';
 
+export const getBackLinkHref = (req, associatedServicePrices, orderId, odsCode) => backLinkHref({
+  req, associatedServicePrices, orderId, odsCode,
+});
 export const formatFormData = ({ formData }) => ({
   quantity: formData.quantity
     ? formData.quantity.trim() : undefined,
@@ -14,11 +17,12 @@ export const formatFormData = ({ formData }) => ({
 
 export const getOrderItemContext = async ({
   orderId,
-  orderItemId,
+  catalogueItemId,
   orderItemType,
   itemName,
   selectedPrice,
   formData,
+  odsCode,
 }) => {
   const selectedPriceManifest = getSelectedPriceManifest({
     orderItemType,
@@ -30,10 +34,11 @@ export const getOrderItemContext = async ({
     commonManifest,
     selectedPriceManifest,
     orderId,
-    orderItemId,
+    catalogueItemId,
     itemName,
     selectedPrice,
     formData,
+    odsCode,
   });
 };
 

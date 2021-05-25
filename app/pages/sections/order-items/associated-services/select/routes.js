@@ -22,15 +22,15 @@ const router = express.Router({ mergeParams: true });
 
 export const associatedServicesSelectRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/select/associated-service`);
+    const { orderId, odsCode } = req.params;
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/select/associated-service`);
   }));
 
   router.get(
     '/associated-service',
     authProvider.authorise({ claim: 'ordering' }),
     withCatch(logger, authProvider, async (req, res) => {
-      const { orderId } = req.params;
+      const { orderId, odsCode } = req.params;
       const accessToken = extractAccessToken({ req, tokenType: 'access' });
       const associatedServices = await findAssociatedServices({
         req,
@@ -45,7 +45,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
           title: 'No Associated Services found',
           description: 'There are no Associated Services offered by this supplier. Go back to the Associated Services dashboard and select continue to complete the section.',
           backLinkText: 'Go back',
-          backLinkHref: `${config.baseUrl}/organisation/${orderId}/associated-services`,
+          backLinkHref: `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services`,
         });
       }
 
@@ -60,15 +60,16 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         orderId,
         associatedServices,
         selectedAssociatedServiceId,
+        odsCode,
       });
 
       logger.info(`navigating to order ${orderId} associated-services select associated-service page`);
-      return res.render('pages/sections/order-items/associated-services/select/associated-service/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+      return res.render('pages/sections/order-items/associated-services/select/associated-service/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
     }),
   );
 
   router.post('/associated-service', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const response = validateAssociatedServicesForm({ data: req.body });
 
     if (response.success) {
@@ -80,6 +81,10 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         catalogueItemsKey: 'associatedServices',
       });
 
+      const orderItems = sessionManager.getFromSession({ req, key: sessionKeys.orderItems });
+      const existingItem = orderItems
+        .filter((orderItem) => orderItem.catalogueItemId === selectedItem.catalogueItemId);
+
       sessionManager.saveToSession({
         req, key: sessionKeys.selectedItemId, value: selectedItemId,
       });
@@ -87,8 +92,17 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedItemName, value: selectedItem.name,
       });
 
+      if (existingItem.length > 0 && existingItem[0].catalogueItemId) {
+        sessionManager.saveToSession({
+          req, key: sessionKeys.catalogueItemExists, value: existingItem,
+        });
+        return res.redirect(
+          `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/${existingItem[0].catalogueItemId}`,
+        );
+      }
+
       logger.info('redirecting to associated services select price page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/select/associated-service/price`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/select/associated-service/price`);
     }
 
     const associatedServices = sessionManager.getFromSession({
@@ -102,12 +116,12 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
 
     return res.render(
       'pages/sections/order-items/associated-services/select/associated-service/template.njk',
-      addContext({ context, user: req.user, csrfToken: req.csrfToken() }),
+      addContext({ context, req, csrfToken: req.csrfToken() }),
     );
   }));
 
   router.get('/associated-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const selectedPriceId = Number(sessionManager.getFromSession({
       req, key: sessionKeys.selectedPriceId,
@@ -129,19 +143,29 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
       req, key: sessionKeys.associatedServicePrices, value: associatedServicePrices,
     });
 
+    if (((associatedServicePrices || {}).prices || {}).length === 1) {
+      sessionManager.saveToSession({
+        req, key: sessionKeys.selectedPriceId, value: associatedServicePrices.prices[0].priceId,
+      });
+
+      logger.info('redirecting to additional services select recipients page');
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/neworderitem`);
+    }
+
     const context = getAssociatedServicePricePageContext({
       orderId,
       associatedServicePrices,
       selectedPriceId,
       selectedAssociatedServiceName,
+      odsCode,
     });
 
     logger.info(`navigating to order ${orderId} associated-services select price page`);
-    return res.render('pages/sections/order-items/associated-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/associated-services/select/price/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/associated-service/price', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     const response = validateAssociatedServicePriceForm({ data: req.body });
     if (response.success) {
@@ -149,7 +173,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
         req, key: sessionKeys.selectedPriceId, value: req.body.selectAssociatedServicePrice,
       });
       logger.info('Redirect to new associated service order item page');
-      return res.redirect(`${config.baseUrl}/organisation/${orderId}/associated-services/neworderitem`);
+      return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services/neworderitem`);
     }
 
     const selectedAssociatedServiceName = sessionManager.getFromSession({
@@ -165,7 +189,7 @@ export const associatedServicesSelectRoutes = (authProvider, addContext, session
       validationErrors: response.errors,
     });
 
-    return res.render('pages/sections/order-items/associated-services/select/price/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/associated-services/select/price/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   return router;

@@ -10,7 +10,8 @@
       error: {
         title: title,
         description: description,
-        stackTrace: stackTrace
+        stackTrace: stackTrace if isDevelopment else null,
+        data: data if isDevelopment else null
       }
     }) }}
 {% endblock %}

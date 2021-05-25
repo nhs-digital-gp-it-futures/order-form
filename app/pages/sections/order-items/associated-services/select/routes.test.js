@@ -1,17 +1,18 @@
 import request from 'supertest';
 import {
-  FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
   getCsrfTokenFromGet,
-  fakeSessionManager,
   ErrorContext,
 } from 'buying-catalogue-library';
-import { App } from '../../../../../app';
-import { routes } from '../../../../../routes';
+import {
+  mockUnauthorisedCookie,
+  mockAuthorisedCookie,
+  setUpFakeApp,
+} from '../../../../../test-utils/routesTestHelper';
 import { baseUrl } from '../../../../../config';
 import * as selectAssociatedServiceController from './associated-service/controller';
 import * as selectAssociatedServicePriceController from './price/controller';
@@ -23,35 +24,26 @@ jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/routes/findSelectedCatalogueItemInSession');
 jest.mock('../../../../../helpers/api/bapi/getCatalogueItemPricing');
 
-const mockLogoutMethod = jest.fn().mockResolvedValue({});
+const associatedServiceId = '10000-A-001';
+const associatedServices = [
+  {
+    associatedServiceId,
+    name: 'Associated Service 1',
+  }];
 
-const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113',
-  name: 'Cool Dude',
-  ordering: 'manage',
-  primaryOrganisationId: 'org-id',
-});
-const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
-
-const mockUnauthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
-});
-const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
-
-const setUpFakeApp = () => {
-  const authProvider = new FakeAuthProvider(mockLogoutMethod);
-  const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, fakeSessionManager()));
-  return app;
-};
+const mockSessionOrderItemsState = JSON.stringify([
+  { catalogueItemId: '10000-A-001', catalogueItemType: 'AssociatedService', catalogueItemName: 'Associated Service 1' },
+  { catalogueItemId: '10000-A-002', catalogueItemType: 'AssociatedService', catalogueItemName: 'Associated Service 2' },
+]);
+const mockOrderItemsCookie = `${sessionKeys.orderItems}=${mockSessionOrderItemsState}`;
 
 describe('associated-services select routes', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
 
-  describe('GET /organisation/:orderId/associated-services/select', () => {
-    const path = '/organisation/order-1/associated-services/select';
+  describe('GET /organisation/:odsCode/order/:orderId/associated-services/select', () => {
+    const path = '/organisation/odsCode/order/order-1/associated-services/select';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -76,12 +68,12 @@ describe('associated-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/associated-services/select/associated-service`);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/select/associated-service`);
     });
   });
 
-  describe('GET /organisation/:orderId/associated-services/select/associated-service', () => {
-    const path = '/organisation/some-order-id/associated-services/select/associated-service';
+  describe('GET /organisation/:odsCode/order/:orderId/associated-services/select/associated-service', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services/select/associated-service';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -132,8 +124,8 @@ describe('associated-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/associated-services/select/associated-service', () => {
-    const path = '/organisation/order-1/associated-services/select/associated-service';
+  describe('POST /organisation/:odsCode/order/:orderId/associated-services/select/associated-service', () => {
+    const path = '/organisation/odsCode/order/order-1/associated-services/select/associated-service';
 
     it('should return 403 forbidden if no csrf token is available', () => (
       testPostPathWithoutCsrf({
@@ -218,18 +210,11 @@ describe('associated-services select routes', () => {
       expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
     });
 
-    it('should redirect to /organisation/some-order-id/associated-services/select/associated-service/price if an associated service is selected', async () => {
-      const associatedServiceId = 'associated-service-1';
-      const associatedServices = [
-        {
-          associatedServiceId,
-          name: 'Associated Service 1',
-        }];
-
+    it('should redirect to /organisation/some-order-id/associated-services/catalogueItemId if an existing associated service is selected', async () => {
       selectAssociatedServiceController.findAssociatedServices = jest.fn()
         .mockResolvedValue(associatedServices);
 
-      findSelectedCatalogueItemInSession.mockReturnValue({ name: 'Associated Service 1', solution: { solutionId: 'solution-1' } });
+      findSelectedCatalogueItemInSession.mockReturnValue({ catalogueItemId: '10000-A-001', name: 'Associated Service 1', solution: { solutionId: 'solution-1' } });
       selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
         .mockResolvedValue({});
 
@@ -239,7 +224,7 @@ describe('associated-services select routes', () => {
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
-        getPathCookies: [mockAuthorisedCookie],
+        getPathCookies: [mockAuthorisedCookie, mockOrderItemsCookie],
       });
 
       const mockSelectedItemCookie = `${sessionKeys.selectedItemId}=${associatedServiceId}`;
@@ -248,7 +233,7 @@ describe('associated-services select routes', () => {
       const res = await request(setUpFakeApp())
         .post(path)
         .type('form')
-        .set('Cookie', [cookies, mockAuthorisedCookie, mockAssociatedServicesCookie, mockSelectedItemCookie])
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockAssociatedServicesCookie, mockSelectedItemCookie, mockOrderItemsCookie])
         .send({
           selectAssociatedService: associatedServiceId,
           _csrf: csrfToken,
@@ -256,12 +241,46 @@ describe('associated-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/associated-services/select/associated-service/price`);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/${associatedServiceId}`);
+    });
+
+    it('should redirect to /organisation/some-order-id/associated-services/select/associated-service/price if an associated service is selected', async () => {
+      selectAssociatedServiceController.findAssociatedServices = jest.fn()
+        .mockResolvedValue(associatedServices);
+
+      findSelectedCatalogueItemInSession.mockReturnValue({ catalogueItemId: '10000-A-003', name: 'Associated Service 3', solution: { solutionId: 'solution-1' } });
+      selectAssociatedServiceController.getAssociatedServicePageContext = jest.fn()
+        .mockResolvedValue({});
+
+      selectAssociatedServiceController.validateAssociatedServicesForm = jest.fn()
+        .mockReturnValue({ success: true });
+
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie, mockOrderItemsCookie],
+      });
+
+      const mockSelectedItemCookie = `${sessionKeys.selectedItemId}=${associatedServiceId}`;
+      const mockAssociatedServicesCookie = `${sessionKeys.associatedServices}=${JSON.stringify(associatedServices)}`;
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie, mockAssociatedServicesCookie, mockSelectedItemCookie, mockOrderItemsCookie])
+        .send({
+          selectAssociatedService: associatedServiceId,
+          _csrf: csrfToken,
+        })
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/select/associated-service/price`);
     });
   });
 
-  describe('GET /organisation/:orderId/associated-services/select/associated-service/price', () => {
-    const path = '/organisation/some-order-id/associated-services/select/associated-service/price';
+  describe('GET /organisation/:odsCode/order/:orderId/associated-services/select/associated-service/price', () => {
+    const path = '/organisation/odsCode/order/some-order-id/associated-services/select/associated-service/price';
 
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -295,8 +314,8 @@ describe('associated-services select routes', () => {
     });
   });
 
-  describe('POST /organisation/:orderId/associated-services/select/associated-service/price', () => {
-    const path = '/organisation/order-1/associated-services/select/associated-service/price';
+  describe('POST /organisation/:odsCode/order/:orderId/associated-services/select/associated-service/price', () => {
+    const path = '/organisation/odsCode/order/order-1/associated-services/select/associated-service/price';
     const prices = [
       {
         priceId: 1,
@@ -399,7 +418,7 @@ describe('associated-services select routes', () => {
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/associated-services/neworderitem`);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/neworderitem`);
     });
   });
 });

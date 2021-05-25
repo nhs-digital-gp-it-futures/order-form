@@ -3,6 +3,7 @@ import completeManifest from './complete/manifest.json';
 import { getContext } from './contextCreator';
 import { baseUrl } from '../../config';
 
+const odsCode = '03F';
 describe('order summary contextCreator', () => {
   describe('getContext', () => {
     const mockOrderData = { description: 'Some order description' };
@@ -11,20 +12,22 @@ describe('order summary contextCreator', () => {
     const mockEmptySupplierRow = { multiLine: { data: [''] }, dataTestId: 'supplier' };
 
     it('should return the backLinkText', () => {
-      const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
+      const context = getContext({ orderId: 'order-1', orderData: mockOrderData, odsCode });
       expect(context.backLinkText).toEqual(incompleteManifest.backLinkText);
     });
 
     it('should construct the backLinkHref for a complete order', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId, orderData: mockCompletedOrderData });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation`);
+      const context = getContext({
+        orderId, orderData: mockCompletedOrderData, odsCode,
+      });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}`);
     });
 
     it('should construct the backLinkHref for an incomplete order', () => {
       const orderId = 'order-id';
-      const context = getContext({ orderId, orderData: mockOrderData });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const context = getContext({ orderId, orderData: mockOrderData, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {
@@ -54,8 +57,8 @@ describe('order summary contextCreator', () => {
 
     it('should return the order summary button href', () => {
       const orderId = 'order-1';
-      const context = getContext({ orderId, orderData: mockOrderData });
-      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/${orderId}/summary?print=true`);
+      const context = getContext({ orderId, orderData: mockOrderData, odsCode });
+      expect(context.orderSummaryButtonHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/summary?print=true`);
     });
 
     it('should return the dateSummaryCreatedLabel', () => {
@@ -306,10 +309,10 @@ describe('order summary contextCreator', () => {
         .toEqual(incompleteManifest.oneOffCostTable.columnInfo);
     });
 
-    it('should return the oneOffCostTotalsTable colummInfo', () => {
+    it('should return the oneOffCostTableFooter colummInfo', () => {
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
-      expect(context.oneOffCostTotalsTable.columnInfo)
-        .toEqual(incompleteManifest.oneOffCostTotalsTable.columnInfo);
+      expect(context.oneOffCostTableFooter.columnInfo)
+        .toEqual(incompleteManifest.oneOffCostTableFooter.columnInfo);
     });
 
     it('should return the oneOff cost table with items when order items are provided', () => {
@@ -332,27 +335,24 @@ describe('order summary contextCreator', () => {
 
       const mockOneOffCosts = [{
         catalogueItemType: 'AssociatedService',
-        itemId: 'item-1',
         provisioningType: 'Declarative',
-        serviceRecipientsOdsCode: 'A10001',
         cataloguePriceType: 'Flat',
         catalogueItemName: 'Some item name',
         price: 585.00,
         itemUnitDescription: 'per Day',
-        quantity: 70,
         costPerYear: 40850.00,
+        serviceRecipients: [{
+          name: 'Some Recipient Name',
+          odsCode: 'A10001',
+          itemId: 'item-1',
+          quantity: 70,
+        }],
       }];
 
       const contextData = {
         orderId: 'order-1',
         orderData: mockOrderData,
         oneOffCostItems: mockOneOffCosts,
-        serviceRecipients: {
-          A10001: {
-            name: 'Some Recipient Name',
-            odsCode: 'A10001',
-          },
-        },
       };
 
       const context = getContext(contextData);
@@ -371,22 +371,22 @@ describe('order summary contextCreator', () => {
       expect(context.oneOffCostTable).toEqual(expectedContext.oneOffCostTable);
     });
 
-    it('should return the oneOffCostTotalsTable with items and the total cost value set to 0.00 when not provided', () => {
+    it('should return the oneOffCostTableFooter with items and the total cost value set to 0.00 when not provided', () => {
       const expectedContext = {
-        oneOffCostTotalsTable: {
-          ...incompleteManifest.oneOffCostTotalsTable,
+        oneOffCostTableFooter: {
+          ...incompleteManifest.oneOffCostTableFooter,
           items: [
             [
               {
-                data: incompleteManifest.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data,
+                data: incompleteManifest.oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.data,
                 classes: incompleteManifest
-                  .oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.classes,
+                  .oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.classes,
                 dataTestId: 'total-cost-label',
               },
               {
                 data: '0.00',
                 classes: incompleteManifest
-                  .oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.classes,
+                  .oneOffCostTableFooter.cellInfo.totalOneOffCostValue.classes,
                 dataTestId: 'total-cost-value',
               },
             ],
@@ -395,25 +395,25 @@ describe('order summary contextCreator', () => {
       };
 
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
-      expect(context.oneOffCostTotalsTable).toEqual(expectedContext.oneOffCostTotalsTable);
+      expect(context.oneOffCostTableFooter).toEqual(expectedContext.oneOffCostTableFooter);
     });
 
-    it('should return the oneOffCostTotalsTable with items and the total cost value when provided', () => {
+    it('should return the oneOffCostTableFooter with items and the total cost value when provided', () => {
       const expectedContext = {
-        oneOffCostTotalsTable: {
-          ...incompleteManifest.oneOffCostTotalsTable,
+        oneOffCostTableFooter: {
+          ...incompleteManifest.oneOffCostTableFooter,
           items: [
             [
               {
-                data: incompleteManifest.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data,
+                data: incompleteManifest.oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.data,
                 classes: incompleteManifest
-                  .oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.classes,
+                  .oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.classes,
                 dataTestId: 'total-cost-label',
               },
               {
                 data: '1,981.02',
                 classes: incompleteManifest
-                  .oneOffCostTotalsTable.cellInfo.totalOneOffCostValue.classes,
+                  .oneOffCostTableFooter.cellInfo.totalOneOffCostValue.classes,
                 dataTestId: 'total-cost-value',
               },
             ],
@@ -427,7 +427,7 @@ describe('order summary contextCreator', () => {
       };
 
       const context = getContext({ orderId: 'order-1', orderData: mockDataWithTotalOneOffCost });
-      expect(context.oneOffCostTotalsTable).toEqual(expectedContext.oneOffCostTotalsTable);
+      expect(context.oneOffCostTableFooter).toEqual(expectedContext.oneOffCostTableFooter);
     });
 
     it('should return the recurringCostTable colummInfo', () => {
@@ -448,9 +448,9 @@ describe('order summary contextCreator', () => {
               { classes, data: 'Some item name', dataTestId: 'item-name' },
               { classes, data: 'service-instance-id', dataTestId: 'service-instance-id' },
               { classes, data: '1.26 per patient per year', dataTestId: 'price-unit' },
-              { classes, data: '500 per month', dataTestId: 'quantity' },
+              { classes, data: '85 per month', dataTestId: 'quantity' },
               { classes, data: '24 February 2020', dataTestId: 'planned-date' },
-              { classes: `${classes} nhsuk-table__cell--numeric`, data: '5,000.00', dataTestId: 'item-cost' },
+              { classes: `${classes} nhsuk-table__cell--numeric`, data: '5,000.00', dataTestId: 'costPerYear' },
             ],
           ],
         },
@@ -458,31 +458,84 @@ describe('order summary contextCreator', () => {
 
       const mockRecurringCosts = [{
         catalogueItemType: 'Solution',
-        itemId: 'item-1',
         provisioningType: 'Declarative',
-        serviceRecipientsOdsCode: 'A10001',
         cataloguePriceType: 'Flat',
         catalogueItemName: 'Some item name',
-        serviceInstanceId: 'service-instance-id',
         price: 1.260,
         itemUnitDescription: 'per patient',
         timeUnitDescription: 'per year',
-        quantity: 500,
         quantityPeriodDescription: 'per month',
-        deliveryDate: '2020-02-24',
         costPerYear: 5000.000,
+        serviceRecipients: [
+          {
+            itemId: 'item-1',
+            deliveryDate: '2020-02-24',
+            name: 'Some Recipient Name',
+            odsCode: 'A10001',
+            quantity: 85,
+            serviceInstanceId: 'service-instance-id',
+            costPerYear: 5000,
+          },
+        ],
       }];
 
       const contextData = {
         orderId: 'order-1',
         orderData: mockOrderData,
         recurringCostItems: mockRecurringCosts,
-        serviceRecipients: {
-          A10001: {
+      };
+
+      const context = getContext(contextData);
+      expect(context.recurringCostTable).toEqual(expectedContext.recurringCostTable);
+    });
+
+    it('should return the recurring cost table where price unit should not have timeUnit description when OnDemand type order items are provided', () => {
+      const classes = 'nhsuk-u-font-size-14';
+      const expectedContext = {
+        recurringCostTable: {
+          ...incompleteManifest.recurringCostTable,
+          items: [
+            [
+              { classes, data: 'Some Recipient Name (A10001)', dataTestId: 'recipient-name' },
+              { classes, data: 'item-1', dataTestId: 'item-id' },
+              { classes, data: 'Some item name', dataTestId: 'item-name' },
+              { classes, data: 'service-instance-id', dataTestId: 'service-instance-id' },
+              { classes, data: '1.26 per consultation ', dataTestId: 'price-unit' },
+              { classes, data: '85 per month', dataTestId: 'quantity' },
+              { classes, data: '24 February 2020', dataTestId: 'planned-date' },
+              { classes: `${classes} nhsuk-table__cell--numeric`, data: '5,000.00', dataTestId: 'costPerYear' },
+            ],
+          ],
+        },
+      };
+
+      const mockRecurringCosts = [{
+        catalogueItemType: 'Solution',
+        provisioningType: 'OnDemand',
+        cataloguePriceType: 'Flat',
+        catalogueItemName: 'Some item name',
+        price: 1.260,
+        itemUnitDescription: 'per consultation',
+        timeUnitDescription: 'per year',
+        quantityPeriodDescription: 'per month',
+        costPerYear: 5000.000,
+        serviceRecipients: [
+          {
+            itemId: 'item-1',
+            deliveryDate: '2020-02-24',
             name: 'Some Recipient Name',
             odsCode: 'A10001',
+            quantity: 85,
+            serviceInstanceId: 'service-instance-id',
+            costPerYear: 5000,
           },
-        },
+        ],
+      }];
+
+      const contextData = {
+        orderId: 'order-1',
+        orderData: mockOrderData,
+        recurringCostItems: mockRecurringCosts,
       };
 
       const context = getContext(contextData);
@@ -503,7 +556,6 @@ describe('order summary contextCreator', () => {
 
     it('should throw an error when a service recipient cannot be found', () => {
       const mockRecurringCosts = [{
-        serviceRecipientsOdsCode: 'A10001',
       }];
 
       const contextData = {
@@ -516,24 +568,24 @@ describe('order summary contextCreator', () => {
       expect(() => getContext(contextData)).toThrow(Error);
     });
 
-    it('should return the recurringCostTotalsTable with items and the total costs set to 0.00 when not provided', () => {
+    it('should return the recurringCostTableFooter with items and the total costs set to 0.00 when not provided', () => {
       const expectedContext = {
-        recurringCostTotalsTable: {
-          ...incompleteManifest.recurringCostTotalsTable,
+        recurringCostTableFooter: {
+          ...incompleteManifest.recurringCostTableFooter,
           items: [
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostLabel.classes,
                 dataTestId: 'total-year-cost-label',
                 hideSeperator: true,
               },
               {
                 data: '0.00',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostValue.classes,
                 dataTestId: 'total-year-cost-value',
                 hideSeperator: true,
               },
@@ -541,31 +593,31 @@ describe('order summary contextCreator', () => {
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.classes,
                 dataTestId: 'total-monthly-cost-label',
               },
               {
                 data: '0.00',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostValue.classes,
                 dataTestId: 'total-monthly-cost-value',
               },
             ],
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.classes,
                 dataTestId: 'total-ownership-cost-label',
                 hideSeperator: true,
               },
               {
                 data: '0.00',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostValue.classes,
                 dataTestId: 'total-ownership-cost-value',
                 hideSeperator: true,
               },
@@ -573,9 +625,9 @@ describe('order summary contextCreator', () => {
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipTerms.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipTerms.classes,
                 dataTestId: 'total-ownership-terms',
                 hideSeperator: true,
               },
@@ -591,27 +643,27 @@ describe('order summary contextCreator', () => {
 
       const context = getContext({ orderId: 'order-1', orderData: mockOrderData });
 
-      expect(context.recurringCostTotalsTable).toEqual(expectedContext.recurringCostTotalsTable);
+      expect(context.recurringCostTableFooter).toEqual(expectedContext.recurringCostTableFooter);
     });
 
-    it('should return the recurringCostTotalsTable with items and the total cost value when provided', () => {
+    it('should return the recurringCostTableFooter with items and the total cost value when provided', () => {
       const expectedContext = {
-        recurringCostTotalsTable: {
-          ...incompleteManifest.recurringCostTotalsTable,
+        recurringCostTableFooter: {
+          ...incompleteManifest.recurringCostTableFooter,
           items: [
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostLabel.classes,
                 dataTestId: 'total-year-cost-label',
                 hideSeperator: true,
               },
               {
                 data: '1,981.03',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOneYearCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalOneYearCostValue.classes,
                 dataTestId: 'total-year-cost-value',
                 hideSeperator: true,
               },
@@ -619,31 +671,31 @@ describe('order summary contextCreator', () => {
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.classes,
                 dataTestId: 'total-monthly-cost-label',
               },
               {
                 data: '191.00',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalMonthlyCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalMonthlyCostValue.classes,
                 dataTestId: 'total-monthly-cost-value',
               },
             ],
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.classes,
                 dataTestId: 'total-ownership-cost-label',
                 hideSeperator: true,
               },
               {
                 data: '2,345.40',
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipCostValue.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipCostValue.classes,
                 dataTestId: 'total-ownership-cost-value',
                 hideSeperator: true,
               },
@@ -651,9 +703,9 @@ describe('order summary contextCreator', () => {
             [
               {
                 data: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipTerms.data,
                 classes: incompleteManifest
-                  .recurringCostTotalsTable.cellInfo.totalOwnershipTerms.classes,
+                  .recurringCostTableFooter.cellInfo.totalOwnershipTerms.classes,
                 dataTestId: 'total-ownership-terms',
                 hideSeperator: true,
               },
@@ -675,7 +727,7 @@ describe('order summary contextCreator', () => {
       };
 
       const context = getContext({ orderId: 'order-1', orderData: mockDataWithTotalRecurringCosts });
-      expect(context.recurringCostTotalsTable).toEqual(expectedContext.recurringCostTotalsTable);
+      expect(context.recurringCostTableFooter).toEqual(expectedContext.recurringCostTableFooter);
     });
   });
 });

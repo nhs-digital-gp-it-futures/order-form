@@ -9,19 +9,22 @@ import { catalogueSolutionsSelectRoutes } from './select/routes';
 import {
   formatFormData,
   getOrderItemContext,
-  getOrderItemErrorPageContext,
+  getOrderItemErrorContext,
+  getPageData,
+  setEstimationPeriod,
 } from './order-item/controller';
-import { validateOrderItemForm } from '../../../../helpers/controllers/validateOrderItemForm';
-import { getOrderItemPageData } from '../../../../helpers/routes/getOrderItemPageData';
-import { saveOrderItem } from '../../../../helpers/controllers/saveOrderItem';
+import { validateOrderItemFormBulk } from '../../../../helpers/controllers/validateOrderItemFormBulk';
+import { getOrderItemPageDataBulk } from '../../../../helpers/routes/getOrderItemPageDataBulk';
+import { saveOrderItemBulk } from '../../../../helpers/controllers/saveOrderItemBulk';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
+import { transformApiValidationResponse } from '../../../../helpers/common/transformApiValidationResponse';
 
 const router = express.Router({ mergeParams: true });
 
 export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     const context = await getCatalogueSolutionsPageContext({
       req,
@@ -29,14 +32,28 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
       sessionManager,
       logger,
+      odsCode,
     });
 
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.selectedRecipients, value: undefined },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.recipients, value: undefined },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.catalogueItemExists, value: undefined },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.orderItems, value: context.orderItems },
+    );
+
     logger.info(`navigating to order ${orderId} catalogue-solutions dashboard page`);
-    return res.render('pages/sections/order-items/catalogue-solutions/dashboard/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/dashboard/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     await putOrderSection({
       orderId,
@@ -44,16 +61,15 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}`);
   }));
 
   router.use('/select', catalogueSolutionsSelectRoutes(authProvider, addContext, sessionManager));
 
   router.get('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
+    const { orderId, orderItemId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-
-    const pageData = await getOrderItemPageData({
+    const pageData = await getOrderItemPageDataBulk({
       req,
       sessionManager,
       accessToken,
@@ -62,39 +78,50 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
     });
 
     sessionManager.saveToSession({ req, key: sessionKeys.orderItemPageData, value: pageData });
-
+    const catalogueItemExists = sessionManager.getFromSession({
+      req, key: sessionKeys.catalogueItemExists,
+    });
     const context = await getOrderItemContext({
       orderId,
       orderItemId,
       orderItemType: 'Solution',
       solutionName: pageData.itemName,
-      odsCode: pageData.serviceRecipientId,
-      serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,
       formData: pageData.formData,
+      deliveryDate: pageData.deliveryDate,
+      recipients: pageData.recipients,
+      selectedRecipients: pageData.selectedRecipients,
+      catalogueItemExists,
+      odsCode,
     });
 
+    if (context.questions.price && !context.questions.price.data) {
+      context.questions.price.data = ['0'];
+    }
+
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.selectedItemName, value: pageData.itemName },
+    );
+    sessionManager.saveToSession(
+      { req, key: sessionKeys.selectedRecipients, value: pageData.selectedRecipients },
+    );
     logger.info(`navigating to order ${orderId} catalogue-solutions order item page`);
-    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/:orderItemId', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId, orderItemId } = req.params;
-    const validationErrors = [];
-
+    const { orderId, orderItemId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
-    const pageData = sessionManager.getFromSession({ req, key: sessionKeys.orderItemPageData });
+    const pageData = getPageData(req, sessionManager);
     const formData = formatFormData({ formData: req.body });
-
-    const errors = validateOrderItemForm({
+    const validationErrors = validateOrderItemFormBulk({
       orderItemType: 'Solution',
       data: formData,
       selectedPrice: pageData.selectedPrice,
     });
-    validationErrors.push(...errors);
 
     if (validationErrors.length === 0) {
-      const apiResponse = await saveOrderItem({
+      const apiResponse = await saveOrderItemBulk({
         accessToken,
         orderId,
         orderItemId,
@@ -104,29 +131,47 @@ export const catalogueSolutionsRoutes = (authProvider, addContext, sessionManage
         itemId: pageData.itemId,
         itemName: pageData.itemName,
         selectedPrice: pageData.selectedPrice,
+        recipients: pageData.recipients,
+        selectedRecipients: pageData.selectedRecipients,
         formData,
       });
 
       if (apiResponse.success) {
         logger.info('redirecting catalogue solutions main page');
-        return res.redirect(`${config.baseUrl}/organisation/${orderId}/catalogue-solutions`);
+        sessionManager.saveToSession({ req, key: sessionKeys.solutions, value: undefined });
+        sessionManager.saveToSession({ req, key: sessionKeys.selectedItemId, value: undefined });
+        sessionManager.saveToSession({ req, key: sessionKeys.solutionPrices, value: undefined });
+        sessionManager.saveToSession({ req, key: sessionKeys.selectedPriceId, value: undefined });
+        sessionManager.saveToSession(
+          { req, key: sessionKeys.selectedRecipients, value: undefined },
+        );
+        sessionManager.saveToSession(
+          { req, key: sessionKeys.plannedDeliveryDate, value: undefined },
+        );
+        return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions`);
       }
-      validationErrors.push(...apiResponse.errors);
+
+      const apiErrors = transformApiValidationResponse(apiResponse.errors);
+      validationErrors.push(...apiErrors);
     }
 
-    const context = await getOrderItemErrorPageContext({
+    setEstimationPeriod(req, formData, sessionManager);
+
+    const context = await getOrderItemErrorContext({
       orderId,
       orderItemId,
       orderItemType: 'Solution',
       solutionName: pageData.itemName,
-      selectedRecipientId: pageData.serviceRecipientId,
-      serviceRecipientName: pageData.serviceRecipientName,
       selectedPrice: pageData.selectedPrice,
+      deliveryDate: pageData.deliveryDate,
+      recipients: pageData.recipients,
+      selectedRecipients: pageData.selectedRecipients,
       formData,
       validationErrors,
+      odsCode,
     });
 
-    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    return res.render('pages/sections/order-items/catalogue-solutions/order-item/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   return router;

@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/supplier/search';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/supplier/search';
 
 const mocks = (data) => {
   nock(orderApiUrl)
@@ -55,14 +55,14 @@ test('should render Supplier search page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -79,7 +79,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="supplier-search-page-description"]');
+  const description = Selector('[data-test-id="supplier-search-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -105,7 +105,7 @@ test('should render the Search button', async (t) => {
     .expect(await extractInnerText(searchButton)).eql(content.searchButtonText);
 });
 
-test('should redirect to /organisation/order-id/supplier/search/select when suppliers are returned', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/supplier/search/select when suppliers are returned', async (t) => {
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers?name=some-supp&solutionPublicationStatus=Published')
     .reply(200, [{}]);
@@ -119,7 +119,7 @@ test('should redirect to /organisation/order-id/supplier/search/select when supp
   await t
     .typeText(supplierNameInput.find('input'), 'some-supp')
     .click(searchButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier/search/select');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/supplier/search/select');
 });
 
 test('should render the error page if no suppliers are found', async (t) => {
@@ -142,7 +142,7 @@ test('should render the error page if no suppliers are found', async (t) => {
 
   await t
     .expect(await extractInnerText(backLink)).eql('Go back to search')
-    .expect(backLink.find('a').getAttribute('href')).ok('/order/organisation/order-id/supplier/search')
+    .expect(backLink.find('a').getAttribute('href')).ok('/order/organisation/odsCode/order/order-id/supplier/search')
     .expect(await extractInnerText(errorTitle)).eql('No supplier found')
     .expect(await extractInnerText(errorDescription)).eql("There are no suppliers that match the search terms you've provided. Try searching again.");
 });
@@ -198,10 +198,10 @@ test('should anchor to the field when clicking on the error link in errorSummary
     .expect(getLocation()).eql(`${pageUrl}#supplierName`);
 });
 
-test('should redirect to /organisation/order-id/supplier when ORDAPI returns order data', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/supplier when ORDAPI returns order data', async (t) => {
   await pageSetup({ ...defaultPageSetup, mockData: orderData });
   await t.navigateTo(pageUrl);
 
   await t
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/supplier');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/supplier');
 });

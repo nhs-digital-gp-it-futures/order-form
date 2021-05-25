@@ -9,7 +9,7 @@ const router = express.Router({ mergeParams: true });
 
 export const deleteOrderRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     const context = await getDeleteOrderContext({
@@ -17,19 +17,20 @@ export const deleteOrderRoutes = (authProvider, addContext, sessionManager) => {
       sessionManager,
       accessToken,
       logger,
+      odsCode,
     });
 
     logger.info(`navigating to order ${orderId} delete-order page`);
-    res.render('pages/delete-order/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/delete-order/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
 
     await deleteOrder({ orderId, accessToken });
 
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/delete-order/confirmation`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/delete-order/confirmation`);
   }));
 
   router.get('/confirmation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -44,7 +45,7 @@ export const deleteOrderRoutes = (authProvider, addContext, sessionManager) => {
     });
 
     logger.info(`navigating to order ${orderId} delete-order-confirmation page`);
-    res.render('pages/delete-order/delete-order-confirmation/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/delete-order/delete-order-confirmation/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   return router;

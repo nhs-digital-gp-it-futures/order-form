@@ -33,9 +33,29 @@ describe('order confirmation page', () => {
 
   it('should render the order confirmation page description', componentTester(setup, (harness) => {
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="order-confirmation-page-description"]');
+      const description = $('[data-test-id="order-confirmation-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
+    });
+  }));
+
+  it('should not render the complete order inset advice', componentTester(setup, (harness) => {
+    harness.request(context, ($) => {
+      const insetAdvice = $('[data-test-id="order-confirmation-page-inset-advice"]');
+      expect(insetAdvice.length).toEqual(0);
+    });
+  }));
+
+  it('should render the complete order inset advice', componentTester(setup, (harness) => {
+    const contextWithInsetAdvice = {
+      ...context,
+      insetAdvice: 'some inset advice',
+    };
+
+    harness.request(contextWithInsetAdvice, ($) => {
+      const insetAdvice = $('div[data-test-id="order-confirmation-page-inset-advice"]');
+      expect(insetAdvice.length).toEqual(1);
+      expect(insetAdvice.text().trim()).toContain(contextWithInsetAdvice.insetAdvice);
     });
   }));
 

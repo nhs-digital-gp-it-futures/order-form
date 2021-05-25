@@ -1,4 +1,4 @@
-import { baseUrl } from '../../../../../config';
+import config from '../../../../../config';
 import { generateErrorMap } from '../../../../../helpers/contextCreators/generateErrorMap';
 import { generateQuestions } from '../../../../../helpers/contextCreators/generateQuestions';
 import { generateErrorSummary } from '../../../../../helpers/contextCreators/generateErrorSummary';
@@ -8,7 +8,7 @@ export const getContext = ({
   commonManifest,
   selectedPriceManifest,
   orderId,
-  orderItemId,
+  catalogueItemId,
   itemName,
   serviceRecipientName,
   odsCode,
@@ -36,10 +36,11 @@ export const getContext = ({
   }),
   deleteButton: {
     ...commonManifest.deleteButton,
-    disabled: orderItemId === 'neworderitem',
+    disabled: catalogueItemId === 'neworderitem',
   },
-  backLinkHref: orderItemId === 'neworderitem' ? `${baseUrl}/organisation/${orderId}/additional-services/select/additional-service/price/recipient`
-    : `${baseUrl}/organisation/${orderId}/additional-services`,
+  backLinkHref: catalogueItemId === 'neworderitem'
+    ? `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/select/additional-service/price/recipients`
+    : `${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services`,
 });
 
 export const getErrorContext = (params) => {
@@ -52,7 +53,7 @@ export const getErrorContext = (params) => {
     commonManifest: params.commonManifest,
     selectedPriceManifest: params.selectedPriceManifest,
     orderId: params.orderId,
-    orderItemId: params.orderItemId,
+    catalogueItemId: params.catalogueItemId,
     itemName: params.itemName,
     serviceRecipientName: params.serviceRecipientName,
     odsCode: params.serviceRecipientId,

@@ -5,7 +5,7 @@ import content from '../withFundingManifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/complete-order/order-confirmation';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/complete-order/order-confirmation';
 
 const pageSetup = async (setup = { withAuth: true }) => {
   if (setup.withAuth) {
@@ -51,7 +51,7 @@ test('should render go back link with href /organisation', async (t) => {
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode');
 });
 
 test('should render the title', async (t) => {
@@ -68,26 +68,38 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="order-confirmation-page-description"]');
+  const description = Selector('[data-test-id="order-confirmation-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
-test('should not render the get order summary button', async (t) => {
+test('should render the get order summary button', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const orderSummaryButton = Selector('[data-test-id="order-confirmation-page-orderSummaryButton"]');
 
-  await t.expect(orderSummaryButton.exists).notOk();
+  await t
+    .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
 });
 
-test('should not render the order summary advice', async (t) => {
+test('should render the get order summary button link with href /order/organisation/odsCode/order/order-id/summary?print=true', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const advice = Selector('div[data-test-id="order-confirmation-page-orderSummaryAdvice"]');
+  const orderSummaryButton = Selector('[data-test-id="order-confirmation-page-orderSummaryButton"] a');
 
-  await t.expect(advice.exists).notOk();
+  await t
+    .expect(orderSummaryButton.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/summary?print=true');
+});
+
+test('should render the order summary advice', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+
+  await Promise.all(content.orderSummaryAdvice.map(async (advice, idx) => {
+    const selectedAdvice = Selector(`div[data-test-id="order-confirmation-page-orderSummaryAdvice"] p:nth-child(${idx + 1})`);
+    await t.expect(await extractInnerText(selectedAdvice)).eql(advice);
+  }));
 });

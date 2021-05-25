@@ -13,7 +13,7 @@ const router = express.Router({ mergeParams: true });
 
 export const completeOrderRoutes = (authProvider, addContext, sessionManager) => {
   router.get('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { odsCode, orderId } = req.params;
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const fundingSource = await getFundingSource({ orderId, accessToken });
     sessionManager.saveToSession({ req, key: sessionKeys.fundingSource, value: fundingSource });
@@ -24,31 +24,33 @@ export const completeOrderRoutes = (authProvider, addContext, sessionManager) =>
       logger,
     });
 
-    const context = await getCompleteOrderContext({ orderId, orderDescription, fundingSource });
+    const context = await getCompleteOrderContext({
+      orderId, orderDescription, fundingSource, odsCode,
+    });
 
     logger.info(`navigating to order ${orderId} complete-order page`);
-    res.render('pages/complete-order/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/complete-order/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId, odsCode } = req.params;
 
     await putOrderStatus({
       orderId,
       accessToken: extractAccessToken({ req, tokenType: 'access' }),
     });
 
-    return res.redirect(`${config.baseUrl}/organisation/${orderId}/complete-order/order-confirmation`);
+    return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/complete-order/order-confirmation`);
   }));
 
   router.get('/order-confirmation', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
-    const { orderId } = req.params;
+    const { odsCode, orderId } = req.params;
     const fundingSource = sessionManager.getFromSession({ req, key: sessionKeys.fundingSource });
 
-    const context = await getOrderConfirmationContext({ orderId, fundingSource });
+    const context = await getOrderConfirmationContext({ orderId, fundingSource, odsCode });
 
     logger.info(`navigating to order ${orderId} order-confirmation page`);
-    res.render('pages/complete-order/order-confirmation/template.njk', addContext({ context, user: req.user, csrfToken: req.csrfToken() }));
+    res.render('pages/complete-order/order-confirmation/template.njk', addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   return router;

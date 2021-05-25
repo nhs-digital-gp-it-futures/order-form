@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/description';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/description';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -65,7 +65,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="description-page-description"]');
+  const description = Selector('label[data-test-id="description-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);

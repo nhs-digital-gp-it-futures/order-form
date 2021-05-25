@@ -3,10 +3,10 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
-import { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
+import { solutionsApiUrl, organisationApiUrl } from '../../../../../../../config';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price';
 
 const selectedItemNameInSession = 'Solution One';
 const selectedItemIdInSession = 'solution-1';
@@ -65,6 +65,25 @@ const mockSolutionPricing = {
   ],
 };
 
+const mockSinglePriceSolution = {
+  prices: [
+    {
+      priceId: 1,
+      type: 'flat',
+      currencyCode: 'GBP',
+      itemUnit: {
+        name: 'patient',
+        description: 'per patient',
+      },
+      timeUnit: {
+        name: 'year',
+        description: 'per year',
+      },
+      price: 1.64,
+    },
+  ],
+};
+
 const solutionPricesInSession = JSON.stringify(
   mockSolutionPricing,
 );
@@ -76,13 +95,16 @@ const mocks = () => {
     .reply(200, mockSolutionPricing);
 };
 
-const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const defaultPageSetup = {
+  withAuth: true, getRoute: true, postRoute: false, withMocks: true,
+};
+
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
   if (setup.getRoute) {
-    mocks();
+    if (setup.withMocks) mocks();
     await setState(ClientFunction)(sessionKeys.selectedItemName, selectedItemNameInSession);
     await setState(ClientFunction)(sessionKeys.selectedItemId, selectedItemIdInSession);
   }
@@ -121,17 +143,18 @@ test('should render Catalogue-solutions price page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /organisation/order-id/catalogue-solutions/select/solution for backlink', async (t) => {
+test('should link to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution');
+    .expect(goBackLink.getAttribute('href'))
+    .eql('/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution');
 });
 
-test('should link to /organisation/order-id/catalogue-solutions/select/solution for backlink with validation errors', async (t) => {
+test('should link to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution for backlink with validation errors', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -145,7 +168,7 @@ test('should link to /organisation/order-id/catalogue-solutions/select/solution 
 
   await t
     .expect(errorSummary.exists).ok()
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions/select/solution');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution');
 });
 
 test('should render the title', async (t) => {
@@ -162,7 +185,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="solution-price-page-description"]');
+  const description = Selector('p[data-test-id="solution-price-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -213,10 +236,10 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price/recipient when a price is selected', async (t) => {
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/service-recipients')
-    .reply(200, {});
+test('should redirect to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients when a price is selected', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id/service-recipients')
+    .reply(200, []);
 
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
@@ -228,7 +251,23 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
   await t
     .click(firstSolution)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price/recipient');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients');
+});
+
+test('should redirect to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients if only one price returned', async (t) => {
+  nock(solutionsApiUrl)
+    .get('/api/v1/prices?catalogueItemId=solution-1')
+    .reply(200, mockSinglePriceSolution);
+
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id/service-recipients')
+    .reply(200, []);
+
+  await pageSetup({ ...defaultPageSetup, withMocks: false });
+  await t.navigateTo(pageUrl);
+
+  await t
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients');
 });
 
 test('should show the error summary when no price selected causing validation error', async (t) => {

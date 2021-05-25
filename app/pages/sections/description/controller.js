@@ -6,6 +6,7 @@ import { putDescription } from '../../../helpers/api/ordapi/putDescription';
 
 export const getDescriptionContext = async ({
   req,
+  odsCode,
   orderId,
   accessToken,
   sessionManager,
@@ -21,7 +22,7 @@ export const getDescriptionContext = async ({
     });
   }
 
-  return getContext({ orderId, description: descriptionData || '' });
+  return getContext({ odsCode, orderId, description: descriptionData || '' });
 };
 
 export const getDescriptionErrorContext = async (params) => getErrorContext(params);

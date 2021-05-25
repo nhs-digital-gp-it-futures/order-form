@@ -2,12 +2,12 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 import { formatDate } from '../../helpers/common/dateFormatter';
 
-const generateIncompletedOrdersTable = (incompletedOrders, incompleteOrdersTable) => {
+const generateIncompletedOrdersTable = (incompletedOrders, incompleteOrdersTable, odsCode) => {
   const items = incompletedOrders.map((order) => {
     const columns = [
       {
         data: order.orderId,
-        href: `${baseUrl}/organisation/${order.orderId}`,
+        href: `${baseUrl}/organisation/${odsCode}/order/${order.orderId}`,
         dataTestId: `${order.orderId}-id`,
         classes: incompleteOrdersTable.cellInfo.orderId.classes,
       },
@@ -42,12 +42,12 @@ const generateIncompletedOrdersTable = (incompletedOrders, incompleteOrdersTable
   };
 };
 
-const generateCompletedOrdersTable = (completedOrders, completeOrdersTable) => {
+const generateCompletedOrdersTable = (completedOrders, completeOrdersTable, odsCode) => {
   const items = completedOrders.map((order) => {
     const columns = [
       {
         data: order.orderId,
-        href: `${baseUrl}/organisation/${order.orderId}/summary`,
+        href: `${baseUrl}/organisation/${odsCode}/order/${order.orderId}/summary`,
         dataTestId: `${order.orderId}-id`,
         classes: completeOrdersTable.cellInfo.orderId.classes,
       },
@@ -87,15 +87,26 @@ const generateCompletedOrdersTable = (completedOrders, completeOrdersTable) => {
   };
 };
 
-export const getContext = ({ orgName, completedOrders = [], incompletedOrders = [] }) => ({
+export const getContext = ({
+  orgName,
+  completedOrders = [],
+  incompletedOrders = [],
+  userIsProxy = false,
+  odsCode,
+  mainOrgOdsCode,
+}) => ({
+
   ...manifest,
-  title: `${orgName} orders`,
-  newOrderButtonHref: `${baseUrl}/organisation/neworder`,
+  title: orgName,
+  newOrderButtonHref: `${baseUrl}/organisation/${odsCode}/order/neworder`,
   proxyLinkHref: '#',
   completeOrders: generateCompletedOrdersTable(
-    completedOrders, manifest.completeOrdersTable,
+    completedOrders, manifest.completeOrdersTable, odsCode,
   ),
   incompleteOrders: generateIncompletedOrdersTable(
-    incompletedOrders, manifest.incompleteOrdersTable,
+    incompletedOrders, manifest.incompleteOrdersTable, odsCode,
   ),
+  changeOrganisationHref: `${baseUrl}/organisation/${mainOrgOdsCode}/select/${odsCode}`,
+  userIsProxy,
+  odsCode,
 });

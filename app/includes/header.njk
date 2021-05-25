@@ -1,5 +1,4 @@
 {% from 'components/bc-header/macro.njk' import bcHeader %}
-{% from 'components/panel/macro.njk' import panel %}
 {% from 'components/login-logout/macro.njk' import loginLogout %}
 
 {{ bcHeader({
@@ -17,5 +16,10 @@
     ariaLabel: "Buying Catalogue Homepage"
   },
   showBetaBanner: true,
-  termsHref: config.feedbackLinkUrl
+  termsHref: config.feedbackLinkUrl,
+  cookiePrivacy: {
+      showBanner: showCookieBanner,
+      href: "/privacy-policy",
+      dismissHref: "/order/dismiss-cookie-banner"
+    }
 }) }}

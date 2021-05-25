@@ -20,28 +20,64 @@ describe('getOrder', () => {
     catalogueItemName: 'Apple training',
     provisioningType: 'Declarative',
     itemId: 'one-off-1',
-    serviceRecipientsOdsCode: 'recipient1',
+    serviceRecipients: [
+      {
+        itemId: 'C010008-01-12C-2',
+        serviceInstanceId: 'ServiceInstanceId',
+        deliveryDate: '2021-12-30T00:00:00',
+        name: 'NHS Leeds CCG',
+        odsCode: '12C',
+        quantity: 25,
+      },
+    ],
   };
   const oneOffCostItem2 = {
     catalogueItemType: 'AssociatedService',
     catalogueItemName: 'Banana training',
     provisioningType: 'Declarative',
     itemId: 'one-off-2',
-    serviceRecipientsOdsCode: 'recipient1',
+    serviceRecipients: [
+      {
+        itemId: 'C010008-01-00C-1',
+        serviceInstanceId: 'ServiceInstanceId',
+        deliveryDate: '2021-12-30T00:00:00',
+        name: 'NHS Northumbria CCG',
+        odsCode: '00C',
+        quantity: 250,
+      },
+    ],
   };
   const recipient1recurringCostItem1 = {
     catalogueItemType: 'AssociatedService',
     catalogueItemName: 'Apple annual training',
     provisioningType: 'OnDemand',
     itemId: 'recurring-2',
-    serviceRecipientsOdsCode: 'recipient1',
+    serviceRecipients: [
+      {
+        itemId: 'C010008-01-00C-1',
+        serviceInstanceId: 'ServiceInstanceId',
+        deliveryDate: '2021-12-30T00:00:00',
+        name: 'NHS Northumbria CCG',
+        odsCode: '00C',
+        quantity: 250,
+      },
+    ],
   };
   const recipient2recurringCostItem1 = {
     catalogueItemType: 'Solution',
     catalogueItemName: 'Cat solution',
     provisioningType: 'OnDemand',
     itemId: 'recurring-1',
-    serviceRecipientsOdsCode: 'recipient2',
+    serviceRecipients: [
+      {
+        itemId: 'C010008-01-12C-2',
+        serviceInstanceId: 'ServiceInstanceId',
+        deliveryDate: '2021-12-30T00:00:00',
+        name: 'NHS Leeds CCG',
+        odsCode: '12C',
+        quantity: 25,
+      },
+    ],
   };
 
   const recipient1 = {
@@ -133,39 +169,6 @@ describe('getOrder', () => {
       const expectServiceRecipients = {};
 
       getData.mockResolvedValueOnce({ serviceRecipients: undefined });
-
-      const { serviceRecipients } = await getOrder({ orderId, accessToken });
-
-      expect(serviceRecipients).toEqual(expectServiceRecipients);
-    });
-
-    it('should return a single recipient provided as a dict', async () => {
-      const expectServiceRecipients = {
-        [recipient1.odsCode]: recipient1,
-      };
-
-      getData.mockResolvedValueOnce({
-        orderItems: [oneOffCostItem1], serviceRecipients: [recipient1],
-      });
-
-      const { serviceRecipients } = await getOrder({ orderId, accessToken });
-
-      expect(serviceRecipients).toEqual(expectServiceRecipients);
-    });
-
-    it('should return a mutliple recipient provided as a dict', async () => {
-      const expectServiceRecipients = {
-        [recipient1.odsCode]: recipient1,
-        [recipient2.odsCode]: recipient2,
-      };
-
-      getData.mockResolvedValueOnce({
-        orderItems: [
-          recipient2recurringCostItem1,
-          recipient1recurringCostItem1,
-        ],
-        serviceRecipients: [recipient2, recipient1],
-      });
 
       const { serviceRecipients } = await getOrder({ orderId, accessToken });
 

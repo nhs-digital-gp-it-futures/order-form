@@ -12,14 +12,14 @@ describe('Catalogue-solutions - Dashboard page', () => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation/order-1',
+      backLinkHref: '/organisation/odsCode/order/order-1',
     };
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 
@@ -41,7 +41,7 @@ describe('Catalogue-solutions - Dashboard page', () => {
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="catalogue-solutions-page-description"]');
+      const description = $('p[data-test-id="catalogue-solutions-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -66,8 +66,8 @@ describe('Catalogue-solutions - Dashboard page', () => {
     };
 
     harness.request(context, ($) => {
-      const orderDescriptionHeading = $('h3[data-test-id="order-description-heading"]');
-      const orderDescription = $('h4[data-test-id="order-description"]');
+      const orderDescriptionHeading = $('h2[data-test-id="order-description-heading"]');
+      const orderDescription = $('p[data-test-id="order-description"]');
 
       expect(orderDescriptionHeading.length).toEqual(1);
       expect(orderDescriptionHeading.text().trim()).toContain(context.orderDescriptionHeading);
@@ -110,11 +110,21 @@ describe('Catalogue-solutions - Dashboard page', () => {
   }));
 
   describe('Added Order Items table', () => {
+    const solutionOne = 'Solution One';
+    const hrefOne = '/orderItem1';
+    const solutionTwo = 'Solution Two';
+    const hrefTwo = '/orderItem2';
+    const unitOfOrder = 'per patient per year';
+    const multipleServiceRecipients = 'Recipient One (recipient-1)<br><br>Recipient Two (recipient-2)';
+    const singleServiceRecipient = 'Recipient Three (recipient-3)';
     const context = {
       addedOrderItemsTable: {
         columnInfo: [
           {
             data: 'Catalogue Solution',
+          },
+          {
+            data: 'Unit of order',
           },
           {
             data: 'Service Recipient (ODS code)',
@@ -123,24 +133,38 @@ describe('Catalogue-solutions - Dashboard page', () => {
         items: [
           [
             {
-              data: 'Solution One',
-              href: '/orderItem1',
+              data: solutionOne,
+              href: hrefOne,
               dataTestId: 'orderItem1-catalogueItemName',
             },
             {
-              data: 'Recipient One (recipient-1)',
-              dataTestId: 'orderItem1-serviceRecipient',
+              data: unitOfOrder,
+              dataTestId: 'orderItem1-unitOfOrder',
+            },
+            {
+              expandableSection: {
+                dataTestId: 'orderItem1-serviceRecipients',
+                title: 'Service recipients (ODS code)',
+                innerComponent: multipleServiceRecipients,
+              },
             },
           ],
           [
             {
-              data: 'Solution Two',
-              href: '/orderItem2',
+              data: solutionTwo,
+              href: hrefTwo,
               dataTestId: 'orderItem2-catalogueItemName',
             },
             {
-              data: 'Recipient Two (recipient-2)',
-              dataTestId: 'orderItem2-serviceRecipient',
+              data: unitOfOrder,
+              dataTestId: 'orderItem2-unitOfOrder',
+            },
+            {
+              expandableSection: {
+                dataTestId: 'orderItem2-serviceRecipients',
+                title: 'Service recipients (ODS code)',
+                innerComponent: singleServiceRecipient,
+              },
             },
           ],
         ],
@@ -152,7 +176,8 @@ describe('Catalogue-solutions - Dashboard page', () => {
         const table = $('div[data-test-id="added-orderItems"]');
         expect(table.length).toEqual(1);
         expect(table.find('[data-test-id="column-heading-0"]').text().trim()).toEqual('Catalogue Solution');
-        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Service Recipient (ODS code)');
+        expect(table.find('[data-test-id="column-heading-1"]').text().trim()).toEqual('Unit of order');
+        expect(table.find('[data-test-id="column-heading-2"]').text().trim()).toEqual('Service Recipient (ODS code)');
       });
     }));
 
@@ -161,24 +186,30 @@ describe('Catalogue-solutions - Dashboard page', () => {
         const table = $('div[data-test-id="added-orderItems"]');
         const row1 = table.find('[data-test-id="table-row-0"]');
         const row1catalogueItemName = row1.find('a[data-test-id="orderItem1-catalogueItemName"]');
-        const row1serviceRecipient = row1.find('div[data-test-id="orderItem1-serviceRecipient"]');
+        const row1unitOfOrder = row1.find('div[data-test-id="orderItem1-unitOfOrder"]');
+        const row1serviceRecipients = row1.find('div[data-test-id="orderItem1-serviceRecipients"]');
         const row2 = table.find('[data-test-id="table-row-1"]');
         const row2catalogueItemName = row2.find('a[data-test-id="orderItem2-catalogueItemName"]');
-        const row2serviceRecipient = row2.find('div[data-test-id="orderItem2-serviceRecipient"]');
+        const row2unitOfOrder = row2.find('div[data-test-id="orderItem2-unitOfOrder"]');
+        const row2serviceRecipients = row2.find('div[data-test-id="orderItem2-serviceRecipients"]');
 
         expect(row1.length).toEqual(1);
         expect(row1catalogueItemName.length).toEqual(1);
-        expect(row1catalogueItemName.text().trim()).toEqual('Solution One');
-        expect(row1catalogueItemName.attr('href')).toEqual('/orderItem1');
-        expect(row1serviceRecipient.length).toEqual(1);
-        expect(row1serviceRecipient.text().trim()).toEqual('Recipient One (recipient-1)');
+        expect(row1catalogueItemName.text().trim()).toEqual(solutionOne);
+        expect(row1catalogueItemName.attr('href')).toEqual(hrefOne);
+        expect(row1unitOfOrder.length).toEqual(1);
+        expect(row1unitOfOrder.text().trim()).toEqual(unitOfOrder);
+        expect(row1serviceRecipients.length).toEqual(1);
+        expect(row1serviceRecipients.text().trim()).toContain('Recipient One (recipient-1)Recipient Two (recipient-2)');
 
         expect(row2.length).toEqual(1);
         expect(row2catalogueItemName.length).toEqual(1);
-        expect(row2catalogueItemName.text().trim()).toEqual('Solution Two');
-        expect(row2catalogueItemName.attr('href')).toEqual('/orderItem2');
-        expect(row2serviceRecipient.length).toEqual(1);
-        expect(row2serviceRecipient.text().trim()).toEqual('Recipient Two (recipient-2)');
+        expect(row2catalogueItemName.text().trim()).toEqual(solutionTwo);
+        expect(row2catalogueItemName.attr('href')).toEqual(hrefTwo);
+        expect(row2unitOfOrder.length).toEqual(1);
+        expect(row2unitOfOrder.text().trim()).toEqual(unitOfOrder);
+        expect(row2serviceRecipients.length).toEqual(1);
+        expect(row2serviceRecipients.text().trim()).toContain(singleServiceRecipient);
       });
     }));
   });

@@ -2,11 +2,11 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl, solutionsApiUrl } from '../../../../../../../config';
+import { organisationApiUrl, solutionsApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/select/additional-service/price';
 
 const selectedItemNameInSession = 'Additional Service Name';
 const selectedItemIdInSession = 'additional-service-1';
@@ -120,14 +120,14 @@ test('should render Additional-services price page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/additional-services/select/additional-service for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/additional-services/select/additional-service for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/additional-services/select/additional-service');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/additional-services/select/additional-service');
 });
 
 test('should render the title', async (t) => {
@@ -144,7 +144,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="additional-service-price-page-description"]');
+  const description = Selector('[data-test-id="additional-service-price-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -195,12 +195,11 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/additional-services/select/additional-service/price/recipient when a price is selected', async (t) => {
-  nock(orderApiUrl)
-    .get('/api/v1/orders/order-id/sections/service-recipients')
+test('should redirect to /organisation/odsCode/order/order-id/additional-services/select/additional-service/price/recipient when a price is selected', async (t) => {
+  nock(organisationApiUrl)
+    .get('/api/v1/Organisations/org-id/service-recipients')
     .reply(200, {});
-
-  await pageSetup();
+  await pageSetup({ withAuth: true, getRoute: true, postRoute: true });
   await t.navigateTo(pageUrl);
 
   const selectAdditionalServiceRadioOptions = Selector('[data-test-id="question-selectAdditionalServicePrice"]');
@@ -208,10 +207,9 @@ test('should redirect to /organisation/order-id/additional-services/select/addit
   const button = Selector('[data-test-id="continue-button"] button');
 
   await t
-
     .click(firstAdditionalService)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/additional-services/select/additional-service/price/recipient');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/select/additional-service/price/recipients');
 });
 
 test('should render the title on validation error', async (t) => {

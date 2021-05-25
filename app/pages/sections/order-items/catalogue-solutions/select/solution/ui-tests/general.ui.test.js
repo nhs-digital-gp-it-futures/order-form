@@ -6,21 +6,23 @@ import { solutionsApiUrl, orderApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution';
 
-const selectedItemIdInSession = 'solution-2';
+const selectedItemIdInSession = 'solution-B';
 const mockSolutions = [
   {
-    catalogueItemId: 'solution-1',
-    name: 'Solution 1',
+    catalogueItemId: 'solution-B',
+    name: 'B - Solution B',
   },
   {
-    catalogueItemId: 'solution-2',
-    name: 'Solution 2',
+    catalogueItemId: 'solution-A',
+    name: 'A - Solution A',
   },
 ];
 const solutionsInSession = JSON.stringify(mockSolutions);
-
+const mockSessionOrderItemsState = JSON.stringify([
+  { catalogueItemId: 'solution-A', catalogueItemType: 'Solution', catalogueItemName: 'A - Solution A' },
+]);
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
@@ -37,9 +39,11 @@ const pageSetup = async (setup = defaultPageSetup) => {
   }
   if (setup.getRoute) {
     mocks();
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
   if (setup.postRoute) {
     await setState(ClientFunction)(sessionKeys.solutions, solutionsInSession);
+    await setState(ClientFunction)(sessionKeys.orderItems, mockSessionOrderItemsState);
   }
 };
 
@@ -73,17 +77,17 @@ test('should render Catalogue-solutions select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /organisation/order-id/catalogue-solutions for backlink', async (t) => {
+test('should link to /organisation/odsCode/order/order-id/catalogue-solutions for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions');
 });
 
-test('should link to /organisation/order-id/catalogue-solutions for backlink with validation errors', async (t) => {
+test('should link to /organisation/odsCode/order/order-id/catalogue-solutions for backlink with validation errors', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -97,7 +101,7 @@ test('should link to /organisation/order-id/catalogue-solutions for backlink wit
 
   await t
     .expect(errorSummary.exists).ok()
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/catalogue-solutions');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/catalogue-solutions');
 });
 
 test('should render the title', async (t) => {
@@ -114,13 +118,13 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="solution-select-page-description"]');
+  const description = Selector('p[data-test-id="solution-select-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
 });
 
-test('should render a selectSolution question as radio button options', async (t) => {
+test('should render a selectSolution question as radio button options in alphabetical order', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -131,11 +135,11 @@ test('should render a selectSolution question as radio button options', async (t
     .expect(await extractInnerText(selectSolutionRadioOptions.find('legend'))).eql(content.questions[0].mainAdvice)
     .expect(selectSolutionRadioOptions.find('input').count).eql(2)
 
-    .expect(selectSolutionRadioOptions.find('input').nth(0).getAttribute('value')).eql('solution-1')
-    .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(0))).eql('Solution 1')
+    .expect(selectSolutionRadioOptions.find('input').nth(0).getAttribute('value')).eql('solution-A')
+    .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(0))).eql('A - Solution A')
 
-    .expect(selectSolutionRadioOptions.find('input').nth(1).getAttribute('value')).eql('solution-2')
-    .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(1))).eql('Solution 2');
+    .expect(selectSolutionRadioOptions.find('input').nth(1).getAttribute('value')).eql('solution-B')
+    .expect(await extractInnerText(selectSolutionRadioOptions.find('label').nth(1))).eql('B - Solution B');
 });
 
 test('should render the radioButton as checked for the selectedItemId', async (t) => {
@@ -162,7 +166,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/catalogue-solutions/select/solution/price when a solution is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/catalogue-solutions/solution-A when a existing solution is selected', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -173,9 +177,22 @@ test('should redirect to /organisation/order-id/catalogue-solutions/select/solut
   await t
     .click(firstSolution)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/catalogue-solutions/select/solution/price');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/solution-A');
 });
 
+test('should redirect to /organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price when new solution is selected', async (t) => {
+  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await t.navigateTo(pageUrl);
+
+  const selectSolutionRadioOptions = Selector('[data-test-id="question-selectSolution"]');
+  const selectedSolution = selectSolutionRadioOptions.find('input').nth(1);
+  const button = Selector('[data-test-id="continue-button"] button');
+
+  await t
+    .click(selectedSolution)
+    .click(button)
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price');
+});
 test('should show the error summary when no solution selected causing validation error', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);

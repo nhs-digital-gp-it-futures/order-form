@@ -1,0 +1,53 @@
+{% extends 'includes/layout.njk' %}
+{% from 'components/back-link/macro.njk' import backLink %}
+{% from 'components/bc-button/macro.njk' import bcButton %}
+{% from 'components/inset-text/macro.njk' import insetText %}
+{% from 'components/checkboxes/macro.njk' import checkboxes %}
+{% from 'components/bc-error-wrapper/macro.njk' import bcErrorWrapper %}
+{% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
+{% from 'components/date-field/macro.njk' import dateField %}
+{% from 'components/view/components/view-expandable-section/macro.njk' import viewExpandableSection %}
+
+{% block body %}
+  <div class="nhsuk-width-container" data-test-id="planned-delivery-date-page">
+    <div data-test-id="go-back-link">
+      {{ backLink({
+        "href": backLinkHref,
+        "text": backLinkText
+      }) }}
+    </div>
+    <div class="nhsuk-grid-row">
+
+      <div class="nhsuk-grid-column-two-thirds">
+        {% if (errors.length > 0) %}
+          {{ bcErrorSummary({
+            errors: errors
+          }) }}
+        {% endif %}
+        <h1 data-test-id="planned-delivery-date-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
+        <p data-test-id="planned-delivery-date-page-description" class="nhsuk-heading-l nhsuk-u-font-size-24 nhsuk-u-margin-bottom-7">{{ description }}</p>
+        <div data-test-id="planned-delivery-date-page-inset-advice">
+            {{ insetText({
+              "HTML": insetAdvice
+            }) }}
+        </div>
+      </div>
+
+      <div class="nhsuk-grid-column-full">
+        <form method="post">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+          <div class="nhsuk-u-margin-bottom-5">
+            {{ dateField({ question: questions.deliveryDate }) }}
+            {{ viewExpandableSection(questions.deliveryDate.expandableSection) }}
+          </div>
+
+          {{ bcButton({
+              dataTestId: "continue-button",
+              text: continueButtonText,
+              classes: "nhsuk-u-margin-top-9"
+          })}}
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

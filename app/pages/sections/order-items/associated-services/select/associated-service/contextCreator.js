@@ -19,14 +19,16 @@ const generateQuestionsContext = ({ associatedServices, selectedAssociatedServic
   }))
 );
 
-export const getContext = ({ orderId, associatedServices, selectedAssociatedServiceId }) => ({
+export const getContext = ({
+  orderId, associatedServices, selectedAssociatedServiceId, odsCode,
+}) => ({
   ...manifest,
   title: `${manifest.title} ${orderId}`,
   questions: associatedServices && generateQuestionsContext({
     associatedServices,
     selectedAssociatedServiceId,
   }),
-  backLinkHref: `${baseUrl}/organisation/${orderId}/associated-services`,
+  backLinkHref: `${baseUrl}/organisation/${odsCode}/order/${orderId}/associated-services`,
 });
 
 export const getErrorContext = (params) => {

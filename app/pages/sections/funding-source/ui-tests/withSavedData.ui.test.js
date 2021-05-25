@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/funding-source';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/funding-source';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -53,5 +53,5 @@ test('should navigate to task list page when a different option is selected and 
   await t
     .click(selectFundingSourceRadioOptions.find('input').nth(1))
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id');
 });

@@ -1,11 +1,16 @@
 import {
   getOrderItemContext,
   getOrderItemErrorPageContext,
+  getBackLinkHref,
 } from './controller';
 import * as contextCreator from './contextCreator';
 import * as getSelectedPriceManifest from '../../../../../helpers/controllers/manifestProvider';
 
-jest.mock('./contextCreator', () => ({ getContext: jest.fn(), getErrorContext: jest.fn() }));
+jest.mock('./contextCreator', () => ({
+  getContext: jest.fn(),
+  getErrorContext: jest.fn(),
+  backLinkHref: jest.fn(),
+}));
 jest.mock('./commonManifest.json', () => ({ title: 'fake manifest' }));
 jest.mock('../../../../../helpers/controllers/manifestProvider', () => ({
   getSelectedPriceManifest: jest.fn(),
@@ -24,8 +29,27 @@ const selectedPrice = {
 };
 
 const orderItemType = 'associated-services';
+const orderId = 'order-id';
+const odsCode = 'odsCode';
+const req = { params: { orderId }, query: {} };
+const associatedServicePrices = { prices: [] };
 
 describe('associated-services order-item controller', () => {
+  describe('getBackLinkHref', () => {
+    it('should return result from backLinkHref', () => {
+      const expected = 'http://some.link.com';
+      contextCreator.backLinkHref.mockReturnValueOnce(expected);
+
+      const actual = getBackLinkHref(req, associatedServicePrices, orderId, odsCode);
+
+      expect(contextCreator.backLinkHref.mock.calls.length).toEqual(1);
+      expect(contextCreator.backLinkHref).toHaveBeenCalledWith({
+        req, associatedServicePrices, orderId, odsCode,
+      });
+      expect(actual).toEqual(expected);
+    });
+  });
+
   describe('getOrderItemContext', () => {
     afterEach(() => {
       contextCreator.getContext.mockReset();

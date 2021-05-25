@@ -1,44 +1,22 @@
 import request from 'supertest';
 import {
-  FakeAuthProvider,
   testAuthorisedGetPathForUnauthenticatedUser,
   testAuthorisedGetPathForUnauthorisedUser,
   testPostPathWithoutCsrf,
   testAuthorisedPostPathForUnauthenticatedUser,
   testAuthorisedPostPathForUnauthorisedUsers,
   getCsrfTokenFromGet,
-  fakeSessionManager,
 } from 'buying-catalogue-library';
-import { App } from '../../app';
-import { routes } from '../../routes';
+import {
+  mockUnauthorisedCookie,
+  mockAuthorisedCookie,
+  setUpFakeApp,
+} from '../../test-utils/routesTestHelper';
 import { baseUrl } from '../../config';
 import * as deleteOrderController from './controller';
 
-const mockLogoutMethod = jest.fn().mockImplementation(() => Promise.resolve({}));
-
-const mockAuthorisedJwtPayload = JSON.stringify({
-  id: '88421113',
-  name: 'Cool Dude',
-  ordering: 'manage',
-  primaryOrganisationId: 'org-id',
-});
-
-const mockAuthorisedCookie = `fakeToken=${mockAuthorisedJwtPayload}`;
-
-const mockUnauthorisedJwtPayload = JSON.stringify({
-  id: '88421113', name: 'Cool Dude',
-});
-const mockUnauthorisedCookie = `fakeToken=${mockUnauthorisedJwtPayload}`;
-
-const setUpFakeApp = () => {
-  const authProvider = new FakeAuthProvider(mockLogoutMethod);
-  const app = new App(authProvider).createApp();
-  app.use('/', routes(authProvider, fakeSessionManager()));
-  return app;
-};
-
-describe('GET /organisation/:orderId/delete-order', () => {
-  const path = '/organisation/some-order-id/delete-order';
+describe('GET /organisation/:odsCode/order/:orderId/delete-order', () => {
+  const path = '/organisation/odsCode/order/some-order-id/delete-order';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -72,8 +50,8 @@ describe('GET /organisation/:orderId/delete-order', () => {
   });
 });
 
-describe('POST /organisation/:orderId/delete-order', () => {
-  const path = '/organisation/order-1/delete-order';
+describe('POST /organisation/:odsCode/order/:orderId/delete-order', () => {
+  const path = '/organisation/odsCode/order/order-1/delete-order';
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -110,7 +88,7 @@ describe('POST /organisation/:orderId/delete-order', () => {
 
   it('should redirect to /delete-order/confirmation page, if the order is deleted', async () => {
     deleteOrderController.getDeleteOrderContext = jest.fn()
-      .mockResolvedValueOnce();
+      .mockResolvedValueOnce({ odsCode: '03F' });
 
     deleteOrderController.deleteOrder = jest.fn().mockResolvedValueOnce();
 
@@ -130,6 +108,6 @@ describe('POST /organisation/:orderId/delete-order', () => {
       .expect(302);
 
     expect(res.redirect).toEqual(true);
-    expect(res.headers.location).toEqual(`${baseUrl}/organisation/order-1/delete-order/confirmation`);
+    expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/order-1/delete-order/confirmation`);
   });
 });

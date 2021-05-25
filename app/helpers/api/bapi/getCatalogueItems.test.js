@@ -33,7 +33,14 @@ describe('getCatalogueItems', () => {
   });
 
   it('should return the catalogueItems', async () => {
-    const expectedCatalogueItems = [{}, {}];
+    const expectedCatalogueItems = [{
+      catalogueItemId: 'solution-B',
+      name: 'b',
+    },
+    {
+      catalogueItemId: 'solution-A',
+      name: 'a',
+    }];
 
     getData.mockResolvedValueOnce(expectedCatalogueItems);
 
@@ -43,5 +50,25 @@ describe('getCatalogueItems', () => {
     });
 
     expect(response).toEqual(expectedCatalogueItems);
+  });
+
+  it('should return the catalogueItems in alphabetical order by name', async () => {
+    const expectedCatalogueItems = [{
+      catalogueItemId: 'solution-B',
+      name: 'b',
+    },
+    {
+      catalogueItemId: 'solution-A',
+      name: 'a',
+    }];
+    getData.mockResolvedValueOnce(expectedCatalogueItems);
+
+    const response = await getCatalogueItems({
+      supplierId: 'supp-1',
+      catalogueItemType: 'Solution',
+    });
+
+    expect(response[0].name).toEqual('a');
+    expect(response[1].name).toEqual('b');
   });
 });

@@ -1,553 +1,376 @@
 import commonManifest from './commonManifest.json';
-import flatOndemandManifest from './flat/ondemand/manifest.json';
 import flatPatientManifest from './flat/patient/manifest.json';
-import flatDeclarativeManifest from './flat/declarative/manifest.json';
+import flatOnDemandManifest from './flat/ondemand/manifest.json';
 import { getContext, getErrorContext } from './contextCreator';
 
 describe('catalogue-solutions order-item contextCreator', () => {
+  const selectedPerPatientPrice = {
+    itemUnit: { description: 'per patient' },
+    timeUnit: { description: 'per year' },
+    type: 'flat',
+    provisioningType: 'Patient',
+  };
+
+  const selectedOnDemandPrice = {
+    itemUnit: { description: 'per consultation – core hours' }, type: 'flat', provisioningType: 'ondemand',
+  };
+  const odsCode = '03F';
+
   describe('getContext', () => {
     it('should return the backLinkText', () => {
       const context = getContext({
-        commonManifest,
+        commonManifest, selectedPrice: { type: 'flat', provisioningType: 'patient' },
       });
       expect(context.backLinkText).toEqual(commonManifest.backLinkText);
     });
 
     it('should return the backLinkHref to catalogue solutions when order item id is not neworderitem', () => {
       const context = getContext({
-        commonManifest,
+        commonManifest, selectedPrice: { type: 'flat', provisioningType: 'patient' }, odsCode,
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions');
+      expect(context.backLinkHref).toEqual(`/order/organisation/${odsCode}/order/undefined/catalogue-solutions`);
     });
 
-    it('should return the backLinkHref to recipient when order item id is neworderitem', () => {
+    it('should return the backLinkHref to recipient when order item id is neworderitem and order type is Patient', () => {
       const context = getContext({
         commonManifest,
         orderItemId: 'neworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'Patient' },
+        odsCode,
       });
-      expect(context.backLinkHref).toEqual('/order/organisation/undefined/catalogue-solutions/select/solution/price/recipient');
+      expect(context.backLinkHref).toEqual(`/order/organisation/${odsCode}/order/undefined/catalogue-solutions/select/solution/price/recipients/date`);
+    });
+
+    it('should return the backLinkHref to recipient when order item id is neworderitem and order type is OnDemand', () => {
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'neworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'ondemand' },
+        odsCode,
+      });
+      expect(context.backLinkHref).toEqual(`/order/organisation/${odsCode}/order/undefined/catalogue-solutions/select/solution/price/flat/ondemand`);
+    });
+
+    it('should return the backLinkHref to select catalogue solution when user selects existing catalogue solution', () => {
+      const context = getContext({
+        commonManifest,
+        selectedPrice: { type: 'flat', provisioningType: 'ondemand' },
+        catalogueItemExists: { catalogueItemId: 'some-id' },
+        odsCode,
+      });
+      expect(context.backLinkHref).toEqual(`/order/organisation/${odsCode}/order/undefined/catalogue-solutions/select/solution/`);
     });
 
     it('should return the title', () => {
       const solutionName = 'solution-name';
-      const serviceRecipientName = 'service-recipient-name';
-      const odsCode = 'ods-code';
+      const orderId = 'order-id';
 
       const context = getContext({
-        commonManifest, solutionName, serviceRecipientName, odsCode,
+        commonManifest, solutionName, orderId, selectedPrice: { type: 'flat', provisioningType: 'patient' },
       });
-      expect(context.title).toEqual(`${solutionName} ${commonManifest.title} ${serviceRecipientName} (${odsCode})`);
+      expect(context.title).toEqual(`${solutionName} ${commonManifest.title} ${orderId}`);
     });
 
     it('should return the description', () => {
-      const context = getContext({ commonManifest });
+      const context = getContext({ commonManifest, selectedPrice: { type: 'flat', provisioningType: 'patient' } });
       expect(context.description).toEqual(commonManifest.description);
     });
 
     it('should return the delete button disabled when neworderitem', () => {
-      const context = getContext({ commonManifest, orderItemId: 'neworderitem' });
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'neworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
       expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
       expect(context.deleteButton.disabled).toEqual(true);
+      expect(context.deleteButton.altText).toEqual('The Delete Catalogue Solution button will be disabled until you save for the first time');
     });
 
     it('should return the delete button when not neworderitem', () => {
-      const context = getContext({ commonManifest, orderItemId: 'notneworderitem' });
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'notneworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
       expect(context.deleteButton.text).toEqual(commonManifest.deleteButton.text);
       expect(context.deleteButton.disabled).toEqual(false);
     });
 
+    it('should return the edit button disabled when neworderitem', () => {
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'neworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
+      expect(context.editButton.text).toEqual(commonManifest.editButton.text);
+      expect(context.editButton.disabled).toEqual(true);
+      expect(context.editButton.altText).toEqual('The Edit Service Recipients button will be disabled until you save for the first time');
+    });
+
+    it('should return the edit button when not neworderitem', () => {
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'notneworderitem',
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
+      expect(context.editButton.text).toEqual(commonManifest.editButton.text);
+      expect(context.editButton.disabled).toEqual(false);
+    });
+
+    it('should return the edit button when not neworderitem and link to recipient page', () => {
+      const orderId = 'order-id';
+      const context = getContext({
+        commonManifest,
+        orderItemId: 'notneworderitem',
+        orderId,
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+        odsCode,
+      });
+      expect(context.editButton.disabled).toEqual(false);
+      expect(context.editButton.href).toEqual(`/order/organisation/${odsCode}/order/${orderId}/catalogue-solutions/select/solution/price/recipients`);
+    });
+
     it('should return the save button', () => {
-      const context = getContext({ commonManifest });
+      const context = getContext({
+        commonManifest,
+        selectedPrice: { type: 'flat', provisioningType: 'patient' },
+      });
       expect(context.saveButtonText).toEqual(commonManifest.saveButtonText);
     });
 
-    describe('flat - ondemand', () => {
-      it('should return the questions', () => {
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatOndemandManifest,
-        });
-        expect(context.questions).toEqual(flatOndemandManifest.questions);
-      });
-
-      it('should populate the planned delivery data with data provided', () => {
-        const expectedContext = {
-          questions: {
-            deliveryDate: {
-              ...flatOndemandManifest.questions.deliveryDate,
-              data: {
-                day: '09',
-                month: '02',
-                year: '2021',
-              },
-            },
-          },
-        };
-
-        const formData = {
-          'deliveryDate-day': '09',
-          'deliveryDate-month': '02',
-          'deliveryDate-year': '2021',
-        };
-
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatOndemandManifest, formData,
-        });
-        expect(context.questions.deliveryDate)
-          .toEqual(expectedContext.questions.deliveryDate);
-      });
-
-      it('should populate the quantity with data provided', () => {
-        const expectedContext = {
-          questions: {
-            quantity: {
-              ...flatOndemandManifest.questions.quantity,
-              data: 'some quantity data',
-            },
-          },
-        };
-
-        const formData = {
-          quantity: 'some quantity data',
-        };
-
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatOndemandManifest, formData,
-        });
-        expect(context.questions.quantity).toEqual(expectedContext.questions.quantity);
-      });
-
-      it('should return the selected estimation period as checked', () => {
-        const expectedContext = {
-          questions: {
-            selectEstimationPeriod: {
-              ...flatOndemandManifest.questions.selectEstimationPeriod,
-              options: [
-                {
-                  value: 'month',
-                  text: 'Per month',
-                  checked: true,
-                },
-                {
-                  value: 'year',
-                  text: 'Per year',
-                },
-              ],
-            },
-          },
-        };
-
-        const formData = {
-          selectEstimationPeriod: 'month',
-        };
-
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatOndemandManifest, formData,
-        });
-        expect(context.questions.selectEstimationPeriod)
-          .toEqual(expectedContext.questions.selectEstimationPeriod);
-      });
-
-      it('should return the addPriceTable colummInfo', () => {
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatOndemandManifest,
-        });
-
-        expect(context.addPriceTable.columnInfo)
-          .toEqual(flatOndemandManifest.addPriceTable.columnInfo);
-      });
-
-      it('should return the addPriceTable with items and the price input and unit of order populated', () => {
-        const expectedContext = {
-          addPriceTable: {
-            ...flatOndemandManifest.addPriceTable,
-            items: [
-              [
-                {
-                  ...flatOndemandManifest.addPriceTable.cellInfo.price,
-                  question: {
-                    ...flatOndemandManifest.addPriceTable.cellInfo.price.question,
-                    data: '0.11',
-                  },
-                },
-                {
-                  ...flatOndemandManifest.addPriceTable.cellInfo.unitOfOrder,
-                  data: 'per consultation ',
-                },
-              ],
-            ],
-          },
-        };
-
-        const selectedPrice = {
-          price: 0.1,
-          itemUnit: { description: 'per consultation' },
-        };
-
-        const formData = { price: 0.11 };
-
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatOndemandManifest, selectedPrice, formData,
-        });
-
-        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
-      });
-    });
-
     describe('flat - patient', () => {
-      it('should return the questions', () => {
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest,
-        });
-        expect(context.questions).toEqual(flatPatientManifest.questions);
-        expect(context.questions.selectEstimationPeriod).toEqual(undefined);
-      });
+      const recipients = [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }];
+      const selectedRecipients = ['testCode'];
 
-      it('should populate the planned delivery data with data provided', () => {
+      it('should populate the price question with data provided', () => {
         const expectedContext = {
           questions: {
-            deliveryDate: {
-              ...flatPatientManifest.questions.deliveryDate,
-              data: {
-                day: '09',
-                month: '02',
-                year: '2021',
-              },
+            price: {
+              ...flatPatientManifest.questions.price,
+              data: '1.25',
+              unit: `${selectedPerPatientPrice.itemUnit.description} ${selectedPerPatientPrice.timeUnit.description}`,
+              error: undefined,
             },
           },
         };
 
-        const formData = {
-          'deliveryDate-day': '09',
-          'deliveryDate-month': '02',
-          'deliveryDate-year': '2021',
-        };
-
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest, formData,
-        });
-        expect(context.questions.deliveryDate)
-          .toEqual(expectedContext.questions.deliveryDate);
-      });
-
-      it('should populate the quantity with data provided', () => {
-        const expectedContext = {
-          questions: {
-            quantity: {
-              ...flatPatientManifest.questions.quantity,
-              data: 'some quantity data',
-            },
-          },
-        };
-
-        const formData = {
-          quantity: 'some quantity data',
-        };
-
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest, formData,
-        });
-        expect(context.questions.quantity).toEqual(expectedContext.questions.quantity);
-      });
-
-      it('should return the addPriceTable colummInfo', () => {
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatPatientManifest,
-        });
-
-        expect(context.addPriceTable.columnInfo)
-          .toEqual(flatPatientManifest.addPriceTable.columnInfo);
-      });
-
-      it('should return the addPriceTable with items and the price input and unit of order populated', () => {
-        const expectedContext = {
-          addPriceTable: {
-            ...flatPatientManifest.addPriceTable,
-            items: [
-              [
-                {
-                  ...flatPatientManifest.addPriceTable.cellInfo.price,
-                  question: {
-                    ...flatPatientManifest.addPriceTable.cellInfo.price.question,
-                    data: '0.11',
-                  },
-                },
-                {
-                  ...flatPatientManifest.addPriceTable.cellInfo.unitOfOrder,
-                  data: 'per patient per year',
-                },
-              ],
-            ],
-          },
-        };
-
-        const selectedPrice = {
-          price: 0.11,
-          itemUnit: { description: 'per patient' },
-          timeUnit: { description: 'per year' },
-        };
-
-        const formData = { price: 0.11 };
+        const formData = { price: 1.25, deliveryDate: [''] };
 
         const context = getContext({
           commonManifest,
           selectedPriceManifest: flatPatientManifest,
-          selectedPrice,
           formData,
+          recipients,
+          selectedRecipients,
+          selectedPrice: selectedPerPatientPrice,
         });
-
-        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+        expect(context.questions.price)
+          .toEqual(expectedContext.questions.price);
       });
-    });
 
-    describe('flat - declarative', () => {
-      it('should return the questions', () => {
+      it('should return the solutionTable colummInfo', () => {
         const context = getContext({
-          commonManifest, selectedPriceManifest: flatDeclarativeManifest,
+          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, selectedPrice: selectedPerPatientPrice, formData: { quantity: '', deliveryDate: [''] },
         });
-        expect(context.questions).toEqual(flatDeclarativeManifest.questions);
-        expect(context.questions.selectEstimationPeriod).toEqual(undefined);
+
+        expect(context.solutionTable.columnInfo)
+          .toEqual(flatPatientManifest.solutionTable.columnInfo);
       });
 
-      it('should populate the planned delivery data with data provided', () => {
+      it('should return the solutionTable with the solution data populated, practice size input and date input populated', () => {
         const expectedContext = {
-          questions: {
-            deliveryDate: {
-              ...flatDeclarativeManifest.questions.deliveryDate,
-              data: {
-                day: '09',
-                month: '02',
-                year: '2021',
-              },
-            },
-          },
-        };
-
-        const formData = {
-          'deliveryDate-day': '09',
-          'deliveryDate-month': '02',
-          'deliveryDate-year': '2021',
-        };
-
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatDeclarativeManifest, formData,
-        });
-        expect(context.questions.deliveryDate)
-          .toEqual(expectedContext.questions.deliveryDate);
-      });
-
-      it('should populate the quantity with data provided', () => {
-        const expectedContext = {
-          questions: {
-            quantity: {
-              ...flatDeclarativeManifest.questions.quantity,
-              data: 'some quantity data',
-            },
-          },
-        };
-
-        const formData = {
-          quantity: 'some quantity data',
-        };
-
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatDeclarativeManifest, formData,
-        });
-        expect(context.questions.quantity).toEqual(expectedContext.questions.quantity);
-      });
-
-      it('should return the addPriceTable colummInfo', () => {
-        const context = getContext({
-          commonManifest, selectedPriceManifest: flatDeclarativeManifest,
-        });
-
-        expect(context.addPriceTable.columnInfo)
-          .toEqual(flatDeclarativeManifest.addPriceTable.columnInfo);
-      });
-
-      it('should return the addPriceTable with items and the price input and unit of order populated', () => {
-        const expectedContext = {
-          addPriceTable: {
-            ...flatDeclarativeManifest.addPriceTable,
+          solutionTable: {
+            ...flatPatientManifest.solutionTable,
             items: [
               [
                 {
-                  ...flatDeclarativeManifest.addPriceTable.cellInfo.price,
+                  ...flatPatientManifest.solutionTable.cellInfo.recipient,
+                  data: 'test (testCode)',
+                  dataTestId: 'test-testCode-recipient',
+                },
+                {
+                  ...flatPatientManifest.solutionTable.cellInfo.quantity,
                   question: {
-                    ...flatDeclarativeManifest.addPriceTable.cellInfo.price.question,
-                    data: '0.11',
+                    ...flatPatientManifest.solutionTable.cellInfo.quantity.question,
+                    data: 100,
+                    dataTestId: 'test-testCode-quantity',
+                    error: undefined,
                   },
                 },
                 {
-                  ...flatDeclarativeManifest.addPriceTable.cellInfo.unitOfOrder,
-                  data: 'per patient per year',
+                  ...flatPatientManifest.solutionTable.cellInfo.deliveryDate,
+                  question: {
+                    ...flatPatientManifest.solutionTable.cellInfo.deliveryDate.question,
+                    data: {
+                      day: 9,
+                      month: 2,
+                      year: 2021,
+                    },
+                    dataTestId: 'test-testCode-deliveryDate',
+                    error: undefined,
+                  },
                 },
               ],
             ],
           },
         };
 
-        const selectedPrice = {
+        const formData = {
           price: 0.11,
-          itemUnit: { description: 'per patient' },
-          timeUnit: { description: 'per year' },
+          quantity: [100],
+          deliveryDate: [{
+            'deliveryDate-day': 9,
+            'deliveryDate-month': 2,
+            'deliveryDate-year': 2021,
+          }],
         };
-
-        const formData = { price: 0.11 };
 
         const context = getContext({
           commonManifest,
-          selectedPriceManifest: flatDeclarativeManifest,
-          selectedPrice,
+          selectedPriceManifest: flatPatientManifest,
           formData,
+          recipients,
+          selectedRecipients,
+          selectedPrice: selectedPerPatientPrice,
         });
 
-        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+        expect(context.solutionTable).toEqual(expectedContext.solutionTable);
+      });
+
+      it('should only add a recipient to the table if it has been selected', () => {
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatPatientManifest, recipients, selectedRecipients, selectedPrice: selectedPerPatientPrice, formData: { quantity: '', deliveryDate: [''] },
+        });
+
+        expect(context.solutionTable.items.length)
+          .toEqual(1);
+      });
+    });
+
+    describe('flat - on demand', () => {
+      const recipients = [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }];
+      const selectedRecipients = ['testCode'];
+
+      it('should populate the price question with data provided', () => {
+        const expectedContext = {
+          questions: {
+            price: {
+              ...flatOnDemandManifest.questions.price,
+              data: '1.25',
+              unit: selectedOnDemandPrice.itemUnit.description,
+              error: undefined,
+            },
+          },
+        };
+
+        const formData = { price: 1.25, deliveryDate: [''] };
+
+        const context = getContext({
+          commonManifest,
+          selectedPriceManifest: flatOnDemandManifest,
+          formData,
+          recipients,
+          selectedRecipients,
+          selectedPrice: selectedOnDemandPrice,
+        });
+        expect(context.questions.price)
+          .toEqual(expectedContext.questions.price);
+      });
+
+      it('should return the solutionTable colummInfo', () => {
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOnDemandManifest, recipients, selectedRecipients, selectedPrice: selectedOnDemandPrice, formData: { quantity: '', deliveryDate: [''] },
+        });
+
+        expect(context.solutionTable.columnInfo)
+          .toEqual(flatOnDemandManifest.solutionTable.columnInfo);
+      });
+
+      it('should return the solutionTable with the solution data populated, practice size input and date input populated', () => {
+        const expectedContext = {
+          solutionTable: {
+            ...flatOnDemandManifest.solutionTable,
+            items: [
+              [
+                {
+                  ...flatOnDemandManifest.solutionTable.cellInfo.recipient,
+                  data: 'test (testCode)',
+                  dataTestId: 'test-testCode-recipient',
+                },
+                {
+                  ...flatOnDemandManifest.solutionTable.cellInfo.quantity,
+                  question: {
+                    ...flatOnDemandManifest.solutionTable.cellInfo.quantity.question,
+                    data: 100,
+                    dataTestId: 'test-testCode-quantity',
+                    error: undefined,
+                  },
+                },
+                {
+                  ...flatOnDemandManifest.solutionTable.cellInfo.deliveryDate,
+                  question: {
+                    ...flatOnDemandManifest.solutionTable.cellInfo.deliveryDate.question,
+                    data: {
+                      day: 9,
+                      month: 2,
+                      year: 2021,
+                    },
+                    dataTestId: 'test-testCode-deliveryDate',
+                    error: undefined,
+                  },
+                },
+              ],
+            ],
+          },
+        };
+
+        const formData = {
+          price: 0.11,
+          quantity: [100],
+          deliveryDate: [{
+            'deliveryDate-day': 9,
+            'deliveryDate-month': 2,
+            'deliveryDate-year': 2021,
+          }],
+        };
+
+        const context = getContext({
+          commonManifest,
+          selectedPriceManifest: flatOnDemandManifest,
+          formData,
+          recipients,
+          selectedRecipients,
+          selectedPrice: selectedOnDemandPrice,
+        });
+
+        expect(context.solutionTable).toEqual(expectedContext.solutionTable);
+      });
+
+      it('should only add a recipient to the table if it has been selected', () => {
+        const context = getContext({
+          commonManifest, selectedPriceManifest: flatOnDemandManifest, recipients, selectedRecipients, selectedPrice: selectedOnDemandPrice, formData: { quantity: '', deliveryDate: [''] },
+        });
+
+        expect(context.solutionTable.items.length)
+          .toEqual(1);
       });
     });
   });
 
   describe('getErrorContext', () => {
-    describe('flat - ondemand', () => {
-      it('should return error for deliveryDate', () => {
-        const expectedContext = {
-          errors: [
-            { href: '#deliveryDate', text: flatOndemandManifest.errorMessages.DeliveryDateRequired },
-          ],
-          questions: {
-            ...flatOndemandManifest.questions,
-            deliveryDate: {
-              ...flatOndemandManifest.questions.deliveryDate,
-              error: {
-                message: flatOndemandManifest.errorMessages.DeliveryDateRequired,
-                fields: ['day', 'month', 'year'],
-              },
-            },
-          },
-        };
-
-        const context = getErrorContext({
-          commonManifest,
-          selectedPriceManifest: flatOndemandManifest,
-          validationErrors: [{
-            field: 'DeliveryDate',
-            id: 'DeliveryDateRequired',
-            part: ['day', 'month', 'year'],
-          }],
-        });
-
-        expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.questions).toEqual(expectedContext.questions);
-      });
-
-      it('should return error for quantity', () => {
-        const expectedContext = {
-          errors: [
-            { href: '#quantity', text: flatOndemandManifest.errorMessages.QuantityRequired },
-          ],
-          questions: {
-            ...flatOndemandManifest.questions,
-            quantity: {
-              ...flatOndemandManifest.questions.quantity,
-              error: {
-                message: flatOndemandManifest.errorMessages.QuantityRequired,
-              },
-            },
-          },
-        };
-
-        const context = getErrorContext({
-          commonManifest,
-          selectedPriceManifest: flatOndemandManifest,
-          validationErrors: [{ field: 'Quantity', id: 'QuantityRequired' }],
-        });
-
-        expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.questions).toEqual(expectedContext.questions);
-      });
-
-      it('should return error for estimation period', () => {
-        const expectedContext = {
-          errors: [
-            { href: '#selectEstimationPeriod', text: flatOndemandManifest.errorMessages.EstimationPeriodRequired },
-          ],
-          questions: {
-            ...flatOndemandManifest.questions,
-            selectEstimationPeriod: {
-              ...flatOndemandManifest.questions.selectEstimationPeriod,
-              error: {
-                message: flatOndemandManifest.errorMessages.EstimationPeriodRequired,
-              },
-            },
-          },
-        };
-
-        const context = getErrorContext({
-          commonManifest,
-          selectedPriceManifest: flatOndemandManifest,
-          validationErrors: [{ field: 'SelectEstimationPeriod', id: 'EstimationPeriodRequired' }],
-        });
-
-        expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.questions).toEqual(expectedContext.questions);
-      });
-
-      it('should return error for price', () => {
-        const expectedContext = {
-          errors: [
-            { href: '#price', text: flatOndemandManifest.errorMessages.PriceRequired },
-          ],
-          addPriceTable: {
-            ...flatOndemandManifest.addPriceTable,
-            items: [
-              [
-                {
-                  ...flatOndemandManifest.addPriceTable.cellInfo.price,
-                  question: {
-                    ...flatOndemandManifest.addPriceTable.cellInfo.price.question,
-                    error: {
-                      message: flatOndemandManifest.errorMessages.PriceRequired,
-                    },
-                  },
-                },
-                {
-                  ...flatOndemandManifest.addPriceTable.cellInfo.unitOfOrder,
-                  data: 'per consultation ',
-                },
-              ],
-            ],
-          },
-        };
-
-        const selectedPrice = {
-          itemUnit: { description: 'per consultation' },
-        };
-
-        const context = getErrorContext({
-          commonManifest,
-          selectedPriceManifest: flatOndemandManifest,
-          validationErrors: [{ field: 'Price', id: 'PriceRequired' }],
-          selectedPrice,
-        });
-
-        expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
-      });
-    });
-
     describe('flat - patient', () => {
-      it('should return error for deliveryDate', () => {
+      it('should return the context with Errors for price', () => {
         const expectedContext = {
           errors: [
-            { href: '#deliveryDate', text: flatPatientManifest.errorMessages.DeliveryDateRequired },
+            {
+              href: '#price',
+              text: flatPatientManifest.errorMessages.PriceRequired,
+            },
           ],
           questions: {
-            ...flatPatientManifest.questions,
-            deliveryDate: {
-              ...flatPatientManifest.questions.deliveryDate,
-              error: {
-                message: flatPatientManifest.errorMessages.DeliveryDateRequired,
-                fields: ['day', 'month', 'year'],
-              },
+            price: {
+              error: { message: flatPatientManifest.errorMessages.PriceRequired },
             },
           },
         };
@@ -555,186 +378,196 @@ describe('catalogue-solutions order-item contextCreator', () => {
         const context = getErrorContext({
           commonManifest,
           selectedPriceManifest: flatPatientManifest,
+          orderId: 'order-id',
+          orderItemId: 'order-item-id',
+          solutionName: 'solution-name',
+          recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
+          selectedRecipients: ['testCode'],
+          selectedPrice: selectedPerPatientPrice,
+          formData: { price: 1.25, deliveryDate: [''] },
           validationErrors: [{
-            field: 'DeliveryDate',
-            id: 'DeliveryDateRequired',
-            part: ['day', 'month', 'year'],
+            field: 'Price',
+            id: 'PriceRequired',
           }],
         });
 
         expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.questions).toEqual(expectedContext.questions);
+        expect(context.questions.price.error.message)
+          .toEqual(expectedContext.questions.price.error.message);
       });
 
-      it('should return error for quantity', () => {
+      it('should return the context with Errors for practice size', () => {
         const expectedContext = {
           errors: [
-            { href: '#quantity', text: flatPatientManifest.errorMessages.QuantityRequired },
-          ],
-          questions: {
-            ...flatPatientManifest.questions,
-            quantity: {
-              ...flatPatientManifest.questions.quantity,
-              error: {
-                message: flatPatientManifest.errorMessages.QuantityRequired,
-              },
+            {
+              href: '#quantity',
+              text: flatPatientManifest.errorMessages.QuantityRequired,
             },
+          ],
+          solutionTable: {
+            errorMessages: [flatPatientManifest.errorMessages.QuantityRequired, undefined],
           },
         };
 
         const context = getErrorContext({
           commonManifest,
           selectedPriceManifest: flatPatientManifest,
-          validationErrors: [{ field: 'Quantity', id: 'QuantityRequired' }],
+          orderId: 'order-id',
+          orderItemId: 'order-item-id',
+          solutionName: 'solution-name',
+          recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
+          selectedRecipients: ['testCode'],
+          selectedPrice: selectedPerPatientPrice,
+          formData: { price: 1.25, deliveryDate: [''] },
+          validationErrors: [{
+            field: 'Quantity',
+            id: 'QuantityRequired',
+          }],
         });
 
         expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.questions).toEqual(expectedContext.questions);
+        expect(context.solutionTable.errorMessages)
+          .toEqual(expectedContext.solutionTable.errorMessages);
       });
 
-      it('should return error for price', () => {
+      it('should return the context with Errors for delivery date', () => {
         const expectedContext = {
           errors: [
-            { href: '#price', text: flatPatientManifest.errorMessages.PriceRequired },
+            {
+              href: '#deliveryDate',
+              text: flatPatientManifest.errorMessages.DeliveryDateRequired,
+            },
           ],
-          addPriceTable: {
-            ...flatPatientManifest.addPriceTable,
-            items: [
-              [
-                {
-                  ...flatPatientManifest.addPriceTable.cellInfo.price,
-                  question: {
-                    ...flatPatientManifest.addPriceTable.cellInfo.price.question,
-                    error: {
-                      message: flatPatientManifest.errorMessages.PriceRequired,
-                    },
-                  },
-                },
-                {
-                  ...flatPatientManifest.addPriceTable.cellInfo.unitOfOrder,
-                  data: 'per patient per year',
-                },
-              ],
-            ],
+          solutionTable: {
+            errorMessages: ['', flatPatientManifest.errorMessages.DeliveryDateRequired],
           },
-        };
-
-        const selectedPrice = {
-          itemUnit: { description: 'per patient' },
-          timeUnit: { description: 'per year' },
         };
 
         const context = getErrorContext({
           commonManifest,
           selectedPriceManifest: flatPatientManifest,
-          validationErrors: [{ field: 'Price', id: 'PriceRequired' }],
-          selectedPrice,
+          orderId: 'order-id',
+          orderItemId: 'order-item-id',
+          solutionName: 'solution-name',
+          recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
+          selectedRecipients: ['testCode'],
+          selectedPrice: selectedPerPatientPrice,
+          formData: { price: 1.25, deliveryDate: [''] },
+          validationErrors: [{
+            field: 'DeliveryDate',
+            id: 'DeliveryDateRequired',
+          }],
         });
 
         expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+        expect(context.solutionTable.errorMessages)
+          .toEqual(expectedContext.solutionTable.errorMessages);
       });
     });
 
-    describe('flat - declarative', () => {
-      it('should return error for deliveryDate', () => {
+    describe('flat - on demand', () => {
+      it('should return the context with Errors for price', () => {
         const expectedContext = {
           errors: [
-            { href: '#deliveryDate', text: flatDeclarativeManifest.errorMessages.DeliveryDateRequired },
+            {
+              href: '#price',
+              text: flatOnDemandManifest.errorMessages.PriceRequired,
+            },
           ],
           questions: {
-            ...flatDeclarativeManifest.questions,
-            deliveryDate: {
-              ...flatDeclarativeManifest.questions.deliveryDate,
-              error: {
-                message: flatDeclarativeManifest.errorMessages.DeliveryDateRequired,
-                fields: ['day', 'month', 'year'],
-              },
+            price: {
+              error: { message: flatOnDemandManifest.errorMessages.PriceRequired },
             },
           },
         };
 
         const context = getErrorContext({
           commonManifest,
-          selectedPriceManifest: flatDeclarativeManifest,
+          selectedPriceManifest: flatOnDemandManifest,
+          orderId: 'order-id',
+          orderItemId: 'order-item-id',
+          solutionName: 'solution-name',
+          recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
+          selectedRecipients: ['testCode'],
+          selectedPrice: selectedOnDemandPrice,
+          formData: { price: 1.25, deliveryDate: [''] },
           validationErrors: [{
-            field: 'DeliveryDate',
-            id: 'DeliveryDateRequired',
-            part: ['day', 'month', 'year'],
+            field: 'Price',
+            id: 'PriceRequired',
           }],
         });
 
         expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.questions).toEqual(expectedContext.questions);
+        expect(context.questions.price.error.message)
+          .toEqual(expectedContext.questions.price.error.message);
       });
 
-      it('should return error for quantity', () => {
+      it('should return the context with Errors for quantity', () => {
         const expectedContext = {
           errors: [
-            { href: '#quantity', text: flatDeclarativeManifest.errorMessages.QuantityRequired },
-          ],
-          questions: {
-            ...flatDeclarativeManifest.questions,
-            quantity: {
-              ...flatDeclarativeManifest.questions.quantity,
-              error: {
-                message: flatDeclarativeManifest.errorMessages.QuantityRequired,
-              },
+            {
+              href: '#quantity',
+              text: flatOnDemandManifest.errorMessages.QuantityRequired,
             },
+          ],
+          solutionTable: {
+            errorMessages: [flatOnDemandManifest.errorMessages.QuantityRequired, undefined],
           },
         };
 
         const context = getErrorContext({
           commonManifest,
-          selectedPriceManifest: flatDeclarativeManifest,
-          validationErrors: [{ field: 'Quantity', id: 'QuantityRequired' }],
+          selectedPriceManifest: flatOnDemandManifest,
+          orderId: 'order-id',
+          orderItemId: 'order-item-id',
+          solutionName: 'solution-name',
+          recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
+          selectedRecipients: ['testCode'],
+          selectedPrice: selectedOnDemandPrice,
+          formData: { price: 1.25, deliveryDate: [''] },
+          validationErrors: [{
+            field: 'Quantity',
+            id: 'QuantityRequired',
+          }],
         });
 
         expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.questions).toEqual(expectedContext.questions);
+        expect(context.solutionTable.errorMessages)
+          .toEqual(expectedContext.solutionTable.errorMessages);
       });
 
-      it('should return error for price', () => {
+      it('should return the context with Errors for delivery date', () => {
         const expectedContext = {
           errors: [
-            { href: '#price', text: flatDeclarativeManifest.errorMessages.PriceRequired },
+            {
+              href: '#deliveryDate',
+              text: flatOnDemandManifest.errorMessages.DeliveryDateRequired,
+            },
           ],
-          addPriceTable: {
-            ...flatDeclarativeManifest.addPriceTable,
-            items: [
-              [
-                {
-                  ...flatDeclarativeManifest.addPriceTable.cellInfo.price,
-                  question: {
-                    ...flatDeclarativeManifest.addPriceTable.cellInfo.price.question,
-                    error: {
-                      message: flatDeclarativeManifest.errorMessages.PriceRequired,
-                    },
-                  },
-                },
-                {
-                  ...flatDeclarativeManifest.addPriceTable.cellInfo.unitOfOrder,
-                  data: 'per patient per year',
-                },
-              ],
-            ],
+          solutionTable: {
+            errorMessages: ['', flatOnDemandManifest.errorMessages.DeliveryDateRequired],
           },
-        };
-
-        const selectedPrice = {
-          itemUnit: { description: 'per patient' },
-          timeUnit: { description: 'per year' },
         };
 
         const context = getErrorContext({
           commonManifest,
-          selectedPriceManifest: flatDeclarativeManifest,
-          validationErrors: [{ field: 'Price', id: 'PriceRequired' }],
-          selectedPrice,
+          selectedPriceManifest: flatOnDemandManifest,
+          orderId: 'order-id',
+          orderItemId: 'order-item-id',
+          solutionName: 'solution-name',
+          recipients: [{ name: 'test', odsCode: 'testCode' }, { name: 'test-2', odsCode: 'notIncluded' }],
+          selectedRecipients: ['testCode'],
+          selectedPrice: selectedOnDemandPrice,
+          formData: { price: 1.25, deliveryDate: [''] },
+          validationErrors: [{
+            field: 'DeliveryDate',
+            id: 'DeliveryDateRequired',
+          }],
         });
 
         expect(context.errors).toEqual(expectedContext.errors);
-        expect(context.addPriceTable).toEqual(expectedContext.addPriceTable);
+        expect(context.solutionTable.errorMessages)
+          .toEqual(expectedContext.solutionTable.errorMessages);
       });
     });
   });

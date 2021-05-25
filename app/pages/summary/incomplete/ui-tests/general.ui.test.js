@@ -6,7 +6,7 @@ import { orderApiUrl } from '../../../../config';
 import { formatDate } from '../../../../helpers/common/dateFormatter';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/summary';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/summary';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -52,14 +52,14 @@ test('should render Summary page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-1 for backlink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-1 for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1');
 });
 
 test('should render the title', async (t) => {
@@ -76,7 +76,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="summary-page-description"]');
+  const description = Selector('[data-test-id="summary-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -86,8 +86,8 @@ test('should render the orderDescription', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const orderDescriptionHeading = Selector('h3[data-test-id="order-description-heading"]');
-  const orderDescription = Selector('h4[data-test-id="order-description"]');
+  const orderDescriptionHeading = Selector('h2[data-test-id="order-description-heading"]');
+  const orderDescription = Selector('p[data-test-id="order-description"]');
 
   await t
     .expect(await extractInnerText(orderDescriptionHeading)).eql(content.orderDescriptionHeading)
@@ -105,7 +105,7 @@ test('should render the get order summary top button', async (t) => {
   await t
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
   await t
-    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
+    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1/summary?print=true');
   await t
     .expect(await extractInnerText(orderSummaryButtonDescription)).eql(content.orderSummaryButtonInfoText);
 });
@@ -121,7 +121,7 @@ test('should render the get order summary bottom button', async (t) => {
   await t
     .expect(await extractInnerText(orderSummaryButton)).eql(content.orderSummaryButtonText);
   await t
-    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/order-1/summary?print=true');
+    .expect(orderSummaryButtonATag.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1/summary?print=true');
   await t
     .expect(await extractInnerText(orderSummaryButtonDescription)).eql(content.orderSummaryButtonInfoText);
 });
@@ -179,8 +179,8 @@ test('should render the one off cost heading and description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const oneOffCostHeading = Selector('h3[data-test-id="one-off-cost-heading"]');
-  const oneOffCostDescription = Selector('h4[data-test-id="one-off-cost-description"]');
+  const oneOffCostHeading = Selector('h2[data-test-id="one-off-cost-heading"]');
+  const oneOffCostDescription = Selector('p[data-test-id="one-off-cost-description"]');
 
   await t
     .expect(await extractInnerText(oneOffCostHeading)).eql(content.oneOffCostHeading)
@@ -208,17 +208,17 @@ test('should render the one off cost table with the column headings', async (t) 
     .expect(await extractInnerText(itemCostColumnHeading)).eql('Item cost (£)');
 });
 
-test('should render the one off cost totals table with 0.00 for the price', async (t) => {
+test('should render the one off cost table footer with 0.00 for the price', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const oneOffCostTotalsTable = Selector('[data-test-id="one-off-cost-totals-table"]');
-  const row1 = oneOffCostTotalsTable.find('[data-test-id="table-row-0"]');
+  const oneOffCostTableFooter = Selector('[data-test-id="one-off-cost-table"] tfoot');
+  const row1 = oneOffCostTableFooter.find('[data-test-id="table-row-0"]');
   const totalCostLabelCell = row1.find('div[data-test-id="total-cost-label"]');
   const totalCostValueCell = row1.find('div[data-test-id="total-cost-value"]');
 
   await t
-    .expect(await extractInnerText(totalCostLabelCell)).eql(content.oneOffCostTotalsTable.cellInfo.totalOneOffCostLabel.data)
+    .expect(await extractInnerText(totalCostLabelCell)).eql(content.oneOffCostTableFooter.cellInfo.totalOneOffCostLabel.data)
     .expect(await extractInnerText(totalCostValueCell)).eql('0.00');
 });
 
@@ -226,8 +226,8 @@ test('should render the recurring cost heading and description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const recurringCostHeading = Selector('h3[data-test-id="recurring-cost-heading"]');
-  const recurringCostDescription = Selector('h4[data-test-id="recurring-cost-description"]');
+  const recurringCostHeading = Selector('h2[data-test-id="recurring-cost-heading"]');
+  const recurringCostDescription = Selector('p[data-test-id="recurring-cost-description"]');
 
   await t
     .expect(await extractInnerText(recurringCostHeading)).eql(content.recurringCostHeading)
@@ -259,36 +259,36 @@ test('should render the recurring cost table with the column headings', async (t
     .expect(await extractInnerText(itemCostColumnHeading)).eql('Item cost per year (£)');
 });
 
-test('should render the recurring cost totals table with 0.00 for the price', async (t) => {
+test('should render the recurring cost table footer with 0.00 for the price', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const recurringCostTotalsTable = Selector('[data-test-id="recurring-cost-totals-table"]');
+  const recurringCostTableFooter = Selector('[data-test-id="recurring-cost-table"] tfoot');
 
-  const row1 = recurringCostTotalsTable.find('[data-test-id="table-row-0"]');
+  const row1 = recurringCostTableFooter.find('[data-test-id="table-row-0"]');
   const totalYearCostLabelCell = row1.find('div[data-test-id="total-year-cost-label"]');
   const totalYearCostValueCell = row1.find('div[data-test-id="total-year-cost-value"]');
 
-  const row2 = recurringCostTotalsTable.find('[data-test-id="table-row-1"]');
+  const row2 = recurringCostTableFooter.find('[data-test-id="table-row-1"]');
   const totalMonthlyCostLabelCell = row2.find('div[data-test-id="total-monthly-cost-label"]');
   const totalMonthlyCostValueCell = row2.find('div[data-test-id="total-monthly-cost-value"]');
 
-  const row3 = recurringCostTotalsTable.find('[data-test-id="table-row-2"]');
+  const row3 = recurringCostTableFooter.find('[data-test-id="table-row-2"]');
   const totalOwnershipCostLabelCell = row3.find('div[data-test-id="total-ownership-cost-label"]');
   const totalOwnershipCostValueCell = row3.find('div[data-test-id="total-ownership-cost-value"]');
 
-  const row4 = recurringCostTotalsTable.find('[data-test-id="table-row-3"]');
+  const row4 = recurringCostTableFooter.find('[data-test-id="table-row-3"]');
   const totalOwnershipTermsLabelCell = row4.find('div[data-test-id="total-ownership-terms"]');
 
   await t
-    .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOneYearCostLabel.data)
+    .expect(await extractInnerText(totalYearCostLabelCell)).eql(content.recurringCostTableFooter.cellInfo.totalOneYearCostLabel.data)
     .expect(await extractInnerText(totalYearCostValueCell)).eql('0.00')
 
-    .expect(await extractInnerText(totalMonthlyCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalMonthlyCostLabel.data)
+    .expect(await extractInnerText(totalMonthlyCostLabelCell)).eql(content.recurringCostTableFooter.cellInfo.totalMonthlyCostLabel.data)
     .expect(await extractInnerText(totalMonthlyCostValueCell)).eql('0.00')
 
-    .expect(await extractInnerText(totalOwnershipCostLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipCostLabel.data)
+    .expect(await extractInnerText(totalOwnershipCostLabelCell)).eql(content.recurringCostTableFooter.cellInfo.totalOwnershipCostLabel.data)
     .expect(await extractInnerText(totalOwnershipCostValueCell)).eql('0.00')
 
-    .expect(await extractInnerText(totalOwnershipTermsLabelCell)).eql(content.recurringCostTotalsTable.cellInfo.totalOwnershipTerms.data);
+    .expect(await extractInnerText(totalOwnershipTermsLabelCell)).eql(content.recurringCostTableFooter.cellInfo.totalOwnershipTerms.data);
 });

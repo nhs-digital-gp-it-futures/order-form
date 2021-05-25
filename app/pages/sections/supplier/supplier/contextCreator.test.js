@@ -9,35 +9,36 @@ jest.mock('../../getSectionErrorContext', () => ({
 
 describe('supplier contextCreator', () => {
   describe('getContext', () => {
+    const orderId = 'order-1';
+    const odsCode = 'odsCode';
     it('should return the backLinkText', () => {
       const context = getContext({ orderId: 'order-1' });
       expect(context.backLinkText).toEqual(manifest.backLinkText);
     });
 
     it('should construct the backLinkHref if hasSavedData is false', () => {
-      const orderId = 'order-id';
-      const context = getContext({ orderId });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/supplier/search/select`);
+      const context = getContext({ orderId, odsCode });
+      expect(context.backLinkHref)
+        .toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search/select`);
     });
 
     it('should construct the correct backLinkHref if hasSavedData is true', () => {
-      const orderId = 'order-id';
-      const context = getContext({ orderId, hasSavedData: true });
-      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${orderId}`);
+      const context = getContext({ orderId, hasSavedData: true, odsCode });
+      expect(context.backLinkHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}`);
     });
 
     it('should return the title', () => {
-      const context = getContext({ orderId: 'order-1' });
+      const context = getContext({ orderId });
       expect(context.title).toEqual(`${manifest.title} order-1`);
     });
 
     it('should return the description', () => {
-      const context = getContext({ orderId: 'order-1' });
+      const context = getContext({ orderId });
       expect(context.description).toEqual(manifest.description);
     });
 
     it('should return the insetAdvice', () => {
-      const context = getContext({ orderId: 'order-1' });
+      const context = getContext({ orderId });
       expect(context.insetAdvice).toEqual(manifest.insetAdvice);
     });
 
@@ -53,25 +54,22 @@ describe('supplier contextCreator', () => {
     });
 
     it('should construct the searchAgainLinkHref if hasSavedData is false', () => {
-      const orderId = 'order-id';
-      const context = getContext({ orderId });
-      expect(context.searchAgainLinkHref).toEqual(`${baseUrl}/organisation/${orderId}/supplier/search`);
+      const context = getContext({ orderId, odsCode });
+      expect(context.searchAgainLinkHref)
+        .toEqual(`${baseUrl}/organisation/${odsCode}/order/${orderId}/supplier/search`);
     });
 
     it('should not construct the searchAgainLinkHref if hasSavedData is true', () => {
-      const orderId = 'order-id';
       const context = getContext({ orderId, hasSavedData: true });
       expect(context.searchAgainLinkHref).toEqual(undefined);
     });
 
     it('should add showSearchAgainLink is true if hasSavedData is false', () => {
-      const orderId = 'order-id';
       const context = getContext({ orderId });
       expect(context.showSearchAgainLink).toEqual(true);
     });
 
     it('should add showSearchAgainLink is false if hasSavedData is true', () => {
-      const orderId = 'order-id';
       const context = getContext({ orderId, hasSavedData: true });
       expect(context.showSearchAgainLink).toEqual(false);
     });
@@ -146,14 +144,16 @@ describe('supplier contextCreator', () => {
       const mockParams = {
         orderId: 'order-id',
         validationErrors: [],
+        odsCode: 'odsCode',
       };
 
       const updatedManifest = {
         ...manifest,
         title: 'Supplier information for order-id',
-        backLinkHref: '/order/organisation/order-id/supplier/search/select',
-        searchAgainLinkHref: '/order/organisation/order-id/supplier/search',
+        backLinkHref: '/order/organisation/odsCode/order/order-id/supplier/search/select',
+        searchAgainLinkHref: '/order/organisation/odsCode/order/order-id/supplier/search',
         showSearchAgainLink: true,
+        supplierData: undefined,
       };
 
       getErrorContext(mockParams);

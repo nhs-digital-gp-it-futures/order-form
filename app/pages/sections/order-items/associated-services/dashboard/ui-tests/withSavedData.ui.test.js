@@ -4,16 +4,28 @@ import { extractInnerText } from 'buying-catalogue-library';
 import { baseUrl, orderApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/associated-services';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/associated-services';
 
 const mockAddedOrderItems = [
   {
-    orderItemId: 'orderItem1',
+    catalogueItemId: 'orderItem1',
     catalogueItemName: 'Associated Service One',
+    itemUnit: {
+      name: 'patient',
+      description: 'per patient',
+    },
+    timeUnit: {
+      name: 'month',
+      description: 'per month',
+    },
   },
   {
-    orderItemId: 'orderItem2',
+    catalogueItemId: 'orderItem2',
     catalogueItemName: 'Associated Service Two',
+    itemUnit: {
+      name: 'appointment',
+      description: 'per appointment',
+    },
   },
 ];
 
@@ -47,9 +59,11 @@ test('should render the added associated service table with the column headings'
 
   const addedOrderItems = Selector('[data-test-id="added-orderItems"]');
   const addedOrderItemsColumnHeading1 = addedOrderItems.find('[data-test-id="column-heading-0"]');
+  const addedOrderItemsColumnHeading2 = addedOrderItems.find('[data-test-id="column-heading-1"]');
 
   await t
-    .expect(await extractInnerText(addedOrderItemsColumnHeading1)).eql('Associated Services for this order');
+    .expect(await extractInnerText(addedOrderItemsColumnHeading1)).eql('Associated Service')
+    .expect(await extractInnerText(addedOrderItemsColumnHeading2)).eql('Unit of order');
 });
 
 test('should render the added associated service items in the table', async (t) => {
@@ -64,8 +78,8 @@ test('should render the added associated service items in the table', async (t) 
 
   await t
     .expect(await extractInnerText(row1CatalogueItemName)).eql('Associated Service One')
-    .expect(row1CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/associated-services/orderItem1`)
+    .expect(row1CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/orderItem1`)
 
     .expect(await extractInnerText(row2CatalogueItemName)).eql('Associated Service Two')
-    .expect(row2CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/order-1/associated-services/orderItem2`);
+    .expect(row2CatalogueItemName.getAttribute('href')).eql(`${baseUrl}/organisation/odsCode/order/order-1/associated-services/orderItem2`);
 });

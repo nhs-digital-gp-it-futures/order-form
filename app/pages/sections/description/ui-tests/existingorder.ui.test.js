@@ -1,16 +1,17 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import { orderApiUrl } from '../../../../config';
+import { orderApiUrl, organisationApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
+import mockOrgData from '../../../../test-utils/mockData/mockOrganisationData.json';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-1/description';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-1/description';
 
 const postDescriptionErrorResponse = {
   errors: [
     {
       field: 'Description',
-      id: 'OrderDescriptionTooLong',
+      id: 'DescriptionTooLong',
     },
   ],
 };
@@ -19,6 +20,9 @@ const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-1/sections/description')
     .reply(200, { description: 'a lovely description' });
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .reply(200, mockOrgData);
 };
 
 const pageSetup = async (setup = { withAuth: true, getRoute: true }) => {
@@ -38,14 +42,14 @@ fixture('Description page - existing order')
     await nockAndErrorCheck(nock, t);
   });
 
-test('should link to /order/organisation/order-1 for backlink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-1 for backlink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-1');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-1');
 });
 
 test('should populate the text area with existing decription data', async (t) => {
@@ -70,7 +74,7 @@ test('should navigate to task list page when valid description is added and save
 
   await t
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-1');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-1');
 });
 
 test('should show the error summary when there are validation errors', async (t) => {

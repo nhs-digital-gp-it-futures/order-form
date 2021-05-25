@@ -13,14 +13,14 @@ describe('summary page', () => {
     const context = {
       orderId: 'order-1',
       backLinkText: 'Go back',
-      backLinkHref: '/organisation/order-1',
+      backLinkHref: '/organisation/odsCode/order/order-1',
     };
 
     harness.request(context, ($) => {
       const backLink = $('[data-test-id="go-back-link"]');
       expect(backLink.length).toEqual(1);
       expect(backLink.text().trim()).toEqual('Go back');
-      expect($(backLink).find('a').attr('href')).toEqual('/organisation/order-1');
+      expect($(backLink).find('a').attr('href')).toEqual(context.backLinkHref);
     });
   }));
 
@@ -42,7 +42,7 @@ describe('summary page', () => {
     };
 
     harness.request(context, ($) => {
-      const description = $('h2[data-test-id="summary-page-description"]');
+      const description = $('[data-test-id="summary-page-description"]');
       expect(description.length).toEqual(1);
       expect(description.text().trim()).toEqual(context.description);
     });
@@ -55,8 +55,8 @@ describe('summary page', () => {
     };
 
     harness.request(context, ($) => {
-      const orderDescriptionHeading = $('h3[data-test-id="order-description-heading"]');
-      const orderDescription = $('h4[data-test-id="order-description"]');
+      const orderDescriptionHeading = $('h2[data-test-id="order-description-heading"]');
+      const orderDescription = $('p[data-test-id="order-description"]');
 
       expect(orderDescriptionHeading.length).toEqual(1);
       expect(orderDescriptionHeading.text().trim()).toContain(context.orderDescriptionHeading);
@@ -263,8 +263,8 @@ describe('summary page', () => {
     };
 
     harness.request(context, ($) => {
-      const oneOffCostHeading = $('h3[data-test-id="one-off-cost-heading"]');
-      const oneOffCostDescription = $('h4[data-test-id="one-off-cost-description"]');
+      const oneOffCostHeading = $('h2[data-test-id="one-off-cost-heading"]');
+      const oneOffCostDescription = $('p[data-test-id="one-off-cost-description"]');
 
       expect(oneOffCostHeading.length).toEqual(1);
       expect(oneOffCostHeading.text().trim()).toContain(context.oneOffCostHeading);
@@ -344,11 +344,11 @@ describe('summary page', () => {
     }));
   });
 
-  describe('One off cost totals table', () => {
+  describe('One off cost table footer', () => {
     const context = {
-      oneOffCostTotalsTable: {
+      oneOffCostTableFooter: {
         columnInfo: [
-          { data: '', width: '75%' }, { data: '', width: '25%' },
+          { data: '', width: 5 }, { data: '', width: 1 },
         ],
         items: [
           [
@@ -359,27 +359,25 @@ describe('summary page', () => {
       },
     };
 
-    it('should render the table with no headings and widths provided', componentTester(setup, (harness) => {
+    it('should render the table footer with widths provided', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="one-off-cost-totals-table"]');
+        const tFoot = $('div[data-test-id="one-off-cost-table"] tfoot');
 
-        expect(table.length).toEqual(1);
-        expect(table.find('th[data-test-id="column-heading-0"]').text().trim()).toEqual('');
-        expect(table.find('th[data-test-id="column-heading-1"]').text().trim()).toEqual('');
-
-        expect(table.find('[data-test-id="column-heading-0"]').attr('style')).toEqual('width:75%');
-        expect(table.find('[data-test-id="column-heading-1"]').attr('style')).toEqual('width:25%');
+        expect(tFoot.length).toEqual(1);
+        expect(tFoot.find('[data-test-id="column-footer-0"]').attr('colspan')).toEqual('5');
+        expect(tFoot.find('[data-test-id="column-footer-1"]').attr('colspan')).toEqual('1');
       });
     }));
 
-    it('should render the one off cost totals table', componentTester(setup, (harness) => {
+    it('should render the table footer with one off cost totals', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="one-off-cost-totals-table"]');
-        const row1 = table.find('[data-test-id="table-row-0"]');
+        const tFoot = $('div[data-test-id="one-off-cost-table"] tfoot');
+        const row1 = tFoot.find('[data-test-id="table-row-0"]');
         const totalCostLabelCell = row1.find('div[data-test-id="total-cost-label"]');
         const totalCostValueCell = row1.find('div[data-test-id="total-cost-value"]');
 
-        expect(table.length).toEqual(1);
+        expect(tFoot.length).toEqual(1);
+        expect(row1.length).toEqual(1);
         expect(totalCostLabelCell.text().trim()).toEqual('Total one off cost (indicative)');
         expect(totalCostValueCell.text().trim()).toEqual('1981.02');
       });
@@ -393,8 +391,8 @@ describe('summary page', () => {
     };
 
     harness.request(context, ($) => {
-      const recurringCostHeading = $('h3[data-test-id="recurring-cost-heading"]');
-      const recurringCostDescription = $('h4[data-test-id="recurring-cost-description"]');
+      const recurringCostHeading = $('h2[data-test-id="recurring-cost-heading"]');
+      const recurringCostDescription = $('[data-test-id="recurring-cost-description"]');
 
       expect(recurringCostHeading.length).toEqual(1);
       expect(recurringCostHeading.text().trim()).toContain(context.recurringCostHeading);
@@ -490,9 +488,9 @@ describe('summary page', () => {
 
   describe('Recurring cost totals table', () => {
     const context = {
-      recurringCostTotalsTable: {
+      recurringCostTableFooter: {
         columnInfo: [
-          { data: '', width: '75%' }, { data: '', width: '25%' },
+          { data: '', width: 7 }, { data: '', width: 1 },
         ],
         items: [
           [
@@ -515,40 +513,41 @@ describe('summary page', () => {
       },
     };
 
-    it('should render the table with no headings and widths provided', componentTester(setup, (harness) => {
+    it('should render the table footer with widths provided', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="recurring-cost-totals-table"]');
+        const tFoot = $('div[data-test-id="recurring-cost-table"] tfoot');
 
-        expect(table.length).toEqual(1);
-        expect(table.find('th[data-test-id="column-heading-0"]').text().trim()).toEqual('');
-        expect(table.find('th[data-test-id="column-heading-1"]').text().trim()).toEqual('');
-
-        expect(table.find('[data-test-id="column-heading-0"]').attr('style')).toEqual('width:75%');
-        expect(table.find('[data-test-id="column-heading-1"]').attr('style')).toEqual('width:25%');
+        expect(tFoot.length).toEqual(1);
+        expect(tFoot.find('[data-test-id="column-footer-0"]').attr('colspan')).toEqual('7');
+        expect(tFoot.find('[data-test-id="column-footer-1"]').attr('colspan')).toEqual('1');
       });
     }));
 
-    it('should render the recurring cost totals table', componentTester(setup, (harness) => {
+    it('should render the recurring cost totals in table footer', componentTester(setup, (harness) => {
       harness.request(context, ($) => {
-        const table = $('div[data-test-id="recurring-cost-totals-table"]');
+        const tFoot = $('div[data-test-id="recurring-cost-table"] tfoot');
 
-        const row1 = table.find('[data-test-id="table-row-0"]');
+        const row1 = tFoot.find('[data-test-id="table-row-0"]');
         const totalYearCostLabelCell = row1.find('div[data-test-id="total-year-cost-label"]');
         const totalYearCostValueCell = row1.find('div[data-test-id="total-year-cost-value"]');
 
-        const row2 = table.find('[data-test-id="table-row-1"]');
+        const row2 = tFoot.find('[data-test-id="table-row-1"]');
         const totalMonthlyCostLabelCell = row2.find('div[data-test-id="total-monthly-cost-label"]');
         const totalMonthlyCostValueCell = row2.find('div[data-test-id="total-monthly-cost-value"]');
 
-        const row3 = table.find('[data-test-id="table-row-2"]');
+        const row3 = tFoot.find('[data-test-id="table-row-2"]');
         const totalOwnershipCostLabelCell = row3.find('div[data-test-id="total-ownership-cost-label"]');
         const totalOwnershipCostValueCell = row3.find('div[data-test-id="total-ownership-cost-value"]');
 
-        const row4 = table.find('[data-test-id="table-row-3"]');
+        const row4 = tFoot.find('[data-test-id="table-row-3"]');
         const totalOwnershipTermsLabelCell = row4.find('div[data-test-id="total-ownership-terms"]');
         const row4BlankCell = row4.find('div[data-test-id="blank-cell"]');
 
-        expect(table.length).toEqual(1);
+        expect(tFoot.length).toEqual(1);
+        expect(row1.length).toEqual(1);
+        expect(row2.length).toEqual(1);
+        expect(row3.length).toEqual(1);
+        expect(row4.length).toEqual(1);
 
         expect(totalYearCostLabelCell.text().trim()).toEqual('Total cost for one year (indicative)');
         expect(totalYearCostValueCell.text().trim()).toEqual('1981.02');

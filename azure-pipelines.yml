@@ -75,8 +75,8 @@ jobs:
   displayName: Build and push docker containers to the acr
   variables:
     semVer: $[ dependencies.version.outputs['setVersionStep.semVer'] ]
-  condition: and(succeeded(), not(eq(variables['build.reason'], 'PullRequest')))
-  dependsOn:
+  condition: succeeded()
+  dependsOn: 
     - version
     - buildAndTest
   steps:
@@ -86,7 +86,7 @@ jobs:
 
   - task: DockerCompose@0
     displayName: 'Build: Dev'
-    condition: and(succeeded(), ne(variables['build.reason'], 'PullRequest'))
+    condition: succeeded()
     inputs:
       containerregistrytype: 'Azure Container Registry'
       azureSubscription: 'NHSAPP-BuyingCatalogue (Non-Prod)'
@@ -98,7 +98,7 @@ jobs:
 
   - task: DockerCompose@0
     displayName: 'Push: Dev'
-    condition: and(succeeded(), ne(variables['build.reason'], 'PullRequest'))
+    condition: succeeded()
     inputs:
       containerregistrytype: 'Azure Container Registry'
       azureSubscription: 'NHSAPP-BuyingCatalogue (Non-Prod)'

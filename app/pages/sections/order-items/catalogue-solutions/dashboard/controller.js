@@ -8,6 +8,7 @@ export const getCatalogueSolutionsPageContext = async ({
   accessToken,
   sessionManager,
   logger,
+  odsCode,
 }) => {
   const catalogueItemType = 'Solution';
   const solutionOrderItemsData = await getOrderItems({ orderId, catalogueItemType, accessToken });
@@ -22,5 +23,6 @@ export const getCatalogueSolutionsPageContext = async ({
     orderId,
     orderDescription: orderDescriptionData || '',
     orderItems: solutionOrderItemsData,
+    odsCode,
   });
 };

@@ -6,7 +6,7 @@ import { solutionsApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/associated-services/select/associated-service/price';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/select/associated-service/price';
 
 const selectedItemNameInSession = 'Associated Service Name';
 const selectedItemIdInSession = 'associated-service-1';
@@ -121,14 +121,14 @@ test('should render Associated-services price page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id/associated-services/select/associated-service for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id/associated-services/select/associated-service for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id/associated-services/select/associated-service');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id/associated-services/select/associated-service');
 });
 
 test('should render the title', async (t) => {
@@ -145,7 +145,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="associated-service-price-page-description"]');
+  const description = Selector('p[data-test-id="associated-service-price-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -196,7 +196,7 @@ test('should render the Continue button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.continueButtonText);
 });
 
-test('should redirect to /organisation/order-id/associated-services/neworderitem when a recipient is selected', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/associated-services/neworderitem when a recipient is selected', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -207,7 +207,7 @@ test('should redirect to /organisation/order-id/associated-services/neworderitem
   await t
     .click(firstPrice)
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/associated-services/neworderitem');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/neworderitem');
 });
 
 test('should render the title on validation error', async (t) => {

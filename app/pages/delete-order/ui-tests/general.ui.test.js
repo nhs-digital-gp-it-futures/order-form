@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../test-utils/uiTestHelper';
 import { orderApiUrl } from '../../../config';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/delete-order';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/delete-order';
 
 const orderDescriptionMock = 'desc';
 
@@ -61,7 +61,7 @@ test('should render delete-order select page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation for backLink', async (t) => {
+test('should link to /order/organisation/odsCode for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -69,7 +69,7 @@ test('should link to /order/organisation for backLink', async (t) => {
 
   await t
     .expect(await extractInnerText(goBackLink)).eql(content.backLinkText)
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -86,7 +86,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="delete-order-page-description"]');
+  const description = Selector('[data-test-id="delete-order-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -96,7 +96,7 @@ test('should render the order description title', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const orderDescriptionTitle = Selector('h3[data-test-id="order-description-title"]');
+  const orderDescriptionTitle = Selector('h2[data-test-id="order-description-title"]');
 
   await t
     .expect(await extractInnerText(orderDescriptionTitle)).eql(content.orderDescriptionTitle);
@@ -106,7 +106,7 @@ test('should render the order description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const orderDescription = Selector('h4[data-test-id="order-description"]');
+  const orderDescription = Selector('p[data-test-id="order-description"]');
 
   await t
     .expect(await extractInnerText(orderDescription)).eql(orderDescriptionMock);
@@ -120,7 +120,7 @@ test('should render the No button', async (t) => {
 
   await t
     .expect(await extractInnerText(button)).eql(content.noButton.text)
-    .expect(button.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(button.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
 
 test('should render the Yes button', async (t) => {
@@ -133,7 +133,7 @@ test('should render the Yes button', async (t) => {
     .expect(await extractInnerText(button)).eql(content.yesButton.text);
 });
 
-test('should redirect to /organisation/order-id/delete-order/confirmation when Yes is clicked', async (t) => {
+test('should redirect to /organisation/odsCode/order/order-id/delete-order/confirmation when Yes is clicked', async (t) => {
   await pageSetup({ ...defaultPageSetup, postRoute: true });
   await t.navigateTo(pageUrl);
 
@@ -141,5 +141,5 @@ test('should redirect to /organisation/order-id/delete-order/confirmation when Y
 
   await t
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id/delete-order/confirmation');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id/delete-order/confirmation');
 });

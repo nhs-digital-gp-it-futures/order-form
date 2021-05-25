@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/commencement-date';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/commencement-date';
 
 const putCommencementDateErrorResponse = {
   errors: [{
@@ -58,14 +58,14 @@ test('should render commencement-date page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -82,7 +82,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="commencement-date-page-description"]');
+  const description = Selector('[data-test-id="commencement-date-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -102,7 +102,7 @@ test('should render additionalAdvice', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const additionalAdvice = Selector('[data-test-id="date-field-input"] span.nhsuk-hint');
+  const additionalAdvice = Selector('[data-test-id="date-field-input"] .nhsuk-hint');
 
   await t
     .expect(await extractInnerText(additionalAdvice)).eql(content.questions.commencementDate.additionalAdvice);
@@ -135,15 +135,12 @@ test('should render input fields for day, month and year', async (t) => {
   await t
     .expect(dayInput.getAttribute('id')).eql('commencementDate-day')
     .expect(dayInput.getAttribute('name')).eql('commencementDate-day')
-    .expect(dayInput.getAttribute('type')).eql('number')
 
     .expect(monthInput.getAttribute('id')).eql('commencementDate-month')
     .expect(monthInput.getAttribute('name')).eql('commencementDate-month')
-    .expect(monthInput.getAttribute('type')).eql('number')
 
     .expect(yearInput.getAttribute('id')).eql('commencementDate-year')
-    .expect(yearInput.getAttribute('name')).eql('commencementDate-year')
-    .expect(yearInput.getAttribute('type')).eql('number');
+    .expect(yearInput.getAttribute('name')).eql('commencementDate-year');
 });
 
 test('should render save button', async (t) => {
@@ -175,7 +172,7 @@ test('should navigate to task list page if save button is clicked and data is va
     .typeText(monthInput, '01', { paste: true })
     .typeText(yearInput, '2020', { paste: true })
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id');
 });
 
 // FE Validation tests

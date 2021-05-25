@@ -5,7 +5,7 @@ import content from '../manifest.json';
 import { orderApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/funding-source';
+const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/funding-source';
 
 const mocks = () => {
   nock(orderApiUrl)
@@ -50,14 +50,14 @@ test('should render funding source page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should render go back link with href /organisation/order-id', async (t) => {
+test('should render go back link with href /organisation/odsCode/order/order-id', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/odsCode/order/order-id');
 });
 
 test('should render the title', async (t) => {
@@ -74,7 +74,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="funding-source-page-description"]');
+  const description = Selector('[data-test-id="funding-source-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -121,7 +121,7 @@ test('should navigate to task list page if save button is clicked and data is va
   await t
     .click(selectFundingSourceRadioOptions.find('input').nth(0))
     .click(button)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql('http://localhost:1234/order/organisation/odsCode/order/order-id');
 });
 
 test('should render the title on validation error', async (t) => {
@@ -154,7 +154,7 @@ test('should show the error summary when no funding source selected causing vali
 
   await t
     .expect(errorSummary.find('li a').count).eql(1)
-    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select yes if GMS is your only source of funding for this order');
+    .expect(await extractInnerText(errorSummary.find('li a'))).eql('Select yes if you\'re paying for this order in full using your GP IT Futures centrally held funding allocation');
 });
 
 test('should render select funding source field as errors with error message when no funding source selected causing validation error', async (t) => {
@@ -171,7 +171,7 @@ test('should render select funding source field as errors with error message whe
 
   await t
     .expect(fundingSourceSelectField.find('[data-test-id="radiobutton-options-error"]').exists).ok()
-    .expect(await extractInnerText(fundingSourceSelectField.find('#selectFundingSource-error'))).contains('Select yes if GMS is your only source of funding for this order');
+    .expect(await extractInnerText(fundingSourceSelectField.find('#selectFundingSource-error'))).contains('Select yes if you\'re paying for this order in full using your GP IT Futures centrally held funding allocation');
 });
 
 test('should anchor to the field when clicking on the error link in errorSummary ', async (t) => {

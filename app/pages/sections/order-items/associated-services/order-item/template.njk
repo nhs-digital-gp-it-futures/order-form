@@ -2,7 +2,7 @@
 {% from 'components/back-link/macro.njk' import backLink %}
 {% from 'components/bc-button/macro.njk' import bcButton %}
 {% from 'components/bc-error-summary/macro.njk' import bcErrorSummary %}
-{% from 'components/bc-table-flexible/macro.njk' import bcTableFlexible %}
+{% from 'components/bc-table/macro.njk' import bcTable %}
 {% from 'components/date-field/macro.njk' import dateField %}
 {% from 'components/text-field/macro.njk' import textField %}
 {% from 'components/radiobutton-options/macro.njk' import radiobuttonOptions %}
@@ -25,7 +25,7 @@
             }) }}
         {% endif %}
         <h1 data-test-id="order-item-page-title" class="nhsuk-u-margin-top-7 nhsuk-u-margin-bottom-3">{{ title }}</h1>
-        <h2 data-test-id="order-item-page-description" class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</h2>
+        <p data-test-id="order-item-page-description" class="nhsuk-heading-l nhsuk-u-font-size-24 nhsuk-u-margin-bottom-6">{{ description }}</p>
       </div>
 
       <form method="post">
@@ -58,7 +58,7 @@
         <div class="nhsuk-grid-column-full">
           <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-3 bc-c-order-table__hr"/>
           <div data-test-id="price-table" class="nhsuk-u-margin-left-5 nhsuk-u-margin-top-0">
-            {{ bcTableFlexible({
+            {{ bcTable({
               columnInfo: addPriceTable.columnInfo,
               classes: addPriceTable.classes,
               data: addPriceTable.items

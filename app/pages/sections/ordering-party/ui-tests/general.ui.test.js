@@ -2,10 +2,22 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl } from '../../../../config';
+import { orderApiUrl, organisationApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 
-const pageUrl = 'http://localhost:1234/order/organisation/order-id/ordering-party';
+const odsCode = 'AB3';
+const pageUrl = `http://localhost:1234/order/organisation/${odsCode}/order/order-id/ordering-party`;
+const mockOrganisationData = {
+  odsCode: 'AB3',
+  organisationId: 'org-id',
+  organisationName: 'Org name',
+  primaryRoleId: 'AB12',
+  address: {
+    line1: 'xyz',
+    postcode: 'some-postcode',
+    country: 'some-country',
+  },
+};
 
 const mockOrgData = {
   name: 'Org name',
@@ -73,6 +85,11 @@ const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Ordering-party page - general')
   .page('http://localhost:1234/order/some-fake-page')
+  .beforeEach(async () => {
+    nock(organisationApiUrl)
+      .get(`/api/v1/ods/${odsCode}`)
+      .reply(200, mockOrganisationData);
+  })
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
   });
@@ -99,14 +116,14 @@ test('should render ordering-party page', async (t) => {
     .expect(page.exists).ok();
 });
 
-test('should link to /order/organisation/order-id for backLink', async (t) => {
+test('should link to /order/organisation/odsCode/order/order-id for backLink', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
   const goBackLink = Selector('[data-test-id="go-back-link"] a');
 
   await t
-    .expect(goBackLink.getAttribute('href')).eql('/order/organisation/order-id');
+    .expect(goBackLink.getAttribute('href')).eql(`/order/organisation/${odsCode}/order/order-id`);
 });
 
 test('should render the title', async (t) => {
@@ -123,7 +140,7 @@ test('should render the description', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
-  const description = Selector('h2[data-test-id="ordering-party-page-description"]');
+  const description = Selector('[data-test-id="ordering-party-page-description"]');
 
   await t
     .expect(await extractInnerText(description)).eql(content.description);
@@ -189,7 +206,7 @@ test('should navigate to task list page if save button is clicked and data is va
   await t
     .expect(saveButton.exists).ok()
     .click(saveButton)
-    .expect(getLocation()).eql('http://localhost:1234/order/organisation/order-id');
+    .expect(getLocation()).eql(`http://localhost:1234/order/organisation/${odsCode}/order/order-id`);
 });
 
 test('should show the error summary when there are validation errors', async (t) => {
