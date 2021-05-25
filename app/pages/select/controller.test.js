@@ -9,7 +9,7 @@ describe('organisation select controller', () => {
   const options = {
     accessToken: 'access_token',
     orgId: 'abc',
-    orgName: 'primary',
+    orgName: 'Primary Organisation',
     odsCode: 'odsCode',
     selectedOrgId: '002',
     selectedOdsCode: 'currentOdsCode',
@@ -49,7 +49,7 @@ describe('organisation select controller', () => {
       expect(returnedContext.backLinkHref).toEqual(`${baseUrl}/organisation/${options.selectedOdsCode}`);
     });
 
-    it('should return backLinkHref with odsCode if selectedOdsCode is invalid ', async () => {
+    it('should return backLinkHref with odsCode if selectedOdsCode is invalid', async () => {
       options.selectedOdsCode = undefined;
 
       const returnedContext = await getSelectContext(options);
@@ -57,12 +57,20 @@ describe('organisation select controller', () => {
       expect(returnedContext.backLinkHref).toEqual(`${baseUrl}/organisation/${options.odsCode}`);
     });
 
+    it('should return expected description', async () => {
+      options.selectedOdsCode = undefined;
+
+      const returnedContext = await getSelectContext(options);
+
+      expect(returnedContext.description)
+        .toEqual(`Select the organisation you want ${options.orgName} to act on behalf of.`);
+    });
+
     it('should return manifest values', async () => {
       const returnedContext = await getSelectContext(options);
 
       expect(returnedContext.backLinkText).toEqual(manifest.backLinkText);
       expect(returnedContext.continueButtonText).toEqual(manifest.continueButtonText);
-      expect(returnedContext.description).toEqual(manifest.description);
       expect(returnedContext.errorMessages).toEqual(manifest.errorMessages);
       expect(returnedContext.title).toEqual(manifest.title);
     });
@@ -80,7 +88,7 @@ describe('organisation select controller', () => {
       const returnedContext = await getSelectContext(options);
 
       const question = returnedContext.questions[0];
-      expect(question.options[0].text).toEqual('primary');
+      expect(question.options[0].text).toEqual('Primary Organisation');
       expect(question.options[0].value).toEqual('abc');
 
       expect(question.options[1].text).toEqual('a org two');
@@ -121,7 +129,7 @@ describe('organisation select controller', () => {
         body: {
           odsCode: 'odsCode',
           orgId: 'orgId',
-          orgName: 'orgName',
+          orgName: 'Goole CCG',
         },
       },
       selectedOdsCode: 'currentOdsCode',
@@ -146,7 +154,8 @@ describe('organisation select controller', () => {
 
       expect(returnedContext.backLinkText).toEqual(manifest.backLinkText);
       expect(returnedContext.continueButtonText).toEqual(manifest.continueButtonText);
-      expect(returnedContext.description).toEqual(manifest.description);
+      expect(returnedContext.description)
+        .toEqual(`Select the organisation you want ${params.req.body.orgName} to act on behalf of.`);
       expect(returnedContext.errorMessages).toEqual(manifest.errorMessages);
       expect(returnedContext.title).toEqual(manifest.title);
     });
