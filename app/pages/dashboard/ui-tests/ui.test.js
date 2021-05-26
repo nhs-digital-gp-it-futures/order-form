@@ -50,6 +50,19 @@ test('when user is not authenticated - should navigate to the identity server lo
     .expect(getLocation()).eql('http://identity-server/login');
 });
 
+test('should render cookie policy banner and it should not re-render again after dismissing', async (t) => {
+  await pageSetup();
+  await t.navigateTo(pageUrl);
+  const cookieBanner = Selector('[data-test-id="cookie-banner"]');
+  const dismissButton = Selector('[data-test-id="cookie-dismiss"] a');
+  await t
+    .expect(cookieBanner.exists).ok()
+    .click(dismissButton);
+  await pageSetup();
+  await t.navigateTo(pageUrl)
+    .expect(cookieBanner.exists).notOk();
+});
+
 test('should render dashboard page', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
