@@ -1,4 +1,5 @@
 import express from 'express';
+import sanitize from 'sanitize-filename';
 import { ErrorContext } from 'buying-catalogue-library';
 import { logger } from '../../../../../logger';
 import config from '../../../../../config';
@@ -507,7 +508,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/additional-services/neworderitem`);
     }
 
-    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, req, csrfToken: req.csrfToken() }));
+    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${sanitize(priceType)}/template.njk`, addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/additional-service/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -549,7 +550,7 @@ export const additionalServicesSelectRoutes = (authProvider, addContext, session
       formData,
       validationErrors,
     });
-    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, req, csrfToken: req.csrfToken() }));
+    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${sanitize(priceType)}/template.njk`, addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
   return router;
 };
