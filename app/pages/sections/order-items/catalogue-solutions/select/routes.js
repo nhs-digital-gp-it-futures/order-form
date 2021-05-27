@@ -1,4 +1,5 @@
 import express from 'express';
+import sanitize from 'sanitize-filename';
 import { logger } from '../../../../../logger';
 import config from '../../../../../config';
 import { withCatch, extractAccessToken } from '../../../../../helpers/routes/routerHelper';
@@ -403,7 +404,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
     if (priceType === 'flat' && provisioningType === 'patient') {
       return res.redirect(`${config.baseUrl}/organisation/${odsCode}/order/${orderId}/catalogue-solutions/neworderitem`);
     }
-    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, req, csrfToken: req.csrfToken() }));
+    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${sanitize(priceType)}/template.njk`, addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
 
   router.post('/solution/price/:priceType/:provisioningType', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
@@ -445,7 +446,7 @@ export const catalogueSolutionsSelectRoutes = (authProvider, addContext, session
       formData,
       validationErrors,
     });
-    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${priceType}/template.njk`, addContext({ context, req, csrfToken: req.csrfToken() }));
+    return res.render(`pages/sections/order-items/catalogue-solutions/order-item/${sanitize(priceType)}/template.njk`, addContext({ context, req, csrfToken: req.csrfToken() }));
   }));
   return router;
 };
