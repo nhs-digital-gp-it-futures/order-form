@@ -2,9 +2,10 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { solutionsApiUrl, orderApiUrl } from '../../../../../config';
+import { solutionsApiUrl, orderApiUrl, organisationApiUrl } from '../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/supplier';
 
@@ -33,10 +34,13 @@ const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/supplier')
     .reply(200, {});
-
   nock(solutionsApiUrl)
     .get('/api/v1/suppliers/supplier-1')
     .reply(200, supplierDataFromBapi);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, withSelectedSupplier: true };

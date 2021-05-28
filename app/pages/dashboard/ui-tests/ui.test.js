@@ -15,6 +15,7 @@ const mocks = () => {
     .reply(200, mockOrdersData);
   nock(organisationApiUrl)
     .get('/api/v1/ods/odsCode')
+    .times(2)
     .reply(200, mockOrgData);
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id')

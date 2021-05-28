@@ -64,6 +64,9 @@ const mocks = () => {
   nock(solutionsApiUrl)
     .get(`/api/v1/prices/${selectedPriceId}`)
     .reply(200, selectedPrice);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
@@ -83,11 +86,6 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 fixture('Associated-services - flat declarative - withSavedData')
   .page('http://localhost:1234/order/some-fake-page')
-  .beforeEach(async () => {
-    nock(organisationApiUrl)
-      .get(`/api/v1/ods/${odsCode}`)
-      .reply(200, mockOrgData);
-  })
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
   });

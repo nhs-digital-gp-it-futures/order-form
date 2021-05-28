@@ -33,6 +33,7 @@ const mockDataFromOrdapi = {
 const mocks = () => {
   nock(organisationApiUrl)
     .get(`/api/v1/ods/${odsCode}`)
+    .times(2)
     .reply(200, mockDataFromOrdapi);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/ordering-party')

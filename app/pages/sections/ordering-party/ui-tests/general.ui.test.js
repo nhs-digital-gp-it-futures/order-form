@@ -4,11 +4,12 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { orderApiUrl, organisationApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
+import mockOrgData from '../../../../test-utils/mockData/mockOrganisationData.json';
 
-const odsCode = 'AB3';
+const odsCode = 'odsCode';
 const pageUrl = `http://localhost:1234/order/organisation/${odsCode}/order/order-id/ordering-party`;
 const mockOrganisationData = {
-  odsCode: 'AB3',
+  odsCode: 'odsCode',
   organisationId: 'org-id',
   organisationName: 'Org name',
   primaryRoleId: 'AB12',
@@ -19,9 +20,9 @@ const mockOrganisationData = {
   },
 };
 
-const mockOrgData = {
+const mockOrgDataLongAddress = {
   name: 'Org name',
-  odsCode: 'AB3',
+  odsCode: 'odsCode',
   address: {
     line1: 'line 1',
     line2: 'line 2',
@@ -57,7 +58,7 @@ const putOrderingPartyErrorResponse = {
 };
 
 const requestPutBody = {
-  ...mockOrgData,
+  ...mockOrgDataLongAddress,
   primaryContact: {
     firstName: null,
     lastName: null,
@@ -69,6 +70,10 @@ const requestPutBody = {
 const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/ordering-party')
+    .reply(200, mockOrgDataLongAddress);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
     .reply(200, mockOrgData);
 };
 
@@ -275,15 +280,15 @@ test('should ensure details are repopulated when there are validation errors', a
     .click(saveButton);
 
   await t
-    .expect(await extractInnerText(addressTextLine1)).eql(mockOrgData.address.line1)
-    .expect(await extractInnerText(addressTextLine2)).eql(mockOrgData.address.line2)
-    .expect(await extractInnerText(addressTextLine3)).eql(mockOrgData.address.line3)
+    .expect(await extractInnerText(addressTextLine1)).eql(mockOrgDataLongAddress.address.line1)
+    .expect(await extractInnerText(addressTextLine2)).eql(mockOrgDataLongAddress.address.line2)
+    .expect(await extractInnerText(addressTextLine3)).eql(mockOrgDataLongAddress.address.line3)
     .expect(await extractInnerText(addressTextLine4)).eql('')
-    .expect(await extractInnerText(addressTextLine5)).eql(mockOrgData.address.line5)
-    .expect(await extractInnerText(addressTextTown)).eql(mockOrgData.address.town)
-    .expect(await extractInnerText(addressTextCounty)).eql(mockOrgData.address.county)
-    .expect(await extractInnerText(addressTextPostcode)).eql(mockOrgData.address.postcode)
-    .expect(await extractInnerText(addressTextCountry)).eql(mockOrgData.address.country)
+    .expect(await extractInnerText(addressTextLine5)).eql(mockOrgDataLongAddress.address.line5)
+    .expect(await extractInnerText(addressTextTown)).eql(mockOrgDataLongAddress.address.town)
+    .expect(await extractInnerText(addressTextCounty)).eql(mockOrgDataLongAddress.address.county)
+    .expect(await extractInnerText(addressTextPostcode)).eql(mockOrgDataLongAddress.address.postcode)
+    .expect(await extractInnerText(addressTextCountry)).eql(mockOrgDataLongAddress.address.country)
     .expect(firstName.find('input').value).eql(`${typedText} firstName`)
     .expect(lastName.find('input').value).eql(`${typedText} lastName`)
     .expect(emailAddress.find('input').value).eql(`${typedText} emailAddress`)

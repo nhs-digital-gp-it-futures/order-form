@@ -15,7 +15,7 @@ import { completeOrderRoutes } from './pages/complete-order/routes';
 import { deleteOrderRoutes } from './pages/delete-order/routes';
 import { selectOrganisationRoutes } from './pages/select/routes';
 import includesContext from './includes/manifest.json';
-import { getOdsCodeForOrganisation } from './helpers/controllers/odsCodeLookup';
+import { getOdsCodeForOrganisation, getOrganisationFromOdsCode } from './helpers/controllers/odsCodeLookup';
 import { sessionKeys } from './helpers/routes/sessionHelper';
 
 const addContext = ({ context, req, csrfToken }) => ({
@@ -23,7 +23,7 @@ const addContext = ({ context, req, csrfToken }) => ({
   ...includesContext,
   config,
   username: req && req.user && req.user.name,
-  organisation: req && req.user && req.user.primaryOrganisationName,
+  organisation: req && req.primaryOrganisationName,
   csrfToken,
   showCookieBanner: !cookiePolicyExists({ req, logger }),
 });
@@ -96,6 +96,32 @@ export const routes = (authProvider, sessionManager) => {
 
     return next();
   });
+
+  router.use('/organisation/:odsCode', withCatch(logger, authProvider, async (req, res, next) => {
+    const { odsCode } = req.params;
+    const accessToken = extractAccessToken({ req, tokenType: 'access' });
+    logger.info(`getting organisation from odsCode ${odsCode}`);
+    try {
+      const { name } = await getOrganisationFromOdsCode({
+        req, sessionManager, odsCode, accessToken,
+      });
+      if (name) {
+        req.primaryOrganisationName = name;
+      } else if (req.user && req.user.primaryOrganisationName) {
+        req.primaryOrganisationName = req.user.primaryOrganisationName;
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      logger.info(`Unable to get organisation by odsCode ${odsCode}`);
+      throw new ErrorContext({
+        status: 404,
+        title: `Invalid ods code ${odsCode}`,
+        description: 'Unable to get organisation by odsCode',
+      });
+    }
+    next();
+  }));
 
   router.use('/organisation/:odsCode', dashboardRoutes(authProvider, addContext, sessionManager));
 

@@ -7,6 +7,12 @@ import mockOrgData from '../../../../test-utils/mockData/mockOrganisationData.js
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/neworder/description';
 
+const mocks = () => {
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .reply(200, mockOrgData);
+};
+
 const postDescriptionErrorResponse = {
   errors: [
     {
@@ -20,6 +26,7 @@ const pageSetup = async (setup = { withAuth: true }) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
+  mocks();
 };
 
 const getLocation = ClientFunction(() => document.location.href);

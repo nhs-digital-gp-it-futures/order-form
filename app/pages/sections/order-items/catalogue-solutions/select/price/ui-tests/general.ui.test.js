@@ -5,6 +5,7 @@ import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { solutionsApiUrl, organisationApiUrl } from '../../../../../../../config';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price';
 
@@ -93,6 +94,10 @@ const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices?catalogueItemId=solution-1')
     .reply(200, mockSolutionPricing);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = {
@@ -263,7 +268,7 @@ test('should redirect to /organisation/odsCode/order/order-id/catalogue-solution
     .get('/api/v1/Organisations/org-id/service-recipients')
     .reply(200, []);
 
-  await pageSetup({ ...defaultPageSetup, withMocks: false });
+  await pageSetup({ ...defaultPageSetup, withMocks: true });
   await t.navigateTo(pageUrl);
 
   await t

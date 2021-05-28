@@ -5,6 +5,7 @@ import content from '../manifest.json';
 import { organisationApiUrl, solutionsApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/additional-services/select/additional-service/price';
 
@@ -73,6 +74,10 @@ const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices?catalogueItemId=additional-service-1')
     .reply(200, mockAdditionalServicePricing);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };

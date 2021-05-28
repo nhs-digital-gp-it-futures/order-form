@@ -2,15 +2,16 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { solutionsApiUrl, orderApiUrl } from '../../../../../../../../config';
+import { solutionsApiUrl, orderApiUrl, organisationApiUrl } from '../../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const getLocation = ClientFunction(() => document.location.href);
 
 const organisation = 'organisation';
 const callOffId = 'order-id';
-const odsCode = '03F';
+const odsCode = 'odsCode';
 const pageUrl = `http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/catalogue-solutions/neworderitem`;
 
 const selectedPrice = {
@@ -77,6 +78,9 @@ const mocks = (mockSelectedPrice) => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, mockSelectedPrice);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = {

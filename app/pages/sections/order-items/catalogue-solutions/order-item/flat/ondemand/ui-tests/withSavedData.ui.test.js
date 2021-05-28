@@ -1,10 +1,11 @@
 import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import { orderApiUrl, solutionsApiUrl } from '../../../../../../../../config';
+import { orderApiUrl, solutionsApiUrl, organisationApiUrl } from '../../../../../../../../config';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/1';
 const priceId = '1018';
@@ -64,6 +65,9 @@ const mocks = () => {
   nock(solutionsApiUrl)
     .get(`/api/v1/prices/${priceId}`)
     .reply(200, orderItem);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
