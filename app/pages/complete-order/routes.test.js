@@ -16,11 +16,14 @@ import { baseUrl } from '../../config';
 import { getFundingSource } from '../../helpers/api/ordapi/getFundingSource';
 import { getOrderDescription } from '../../helpers/routes/getOrderDescription';
 import { putOrderStatus } from '../../helpers/api/ordapi/putOrderStatus';
+import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
+import mockOrgData from '../../test-utils/mockData/mockOrganisationData.json';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
 jest.mock('../../helpers/routes/getOrderDescription');
 jest.mock('../../helpers/api/ordapi/putOrderStatus');
+jest.mock('../../helpers/controllers/odsCodeLookup');
 
 const mockFundingCookie = `fundingSource=${true}`;
 
@@ -31,11 +34,12 @@ describe('GET /organisation/:odsCode/order/:orderId/complete-order', () => {
     jest.resetAllMocks();
   });
 
-  it('should redirect to the login page if the user is not logged in', () => (
-    testAuthorisedGetPathForUnauthenticatedUser({
+  it('should redirect to the login page if the user is not logged in', () => {
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+    return testAuthorisedGetPathForUnauthenticatedUser({
       app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-    })
-  ));
+    });
+  });
 
   it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
     testAuthorisedGetPathForUnauthorisedUser({
@@ -48,8 +52,10 @@ describe('GET /organisation/:odsCode/order/:orderId/complete-order', () => {
   ));
 
   it('should return the correct status and text when the user is authorised', () => {
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
     getFundingSource.mockResolvedValue(true);
     getOrderDescription.mockResolvedValue({});
+
     return request(setUpFakeApp())
       .get(path)
       .set('Cookie', [mockAuthorisedCookie])
@@ -79,6 +85,7 @@ describe('POST /organisation/:odsCode/order/:orderId/complete-order', () => {
   it('should redirect to the login page if the user is not logged in', () => {
     getFundingSource.mockResolvedValue(true);
     putOrderStatus.mockResolvedValue({});
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
     return testAuthorisedPostPathForUnauthenticatedUser({
       app: request(setUpFakeApp()),
@@ -93,6 +100,7 @@ describe('POST /organisation/:odsCode/order/:orderId/complete-order', () => {
   it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
     getFundingSource.mockResolvedValue(true);
     putOrderStatus.mockResolvedValue({});
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
     return testAuthorisedPostPathForUnauthorisedUsers({
       app: request(setUpFakeApp()),
@@ -108,6 +116,7 @@ describe('POST /organisation/:odsCode/order/:orderId/complete-order', () => {
   it('should return the correct status and text if no error is thrown', async () => {
     getFundingSource.mockResolvedValue(true);
     putOrderStatus.mockResolvedValue({});
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
     const { cookies, csrfToken } = await getCsrfTokenFromGet({
       app: request(setUpFakeApp()),
@@ -136,11 +145,12 @@ describe('GET /organisation/:odsCode/order/:orderId/complete-order/order-confirm
     jest.resetAllMocks();
   });
 
-  it('should redirect to the login page if the user is not logged in', () => (
-    testAuthorisedGetPathForUnauthenticatedUser({
+  it('should redirect to the login page if the user is not logged in', () => {
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+    return testAuthorisedGetPathForUnauthenticatedUser({
       app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-    })
-  ));
+    });
+  });
 
   it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
     testAuthorisedGetPathForUnauthorisedUser({
@@ -153,8 +163,10 @@ describe('GET /organisation/:odsCode/order/:orderId/complete-order/order-confirm
   ));
 
   it('should return the correct status and text when the user is authorised', () => {
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
     getFundingSource.mockResolvedValue(true);
     getOrderDescription.mockResolvedValue({});
+
     return request(setUpFakeApp())
       .get(path)
       .set('Cookie', [mockAuthorisedCookie, mockFundingCookie])

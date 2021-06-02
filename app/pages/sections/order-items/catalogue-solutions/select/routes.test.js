@@ -27,6 +27,8 @@ import { getCommencementDate } from '../../../../../helpers/routes/getCommenceme
 import { putPlannedDeliveryDate } from '../../../../../helpers/api/ordapi/putPlannedDeliveryDate';
 import * as validateFormFunction from '../../../../../helpers/controllers/validateSolutionRecipientsForm';
 import { sessionKeys } from '../../../../../helpers/routes/sessionHelper';
+import { getOrganisationFromOdsCode } from '../../../../../helpers/controllers/odsCodeLookup';
+import mockOrgData from '../../../../../test-utils/mockData/mockOrganisationData.json';
 
 jest.mock('../../../../../logger');
 jest.mock('../../../../../helpers/api/oapi/getServiceRecipients');
@@ -38,6 +40,7 @@ jest.mock('../../../../../helpers/api/ordapi/getSupplier');
 jest.mock('../../../../../helpers/routes/getCommencementDate');
 jest.mock('../../../../../helpers/routes/getOrderItemPageData');
 jest.mock('../../../../../helpers/api/ordapi/putPlannedDeliveryDate');
+jest.mock('../../../../../helpers/controllers/odsCodeLookup');
 
 const mockSessionSolutionsState = JSON.stringify([
   { catalogueItemId: 'solution-1', name: 'Solution 1' },
@@ -72,11 +75,12 @@ describe('catalogue-solutions select routes', () => {
   describe('GET /organisation/:odsCode/order/:orderId/catalogue-solutions/select', () => {
     const path = '/organisation/odsCode/order/order-1/catalogue-solutions/select';
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -92,8 +96,8 @@ describe('catalogue-solutions select routes', () => {
       selectSolutionController.getSolutionsPageContext = jest.fn()
         .mockResolvedValue({});
 
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       getSupplier.mockResolvedValue({ supplierId: 'supp-1' });
-
       getCatalogueItems.mockResolvedValue([]);
 
       return request(setUpFakeApp())
@@ -110,11 +114,12 @@ describe('catalogue-solutions select routes', () => {
   describe('GET /organisation/:odsCode/order/:orderId/catalogue-solutions/select/solution', () => {
     const path = '/organisation/odsCode/order/some-order-id/catalogue-solutions/select/solution';
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -131,7 +136,7 @@ describe('catalogue-solutions select routes', () => {
         .mockResolvedValue({});
 
       getSupplier.mockResolvedValue({ supplierId: 'supp-1' });
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       getCatalogueItems.mockResolvedValue([]);
 
       return request(setUpFakeApp())
@@ -180,7 +185,7 @@ describe('catalogue-solutions select routes', () => {
     it('should show the solution select page with errors if there are validation errors', async () => {
       selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: false });
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       selectSolutionController.getSolutionsErrorPageContext = jest.fn()
         .mockResolvedValue({
           errors: [{ text: 'Select a solution', href: '#selectSolution' }],
@@ -208,7 +213,7 @@ describe('catalogue-solutions select routes', () => {
     it('should redirect to /organisation/some-order-id/catalogue-solutions/catalogueItemId if a existing solution is selected', async () => {
       selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: true });
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       findSelectedCatalogueItemInSession.mockReturnValue({ catalogueItemId: 'solution-1', name: 'Solution 1' });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
@@ -235,7 +240,7 @@ describe('catalogue-solutions select routes', () => {
     it('should redirect to /organisation/some-order-id/catalogue-solutions/select/solution/price if a new solution is selected', async () => {
       selectSolutionController.validateSolutionForm = jest.fn()
         .mockReturnValue({ success: true });
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       findSelectedCatalogueItemInSession.mockReturnValue({ catalogueItemId: 'solution-4', name: 'Solution 4' });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
@@ -267,11 +272,12 @@ describe('catalogue-solutions select routes', () => {
 
     const path = '/organisation/odsCode/order/some-order-id/catalogue-solutions/select/solution/price';
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -286,7 +292,7 @@ describe('catalogue-solutions select routes', () => {
     it('should return the catalogue-solutions select price page if authorised', async () => {
       catalogueSolutionPriceController.getSolutionPricePageContext = jest.fn()
         .mockResolvedValue({});
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       getCatalogueItemPricing.mockResolvedValue([]);
 
       const res = await request(setUpFakeApp())
@@ -301,7 +307,7 @@ describe('catalogue-solutions select routes', () => {
     it('should return the catalogue-solutions select service recipients page if only one price returned', async () => {
       catalogueSolutionPriceController.getSolutionPricePageContext = jest.fn()
         .mockResolvedValue({});
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       getCatalogueItemPricing.mockResolvedValue({ prices: [{ priceId: 1 }] });
 
       await request(setUpFakeApp())
@@ -323,19 +329,21 @@ describe('catalogue-solutions select routes', () => {
       })
     ));
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedPostPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
         getPathCookies: [mockAuthorisedCookie, mockSolutionsCookie],
         postPathCookies: [mocksolutionPricesCookie],
         expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedPostPathForUnauthorisedUsers({
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
@@ -343,14 +351,28 @@ describe('catalogue-solutions select routes', () => {
         postPathCookies: [mockUnauthorisedCookie],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
+      });
+    });
 
+    /*
+      NJEN
+      [UnhandledPromiseRejection: This error
+      originated either by throwing inside of an
+      async function without a catch block, or by
+      rejecting a promise which was not handled with .catch().
+      The promise rejected with the reason
+      "Error: expect(received).toEqual(expected) // deep equality
+
+      Expected: true
+      Received: false".] {
+        code: 'ERR_UNHANDLED_REJECTION'
+      }
+    */
     it('should show the solution select page with errors if there are validation errors', async () => {
       catalogueSolutionPriceController.validateSolutionPriceForm = jest.fn()
         .mockReturnValue({ success: false });
-
       getCatalogueItemPricing.mockResolvedValue([]);
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       catalogueSolutionPriceController.getSolutionPriceErrorPageContext = jest.fn()
         .mockResolvedValue({
@@ -379,6 +401,7 @@ describe('catalogue-solutions select routes', () => {
     it('should redirect to /organisation/some-order-id/catalogue-solutions/select/solution/price if a solution is selected', async () => {
       catalogueSolutionPriceController.validateSolutionPriceForm = jest.fn()
         .mockReturnValue({ success: true });
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -414,11 +437,12 @@ describe('catalogue-solutions select routes', () => {
         .mockResolvedValue({});
     });
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -430,26 +454,32 @@ describe('catalogue-solutions select routes', () => {
       })
     ));
 
-    it('should return the catalogue-solutions select recipient page if authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        expect(mockSetContext).toHaveBeenCalled();
-      }));
+    it('should return the catalogue-solutions select recipient page if authorised', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+          expect(mockSetContext).toHaveBeenCalled();
+        });
+    });
 
-    it('should set context if authorised and back from catalogue solution edit', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="solution-recipients-page-title"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        expect(mockSetContext).toHaveBeenCalled();
-      }));
+    it('should set context if authorised and back from catalogue solution edit', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="solution-recipients-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="solution-recipients-page-title"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+          expect(mockSetContext).toHaveBeenCalled();
+        });
+    });
   });
 
   describe('POST /organisation/:odsCode/order/:orderId/catalogue-solutions/select/solution/price/recipients', () => {
@@ -490,6 +520,7 @@ describe('catalogue-solutions select routes', () => {
 
     it('should show the recipient select page with errors if there are validation errors', async () => {
       getRecipientsFromOapi.mockResolvedValue([]);
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       validateFormFunction.validateSolutionRecipientsForm = jest.fn()
         .mockReturnValue({ success: false });
@@ -525,6 +556,7 @@ describe('catalogue-solutions select routes', () => {
     it('should redirect to planned delivey date page when a recipient is selected', async () => {
       validateFormFunction.validateSolutionRecipientsForm = jest.fn()
         .mockReturnValue({ success: true });
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -549,7 +581,7 @@ describe('catalogue-solutions select routes', () => {
       const slug = '/organisation/odsCode/order/order-1/catalogues-solutions/42';
       const expectedLocation = `${baseUrl}${slug}`;
       selectRecipientController.getSelectSolutionPriceEndpoint = jest.fn().mockReturnValue(slug);
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       validateFormFunction.validateSolutionRecipientsForm = jest.fn()
         .mockReturnValue({ success: true });
 
@@ -576,11 +608,12 @@ describe('catalogue-solutions select routes', () => {
   describe('GET /organisation/:odsCode/order/:orderId/catalogue-solutions/select/solution/price/recipients/date', () => {
     const path = '/organisation/odsCode/order/some-order-id/catalogue-solutions/select/solution/price/recipients/date';
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValueOnce(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -594,7 +627,7 @@ describe('catalogue-solutions select routes', () => {
 
     it('should return the catalogue-solutions select planned delivery date if authorised', () => {
       getCommencementDate.mockResolvedValue('');
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       selectPlannedDateController.getDeliveryDateContext = jest.fn()
         .mockResolvedValue({});
 
@@ -643,7 +676,7 @@ describe('catalogue-solutions select routes', () => {
 
     it('should show the recipient select page with errors if there are validation errors', async () => {
       selectPlannedDateController.validateDeliveryDateForm = jest.fn().mockReturnValue([{}]);
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       selectPlannedDateController.getDeliveryDateErrorPageContext = jest.fn().mockResolvedValue({
         errors: [{ text: 'error', field: ['year'], href: '#plannedDeliveryDate' }],
       });
@@ -671,7 +704,7 @@ describe('catalogue-solutions select routes', () => {
 
     it('should return the correct status and text if the api response is unsuccessful', async () => {
       selectPlannedDateController.validateDeliveryDateForm = jest.fn().mockReturnValue([{}]);
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       putPlannedDeliveryDate.mockResolvedValue({ success: false, errors: [{}] });
 
       selectPlannedDateController.getDeliveryDateErrorPageContext = jest.fn().mockResolvedValue({
@@ -700,11 +733,13 @@ describe('catalogue-solutions select routes', () => {
 
   describe('GET /organisation/:odsCode/order/:orderId/catalogue-solutions/select/solution/price/flat/ondemand', () => {
     const path = '/organisation/odsCode/order/some-order-id/catalogue-solutions/select/solution/price/flat/ondemand';
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValueOnce(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({

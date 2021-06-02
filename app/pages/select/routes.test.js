@@ -11,6 +11,7 @@ import * as controller from './controller';
 import { getOdsCodeForOrganisation, getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
 import { getProxyOrganisations } from '../../helpers/api/oapi/getProxyOrganisations';
 import { baseUrl } from '../../config';
+import mockOrgData from '../../test-utils/mockData/mockOrganisationData.json';
 
 jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
 jest.mock('../../helpers/controllers/odsCodeLookup');
@@ -18,20 +19,25 @@ jest.mock('../../helpers/api/oapi/getRelatedOrganisations');
 jest.mock('../../helpers/api/oapi/getProxyOrganisations');
 
 describe('select organisation routes', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('GET /organisation/:odsCode/select', () => {
     const path = '/organisation/odsCode/select/selectedOdsCode';
     afterEach(() => {
       jest.resetAllMocks();
     });
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValueOnce(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should return the page with correct status when the user is authorised', () => {
-      getOrganisationFromOdsCode.mockResolvedValueOnce({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       controller.organisationsList = jest.fn()
         .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });
       getProxyOrganisations.mockResolvedValue([{ organisationId: '123', name: 'abc' }]);
@@ -54,7 +60,7 @@ describe('select organisation routes', () => {
     });
 
     it('should redirect to /organisation/odsCode, if the organisation is selected', async () => {
-      getOrganisationFromOdsCode.mockResolvedValueOnce({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       controller.organisationsList = jest.fn()
         .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });
       getProxyOrganisations.mockResolvedValue([{ organisationId: '123', name: 'abc' }]);
@@ -80,7 +86,7 @@ describe('select organisation routes', () => {
     });
 
     it('should redirect back to select page, if the organisation is not selected', async () => {
-      getOrganisationFromOdsCode.mockResolvedValueOnce({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       controller.getSelectErrorContext = jest.fn();
       controller.organisationsList = jest.fn()
         .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });

@@ -22,6 +22,7 @@ import { putOrderingParty } from '../../helpers/api/ordapi/putOrderingParty';
 import { putCommencementDate } from '../../helpers/api/ordapi/putCommencementDate';
 import * as fundingSourceController from './funding-source/controller';
 import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
+import mockOrgData from '../../test-utils/mockData/mockOrganisationData.json';
 
 jest.mock('../../logger');
 jest.mock('../../helpers/api/ordapi/getFundingSource');
@@ -45,11 +46,12 @@ describe('section routes', () => {
   describe('GET /organisation/:odsCode/order/:orderId/description', () => {
     const path = '/organisation/odsCode/order/some-order-id/description';
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -61,20 +63,23 @@ describe('section routes', () => {
       })
     ));
 
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.text.includes('data-test-id="description-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-      }));
+    it('should return the correct status and text when the user is authorised', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('data-test-id="description-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
   });
 
   describe('POST /organisation/:odsCode/order/:orderId/description', () => {
     const path = '/organisation/odsCode/order/:orderId/description';
     beforeEach(() => {
-      getOrganisationFromOdsCode.mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
     });
 
     afterEach(() => {
@@ -169,7 +174,7 @@ describe('section routes', () => {
   describe('GET /organisation/:odsCode/order/:orderId/ordering-party', () => {
     const path = '/organisation/odsCode/order/some-order-id/ordering-party';
     beforeEach(() => {
-      getOrganisationFromOdsCode.mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
     });
     it('should redirect to the login page if the user is not logged in', () => (
       testAuthorisedGetPathForUnauthenticatedUser({
@@ -200,7 +205,7 @@ describe('section routes', () => {
   describe('POST /organisation/:odsCode/order/:orderId/ordering-party', () => {
     const path = '/organisation/odsCode/order/order-id/ordering-party';
     beforeEach(() => {
-      getOrganisationFromOdsCode.mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
     });
     afterEach(() => {
       jest.resetAllMocks();
@@ -292,11 +297,12 @@ describe('section routes', () => {
     commencementDateController.getCommencementDateContext = jest.fn()
       .mockResolvedValue({});
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -308,15 +314,18 @@ describe('section routes', () => {
       })
     ));
 
-    it('should return the correct status and text when the user is authorised', () => request(setUpFakeApp())
-      .get(path)
-      .set('Cookie', [mockAuthorisedCookie])
-      .expect(200)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        expect(res.text.includes('data-test-id="commencement-date-page"')).toBeTruthy();
-        expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
-      }));
+    it('should return the correct status and text when the user is authorised', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return request(setUpFakeApp())
+        .get(path)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.text.includes('data-test-id="commencement-date-page"')).toBeTruthy();
+          expect(res.text.includes('data-test-id="error-title"')).toEqual(false);
+        });
+    });
   });
 
   describe('POST /organisation/:odsCode/order/:orderId/commencement-date', () => {
@@ -340,19 +349,21 @@ describe('section routes', () => {
       })
     ));
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedPostPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
         getPathCookies: [mockAuthorisedCookie],
         postPathCookies: [],
         expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
-    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-      testAuthorisedPostPathForUnauthorisedUsers({
+    it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
         getPath: path,
         postPath: path,
@@ -360,13 +371,13 @@ describe('section routes', () => {
         postPathCookies: [mockUnauthorisedCookie],
         expectedPageId: 'data-test-id="error-title"',
         expectedPageMessage: 'You are not authorised to view this page',
-      })
-    ));
+      });
+    });
 
     it('should return the correct status and text if there are no FE validation errors and the api response is successfull', async () => {
       commencementDateController.validateCommencementDateForm = jest.fn()
         .mockReturnValue([]);
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       putCommencementDate.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
@@ -390,7 +401,7 @@ describe('section routes', () => {
 
     it('should return the correct status and text if there are FE caught validation errors', async () => {
       commencementDateController.validateCommencementDateForm = jest.fn().mockReturnValue([{}]);
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       commencementDateController.getCommencementDateErrorContext = jest.fn().mockResolvedValue({
         errors: [{ text: 'error', field: ['year'], href: '#commencementDate' }],
       });
@@ -418,6 +429,7 @@ describe('section routes', () => {
       commencementDateController.validateCommencementDateForm = jest.fn()
         .mockReturnValue([]);
 
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       putCommencementDate.mockResolvedValue({ success: false, errors: [{}] });
 
       commencementDateController.getCommencementDateErrorContext = jest.fn()
@@ -448,11 +460,12 @@ describe('section routes', () => {
   describe('GET /organisation/odsCode/order/:orderId/funding-source', () => {
     const path = '/organisation/odsCode/order/some-order-id/funding-source';
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -466,6 +479,7 @@ describe('section routes', () => {
 
     it('should return the correct status and text when the user is authorised', () => {
       getFundingSource.mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
@@ -516,6 +530,7 @@ describe('section routes', () => {
           success: false,
           errors: [{}],
         });
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       fundingSourceController
         .getFundingSourceErrorPageContext = jest.fn()
@@ -545,7 +560,7 @@ describe('section routes', () => {
     it('should return the correct status and text when the FE validation and the API call are both successful', async () => {
       fundingSourceController.validateFundingSourceForm = jest.fn()
         .mockReturnValue({ success: true });
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       putFundingSource.mockResolvedValue({ success: true });
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
@@ -570,7 +585,7 @@ describe('section routes', () => {
     it('should return the correct status and text when FE validation successful but API call returned an error', async () => {
       fundingSourceController.validateFundingSourceForm = jest.fn()
         .mockReturnValue({ success: true });
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       putFundingSource.mockResolvedValue({ success: false, errors: [{}] });
 
       fundingSourceController
