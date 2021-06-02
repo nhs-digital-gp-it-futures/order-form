@@ -10,7 +10,10 @@ import {
 } from '../../test-utils/routesTestHelper';
 import { getOrder } from '../../helpers/api/ordapi/getOrder';
 import * as summaryController from './controller';
+import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
+import mockOrgData from '../../test-utils/mockData/mockOrganisationData.json';
 
+jest.mock('../../helpers/controllers/odsCodeLookup');
 jest.mock('../../helpers/api/ordapi/getOrder');
 
 describe('GET /organisation/:odsCode/order/:orderId/summary', () => {
@@ -20,11 +23,13 @@ describe('GET /organisation/:odsCode/order/:orderId/summary', () => {
     jest.resetAllMocks();
   });
 
-  it('should redirect to the login page if the user is not logged in', () => (
-    testAuthorisedGetPathForUnauthenticatedUser({
+  it('should redirect to the login page if the user is not logged in', () => {
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+
+    return testAuthorisedGetPathForUnauthenticatedUser({
       app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-    })
-  ));
+    });
+  });
 
   it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
     testAuthorisedGetPathForUnauthorisedUser({
@@ -38,6 +43,7 @@ describe('GET /organisation/:odsCode/order/:orderId/summary', () => {
 
   it('should return the correct status and text when the user is authorised', () => {
     getOrder.mockResolvedValueOnce({});
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
     summaryController.getSummaryPageContext = jest.fn()
       .mockResolvedValueOnce({});
@@ -54,7 +60,7 @@ describe('GET /organisation/:odsCode/order/:orderId/summary', () => {
 
   it('should return the printable summary page when the print flag is passed in', () => {
     const pathWithPrintFlag = `${path}?print=true`;
-
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
     getOrder.mockResolvedValueOnce({});
 
     summaryController.getSummaryPageContext = jest.fn()
