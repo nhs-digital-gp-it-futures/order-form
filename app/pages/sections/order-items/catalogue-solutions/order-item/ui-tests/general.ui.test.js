@@ -3,9 +3,10 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../commonManifest.json';
 import content from '../flat/patient/manifest.json';
-import { solutionsApiUrl } from '../../../../../../config';
+import { solutionsApiUrl, organisationApiUrl } from '../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/neworderitem';
 
@@ -47,6 +48,9 @@ const mocks = () => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, selectedPrice);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };

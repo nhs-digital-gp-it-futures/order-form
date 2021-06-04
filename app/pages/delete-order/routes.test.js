@@ -14,6 +14,10 @@ import {
 } from '../../test-utils/routesTestHelper';
 import { baseUrl } from '../../config';
 import * as deleteOrderController from './controller';
+import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
+import mockOrgData from '../../test-utils/mockData/mockOrganisationData.json';
+
+jest.mock('../../helpers/controllers/odsCodeLookup');
 
 describe('GET /organisation/:odsCode/order/:orderId/delete-order', () => {
   const path = '/organisation/odsCode/order/some-order-id/delete-order';
@@ -22,25 +26,28 @@ describe('GET /organisation/:odsCode/order/:orderId/delete-order', () => {
     jest.resetAllMocks();
   });
 
-  it('should redirect to the login page if the user is not logged in', () => (
-    testAuthorisedGetPathForUnauthenticatedUser({
+  it('should redirect to the login page if the user is not logged in', () => {
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+    return testAuthorisedGetPathForUnauthenticatedUser({
       app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-    })
-  ));
+    });
+  });
 
-  it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
-    testAuthorisedGetPathForUnauthorisedUser({
+  it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+    return testAuthorisedGetPathForUnauthorisedUser({
       app: request(setUpFakeApp()),
       getPath: path,
       getPathCookies: [mockUnauthorisedCookie],
       expectedPageId: 'data-test-id="error-title"',
       expectedPageMessage: 'You are not authorised to view this page',
-    })
-  ));
+    });
+  });
 
   it('should return the deleted-order page if authorised', async () => {
     deleteOrderController.getDeleteOrderContext = jest.fn()
       .mockResolvedValueOnce();
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
     const res = await request(setUpFakeApp())
       .get(path)
@@ -58,7 +65,8 @@ describe('POST /organisation/:odsCode/order/:orderId/delete-order', () => {
   });
 
   it('should return 403 forbidden if no csrf token is available', async () => {
-    await testPostPathWithoutCsrf({
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+    return testPostPathWithoutCsrf({
       app: request(setUpFakeApp()),
       postPath: path,
       postPathCookies: [mockAuthorisedCookie],
@@ -66,7 +74,8 @@ describe('POST /organisation/:odsCode/order/:orderId/delete-order', () => {
   });
 
   it('should redirect to the login page if the user is not logged in', async () => {
-    await testAuthorisedPostPathForUnauthenticatedUser({
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+    return testAuthorisedPostPathForUnauthenticatedUser({
       app: request(setUpFakeApp()),
       getPath: path,
       postPath: path,
@@ -76,17 +85,21 @@ describe('POST /organisation/:odsCode/order/:orderId/delete-order', () => {
     });
   });
 
-  it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => testAuthorisedPostPathForUnauthorisedUsers({
-    app: request(setUpFakeApp()),
-    getPath: path,
-    postPath: path,
-    getPathCookies: [mockAuthorisedCookie],
-    postPathCookies: [mockUnauthorisedCookie],
-    expectedPageId: 'data-test-id="error-title"',
-    expectedPageMessage: 'You are not authorised to view this page',
-  }));
+  it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+    return testAuthorisedPostPathForUnauthorisedUsers({
+      app: request(setUpFakeApp()),
+      getPath: path,
+      postPath: path,
+      getPathCookies: [mockAuthorisedCookie],
+      postPathCookies: [mockUnauthorisedCookie],
+      expectedPageId: 'data-test-id="error-title"',
+      expectedPageMessage: 'You are not authorised to view this page',
+    });
+  });
 
   it('should redirect to /delete-order/confirmation page, if the order is deleted', async () => {
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
     deleteOrderController.getDeleteOrderContext = jest.fn()
       .mockResolvedValueOnce({ odsCode: '03F' });
 

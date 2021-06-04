@@ -2,8 +2,9 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl } from '../../../../config';
+import { orderApiUrl, organisationApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
+import mockOrgData from '../../../../test-utils/mockData/mockOrganisationData.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/funding-source';
 
@@ -11,6 +12,10 @@ const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/funding-source')
     .reply(200, {});
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
+    .reply(200, mockOrgData);
 };
 
 const pageSetup = async (setup = { withAuth: true }) => {

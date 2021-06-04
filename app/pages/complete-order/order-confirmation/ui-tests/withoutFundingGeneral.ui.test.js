@@ -4,14 +4,23 @@ import { extractInnerText } from 'buying-catalogue-library';
 import content from '../withoutFundingManifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
+import { organisationApiUrl } from '../../../../config';
+import mockOrgData from '../../../../test-utils/mockData/mockOrganisationData.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/complete-order/order-confirmation';
+
+const mocks = () => {
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .reply(200, mockOrgData);
+};
 
 const pageSetup = async (setup = { withAuth: true }) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
     await setState(ClientFunction)(sessionKeys.fundingSource, false);
   }
+  mocks();
 };
 
 const getLocation = ClientFunction(() => document.location.href);

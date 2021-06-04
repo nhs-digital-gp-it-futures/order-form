@@ -20,7 +20,7 @@
     "start:redis": "docker-compose -f \"docker-compose-redis.yml\" up -d",
     "test:ui": "cross-env NODE_ENV=test LOGGER_LEVEL=off babel-node testcafeRunner.js",
     "test:integration": "cross-env NODE_ENV=pipeline LOGGER_LEVEL=off babel-node testcafeRunner.js",
-    "test": "jest",
+    "test": "jest --maxWorkers 20",
     "test:all": "jest && npm run test:ui",
     "webpack": "webpack",
     "debug": "babel-node ./app/server --inspect",

@@ -11,7 +11,8 @@ import {
 } from './test-utils/routesTestHelper';
 import { baseUrl } from './config';
 import { getDocumentByFileName } from './helpers/api/dapi/getDocumentByFileName';
-import { getOdsCodeForOrganisation } from './helpers/controllers/odsCodeLookup';
+import { getOdsCodeForOrganisation, getOrganisationFromOdsCode } from './helpers/controllers/odsCodeLookup';
+import mockOrgData from './test-utils/mockData/mockOrganisationData.json';
 
 jest.mock('./logger');
 jest.mock('./helpers/api/ordapi/getOrder');
@@ -19,6 +20,7 @@ jest.mock('./helpers/routes/getOrderDescription');
 jest.mock('./helpers/api/dapi/getDocumentByFileName');
 jest.mock('./helpers/controllers/odsCodeLookup');
 jest.mock('./helpers/api/oapi/getOrganisation');
+jest.mock('./helpers/controllers/odsCodeLookup');
 
 describe('routes', () => {
   afterEach(() => {
@@ -51,11 +53,12 @@ describe('routes', () => {
       getOdsCodeForOrganisation.mockResolvedValue(odsCode);
     });
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: `${path}/{odsCode}`, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should redirect to /organisation/sessionOdsCode if user logged in with odsCode', () => {
       fakeSessionManager.getFromSession = () => 'sessionOdsCode';
@@ -123,11 +126,13 @@ describe('routes', () => {
       getOdsCodeForOrganisation.mockResolvedValue(odsCode);
     });
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should redirect to /organisation/odsCode/order/{orderId}/ if user logged in with odsCode', () => request(setUpFakeApp())
       .get(path)

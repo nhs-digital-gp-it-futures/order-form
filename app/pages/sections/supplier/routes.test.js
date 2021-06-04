@@ -20,10 +20,13 @@ import * as supplierSelectController from './select/controller';
 import * as supplierController from './supplier/controller';
 import * as baseController from './controller';
 import { putSupplier } from '../../../helpers/api/ordapi/putSupplier';
+import { getOrganisationFromOdsCode } from '../../../helpers/controllers/odsCodeLookup';
+import mockOrgData from '../../../test-utils/mockData/mockOrganisationData.json';
 
 jest.mock('../../../logger');
 jest.mock('../../../helpers/api/bapi/getSearchSuppliers');
 jest.mock('../../../helpers/api/ordapi/putSupplier');
+jest.mock('../../../helpers/controllers/odsCodeLookup');
 
 const mockSuppliersFoundState = JSON.stringify([
   { supplierId: 'supplier-1', name: 'Supplier 1' },
@@ -47,11 +50,12 @@ describe('supplier section routes', () => {
         .mockReset();
     });
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -66,6 +70,7 @@ describe('supplier section routes', () => {
     it('should return the supplier section page if authorised and no supplierSelected returned from session', () => {
       supplierController.getSupplierPageContext = jest.fn()
         .mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return request(setUpFakeApp())
         .get(path)
@@ -80,6 +85,7 @@ describe('supplier section routes', () => {
     it('should return the supplier section page if authorised and supplierSelected returned from session', () => {
       supplierController.getSupplierPageContext = jest.fn()
         .mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return request(setUpFakeApp())
         .get(path)
@@ -94,6 +100,7 @@ describe('supplier section routes', () => {
     it('should redirect to /organisation/odsCode/order/some-order-id/supplier/search if error from getSupplierPageContext', () => {
       supplierController.getSupplierPageContext = jest.fn()
         .mockRejectedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return request(setUpFakeApp())
         .get(path)
@@ -149,6 +156,7 @@ describe('supplier section routes', () => {
 
     it('should return the correct status and text if response.success is true', async () => {
       putSupplier.mockResolvedValue({ success: true });
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -171,6 +179,7 @@ describe('supplier section routes', () => {
 
     it('should return the correct status and text if response.success is not true', async () => {
       putSupplier.mockResolvedValue({ success: false });
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       supplierController.getSupplierPageErrorContext = jest.fn()
         .mockImplementation(() => Promise.resolve({
@@ -210,11 +219,12 @@ describe('supplier section routes', () => {
         .mockReset();
     });
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -229,6 +239,7 @@ describe('supplier section routes', () => {
     it('should redirect to /supplier if authorised and data found in ORDAPI', () => {
       baseController.checkOrdapiForSupplier = jest.fn()
         .mockResolvedValue(true);
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return request(setUpFakeApp())
         .get(path)
@@ -240,15 +251,17 @@ describe('supplier section routes', () => {
         });
     });
 
-    it('should return the correct status and text when the user is authorised', () => (
-      request(setUpFakeApp())
+    it('should return the correct status and text when the user is authorised', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(200)
         .then((res) => {
           expect(res.text.includes('data-test-id="supplier-search-page"')).toBeTruthy();
           expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
-        })));
+        });
+    });
   });
 
   describe('POST /organisation/:odsCode/order/:orderId/supplier/search', () => {
@@ -292,6 +305,8 @@ describe('supplier section routes', () => {
           errors: [{ text: 'Supplier name is required', href: '#supplierName' }],
         }));
 
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
@@ -314,7 +329,7 @@ describe('supplier section routes', () => {
     it('should redirect to /organisation/odsCode/order/some-order-id/supplier/search/select if there are suppliers', async () => {
       supplierSearchController.validateSupplierSearchForm = jest.fn()
         .mockImplementation(() => ({ success: true }));
-
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       getSearchSuppliers.mockResolvedValue([{ supplierId: 'some-supplier-id', name: 'some-supplier-name' }]);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
@@ -340,6 +355,7 @@ describe('supplier section routes', () => {
 
     it('should show the error page indicating no suppliers found', async () => {
       getSearchSuppliers.mockResolvedValue([]);
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -378,11 +394,12 @@ describe('supplier section routes', () => {
         .mockReset();
     });
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -397,6 +414,7 @@ describe('supplier section routes', () => {
     it('should show the supplier select if supplierFound are returned from session', async () => {
       supplierSelectController.getSupplierSelectPageContext = jest.fn()
         .mockImplementation(() => {});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return request(setUpFakeApp())
         .get(path)
@@ -409,19 +427,22 @@ describe('supplier section routes', () => {
         });
     });
 
-    it('should redirect back to /search if no supplierFound are returned from session', async () => (
-      request(setUpFakeApp())
+    it('should redirect back to /search if no supplierFound are returned from session', async () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return request(setUpFakeApp())
         .get(path)
         .set('Cookie', [mockAuthorisedCookie])
         .expect(302)
         .then((res) => {
           expect(res.redirect).toEqual(true);
           expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/some-order-id/supplier/search`);
-        })));
+        });
+    });
 
     it('should redirect to /supplier if authorised and data found in ORDAPI', () => {
       baseController.checkOrdapiForSupplier = jest.fn()
         .mockResolvedValue(true);
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return request(setUpFakeApp())
         .get(path)
@@ -485,6 +506,8 @@ describe('supplier section routes', () => {
           errors: [{ text: 'Select a supplier', href: '#selectSupplier' }],
         }));
 
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,
@@ -507,6 +530,7 @@ describe('supplier section routes', () => {
     it('should redirect to /organisation/odsCode/order/some-order-id/supplier if a supplier is selected', async () => {
       supplierSelectController.validateSupplierSelectForm = jest.fn()
         .mockImplementation(() => ({ success: true }));
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -530,6 +554,7 @@ describe('supplier section routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/supplier/search if no suppliersFound returned from session', async () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
         getPath: path,

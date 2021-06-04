@@ -23,6 +23,10 @@ const mocks = () => {
   nock(organisationApiUrl)
     .get('/api/v1/Organisations/org-id/service-recipients')
     .reply(200, mockRecipientsData);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = {
@@ -33,6 +37,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
+  mocks();
   if (setup.getRoute) {
     if (setup.withMocks) mocks();
     await setState(ClientFunction)(sessionKeys.selectedItemName, selectedItemNameInSession);
@@ -47,11 +52,6 @@ const getLocation = ClientFunction(() => document.location.href);
 
 fixture('Catalogue-solutions - recipients page - general')
   .page('http://localhost:1234/order/some-fake-page')
-  .beforeEach(async () => {
-    nock(organisationApiUrl)
-      .get('/api/v1/ods/odsCode')
-      .reply(200, mockOrgData);
-  })
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
   });

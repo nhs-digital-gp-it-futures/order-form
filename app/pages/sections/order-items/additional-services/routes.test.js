@@ -21,6 +21,8 @@ import { transformApiValidationResponse } from '../../../../helpers/common/trans
 import { baseUrl } from '../../../../config';
 import { putOrderSection } from '../../../../helpers/api/ordapi/putOrderSection';
 import { sessionKeys } from '../../../../helpers/routes/sessionHelper';
+import { getOrganisationFromOdsCode } from '../../../../helpers/controllers/odsCodeLookup';
+import mockOrgData from '../../../../test-utils/mockData/mockOrganisationData.json';
 
 jest.mock('../../../../logger');
 jest.mock('../../../../helpers/routes/getOrderItemPageData');
@@ -29,6 +31,7 @@ jest.mock('../../../../helpers/controllers/saveOrderItemBulk');
 jest.mock('../../../../helpers/common/transformApiValidationResponse');
 jest.mock('../../../../helpers/api/ordapi/putOrderSection');
 jest.mock('../../../../helpers/routes/getOrderItemPageDataBulk');
+jest.mock('../../../../helpers/controllers/odsCodeLookup');
 
 const mockSelectedItemIdCookie = `${sessionKeys.selectedItemId}=item-1`;
 const mockSelectedRecipientIdCookie = `${sessionKeys.selectedRecipientId}=recipient-1`;
@@ -44,11 +47,12 @@ describe('additional-services section routes', () => {
   describe('GET /organisation/:odsCode/order/:orderId/additional-services', () => {
     const path = '/organisation/odsCode/order/some-order-id/additional-services';
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -63,6 +67,7 @@ describe('additional-services section routes', () => {
     it('should return the additional-services page if authorised', () => {
       additionalServicesController.getAdditionalServicesPageContext = jest.fn()
         .mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return request(setUpFakeApp())
         .get(path)
@@ -90,6 +95,7 @@ describe('additional-services section routes', () => {
       additionalServicesController.getAdditionalServicesPageContext = jest.fn()
         .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
@@ -105,6 +111,7 @@ describe('additional-services section routes', () => {
       additionalServicesController.getAdditionalServicesPageContext = jest.fn()
         .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
@@ -121,6 +128,7 @@ describe('additional-services section routes', () => {
       additionalServicesController.getAdditionalServicesPageContext = jest.fn()
         .mockResolvedValue({});
       putOrderSection.mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       const { cookies, csrfToken } = await getCsrfTokenFromGet({
         app: request(setUpFakeApp()),
@@ -145,11 +153,12 @@ describe('additional-services section routes', () => {
   describe('GET /organisation/:odsCode/order/:orderId/additional-services/:catalogueItemId', () => {
     const path = '/organisation/odsCode/order/some-order-id/additional-services/neworderitem';
 
-    it('should redirect to the login page if the user is not logged in', () => (
-      testAuthorisedGetPathForUnauthenticatedUser({
+    it('should redirect to the login page if the user is not logged in', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      return testAuthorisedGetPathForUnauthenticatedUser({
         app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-      })
-    ));
+      });
+    });
 
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
       testAuthorisedGetPathForUnauthorisedUser({
@@ -162,6 +171,7 @@ describe('additional-services section routes', () => {
     ));
 
     it('should return the additional-services order item page if authorised', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       getOrderItemPageDataBulk.mockResolvedValue({});
       additionalServicesController.getBackLinkHref = jest.fn().mockResolvedValue({});
       catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({
@@ -195,6 +205,7 @@ describe('additional-services section routes', () => {
     it('should redirect to the login page if the user is not logged in', () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
       catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return testAuthorisedPostPathForUnauthenticatedUser({
         app: request(setUpFakeApp()),
@@ -213,6 +224,7 @@ describe('additional-services section routes', () => {
     it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => {
       getOrderItemPageDataBulk.mockResolvedValue({});
       catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({});
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
       return testAuthorisedPostPathForUnauthorisedUsers({
         app: request(setUpFakeApp()),
@@ -233,6 +245,7 @@ describe('additional-services section routes', () => {
     });
 
     it('should show the additional-services order item page with errors if there are FE caught validation errors', async () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       getOrderItemPageDataBulk.mockResolvedValue({});
       catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
       catalogueSolutionsController.formatFormData = jest.fn().mockResolvedValue({});
@@ -268,6 +281,7 @@ describe('additional-services section routes', () => {
     });
 
     it('should show the additional-services order item page with errors if the api response is unsuccessful', async () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       getOrderItemPageDataBulk.mockResolvedValue({});
       catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
       catalogueSolutionsController.formatFormData = jest.fn().mockResolvedValue({});
@@ -300,6 +314,7 @@ describe('additional-services section routes', () => {
     });
 
     it('should redirect to /organisation/some-order-id/additional-services if there are no validation errors and post is successful', async () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       getOrderItemPageDataBulk.mockResolvedValue({});
       catalogueSolutionsController.getOrderItemContext = jest.fn().mockResolvedValue({ questions: { price: { data: '0' } } });
       catalogueSolutionsController.formatFormData = jest.fn().mockResolvedValue({});

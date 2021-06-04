@@ -22,6 +22,7 @@ const mocks = () => {
     .reply(200, { description: 'a lovely description' });
   nock(organisationApiUrl)
     .get('/api/v1/ods/odsCode')
+    .times(3)
     .reply(200, mockOrgData);
 };
 

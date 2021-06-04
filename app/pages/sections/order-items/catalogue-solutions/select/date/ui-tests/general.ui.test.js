@@ -2,9 +2,10 @@ import nock from 'nock';
 import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
-import { orderApiUrl } from '../../../../../../../config';
+import { orderApiUrl, organisationApiUrl } from '../../../../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../helpers/routes/sessionHelper';
+import mockOrgData from '../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/select/solution/price/recipients/date';
 
@@ -30,6 +31,10 @@ const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/commencement-date')
     .reply(200, { commencementDate: '2020-10-10' });
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
+    .reply(200, mockOrgData);
 };
 
 const pageSetup = async (setup = defaultPageSetup) => {
