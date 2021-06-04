@@ -63,7 +63,7 @@ describe('organisation select controller', () => {
       const returnedContext = await getSelectContext(options);
 
       expect(returnedContext.description)
-        .toEqual(`Select the organisation you want ${options.orgName} to act on behalf of.`);
+        .toEqual('Select the organisation you want to act on behalf of.');
     });
 
     it('should return manifest values', async () => {
@@ -155,7 +155,7 @@ describe('organisation select controller', () => {
       expect(returnedContext.backLinkText).toEqual(manifest.backLinkText);
       expect(returnedContext.continueButtonText).toEqual(manifest.continueButtonText);
       expect(returnedContext.description)
-        .toEqual(`Select the organisation you want ${params.req.body.orgName} to act on behalf of.`);
+        .toEqual('Select the organisation you want to act on behalf of.');
       expect(returnedContext.errorMessages).toEqual(manifest.errorMessages);
       expect(returnedContext.title).toEqual(manifest.title);
     });

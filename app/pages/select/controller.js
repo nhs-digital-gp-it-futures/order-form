@@ -21,7 +21,7 @@ export const getSelectContext = async ({
     orgName,
   };
 
-  context.description = `Select the organisation you want ${orgName} to act on behalf of.`;
+  context.description = 'Select the organisation you want to act on behalf of.';
 
   return context;
 };
