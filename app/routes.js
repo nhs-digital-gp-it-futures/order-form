@@ -109,7 +109,7 @@ export const routes = (authProvider, sessionManager) => {
         description: 'Unable to get organisation by odsCode',
       });
     }
-    next();
+    return next();
   }));
 
   router.use('/organisation/:odsCode', dashboardRoutes(authProvider, addContext, sessionManager));
