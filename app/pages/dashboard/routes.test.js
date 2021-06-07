@@ -10,7 +10,9 @@ import {
 } from '../../test-utils/routesTestHelper';
 import * as dashboardController from './controller';
 import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
+import mockOrgData from '../../test-utils/mockData/mockOrganisationData.json';
 
+getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 jest.mock('../../helpers/controllers/odsCodeLookup');
 
 dashboardController.getDashboardContext = jest.fn()
@@ -19,7 +21,7 @@ dashboardController.getDashboardContext = jest.fn()
 describe('GET /organisation/:odsCode', () => {
   const path = '/organisation/odsCode';
   beforeEach(() => {
-    getOrganisationFromOdsCode.mockResolvedValueOnce({});
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
   });
   afterEach(() => {
     jest.resetAllMocks();

@@ -3,8 +3,9 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import commonContent from '../../commonManifest.json';
 import existingorderPageContent from '../manifest.json';
-import { baseUrl, orderApiUrl } from '../../../../config';
+import { baseUrl, orderApiUrl, organisationApiUrl } from '../../../../config';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../test-utils/uiTestHelper';
+import mockOrgData from '../../../../test-utils/mockData/mockOrganisationData.json';
 
 const mockExistingOrderSummary = {
   orderId: 'order-id',
@@ -24,6 +25,10 @@ const mocks = (data) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/summary')
     .reply(200, data);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, mockData: mockExistingOrderSummary };

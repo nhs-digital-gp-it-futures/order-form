@@ -3,7 +3,8 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
-import { orderApiUrl } from '../../../../../../../config';
+import { orderApiUrl, organisationApiUrl } from '../../../../../../../config';
+import mockOrgData from '../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/catalogue-solutions/delete/order-item-id/confirmation/write-on-time/continue';
 
@@ -13,6 +14,9 @@ const mocks = () => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/description')
     .reply(200, { description: orderDescriptionMock });
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };

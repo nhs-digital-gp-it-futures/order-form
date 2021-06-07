@@ -1,17 +1,18 @@
 import nock from 'nock';
 import { ClientFunction } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
-import { orderApiUrl, solutionsApiUrl } from '../../../../../../../../config';
+import { solutionsApiUrl, organisationApiUrl, orderApiUrl } from '../../../../../../../../config';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../../test-utils/uiTestHelper';
 import { sessionKeys } from '../../../../../../../../helpers/routes/sessionHelper';
 import AdditionalServicePageModel from '../../additionalServicesPageModel';
+import mockOrgData from '../../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const organisation = 'organisation';
 const callOffId = 'order-1';
 const priceId = '1018';
 const catalogueItemId = '10000-001';
-const odsCode = '03F';
+const odsCode = 'odsCode';
 
 const pageUrl = `http://localhost:1234/order/${organisation}/${odsCode}/order/${callOffId}/additional-services/${catalogueItemId}`;
 
@@ -102,6 +103,10 @@ const mocks = () => {
   nock(solutionsApiUrl)
     .get(`/api/v1/prices/${priceId}`)
     .reply(200, orderItem);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };

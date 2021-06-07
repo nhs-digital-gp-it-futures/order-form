@@ -63,6 +63,10 @@ const mocks = () => {
   nock(solutionsApiUrl)
     .get(`/api/v1/prices/${selectedPriceId}`)
     .reply(200, selectedPrice);
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
+    .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };

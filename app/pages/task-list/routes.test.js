@@ -9,15 +9,25 @@ import {
   setUpFakeApp,
 } from '../../test-utils/routesTestHelper';
 import * as taskListController from './controller';
+import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
+import mockOrgData from '../../test-utils/mockData/mockOrganisationData.json';
+
+jest.mock('../../helpers/controllers/odsCodeLookup');
 
 describe('GET /organisation/:odsCode/order/:orderId', () => {
   const path = '/organisation/odsCode/order/order-id';
 
-  it('should redirect to the login page if the user is not logged in', () => (
-    testAuthorisedGetPathForUnauthenticatedUser({
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it('should redirect to the login page if the user is not logged in', () => {
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+
+    return testAuthorisedGetPathForUnauthenticatedUser({
       app: request(setUpFakeApp()), getPath: path, expectedRedirectPath: 'http://identity-server/login',
-    })
-  ));
+    });
+  });
 
   it('should show the error page indicating the user is not authorised if the user is logged in but not authorised', () => (
     testAuthorisedGetPathForUnauthorisedUser({
@@ -32,6 +42,7 @@ describe('GET /organisation/:odsCode/order/:orderId', () => {
   it('should return the neworder page with correct status when the user is authorised', () => {
     taskListController.getTaskListPageContext = jest.fn()
       .mockResolvedValueOnce({ orderId: 'neworder' });
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
     return request(setUpFakeApp())
       .get(path)
@@ -46,6 +57,7 @@ describe('GET /organisation/:odsCode/order/:orderId', () => {
   it('should return the existing order page with correct status when the user is authorised', () => {
     taskListController.getTaskListPageContext = jest.fn()
       .mockResolvedValueOnce({ orderId: 'order-id' });
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
 
     return request(setUpFakeApp())
       .get(path)

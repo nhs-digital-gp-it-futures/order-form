@@ -3,15 +3,24 @@ import { ClientFunction, Selector } from 'testcafe';
 import { extractInnerText } from 'buying-catalogue-library';
 import content from '../manifest.json';
 import { nockAndErrorCheck, setState, authTokenInSession } from '../../../../../../../test-utils/uiTestHelper';
-import { orderApiUrl } from '../../../../../../../config';
+import { orderApiUrl, organisationApiUrl } from '../../../../../../../config';
+import mockOrgData from '../../../../../../../test-utils/mockData/mockOrganisationData.json';
 
 const pageUrl = 'http://localhost:1234/order/organisation/odsCode/order/order-id/associated-services/delete/order-item-id/confirmation/write-on-time-associated-service/continue';
+
+const mocks = () => {
+  nock(organisationApiUrl)
+    .get('/api/v1/ods/odsCode')
+    .times(2)
+    .reply(200, mockOrgData);
+};
 
 const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
+  mocks();
 };
 
 const getLocation = ClientFunction(() => document.location.href);
