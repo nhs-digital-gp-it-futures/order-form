@@ -9,6 +9,7 @@ import mockOrgData from '../../../../test-utils/mockData/mockOrganisationData.js
 
 const mockExistingOrderSummary = {
   orderId: 'order-id',
+  organisationId: 'org-id',
   description: 'Some description',
   sections: [
     {
@@ -27,7 +28,7 @@ const mocks = (data) => {
     .reply(200, data);
   nock(organisationApiUrl)
     .get('/api/v1/ods/odsCode')
-    .times(2)
+    .times(3)
     .reply(200, mockOrgData);
 };
 

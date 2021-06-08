@@ -77,7 +77,6 @@ export const getOrganisationFromOdsCode = async ({
         organisation, lookupTable, req, sessionManager,
       });
     }
-
     return organisationData;
   }
 

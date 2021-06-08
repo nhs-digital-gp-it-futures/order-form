@@ -66,6 +66,7 @@ const mocks = () => {
     .reply(200, selectedPrice);
   nock(organisationApiUrl)
     .get('/api/v1/ods/odsCode')
+    .times(2)
     .reply(200, mockOrgData);
 };
 
