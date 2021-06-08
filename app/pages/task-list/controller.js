@@ -4,8 +4,15 @@ import { getOrderSummary } from '../../helpers/api/ordapi/getOrderSummary';
 
 const getNewOrderTaskListPageContext = ({ orderId, odsCode }) => getContext({ orderId, odsCode });
 
-const getExistingOrderTaskListPageContext = async ({ accessToken, orderId, odsCode }) => {
-  const orderSummary = await getOrderSummary({ orderId, accessToken });
+const getExistingOrderTaskListPageContext = async ({
+  req, accessToken, orderId, odsCode, sessionManager,
+}) => {
+  const orderSummary = await getOrderSummary({
+    orderId, accessToken, odsCode, sessionManager, req,
+  });
+  if (!orderSummary) {
+    return undefined;
+  }
   logger.info(`Existing order summary '${orderSummary.orderId}' returned`);
   return getContext({
     orderId,
@@ -16,9 +23,13 @@ const getExistingOrderTaskListPageContext = async ({ accessToken, orderId, odsCo
   });
 };
 
-export const getTaskListPageContext = ({ accessToken, orderId, odsCode }) => {
+export const getTaskListPageContext = ({
+  req, accessToken, orderId, odsCode, sessionManager,
+}) => {
   if (orderId === 'neworder') {
     return getNewOrderTaskListPageContext({ orderId, odsCode });
   }
-  return getExistingOrderTaskListPageContext({ accessToken, orderId, odsCode });
+  return getExistingOrderTaskListPageContext({
+    req, accessToken, orderId, odsCode, sessionManager,
+  });
 };

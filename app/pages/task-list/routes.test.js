@@ -11,6 +11,7 @@ import {
 import * as taskListController from './controller';
 import { getOrganisationFromOdsCode } from '../../helpers/controllers/odsCodeLookup';
 import mockOrgData from '../../test-utils/mockData/mockOrganisationData.json';
+import config from '../../config';
 
 jest.mock('../../helpers/controllers/odsCodeLookup');
 
@@ -66,6 +67,22 @@ describe('GET /organisation/:odsCode/order/:orderId', () => {
       .then((res) => {
         expect(res.text.includes('data-test-id="order-id-page"')).toBeTruthy();
         expect(res.text.includes('data-test-id="error-title"')).toBeFalsy();
+      });
+  });
+
+  it('should redirect to dashboard page of selected odscode', () => {
+    const url = '/organisation/03F/order/order-id';
+    taskListController.getTaskListPageContext = jest.fn()
+      .mockResolvedValueOnce();
+    getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+
+    return request(setUpFakeApp())
+      .get(url)
+      .set('Cookie', [mockAuthorisedCookie])
+      .expect(302)
+      .then((res) => {
+        expect(res.redirect).toEqual(true);
+        expect(res.headers.location).toEqual(`${config.baseUrl}/organisation/03F`);
       });
   });
 });

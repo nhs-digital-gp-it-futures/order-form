@@ -36,6 +36,7 @@ const mockOrgData = {
 const mocks = () => {
   nock(organisationApiUrl)
     .get('/api/v1/ods/odsCode')
+    .times(2)
     .reply(200, mockOrgData);
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/ordering-party')
@@ -85,7 +86,7 @@ test('should render organisation ods code with data from OAPI', async (t) => {
 });
 
 // TODO: fix - fails when all test cases are run
-test.skip('should render organisation address with data from OAPI', async (t) => {
+test('should render organisation address with data from OAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 
@@ -114,7 +115,7 @@ test.skip('should render organisation address with data from OAPI', async (t) =>
 });
 
 // TODO: fix - fails when all test cases are run
-test.skip('should render the primary contact details form with populated data from OAPI', async (t) => {
+test('should render the primary contact details form with populated data from OAPI', async (t) => {
   await pageSetup();
   await t.navigateTo(pageUrl);
 

@@ -8,6 +8,9 @@ jest.mock('./contextCreator', () => ({
   getContext: jest.fn(),
 }));
 
+const req = {};
+const fakeSessionManager = {};
+
 describe('task-list controller', () => {
   describe('getNewOrderPageContext', () => {
     it('should call getContext with the correct params when user data is returned by the apiProvider', async () => {
@@ -28,7 +31,9 @@ describe('task-list controller', () => {
       sections: [],
       enableSubmitButton: false,
     };
-
+    beforeEach(() => {
+      fakeSessionManager.getFromSession = () => { };
+    });
     afterEach(() => {
       jest.resetAllMocks();
     });
@@ -64,6 +69,20 @@ describe('task-list controller', () => {
         sectionsData: [],
         enableSubmitButton: false,
       });
+    });
+
+    it('should return undefined when ordersummary is not present', async () => {
+      getOrderSummary.mockResolvedValueOnce();
+
+      await getTaskListPageContext({
+        req,
+        orderId: 'order-id',
+        accessToken: 'access_token',
+        odsCode: '03F',
+        sessionManager: fakeSessionManager,
+      });
+
+      expect(contextCreator.getContext.mock.calls.length).toEqual(0);
     });
   });
 });
