@@ -16,6 +16,7 @@ const mocks = ({ postRoute = false }) => {
     .reply(200, { description: orderDescriptionMock });
   nock(organisationApiUrl)
     .get('/api/v1/ods/odsCode')
+    .times(2)
     .reply(200, mockOrgData);
 
   if (postRoute) {
