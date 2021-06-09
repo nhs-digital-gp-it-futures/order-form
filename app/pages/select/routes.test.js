@@ -50,6 +50,21 @@ describe('select organisation routes', () => {
           expect(res.text.includes('data-test-id="organisation-select-page"')).toBeTruthy();
         });
     });
+
+    it('should return the page with op input set if set as query parameter', () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      controller.organisationsList = jest.fn()
+        .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });
+      getProxyOrganisations.mockResolvedValue([{ organisationId: '123', name: 'abc' }]);
+
+      return request(setUpFakeApp())
+        .get(`${path}?op=do-some-thing`)
+        .set('Cookie', [mockAuthorisedCookie])
+        .expect(200)
+        .then((res) => {
+          expect(res.text.includes('<input type="hidden" name="op" value="do-some-thing" />')).toBeTruthy();
+        });
+    });
   });
 
   describe('POST /organisation/:odsCode/select', () => {
@@ -59,7 +74,34 @@ describe('select organisation routes', () => {
       jest.resetAllMocks();
     });
 
-    it('should redirect to /organisation/odsCode, if the organisation is selected', async () => {
+    it('should redirect to /organisation/odsCode, if the organisation is selected and op param is null', async () => {
+      getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
+      controller.organisationsList = jest.fn()
+        .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });
+      getProxyOrganisations.mockResolvedValue([{ organisationId: '123', name: 'abc' }]);
+      getOdsCodeForOrganisation.mockResolvedValueOnce('odsCode');
+      const { cookies, csrfToken } = await getCsrfTokenFromGet({
+        app: request(setUpFakeApp()),
+        getPath: path,
+        getPathCookies: [mockAuthorisedCookie],
+      });
+
+      const res = await request(setUpFakeApp())
+        .post(path)
+        .type('form')
+        .set('Cookie', [cookies, mockAuthorisedCookie])
+        .send({
+          _csrf: csrfToken,
+          organisation: 'orgId',
+          op: 'create-order',
+        })
+        .expect(302);
+
+      expect(res.redirect).toEqual(true);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/neworder`);
+    });
+
+    it('should redirect to /organisation/odsCode, if the organisation is selected and is for create order op', async () => {
       getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       controller.organisationsList = jest.fn()
         .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });

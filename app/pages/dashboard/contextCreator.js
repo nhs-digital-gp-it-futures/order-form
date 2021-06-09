@@ -98,7 +98,9 @@ export const getContext = ({
 
   ...manifest,
   title: orgName,
-  newOrderButtonHref: `${baseUrl}/organisation/${odsCode}/order/neworder`,
+  newOrderButtonHref: userIsProxy
+    ? `${baseUrl}/organisation/${mainOrgOdsCode}/select/${odsCode}?op=create-order`
+    : `${baseUrl}/organisation/${odsCode}/order/neworder`,
   proxyLinkHref: '#',
   completeOrders: generateCompletedOrdersTable(
     completedOrders, manifest.completeOrdersTable, odsCode,

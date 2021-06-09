@@ -5,7 +5,7 @@ import manifest from './manifest.json';
 import { baseUrl } from '../../config';
 
 export const getSelectContext = async ({
-  accessToken, orgId, orgName, odsCode, selectedOdsCode,
+  accessToken, orgId, orgName, odsCode, selectedOdsCode, op,
 }) => {
   const organisationsList = await getProxyOrganisations({ accessToken, orgId });
   const context = {
@@ -19,6 +19,7 @@ export const getSelectContext = async ({
     odsCode,
     orgId,
     orgName,
+    op,
   };
 
   context.description = 'Select the organisation you want to act on behalf of.';
@@ -33,6 +34,7 @@ export const getSelectErrorContext = async ({ accessToken, req, selectedOdsCode 
     orgName: req.body.orgName,
     odsCode: req.body.odsCode,
     selectedOdsCode,
+    op: req.body.op,
   });
 
   const errors = [

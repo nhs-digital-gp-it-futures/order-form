@@ -13,6 +13,7 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
   router.get('/:selectedOdsCode', authProvider.authorise({ claim: 'ordering' }), withCatch(logger, authProvider, async (req, res) => {
     const accessToken = extractAccessToken({ req, tokenType: 'access' });
     const { odsCode, selectedOdsCode } = req.params;
+    const { op } = req.query;
     const { organisationId, name } = await getOrganisationFromOdsCode({
       req, sessionManager, odsCode, accessToken,
     });
@@ -23,6 +24,7 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
       orgName: name,
       odsCode,
       selectedOdsCode,
+      op,
     });
 
     logger.info('navigating to organisation selection page');
@@ -53,7 +55,11 @@ export const selectOrganisationRoutes = (authProvider, addContext, sessionManage
         req, key: sessionKeys.selectedOrgId, value: orgId,
       });
 
-      return res.redirect(`${config.baseUrl}/organisation/${odsCode}`);
+      const redirectUrl = req.body.op === 'create-order'
+        ? `${config.baseUrl}/organisation/${odsCode}/order/neworder`
+        : `${config.baseUrl}/organisation/${odsCode}`;
+
+      return res.redirect(redirectUrl);
     }));
 
   return router;
