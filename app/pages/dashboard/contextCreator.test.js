@@ -59,7 +59,7 @@ describe('getContext', () => {
     expect(context.newOrderButtonHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/neworder`);
   });
 
-  it('should construct newOrderButtonHref to select org user is proxy', () => {
+  it('should construct newOrderButtonHref to select org if user is proxy', () => {
     const context = getContext({
       odsCode,
       userIsProxy: true,
