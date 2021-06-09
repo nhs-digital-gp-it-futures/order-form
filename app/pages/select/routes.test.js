@@ -93,15 +93,14 @@ describe('select organisation routes', () => {
         .send({
           _csrf: csrfToken,
           organisation: 'orgId',
-          op: 'create-order',
         })
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/neworder`);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode`);
     });
 
-    it('should redirect to /organisation/odsCode, if the organisation is selected and is for create order op', async () => {
+    it('should redirect to /organisation/odsCode/order/neworder, if the organisation is selected and is for create order op', async () => {
       getOrganisationFromOdsCode.mockResolvedValue(mockOrgData);
       controller.organisationsList = jest.fn()
         .mockResolvedValueOnce({ primaryName: 'abc', organisationsList: ['', ''] });
@@ -120,11 +119,12 @@ describe('select organisation routes', () => {
         .send({
           _csrf: csrfToken,
           organisation: 'orgId',
+          op: 'create-order',
         })
         .expect(302);
 
       expect(res.redirect).toEqual(true);
-      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode`);
+      expect(res.headers.location).toEqual(`${baseUrl}/organisation/odsCode/order/neworder`);
     });
 
     it('should redirect back to select page, if the organisation is not selected', async () => {
