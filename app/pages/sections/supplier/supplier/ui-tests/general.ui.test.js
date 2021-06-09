@@ -53,7 +53,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture('Supplier page - general')
+fixture.skip('Supplier page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
