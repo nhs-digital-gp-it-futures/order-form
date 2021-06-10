@@ -44,8 +44,8 @@ jobs:
   - script: npm install
     displayName: 'NPM install'
 
-  - script: npx webpack --config webpack.config.js
-    displayName: 'NPX Webpack'
+  - script: npm run build
+    displayName: 'NPM run build'
 
   - script: npm run test
     displayName: 'Unit test'
@@ -76,7 +76,7 @@ jobs:
   variables:
     semVer: $[ dependencies.version.outputs['setVersionStep.semVer'] ]
   condition: succeeded()
-  dependsOn: 
+  dependsOn:
     - version
     - buildAndTest
   steps:
