@@ -54,9 +54,19 @@ describe('getContext', () => {
     expect(context.title).toEqual('Org1');
   });
 
-  it('should construct newOrderButtonHref', () => {
+  it('should construct newOrderButtonHref for new order if user not proxy', () => {
     const context = getContext({ odsCode });
     expect(context.newOrderButtonHref).toEqual(`${baseUrl}/organisation/${odsCode}/order/neworder`);
+  });
+
+  it('should construct newOrderButtonHref to select org if user is proxy', () => {
+    const context = getContext({
+      odsCode,
+      userIsProxy: true,
+      mainOrgOdsCode: '52H',
+    });
+    expect(context.newOrderButtonHref)
+      .toEqual(`${baseUrl}/organisation/52H/select/${odsCode}?op=create-order`);
   });
 
   describe('ordersData', () => {

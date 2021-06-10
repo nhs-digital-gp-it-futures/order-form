@@ -13,6 +13,7 @@ describe('organisation select controller', () => {
     odsCode: 'odsCode',
     selectedOrgId: '002',
     selectedOdsCode: 'currentOdsCode',
+    op: 'remove-order',
   };
 
   const expectedOrgList = [
@@ -120,6 +121,13 @@ describe('organisation select controller', () => {
       expect(question.options[4].value).toEqual('003');
       expect(question.options[4].checked).toEqual(undefined);
     });
+
+    it('should return expected op', async () => {
+      const returnedContext = await getSelectContext(options);
+
+      expect(returnedContext.op)
+        .toEqual(options.op);
+    });
   });
 
   describe('getSelectErrorContext', () => {
@@ -130,6 +138,7 @@ describe('organisation select controller', () => {
           odsCode: 'odsCode',
           orgId: 'orgId',
           orgName: 'Goole CCG',
+          op: 'order-remove',
         },
       },
       selectedOdsCode: 'currentOdsCode',
@@ -167,6 +176,13 @@ describe('organisation select controller', () => {
       expect(returnedContext.orgId).toEqual(params.req.body.orgId);
       expect(returnedContext.orgName).toEqual(params.req.body.orgName);
       expect(returnedContext.primaryName).toEqual(params.req.body.orgName);
+    });
+
+    it('should return expected op', async () => {
+      const returnedContext = await getSelectErrorContext(params);
+
+      expect(returnedContext.op)
+        .toEqual(params.req.body.op);
     });
   });
 });
