@@ -37,6 +37,7 @@ const mocks = () => {
     .reply(200, mockData);
   nock(organisationApiUrl)
     .get('/api/v1/ods/odsCode')
+    .times(2)
     .reply(200, mockOrgData);
 };
 
@@ -53,7 +54,7 @@ const pageSetup = async (setup = defaultPageSetup) => {
 
 const getLocation = ClientFunction(() => document.location.href);
 
-fixture.skip('Supplier page - general')
+fixture('Supplier page - general')
   .page('http://localhost:1234/order/some-fake-page')
   .afterEach(async (t) => {
     await nockAndErrorCheck(nock, t);
