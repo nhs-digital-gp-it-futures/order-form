@@ -13,7 +13,7 @@ module.exports = {
   publicBrowseBaseUrl: process.env.PUBLIC_BROWSE_BASE_URL || 'http://localhost:3000',
 
   // feedback link URL
-  feedbackLinkUrl: process.env.FEEDBACK_LINK_URL || 'https://forms.office.com/Pages/ResponsePage.aspx?id=Hwf2UP67GkCIA2c3SOYp4nDHKEWnXcFHiqdJhf0fCJtUNDNFRUFZVFU5RkRQTEpWU0RQVlVXMUpRQi4u',
+  feedbackLinkUrl: process.env.FEEDBACK_LINK_URL || 'https://feedback.digital.nhs.uk/jfe/form/SV_3C4ClYbvjUg7veK',
 
   // Environment
   env,
