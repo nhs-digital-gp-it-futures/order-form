@@ -22,22 +22,26 @@ const serviceRecipients = [
   },
 ];
 
-const mocks = () => {
+const mocks = (odsTimes) => {
   nock(orderApiUrl)
     .get('/api/v1/orders/order-id/sections/service-recipients')
     .reply(200, { serviceRecipients });
   nock(organisationApiUrl)
     .get('/api/v1/ods/odsCode')
+    .times(odsTimes)
     .reply(200, mockOrgData);
 };
 
-const defaultPageSetup = { withAuth: true, getRoute: true, postRoute: false };
+const defaultPageSetup = {
+  withAuth: true, getRoute: true, postRoute: false, odsTimes: 1,
+};
+
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
   if (setup.getRoute) {
-    mocks();
+    mocks(setup.odsTimes);
     await setState(ClientFunction)(sessionKeys.selectedItemName, selectedItemName);
   }
   if (setup.postRoute) {
@@ -147,7 +151,7 @@ test('should redirect to /organisation/odsCode/order/order-id/additional-service
 });
 
 test('should show the error summary when no additionalService selected causing validation error', async (t) => {
-  await pageSetup({ ...defaultPageSetup, postRoute: true });
+  await pageSetup({ ...defaultPageSetup, postRoute: true, odsTimes: 2 });
   await t.navigateTo(pageUrl);
 
   const button = Selector('[data-test-id="continue-button"] button');

@@ -50,25 +50,25 @@ const orderItemPageDataInSession = JSON.stringify({
   selectedRecipients,
 });
 
-const mocks = (mockSelectedPrice) => {
+const mocks = (mockSelectedPrice, odsTimes) => {
   nock(solutionsApiUrl)
     .get('/api/v1/prices/price-1')
     .reply(200, mockSelectedPrice);
   nock(organisationApiUrl)
     .get('/api/v1/ods/odsCode')
-    .times(2)
+    .times(odsTimes)
     .reply(200, mockOrgData);
 };
 
 const defaultPageSetup = {
-  withAuth: true, getRoute: true, postRoute: false, mockData: selectedPrice,
+  withAuth: true, getRoute: true, postRoute: false, mockData: selectedPrice, odsTimes: 2,
 };
 const pageSetup = async (setup = defaultPageSetup) => {
   if (setup.withAuth) {
     await setState(ClientFunction)('fakeToken', authTokenInSession);
   }
   if (setup.getRoute) {
-    mocks(setup.mockData);
+    mocks(setup.mockData, setup.odsTimes);
     await setState(ClientFunction)('fakeToken', authTokenInSession);
     await setState(ClientFunction)(sessionKeys.selectedRecipientId, selectedRecipientIdInSession);
     await setState(ClientFunction)(sessionKeys.selectedRecipientName, selectedRecipientNameInSession);
@@ -118,12 +118,12 @@ test('should render the price table headings', async (t) => {
 });
 
 test('should render the solution table display', async (t) => {
-  await pageSetup();
+  await pageSetup({ ...defaultPageSetup, odsTimes: 1 });
   await t.navigateTo(pageUrl);
   const pageModel = new AdditionalServicePageModel();
 
   await t
-    .expect(pageModel.quantityInput.getAttribute('value')).eql(undefined)
+    .expect(pageModel.quantityInput.getAttribute('value')).eql(null)
 
     .expect(pageModel.practiceExpandableSection.exists).ok()
     .expect(await extractInnerText(pageModel.practiceExpandableSection))

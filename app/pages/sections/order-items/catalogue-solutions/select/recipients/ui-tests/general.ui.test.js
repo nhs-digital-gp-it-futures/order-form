@@ -198,8 +198,8 @@ test('should check all checkboxes and change button text when "Select all button
   const checkbox2Input = Selector('[data-test-id="ods2-organisationName"] input');
 
   await t
-    .expect(checkbox1Input.getAttribute('checked')).eql(undefined)
-    .expect(checkbox2Input.getAttribute('checked')).eql(undefined)
+    .expect(checkbox1Input.getAttribute('checked')).eql(null)
+    .expect(checkbox2Input.getAttribute('checked')).eql(null)
     .expect(await extractInnerText(button)).eql('Select all')
     .click(button);
 
@@ -229,8 +229,8 @@ test('should uncheck all checkboxes and change button text when all are selected
 
   await t
     .expect(await extractInnerText(button)).eql('Select all')
-    .expect(checkbox1Input.getAttribute('checked')).eql(undefined)
-    .expect(checkbox2Input.getAttribute('checked')).eql(undefined);
+    .expect(checkbox1Input.getAttribute('checked')).eql(null)
+    .expect(checkbox2Input.getAttribute('checked')).eql(null);
 });
 
 test('should render the "Continue" button', async (t) => {
